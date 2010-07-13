@@ -126,7 +126,17 @@ if($_REQUEST['dragdroporder']) {
 	$config = write_config("Drag and drop firewall rules ordering update.");
 	// Redirect back to page
 	mark_subsystem_dirty('filter');
-	Header("Location: firewall_rules.php?if=" . $_REQUEST['if']);
+	$undo = array();
+	foreach($_REQUEST['dragtable'] as $dt) 
+		$undo[] = "";
+	$counter = 0;
+	foreach($_REQUEST['dragtable'] as $dt) {
+		$undo[$dt] = $counter;
+		$counter++;
+	}
+	foreach($undo as $dt) 
+		$undotxt .= "&dragtable[]={$dt}";
+	Header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
 	exit;
 }
 
@@ -286,7 +296,16 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
-<?php print_info_box_np(gettext("The firewall rule configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php
+if($_REQUEST['undodrag']) {
+	foreach($_REQUEST['dragtable'] as $dt) 
+		$dragtable .= "&dragtable[]={$dt}";
+	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
+} else {
+	print_info_box_np(gettext("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect."));
+}
+?>
+<br>
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
 	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...

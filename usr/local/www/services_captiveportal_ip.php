@@ -39,7 +39,6 @@
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 
-$pgtitle = array("Services","Captive portal");
 $statusurl = "status_captiveportal.php";
 $logurl = "diag_logs_auth.php";
 
@@ -48,6 +47,8 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"));
 
 if (!is_array($config['captiveportal']['allowedip']))
 	$config['captiveportal']['allowedip'] = array();
@@ -83,11 +84,11 @@ include("head.inc");
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
-	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
-	$tab_array[] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
-	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
+	$tab_array[] = array(gettext("Allowed IP addresses"), true, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
+	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -95,13 +96,13 @@ include("head.inc");
   <td class="tabcont">
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-	  <td width="30%" class="listhdrr">IP address</td>
-	  <td width="60%" class="listhdr">Description</td>
+	  <td width="30%" class="listhdrr"><?=gettext("IP address"); ?></td>
+	  <td width="60%" class="listhdr"><?=gettext("Description"); ?></td>
 	  <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>
@@ -120,8 +121,8 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="edit address" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this address?')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="delete address" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
 	<tr>
@@ -130,27 +131,27 @@ include("head.inc");
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
-	  Note:<br>
+	  <?=gettext("Note"); ?>:<br>
 	  </strong></span>
-	  Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.</p>
+	  <?=gettext("Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying"); ?> <em><?=gettext("from"); ?></em> <?=gettext("addresses, it may be used to always allow pass-through access from a client behind the captive portal"); ?>.</p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		  <td><span class="vexpl">any <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
-		  <td><span class="vexpl">All connections <strong>to</strong> the IP address are allowed</span></td>
+		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
+		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong>to</strong> <?=gettext("the IP address are allowed"); ?></span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>
 		</tr>
 		<tr>
-		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
-		  <td><span class="vexpl">All connections <strong>from</strong> the IP address are allowed </span></td>
+		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> <?=gettext("any"); ?>&nbsp;&nbsp;&nbsp; </td>
+		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong><?=gettext("from"); ?></strong> <?=gettext("the IP address are allowed"); ?> </span></td>
 		</tr>
 	  </table></td>
 	<td class="list">&nbsp;</td>

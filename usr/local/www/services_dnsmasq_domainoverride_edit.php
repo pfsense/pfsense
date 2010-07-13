@@ -62,15 +62,15 @@ if ($_POST) {
 
        /* input validation */
        $reqdfields = explode(" ", "domain ip");
-       $reqdfieldsn = explode(",", "Domain,IP address");
+       $reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
 
        do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
        if (($_POST['domain'] && !is_domain($_POST['domain']))) {
-               $input_errors[] = "A valid domain must be specified.";
+               $input_errors[] = gettext("A valid domain must be specified.");
        }
        if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
-               $input_errors[] = "A valid IP address must be specified.";
+               $input_errors[] = gettext("A valid IP address must be specified.");
        }
 
        if (!$input_errors) {
@@ -93,7 +93,7 @@ if ($_POST) {
        }
 }
 
-$pgtitle = array("Services","DNS forwarder","Edit Domain Override");
+$pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit Domain Override"));
 include("head.inc");
 
 ?>
@@ -104,30 +104,30 @@ include("head.inc");
             <form action="services_dnsmasq_domainoverride_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Domain</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl">Domain to override (NOTE: this does not have to be a valid TLD!)<br>
-                    e.g. <em>test</em></span></td>
+                    <br> <span class="vexpl"><?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)<br>".
+                    " e.g. <em>test</em>");?></span></td>
                 </tr>
                                <tr>
-                  <td width="22%" valign="top" class="vncellreq">IP address</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl">IP address of the authoritative DNS server for this domain<br>
-                    e.g. <em>192.168.100.100</em></span></td>
+                    <br> <span class="vexpl"><?=gettext("IP address of the authoritative DNS server for this domain<br>".
+                    " e.g. <em>192.168.100.100</em>");?></span></td>
                 </tr>
                                <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">  <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">  <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_domainOverrides[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

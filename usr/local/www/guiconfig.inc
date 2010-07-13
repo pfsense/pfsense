@@ -338,6 +338,70 @@ EOFnp;
 
 }
 
+function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
+	global $g;
+	
+	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
+		$savebutton = "<td class='infoboxsave'><nobr>";
+		$savebutton .= " <input type=\"button\" value=\"Undo\" onClick=\"document.location='{$undo}'\">";
+		$savebutton .= " <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
+		$savebutton.="</nobr></td>";
+		if($_POST['if']) 
+			$savebutton .= "<input type='hidden' name='if' value='{$_POST['if']}'>";
+	}
+	$nifty_redbox = "#990000";
+	$nifty_blackbox = "#000000";
+	
+	$themename = $g['theme'];
+	
+	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
+		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
+		eval($toeval);
+	}
+	
+	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
+		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
+		eval($toeval);
+	}	
+	
+		
+	if(!$savebutton) {
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
+	}
+
+	echo <<<EOFnp
+	<table class='infobox' id='redboxtable'>
+		<tr>
+			<td>
+				<div class='infoboxnp' id='redbox'>
+					<table class='infoboxnptable2'>
+						<tr>
+							<td class='infoboxnptd'>
+								&nbsp;&nbsp;&nbsp;<img class='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
+							</td>
+							<td class='infoboxnptd2'>
+								<b>{$msg}</b>
+							</td>
+							{$savebutton} 
+							{$undobutton}
+						</tr>
+					</table>
+				</div>
+				<div>
+					<p/>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		NiftyCheck();
+		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
+		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
+	</script>
+EOFnp;
+
+}
+
 function print_info_box($msg) {
 	print_info_box_np($msg);
 }

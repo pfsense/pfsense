@@ -331,8 +331,8 @@ if (isAllowedPage("system_usermanager")) {
 				$a_user[] = $userent;
 			}
 
-			local_user_set($userent);
 			local_user_set_groups($userent,$_POST['groups']);
+			local_user_set($userent);
 			write_config();
 
 			if(is_dir("/etc/inc/privhooks"))

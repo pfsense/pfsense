@@ -52,7 +52,7 @@ require_once("shaper.inc");
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
-$pconfig['disablehttpredirect'] = isset($config['system']['disablehttpredirect']);
+$pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -110,10 +110,10 @@ if ($_POST) {
 			$restart_webgui = true;
 
 		if ($_POST['disablehttpredirect'] == "yes") {
-			$config['system']['disablehttpredirect'] = true;
+			$config['system']['webgui']['disablehttpredirect'] = true;
 			$restart_webgui = true;
 		} else {
-			unset($config['system']['disablehttpredirect']);
+			unset($config['system']['webgui']['disablehttpredirect']);
 			$restart_webgui = true;
 		}
 

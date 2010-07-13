@@ -193,6 +193,7 @@ $diagnostics_menu[] = array("pfTOP", "/diag_system_pftop.php");
 $diagnostics_menu[] = array("Reboot", "/reboot.php");
 $diagnostics_menu[] = array("Routes", "/diag_routes.php");
 $diagnostics_menu[] = array("Show Bogons", "/diag_showbogons.php");
+$diagnostics_menu[] = array("SMART Status", "/diag_smart.php");
 $diagnostics_menu[] = array("States", "/diag_dump_states.php");
 $diagnostics_menu[] = array("States Summary", "/diag_states_summary.php");
 $diagnostics_menu[] = array("System Activity", "/diag_system_activity.php");

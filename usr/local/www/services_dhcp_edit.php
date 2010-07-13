@@ -101,7 +101,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = explode(",", "MAC address");
+	$reqdfieldsn = array(gettext("MAC address"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -110,21 +110,21 @@ if ($_POST) {
 	
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
-			$input_errors[] = "The hostname can only contain the characters A-Z, 0-9 and '-'.";
+			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
 			if (strpos($_POST['hostname'],'.')) {
-				$input_errors[] = "A valid hostname is specified, but the domain name part should be omitted";
+				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
 			}
 		}
 	}
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-		$input_errors[] = "A valid IP address must be specified.";
+		$input_errors[] = gettext("A valid IP address must be specified.");
 	}
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
-		$input_errors[] = "A valid MAC address must be specified.";
+		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 	if($static_map_enabled && !$_POST['ipaddr']) {
-		$input_errors[] = "Static map is enabled.  You must specify an IP address.";
+		$input_errors[] = gettext("Static map is enabled.  You must specify an IP address.");
 	}
 	
 	/* check for overlaps */
@@ -133,7 +133,7 @@ if ($_POST) {
 			continue;
 
 		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['mac'] == $_POST['mac'])) {
-			$input_errors[] = "This Hostname, IP or MAC address already exists.";
+			$input_errors[] = gettext("This Hostname, IP or MAC address already exists.");
 			break;
 		}
 	}
@@ -146,7 +146,7 @@ if ($_POST) {
 		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
 			(ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
-			$input_errors[] = "The IP address must lie in the {$ifcfgdescr} subnet.";
+			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."),$ifcfgdescr);
 		}
 	}
 
@@ -176,7 +176,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","DHCP","Edit static mapping");
+$pgtitle = array(gettext("Services"),gettext("DHCP"),gettext("Edit static mapping"));
 $statusurl = "status_dhcp_leases.php";
 $logurl = "diag_logs_dhcp.php";
 
@@ -190,10 +190,10 @@ include("head.inc");
             <form action="services_dhcp_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Static DHCP Mapping</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCP Mapping");?></td>
 				</tr>	
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">MAC address</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
 		    <?php
@@ -201,35 +201,35 @@ include("head.inc");
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
 			$mac = str_replace("\n","",$mac);
 		    ?>
-		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#">Copy my MAC address</a>   		    
+		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>   		    
                     <br>
-                    <span class="vexpl">Enter a MAC address in the following format: 
-                    xx:xx:xx:xx:xx:xx</span></td>
+                    <span class="vexpl"><?=gettext("Enter a MAC address in the following format: ".
+                    "xx:xx:xx:xx:xx:xx");?></span></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">IP address</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     <br>
-                    If no IP address is given, one will be dynamically allocated  from the pool.</td>
+                    <?=gettext("If no IP address is given, one will be dynamically allocated  from the pool.");?></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">Hostname</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
-                    <br> <span class="vexpl">Name of the host, without domain part.</span></td>
+                    <br> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
                 </tr>				
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
-                    <br> <span class="vexpl">You may enter a description here 
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here ".
+                    "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_maps[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

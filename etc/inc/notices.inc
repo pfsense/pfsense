@@ -291,7 +291,7 @@ function notify_via_smtp($message) {
 	$to = $config['notifications']['smtp']['notifyemailaddress'];
 
 	$smtp->host_name = $config['notifications']['smtp']['ipaddress'];
-	$smtp->host_port = 25;
+	$smtp->host_port = empty($config['notifications']['smtp']['port']) ? 25 : $config['notifications']['smtp']['port'];
 
 	$smtp->direct_delivery = 0;
 	$smtp->ssl = 0;

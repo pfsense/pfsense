@@ -38,7 +38,6 @@
 ##|*MATCH=services_captiveportal_mac.php*
 ##|-PRIV
 
-$pgtitle = array("Services","Captive portal");
 $statusurl = "status_captiveportal.php";
 $logurl = "diag_logs_auth.php";
 
@@ -47,6 +46,8 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"));
 
 if (!is_array($config['captiveportal']['passthrumac']))
 	$config['captiveportal']['passthrumac'] = array();
@@ -69,7 +70,7 @@ if ($_POST) {
 
 	if ($_POST['postafterlogin']) {
 		if (!is_array($a_passthrumacs)) {
-			echo "No entry exists yet!\n";
+			echo gettext("No entry exists yet!") ."\n";
 			exit;
 		}
 		if ($_POST['username']) {
@@ -77,7 +78,7 @@ if ($_POST) {
 			if (!empty($mac))
 				$_POST['delmac'] = $mac['mac'];	
 			else
-				echo "No entry exists for this username: {$_POST['username']}\n";
+				echo gettext("No entry exists for this username:") . " " . $_POST['username'] . "\n";
 		}
 		if ($_POST['delmac']) {
 			$found = false;
@@ -95,9 +96,9 @@ if ($_POST) {
 				}
 				unset($a_passthrumacs[$idx]);
 				write_config();
-				echo "The entry was sucessfully deleted\n";
+				echo gettext("The entry was sucessfully deleted") . "\n";
 			} else
-				echo "No entry exists for this mac address: {$_POST['delmac']}\n";
+				echo gettext("No entry exists for this mac address:") . " " .  $_POST['delmac'] . "\n";
 		}
 		exit;
 	}
@@ -124,17 +125,17 @@ include("head.inc");
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('passthrumac')): ?><p>
-<?php print_info_box_np("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
-	$tab_array[] = array("Pass-through MAC", true, "services_captiveportal_mac.php");
-	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
-	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
+	$tab_array[] = array(gettext("Pass-through MAC"), true, "services_captiveportal_mac.php");
+	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
+	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -142,8 +143,8 @@ include("head.inc");
   <td class="tabcont">
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-	  <td width="30%" class="listhdrr">MAC address</td>
-	  <td width="60%" class="listhdr">Description</td>
+	  <td width="30%" class="listhdrr"><?=gettext("MAC address"); ?></td>
+	  <td width="60%" class="listhdr"><?=gettext("Description"); ?></td>
 	  <td width="10%" class="list"></td>
 	</tr>
   <?php $i = 0; foreach ($a_passthrumacs as $mac): ?>
@@ -154,19 +155,19 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($mac['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_mac_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="edit host" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="services_captiveportal_mac.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this host?')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="delete host" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_mac_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit host"); ?>" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="services_captiveportal_mac.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete host"); ?>" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="2">&nbsp;</td>
-	  <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add host" width="17" height="17" border="0"></a></td>
+	  <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add host"); ?>" width="17" height="17" border="0"></a></td>
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>
-	Note:<br>
+	<?=gettext("Note"); ?>:<br>
 	</strong></span>
-	Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page. </span></td>
+	<?=gettext("Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page"); ?>. </span></td>
 	<td class="list">&nbsp;</td>
 	</tr>
   </table>

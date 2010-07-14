@@ -37,9 +37,11 @@
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
 
 require("guiconfig.inc");
+require_once("functions.inc");
+
+$pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
 
 if (!is_array($config['ifgroups']['ifgroupentry']))
 	$config['ifgroups']['ifgroupentry'] = array();
@@ -66,7 +68,7 @@ if ($_POST) {
 	if (!isset($id)) {
 		foreach ($a_ifgroups as $groupentry)
 			if ($groupentry['ifname'] == $_POST['ifname'])
-				$input_errors[] = "Group name already exists!";
+				$input_errors[] = gettext("Group name already exists!");
 	}
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");

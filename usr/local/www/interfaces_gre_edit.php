@@ -39,6 +39,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("functions.inc");
 
 if (!is_array($config['gres']['gre']))
 	$config['gres']['gre'] = array();
@@ -76,7 +77,7 @@ if ($_POST) {
 
 	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
 			(!is_ipaddr($_POST['remote-addr']))) {
-		$input_errors[] = "The tunnel local and tunnel remote fields must have valid IP addresses.";
+		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
 
 	foreach ($a_gres as $gre) {

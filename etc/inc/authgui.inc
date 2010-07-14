@@ -181,6 +181,11 @@ if (empty($FilterIflist)) {
 foreach ($FilterIflist as $iflist)
 	if($iflist['ip'] == $http_host)
 		$local_ip = true;
+if($config['virtualip'])
+	if($config['virtualip']['vip'])
+		foreach($config['virtualip']['vip'] as $vip) 
+			if($vip['subnet'] == $http_host)
+				$local_ip = true;
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

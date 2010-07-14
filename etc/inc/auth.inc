@@ -361,7 +361,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name}");
+	exec("/usr/sbin/pw {$un}lock -q {$user_name}");
 	
 	conf_mount_ro();
 }

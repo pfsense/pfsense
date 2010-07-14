@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<title>Services: UPnP</title>
+	<title>Services: UPnP &amp; NAT-PMP</title>
 	<name>miniupnpd</name>
-	<version>20070521</version>
+	<version>20100712</version>
 	<savetext>Change</savetext>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
 	<menu>
-		<name>UPnP</name>
-		<tooltiptext>Set UPnP settings such as interfaces to listen on.</tooltiptext>
+		<name>UPnP &amp; NAT-PMP</name>
+		<tooltiptext>Set UPnP &amp; NAT-PMP settings such as interfaces to listen on.</tooltiptext>
 		<section>Services</section>
 		<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 	</menu>
@@ -33,16 +33,28 @@
 	</service>
 	<fields>
 		<field>
-			<name>UPnP Settings</name>
+			<name>UPnP &amp; NAT-PMP Settings</name>
 			<type>listtopic</type>
-			<enablefields>iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
 		</field>
 		<field>
-			<fielddescr>Enable UPnP</fielddescr>
+			<fielddescr>Enable UPnP &amp; NAT-PMP</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
-			<enablefields>iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
 		</field>			
+		<field>
+			<fielddescr>Allow UPnP Port Mapping</fielddescr>
+			<fieldname>enable_upnp</fieldname>
+			<type>checkbox</type>
+			<description>This protocol is often used by Microsoft-compatible systems.</description>
+		</field>
+		<field>
+			<fielddescr>Allow NAT-PMP Port Mapping</fielddescr>
+			<fieldname>enable_natpmp</fieldname>
+			<type>checkbox</type>
+			<description>This protocol is often used by Apple-compatible systems.</description>
+		</field>
 		<field>
 			<fielddescr>Interfaces (generally LAN)</fielddescr>
 			<fieldname>iface_array</fieldname>
@@ -74,17 +86,17 @@
 			<type>input</type>
 		</field>
 		<field>
-			<fielddescr>Log packets handled by UPnP rules?</fielddescr>
+			<fielddescr>Log packets handled by UPnP &amp; NAT-PMP rules?</fielddescr>
 			<fieldname>logpackets</fieldname>
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Use system uptime instead of UPnP service uptime?</fielddescr>
+			<fielddescr>Use system uptime instead of UPnP &amp; NAT-PMP service uptime?</fielddescr>
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>By default deny access to UPnP?</fielddescr>
+			<fielddescr>By default deny access to UPnP &amp; NAT-PMP?</fielddescr>
 			<fieldname>permdefault</fieldname>
 			<type>checkbox</type>
 		</field>

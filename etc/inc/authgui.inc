@@ -165,7 +165,7 @@ function display_login_form() {
 
 /* Check against locally configured IP addresses, which will catch when someone 
    port forwards WebGUI access from WAN to an internal IP on the router. */
-global $FilterIflist;
+global $FilterIflist, $nifty_background;
 $local_ip = false;
 if(strstr($_SERVER['HTTP_HOST'], ":")) {
 	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);

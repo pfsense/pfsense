@@ -35,7 +35,6 @@
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
-$pgtitle = array("Services", "Captive portal", "Edit Voucher Rolls");
 $statusurl = "status_captiveportal_vouchers.php";
 $logurl = "diag_logs_auth.php";
 
@@ -45,6 +44,8 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+
+$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
 
 if (!is_array($config['voucher'])) {
     $config['voucher'] = array();
@@ -76,26 +77,26 @@ if ($_POST) {
 
     /* input validation */
     $reqdfields = explode(" ", "number count minutes");
-    $reqdfieldsn = explode(",", "Number,Count,minutes");
+    $reqdfieldsn = array(gettext("Number"),getext("Count"),gettext("minutes"));
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	// Look for duplicate roll #
 	foreach($a_roll as $re) {
 		if($re['number'] == $_POST['number']) {
-			$input_errors[] = "Roll number {$_POST['number']} already exists.";
+			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;
 		}
 	}
 	
     if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber) 
-        $input_errors[] = "Roll number must be numeric and less than $maxnumber";
+        $input_errors[] = sprintf(gettext("Roll number must be numeric and less than %s"), $maxnumber);
 
     if (!is_numeric($_POST['count']) || $_POST['count'] < 1 || $_POST['count'] > $maxcount)
-        $input_errors[] = "A roll has at least one voucher and less than $maxcount.";
+        $input_errors[] = sprintf(gettext("A roll has at least one voucher and less than %s."), $maxcount);
 
     if (!is_numeric($_POST['minutes']) || $_POST['minutes'] < 1)
-        $input_errors[] = "Each voucher must be good for at least 1 minute.";
+        $input_errors[] = gettext("Each voucher must be good for at least 1 minute.");
 
     if (!$input_errors) {
 
@@ -154,41 +155,41 @@ include("head.inc");
 <form action="services_captiveportal_vouchers_edit.php" method="post" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="content pane">
 	<tr> 
-	  <td width="22%" valign="top" class="vncellreq">Roll#</td>
+	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Roll"); ?>#</td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>"> 
         <br>
-        <span class="vexpl">Enter the Roll# (0..<?=htmlspecialchars($maxnumber);?>) found on top of the generated/printed vouchers.</span>
+        <span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=htmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
 		</td>
 	</tr>
 	<tr> 
-	  <td width="22%" valign="top" class="vncellreq">Minutes per Ticket</td>
+	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Minutes per Ticket"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>"> 
         <br>
-        <span class="vexpl">Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication.</span>
+        <span class="vexpl"><?=gettext("Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication"); ?>.</span>
 	   </td>
 	</tr>
 	<tr> 
-	  <td width="22%" valign="top" class="vncellreq">Count</td>
+	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Count"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>"> 
         <br>
-        <span class="vexpl">Enter the number of vouchers (1..<?=htmlspecialchars($maxcount);?>) found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again.</span>
+        <span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=htmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
 		</td>
 	</tr>
 	<tr> 
-	  <td width="22%" valign="top" class="vncell">Comment</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="comment" type="text" class="formfld" id="comment" size="60" value="<?=htmlspecialchars($pconfig['comment']);?>"> 
         <br>
-        <span class="vexpl">Can be used to further identify this roll. Ignored by the system.</span>
+        <span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
 		</td>
 	</tr>
 	<tr> 
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"> 
-		<input name="Submit" type="submit" class="formbtn" value="Save"> 
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
 		<?php if (isset($id) && $a_roll[$id]): ?>
 		<input name="id" type="hidden" value="<?=$id;?>">
 		<?php endif; ?>

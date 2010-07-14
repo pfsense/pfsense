@@ -38,7 +38,6 @@
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
 
-$pgtitle = array("Services","Captive portal");
 $statusurl = "status_captiveportal.php";
 $logurl = "diag_logs_auth.php";
 
@@ -47,6 +46,8 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"));
 
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
@@ -111,60 +112,60 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "cinterface");
-		$reqdfieldsn = explode(",", "Interface");
+		$reqdfieldsn = array(gettext("Interface"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* make sure no interfaces are bridged */
 		foreach ($pconfig['cinterface'] as $cpbrif)
 			if (link_interface_to_bridge($cpbrif)) 
-				$input_errors[] = "The captive portal cannot be used on interface {$cpbrif} since it is part of a bridge.";
+				$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
 
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
-				$input_errors[] = "Certificate and key must be specified for HTTPS login.";
+				$input_errors[] = gettext("Certificate and key must be specified for HTTPS login.");
 			} else {
 				if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
-					$input_errors[] = "This certificate does not appear to be valid.";
+					$input_errors[] = gettext("This certificate does not appear to be valid.");
 				if (!strstr($_POST['cacert'], "BEGIN CERTIFICATE") || !strstr($_POST['cacert'], "END CERTIFICATE"))
-					$input_errors[] = "This intermmediate certificate does not appear to be valid.";
+					$input_errors[] = gettext("This intermmediate certificate does not appear to be valid.");
 				if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
-					$input_errors[] = "This key does not appear to be valid.";
+					$input_errors[] = gettext("This key does not appear to be valid.");
 			}
 
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
-				$input_errors[] = "The HTTPS server name must be specified for HTTPS login.";
+				$input_errors[] = gettext("The HTTPS server name must be specified for HTTPS login.");
 			}
 		}
 	}
 
 	if ($_POST['timeout'] && (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))) {
-		$input_errors[] = "The timeout must be at least 1 minute.";
+		$input_errors[] = gettext("The timeout must be at least 1 minute.");
 	}
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
-		$input_errors[] = "The idle timeout must be at least 1 minute.";
+		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
-		$input_errors[] = "A valid IP address must be specified. [".$_POST['radiusip']."]";
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
-		$input_errors[] = "A valid IP address must be specified. [".$_POST['radiusip2']."]";
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
-		$input_errors[] = "A valid port number must be specified. [".$_POST['radiusport']."]";
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
-		$input_errors[] = "A valid port number must be specified. [".$_POST['radiusport2']."]";
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
-		$input_errors[] = "A valid port number must be specified. [".$_POST['radiusacctport']."]";
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
-		$input_errors[] = "The total maximum number of concurrent connections must be between 4 and 100.";
+		$input_errors[] = gettext("The total maximum number of concurrent connections must be between 4 and 100.");
 	}
 	$mymaxproc = $_POST['maxproc'] ? $_POST['maxproc'] : 16;
 	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] > $mymaxproc))) {
-		$input_errors[] = "The maximum number of concurrent connections per client IP address may not be larger than the global maximum.";
+		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
 
 	if (!$input_errors) {
@@ -289,11 +290,11 @@ function enable_change(enable_change) {
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array("Captive portal", true, "services_captiveportal.php");
-	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
-	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
-	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), true, "services_captiveportal.php");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
+	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
+	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
   <tr>
@@ -303,10 +304,10 @@ function enable_change(enable_change) {
 	  <td width="22%" valign="top" class="vtable">&nbsp;</td>
 	  <td width="78%" class="vtable">
 		<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-		<strong>Enable captive portal </strong></td>
+		<strong><?=gettext("Enable captive portal"); ?> </strong></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncellreq">Interfaces</td>
+	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interfaces"); ?></td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
 		  <?php 
@@ -317,113 +318,113 @@ function enable_change(enable_change) {
 		  </option>
 		  <?php endforeach; ?>
 		</select> <br>
-		<span class="vexpl">Select the interface(s) to enable for captive portal.</span></td>
+		<span class="vexpl"><?=gettext("Select the interface(s) to enable for captive portal"); ?>.</span></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell">Maximum concurrent connections</td>
+	  <td valign="top" class="vncell"><?=gettext("Maximum concurrent connections"); ?></td>
 	  <td class="vtable">
 		<table cellpadding="0" cellspacing="0">
                  <tr>
            			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" 
-value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> per client IP address (0 = no limit)</td>
+value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client IP address (0 = no limit)"); ?></td>
                  </tr>
                </table>
-This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in
-to the captive portal, but rather how many users can load the portal page or authenticate at the same time!
-Default is 4 connections per client IP address, with a total maximum of 16 connections.</td>
+<?=gettext("This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in " .
+"to the captive portal, but rather how many users can load the portal page or authenticate at the same time! " .
+"Default is 4 connections per client IP address, with a total maximum of 16 connections"); ?>.</td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell">Idle timeout</td>
+	  <td valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 	  <td class="vtable">
 		<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
-minutes<br>
-Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout.</td>
+<?=gettext("minutes"); ?><br>
+<?=gettext("Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout"); ?>.</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Hard timeout</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Hard timeout"); ?></td>
 	  <td width="78%" class="vtable">
 		<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
-		minutes<br>
-	  Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).</td>
+		<?=gettext("minutes"); ?><br>
+	  <?=gettext("Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set)"); ?>.</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Logout popup window</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Logout popup window"); ?></td>
 	  <td width="78%" class="vtable">
 		<input name="logoutwin_enable" type="checkbox" class="formfld" id="logoutwin_enable" value="yes" <?php if($pconfig['logoutwin_enable']) echo "checked"; ?>>
-		<strong>Enable logout popup window</strong><br>
-	  If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs.</td>
+		<strong><?=gettext("Enable logout popup window"); ?></strong><br>
+	  <?=gettext("If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs"); ?>.</td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell">Redirection URL</td>
+	  <td valign="top" class="vncell"><?=gettext("Redirection URL"); ?></td>
 	  <td class="vtable">
 		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>">
 		<br>
-If you provide a URL here, clients will be redirected to that URL instead of the one they initially tried
-to access after they've authenticated.</td>
+<?=gettext("If you provide a URL here, clients will be redirected to that URL instead of the one they initially tried " .
+"to access after they've authenticated"); ?>.</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">Concurrent user logins</td>
+      <td valign="top" class="vncell"><?=gettext("Concurrent user logins"); ?></td>
       <td class="vtable">
 	<input name="noconcurrentlogins" type="checkbox" class="formfld" id="noconcurrentlogins" value="yes" <?php if ($pconfig['noconcurrentlogins']) echo "checked"; ?>>
-	<strong>Disable concurrent logins</strong><br>
-	If this option is set, only the most recent login per username will be active. Subsequent logins will cause machines previously logged in with the same username to be disconnected.</td>
+	<strong><?=gettext("Disable concurrent logins"); ?></strong><br>
+	<?=gettext("If this option is set, only the most recent login per username will be active. Subsequent logins will cause machines previously logged in with the same username to be disconnected"); ?>.</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">MAC filtering </td>
+      <td valign="top" class="vncell"><?=gettext("MAC filtering"); ?> </td>
       <td class="vtable">
         <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
-        <strong>Disable MAC filtering</strong><br>
-    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in.
-    This is required when the MAC address of the client cannot be determined (usually because there are routers between <?php echo $g['product_name'] ?> and the clients).
-    If this is enabled, RADIUS MAC authentication cannot be used.</td>
+        <strong><?=gettext("Disable MAC filtering"); ?></strong><br>
+    <?=gettext("If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in." .
+    "This is required when the MAC address of the client cannot be determined (usually because there are routers between"); ?> <?php echo $g['product_name'] ?> <?=gettext("and the clients)"); ?>.
+    <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used"); ?>.</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">Pass-through MAC Auto Entry</td>
+      <td valign="top" class="vncell"><?=gettext("Pass-through MAC Auto Entry"); ?></td>
       <td class="vtable">
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
-        <strong>Enable Pass-through MAC automatic additions</strong><br>
-    If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again. 
-    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
-    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.
+        <strong><?=gettext("Enable Pass-through MAC automatic additions"); ?></strong><br>
+    <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again"); ?>. 
+    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> <?=gettext("or send a POST from another system to remove it"); ?>.
+    <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown"); ?>.
 	<br/><br/>
         <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
-        <strong>Enable Pass-through MAC automatic addition with username</strong><br>
-    If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved.
-    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
+        <strong><?=gettext("Enable Pass-through MAC automatic addition with username"); ?></strong><br>
+    <?=gettext("If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved"); ?>.
+    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it"); ?>.
 	</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">Per-user bandwidth restriction</td>
+      <td valign="top" class="vncell"><?=gettext("Per-user bandwidth restriction"); ?></td>
       <td class="vtable">
         <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?>>
-        <strong>Enable per-user bandwidth restriction</strong><br><br>
+        <strong><?=gettext("Enable per-user bandwidth restriction"); ?></strong><br><br>
         <table cellpadding="0" cellspacing="0">
         <tr>
-        <td>Default download</td>
-        <td><input type="text" class="formfld unknown" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> Kbit/s</td>
+        <td><?=gettext("Default download"); ?></td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> <?=gettext("Kbit/s"); ?></td>
         </tr>
         <tr>
-        <td>Default upload</td>
-        <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
+        <td><?=gettext("Default upload"); ?></td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> <?=gettext("Kbit/s"); ?></td>
         </tr></table>
         <br>
-        If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit. </td>
+        <?=gettext("If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit"); ?>. </td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Authentication</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
 	  <td width="78%" class="vtable">
 		<table cellpadding="0" cellspacing="0">
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
-  No Authentication</td>
+  <?=gettext("No Authentication"); ?></td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
-  Local <a href="system_usermanager.php">User Manager</a></td>
+  <?=gettext("Local"); ?> <a href="system_usermanager.php"><?=gettext("User Manager"); ?></a></td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="radius" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?>>
-  RADIUS Authentication</td>
+  <?=gettext("RADIUS Authentication"); ?></td>
 		  </tr><tr>
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
@@ -431,40 +432,40 @@ to access after they've authenticated.</td>
 		</table>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
         	<tr>
-            	<td colspan="2" valign="top" class="optsect_t2">Primary RADIUS server</td>
+            	<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">IP address</td>
+				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
 				<td class="vtable"><input name="radiusip" type="text" class="formfld unknown" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>"><br>
-				Enter the IP address of the RADIUS server which users of the captive portal have to authenticate against.</td>
+				<?=gettext("Enter the IP address of the RADIUS server which users of the captive portal have to authenticate against"); ?>.</td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">Port</td>
+				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
 				<td class="vtable"><input name="radiusport" type="text" class="formfld unknown" id="radiusport" size="5" value="<?=htmlspecialchars($pconfig['radiusport']);?>"><br>
-				 Leave this field blank to use the default port (1812).</td>
+				 <?=gettext("Leave this field blank to use the default port (1812)"); ?>.</td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">Shared secret&nbsp;&nbsp;</td>
+				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
 				<td class="vtable"><input name="radiuskey" type="text" class="formfld unknown" id="radiuskey" size="16" value="<?=htmlspecialchars($pconfig['radiuskey']);?>"><br>
-				Leave this field blank to not use a RADIUS shared secret (not recommended).</td>
+				<?=gettext("Leave this field blank to not use a RADIUS shared secret (not recommended)"); ?>.</td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">Secondary RADIUS server</td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Secondary RADIUS server"); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">IP address</td>
+				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
 				<td class="vtable"><input name="radiusip2" type="text" class="formfld unknown" id="radiusip2" size="20" value="<?=htmlspecialchars($pconfig['radiusip2']);?>"><br>
-				If you have a second RADIUS server, you can activate it by entering its IP address here.</td>
+				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here"); ?>.</td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">Port</td>
+				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
 				<td class="vtable"><input name="radiusport2" type="text" class="formfld unknown" id="radiusport2" size="5" value="<?=htmlspecialchars($pconfig['radiusport2']);?>"></td>
 			</tr>
 			<tr>
-				<td class="vncell" valign="top">Shared secret&nbsp;&nbsp;</td>
+				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
 				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" 
 value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
@@ -472,66 +473,66 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">Accounting</td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Accounting"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell">&nbsp;</td>
 				<td class="vtable"><input name="radacct_enable" type="checkbox" id="radacct_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['radacct_enable']) echo "checked"; ?>>
-				<strong>send RADIUS accounting packets</strong><br>
-				If this is enabled, RADIUS accounting packets will be sent to the primary RADIUS server.</td>
+				<strong><?=gettext("send RADIUS accounting packets"); ?></strong><br>
+				<?=gettext("If this is enabled, RADIUS accounting packets will be sent to the primary RADIUS server"); ?>.</td>
 			</tr>
 			<tr>
-			  <td class="vncell" valign="top">Accounting port</td>
+			  <td class="vncell" valign="top"><?=gettext("Accounting port"); ?></td>
 			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld unknown" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>"><br>
-			  Leave blank to use the default port (1813).</td>
+			  <?=gettext("Leave blank to use the default port (1813)"); ?>.</td>
 			  </tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">Reauthentication</td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Reauthentication"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell">&nbsp;</td>
 				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
-			  <strong>Reauthenticate connected users every minute</strong><br>
-			  If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is
-			  logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately.</td>
+			  <strong><?=gettext("Reauthenticate connected users every minute"); ?></strong><br>
+			  <?=gettext("If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is " .
+			  "logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately"); ?>.</td>
 			</tr>
 			<tr>
-			  <td class="vncell" valign="top">Accounting updates</td>
+			  <td class="vncell" valign="top"><?=gettext("Accounting updates"); ?></td>
 			  <td class="vtable">
-			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> no accounting updates<br>
-			  <input name="reauthenticateacct" type="radio" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> stop/start accounting<br>
-			  <input name="reauthenticateacct" type="radio" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> interim update
+			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> <?=gettext("no accounting updates"); ?><br>
+			  <input name="reauthenticateacct" type="radio" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> <?=gettext("stop/start accounting"); ?><br>
+			  <input name="reauthenticateacct" type="radio" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> <?=gettext("interim update"); ?>
 			  </td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">RADIUS MAC authentication</td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS MAC authentication"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell">&nbsp;</td>
 				<td class="vtable">
-				<input name="radmac_enable" type="checkbox" id="radmac_enable" value="yes" onClick="enable_change(false)" <?php if ($pconfig['radmac_enable']) echo "checked"; ?>><strong>Enable RADIUS MAC authentication</strong><br>
-				If this option is enabled, the captive portal will try to authenticate users by sending their MAC address as the username and the password
-				entered below to the RADIUS server.</td>
+				<input name="radmac_enable" type="checkbox" id="radmac_enable" value="yes" onClick="enable_change(false)" <?php if ($pconfig['radmac_enable']) echo "checked"; ?>><strong><?=gettext("Enable RADIUS MAC authentication"); ?></strong><br>
+				<?=gettext("If this option is enabled, the captive portal will try to authenticate users by sending their MAC address as the username and the password " .
+				"entered below to the RADIUS server"); ?>.</td>
 			</tr>
 			<tr>
-				<td class="vncell">Shared secret</td>
+				<td class="vncell"><?=gettext("Shared secret"); ?></td>
 				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>"></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">RADIUS options</td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS options"); ?></td>
 			</tr>
 
 			<tr>
-				<td class="vncell" valign="top">Radius ip attribute</td>
+				<td class="vncell" valign="top"><?=gettext("Radius ip attribute"); ?></td>
 				<td>
 				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
 				<?php $iflist = get_configured_interface_with_descr();
@@ -561,20 +562,20 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 					}
 				?>
 				</select><br/>
-				Choose the ip to use for calling station attribute.
+				<?=gettext("Choose the ip to use for calling station attribute"); ?>.
 				</td>
 			</tr>
 
 			<tr>
-				<td class="vncell" valign="top">Session-Timeout</td>
-				<td class="vtable"><input name="radiussession_timeout" type="checkbox" id="radiussession_timeout" value="yes" <?php if ($pconfig['radiussession_timeout']) echo "checked"; ?>><strong>Use RADIUS Session-Timeout attributes</strong><br>
-				When this is enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.</td>
+				<td class="vncell" valign="top"><?=gettext("Session-Timeout"); ?></td>
+				<td class="vtable"><input name="radiussession_timeout" type="checkbox" id="radiussession_timeout" value="yes" <?php if ($pconfig['radiussession_timeout']) echo "checked"; ?>><strong><?=gettext("Use RADIUS Session-Timeout attributes"); ?></strong><br>
+				<?=gettext("When this is enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute"); ?>.</td>
 			</tr>
 
 			<tr>
-				<td class="vncell" valign="top">Type</td>
+				<td class="vncell" valign="top"><?=gettext("Type"); ?></td>
 				<td class="vtable"><select name="radiusvendor" id="radiusvendor">
-				<option>default</option>
+				<option><?=gettext("default"); ?></option>
 				<?php
 				$radiusvendors = array("cisco");
 				foreach ($radiusvendors as $radiusvendor){
@@ -584,18 +585,18 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 						echo "<option value=\"$radiusvendor\">$radiusvendor</option>\n";
 				}
 				?></select><br>
-				If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and
-				the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
+				<?=gettext("If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and " .
+				"the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id"); ?> = <?=$g['product_name']?>'s <?=gettext("WAN IP address"); ?>.</td>
 			</tr>
 		</table>
 	</tr>
     <tr>
-        <td class="vncell" valign="top">MAC address format</td>
+        <td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
         <td class="vtable">
         <select name="radmac_format" id="radmac_format">
-        <option>default</option>
+        <option><?=gettext("default"); ?></option>
         <?php
-        $macformats = array("singledash","ietf","cisco","unformatted");
+        $macformats = array(gettext("singledash"),gettext("ietf"),gettext("cisco"),gettext("unformatted"));
         foreach ($macformats as $macformat) {
             if ($pconfig['radmac_format'] == $macformat)
                 echo "<option selected value=\"$macformat\">$macformat</option>\n";
@@ -604,50 +605,50 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
         }
         ?>
         </select></br>
-        This option changes the MAC address format used in the whole RADIUS system. Change this if you also
-        need to change the username format for RADIUS MAC authentication.<br>
-        default: 00:11:22:33:44:55<br>
-        singledash: 001122-334455<br>
-        ietf: 00-11-22-33-44-55<br>
-        cisco: 0011.2233.4455<br>
-        unformatted: 001122334455
+        <?=getetxt("This option changes the MAC address format used in the whole RADIUS system. Change this if you also " .
+        "need to change the username format for RADIUS MAC authentication"); ?>.<br>
+        <?=gettext("default"); ?>: 00:11:22:33:44:55<br>
+        <?=gettext("singledash"); ?>: 001122-334455<br>
+        <?=gettext("ietf"); ?>: 00-11-22-33-44-55<br>
+        <?=gettext("cisco"); ?>: 0011.2233.4455<br>
+        <?=gettext("unformatted"); ?>: 001122334455
     </tr>
 	<tr>
-      <td valign="top" class="vncell">HTTPS login</td>
+      <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
       <td class="vtable">
         <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
-        <strong>Enable HTTPS login</strong><br>
-    If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name, certificate and matching private key must also be specified below.</td>
+        <strong><?=gettext("Enable HTTPS login"); ?></strong><br>
+    <?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name, certificate and matching private key must also be specified below"); ?>.</td>
 	  </tr>
 	<tr>
-      <td valign="top" class="vncell">HTTPS server name </td>
+      <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-    	This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on <?=$g['product_name']?>. </td>
+    	<?=gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on"); ?> <?=$g['product_name']?>. </td>
 	  </tr>
 	<tr>
-      <td valign="top" class="vncell">HTTPS certificate</td>
+      <td valign="top" class="vncell"><?=gettext("HTTPS certificate"); ?></td>
       <td class="vtable">
         <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
         <br>
-    Paste a signed certificate in X.509 PEM format here.</td>
+    <?=gettext("Paste a signed certificate in X.509 PEM format here"); ?>.</td>
 	  </tr>
 	<tr>
-      <td valign="top" class="vncell">HTTPS private key</td>
+      <td valign="top" class="vncell"><?=gettext("HTTPS private key"); ?></td>
       <td class="vtable">
         <textarea name="key" cols="65" rows="7" id="key" class="formpre"><?=htmlspecialchars($pconfig['key']);?></textarea>
         <br>
-    Paste an RSA private key in PEM format here.</td>
+    <?=gettext("Paste an RSA private key in PEM format here"); ?>.</td>
 	  </tr>
         <tr>
-      <td valign="top" class="vncell">HTTPS intermediate certificate</td>
+      <td valign="top" class="vncell"><?=gettext("HTTPS intermediate certificate"); ?></td>
       <td class="vtable">
         <textarea name="cacert" cols="65" rows="7" id="cacert" class="formpre"><?=htmlspecialchars($pconfig['cacert']);?></textarea>
         <br>
-    Paste a certificate in X.509 PEM format here.</td>
+    <?=gettext("Paste a certificate in X.509 PEM format here"); ?>.</td>
           </tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
+	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Portal page contents"); ?></td>
 	  <td width="78%" class="vtable">
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld file" id="htmlfile"><br>
 		<?php
@@ -659,14 +660,14 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			}
 		?>
 		<?php if ($config['captiveportal']['page']['htmltext']): ?>
-		<a href="<?=$href?>" target="_new">View current page</a>
+		<a href="<?=$href?>" target="_new"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
-		  Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
-with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quot;redirurl&quot; and value=&quot;$PORTAL_REDIRURL$&quot;.
-Include the &quot;auth_user&quot; and &quot;auth_pass&quot; and/or &quot;auth_voucher&quot; input fields if authentication is enabled, otherwise it will always fail.
-Example code for the form:<br>
+		  <?=gettext("Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to"); ?> &quot;$PORTAL_ACTION$&quot;)
+<?=gettext("with a submit button"); ?> (name=&quot;accept&quot;) <?=gettext("and a hidden field with"); ?> name=&quot;redirurl&quot; <?=gettext("and"); ?> value=&quot;$PORTAL_REDIRURL$&quot;.
+<?=gettext("Include the"); ?> &quot;auth_user&quot; <?=gettext("and"); ?> &quot;auth_pass&quot; <?=gettext("and/or"); ?> &quot;auth_voucher&quot; <?=gettext("input fields if authentication is enabled, otherwise it will always fail"); ?>.
+<?=gettext("Example code for the form"); ?>:<br>
 		  <br>
 		  <tt>&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br>
 		  &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br>
@@ -677,43 +678,43 @@ Example code for the form:<br>
 		  &lt;/form&gt;</tt></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Authentication<br>
-		error page<br>
-		contents</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?><br>
+		<?=gettext("error page"); ?><br>
+		<?=gettext("contents"); ?></td>
 	  <td class="vtable">
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
-		<a href="?act=viewerrhtml" target="_blank">View current page</a>
+		<a href="?act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
-The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
-You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
+<?=gettext("The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs. " .
+"You may include"); ?> &quot;$PORTAL_MESSAGE$&quot;, <?=gettext("which will be replaced by the error or reply messages from the RADIUS server, if any"); ?>.</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Logout<br>
-		page<br>
-		contents</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Logout"); ?><br>
+		<?=gettext("page"); ?><br>
+		<?=gettext("contents"); ?></td>
 	  <td class="vtable">
 		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
 		<?php if ($config['captiveportal']['page']['logouttext']): ?>
-		<a href="?act=viewlogouthtml" target="_blank">View current page</a>
+		<a href="?act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
-The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
-You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
+<?=gettext("The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs. " .
+"You may include"); ?> &quot;$PORTAL_MESSAGE$&quot;, <?=gettext("which will be replaced by the error or reply messages from the RADIUS server, if any"); ?>.</td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="enable_change(true)">
 	  </td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-		</strong></span>Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work. </span></td>
+	  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br>
+		</strong></span><?=gettext("Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work"); ?>. </span></td>
 	</tr>
   </table>
   </td>

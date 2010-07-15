@@ -267,7 +267,7 @@ if ($_GET) {
 			read_altq_config();
 			$output_form .= $tmp->build_form();			
 		} else
-			$input_errors[] = "Could not add new queue.";
+			$input_errors[] = gettext("Could not add new queue.");
 	} else if ($_POST['apply']) {
 			write_config();
 
@@ -342,7 +342,7 @@ $tree .= "</ul>";
 if (!$dontshow || $newqueue) {
 
 $output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
-$output_form .= "Queue Actions";
+$output_form .= gettext("Queue Actions");
 $output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
 
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
@@ -353,7 +353,7 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add new queue\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") . "\">";
 	$output_form .= "</a>";
 	$output_form .= "<a href=\"firewall_shaper.php?interface=";
 	$output_form .= $interface . "&queue=";

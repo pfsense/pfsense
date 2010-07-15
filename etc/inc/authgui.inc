@@ -56,7 +56,7 @@ $allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
 /*
  * redirect to first allowed page if requesting a wrong url
  */
-if (!isAllowedPage($_SERVER['SCRIPT_NAME'], $_SESSION['Username'])) {
+if (!isAllowedPage($_SERVER['SCRIPT_NAME'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
 		$_SESSION['Post_Login'] = true;
@@ -165,7 +165,7 @@ function display_login_form() {
 
 /* Check against locally configured IP addresses, which will catch when someone 
    port forwards WebGUI access from WAN to an internal IP on the router. */
-global $FilterIflist;
+global $FilterIflist, $nifty_background;
 $local_ip = false;
 if(strstr($_SERVER['HTTP_HOST'], ":")) {
 	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
@@ -181,6 +181,11 @@ if (empty($FilterIflist)) {
 foreach ($FilterIflist as $iflist)
 	if($iflist['ip'] == $http_host)
 		$local_ip = true;
+if($config['virtualip'])
+	if($config['virtualip']['vip'])
+		foreach($config['virtualip']['vip'] as $vip) 
+			if($vip['subnet'] == $http_host)
+				$local_ip = true;
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -216,8 +221,12 @@ foreach ($FilterIflist as $iflist)
 	</head>
 	<body onload="page_load()">
 		<div id="login">
-			<?php if(is_ipaddr($http_host) && !$local_ip)
-				print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); ?>
+			<?php 
+				if(is_ipaddr($http_host) && !$local_ip) {
+					$nifty_background = "#999";
+					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
+				}
+			?>
 			<form id="iform" name="login_iform" method="post" autocomplete="off" action="<?=$_SERVER['SCRIPT_NAME'];?>">
 				<h1></h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>

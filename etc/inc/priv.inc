@@ -262,6 +262,7 @@ function getAllowedPages($username) {
 	else {
 		// search for a local user by name
 		$local_user = getUserEntry($username);
+		getPrivPages($local_user, $allowed_pages);
 
 		// obtain local groups if we have a local user
 		if ($local_user)

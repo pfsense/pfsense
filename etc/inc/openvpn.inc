@@ -168,7 +168,7 @@ function openvpn_get_cipherlist() {
 		$words = explode(' ', $line);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
-
+	$ciphers["none"] = "None (No Encryption)";
 	return $ciphers;
 }
 

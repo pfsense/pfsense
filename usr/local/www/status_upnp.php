@@ -55,7 +55,7 @@ exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 $now = time();
 $year = date("Y");
 
-$pgtitle = array("Status","UPnP Status");
+$pgtitle = array("Status","UPnP &amp; NAT-PMP Status");
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

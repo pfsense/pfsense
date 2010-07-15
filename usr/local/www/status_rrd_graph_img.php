@@ -51,11 +51,78 @@ if ($_GET['style']) {
 	$curstyle = "inverse";
 }
 
-if ($_GET['interval']) {
-	$interval = $_GET['interval'];
+/* this is used for temp name */
+if ($_GET['graph']) {
+	$curgraph = $_GET['graph'];
 } else {
-	$interval = "4h";
+	$curgraph = "custom";
 }
+
+$now = time();
+
+if (is_numeric($_GET['start'])) {
+        if($start < ($now - (3600 * 24 * 365 * 5))) {
+                $start = $now - (4 * 3600);
+        }
+        $start = $_GET['start'];
+} else {
+        $start = $now - (4 * 3600);
+}
+
+if (is_numeric($_GET['end'])) {
+        $end = $_GET['end'];
+} else {
+        $end = $now;
+}
+
+/* this should never happen */
+if($end < $start) {
+        $end = $now;
+}
+
+$seconds = $end - $start;
+
+$scales = array();
+$scales[14400] = "MINUTE:5:MINUTE:10:MINUTE:30:0:%H%:%M";
+$scales[57600] = "MINUTE:30:HOUR:1:HOUR:1:0:%H";
+$scales[172800] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
+$scales[691200] = "HOUR:2:HOUR:12:DAY:1:0:%D %d";
+$scales[2764800] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
+$scales[16070400] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
+$scales[42854400] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
+
+$archives = array();
+$archives[1] = 1000;
+$archives[5] = 1000;
+$archives[60] = 1000;
+$archives[720] = 1000;
+
+$defOptions = array(
+	'to' => 1,
+	'parts' => 1,
+	'precision' => 'minute',
+	'distance' => FALSE,
+	'separator' => ', '
+);
+
+/* always set the average to the highest value as a fallback */
+$average = 720 * 60;
+foreach($archives as $rra => $value) {
+        $archivestart = $end - ($rra * 60 * $value);
+        if($archivestart <= $start) {
+                $average = $rra * 60;
+                break;
+        }
+}
+
+foreach($scales as $scalelength => $value) {
+        if($scalelength >= $seconds) {
+                $scale = $value;
+                break;
+        }
+}
+
+log_error("start $start, end $end, archivestart $archivestart, average $average, scale $scale, seconds $seconds");
 
 /* Deduce a interface if possible and use the description */
 $curif = split("-", $curdatabase);
@@ -68,41 +135,6 @@ $search = array("-", ".rrd", $curif);
 $replace = array(" :: ", "", $friendly);
 $prettydb = ucwords(str_replace($search, $replace, $curdatabase));
 
-$periods = array("4h", "16h", "48h", "32d", "6m", "1y", "4y");
-
-$found = 0;
-foreach($periods as $period) if($period == $interval) $found = 1;
-if($found == 0) {
-	PRINT "Graph interval $interval is not valid <br />\n";
-	exit();
-}
-
-$graphs['4h']['seconds'] = 14400;
-$graphs['4h']['average'] = 60;
-$graphs['4h']['scale'] = "MINUTE:5:MINUTE:10:MINUTE:30:0:%H%:%M";
-$graphs['16h']['seconds'] = 57600;
-$graphs['16h']['average'] = 60;
-$graphs['16h']['scale'] = "MINUTE:30:HOUR:1:HOUR:1:0:%H";
-$graphs['48h']['seconds'] = 172800;
-$graphs['48h']['average'] = 300;
-$graphs['48h']['scale'] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
-$graphs['32d']['seconds'] = 2764800;
-$graphs['32d']['average'] = 3600;
-$graphs['32d']['scale'] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
-$graphs['6m']['seconds'] = 16070400;
-$graphs['6m']['average'] = 43200;
-$graphs['6m']['scale'] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
-$graphs['1y']['seconds'] = 31622400;
-$graphs['1y']['average'] = 43200;
-$graphs['1y']['scale'] = "MONTH:1:MONTH:3:MONTH:1:0:%b";
-$graphs['4y']['seconds'] = 126489600;
-$graphs['4y']['average'] = 86400;
-$graphs['4y']['scale'] = "MONTH:1:YEAR:1:MONTH:3:0:%b";
-
-/* generate the graphs when we request the page. */
-$seconds = $graphs[$interval]['seconds'];
-$average = $graphs[$interval]['average'];
-$scale = $graphs[$interval]['scale'];
 
 $rrddbpath = "/var/db/rrd/";
 $rrdtmppath = "/tmp/";
@@ -110,8 +142,8 @@ $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
 
-$havg = humantime($average);
-$hperiod = humantime($seconds);
+$havg = timeDiff($average, $defOptions);
+$hperiod = timeDiff($seconds, $defOptions);
 $data = true;
 
 /* XXX: (billm) do we have an exec() type function that does this type of thing? */
@@ -186,28 +218,59 @@ default:
 	break;
 }
 
-function humantime($timestamp){
-	$difference = $timestamp;
-	$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
-	$lengths = array("60","60","24","7","4.35","12","10");
-	for($j = 0; $difference >= $lengths[$j]; $j++) {
-		$difference /= $lengths[$j];
-		$difference = round($difference);
-	}
-	if($difference != 1) {
-		$periods[$j].= "s";
-	}	
-	$text = "$difference $periods[$j]";
-	return $text;
+function timeDiff($time, $opt = array()) {
+    // The default values
+    $defOptions = array(
+        'to' => 0,
+        'parts' => 1,
+        'precision' => 'second',
+        'distance' => TRUE,
+        'separator' => ', '
+    );
+    $opt = array_merge($defOptions, $opt);
+    // Default to current time if no to point is given
+    (!$opt['to']) && ($opt['to'] = time());
+    // Init an empty string
+    $str = '';
+    // To or From computation
+    $diff = ($opt['to'] >= $time) ? $opt['to']-$time : $time-$opt['to'];
+    // An array of label => periods of seconds;
+    $periods = array(
+        'decade' => 315569260,
+        'year' => 31556926,
+        'month' => 2629744,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'minute' => 60,
+        'second' => 1
+    );
+    // Round to precision
+    if ($opt['precision'] != 'second')
+        $diff = round(($diff/$periods[$opt['precision']])) * $periods[$opt['precision']];
+    // Report the value is 'less than 1 ' precision period away
+    (0 == $diff) && ($str = 'less than 1 '.$opt['precision']);
+    // Loop over each period
+    foreach ($periods as $label => $value) {
+        // Stitch together the time difference string
+        (($x=floor($diff/$value))&&$opt['parts']--) && $str.=($str?$opt['separator']:'').($x.' '.$label.($x > 1?'s':''));
+        // Stop processing if no more parts are going to be reported.
+        if ($opt['parts'] == 0 || $label == $opt['precision']) break;
+        // Get ready for the next pass
+        $diff -= $x*$value;
+    }
+    $opt['distance'] && $str.=($str&&$opt['to'] >= $time)?' ago':' away';
+    return $str;
 }
+
 
 if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for traffic stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average --vertical-label \"bits/sec\" ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"{$scale}\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:$curif-in_bytes_pass=$rrddbpath$curdatabase:inpass:AVERAGE ";
 	$graphcmd .= "DEF:$curif-out_bytes_pass=$rrddbpath$curdatabase:outpass:AVERAGE ";
 	$graphcmd .= "DEF:$curif-in_bytes_block=$rrddbpath$curdatabase:inblock:AVERAGE ";
@@ -279,12 +342,12 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 elseif(strstr($curdatabase, "-throughput.rrd")) {
 	/* define graphcmd for throughput stats */
 	/* this gathers all interface statistics, the database does not actually exist */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"{$scale}\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 
 	$iflist = get_configured_interface_list();
 	$g = 0;
@@ -406,12 +469,12 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 }
 elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"packets/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-in_pps_pass=$rrddbpath$curdatabase:inpass:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-out_pps_pass=$rrddbpath$curdatabase:outpass:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-in_pps_block=$rrddbpath$curdatabase:inblock:AVERAGE\" ";
@@ -475,12 +538,12 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 }
 elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"snr/channel/rate\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-snr=$rrddbpath$curdatabase:snr:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-rate=$rrddbpath$curdatabase:rate:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-channel=$rrddbpath$curdatabase:channel:AVERAGE\" ";
@@ -508,12 +571,12 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 }
 elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for states stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"states, ip\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-pfrate=$rrddbpath$curdatabase:pfrate:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-pfstates=$rrddbpath$curdatabase:pfstates:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-pfnat=$rrddbpath$curdatabase:pfnat:AVERAGE\" ";
@@ -562,12 +625,12 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for processor stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"utilization, number\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"user=$rrddbpath$curdatabase:user:AVERAGE\" ";
 	$graphcmd .= "DEF:\"nice=$rrddbpath$curdatabase:nice:AVERAGE\" ";
 	$graphcmd .= "DEF:\"system=$rrddbpath$curdatabase:system:AVERAGE\" ";
@@ -614,12 +677,12 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 }
 elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for memory usage stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"active=$rrddbpath$curdatabase:active:AVERAGE\" ";
 	$graphcmd .= "DEF:\"inactive=$rrddbpath$curdatabase:inactive:AVERAGE\" ";
 	$graphcmd .= "DEF:\"free=$rrddbpath$curdatabase:free:AVERAGE\" ";
@@ -666,12 +729,12 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queue stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
 		$t = 0; 
@@ -695,12 +758,12 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"drops / sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
 		$t = 0;
@@ -725,13 +788,13 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 }
 elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
-		--start -$seconds -e -$average \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
+		--start $start --end $end  \\
 		--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
-		-x \"$scale\" --lower-limit 0 \\
+		--lower-limit 0 \\
 		DEF:delayraw=$rrddbpath$curdatabase:delay:AVERAGE \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE \\
 		\"CDEF:delay=delayraw,1000,*\" \\
@@ -761,13 +824,13 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 }
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--vertical-label=\"Conn / Time, sec.\" ";
 	$graphcmd .= "--height 200 --width 620 --no-gridfit ";
-	$graphcmd .= "-x \"$scale\" --lower-limit 0 ";
+	$graphcmd .= "--lower-limit 0 ";
 	$graphcmd .= "DEF:\"consmin=$rrddbpath$curdatabase:conn:MIN\" ";
 	$graphcmd .= "DEF:\"consavg=$rrddbpath$curdatabase:conn:AVERAGE\" ";
 	$graphcmd .= "DEF:\"consmax=$rrddbpath$curdatabase:conn:MAX\" ";
@@ -799,12 +862,12 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
 elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
-	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"signal\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-signal1=$rrddbpath$curdatabase:signal1:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-signal2=$rrddbpath$curdatabase:signal2:AVERAGE\" ";
 	$graphcmd .= "LINE2:\"$curif-signal1#{$colorwireless[0]}:$curif-signal1\" ";
@@ -829,8 +892,8 @@ else {
 } 
 
 /* check modification time to see if we need to generate image */
-if (file_exists("$rrdtmppath$curdatabase-$interval.png")) {
-	if((time() - filemtime("$rrdtmppath$curdatabase-$interval.png")) >= 55 ) {
+if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
+	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 55 ) {
 		if($data)
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
@@ -869,7 +932,7 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	$file= "/usr/local/www/themes/{$g['theme']}/images/misc/rrd_error.png";
 	readfile($file);
 } else {
-	$file = "$rrdtmppath$curdatabase-$interval.png";
+	$file = "$rrdtmppath$curdatabase-$curgraph.png";
 	if(file_exists("$file")) {
 		header("Content-type: image/png");
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");

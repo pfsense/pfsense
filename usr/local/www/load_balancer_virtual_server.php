@@ -93,7 +93,7 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	}
 }
 
-$pgtitle = array("Services","Load Balancer","Virtual Servers");
+$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Servers"));
 $statusurl = "status_lb_vs.php";
 #$statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
@@ -107,16 +107,16 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np("The virtual server configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Monitors", false, "load_balancer_monitor.php");
-        $tab_array[] = array("Pools", false, "load_balancer_pool.php");
-        $tab_array[] = array("Virtual Servers", true, "load_balancer_virtual_server.php");
+        $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+        $tab_array[] = array(gettext("Pools"), false, "load_balancer_pool.php");
+        $tab_array[] = array(gettext("Virtual Servers"), true, "load_balancer_virtual_server.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

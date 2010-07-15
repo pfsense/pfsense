@@ -60,6 +60,8 @@ else
 // SMTP
 if($config['notifications']['smtp']['ipaddress']) 
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
+if($config['notifications']['smtp']['port'])
+	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
 if($config['notifications']['smtp']['notifyemailaddress']) 
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
 if($config['notifications']['smtp']['username']) 
@@ -97,6 +99,7 @@ if ($_POST) {
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
+		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
@@ -200,6 +203,13 @@ include("head.inc");
 							<td width="78%" class="vtable">
 								<input name='smtpipaddress' value='<?php echo $pconfig['smtpipaddress']; ?>'><br/>
 								<?=gettext("This is the IP address of the SMTP E-Mail server that will be used to send notifications to."); ?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("SMTP Port of E-Mail server"); ?></td>
+							<td width="78%" class="vtable">
+								<input name='smtpport' value='<?php echo $pconfig['smtpport']; ?>'><br/>
+								<?=gettext("This is the port of the SMTP E-Mail server, typically 25 or 587 (submission)."); ?>
 							</td>
 						</tr>
 						<tr>

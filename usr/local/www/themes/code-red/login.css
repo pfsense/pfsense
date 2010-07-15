@@ -5,6 +5,42 @@ html, body, td, th, input, select {
 
 }
 
+.infoboxnptd2 {
+	width:100%;
+	color:white;
+	background-color:#990000;
+	padding-right: 10px;
+}
+
+.infoboxnptd {
+	width:8%;
+	background-color:#990000;	
+}
+
+.infoboxnptable {
+ 	height:32px;
+	width:100%;
+	background-color:#990000;	
+}
+
+.infoboxnptable2 {
+ 	height:32px;
+	width:100%;
+	background-color:#990000;	
+}
+
+.infoboxnp {
+	background-color:#990000;
+	width:100%;
+}
+
+.infoboxnpimg {
+	vertical-align:middle;
+	width:28px;
+	height:32px;
+	background-color:#990000;	
+}
+
 /* please adjust the bgcolor to be used together with niftycorners! */
 .rtop, .artop {
         background-color: #999999;

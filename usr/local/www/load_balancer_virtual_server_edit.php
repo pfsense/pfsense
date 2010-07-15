@@ -58,7 +58,7 @@ if (isset($id) && $a_vs[$id]) {
   $pconfig['mode'] = 'redirect';
 }
 
-$changedesc = "Load Balancer: Virtual Server: ";
+$changedesc = gettext("Load Balancer: Virtual Server:") . " ";
 $changecount = 0;
 
 if ($_POST) {
@@ -69,12 +69,12 @@ if ($_POST) {
   switch($pconfig['mode']) {
     case "redirect": {
     	$reqdfields = explode(" ", "ipaddr name port mode");
-    	$reqdfieldsn = explode(",", "IP Address, Name, Port, Mode");
+    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Port"),gettext("Mode"));
     	break;
     }
     case "relay": {
     	$reqdfields = explode(" ", "ipaddr name port mode relay_protocol");
-    	$reqdfieldsn = explode(",", "IP Address, Name, Port, Relay Protocol");
+    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Port"),gettext("Relay Protocol"));
       break;
     }
   }    
@@ -83,22 +83,22 @@ if ($_POST) {
 
 	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This virtual server name has already been used.  Virtual server names must be unique.";
+			$input_errors[] = gettext("This virtual server name has already been used.  Virtual server names must be unique.");
 
 	if (!is_port($_POST['port']))
-		$input_errors[] = "The port must be an integer between 1 and 65535.";
+		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
 
 	if(!is_ipaddr($_POST['ipaddr']))
-		$input_errors[] = "{$_POST['ipaddr']} is not a valid IP address.";
+		$input_errors[] = sprintf(gettext("%s is not a valid IP address."), $_POST['ipaddr']);
 
 	if (!$input_errors) {
 		$vsent = array();
 		if(isset($id) && $a_vs[$id])
 			$vsent = $a_vs[$id];
 		if($vsent['name'] != "")
-			$changedesc .= " modified '{$vsent['name']}' vs:";
+			$changedesc .= " " . sprintf(gettext("modified '%s' vs"), $vsent['name']) . ":";
 		else
-			$changedesc .= " created '{$_POST['name']}' vs:";
+			$changedesc .= " " . sprintf(gettext("created '%s' vs"), $_POST['name']) . ":";
 
 		update_if_changed("name", $vsent['name'], $_POST['name']);
 		update_if_changed("desc", $vsent['desc'], $_POST['desc']);
@@ -128,7 +128,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Virtual Server","Edit");
+$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Server"),gettext("Edit"));
 $statusurl = "status_lb_vs.php";
 #$statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
@@ -174,39 +174,39 @@ document.observe("dom:loaded", function() {
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="3" valign="top" class="listtopic">Edit Load Balancer - Virtual Server entry</td>
+					<td colspan="3" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Virtual Server entry"); ?></td>
 				</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">Name</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?>size="32" maxlength="32">
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">Description</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">IP Address</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
-		    		<br>This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster.
+		    		<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster"); ?>.
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">Port</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
-		    		<br>This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster.
+		    		<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster"); ?>.
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">Virtual Server Pool</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Virtual Server Pool"); ?></td>
 					<td width="78%" class="vtable" colspan="2">
 			<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
-				<b>NOTE:</b> Please add a pool on the Pools tab to use this feature.    
+				<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a pool on the Pools tab to use this feature"); ?>.    
 			<?php else: ?>
 				<select id="pool" name="pool">
 			<?php
@@ -222,13 +222,13 @@ document.observe("dom:loaded", function() {
 				</td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq">Fall Back Pool</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Fall Back Pool"); ?></td>
 					<td width="78%" class="vtable" colspan="2">
 					<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
-						<b>NOTE:</b> Please add a pool on the Pools tab to use this feature.    
+						<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a pool on the Pools tab to use this feature"); ?>.    
 					<?php else: ?>
 						<select id="sitedown" name="sitedown">
-							<option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>>none</option>
+							<option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>><?=gettext("none"); ?></option>
             			<?php
             				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
             					$selected = "";
@@ -238,7 +238,7 @@ document.observe("dom:loaded", function() {
             				}
             			?>
             			</select>
-                  		<br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
+                  		<br><b><?=gettext("NOTE"); ?>:</b> <?=gettext("This is the server that clients will be redirected to if *ALL* servers in the pool are offline"); ?>.
 				  <?php endif; ?>
                   </td>
 				</tr>
@@ -255,7 +255,7 @@ document.observe("dom:loaded", function() {
 				</tr>
 -->
                 <tr id="relay" align="left" style="display:none;">
-		  			<td width="22%" valign="top" class="vncellreq">Relay Protocol</td>
+		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Relay Protocol"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                   <select id="relay_protocol" name="relay_protocol">
                 <?php
@@ -272,8 +272,8 @@ document.observe("dom:loaded", function() {
 				</tr>
                 <tr align="left">
                   <td align="left" valign="bottom">
-					<input name="Submit" type="submit" class="formbtn" value="Submit"> 
-					<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>"> 
+					<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 			<?php endif; ?>
@@ -282,7 +282,7 @@ document.observe("dom:loaded", function() {
 		</table>
 	</form>
 	<br/>
-	<span class="red"><strong>Note:</strong></span> Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up.
+	<span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up"); ?>.
 <?php include("fend.inc"); ?>
 </body>
 </html>

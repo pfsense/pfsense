@@ -180,30 +180,31 @@ function get_dates($curperiod, $graph) {
 	}
 	switch($graph) {
 		case "day":
-			$start = mktime(0, 0, 0, $curmonth, ($curday - $offset), $curyear);
-			$end = mktime(0, 0, 0, $curmonth, (($curday - $offset) + 1), $curyear);
+			$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
+			$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
-			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) - $offset), $curyear);
-			$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + 7), $curyear);
+			$start = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) - $offset), $curyear);
+			$end = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) + 7), $curyear);
 			break;
 		case "month":
-			$start = mktime(0, 0, 0, ($curmonth - $offset), 0, $curyear);
-			$end = mktime(0, 0, 0, (($curmonth - $offset) + 1), 0, $curyear);
+			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
+			$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "quarter":
-			$start = mktime(0, 0, 0, (($curmonth -2) - $offset), 0, $curyear);
-			$end = mktime(0, 0, 0, (($curmonth - $offset) + 1), 0, $curyear);
+			$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
+			$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "year":
-			$start = mktime(0, 0, 0, 1, 0, ($curyear - $offset));
-			$end = mktime(0, 0, 0, 1, 1, (($curyear - $offset) +1));
+			$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
+			$end = mktime(0, 0, 0, 1, 1, (($curyear + $offset) +1));
 			break;
-		case "4year":
-			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) - $offset));
-			$end = mktime(0, 0, 0, 1, 1, (($curyear - $offset) +1));
+		case "4year": 
+			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
+			$end = mktime(0, 0, 0, 1, 1, (($curyear + $offset) +1));
 			break;
 	}
+	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
 	$dates = array();
 	$dates['start'] = $start;
 	$dates['end'] = $end;

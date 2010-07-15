@@ -121,7 +121,7 @@ function enable_change(enable_over) {
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np(gettext("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
@@ -152,11 +152,11 @@ function enable_change(enable_over) {
                     </td>
                 </tr>				
                 <tr>
-                  <td> <input name="submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  <td> <input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)">
                   </td>
                 </tr>
                 <tr>
-                  <td><p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                  <td><p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
                       </strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
                      " service (if enabled) will automatically serve the LAN IP".
                      " address as a DNS server to DHCP clients so they will use".

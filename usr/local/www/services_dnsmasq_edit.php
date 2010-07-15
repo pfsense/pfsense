@@ -141,22 +141,22 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>">
                     <br> <span class="vexpl"><?=gettext("Name of the host, without".
-                   " domain part<br>".
-                   " e.g. <em>myhost</em>");?></span></td>
+                   " domain part"); ?><br>
+                   <?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl"><?=gettext("Domain of the host<br>".
-                   " e.g. <em>example.com</em>");?></span></td>
+                    <br> <span class="vexpl"><?=gettext("Domain of the host"); ?><br>
+                   <?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl"><?=gettext("IP address of the host<br>".
-                   " e.g. <em>192.168.100.100</em>");?></span></td>
+                    <br> <span class="vexpl"><?=gettext("IP address of the host"); ?><br>
+                   <?=gettext("e.g."); ?> <em>192.168.100.100</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

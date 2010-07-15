@@ -316,7 +316,7 @@ function netbios_change() {
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
 									<td>
-										<?php set_checked(isset($pconfig['disable']),$chk); ?>
+										<?php set_checked($pconfig['disable'],$chk); ?>
 										<input name="disable" type="checkbox" value="yes" <?=$chk;?>/>
 									</td>
 									<td>

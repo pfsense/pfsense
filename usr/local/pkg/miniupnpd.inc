@@ -85,6 +85,8 @@
 	}
 
 	function validate_form_miniupnpd($post, $input_errors) {
+		if($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp']))
+			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
 		if($post['iface_array'])
 			foreach($post['iface_array'] as $iface)
 				if($iface == 'wan')
@@ -222,6 +224,10 @@
 				/* Add shaper queue */
 				if($upnp_config['upnpqueue'])
 					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
+
+				/* Allow UPnP or NAT-PMP as requested */
+				$config_text .= "enable_upnp="   . ( $upnp_config['enable_upnp']   ? "yes\n" : "no\n" );
+				$config_text .= "enable_natpmp=" . ( $upnp_config['enable_natpmp'] ? "yes\n" : "no\n" );
 
 				/* write out the configuration */
 				upnp_write_config($config_file, $config_text);

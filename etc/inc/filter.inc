@@ -2647,7 +2647,7 @@ function discover_pkg_rules($ruletype) {
 			if ($status <> 0) {
 				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";
 				log_error($errorrules);
-				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
+				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n");
 				continue;
 			}
 			$rules .= $tmprules;

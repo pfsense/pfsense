@@ -278,8 +278,12 @@ function verify_gzip_file($fname) {
 }
 
 function print_info_box_np($msg, $name="apply",$value="Apply changes") {
-	global $g;
-	
+	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
+
+	// Set the Nifty background color if one is not set already (defaults to white)
+	if($nifty_background == "")
+		$nifty_background = "#FFF";
+
 	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
@@ -331,8 +335,8 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	</table>
 	<script type="text/javascript">
 		NiftyCheck();
-		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
+		Rounded("div#redbox","all","{$nifty_background}","{$nifty_redbox}","smooth");
+		Rounded("td#blackbox","all","{$nifty_background}","{$nifty_blackbox}","smooth");
 	</script>
 EOFnp;
 

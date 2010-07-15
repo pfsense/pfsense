@@ -263,13 +263,13 @@ function relayd_configure() {
   if (is_process_running('relayd')) {
 	if (! empty($vs_a)) {
 		// it's running and there is a config, just reload
-		mwexec("/usr/local/bin/relayctl reload");
+		mwexec("/usr/local/sbin/relayctl reload");
 	} else {
 		/*
 		* XXX: Something breaks our control connection with relayd
 		* and makes 'relayctl stop' not work
 		* rule reloads are the current suspect
-		* mwexec('/usr/local/bin/relayctl stop');
+		* mwexec('/usr/local/sbin/relayctl stop');
 		*  returns "command failed"
 		*/
 		mwexec('pkill relayd');

@@ -131,7 +131,7 @@ if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array("UPnP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
+	$services_menu[] = array("UPnP &amp; NAT-PMP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
 }
 $services_menu[] = array("OpenNTPD", "/pkg_edit.php?xml=openntpd.xml&id=0");
 $services_menu[] = array("Wake on LAN", "/services_wol.php");
@@ -166,7 +166,7 @@ $status_menu[] = array("Services", "/status_services.php");
 $status_menu[] = array("System Logs", "/diag_logs.php");
 $status_menu[] = array("Traffic Graph", "/status_graph.php?if=wan");
 if(count($config['interfaces']) > 1) 
-	$status_menu[] = array("UPnP", "/status_upnp.php");
+	$status_menu[] = array("UPnP &amp; NAT-PMP", "/status_upnp.php");
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&

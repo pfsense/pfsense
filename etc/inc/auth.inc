@@ -255,15 +255,15 @@ function local_sync_accounts() {
 	$allgrp = getGroupEntryByGID(1998);
 	local_group_set($allgrp, true);
 
-	/* sync all local groups */
-	if (is_array($config['system']['group']))
-		foreach ($config['system']['group'] as $group)
-			local_group_set($group);
-
 	/* sync all local users */
 	if (is_array($config['system']['user']))
 		foreach ($config['system']['user'] as $user)
 			local_user_set($user);
+
+	/* sync all local groups */
+	if (is_array($config['system']['group']))
+		foreach ($config['system']['group'] as $group)
+			local_group_set($group);
 
 	conf_mount_ro();
 
@@ -361,7 +361,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name}");
+	exec("/usr/sbin/pw {$un}lock -q {$user_name}");
 	
 	conf_mount_ro();
 }

@@ -37,7 +37,6 @@
 ##|*MATCH=firewall_aliases_import.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
 
@@ -45,6 +44,8 @@ require("guiconfig.inc");
 require_once("util.inc");
 require("filter.inc");
 require("shaper.inc");
+
+$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);

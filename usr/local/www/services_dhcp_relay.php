@@ -106,7 +106,7 @@ if ($_POST) {
 		if (isset($_POST['proxydhcp']))
 			$_POST['server'] = get_wan_dhcp_server();
 		$reqdfields = explode(" ", "server");
-		$reqdfieldsn = explode(",", "Destination Server");
+		$reqdfieldsn = array(gettext("Destination Server"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -214,21 +214,21 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
 <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-                          <strong><?php printf(gettext("Enable DHCP relay on
-                          %s
-                          interface"),htmlspecialchars($iflist[$if]));?></strong></td>
+                          <strong><?php printf(gettext("Enable DHCP relay on " .
+                          "%s " .
+                          "interface"),htmlspecialchars($iflist[$if]));?></strong></td>
                       </tr>
 			<tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong><?php printf(gettext("Append circuit ID and agent ID to requests</strong><br>
-                      If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."),$g['product_name']);?></td>
+                      <strong><?=(gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
+                      <?php printf("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.", $g['product_name']); ?></td>
         		  </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
-			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)"><?=gettext("  Proxy requests to DHCP server on WAN subnet");?>
+			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)"> <?=gettext("Proxy requests to DHCP server on WAN subnet");?>
                           <br><br><input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
 			  <?=gettext("This is the IP address of the server to which the DHCP packet is relayed.  Select \"Proxy requests to DHCP server on WAN subnet\" to relay DHCP packets to the server that was used on the WAN interface.");?>

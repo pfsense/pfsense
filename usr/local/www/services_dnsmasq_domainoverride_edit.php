@@ -107,15 +107,15 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl"><?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)<br>".
-                    " e.g. <em>test</em>");?></span></td>
+                    <br> <span class="vexpl"><?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)"); ?><br>
+                    <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em></span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl"><?=gettext("IP address of the authoritative DNS server for this domain<br>".
-                    " e.g. <em>192.168.100.100</em>");?></span></td>
+                    <br> <span class="vexpl"><?=gettext("IP address of the authoritative DNS server for this domain"); ?><br>
+                    <?=gettext("e.g."); ?> <em>192.168.100.100</em></span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

@@ -197,11 +197,11 @@ function get_dates($curperiod, $graph) {
 			break;
 		case "year":
 			$start = mktime(0, 0, 0, 1, 0, ($curyear - $offset));
-			$end = mktime(0, 0, 0, 1, 0, (($curyear - $offset) +1));
+			$end = mktime(0, 0, 0, 1, 1, (($curyear - $offset) +1));
 			break;
 		case "4year":
 			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) - $offset));
-			$end = mktime(0, 0, 0, 1, 0, (($curyear - $offset) +1));
+			$end = mktime(0, 0, 0, 1, 1, (($curyear - $offset) +1));
 			break;
 	}
 	$dates = array();

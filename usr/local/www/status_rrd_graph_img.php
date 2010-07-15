@@ -95,7 +95,7 @@ $archives = array();
 $archives[1] = 1000;
 $archives[5] = 1000;
 $archives[60] = 1000;
-$archives[720] = 1000;
+$archives[720] = 3000;
 
 $defOptions = array(
 	'to' => 1,
@@ -122,7 +122,7 @@ foreach($scales as $scalelength => $value) {
         }
 }
 
-log_error("start $start, end $end, archivestart $archivestart, average $average, scale $scale, seconds $seconds");
+// log_error("start $start, end $end, archivestart $archivestart, average $average, scale $scale, seconds $seconds");
 
 /* Deduce a interface if possible and use the description */
 $curif = split("-", $curdatabase);
@@ -233,11 +233,11 @@ function timeDiff($time, $opt = array()) {
     // Init an empty string
     $str = '';
     // To or From computation
-    $diff = ($opt['to'] >= $time) ? $opt['to']-$time : $time-$opt['to'];
+    $diff = ($opt['to'] >= $time) ? $opt['to'] - $time : $time - $opt['to'];
     // An array of label => periods of seconds;
     $periods = array(
         'decade' => 315569260,
-        'year' => 31556926,
+        'year' => 31539600,
         'month' => 2629744,
         'week' => 604800,
         'day' => 86400,
@@ -245,21 +245,22 @@ function timeDiff($time, $opt = array()) {
         'minute' => 60,
         'second' => 1
     );
+	// 31539600, 31556926, 31622400
     // Round to precision
     if ($opt['precision'] != 'second')
-        $diff = round(($diff/$periods[$opt['precision']])) * $periods[$opt['precision']];
+        $diff = round(($diff / $periods[$opt['precision']])) * $periods[$opt['precision']];
     // Report the value is 'less than 1 ' precision period away
-    (0 == $diff) && ($str = 'less than 1 '.$opt['precision']);
+    (0 == $diff) && ($str = 'less than 1 ' .$opt['precision']);
     // Loop over each period
     foreach ($periods as $label => $value) {
         // Stitch together the time difference string
-        (($x=floor($diff/$value))&&$opt['parts']--) && $str.=($str?$opt['separator']:'').($x.' '.$label.($x > 1?'s':''));
+        (($x = floor($diff / $value)) && $opt['parts']--) && $str .= ($str ? $opt['separator'] : '') . ($x .' '. $label. ($x > 1 ? 's' : ''));
         // Stop processing if no more parts are going to be reported.
         if ($opt['parts'] == 0 || $label == $opt['precision']) break;
         // Get ready for the next pass
-        $diff -= $x*$value;
+        $diff -= $x * $value;
     }
-    $opt['distance'] && $str.=($str&&$opt['to'] >= $time)?' ago':' away';
+    $opt['distance'] && $str .= ($str && $opt['to'] >= $time) ? ' ago' : ' away';
     return $str;
 }
 

@@ -328,8 +328,9 @@ function enable_change(enable_over) {
 					<td width="78%" class="vtable">
 						<select id="n_pptp_units" name="n_pptp_units">
 							<?php
-								for($x=0; $x<255; $x++) {
-									if($x == $pconfig['n_pptp_units'])
+								$toselect = ($pconfig['n_pptp_units'] > 0) ? $pconfig['n_pptp_units'] : 16;
+								for($x=1; $x<255; $x++) {
+									if($x == $toselect)
 										$SELECTED = " SELECTED";
 									else
 										$SELECTED = "";

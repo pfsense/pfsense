@@ -62,7 +62,7 @@ if (isset($id) && $a_protocol[$id]) {
 	$pconfig['type'] = 'http';
 }
 
-$changedesc = "Load Balancer: Relay Protocol: ";
+$changedesc = gettext("Load Balancer: Relay Protocol:"); . " ";
 $changecount = 0;
 
 
@@ -76,14 +76,14 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name type desc");
-	$reqdfieldsn = explode(",", "Name,Type,Description");
+	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* Ensure that our monitor names are unique */
 	for ($i=0; isset($config['load_balancer']['lbprotocol'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbprotocol'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This protocol name has already been used.  Protocol names must be unique.";
+			$input_errors[] = gettext("This protocol name has already been used.  Protocol names must be unique.");
 
 	switch($_POST['type']) {
 		case 'tcp':
@@ -99,13 +99,13 @@ if ($_POST) {
 		if(isset($id) && $a_protocol[$id])
 			$protent = $a_protocol[$id];
 		if($protent['name'] != "")
-			$changedesc .= " modified '{$protent['name']}' load balancing protocol:";
+			$changedesc .= " " . sprintf(gettext("modified '%s' load balancing protocol:"), $protent['name']);
 		
-		update_if_changed("name", $protent['name'], $pconfig['name']);
-		update_if_changed("type", $protent['type'], $pconfig['type']);
-		update_if_changed("description", $protent['desc'], $pconfig['desc']);
-		update_if_changed("type", $protent['type'], $pconfig['type']);
-		update_if_changed("action", $protent['lbaction'], $pconfig['lbaction']);
+		update_if_changed(gettext("name"), $protent['name'], $pconfig['name']);
+		update_if_changed(gettext("type"), $protent['type'], $pconfig['type']);
+		update_if_changed(gettext("description"), $protent['desc'], $pconfig['desc']);
+		update_if_changed(gettext("type"), $protent['type'], $pconfig['type']);
+		update_if_changed(gettext("action"), $protent['lbaction'], $pconfig['lbaction']);
 
 		if (isset($id) && $a_protocol[$id]) {
 			/* modify all virtual servers with this name */
@@ -131,14 +131,14 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Relay Protocol","Edit");
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Relay Protocol"),gettext("Edit"));
 #$statusurl = "status_lb_vs.php";
 $statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
 
 include("head.inc");
 
-$types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
+$types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script language="javascript">
@@ -186,16 +186,16 @@ document.observe('dom:loaded', function(){
 	<form action="load_balancer_relay_protocol_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Edit Load Balancer - Relay Protocol entry</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Relay Protocol entry"); ?></td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Name</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Type</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="type" name="type">
 <?
@@ -212,7 +212,7 @@ document.observe('dom:loaded', function(){
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
@@ -221,17 +221,17 @@ document.observe('dom:loaded', function(){
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Add / remove available actions</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Add / remove available actions"); ?></td>
 		</tr>
 		<tr align="left" id="actions">
-			<td width="22%" valign="top" class="vncellreq">Actions</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Actions"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<table>
 					<tbody>
 					<tr>
 						<td>
 							<center>
-							<b>Available Actions</b>
+							<b><?=gettext("Available Actions"); ?></b>
 							<br/>
 							<select id="available_action" name="available_action[]" multiple="true" size="5">
 <?php
@@ -246,14 +246,14 @@ echo "</select>";
 						</td>
 						<td valign="middle">
 							<center>
-								<input class="formbtn" type="button" name="copyToEnabled" value="Add" onclick="copyOption($('available_action'), $('lbaction'));" /><br/>
-								<input class="formbtn" type="button" name="removeFromEnabled" value="Remove" onclick="deleteOption($('lbaction'));" />
+								<input class="formbtn" type="button" name="copyToEnabled" value="<?=gettext("Add"); ?>" onclick="copyOption($('available_action'), $('lbaction'));" /><br/>
+								<input class="formbtn" type="button" name="removeFromEnabled" value="<?=gettext("Remove"); ?>" onclick="deleteOption($('lbaction'));" />
 							</center>
 						</td>
 
 						<td>
 							<center>
-							<b>Enabled Actions</b>
+							<b><?=gettext("Enabled Actions"); ?></b>
 							<br/>
 							<select id="lbaction" name="lbaction[]" multiple="true" size="5">
 <?php
@@ -274,7 +274,7 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_protocol[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

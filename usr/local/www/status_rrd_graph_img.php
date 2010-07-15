@@ -233,7 +233,7 @@ function timeDiff($time, $opt = array()) {
     // Init an empty string
     $str = '';
     // To or From computation
-    $diff = ($opt['to'] >= $time) ? $opt['to'] - $time : $time - $opt['to'];
+    $diff = ($opt['to'] > $time) ? $opt['to'] - $time : $time - $opt['to'];
     // An array of label => periods of seconds;
     $periods = array(
         'decade' => 315569260,
@@ -250,11 +250,11 @@ function timeDiff($time, $opt = array()) {
     if ($opt['precision'] != 'second')
         $diff = round(($diff / $periods[$opt['precision']])) * $periods[$opt['precision']];
     // Report the value is 'less than 1 ' precision period away
-    (0 == $diff) && ($str = 'less than 1 ' .$opt['precision']);
+    (0 == $diff) && ($str = 'less than 1 ' . $opt['precision']);
     // Loop over each period
     foreach ($periods as $label => $value) {
         // Stitch together the time difference string
-        (($x = floor($diff / $value)) && $opt['parts']--) && $str .= ($str ? $opt['separator'] : '') . ($x .' '. $label. ($x > 1 ? 's' : ''));
+        (($x = round($diff / $value)) && $opt['parts']--) && $str .= ($str ? $opt['separator'] : '') . ($x .' '. $label. ($x > 1 ? 's' : ''));
         // Stop processing if no more parts are going to be reported.
         if ($opt['parts'] == 0 || $label == $opt['precision']) break;
         // Get ready for the next pass
@@ -894,7 +894,7 @@ else {
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
-	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 55 ) {
+	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 5 ) {
 		if($data)
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;

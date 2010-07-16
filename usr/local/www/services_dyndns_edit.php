@@ -180,14 +180,14 @@ include("head.inc");
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
                     <br>
 				    <span class="vexpl">
-				    <span class="red"><strong><?=gettext("Note:");?><br></strong>
+				    <span class="red"><strong><?=gettext("Note");?>:<br></strong>
 				    </span>
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?>
 				    </span>
 		          </td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">MX</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("MX"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
                     <br>
@@ -197,10 +197,10 @@ include("head.inc");
                    " all services support this.");?></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Wildcards</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Wildcards"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
-                    <?=gettext("Enable ");?>Wildcard</td>
+                    <?=gettext("Enable ");?><?=gettext("Wildcard"); ?></td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
@@ -232,7 +232,7 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
                     </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem:
                     General setup%s or allow the DNS server list to be overridden
                     by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">','</a>');?></span></td>

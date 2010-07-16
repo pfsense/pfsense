@@ -350,7 +350,7 @@ function updateType(t){
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_monitor[$id]): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

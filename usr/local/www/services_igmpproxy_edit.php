@@ -131,8 +131,8 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 
-<input type='hidden' name='address_type' value='<?=gettext("textbox");?>' class="formfld unknown" />
-<input type='hidden' name='address_subnet_type' value='<?=gettext("select");?>' />
+<input type='hidden' name='address_type' value='textbox' class="formfld unknown" />
+<input type='hidden' name='address_subnet_type' value='select' />
 
 <script type="text/javascript">
 	rowname[0] = "address";
@@ -195,7 +195,7 @@ include("head.inc");
 	</span>
 	<br />
 	<span class="vexpl">
-       <?=gettext("<b>Downstream</b> network interfaces are the distribution  interfaces  to  the".
+       <b><?=gettext("Downstream"); ?></b> <?=gettext("network interfaces are the distribution  interfaces  to  the".
       " destination  networks,  where  multicast  clients  can  join groups and".
       " receive multicast data. One or more downstream interfaces must be configured.");?>
       </span>

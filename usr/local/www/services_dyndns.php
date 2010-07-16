@@ -86,8 +86,8 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("DynDns", true, "services_dyndns.php");
-	$tab_array[] = array("RFC 2136", false, "services_rfc2136.php");
+	$tab_array[] = array(gettext("DynDns"), true, "services_dyndns.php");
+	$tab_array[] = array(gettext("RFC 2136"), false, "services_rfc2136.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -157,7 +157,7 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br>
+				  <?=gettext("Note");?>:<br>
 				  </strong></span>
 				  <?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?>
 				  </td>

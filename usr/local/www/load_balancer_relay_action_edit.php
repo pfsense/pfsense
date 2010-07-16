@@ -62,7 +62,7 @@ if (isset($id) && $a_action[$id]) {
 	$pconfig['action'] = 'change';
 }
 
-$changedesc = "Load Balancer: Relay Action: ";
+$changedesc = gettext("Load Balancer: Relay Action:") . " ";
 $changecount = 0;
 
 $kv = array('key', 'value');
@@ -114,14 +114,14 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name protocol direction action desc");
-	$reqdfieldsn = explode(",", "Name,Protocol,Direction,Action,Description");
+	$reqdfieldsn = array(gettext("Name"),gettext("Protocol"),gettext("Direction"),gettext("Action"),gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* Ensure that our monitor names are unique */
 	for ($i=0; isset($config['load_balancer']['lbactions'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbactions'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This action name has already been used.  Action names must be unique.";
+			$input_errors[] = gettext("This action name has already been used.  Action names must be unique.");
 
 
 	if (!$input_errors) {
@@ -129,7 +129,7 @@ if ($_POST) {
 		if(isset($id) && $a_action[$id])
 			$actent = $a_action[$id];
 		if($actent['name'] != "")
-			$changedesc .= " modified '{$actent['name']}' action:";
+			$changedesc .= " " . sprintf(gettext("modified '%s' action:"), $actent['name']);
 		
 		update_if_changed("name", $actent['name'], $pconfig['name']);
 		update_if_changed("protocol", $actent['protocol'], $pconfig['protocol']);
@@ -175,13 +175,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Relay Action","Edit");
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Relay Action"),gettext("Edit"));
 #$statusurl = "status_lb_vs.php";
 $statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
 
 include("head.inc");
-	$types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
+	$types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -403,23 +403,23 @@ document.observe("dom:loaded", function() {
 	<form action="load_balancer_relay_action_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Edit Load Balancer - Relay Action entry</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Relay Action entry"); ?></td>
 		</tr>
 		<tr align="left" id="name">
-			<td width="22%" valign="top" class="vncellreq">Name</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
 		</tr>
 <!-- Protocol -->
 		<tr align="left" id="protocol_row">
-			<td width="22%" valign="top" class="vncellreq">Protocol</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="protocol" name="protocol">
 <?
@@ -438,7 +438,7 @@ document.observe("dom:loaded", function() {
 
 <!-- Direction -->
 		<tr align="left" id="direction_row">
-			<td width="22%" valign="top" class="vncellreq">Direction</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="direction" name="direction" style="disabled">
 <?
@@ -458,7 +458,7 @@ document.observe("dom:loaded", function() {
 
 <!-- Type -->
     <tr align="left" id="type_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Type</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 <?
 	foreach ($actions['direction'] as $dir => $v) {
@@ -479,7 +479,7 @@ document.observe("dom:loaded", function() {
 
 <!-- Action -->
     <tr align="left" id="action_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Action</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="action" name="action" style=\"display: none;\">
 <?
@@ -501,18 +501,18 @@ document.observe("dom:loaded", function() {
 				</select>
 <br/>
 <table><tr>
-<td><div id="input_action_value">Value&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if(isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
+<td><div id="input_action_value"><?=gettext("Value"); ?>&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if(isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
 <td><div id="action_action_value"></div></td>
-<td><div id="input_action_key">Key&nbsp;<input id="option_action_key" name="option_action_key" type="text" <?if(isset($pconfig['options']['akey'])) echo "value=\"{$pconfig['options']['akey']}\"";?>size="20"></div></td>
+<td><div id="input_action_key"><?=gettext("Key"); ?>&nbsp;<input id="option_action_key" name="option_action_key" type="text" <?if(isset($pconfig['options']['akey'])) echo "value=\"{$pconfig['options']['akey']}\"";?>size="20"></div></td>
 <td><div id="action_action_id"></div></td>
-<td><div id="input_action_id">ID&nbsp;<input id="option_action_id" name="option_action_id" type="text" <?if(isset($pconfig['options']['id'])) echo "value=\"{$pconfig['options']['id']}\"";?>size="20"></div></td>
+<td><div id="input_action_id"><?=gettext("ID"); ?>&nbsp;<input id="option_action_id" name="option_action_id" type="text" <?if(isset($pconfig['options']['id'])) echo "value=\"{$pconfig['options']['id']}\"";?>size="20"></div></td>
 </tr></table>
 			</td>
 		</tr>
 		<tr align="left" id="tcp_options_row"<?= $pconfig['protocol'] == "tcp" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Options</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Options"); ?</td>
 			<td width="78%" class="vtable" colspan="2">
-				XXX: TODO
+				XXX: <?=gettext("TODO"); ?>
 				<select id="options" name="options">
 <!-- XXX TODO >
 <?
@@ -530,9 +530,9 @@ document.observe("dom:loaded", function() {
 			</td>
 		</tr>
 		<tr align="left" id="ssl_options_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Options</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Options"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				XXX: TODO
+				XXX: <?=gettext("TODO"); ?>
 <!-- XXX TODO >
 				<select id="options" name="options">
 <?
@@ -552,7 +552,7 @@ document.observe("dom:loaded", function() {
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_action[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

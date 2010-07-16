@@ -60,7 +60,7 @@ if (isset($id) && $a_pool[$id]) {
 	$pconfig['monitor'] = $a_pool[$id]['monitor'];
 }
 
-$changedesc = "Load Balancer: Pool: ";
+$changedesc = gettext("Load Balancer: Pool:") . " ";
 $changecount = 0;
 
 if ($_POST) {
@@ -71,27 +71,27 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name port monitor servers");
-	$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
+	$reqdfieldsn = array(gettext("Name"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* Ensure that our pool names are unique */
 	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
+			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
 	if (!is_port($_POST['port']))
-		$input_errors[] = "The port must be an integer between 1 and 65535.";
+		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
-				$input_errors[] = "{$svrent} is not a valid IP address (in \"enabled\" list).";
+				$input_errors[] = sprintf(gettext("%s is not a valid IP address (in \"enabled\" list)."), $svrent);
 			}
 		}
 	}
 	if (is_array($_POST['serversdisabled'])) {
 		foreach($pconfig['serversdisabled'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
-				$input_errors[] = "{$svrent} is not a valid IP address (in \"disabled\" list).";
+				$input_errors[] = sprintf(gettext("%s is not a valid IP address (in \"disabled\" list)."), $svrent);
 			}
 		}
 	}
@@ -100,14 +100,14 @@ if ($_POST) {
 		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
 
 	if (!isset($m[$_POST['monitor']]))
-		$input_errors[] = "Invalid monitor chosen.";
+		$input_errors[] = gettext("Invalid monitor chosen.");
 
 	if (!$input_errors) {
 		$poolent = array();
 		if(isset($id) && $a_pool[$id])
 			$poolent = $a_pool[$id];
 		if($poolent['name'] != "")
-			$changedesc .= " modified '{$poolent['name']}' pool:";
+			$changedesc .= sprintf(gettext(" modified '%s' pool:"), $poolent['name']);
 		
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
@@ -137,7 +137,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Pool","Edit");
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
 #$statusurl = "status_lb_vs.php";
 $statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
@@ -162,36 +162,36 @@ function clearcombo(){
 	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Add/edit Load Balancer - Pool entry</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Add/edit Load Balancer - Pool entry"); ?></td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Name</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
 		</tr>
 
 		<tr align="left">
-			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
+			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
-				<div id="monitorport_desc">This is the port your servers are listening on.</div>
+				<div id="monitorport_desc"><?=gettext("This is the port your servers are listening on"); ?>.</div>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Add item to pool</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Add item to pool"); ?></td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Monitor</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Monitor"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<?php if(count($config['load_balancer']['monitor_type'])): ?>
 				<select id="monitor" name="monitor">
@@ -206,33 +206,33 @@ function clearcombo(){
 						}
 					?>
 				<?php else: ?>
-					<b>NOTE:</b> Please add a monitor IP address on the monitors tab if you wish to use this feature.
+					<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a monitor IP address on the monitors tab if you wish to use this feature"); ?>.
 				<?php endif; ?>
 				</select>
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Server IP Address</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Server IP Address"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;"> 
-				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
+				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform);"><br>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Current Pool Members</td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Current Pool Members"); ?></td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncellreq">Members</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Members"); ?></td>
 			<td width="78%" class="vtable" colspan="2" valign="top">
 				<table>
 					<tbody>
 					<tr>
 						<td>
 							<center>
-								<b>Pool Disabled</b>
+								<b><?=gettext("Pool Disabled"); ?></b>
 							<p/>
 							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="true" size="5">
 							
@@ -245,7 +245,7 @@ function clearcombo(){
 	echo "</select>";
 ?>
 							<p/>
-							<input class="formbtn" type="button" name="removeDisabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
+							<input class="formbtn" type="button" name="removeDisabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
 						</td>
 
 						<td valign="middle">
@@ -255,7 +255,7 @@ function clearcombo(){
 
 						<td>
 							<center>
-								<b>Enabled (default)</b>
+								<b><?=gettext("Enabled (default)"); ?></b>
 							<p/>
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 							
@@ -268,7 +268,7 @@ if (is_array($pconfig['servers'])) {
 echo "</select>";
 ?>
 							<p/>
-							<input class="formbtn" type="button" name="removeEnabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
+							<input class="formbtn" type="button" name="removeEnabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
 					</tr>
 					</tbody>
@@ -279,8 +279,8 @@ echo "</select>";
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<br/>
-				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
-				<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
+				<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

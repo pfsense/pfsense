@@ -461,9 +461,6 @@ function system_syslogd_start() {
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";
-		$syslogconf .= "!apinger\n";
-		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/slbd.log\n";
 		if (isset($syslogcfg['vpn'])) {
 			if($syslogcfg['remoteserver'])
 				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
@@ -483,6 +480,9 @@ function system_syslogd_start() {
 			if($syslogcfg['remoteserver3'])
 				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver3']}\n";
 		}
+		$syslogconf .= "!apinger\n";
+		if (!isset($syslogcfg['disablelocallogging']))
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/apinger.log\n";
 		$syslogconf .= "!relayd\n";
 		$syslogconf .= "*.* 						{$log_directive}{$g['varlog_path']}/relayd.log\n";
 		$syslogconf .= "!-{$facilitylist}\n";

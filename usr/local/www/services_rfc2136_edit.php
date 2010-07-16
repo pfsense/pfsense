@@ -149,7 +149,7 @@ include("head.inc");
                   </td>
 				</tr>
                 <tr>
-                  <td valign="top" class="vncellreq">TTL</td>
+                  <td valign="top" class="vncellreq"><?=gettext("TTL"); ?></td>
                   <td class="vtable">
                     <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>">
                   <?=gettext("seconds");?></td>
@@ -162,11 +162,11 @@ include("head.inc");
                     <?=gettext("This must match the setting on the DNS server.");?></td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq"><?=gettext("Key type ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Key type");?> </td>
                   <td class="vtable">
-				  <input name="keytype" type="radio" value="<?=gettext("zone");?>" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> <?=gettext("Zone");?> &nbsp;
-                  <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked"; ?>> Host &nbsp;
-                  <input name="keytype" type="radio" value="<?=gettext("user");?>" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>><?=gettext(" User");?>
+				  <input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> <?=gettext("Zone");?> &nbsp;
+                  <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked"; ?>> <?=gettext("Host");?> &nbsp;
+                  <input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>><?=gettext(" User");?>
 				</tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key");?></td>
@@ -205,10 +205,10 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
-                    </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem:
-                    General setup %sor allow the DNS server list to be overridden
-                    by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">', '</a>');?></span></td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+                    </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem: " .
+                    "General setup %sor allow the DNS server list to be overridden " .
+                    "by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">', '</a>');?></span></td>
                 </tr>
               </table>
 </form>

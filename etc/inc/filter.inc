@@ -575,29 +575,28 @@ function filter_generate_gateways() {
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";
-                        	foreach($members as $idx => $member) {
-                                	$int = $member['int'];
-                                	$gatewayip = $member['gwip'];
-                                	if (($int <> "") && is_ipaddr($gatewayip)) {
-                                        	if ($g['debug'])
-                                                	log_error("Setting up route with {$gatewayip} om $int");
+				foreach($members as $idx => $member) {
+					$int = $member['int'];
+					$gatewayip = $member['gwip'];
+					if (($int <> "") && is_ipaddr($gatewayip)) {
+						if ($g['debug'])
+							log_error("Setting up route with {$gatewayip} om $int");
 						if ($member['weight'] > 1) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
 						} else
-                                        		$routeto .= "( {$int} {$gatewayip} ) ";
+							$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb = 1;
-                                	} else
-                                        	log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
-                        	}
-				$route = "";
-				if ($foundlb > 0) {
-                                	$route = " route-to { {$routeto} } ";
-					if ($idx > 1) {
-                                		$route .= " round-robin ";
-                                		if (isset($config['system']['lb_use_sticky']))
-                                        		$route .= " sticky-address ";
+						} else
+							log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
 					}
-                        	}
+					$route = "";
+					if ($foundlb > 0) {
+						$route = " route-to { {$routeto} } ";
+					if($idx > 1)
+						$route .= " round-robin ";
+					if (isset($config['system']['lb_use_sticky']))
+						$route .= " sticky-address ";
+				}
 			}
 			$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}

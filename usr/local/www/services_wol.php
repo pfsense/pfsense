@@ -58,10 +58,10 @@ if($_GET['wakeall'] <> "") {
 			get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
-			$savemsg .= printf(gettext("Sent magic packet to %s (%s).<br>"),$mac, $description);
+			$savemsg .= sprintf(gettext("Sent magic packet to %s (%s)%s"),$mac, $description, ".<br>");
 		}
 		else {
-			$savemsg .= printf(gettext("Please check the %ssystem log%s, the wol command for %s (%s) did not complete successfully.<br>"),'<a href=\"/diag_logs.php\">','</a>',$description,$mac);
+			$savemsg .= sprintf(gettext("Please check the %ssystem log%s, the wol command for %s (%s) did not complete successfully%s"),'<a href=\"/diag_logs.php\">','</a>',$description,$mac,".<br>");
 		}
 	}
 }
@@ -93,10 +93,10 @@ if ($_POST || $_GET['mac']) {
 			get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
-			$savemsg .= printf(gettext("Sent magic packet to %s."),$mac);
+			$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
 		}
 		else {
-			$savemsg .= printf(gettext("Please check the %ssystem log%s, the wol command for %s did not complete successfully.<br>"),'<a href=\"/diag_logs.php\">', '</a>', $mac);
+			$savemsg .= sprintf(gettext("Please check the %ssystem log%s, the wol command for %s did not complete successfully%s"),'<a href=\"/diag_logs.php\">', '</a>', $mac, ".<br>");
 		}
 	}
 }
@@ -143,7 +143,7 @@ include("head.inc");
 				  <td width="78%" class="vtable">
                       <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
                       <br>
-                      <?=gettext("Enter a MAC address ");?><span class="vexpl"><?=gettext(" in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
+                      <?=gettext("Enter a MAC address ");?><span class="vexpl"> <?=gettext("in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%">
@@ -209,9 +209,9 @@ include("head.inc");
 			<span class="vexpl">
 					<span class="red">
 						<strong>
-							<?=gettext("Note:");?><br>
+							<?=gettext("Note");?>:<br>
             			</strong>
-					</span><?=gettext("This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");?>
+					</span><?=gettext("This service can be used to wake up (power on) computers by sending special"); ?> &quot;<?=gettext("Magic Packets"); ?>&quot;. <?=gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");?>
 			</span>
 
 </form>

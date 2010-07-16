@@ -260,7 +260,7 @@ function enable_change(whichone) {
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Daemon");?></strong></td>
-			<td align="right" class="optsect_s"><input name="enable" id="enable" type="checkbox" value="<?=gettext("yes");?>" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
+					<td align="right" class="optsect_s"><input name="enable" id="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
   			</table></td>
                 </tr>
 
@@ -290,7 +290,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Read Community String");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
-                    <br><?=gettext("In most cases, &quotpublic&quot; is used here");?></br>
+                    <br><?=gettext("In most cases"); ?>, &quot;<?=gettext("public"); ?>&quot; <?=gettext("is used here");?></br>
 		  </td>
                 </tr>
 
@@ -320,7 +320,7 @@ function enable_change(whichone) {
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Traps");?></strong></td>
-			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="<?=gettext("yes");?>" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
+			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
   			</table></td>
                 </tr>
 
@@ -362,20 +362,20 @@ function enable_change(whichone) {
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("SNMP Modules");?></td>
 		  <td width="78%" class="vtable">
-		    <input name="mibii" type="checkbox" id="mibii" value="<?=gettext("yes");?>" <?php if ($pconfig['mibii']) echo "checked"; ?> >MibII
+		    <input name="mibii" type="checkbox" id="mibii" value="yes" <?php if ($pconfig['mibii']) echo "checked"; ?> ><?=gettext("MibII"); ?>
 		    <br />
-		    <input name="netgraph" type="checkbox" id="netgraph" value="<?=gettext("yes");?>" <?php if ($pconfig['netgraph']) echo "checked"; ?> >Netgraph
+		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> ><?=gettext("Netgraph"); ?>
 		    <br />
-		    <input name="pf" type="checkbox" id="pf" value="<?=gettext("yes");?>" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
+		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> ><?=gettext("PF"); ?>
 		    <br />
-		    <input name="hostres" type="checkbox" id="hostres" value="<?=gettext("yes");?>" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources");?>
+		    <input name="hostres" type="checkbox" id="hostres" value="yes" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources");?>
 		  </td>
 		</tr>
 <?php if(!$config['interfaces']['lan']): ?>
 		 <tr> 
 		   <td width="22%" valign="top" class="vtable"></td>
 		   <td width="78%" class="vtable"> 
-		     <input name="bindlan" type="checkbox" value="<?=gettext("yes");?>" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong><?=gettext("Bind to LAN interface only");?></strong>
+		     <input name="bindlan" type="checkbox" value="yes" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong><?=gettext("Bind to LAN interface only");?></strong>
 		     <br>
 		     <?=gettext("This option can be useful when trying to access the SNMP agent".
             	    " by the LAN interface's IP address through a VPN tunnel terminated on the WAN interface.");?></td>

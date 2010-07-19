@@ -37,7 +37,7 @@ function listtags() {
    */
 	$ret = explode(" ",
 		"alias aliasurl allowedip authserver bridged ca cacert cert clone config ".
-		"container columnitem depends_on_package disk dnsserver dnsupdate ".
+		"container columnitem build_port_path depends_on_package disk dnsserver dnsupdate ".
 		"domainoverrides dyndns earlyshellcmd element encryption-algorithm-option ".
 		"field fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
 		"group hosts member ifgroupentry igmpentry interface_array item key lagg " .
@@ -54,7 +54,7 @@ function listtags() {
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
+	$ret = array("build_port_path", "depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
 	return $ret;
 }

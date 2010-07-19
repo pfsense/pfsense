@@ -32,7 +32,7 @@
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
-	$ret = explode(" ", "element alias aliasurl allowedip cacert config columnitem disk dnsserver domainoverrides " .
+	$ret = explode(" ", "build_port_path element alias aliasurl allowedip cacert config columnitem disk dnsserver domainoverrides " .
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
 		"hosts group interface_array item key lbpool menu mobilekey mount onetoone option package passthrumac priv proxyarpnet " .
 		"queue pages pipe route row rule schedule service servernat servers earlyshellcmd shellcmd staticmap subqueue " .
@@ -42,7 +42,7 @@ function listtags() {
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
+	$ret = array("build_port_path", "depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
 	return $ret;
 }

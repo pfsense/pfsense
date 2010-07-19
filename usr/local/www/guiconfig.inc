@@ -760,5 +760,9 @@ function ipsec_ca_sort() {
         usort($config['ipsec']['cacert'], "ipseccacmp");
 }
 
+function display_error_form() {
+	// Dummy function for DNS Rebinding so we avoid Captive Portal
+	echo "&nbsp";
+}
 
 ?>

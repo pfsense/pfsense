@@ -66,6 +66,7 @@ $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['shapertype']             = $config['system']['shapertype'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+$pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 
 if ($_POST) {
 
@@ -147,6 +148,11 @@ if ($_POST) {
 			unset($config['system']['polling']);
 			setup_polling();
 		}
+
+		if ($_POST['nodnsrebindcheck'] == "yes")
+			$config['system']['webgui']['nodnsrebindcheck'] = true;
+		else
+			unset($config['system']['webgui']['nodnsrebindcheck']);
 
 		if($_POST['lb_use_sticky'] == "yes") {
 			$config['system']['lb_use_sticky'] = true;
@@ -430,14 +436,18 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Filtering Bridge</td>
 		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This setting no longer exists as it is unnecessary. Filtering
-                    occurs on the member interfaces of the bridge and cannot be
-                    disabled. </span></td>
-                </tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">&nbsp;</td>
+			<td width="78%" class="vtable">
+				<strong>Enable filtering bridge</strong>
+				<span class="vexpl">
+					<br>
+					This setting no longer exists as it is unnecessary. Filtering
+					occurs on the member interfaces of the bridge and cannot be
+					disabled. 
+				</span>
+			</td>
+		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -505,31 +515,42 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Miscellaneous</td>
 		</tr>
-
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Device polling</td>
-                  <td width="78%" class="vtable">
-                    <input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
-                    <strong>Use device polling</strong><br>
-                                        Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webGUI, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
-                                        Not all NICs support polling; see the <?=$g['product_name'];?> homepage for a list of supported cards.
-                  </td>
-                </tr>
-
-		<tr>
-			<td width="22%" valign="top" class="vncell">Console menu </td>
-			<td width="78%" class="vtable">
-				<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
-				<strong>Password protect the console menu</strong>
-				<br />
-				<span class="vexpl">Changes to this option will take effect after a reboot.</span>
-			</td>
-		</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">DNS Rebind Check</td>
+				<td width="78%" class="vtable">
+					<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked"; ?> />
+					<strong>Disable webConfigurator DNS Rebinding Checks</strong>
+					<br/>
+					When this is unchecked, access to the webConfigurator 
+					is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>
+					Check this box to disable this protection if you find that it interferes with
+					webConfigurator access in certain corner cases.
+				</td>
+			</tr>
+			<tr>
+			  <td width="22%" valign="top" class="vncell">Device polling</td>
+			  <td width="78%" class="vtable">
+			    <input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
+			    <strong>Use device polling</strong>
+				<br>
+				Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webGUI, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
+				Not all NICs support polling; see the <?=$g['product_name'];?> homepage for a list of supported cards.
+			  </td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Console menu </td>
+				<td width="78%" class="vtable">
+					<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
+					<strong>Password protect the console menu</strong>
+					<br />
+					<span class="vexpl">Changes to this option will take effect after a reboot.</span>
+				</td>
+			</tr>
 <?php if($g['platform'] == "pfSenseDISABLED"): ?>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
-			<td width="78%" class="vtable">
-				<select name="harddiskstandby" class="formfld">
+			<tr>
+				<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
+				<td width="78%" class="vtable">
+					<select name="harddiskstandby" class="formfld">
 <?php
 				 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
 					$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
@@ -540,208 +561,194 @@ include("head.inc");
 						list($min,$val) = explode(",", $sbval); ?>
 					<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> minutes</option>
 <?php 				endforeach; ?>
-				</select>
-				<br />
-				Puts the hard disk into standby mode when the selected amount of time after the last
-				access has elapsed. <em>Do not set this for CF cards.</em>
-			</td>
-		</tr>
+					</select>
+					<br />
+					Puts the hard disk into standby mode when the selected amount of time after the last
+					access has elapsed. <em>Do not set this for CF cards.</em>
+				</td>
+			</tr>
 <?php endif; ?>
-		<tr>
-			<td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
-			<td width="78%" class="vtable">
-				<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
-				<strong>Disable webGUI anti-lockout rule</strong>
-				<br />
-				By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter
-				rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you
-				in, or you will lock yourself out!).
-				<br />
-				Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Static route filtering</td>
-			<td width="78%" class="vtable">
-				<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
-				<strong>Bypass firewall rules for traffic on the same interface</strong>
-				<br />
-				This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
- 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
-				multiple subnets are connected to the same interface.
-				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
-			<td width="78%" class="vtable">
-				<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
-				<strong>Prefer old IPsec SAs</strong>
-				<br />
-				By default, if several SAs match, the newest one is preferred if it's at least 30 seconds old.Select this option to always prefer old SAs over new ones.
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
-		</tr>
-<?php
-/*
-		<tr>
-			<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
-			<td width="78%" class="vtable">
-				<select name="shapertype" class="formselect">
-					<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
-					<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
-				</select>
-			</td>
-		</tr>
-*/
-?>
-		<tr>
-			<td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>
-			<td width="78%" class="vtable">
-				<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typically port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong>
-				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Clear DF bit instead of dropping</td>
-			<td width="78%" class="vtable">
-				<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong class="vexpl">Workaround for operating systems that generate fragmented packets with the don't fragment (DF) bit set.  Linux NFS is known to do this.  This will cause the filter to not drop such packets but instead clear the don't fragment bit.  The filter will also randomize the IP identification field of outgoing packets with this option on, to compensate for operating systems that set the DF bit but set a zero IP identification header field.</strong>
-				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
-			<td width="78%" class="vtable">
-				<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
-					<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected"; ?>>normal</option>
-					<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected"; ?>>high-latency</option>
-					<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected"; ?>>aggressive</option>
-					<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
-				</select>
-				<br />
-				<textarea cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
-				<script language="javascript" type="text/javascript">
-					update_description(document.forms[0].optimization.selectedIndex);
-				</script>
-				<br />
-				<span class="vexpl"><b>Select which type of state table optimization your would like to use</b></span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Disable Firewall</td>
-			<td width="78%" class="vtable">
-				<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable all packet filtering.</strong>
-				<br />
-				<span class="vexpl">Note:  This converts <?=$g['product_name'];?> into a routing only platform!<br>
-				                    Note:  This will turn off NAT!
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Disable Firewall Scrub</td>
-			<td width="78%" class="vtable">
-				<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.</strong>
-				<br/>
-				Click <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'>here</a> for more information.
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Firewall Maximum States</td>
-			<td width="78%" class="vtable">
-				<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" onclick="enable_change(false)" />
-				<br />
-				<strong>Maximum number of connections to hold in the firewall state table.</strong>
-				<br />
-				<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Disable Auto-added VPN rules</td>
-			<td width="78%" class="vtable">
-				<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable all auto-added VPN rules.</strong>
-				<br />
-				<span class="vexpl">Note:  This disables automatically added rules for IPsec, PPTP, and OpenVPN. 
-				</span>
-			</td>
-		</tr>
-                <tr>
-			<td width="22%" valign="top" class="vncell">Disable reply-to</td>
-			<td width="78%" class="vtable">
-				<input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked"; ?> />
-				<strong>Disable reply-to on WAN rules</strong>
-				<br />
-				With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default.
-                                When using bridging, you must disable this behavior if the WAN gateway IP is different from the gateway IP of the hosts behind the bridged interface. 
-				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
-		</tr>
-		<tr>
-			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
-			<td width="78%" class="vtable">
-				<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection only works on port forward type items  and does not work for large ranges > 500 ports.</strong>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
-		</tr>
-		<tr>
-			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Hardware Options</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Disable Hardware Checksum Offloading</td>
-			<td width="78%" class="vtable">
-				<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Checking this option will disable hardware checksum offloading.  Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs.</strong>
-			</td>
-		</tr>
-       		<tr>
-			<td width="22%" valign="top" class="vncell">Disable glxsb loading</td>
-			<td width="78%" class="vtable">
-				<input name="disableglxsb" type="checkbox" id="disableglxsb" value="yes" <?php if (isset($config['system']['disableglxsb'])) echo "checked"; ?> onclick="enable_change(false)" />
-                                <span class="vexpl"><strong>Checking this option will disable loading of the glxsb driver.</strong></span>
-                                <br>
-                                <span>The glxsb crypto accelerator is found on some Geode platforms (PC Engines ALIX among others).  When using a better crypto card such as a Hifn, you will want to disable the glxsb. <strong>If this device is currently in use, YOU MUST REBOOT for it to be unloaded.</strong></span>
-			</td>
-		</tr>		
-
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
-		</tr>
-		<tr>
-			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
+				<td width="78%" class="vtable">
+					<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
+					<strong>Disable webGUI anti-lockout rule</strong>
+					<br />
+					By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter
+					rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you
+					in, or you will lock yourself out!).
+					<br />
+					Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Static route filtering</td>
+				<td width="78%" class="vtable">
+					<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
+					<strong>Bypass firewall rules for traffic on the same interface</strong>
+					<br />
+					This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
+	 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
+					multiple subnets are connected to the same interface.
+					<br />
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
+				<td width="78%" class="vtable">
+					<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
+					<strong>Prefer old IPsec SAs</strong>
+					<br />
+					By default, if several SAs match, the newest one is preferred if it's at least 30 seconds old.Select this option to always prefer old SAs over new ones.
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%">
+					<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>
+				<td width="78%" class="vtable">
+					<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typically port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong>
+					<br />
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Clear DF bit instead of dropping</td>
+				<td width="78%" class="vtable">
+					<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong class="vexpl">Workaround for operating systems that generate fragmented packets with the don't fragment (DF) bit set.  Linux NFS is known to do this.  This will cause the filter to not drop such packets but instead clear the don't fragment bit.  The filter will also randomize the IP identification field of outgoing packets with this option on, to compensate for operating systems that set the DF bit but set a zero IP identification header field.</strong>
+					<br />
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
+				<td width="78%" class="vtable">
+					<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
+						<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected"; ?>>normal</option>
+						<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected"; ?>>high-latency</option>
+						<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected"; ?>>aggressive</option>
+						<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
+					</select>
+					<br />
+					<textarea cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+					<script language="javascript" type="text/javascript">
+						update_description(document.forms[0].optimization.selectedIndex);
+					</script>
+					<br />
+					<span class="vexpl"><b>Select which type of state table optimization your would like to use</b></span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable Firewall</td>
+				<td width="78%" class="vtable">
+					<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong>Disable all packet filtering.</strong>
+					<br />
+					<span class="vexpl">Note:  This converts <?=$g['product_name'];?> into a routing only platform!<br>
+					                    Note:  This will turn off NAT!
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable Firewall Scrub</td>
+				<td width="78%" class="vtable">
+					<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong>Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.</strong>
+					<br/>
+					Click <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'>here</a> for more information.
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Firewall Maximum States</td>
+				<td width="78%" class="vtable">
+					<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" onclick="enable_change(false)" />
+					<br />
+					<strong>Maximum number of connections to hold in the firewall state table.</strong>
+					<br />
+					<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable Auto-added VPN rules</td>
+				<td width="78%" class="vtable">
+					<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong>Disable all auto-added VPN rules.</strong>
+					<br />
+					<span class="vexpl">Note:  This disables automatically added rules for IPsec, PPTP, and OpenVPN. 
+					</span>
+				</td>
+			</tr>
+	                <tr>
+				<td width="22%" valign="top" class="vncell">Disable reply-to</td>
+				<td width="78%" class="vtable">
+					<input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked"; ?> />
+					<strong>Disable reply-to on WAN rules</strong>
+					<br />
+					With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default.
+	                                When using bridging, you must disable this behavior if the WAN gateway IP is different from the gateway IP of the hosts behind the bridged interface. 
+					<br />
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
+				<td width="78%" class="vtable">
+					<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection only works on port forward type items  and does not work for large ranges > 500 ports.</strong>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Hardware Options</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable Hardware Checksum Offloading</td>
+				<td width="78%" class="vtable">
+					<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<strong>Checking this option will disable hardware checksum offloading.  Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs.</strong>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Disable glxsb loading</td>
+				<td width="78%" class="vtable">
+					<input name="disableglxsb" type="checkbox" id="disableglxsb" value="yes" <?php if (isset($config['system']['disableglxsb'])) echo "checked"; ?> onclick="enable_change(false)" />
+					<span class="vexpl"><strong>Checking this option will disable loading of the glxsb driver.</strong></span>
+					<br>
+					<span>The glxsb crypto accelerator is found on some Geode platforms (PC Engines ALIX among others).  When using a better crypto card such as a Hifn, you will want to disable the glxsb. <strong>If this device is currently in use, YOU MUST REBOOT for it to be unloaded.</strong></span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
 	</tbody>
 </table>
 </form>

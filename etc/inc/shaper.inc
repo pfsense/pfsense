@@ -1791,7 +1791,8 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_form() {
-		$form = "<tr>";
+		$form = parent::build_form();
+		$form .= "<tr>";
 		$form .= "<td valign=\"top\" class=\"vncellreq\">Bandwidth</td>";
 		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
 		$form .= htmlspecialchars($this->GetBandwidth());
@@ -1819,8 +1820,7 @@ class hfsc_queue extends priq_queue {
 		$form .= ">%</option>";
 		$form .= "</select> <br>";
 		$form .= "<span class=\"vexpl\">Choose the amount of bandwidth for this queue";
-		$form .= "</span></td>";
-		$form .= parent::build_form();
+		$form .= "</span></td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Service Curve (sc)</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";

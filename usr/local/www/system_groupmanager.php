@@ -152,10 +152,12 @@ if ($_POST) {
 		local_group_set($group);
 
 		/* Refresh users in this group since their privileges may have changed. */
-		$a_user = &$config['system']['user'];
-		foreach ($a_user as & $user) {
-			if (in_array($user['uid'], $group['member']))
-				local_user_set($user);
+		if (is_array($group['member'])) {
+			$a_user = &$config['system']['user'];
+			foreach ($a_user as & $user) {
+				if (in_array($user['uid'], $group['member']))
+					local_user_set($user);
+			}
 		}
 
 		write_config();
@@ -411,7 +413,7 @@ function presubmit() {
 							else
 								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
 					?>
-					<tr>
+					<tr ondblclick="document.location='system_groupmanager.php?act=edit&id=<?=$i;?>'">
 						<td class="listlr">
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>

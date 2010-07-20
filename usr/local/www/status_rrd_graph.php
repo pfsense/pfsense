@@ -28,7 +28,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*	
-	pfSense_BUILDER_BINARIES:	/usr/bin/find
 	pfSense_MODULE:	system
 */
 
@@ -50,8 +49,7 @@ if(! isset($config['rrd']['enable'])) {
 }
 
 $rrddbpath = "/var/db/rrd/";
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+$databases = glob("{$rrddbpath}*.rrd");
 
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];
@@ -115,6 +113,30 @@ if ($_GET['option']) {
 	}
 }
 
+if($curcat == "custom") {
+	if (is_numeric($_GET['start'])) {
+			if($start < ($now - (3600 * 24 * 365 * 5))) {
+					$start = $now - (4 * 3600);
+			}
+			$start = $_GET['start'];
+	} else {
+			$start = $now - (4 * 3600);
+	}
+}
+
+if (is_numeric($_GET['end'])) {
+        $end = $_GET['end'];
+} else {
+        $end = $now;
+}
+
+/* this should never happen */
+if($end < $start) {
+        $end = $now;
+}
+
+$seconds = $end - $start;
+					
 if ($_GET['style']) {
 	$curstyle = $_GET['style'];
 } else {
@@ -244,6 +266,8 @@ function get_dates($curperiod, $graph) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
 				}
+				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Custom", $tabactive, "status_rrd_graph.php?cat=custom");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);
@@ -263,6 +287,19 @@ function get_dates($curperiod, $graph) {
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 
+					if($curcat == "custom") {
+						foreach ($databases as $db => $database) {
+							$optionc = split("-", $database);
+							$search = array("-", ".rrd", $optionc);
+							$replace = array(" :: ", "", $friendly);
+							echo "<option value=\"{$database}\"";
+							$prettyprint = ucwords(str_replace($search, $replace, $database));
+							if($curoption == $database) {
+								echo " selected ";
+							}
+							echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
+						}
+					}
 					foreach ($ui_databases as $db => $database) {
 						if(! preg_match("/($curcat)/i", $database)) {
 							continue;
@@ -270,11 +307,12 @@ function get_dates($curperiod, $graph) {
 						$optionc = split("-", $database);
 						$search = array("-", ".rrd", $optionc);
 						$replace = array(" :: ", "", $friendly);
+
 						switch($curcat) {
 							case "system":
-								$optionc = str_replace($search, $replace, $optionc[1]);
-								echo "<option value=\"$optionc\"";
-								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+								$optioncf = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optioncf\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optioncf));
 								break;
 							default:
 								/* Deduce a interface if possible and use the description */
@@ -292,6 +330,7 @@ function get_dates($curperiod, $graph) {
 							echo " selected ";
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
+
 					}
 
 					?>
@@ -308,13 +347,17 @@ function get_dates($curperiod, $graph) {
 					?>
 					</select>
 					
-					<?=gettext("Period:");?>
-					<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-					<?php
-					foreach ($periods as $period => $value) {
-						echo "<option value=\"$period\"";
-						if ($period == $curperiod) echo " selected";
-						echo ">" . htmlspecialchars($value) . "</option>\n";
+					<?
+					if($curcat <> "custom") {
+					?>
+						<?=gettext("Period:");?>
+						<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+						<?php
+						foreach ($periods as $period => $value) {
+							echo "<option value=\"$period\"";
+							if ($period == $curperiod) echo " selected";
+							echo ">" . htmlspecialchars($value) . "</option>\n";
+						}
 					}
 					?>
 
@@ -322,7 +365,10 @@ function get_dates($curperiod, $graph) {
 
 					<?php
 
-					// echo "year $curyear, month $curmonth, week $curweek, day $curday, weekday $curweekday<br>";
+					if($curcat == "custom") {
+						
+					
+					}
 					foreach($graphs as $graph) {
 						/* check which databases are valid for our category */
 						foreach($ui_databases as $curdatabase) {

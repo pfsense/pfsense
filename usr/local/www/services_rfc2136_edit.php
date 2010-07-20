@@ -68,7 +68,7 @@ if ($_POST) {
 	$reqdfields = array();
 	$reqdfieldsn = array();
 	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
-	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key"));
+	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key")));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

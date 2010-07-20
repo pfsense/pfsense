@@ -1122,20 +1122,11 @@ function upgrade_047_to_048() {
 		unset($config['dyndns']);
 	}		
 	if (!empty($config['dnsupdate'])) {
-		$config['dnsupdates'][0]['dnsupdate'] = array();
-		$pconfig = array();
-		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate'][0]['enable']);
-		$pconfig['dnsupdate_host'] = $config['dnsupdate'][0]['host'];
-		$pconfig['dnsupdate_ttl'] = $config['dnsupdate'][0]['ttl'];
-		if (!$pconfig['dnsupdate_ttl'])
-			$pconfig['dnsupdate_ttl'] = 60;
-		$pconfig['dnsupdate_keydata'] = $config['dnsupdate'][0]['keydata'];
-		$pconfig['dnsupdate_keyname'] = $config['dnsupdate'][0]['keyname'];
-		$pconfig['dnsupdate_keytype'] = $config['dnsupdate'][0]['keytype'];
-		if (!$pconfig['dnsupdate_keytype'])
-			$pconfig['dnsupdate_keytype'] = "zone";
-		$pconfig['dnsupdate_server'] = $config['dnsupdate'][0]['server'];
-		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate'][0]['usetcp']);
+		$pconfig = $config['dnsupdate'][0];
+		if (!$pconfig['ttl'])
+			$pconfig['ttl'] = 60;
+		if (!$pconfig['keytype'])
+			$pconfig['keytype'] = "zone";
 		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
 		unset($config['dnsupdate']);

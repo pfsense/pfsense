@@ -28,7 +28,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*	
-	pfSense_BUILDER_BINARIES:	/usr/bin/find
 	pfSense_MODULE:	system
 */
 
@@ -50,8 +49,7 @@ if(! isset($config['rrd']['enable'])) {
 }
 
 $rrddbpath = "/var/db/rrd/";
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+$databases = glob("{$rrddbpath}*.rrd");
 
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];

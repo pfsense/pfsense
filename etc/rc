@@ -194,6 +194,7 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 	clog -i -s 65535 /var/log/slbd.log
 	clog -i -s 65535 /var/log/lighttpd.log
 	clog -i -s 65535 /var/log/ntpd.log
+	clog -i -s 65535 /var/log/apinger.log
 else
     clog -i -s 65535 /var/log/system.log
     clog -i -s 65535 /var/log/filter.log
@@ -204,6 +205,7 @@ else
     clog -i -s 65535 /var/log/ipsec.log
     clog -i -s 65535 /var/log/slbd.log
 	clog -i -s 65535 /var/log/ntpd.log
+	clog -i -s 65535 /var/log/apinger.log
 fi
 
 # change permissions on newly created clog files.

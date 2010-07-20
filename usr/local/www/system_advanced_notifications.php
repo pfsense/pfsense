@@ -111,13 +111,13 @@ if ($_POST) {
 		if($config['notifications']['growl']['ipaddress'] && 
 		   $config['notifications']['growl']['password'] = $_POST['password']) {
 			register_via_growl();
-			notify_via_growl(gettext("This is a test message form pfSense.  It is safe to ignore this message."));
+			notify_via_growl(gettext("This is a test message from pfSense.  It is safe to ignore this message."));
 		}
 
 		// Send test message via smtp
 		if(file_exists("/var/db/notices_lastmsg.txt"))
 			unlink("/var/db/notices_lastmsg.txt");
-		$savemsg = notify_via_smtp(gettext("This is a test message form pfSense.  It is safe to ignore this message."));
+		$savemsg = notify_via_smtp(gettext("This is a test message from pfSense.  It is safe to ignore this message."));
 
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;

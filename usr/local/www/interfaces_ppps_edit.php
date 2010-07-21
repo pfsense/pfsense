@@ -770,7 +770,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-				<input type="button" value="Cancel" onclick="history.back()">
+				<input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">

@@ -727,7 +727,7 @@ function system_generate_lighty_config($filename,
 	$cert_location = "cert.pem",
 	$ca_location = "ca.pem",
 	$max_procs = 1,
-	$max_requests = "1",
+	$max_requests = "2",
 	$fast_cgi_enable = true,
 	$captive_portal = false) {
 

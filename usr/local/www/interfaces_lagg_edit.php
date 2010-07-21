@@ -108,7 +108,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),"LAGG",gettext("Edit"));
+$pgtitle = array(gettext("Firewall"),gettext("LAGG"),gettext("Edit"));
 include("head.inc");
 
 ?>

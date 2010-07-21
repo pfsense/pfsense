@@ -35,13 +35,13 @@
 ##|*MATCH=status_captiveportal_vouchers.php*
 ##|-PRIV
 
-$pgtitle = array("Status", "Captive portal", "Vouchers");
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Vouchers"));
 
 function clientcmp($a, $b) {
     global $order;
@@ -87,10 +87,10 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array("Active Users", false, "status_captiveportal.php");
-        $tab_array[] = array("Active Vouchers", true, "status_captiveportal_vouchers.php");
-        $tab_array[] = array("Voucher Rolls", false, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array("Test Vouchers", false, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php");
+        $tab_array[] = array(gettext("Active Vouchers"), true, "status_captiveportal_vouchers.php");
+        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php");
+        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>
@@ -99,11 +99,11 @@ include("fbegin.inc");
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="content pane">
   <tr>
-    <td class="listhdrr"><a href="?order=0&showact=<?=$_GET['showact'];?>">Voucher</a></td>
-    <td class="listhdrr"><a href="?order=1&showact=<?=$_GET['showact'];?>">Roll</a></td>
-    <td class="listhdrr"><a href="?order=2&showact=<?=$_GET['showact'];?>">Activated at</a></td>
-    <td class="listhdrr"><a href="?order=3&showact=<?=$_GET['showact'];?>">Expires in</a></td>
-    <td class="listhdr"><a href="?order=4&showact=<?=$_GET['showact'];?>">Expires at</a></td>
+    <td class="listhdrr"><a href="?order=0&showact=<?=$_GET['showact'];?>"><?=gettext("Voucher"); ?></a></td>
+    <td class="listhdrr"><a href="?order=1&showact=<?=$_GET['showact'];?>"><?=gettext("Roll"); ?></a></td>
+    <td class="listhdrr"><a href="?order=2&showact=<?=$_GET['showact'];?>"><?=gettext("Activated at"); ?></a></td>
+    <td class="listhdrr"><a href="?order=3&showact=<?=$_GET['showact'];?>"><?=gettext("Expires in"); ?></a></td>
+    <td class="listhdr"><a href="?order=4&showact=<?=$_GET['showact'];?>"><?=gettext("Expires at"); ?></a></td>
     <td class="list"></td>
   </tr>
 <?php foreach ($db as $dbent): ?>
@@ -111,7 +111,7 @@ include("fbegin.inc");
     <td class="listlr"><?=$dbent[0];?></td>
     <td class="listr"><?=$dbent[1];?></td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[2]));?></td>
-    <td class="listr"><?=$dbent[3];?> min</td>
+    <td class="listr"><?=$dbent[3];?> <?=gettext("min"); ?></td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[4]));?></td>
     <td class="list"></td>
   </tr>

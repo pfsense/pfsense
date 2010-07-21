@@ -162,7 +162,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rg = $ph1ent['remote-gateway'];
 
 				if (!is_ipaddr($rg)) {
-					$dnswatch_list[] = $rg;
+					$dnswatch_list[] = "{$rg} = value";
 					add_hostname_to_watch($rg);
 					$rg = resolve_retry($rg);
 					if (!$rg)

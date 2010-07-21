@@ -45,7 +45,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("Status","DHCP leases");
+$pgtitle = array(gettext("Status"),gettext("DHCP leases"));
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 
@@ -280,11 +280,11 @@ if(count($pools) > 0) {
 ?>
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td class="listhdrr">Failover Group</a></td>
-    <td class="listhdrr">My State</a></td>
-    <td class="listhdrr">Since</a></td>
-    <td class="listhdrr">Peer State</a></td>
-    <td class="listhdrr">Since</a></td>
+    <td class="listhdrr"><?=gettext("Failover Group"); ?></a></td>
+    <td class="listhdrr"><?=gettext("My State"); ?></a></td>
+    <td class="listhdrr"><?=gettext("Since"); ?></a></td>
+    <td class="listhdrr"><?=gettext("Peer State"); ?></a></td>
+    <td class="listhdrr"><?=gettext("Since"); ?></a></td>
   </tr>
 <?php
 foreach ($pools as $data) {
@@ -311,13 +311,13 @@ foreach ($pools as $data) {
 
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td class="listhdrr"><a href="#">IP address</a></td>
-    <td class="listhdrr"><a href="#">MAC address</a></td>
-    <td class="listhdrr"><a href="#">Hostname</a></td>
-    <td class="listhdrr"><a href="#">Start</a></td>
-    <td class="listhdrr"><a href="#">End</a></td>
-    <td class="listhdrr"><a href="#">Online</a></td>
-    <td class="listhdrr"><a href="#">Lease Type</a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("IP address"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("MAC address"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("Hostname"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("End"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("Online"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("Lease Type"); ?></a></td>
 	</tr>
 <?php
 foreach ($leases as $data) {
@@ -354,7 +354,7 @@ foreach ($leases as $data) {
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
                 if ($data['online'] != "online") {
-                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"send Wake on LAN packet to this MAC address\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
+                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
                 } else {
                 	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
                 }
@@ -371,19 +371,19 @@ foreach ($leases as $data) {
 		
 		if ($data['type'] == "dynamic") {
 			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\"></a></td>\n";
 		} else {
                 	echo "<td class=\"list\" valign=\"middle\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"></td>\n";
 		}
 
                 echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
-		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a Wake on LAN mapping for this MAC address\"></a></td>\n";
+		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a Wake on LAN mapping for this MAC address") ."\"></a></td>\n";
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
 			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&all={$_GET['all']}\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"delete this DHCP lease\"></a></td>\n";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\"></a></td>\n";
 		}
                 echo "</tr>\n";
 	}
@@ -396,14 +396,14 @@ foreach ($leases as $data) {
 <input type="hidden" name="order" value="<?=$_GET['order'];?>">
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0">
-<input type="submit" class="formbtn" value="Show active and static leases only">
+<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>">
 <?php else: ?>
 <input type="hidden" name="all" value="1">
-<input type="submit" class="formbtn" value="Show all configured leases">
+<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>">
 <?php endif; ?>
 </form>
 <?php if($leases == 0): ?>
-<p><strong>No leases file found. Is the DHCP server active?</strong></p>
+<p><strong><?=gettext("No leases file found. Is the DHCP server active"); ?>?</strong></p>
 <?php endif; ?>
 
 <?php include("fend.inc"); ?>

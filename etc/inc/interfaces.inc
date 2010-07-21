@@ -822,8 +822,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 					killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
 					sleep(2);
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-					if (isset($ppp['ondemand'])) {
-						$destroy = false;
+					if (isset($ppp['ondemand']) && !$destroy) {
 						interface_configure("wan");
 					}
 					break;
@@ -2229,7 +2228,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface);
+			interface_bring_down($interface, true);
 	}
 
 	/* wireless configuration? */

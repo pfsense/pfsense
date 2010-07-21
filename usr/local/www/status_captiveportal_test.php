@@ -35,7 +35,6 @@
 ##|*MATCH=status_captiveportal_test.php*
 ##|-PRIV
 
-$pgtitle = array("Status", "Captive portal", "Test Vouchers");
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -45,6 +44,7 @@ require_once("voucher.inc");
 
 include("head.inc");
 include("fbegin.inc");
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"));
 ?>
 
 <form action="status_captiveportal_test.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -52,10 +52,10 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array("Active Users", false, "status_captiveportal.php");
-        $tab_array[] = array("Active Vouchers", false, "status_captiveportal_vouchers.php");
-        $tab_array[] = array("Voucher Rolls", false, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array("Test Vouchers", true, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php");
+        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php");
+        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php");
+        $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.php");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>
@@ -64,16 +64,16 @@ include("fbegin.inc");
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="content pane">
   <tr>
-    <td valign="top" class="vncellreq">Voucher(s)</td>
+    <td valign="top" class="vncellreq"><?=gettext("Voucher(s)"); ?></td>
     <td class="vtable">
     <textarea name="vouchers" cols="65" rows="3" type="text" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
     <br>
-Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher.</td>      
+<?=gettext("Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher"); ?>.</td>      
   </tr>      
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <input name="Submit" type="submit" class="formbtn" value="Submit">
+    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
     </td>
   </tr>
 </table>

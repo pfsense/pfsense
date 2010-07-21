@@ -89,7 +89,7 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
 	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless", false), "interfaces_wireless.php");
+	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 	$tab_array[3] = array(gettext("VLANs"), true, "interfaces_vlan.php");
 	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");

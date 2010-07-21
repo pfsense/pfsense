@@ -94,13 +94,13 @@ include("head.inc");
 	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
 	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
-	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
-	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
+	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
 	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array("LAGG", true, "interfaces_lagg.php");
+	$tab_array[9] = array(gettext("LAGG"), true, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

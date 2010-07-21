@@ -384,7 +384,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
         <strong><?=gettext("Enable Pass-through MAC automatic additions"); ?></strong><br>
     <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again"); ?>. 
-    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> <?=gettext("or send a POST from another system to remove it"); ?>.
+    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it"); ?>.
     <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown"); ?>.
 	<br/><br/>
         <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
@@ -605,8 +605,8 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
         }
         ?>
         </select></br>
-        <?=getetxt("This option changes the MAC address format used in the whole RADIUS system. Change this if you also " .
-        "need to change the username format for RADIUS MAC authentication"); ?>.<br>
+        <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
+        <?=gettext("need to change the username format for RADIUS MAC authentication"); ?>.<br>
         <?=gettext("default"); ?>: 00:11:22:33:44:55<br>
         <?=gettext("singledash"); ?>: 001122-334455<br>
         <?=gettext("ietf"); ?>: 00-11-22-33-44-55<br>

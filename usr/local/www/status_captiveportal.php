@@ -51,7 +51,7 @@ if ($_GET['act'] == "del") {
 	exit;
 }
 
-$pgtitle = array("Status: Captive portal");
+$pgtitle = array(gettext("Status: Captive portal"));
 
 include("head.inc");
 
@@ -107,10 +107,10 @@ if ($_GET['order']) {
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array("Active Users", true, "status_captiveportal.php");
-        $tab_array[] = array("Active Vouchers", false, "status_captiveportal_vouchers.php");
-        $tab_array[] = array("Voucher Rolls", false, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array("Test Vouchers", false, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php");
+        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php");
+        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php");
+        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>
@@ -141,7 +141,7 @@ if ($_GET['order']) {
     <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm(gettext('Do you really want to disconnect this client?'))"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
   </tr>
 <?php endforeach; ?>
 </table>

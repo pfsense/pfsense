@@ -41,7 +41,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = array("Status","Filter Reload Status");
+$pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
 
 if(file_exists("{$g['varrun_path']}/filter_reload_status"))
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");
@@ -67,7 +67,7 @@ include("head.inc");
 
 <p>
 
-<div id="reloadinfo" name="reloadinfo">This page will automatically refresh every 3 seconds until the filter is done reloading.</div>
+<div id="reloadinfo" name="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
 
 
 

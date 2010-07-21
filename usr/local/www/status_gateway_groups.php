@@ -45,11 +45,11 @@ if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
-$changedesc = "Gateway Groups: ";
+$changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();
 
-$pgtitle = array("Status","Gateway Groups");
+$pgtitle = array(gettext("Status"),gettext("Gateway Groups"));
 include("head.inc");
 
 ?>
@@ -61,8 +61,8 @@ include("head.inc");
 		  <td>
 <?php
 			$tab_array = array();
-			$tab_array[0] = array("Gateways", false, "status_gateways.php");
-			$tab_array[1] = array("Groups", true, "status_gateway_groups.php");
+			$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
+			$tab_array[1] = array(gettext("Groups"), true, "status_gateway_groups.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -71,9 +71,9 @@ include("head.inc");
 	<div id="mainarea">
              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr">Group Name</td>
-                  <td width="50%" class="listhdrr">Gateways</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="20%" class="listhdrr"><?=gettext("Group Name"); ?></td>
+                  <td width="50%" class="listhdrr"><?=gettext("Gateways"); ?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 		</tr>
 			  <?php $i = 0; foreach ($a_gateway_groups as $gateway_group): ?>
                 <tr>
@@ -97,7 +97,7 @@ include("head.inc");
 
 			echo "<tr>";
 			foreach($priorities as $number => $tier) {
-				echo "<td width='120'>Tier $number</td>";
+				printf(gettext("%sTier %s%s"), "<td width='120'>", $number, "</td>");
 			}
 			echo "</tr>\n";
 
@@ -120,19 +120,19 @@ include("head.inc");
 						if($p == $c) {
 							$status = $gateways_status[$monitor]['status'];
 							if (stristr($status, "down")) {
-                                        			$online = "Offline";
+                                        			$online = gettext("Offline");
                                         			$bgcolor = "lightcoral";
                                 			} elseif (stristr($status, "loss")) {
-                                        			$online = "Warning, Packetloss";
+                                        			$online = gettext("Warning, Packetloss");
                                         			$bgcolor = "khaki";
                                 			} elseif (stristr($status, "delay")) {
-                                        			$online = "Warning, Latency";
+                                        			$online = gettext("Warning, Latency");
                                         			$bgcolor = "khaki";
                                 			} elseif ($status == "none") {
-                                        			$online = "Online";
+                                        			$online = gettext("Online");
                                         			$bgcolor = "lightgreen";
                                 			} else {
-								$online = "Unknown";
+								$online = gettext("Unknown");
 								$bgcolor = "lightblue";
 							}
 							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) .", $online</td>";

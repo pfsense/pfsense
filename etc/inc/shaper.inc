@@ -955,11 +955,9 @@ class priq_queue {
 				$this->SetQname($q['name']);
 		if (isset($q['interface']))
 				$this->SetInterface($q['interface']);
-		if ($q['bandwidth'] <> "") {
-			$this->SetBandwidth($q['bandwidth']);
-			if ($q['bandwidthtype'] <> "")
-				$this->SetBwscale($q['bandwidthtype']);
-		}
+		$this->SetBandwidth($q['bandwidth']);
+		if ($q['bandwidthtype'] <> "")
+			$this->SetBwscale($q['bandwidthtype']);
 		if (!empty($q['qlimit']))
 			$this->SetQlimit($q['qlimit']);
 		else
@@ -1091,14 +1089,12 @@ class priq_queue {
 		$form .= "<br /> <span class=\"vexpl\">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.";
 		$form .= "</span><br /></td>";
 		$form .= "</tr><tr>";
-/* 		HFSC actually does not use the priority at all.
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">Priority</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
 		$form .= htmlspecialchars($this->GetQpriority());
 		$form .= "\">";
 		$form .= "<br> <span class=\"vexpl\">For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.</span></td>";
 		$form .= "</tr>";
-*/
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">Queue limit</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"8\" value=\"";
@@ -1162,12 +1158,10 @@ class priq_queue {
 		$form .= "<td width=\"50%\" class=\"vncellreq\">";
 		$form .= "Bandwidth: " . $this->GetBandwidth().$this->GetBwscale();
 		$form .= "</td><td width=\"50%\"></td></tr>";
-/*		HFSC does not need priority.
 		$form .= "<tr><td width=\"20%\" class=\"vncellreq\">";
 		$tmpvalue = $this->GetQpriority();
 		if (!empty($tmpvalue))
 			$form .= "Priority: on </td></tr>";
-*/
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue))
 			$form .= "<tr><td class=\"vncellreq\">Default: on </td></tr>";

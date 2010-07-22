@@ -181,7 +181,7 @@ $styles = array('inverse' => 'Inverse',
 $graphs = array("day", "week", "month", "quarter", "year", "4year");
 $periods = array("current" => "Current Period", "previous" => "Previous Period");
 
-$pgtitle = array("Status","RRD Graphs");
+$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 include("head.inc");
 
 function get_dates($curperiod, $graph) {
@@ -283,7 +283,7 @@ function get_dates($curperiod, $graph) {
 				</tr>
 				<tr>
                                         <td colspan="2" class="list">
-					<?=gettext("Graphs:");?>
+					<?=gettext("Graphs");?>:
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 
@@ -295,7 +295,7 @@ function get_dates($curperiod, $graph) {
 							echo "<option value=\"{$database}\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $database));
 							if($curoption == $database) {
-								echo gettext(" selected ");
+								echo " selected";
 							}
 							echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 						}
@@ -327,7 +327,7 @@ function get_dates($curperiod, $graph) {
 								$prettyprint = ucwords(str_replace($search, $replace, $friendly));
 						}
 						if($curoption == $optionc) {
-							echo gettext(" selected ");
+							echo " selected";
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 
@@ -336,7 +336,7 @@ function get_dates($curperiod, $graph) {
 					?>
 					</select>
 
-					<?=gettext("Style:");?>
+					<?=gettext("Style");?>:
 					<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 					foreach ($styles as $style => $styled) {
@@ -350,12 +350,12 @@ function get_dates($curperiod, $graph) {
 					<?
 					if($curcat <> "custom") {
 					?>
-						<?=gettext("Period:");?>
+						<?=gettext("Period");?>:
 						<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 						<?php
 						foreach ($periods as $period => $value) {
 							echo "<option value=\"$period\"";
-							if ($period == $curperiod) echo gettext(" selected");
+							if ($period == $curperiod) echo " selected";
 							echo ">" . htmlspecialchars($value) . "</option>\n";
 						}
 					}

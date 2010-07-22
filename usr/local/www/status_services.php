@@ -55,7 +55,7 @@ function get_pkg_descr($package_name) {
 				return $pkg['descr'];
 		}
 	}
-	return "Not available.";
+	return gettext("Not available.");
 }
 
 if($_GET['mode'] == "restartservice" and $_GET['service']) {
@@ -100,7 +100,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			restart_service($_GET['service']);
 			break;
 	}
-	$savemsg = printf(gettext("%s has been restarted."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been restarted."),$_GET['service']);
 	sleep(5);
 }
 
@@ -143,7 +143,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			start_service($_GET['service']);
 			break;
 	}
-	$savemsg = printf(gettext("%s has been started."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been started."),$_GET['service']);
 	sleep(5);
 }
 
@@ -197,14 +197,14 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 			stop_service($_GET['service']);
 			break;
 	}
-	$savemsg = printf(gettext("%s has been stopped."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been stopped."),$_GET['service']);
 	sleep(5);
 }
 
 /* batch mode, allow other scripts to call this script */
 if($_GET['batch']) exit;
 
-$pgtitle = array("Status","Services");
+$pgtitle = array(gettext("Status"),gettext("Services"));
 include("head.inc");
 
 ?>
@@ -325,7 +325,7 @@ foreach (array('server', 'client') as $mode) {
 				$pconfig['name'] = "openvpn";
 				$pconfig['mode'] = $mode;
 				$pconfig['id'] = $id;
-				$pconfig['description'] = "OpenVPN ".$mode.": ".htmlspecialchars($setting['description']);
+				$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
 				$services[] = $pconfig;
 				unset($pconfig);
 			}
@@ -347,10 +347,10 @@ if($services) {
 		}
 		if($running) {
 			echo '<td class="listr"><center>';
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> Running</td>";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>";
 		} else {
 			echo '<td class="listbg"><center>';
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">Stopped</td>";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Stopped") . "</td>";
 		}
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
@@ -359,13 +359,13 @@ if($services) {
 			} else {
 				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			}
-			echo "<img title='Restart Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
+			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
 			if ($service['name'] == "openvpn") {
 				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
 			} else {
 				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'> ";
 			}
-			echo "<img title='Stop Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'> ";
+			echo "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'> ";
 			echo "</a>";
 		} else {
 			if ($service['name'] == "openvpn") {
@@ -374,13 +374,13 @@ if($services) {
 				echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			}
 			
-			echo "<img title='Start Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a> ";
+			echo "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a> ";
 		}
 		echo '</td>';
 		echo '</tr>';
 	}
 } else {
-	echo "<tr><td colspan=\"3\"><center>No services found.</td></tr>";
+	echo "<tr><td colspan=\"3\"><center>" . gettext("No services found") . ".</td></tr>";
 }
 
 ?>

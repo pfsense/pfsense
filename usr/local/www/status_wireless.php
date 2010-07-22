@@ -85,7 +85,7 @@ display_top_tabs($tab_array);
 
 
 	/* table header */
-	printf(gettext("%s%s%sNearby access points or ad-hoc peers.%s%s%s\n"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>');
+	printf(gettext("%s%s%sNearby access points or ad-hoc peers.%s%s%s%s"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
 	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>SSID</td>";
@@ -132,7 +132,7 @@ display_top_tabs($tab_array);
 
 	/* table header */
         print "\n<tr>";
-	printf(gettext("%s%s%sAssociated or ad-hoc peers.%s%s%s\n"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>');
+	printf(gettext("%s%s%sAssociated or ad-hoc peers.%s%s%s%s"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>ADDR</td>";
 	print "<td><b><font color='#ffffff'>AID</td>";

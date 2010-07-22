@@ -74,7 +74,7 @@ if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
    <tr>
      <td class="tabcont" >
       <form action="status_upnp.php" method="post">
-      <input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /><?=gettext(" all currently connected sessions.");?>
+      <input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /> <?=gettext("all currently connected sessions");?>.
     </form>
     </td>
    </tr>
@@ -82,10 +82,10 @@ if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
     <td class="tabcont" >
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
     	<tr>
-          <td width="10%" class="listhdrr"><?=gettext("Port")?></td>
-          <td width="10%" class="listhdrr"><?=gettext("Protocol")?></td>
-          <td width="20%" class="listhdrr"><?=gettext("Internal IP")?></td>
-          <td width="60%" class="listhdr"><?=gettext("Description")?></td>
+          <td width="10%" class="listhdrr"><?=gettext("Port");?></td>
+          <td width="10%" class="listhdrr"><?=gettext("Protocol");?></td>
+          <td width="20%" class="listhdrr"><?=gettext("Internal IP");?></td>
+          <td width="60%" class="listhdr"><?=gettext("Description");?></td>
 		</tr>
 		<?php $i = 0; foreach ($rdr_entries as $rdr_entry) {
 			if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches))

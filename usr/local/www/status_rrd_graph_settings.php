@@ -49,13 +49,13 @@ $pconfig['category'] = $config['rrd']['category'];
 $pconfig['style'] = $config['rrd']['style'];
 
 $curcat = "settings";
-$categories = array('system' => 'System',
-		'traffic' => 'Traffic',
-		'packets' => 'Packets',
-		'quality' => 'Quality',
-		'queues' => 'Queues');
-$styles = array('inverse' => 'Inverse',
-		'absolute' => 'Absolute');
+$categories = array('system' => gettext("System"),
+		'traffic' => gettext("Traffic"),
+		'packets' => gettext("Packets"),
+		'quality' => gettext("Quality"),
+		'queues' => gettext("Queues"));
+$styles = array('inverse' => gettext("Inverse"),
+		'absolute' => gettext("Absolute"));
 
 if ($_POST) {
 
@@ -93,7 +93,7 @@ foreach($databases as $database) {
 	}
 }
 
-$pgtitle = array("Status","RRD Graphs");
+$pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 include("head.inc");
 
 ?>
@@ -108,29 +108,29 @@ include("head.inc");
 			<?php
                                 $tab_array = array();
                                 if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("System", $tabactive, "status_rrd_graph.php?cat=system");
+                                $tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
                                 if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Traffic", $tabactive, "status_rrd_graph.php?cat=traffic");
+                                $tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
                                 if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
+                                $tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
                                 if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
+                                $tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
 				if($queues) {
 	                                if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+					$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
 					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+					$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				}
 				if($wireless) {
 	                                if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+					$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
 				}
 				if($cellular) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+					$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
 				}
                                 if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
+                                $tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
                                 display_top_tabs($tab_array);
                         ?>
                 </td>
@@ -140,20 +140,20 @@ include("head.inc");
                         <div id="mainarea">
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
-				<td width="22%" valign="top" class="vtable">RRD Graphs</td>
+				<td width="22%" valign="top" class="vtable"><?=gettext("RRD Graphs");?></td>
 				<td width="78%" class="vtable">
-					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo gettext("checked"); ?> onClick="enable_change(false)">
 					<b><?=gettext("Enables the RRD graphing backend.");?></b>
 				</td>
 			</tr>
 			<tr>
-                        	<td width="22%" valign="top" class="vtable">Default category</td>
+                        	<td width="22%" valign="top" class="vtable"><?=gettext("Default category");?></td>
 	                        <td width="78%" class="vtable">
 					<select name="category" id="category" class="formselect" style="z-index: -10;" >
 					<?php
 					foreach ($categories as $category => $categoryd) {
 						echo "<option value=\"$category\"";
-						if ($category == $pconfig['category']) echo " selected";
+						if ($category == $pconfig['category']) echo gettext(" selected");
 						echo ">" . htmlspecialchars($categoryd) . "</option>\n";
 					}
 					?>
@@ -162,13 +162,13 @@ include("head.inc");
 				</td>
 			</tr>
 			<tr>
-                        	<td width="22%" valign="top" class="vtable">Default style</td>
+                        	<td width="22%" valign="top" class="vtable"><?=gettext("Default style");?></td>
 	                        <td width="78%" class="vtable">
 					<select name="style" class="formselect" style="z-index: -10;" >
 					<?php
 					foreach ($styles as $style => $styled) {
 						echo "<option value=\"$style\"";
-						if ($style == $pconfig['style']) echo " selected";
+						if ($style == $pconfig['style']) echo gettext(" selected");
 						echo ">" . htmlspecialchars($styled) . "</option>\n";
 					}
 					?>
@@ -179,12 +179,12 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red">Note:</span></strong><br>
+				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br>
 					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please 
 					take this into account after changing the style.");?>
 				</td>

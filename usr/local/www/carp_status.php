@@ -107,7 +107,7 @@ include("head.inc");
 			<p>
 			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td class="listhdrr"><b><center>Carp Interface</center></b></td>
+					<td class="listhdrr"><b><center>CARP Interface</center></b></td>
 					<td class="listhdrr"><b><center>Virtual IP</center></b></td>
 					<td class="listhdrr"><b><center>Status</center></b></td>
 				</tr>

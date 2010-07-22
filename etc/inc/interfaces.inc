@@ -2765,7 +2765,7 @@ function find_carp_interface($ip) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
 				$carp_ip = get_interface_ip($vip['interface']);
-				$if = `ifconfig | grep '$ip' -B1 | head -n1 | cut -d: -f1`;
+				$if = `ifconfig | grep '$ip ' -B1 | head -n1 | cut -d: -f1`;
 				if ($if)
 					return $if;
 			}

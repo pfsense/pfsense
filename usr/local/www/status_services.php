@@ -100,7 +100,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			restart_service($_GET['service']);
 			break;
 	}
-	$savemsg = "{$_GET['service']} has been restarted.";
+	$savemsg = printf(gettext("%s has been restarted."),$_GET['service']);
 	sleep(5);
 }
 
@@ -143,7 +143,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			start_service($_GET['service']);
 			break;
 	}
-	$savemsg = "{$_GET['service']} has been started.";
+	$savemsg = printf(gettext("%s has been started."),$_GET['service']);
 	sleep(5);
 }
 
@@ -197,7 +197,7 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 			stop_service($_GET['service']);
 			break;
 	}
-	$savemsg = "{$_GET['service']} " . gettext("has been stopped.");
+	$savemsg = printf(gettext("%s has been stopped."),$_GET['service']);
 	sleep(5);
 }
 
@@ -224,9 +224,9 @@ include("fbegin.inc");
     <td>
     <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
-	  <td class="listhdrr"><b><center>Service</center></b></td>
-	  <td class="listhdrr"><b><center>Description</center></b></td>
-	  <td class="listhdrr"><b><center>Status</center></b></td>
+	  <td class="listhdrr"><b><center><?=gettext("Service");?></center></b></td>
+	  <td class="listhdrr"><b><center><?=gettext("Description");?></center></b></td>
+	  <td class="listhdrr"><b><center><?=gettext("Status");?></center></b></td>
 	</tr>
 
 <?php
@@ -244,19 +244,19 @@ $services = $config['installedpackages']['service'];
  */
 if(isset($config['dnsmasq']['enable'])) {
 	$pconfig['name'] = "dnsmasq";
-	$pconfig['description'] = "DNS Forwarder";
+	$pconfig['description'] = gettext("DNS Forwarder");
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
 $pconfig['name'] = "ntpd";
-$pconfig['description'] = "NTP clock sync";
+$pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
 unset($pconfig);
 
 if(isset($config['captiveportal']['enable'])) {
 	$pconfig['name'] = "lighttpd";
-	$pconfig['description'] = "Captive Portal";
+	$pconfig['description'] = gettext("Captive Portal");
 	$services[] = $pconfig;
 	$pconfig = "";
 	unset($pconfig);
@@ -277,28 +277,28 @@ foreach($iflist as $if) {
 
 if($show_dhcprelay == true) {
 	$pconfig['name'] = "dhcrelay";
-	$pconfig['description'] = "DHCP Relay";
+	$pconfig['description'] = gettext("DHCP Relay");
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
 if(is_dhcp_server_enabled()) {
 	$pconfig['name'] = "dhcpd";
-	$pconfig['description'] = "DHCP Service";
+	$pconfig['description'] = gettext("DHCP Service");
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
 	$pconfig['name'] = "bsnmpd";
-	$pconfig['description'] = "SNMP Service";
+	$pconfig['description'] = gettext("SNMP Service");
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
 if (count($config['igmpproxy']['igmpentry']) > 0) {
 	$pconfig['name'] = "igmpproxy";
-	$pconfig['descritption'] = "IGMP proxy";
+	$pconfig['descritption'] = gettext("IGMP proxy");
 	$services[] = $pconfig;
 	unset($pconfig);
 }

@@ -245,31 +245,31 @@ function get_dates($curperiod, $graph) {
 			<?php
 			        $tab_array = array();
 				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("System", $tabactive, "status_rrd_graph.php?cat=system");
+			        $tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
 				if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Traffic", $tabactive, "status_rrd_graph.php?cat=traffic");
+			        $tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
 				if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
+			        $tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
 				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
+			        $tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
 				if($queues) {
 					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+					$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
 					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+					$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				}
 				if($wireless) {
 					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-				        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+				        $tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
 				}
 				if($cellular) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-				        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+				        $tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Custom", $tabactive, "status_rrd_graph.php?cat=custom");
+			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
+			        $tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);
 			?>
                 </td>
@@ -295,7 +295,7 @@ function get_dates($curperiod, $graph) {
 							echo "<option value=\"{$database}\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $database));
 							if($curoption == $database) {
-								echo " selected ";
+								echo gettext(" selected ");
 							}
 							echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 						}
@@ -327,7 +327,7 @@ function get_dates($curperiod, $graph) {
 								$prettyprint = ucwords(str_replace($search, $replace, $friendly));
 						}
 						if($curoption == $optionc) {
-							echo " selected ";
+							echo gettext(" selected ");
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 
@@ -355,7 +355,7 @@ function get_dates($curperiod, $graph) {
 						<?php
 						foreach ($periods as $period => $value) {
 							echo "<option value=\"$period\"";
-							if ($period == $curperiod) echo " selected";
+							if ($period == $curperiod) echo gettext(" selected");
 							echo ">" . htmlspecialchars($value) . "</option>\n";
 						}
 					}

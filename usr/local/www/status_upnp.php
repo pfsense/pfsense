@@ -45,7 +45,7 @@ require("guiconfig.inc");
 if ($_POST) {
 	if ($_POST['clear'] == "Clear") {
 		upnp_action('restart');
-		$savemsg = "Rules have been cleared and the daemon restarted";
+		$savemsg = gettext("Rules have been cleared and the daemon restarted");
 	}
 }
 
@@ -55,7 +55,7 @@ exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 $now = time();
 $year = date("Y");
 
-$pgtitle = array("Status","UPnP &amp; NAT-PMP Status");
+$pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP Status"));
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -74,7 +74,7 @@ if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
    <tr>
      <td class="tabcont" >
       <form action="status_upnp.php" method="post">
-      <input type="submit" name="clear" id="clear" value="Clear" /> all currently connected sessions.
+      <input type="submit" name="clear" id="clear" value="<?=gettext("Clear");?>" /><?=gettext(" all currently connected sessions.");?>
     </form>
     </td>
    </tr>

@@ -425,45 +425,14 @@ EOD;
 	foreach ($cpips as $cpip)
 		$ips .= "or {$cpip} ";
 	$ips = "{ {$ips} }";
-	//# allow access to our DHCP server (which needs to be able to ping clients as well)
-	$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$ips} 67 in \n";
+	$cprules .= "add {$rulenum} set 1 pass ip from any to {$ips} in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$ips} 67 in \n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass udp from {$ips} 67 to any 68 out \n";
+	$cprules .= "add {$rulenum} set 1 pass ip from {$ips} to any out\n";
 	$rulenum++;
 	$cprules .= "add {$rulenum} set 1 pass icmp from {$ips} to any out icmptype 0\n";
 	$rulenum++;
 	$cprules .= "add {$rulenum} set 1 pass icmp from any to {$ips} in icmptype 8 \n";
 	$rulenum++;
-	//# allow access to our DNS forwarder
-	$cprules .= "add {$rulenum} set 1 pass udp from any to {$ips} 53 in \n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass udp from {$ips} 53 to any out \n";
-	$rulenum++;
-	# allow access to our web server
-	$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} 8000 in \n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} 8000 to any out \n";
-
-	if (isset($config['captiveportal']['httpslogin'])) {
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} 8001 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} 8001 to any out \n";
-	}
-	if (!empty($config['system']['webgui']['port']))
-		$port = $config['system']['webgui']['port'];
-	else if ($config['system']['webgui']['proto'] == "http")
-		$port = 80;
-	else
-		$port = 443;
-	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} {$port} in \n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} {$port} to any out \n";
-	$rulenum++;
-
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} allow ip from table(3) to any in\n";
 	$rulenum++;

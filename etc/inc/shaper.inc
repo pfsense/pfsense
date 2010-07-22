@@ -333,11 +333,9 @@ class altq_root_queue {
 	function ReadConfig(&$conf) {
 		if (isset($conf['tbrconfig']))
 			$this->SetTbrConfig($conf['tbrconfig']);
-		if ($conf['bandwidth'] <> "") {
-			$this->SetBandwidth($conf['bandwidth']);
-			if ($conf['bandwidthtype'] <> "")
-				$this->SetBwscale($conf['bandwidthtype']);
-		}
+		$this->SetBandwidth($conf['bandwidth']);
+		if ($conf['bandwidthtype'] <> "")
+			$this->SetBwscale($conf['bandwidthtype']);
 		if (isset($conf['scheduler'])) {
 			if ($this->GetScheduler() != $conf['scheduler']) {
 				foreach ($this->queues as $q) {
@@ -517,10 +515,11 @@ class altq_root_queue {
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
-			if ($this->GetBandwidth())
+			if ($this->GetBandwidth()) {
 				$rules .= " bandwidth ".trim($this->GetBandwidth());
-			if ($this->GetBwscale())
-				$rules .= $this->GetBwscale();
+				if ($this->GetBwscale())
+					$rules .= $this->GetBwscale();
+			}
 			if ($this->GetTbrConfig())
 				$rules .= " tbrsize ".$this->GetTbrConfig();
 			if (count($this->queues)) {

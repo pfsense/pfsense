@@ -70,6 +70,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];
+	$pconfig['sn'] = $a_allowedips[$id]['sn'];
 	$pconfig['dir'] = $a_allowedips[$id]['dir'];
 	$pconfig['bw_up'] = $a_allowedips[$id]['bw_up'];
 	$pconfig['bw_down'] = $a_allowedips[$id]['bw_down'];
@@ -108,6 +109,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ip = array();
 		$ip['ip'] = $_POST['ip'];
+		$ip['sn'] = $_POST['sn'];
 		$ip['dir'] = $_POST['dir'];
 		$ip['descr'] = $_POST['descr'];
 		if ($_POST['bw_up'])
@@ -116,9 +118,13 @@ if ($_POST) {
                         $ip['bw_down'] = $_POST['bw_down'];
 		if (isset($id) && $a_allowedips[$id]) {
 			$oldip = $a_allowedips[$id]['ip'];
+			if (!empty($a_allowedips[$id]['sn']))
+				$oldip .= "/{$a_allowedips[$id]['sn']}";
 			$a_allowedips[$id] = $ip;
 		} else {
 			$oldip = $ip['ip'];
+			if (!empty($$ip['sn']))
+				$oldip .= "/{$$ip['sn']}";
 			$a_allowedips[] = $ip;
 		}
 		allowedips_sort();
@@ -168,6 +174,11 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
+		    <select name='sn' class="formselect" id='sn'>
+			<?php for ($i = 32; $i >= 1; $i--): ?>
+			<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected"; ?>><?=$i;?></option>
+			<?php endfor; ?>
+		    </select>
                     <br> 
                     <span class="vexpl">IP address</span></td>
                 </tr>

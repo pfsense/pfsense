@@ -886,14 +886,17 @@ function captiveportal_allowedip_configure_entry($ipent) {
                 $bw_up = $ruleno + 20000;
         	$rules .= "pipe {$bw_up} config bw {$ipent['bw_up']}Kbit/s queue 100\n";
         }
+	$subnet = "";
+	if (!empty($ipent['sn']))
+		$subnet = "/{$ipent['sn']}";
 	foreach ($tablein as $table)
-               $rules .= "table {$table} add {$ipent['ip']} {$bw_up}\n";
+               $rules .= "table {$table} add {$ipent['ip']}{$subnet} {$bw_up}\n";
         if ($enBwdown) {
                $bw_down = $ruleno + 20001;
                $rules .= "pipe {$bw_down} config bw {$ipent['bw_down']}Kbit/s queue 100\n";
         }
         foreach ($tableout as $table)
-        	$rules .= "table {$table} add {$ipent['ip']} {$bw_down}\n";
+        	$rules .= "table {$table} add {$ipent['ip']}{$subnet} {$bw_down}\n";
 
 	return $rules;
 }

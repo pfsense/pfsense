@@ -59,10 +59,16 @@ if ($_GET['act'] == "del") {
 		$ipent = $a_allowedips[$_GET['id']];
 		
 		if (isset($config['captiveportal']['enable'])) {
+			if (!empty($ipent['sn']))
+				$ipent['ip'] .= "/{$ipent['sn']}";
 			mwexec("/sbin/ipfw table 3 delete " . $ipent['ip']);
 			mwexec("/sbin/ipfw table 4 delete " . $ipent['ip']);
 			mwexec("/sbin/ipfw table 5 delete " . $ipent['ip']);
 			mwexec("/sbin/ipfw table 6 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 7 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 8 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 9 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 10 delete " . $ipent['ip']);
 		}
 			
 		unset($a_allowedips[$_GET['id']]);

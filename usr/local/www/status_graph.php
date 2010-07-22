@@ -59,7 +59,7 @@ if ($_GET['if'])
 else
 	$curif = "wan";
 
-$pgtitle = array("Status","Traffic Graph");
+$pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
 include("head.inc");
 
@@ -149,7 +149,7 @@ function updateBandwidthHosts(data){
 
 <?php include("fbegin.inc"); ?>
 <?php
-$ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+$ifdescrs = array('wan' => gettext('WAN'), 'lan' => gettext('LAN'));
 
 for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	if(isset($config['interfaces']['opt' . $j]['enable']))
@@ -173,7 +173,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 </form>
-<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG Viewer</a>, Firefox 1.5 or later or other browser supporting SVG is required to view the graph.
+<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.
 <p><form method="post" action="status_graph.php">
 </form>
 <p>
@@ -181,15 +181,15 @@ foreach ($ifdescrs as $ifn => $ifd) {
     <div class="widgetdiv" style="padding: 5px; float:left; width:46%">
         <object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
             <param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
-            Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin.
+            <?=gettext("Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin"); ?>.
         </object>
     </div>
     <div class="widgetdiv" style="padding: 5px; float:right; width:48%">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td class="listtopic" valign="top">Host IP</td>
-                <td class="listtopic" valign="top">Bandwidth In</td>
-                <td class="listtopic" valign="top">Bandwidth Out</td>
+                <td class="listtopic" valign="top"><?=gettext("Host IP"); ?></td>
+                <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
+                <td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
            </tr>
            <tr id="host0" style="display:none">
                 <td id="hostip0" class="vncell">

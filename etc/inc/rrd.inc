@@ -174,6 +174,7 @@ function enable_rrd_graphing() {
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
 	$cellular = "-cellular.rrd";
+	$vpn = "-vpn.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -197,6 +198,7 @@ function enable_rrd_graphing() {
 	$rrdprocinterval = 60;
 	$rrdmeminterval = 60;
 	$rrdcellularinterval = 60;
+	$rrdvpninterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -209,6 +211,7 @@ function enable_rrd_graphing() {
 	$procvalid = $rrdlbpoolinterval * 2;
 	$memvalid = $rrdmeminterval * 2;
 	$cellularvalid = $rrdcellularinterval * 2;
+	$cellvpnvalid = $rrdvpninterval * 2;
 
 	/* Asume GigE for now */
 	$downstream = 125000000;
@@ -251,6 +254,12 @@ function enable_rrd_graphing() {
 		$i = 0;
 		$ifdescrs = get_configured_interface_with_descr();
 		$ifdescrs['ipsec'] = "IPsec";
+		if(is_array($config['openvpn']['openvpn-server'])) {
+			foreach($config['openvpn']['openvpn-server'] as $server) {
+				$serverid = "ovpns" . $server['vpnid'];
+				$ifdescrs[$serverid] = "{$server['description']}";
+			}
+		}
 
 		foreach ($ifdescrs as $ifname => $ifdescr) {
 			$temp = get_real_interface($ifname);

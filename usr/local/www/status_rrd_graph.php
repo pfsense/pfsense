@@ -192,7 +192,7 @@ function get_dates($curperiod, $graph) {
 	$curyear = date('Y', $now);
 	$curmonth = date('m', $now);
 	$curweek = date('W', $now);
-	$curweekday = date('w', $now);
+	$curweekday = date('N', $now) - 1; // We want to start on monday
 	$curday = date('d', $now);
 
 	switch($curperiod) {
@@ -208,8 +208,16 @@ function get_dates($curperiod, $graph) {
 			$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
-			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $offset), $curyear);
-			$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + 7), $curyear);
+			switch($offset) {
+				case 0;
+					$weekoffset = 0;
+					break;
+				default:
+					$weekoffset = ($offset * 7) - 7;
+					break;
+			}
+			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
+			$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
 			break;
 		case "month":
 			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);

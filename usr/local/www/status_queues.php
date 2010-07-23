@@ -99,7 +99,7 @@ foreach($pfctl_vsq_array as $pfctl) {
 	}
 }
 
-$pgtitle = array("Status","Traffic shaper","Queues");
+$pgtitle = array(gettext("Status"),gettext("Traffic shaper"),gettext("Queues"));
 include("head.inc");
 
 ?>
@@ -108,7 +108,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php
 if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 1) {
-	echo "Traffic shaping is not configured.";
+	echo gettext("Traffic shaping is not configured.");
 	include("fend.inc");
 	exit;	
 }
@@ -136,8 +136,8 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 </script>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td class="listhdr" colspan="1">Queue</td>
-			<td class="listhdr" colspan="6">Statistics</td>
+                        <td class="listhdr" colspan="1"><?=gettext("Queue"); ?></td>
+			<td class="listhdr" colspan="6"><?=gettext("Statistics"); ?></td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
 		      <tr><td bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
@@ -156,7 +156,7 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
 			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			echo "<nobr>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}pps' id='queue{$i}pps' value='(Loading)' align='left'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}pps' id='queue{$i}pps' value='(" . gettext("Loading") . ")' align='left'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
@@ -170,9 +170,9 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
                       <?php $i++; endforeach; $total_queues = $i; ?>
                     </table>
 		    <p>
-                    <strong><span class="red">Note:</span></strong><strong><br></strong>
-		      Queue graphs take 5 seconds to sample data.<br>
-                      You can configure the Traffic Shaper <a href="/firewall_shaper_wizards.php">here</a>.
+                    <strong><span class="red"><?=gettext("Note"); ?>:</span></strong><strong><br></strong>
+		      <?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br>
+                      <?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
 		    </p>
             </form>
 <?php include("fend.inc"); ?>

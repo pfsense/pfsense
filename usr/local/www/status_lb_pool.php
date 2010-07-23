@@ -55,7 +55,7 @@ if (!$nentries)
 $now = time();
 $year = date("Y");
 
-$pgtitle = array("Status","Load Balancer","Pool");
+$pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Pool"));
 include("head.inc");
 
 ?>
@@ -67,8 +67,8 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Pools", true, "status_lb_pool.php");
-        $tab_array[] = array("Virtual Servers", false, "status_lb_vs.php");
+        $tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
+        $tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
@@ -77,11 +77,11 @@ include("head.inc");
 	<div id="mainarea">
               <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" name="sortabletable" id="sortabletable">
                 <tr>
-                  <td width="10%" class="listhdrr">Name</td>
-				  <td width="10%" class="listhdrr">Type</td>
-                  <td width="10%" class="listhdrr">Gateways</td>
-                  <td width="30%" class="listhdrr">Status</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="10%" class="listhdrr"><?=gettext("Name");?></td>
+				  <td width="10%" class="listhdrr"><?=gettext("Type");?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("Gateways");?></td>
+                  <td width="30%" class="listhdrr"><?=gettext("Status");?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description");?></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_pool as $vipent):
 				if ($vipent['type'] == "gateway") {
@@ -126,21 +126,21 @@ include("head.inc");
 							$lastchange = "$date[0] $date[1] $year $date[2]";
 						}
 						if(stristr($poolstatus, $monitorip)) {
-							$online = "Online";
+							$online = gettext("Online");
 							$bgcolor = "lightgreen";
 							$change = $now - strtotime("$lastchange");
 							if($change < 300) {
 								$bgcolor = "khaki";
 							}
 						} else {
-							$online = "Offline";
+							$online = gettext("Offline");
 							$bgcolor = "lightcoral";
 						}
 						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
 						if($lastchange <> "") {
-							PRINT "Last change $lastchange";
+							PRINTF(gettext("Last change %s"),$lastchange);
 						} else {
-							PRINT "No changes found in logfile";
+							PRINT(gettext("No changes found in logfile"));
 						}
 						PRINT "</td></tr>";
                                         }

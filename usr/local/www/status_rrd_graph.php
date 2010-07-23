@@ -109,9 +109,9 @@ if ($_GET['option']) {
 					continue 2;
 				}
 			}
-		case "vpn":
+		case "vpnusers":
 			foreach($databases as $database) {
-				if(preg_match("/[-]vpn\.rrd/i", $database)) {
+				if(preg_match("/[-]vpnusers\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the VPN graphs */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
@@ -167,7 +167,7 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-quality.rrd",
 		"allgraphs-wireless.rrd",
 		"allgraphs-cellular.rrd",
-		"allgraphs-vpn.rrd",
+		"allgraphs-vpnusers.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -176,17 +176,17 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-traffic.rrd");
 
 foreach($databases as $database) {
-	if(stristr($database, "wireless")) {
+	if(stristr($database, "-wireless")) {
 		$wireless = true;
 	}
-	if(stristr($database, "queues")) {
+	if(stristr($database, "-queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "cellular")) {
+	if(stristr($database, "-cellular")) {
 		$cellular = true;
 	}
-	if(stristr($database, "vpn")) {
-		$vpn = true;
+	if(stristr($database, "-vpnusers")) {
+		$vpnusers = true;
 	}
 }
 /* append the existing array to the header */
@@ -278,9 +278,9 @@ function get_dates($curperiod, $graph) {
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($queues) {
 					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+						$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
 					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+						$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				}
 				if($wireless) {
 					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
@@ -290,9 +290,9 @@ function get_dates($curperiod, $graph) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
 				}
-				if($vpn) {
-					if($curcat == "vpn") { $tabactive = True; } else { $tabactive = False; }
-				        $tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpn");
+				if($vpnusers) {
+					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpnusers");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Custom", $tabactive, "status_rrd_graph.php?cat=custom");

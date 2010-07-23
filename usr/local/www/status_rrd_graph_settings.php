@@ -106,32 +106,39 @@ include("head.inc");
         <tr>
                 <td>
 			<?php
-                                $tab_array = array();
-                                if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("System", $tabactive, "status_rrd_graph.php?cat=system");
-                                if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Traffic", $tabactive, "status_rrd_graph.php?cat=traffic");
-                                if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
-                                if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
+				$tab_array = array();
+				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array("System", $tabactive, "status_rrd_graph.php?cat=system");
+				if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array("Traffic", $tabactive, "status_rrd_graph.php?cat=traffic");
+				if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
+				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($queues) {
-	                                if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
 					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+						$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				}
 				if($wireless) {
-	                                if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
 				}
 				if($cellular) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+						$tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
 				}
-                                if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
-                                display_top_tabs($tab_array);
+				if($vpnusers) {
+					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpnusers");
+				}
+				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Custom", $tabactive, "status_rrd_graph.php?cat=custom");
+				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
+				
+				display_top_tabs($tab_array);
                         ?>
                 </td>
         </tr>

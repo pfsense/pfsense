@@ -55,7 +55,7 @@ if ($_GET['if']) {
 	exit;
 }
 
-$pgtitle = array("Status","Interfaces");
+$pgtitle = array(gettext("Status"),gettext("Interfaces"));
 include("head.inc");
 
 ?>
@@ -76,11 +76,11 @@ include("head.inc");
 <?php endif; ?>
 	<tr>
 		<td colspan="2" class="listtopic">
-			<?=htmlspecialchars($ifname);?> interface (<?=htmlspecialchars($ifinfo['hwif']);?>)
+			<?=htmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=htmlspecialchars($ifinfo['hwif']);?>)
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" class="vncellt">Status</td>
+		<td width="22%" class="vncellt"><?=gettext("Status"); ?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['status']);?>
 		</td>
@@ -104,7 +104,7 @@ include("head.inc");
 	</tr>
 	<?php endif; if ($ifinfo['pppoelink']): ?>
 	<tr>
-		<td width="22%" class="vncellt">PPPoE</td>
+		<td width="22%" class="vncellt"><?=gettext("PPPoE"); ?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['pppoelink'] == "up"): ?>
@@ -119,7 +119,7 @@ include("head.inc");
 	</tr>
 	<?php  endif; if ($ifinfo['pptplink']): ?>
 	<tr>
-		<td width="22%" class="vncellt">PPTP</td>
+		<td width="22%" class="vncellt"><?=gettext("PPTP"); ?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['pptplink'] == "up"): ?>
@@ -134,7 +134,7 @@ include("head.inc");
 	</tr>
 	<?php  endif; if ($ifinfo['ppplink']): ?>
 	<tr>
-		<td width="22%" class="vncellt">PPP</td>
+		<td width="22%" class="vncellt"><?=gettext("PPP"); ?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pppinfo']);?>
 			<?php if ($ifinfo['ppplink'] == "up"): ?>
@@ -314,9 +314,9 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("Interrupts/Second");?></td>
 		<td width="78%" class="listr">
 			<?php
-				echo $interrupt_total . " total";
+				echo $interrupt_total . " " . gettext("total");
 				echo "<br/>";
-				echo $interrupt_sec . " rate";
+				echo $interrupt_sec . " " . gettext("rate");
 			?>
 		</td>
 	</tr>

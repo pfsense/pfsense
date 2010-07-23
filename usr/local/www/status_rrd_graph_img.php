@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*	
-	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/rm	/usr/local/bin/rrdtool
+	pfSense_BUILDER_BINARIES:	/bin/rm	/usr/local/bin/rrdtool
 	pfSense_MODULE:	system
 */
 
@@ -40,7 +40,7 @@ require_once("rrd.inc");
 $pgtitle = array("System","RRD Graphs","Image viewer");
 
 if ($_GET['database']) {
-	$curdatabase = $_GET['database'];
+	$curdatabase = basename($_GET['database']);
 } else {
 	$curdatabase = "wan-traffic.rrd";
 }
@@ -146,8 +146,9 @@ $havg = timeDiff($average, $defOptions);
 $hperiod = timeDiff($seconds, $defOptions);
 $data = true;
 
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+$rrddbpath = "/var/db/rrd/";
+chdir($rrddbpath);
+$databases = glob("*.rrd");
 rsort($databases);
 
 /* compare bytes/sec counters, divide bps by 8 */

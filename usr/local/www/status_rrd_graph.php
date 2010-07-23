@@ -49,7 +49,9 @@ if(! isset($config['rrd']['enable'])) {
 }
 
 $rrddbpath = "/var/db/rrd/";
-$databases = glob("{$rrddbpath}*.rrd");
+chdir($rrddbpath);
+$databases = glob("*.rrd");
+
 
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];
@@ -206,8 +208,8 @@ function get_dates($curperiod, $graph) {
 			$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
-			$start = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) - $offset), $curyear);
-			$end = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) + 7), $curyear);
+			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $offset), $curyear);
+			$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + 7), $curyear);
 			break;
 		case "month":
 			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
@@ -330,7 +332,6 @@ function get_dates($curperiod, $graph) {
 							echo " selected ";
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
-
 					}
 
 					?>

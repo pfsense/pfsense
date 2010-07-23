@@ -43,7 +43,7 @@
 ##|*MATCH=status_openvpn.php*
 ##|-PRIV
 
-$pgtitle = array("Status", "OpenVPN");
+$pgtitle = array(gettext("Status"), gettext("OpenVPN"));
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -56,7 +56,7 @@ if($_GET['action']) {
 			$retval = kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
-			echo "invalid input";
+			echo gettext("invalid input");
 		}
 		exit;
 	}
@@ -132,19 +132,19 @@ include("head.inc"); ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
-			Client connections for <?=$server['name'];?>
+			<?=gettext("Client connections for"); ?> <?=$server['name'];?>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
-				<td class="listhdrr">Common Name</td>
-				<td class="listhdrr">Real Address</td>
-				<td class="listhdrr">Virtual Address</td>
-				<td class="listhdrr">Connected Since</td>
-				<td class="listhdrr">Bytes Sent</td>
-				<td class="listhdrr">Bytes Received</td>
+				<td class="listhdrr"><?=gettext("Common Name"); ?></td>
+				<td class="listhdrr"><?=gettext("Real Address"); ?></td>
+				<td class="listhdrr"><?=gettext("Virtual Address"); ?></td>
+				<td class="listhdrr"><?=gettext("Connected Since"); ?></td>
+				<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
+				<td class="listhdrr"><?=gettext("Bytes Received"); ?></td>
 			</tr>
 
 			<?php foreach ($server['conns'] as $conn): ?>
@@ -171,7 +171,7 @@ include("head.inc"); ?>
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
 					   onclick="killClient('<?php echo $server['port']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
-					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
+					   title='<?=gettext("Kill client connection from"); ?> <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>
 			</tr>
 
@@ -193,19 +193,19 @@ include("head.inc"); ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
-			OpenVPN client instances statistics
+			<?=gettext("OpenVPN client instances statistics"); ?>
 		</td>
 	</tr>
 	<tr>
 		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td class="listhdrr">Name</td>
-			<td class="listhdrr">Status</td>
-			<td class="listhdrr">Connected Since</td>
-			<td class="listhdrr">Virtual Addr</td>
-			<td class="listhdrr">Remote Host</td>
-			<td class="listhdrr">Bytes Sent</td>
-			<td class="listhdrr">Bytes Received</td>
+			<td class="listhdrr"><?=gettext("Name"); ?></td>
+			<td class="listhdrr"><?=gettext("Status"); ?></td>
+			<td class="listhdrr"><?=gettext("Connected Since"); ?></td>
+			<td class="listhdrr"><?=gettext("Virtual Addr"); ?></td>
+			<td class="listhdrr"><?=gettext("Remote Host"); ?></td>
+			<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
+			<td class="listhdrr"><?=gettext("Bytes Received"); ?></td>
 		</tr>
 
 <?php foreach ($clients as $client): ?>
@@ -241,11 +241,11 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
-	echo "<br/><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
+	echo "<br/><b>" . gettext("NOTE") . ":</b> " . gettext("You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen");
 }
 
 if ((empty($clients)) && (empty($servers))) {
-	echo "No OpenVPN instance defined";
+	echo gettext("No OpenVPN instance defined");
 }
 ?>
 

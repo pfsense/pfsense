@@ -108,7 +108,7 @@ function parse_summary($summary, $rdrs_a) {
   return $server_a;
 }
 
-$pgtitle = array("Status","Load Balancer","Virtual Server");
+$pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Virtual Server"));
 include("head.inc");
 
 ?>
@@ -119,8 +119,8 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Pools", false, "status_lb_pool.php");
-        $tab_array[] = array("Virtual Servers", true, "status_lb_vs.php");
+        $tab_array[] = array(gettext("Pools"), false, "status_lb_pool.php");
+        $tab_array[] = array(gettext("Virtual Servers"), true, "status_lb_vs.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
@@ -129,11 +129,11 @@ include("head.inc");
 	<div id="mainarea">
               <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="10%" class="listhdrr">Name</td>
-				  <td width="10%" class="listhdrr">Port</td>
-                  <td width="10%" class="listhdrr">Servers</td>
-                  <td width="30%" class="listhdrr">Status</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
+				  <td width="10%" class="listhdrr"><?=gettext("Port"); ?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("Servers"); ?></td>
+                  <td width="30%" class="listhdrr"><?=gettext("Status"); ?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
                 <tr>

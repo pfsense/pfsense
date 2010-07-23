@@ -48,7 +48,7 @@ if ($_GET['act'] == "del") {
 
 		write_config();
 
-		header("Location: services_dyndns.php");
+		header("Location: services_rfc2136.php");
 		exit;
 }
 
@@ -105,9 +105,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
+				  <br>
 				  </strong></span>
-				  Add something meaningful here.
+				  
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

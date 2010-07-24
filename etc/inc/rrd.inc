@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-  Copyright (C) 2008 Seth Mos <seth.mos@dds.nl>
+  Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without

@@ -884,7 +884,7 @@ EOD;
 				fclose($fd);
 
 				/* invoke nsupdate */
-				$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+				$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
 				if (isset($dnsupdate['usetcp']))
 					$cmd .= " -v";
 				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";

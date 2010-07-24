@@ -206,6 +206,7 @@ if(file_exists($rrdcolors)) {
 	$colorwireless = array('333333','a83c3c','999999');
 	$colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066'); 
 	$colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
+	$colorvpnusers = array('990000');
 }
 
 switch ($curstyle) {
@@ -568,6 +569,25 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-channel:MAX:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+}
+elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for vpn users stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
+	$graphcmd .= "--vertical-label \"users\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-users=$rrddbpath$curdatabase:users:AVERAGE\" ";
+	$graphcmd .= "LINE2:\"$curif-users#{$colorvpnusers[0]}:$curif-users\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    maximum\t\t average\t     current\\n\" ";
+	$graphcmd .= "COMMENT:\"Users Online\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-users:MAX:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-users:AVERAGE:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-users:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }

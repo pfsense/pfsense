@@ -46,5 +46,6 @@ $colorqualityloss = "ee0000";
 $colorwireless = array('990000','a83c3c','b36666');
 $colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066');
 $colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
+$colorvpnusers = array('990000');
 
 ?>

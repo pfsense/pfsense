@@ -77,9 +77,11 @@ if ($_POST) {
 	}
 }
 
+
+
 $rrddbpath = "/var/db/rrd/";
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+chdir($rrddbpath);
+$databases = glob("*.rrd");
 
 foreach($databases as $database) {
 	if(stristr($database, "wireless")) {
@@ -90,6 +92,9 @@ foreach($databases as $database) {
 	}
 	if(stristr($database, "cellular")) {
 		$cellular = true;
+	}
+	if(stristr($database, "-vpnusers")) {
+		$vpnusers = true;
 	}
 }
 

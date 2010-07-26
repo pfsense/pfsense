@@ -1696,8 +1696,8 @@ function upgrade_054_to_055() {
 	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
-	echo "done.\n";
+	chdir($rrddbpath);
+	$databases = glob("*-quality.rrd");
 	rsort($databases);
 	foreach($databases as $database) {
 		$xmldump = "{$database}.old.xml";

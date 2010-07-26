@@ -78,7 +78,7 @@ function kill_client($port, $remipp) {
 			/* parse header list line */
 			if (strpos($line, "INFO:"))
 				continue;
-			if (strpos($line, "UCCESS")) {
+			if (strpos($line, "SUCCESS")) {
 				$killed = 0;
 			}
 			break;

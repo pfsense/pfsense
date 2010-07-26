@@ -62,7 +62,7 @@ if (isset($id) && $a_protocol[$id]) {
 	$pconfig['type'] = 'http';
 }
 
-$changedesc = gettext("Load Balancer: Relay Protocol:"); . " ";
+$changedesc = gettext("Load Balancer: Relay Protocol:") . " ";
 $changecount = 0;
 
 

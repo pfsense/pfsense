@@ -3,7 +3,7 @@
 /*
 	status_rrd_graph.php
 	Part of pfSense
-	Copyright (C) 2007 Seth Mos <seth.mos@xs4all.nl>
+	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,9 @@ if(! isset($config['rrd']['enable'])) {
 }
 
 $rrddbpath = "/var/db/rrd/";
-$databases = glob("{$rrddbpath}*.rrd");
+chdir($rrddbpath);
+$databases = glob("*.rrd");
+
 
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];
@@ -107,12 +109,22 @@ if ($_GET['option']) {
 					continue 2;
 				}
 			}
+		case "vpnusers":
+			foreach($databases as $database) {
+				if(preg_match("/[-]vpnusers\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the VPN graphs */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
 		default:
 			$curoption = "wan";
 			break;
 	}
 }
 
+$now = time();
 if($curcat == "custom") {
 	if (is_numeric($_GET['start'])) {
 			if($start < ($now - (3600 * 24 * 365 * 5))) {
@@ -155,6 +167,7 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-quality.rrd",
 		"allgraphs-wireless.rrd",
 		"allgraphs-cellular.rrd",
+		"allgraphs-vpnusers.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -163,14 +176,17 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-traffic.rrd");
 
 foreach($databases as $database) {
-	if(stristr($database, "wireless")) {
+	if(stristr($database, "-wireless")) {
 		$wireless = true;
 	}
-	if(stristr($database, "queues")) {
+	if(stristr($database, "-queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "cellular")) {
+	if(stristr($database, "-cellular")) {
 		$cellular = true;
+	}
+	if(stristr($database, "-vpnusers")) {
+		$vpnusers = true;
 	}
 }
 /* append the existing array to the header */
@@ -190,7 +206,7 @@ function get_dates($curperiod, $graph) {
 	$curyear = date('Y', $now);
 	$curmonth = date('m', $now);
 	$curweek = date('W', $now);
-	$curweekday = date('w', $now);
+	$curweekday = date('N', $now) - 1; // We want to start on monday
 	$curday = date('d', $now);
 
 	switch($curperiod) {
@@ -206,8 +222,16 @@ function get_dates($curperiod, $graph) {
 			$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
-			$start = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) - $offset), $curyear);
-			$end = mktime(0, 0, 0, $curmonth, (($curday + $curweekday) + 7), $curyear);
+			switch($offset) {
+				case 0;
+					$weekoffset = 0;
+					break;
+				default:
+					$weekoffset = ($offset * 7) - 7;
+					break;
+			}
+			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
+			$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
 			break;
 		case "month":
 			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
@@ -254,9 +278,9 @@ function get_dates($curperiod, $graph) {
 			        $tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
 				if($queues) {
 					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
+						$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
 					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-					$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
+						$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				}
 				if($wireless) {
 					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
@@ -265,6 +289,10 @@ function get_dates($curperiod, $graph) {
 				if($cellular) {
 					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
+				}
+				if($vpnusers) {
+					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpnusers");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
@@ -330,7 +358,6 @@ function get_dates($curperiod, $graph) {
 							echo " selected";
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
-
 					}
 
 					?>
@@ -360,59 +387,73 @@ function get_dates($curperiod, $graph) {
 						}
 					}
 					?>
-
 					</select>
-
 					<?php
 
 					if($curcat == "custom") {
-						
-					
-					}
-					foreach($graphs as $graph) {
-						/* check which databases are valid for our category */
-						foreach($ui_databases as $curdatabase) {
-							if(! preg_match("/($curcat)/i", $curdatabase)) {
-								continue;
-							}
-							$optionc = split("-", $curdatabase);
-							$search = array("-", ".rrd", $optionc);
-							$replace = array(" :: ", "", $friendly);
-							switch($curoption) {
-								case "outbound":
-									/* only show interfaces with a gateway */
-									$optionc = "$optionc[0]";
-									if(!interface_has_gateway($optionc)) {
-										if(!preg_match("/($optionc)-(quality)/", $curdatabase)) {
+						?>
+						<?=gettext("Start:");?>
+						<input type="text" name="start" class="formfldunknown" length="32" value="<?php echo $start;?>">
+						<?=gettext("End:");?>
+						<input type="text" name="end" class="formfldunknown" length="32" value="<?php echo $now;?>">
+						<input type="submit" name="Submit" value="Go">
+						<?
+						$curdatabase = $curoption;
+						$graph = "custom-$curdatabase";
+						if(in_array($curdatabase, $databases)) {
+							echo "<tr><td colspan=2 class=\"list\">\n";
+							echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
+							echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
+							echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
+							echo "<br /><hr><br />\n";								
+							echo "</td></tr>\n";
+						}
+					} else {
+						foreach($graphs as $graph) {
+							/* check which databases are valid for our category */
+							foreach($ui_databases as $curdatabase) {
+								if(! preg_match("/($curcat)/i", $curdatabase)) {
+									continue;
+								}
+								$optionc = split("-", $curdatabase);
+								$search = array("-", ".rrd", $optionc);
+								$replace = array(" :: ", "", $friendly);
+								switch($curoption) {
+									case "outbound":
+										/* only show interfaces with a gateway */
+										$optionc = "$optionc[0]";
+										if(!interface_has_gateway($optionc)) {
+											if(!preg_match("/($optionc)-(quality)/", $curdatabase)) {
+												continue 2;
+											}
+										}
+										if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
 											continue 2;
 										}
-									}
-									if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
-										continue 2;
-									}
-									break;
-								case "allgraphs":
-									/* make sure we do not show the placeholder databases in the all view */
-									if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
-										continue 2;
-									}
-									break;
-								default:
-									/* just use the name here */
-									if(! preg_match("/($curoption)[-.]/i", $curdatabase)) {
-										continue 2;
-									}
-							}
-							if(in_array($curdatabase, $databases)) {
-								$dates = get_dates($curperiod, $graph);
-								$start = $dates['start'];
-								$end = $dates['end'];
-								echo "<tr><td colspan=2 class=\"list\">\n";
-								echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
-								echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
-								echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
-								echo "<br /><hr><br />\n";								
-								echo "</td></tr>\n";
+										break;
+									case "allgraphs":
+										/* make sure we do not show the placeholder databases in the all view */
+										if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+											continue 2;
+										}
+										break;
+									default:
+										/* just use the name here */
+										if(! preg_match("/($curoption)[-.]/i", $curdatabase)) {
+											continue 2;
+										}
+								}
+								if(in_array($curdatabase, $databases)) {
+									$dates = get_dates($curperiod, $graph);
+									$start = $dates['start'];
+									$end = $dates['end'];
+									echo "<tr><td colspan=2 class=\"list\">\n";
+									echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
+									echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
+									echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
+									echo "<br /><hr><br />\n";								
+									echo "</td></tr>\n";
+								}
 							}
 						}
 					}

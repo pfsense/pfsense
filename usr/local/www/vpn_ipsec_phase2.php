@@ -106,14 +106,14 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!isset( $_POST['ikeid']))
-		$input_errors[] = "A valid ikeid must be specified.";
+		$input_errors[] = gettext("A valid ikeid must be specified.");
 
 	/* input validation */
 	$reqdfields = explode(" ", "localid_type halgos");
-	$reqdfieldsn = explode(",", "Local network type,P2 Hash Algorithms");
+	$reqdfieldsn = array(gettext("Local network type"),gettext("P2 Hash Algorithms"));
 	if (!isset($pconfig['mobile'])){
 		$reqdfields[] = "remoteid_type";
-		$reqdfieldsn[] = "Remote network type";
+		$reqdfieldsn[] = gettext("Remote network type");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -123,20 +123,20 @@ if ($_POST) {
 		switch ($pconfig['localid_type']) {
 			case "network":
 				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numeric($pconfig['localid_netbits']))
-					$input_errors[] = "A valid local network bit count must be specified.";
+					$input_errors[] = gettext("A valid local network bit count must be specified.");
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
-					$input_errors[] = "A valid local network IP address must be specified.";
+					$input_errors[] = gettext("A valid local network IP address must be specified.");
 				break;
 		}
 
 		switch ($pconfig['remoteid_type']) {
 			case "network":
 				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numeric($pconfig['remoteid_netbits']))
-					$input_errors[] = "A valid remote network bit count must be specified.";
+					$input_errors[] = gettext("A valid remote network bit count must be specified.");
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
-					$input_errors[] = "A valid remote network IP address must be specified.";
+					$input_errors[] = gettext("A valid remote network IP address must be specified.");
 				break;
 		}
 	}
@@ -146,10 +146,10 @@ if ($_POST) {
 	$ealgos = pconfig_to_ealgos($pconfig);
 
 	if (!count($ealgos)) {
-		$input_errors[] = "At least one encryption algorithm must be selected.";
+		$input_errors[] = gettext("At least one encryption algorithm must be selected.");
 	}
 	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
-		$input_errors[] = "The P2 lifetime must be an integer.";
+		$input_errors[] = gettext("The P2 lifetime must be an integer.");
 	}
 
 	if (!$input_errors) {
@@ -196,9 +196,9 @@ if ($_POST) {
 }
 
 if ($pconfig['mobile'])
-    $pgtitle = array("VPN","IPsec","Edit Phase 2", "Mobile Client");
+    $pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 2"), gettext("Mobile Client"));
 else
-    $pgtitle = array("VPN","IPsec","Edit Phase 2");
+    $pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 2"));
 $statusurl = "diag_ipsec.php";
 $logurl = "diag_logs_ipsec.php";
 
@@ -314,9 +314,9 @@ function change_protocol() {
 		<td id="tabnav">
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
-				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+				$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
+				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array(gettext("Pre-shared keys"), false, "vpn_ipsec_keys.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -326,18 +326,18 @@ function change_protocol() {
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-							<strong>Disable this phase2 entry</strong>
+							<strong><?=gettext("Disable this phase2 entry"); ?></strong>
 							<br>
-							<span class="vexpl">Set this option to disable this phase2 entry without
-							  removing it from the list.
+							<span class="vexpl"><?=gettext("Set this option to disable this phase2 entry without " .
+							  "removing it from the list"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Mode</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect" onChange="change_mode()">
 								<?php
@@ -352,18 +352,18 @@ function change_protocol() {
 						</td>
 					</tr>
 					<tr id="opt_localid">
-						<td width="22%" valign="top" class="vncellreq">Local Network</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Local Network"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
 								<tr>
-									<td>Type:&nbsp;&nbsp;</td>
+									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
 									<td></td>
 									<td>
 										<select name="localid_type" class="formselect" onChange="typesel_change_local()">
-											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>>Address</option>
-											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>>Network</option>
-											<option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>>LAN subnet</option>
-											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>>None</option>
+											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
+											<option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>><?=gettext("LAN subnet"); ?></option>
+											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -389,21 +389,21 @@ function change_protocol() {
 					<?php if (!isset($pconfig['mobile'])): ?>
 					
 					<tr id="opt_remoteid">
-						<td width="22%" valign="top" class="vncellreq">Remote Network</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
 								<tr>
-									<td>Type:&nbsp;&nbsp;</td>
+									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
 									<td></td>
 									<td>
 										<select name="remoteid_type" class="formselect" onChange="typesel_change_remote()">
-											<option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected"; ?>>Address</option>
-											<option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected"; ?>>Network</option>
+											<option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected"; ?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected"; ?>><?=gettext("Network"); ?></option>
 										</select>
 									</td>
 								</tr>
 								<tr>
-									<td>Address:&nbsp;&nbsp;</td>
+									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
 										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=$pconfig['remoteid_address'];?>">
@@ -425,13 +425,13 @@ function change_protocol() {
 					<?php endif; ?>
 					
 					<tr>
-						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
 							<br>
 							<span class="vexpl">
-								You may enter a description here
-								for your reference (not parsed).
+								<?=gettext("You may enter a description here " .
+								"for your reference (not parsed)"); ?>.
 							</span>
 						</td>
 					</tr>
@@ -440,11 +440,11 @@ function change_protocol() {
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">
-							Phase 2 proposal (SA/Key Exchange)
+							<?=gettext("Phase 2 proposal (SA/Key Exchange)"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Protocol</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="proto" class="formselect" onChange="change_protocol()">
 							<?php foreach ($p2_protos as $proto => $protoname): ?>
@@ -455,12 +455,12 @@ function change_protocol() {
 							</select>
 							<br>
 							<span class="vexpl">
-								ESP is encryption, AH is authentication only
+								<?=gettext("ESP is encryption, AH is authentication only"); ?>
 							</span>
 						</td>
 					</tr>
 					<tr id="opt_enc">
-						<td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithms"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
 							<?php
@@ -480,7 +480,7 @@ function change_protocol() {
 										<?php if(is_array($algodata['keysel'])): ?>
 										&nbsp;&nbsp;
 										<select name="keylen_<?=$algo;?>" class="formselect">
-											<option value="auto">auto</option>
+											<option value="auto"><?=gettext("auto"); ?></option>
 											<?php
 												$key_hi = $algodata['keysel']['hi'];
 												$key_lo = $algodata['keysel']['lo'];
@@ -491,7 +491,7 @@ function change_protocol() {
 													if ($keylen == $pconfig["keylen_".$algo])
 														$selected = " selected";
 											?>
-											<option value="<?=$keylen;?>"<?=$selected;?>><?=$keylen;?> bits</option>
+											<option value="<?=$keylen;?>"<?=$selected;?>><?=$keylen;?> <?=gettext("bits"); ?></option>
 											<?php endfor; ?>
 										</select>
 										<?php endif; ?>
@@ -502,13 +502,13 @@ function change_protocol() {
 								
 							</table>
 							<br>
-							Hint: use 3DES for best compatibility or if you have a hardware
-							crypto accelerator card. Blowfish is usually the fastest in
-							software encryption.
+							<?=gettext("Hint: use 3DES for best compatibility or if you have a hardware " . 
+							"crypto accelerator card. Blowfish is usually the fastest in " .
+							"software encryption"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Hash algorithms"); ?></td>
 						<td width="78%" class="vtable">
 						<?php foreach ($p2_halgos as $algo => $algoname): ?>
 							<input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked"; ?>>
@@ -518,7 +518,7 @@ function change_protocol() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">PFS key group</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("PFS key group"); ?></td>
 						<td width="78%" class="vtable">
 						<?php if (!isset($pconfig['mobile']) || !isset($a_client['pfs_group'])): ?>
 							<select name="pfsgroup" class="formselect">
@@ -531,7 +531,7 @@ function change_protocol() {
 							<br>
 							<span class="vexpl">
 								<em>
-									1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit
+									<?=gettext("1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit"); ?>
 								</em>
 							</span>
 							
@@ -542,28 +542,28 @@ function change_protocol() {
 							</select>
 							<input name="pfsgroup" type="hidden" value="<?=$pconfig['pfsgroup'];?>">
 							<br>
-							<span class="vexpl"><em>Set globally in mobile client options</em></span>
+							<span class="vexpl"><em><?=gettext("Set globally in mobile client options"); ?></em></span>
 						<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Lifetime</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
-							seconds
+							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Options"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Automatically ping host</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Automatically ping host"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
-							IP address
+							<?=gettext("IP address"); ?>
 						</td>
 					</tr>
 					<tr>
@@ -576,7 +576,7 @@ function change_protocol() {
 							<input name="mobile" type="hidden" value="true">
 							<input name="remoteid_type" type="hidden" value="mobile">
 						<?php endif; ?>
-							<input name="Submit" type="submit" class="formbtn" value="Save">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
 						</td>
 					</tr>

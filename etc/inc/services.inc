@@ -524,6 +524,7 @@ function services_dhcrelay_configure() {
 				if (isset($gateway['defaultgw'])) {
 					$a_gateways = return_gateways_array(true);
                                         $destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
 				}		
 			}
 		} else

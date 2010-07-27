@@ -111,7 +111,6 @@ include("head.inc");
         <tr>
                 <td>
 			<?php
-<<<<<<< HEAD
                                 $tab_array = array();
                                 if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
                                 $tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");

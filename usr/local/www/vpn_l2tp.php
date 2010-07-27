@@ -266,13 +266,13 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
                     <input name="mode" type="radio" onclick="enable_change(false)" value="off"
 			<?php if (($pconfig['mode'] != "server") && ($pconfig['mode'] != "redir")) echo "checked=\"checked\"";?> />
-                    Off</td>
+                    <?=gettext("Off"); ?></td>
 		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 		    <input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked=\"checked\""; ?> />
-                    Enable l2tp server</td>
+                    <?=gettext("Enable l2tp server"); ?></td>
 		</tr>
 
                 <tr>
@@ -308,7 +308,7 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet netmask"); ?></td>
                   <td width="78%" class="vtable">
                     <select id="l2tp_subnet" name="l2tp_subnet">
                     <?php
@@ -321,11 +321,11 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br>Hint: 24 is 255.255.255.0
+                    <br><?=gettext("Hint"); ?>: 24 <?=gettext("is"); ?> 255.255.255.0
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Number of L2TP users</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Number of L2TP users"); ?></td>
                   <td width="78%" class="vtable">
                     <select id="n_l2tp_units" name="n_l2tp_units">
                     <?php
@@ -338,7 +338,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br>Hint: 10 is ten L2TP clients
+                    <br><?=gettext("Hint"); ?>: 10 <?=gettext("is ten L2TP clients"); ?>
                   </td>
                 </tr>
 		<tr>
@@ -353,15 +353,15 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Encyrption type");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><select name="paporchap" id="paporchap">
-			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " SELECTED"; ?>>CHAP</option>
-			<option value='pap'<?php if($pconfig['paporchap'] == "pap") echo " SELECTED"; ?>>PAP</option>
+			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " SELECTED"; ?>><?=gettext("CHAP"); ?></option>
+			<option value='pap'<?php if($pconfig['paporchap'] == "pap") echo " SELECTED"; ?>><?=gettext("PAP"); ?></option>
 		    </select>
                     <br />
                     <?=gettext("Specifies which protocol to use for authentication.");?><br />
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">RADIUS</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
                   <td width="78%" class="vtable">
                       <input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked=\"checked\""; ?> />
                       <strong> <?=gettext("Use a RADIUS server for authentication");?><br /></strong>
@@ -396,7 +396,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input id="submit" name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
+                    <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
                   </td>
                 </tr>
                 <tr>

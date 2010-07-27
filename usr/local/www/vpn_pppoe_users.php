@@ -68,7 +68,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services","PPPoE Server","Users");
+$pgtitle = array(gettext("Services"),gettext("PPPoE Server"),gettext("Users"));
 include("head.inc");
 
 ?>
@@ -78,16 +78,16 @@ include("head.inc");
 <form action="vpn_pppoe_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['pppoe']['radius']['enable']))
-	print_info_box("Warning: RADIUS is enabled. The local user database will not be used."); ?>
+	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used.")); ?>
 <?php if (is_subsystem_dirty('pppoeusers')): ?><p>
-<?php print_info_box_np("The PPPoE user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPPoE sessions!</b>");?><br>
+<?php print_info_box_np(gettext("The PPPoE user list has been modified") . ".<br>" . gettext("You must apply the changes in order for them to take effect") . ".<br><b>" . gettext("Warning: this will terminate all current PPPoE sessions") . "!</b>");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Configuration", false, "vpn_pppoe.php");
-	$tab_array[1] = array("Users", true, "vpn_pppoe_users.php");
+	$tab_array[0] = array(gettext("Configuration"), false, "vpn_pppoe.php");
+	$tab_array[1] = array(gettext("Users"), true, "vpn_pppoe_users.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
   <tr> 
@@ -95,13 +95,13 @@ include("head.inc");
          <div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
-                  <td class="listhdrr">Username</td>
-                  <td class="listhdr">IP address</td>
+                  <td class="listhdrr"><?=gettext("Username"); ?></td>
+                  <td class="listhdr"><?=gettext("IP address"); ?></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" width="17" height="17" border="0"></a></td>
 			   </tr>
 			</table>
 		  </td>
@@ -115,8 +115,8 @@ include("head.inc");
 		    <?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"; ?>
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
-                  <td class="list" nowrap> <a href="vpn_pppoe_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_pppoe_users.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this user?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete user" width="17" height="17" border="0"></a></td>
+                  <td class="list" nowrap> <a href="vpn_pppoe_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="vpn_pppoe_users.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
@@ -125,7 +125,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" width="17" height="17" border="0"></a></td>
 			   </tr>
 			</table>
 		  </td>

@@ -73,32 +73,32 @@ if ($_POST) {
 	/* input validation */
 	if (isset($id) && ($a_secret[$id])) {
 		$reqdfields = explode(" ", "username");
-		$reqdfieldsn = explode(",", "Username");
+		$reqdfieldsn = array(gettext("Username"));
 	} else {
 		$reqdfields = explode(" ", "username password");
-		$reqdfieldsn = explode(",", "Username,Password");
+		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['username']))
-		$input_errors[] = "The username contains invalid characters.";
+		$input_errors[] = gettext("The username contains invalid characters.");
 
 	if (preg_match("/[[:cntrl:]\"]/", $_POST['password']))
-		$input_errors[] = "The password contains invalid characters.";
+		$input_errors[] = gettext("The password contains invalid characters.");
 
 	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
-		$input_errors[] = "The passwords do not match.";
+		$input_errors[] = gettext("The passwords do not match.");
 	}
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
-		$input_errors[] = "The IP address entered is not valid.";
+		$input_errors[] = gettext("The IP address entered is not valid.");
 	}
 
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {
 			if ($secretent['name'] == $_POST['username']) {
-				$input_errors[] = "Another entry with the same username already exists.";
+				$input_errors[] = gettext("Another entry with the same username already exists.");
 				break;
 			}
 		}
@@ -129,7 +129,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN","VPN PPTP","User","Edit");
+$pgtitle = array(gettext("VPN"),gettext("VPN PPTP"),gettext("User"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -140,29 +140,29 @@ include("head.inc");
               <div id="mainarea">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Username</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
 					<?=$mandfldhtml;?><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Password</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20">
                     <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20">
-                    &nbsp;(confirmation)<?php if (isset($id) && $a_secret[$id]): ?><br>
-                    <span class="vexpl">If you want to change the users' password,
-                    enter it here twice.</span><?php endif; ?></td>
+                    &nbsp;<?=gettext("(confirmation)");?><?php if (isset($id) && $a_secret[$id]): ?><br>
+                    <span class="vexpl"><?=gettext("If you want to change the users' password, ".
+                    "enter it here twice.");?></span><?php endif; ?></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">IP address</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
                     <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br><span class="vexpl">If you want the user to be assigned a specific IP address, enter it here.</span></td>
+                    <br><span class="vexpl"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.");?></span></td>
                 </tr>
                 <tr>
                   <td class="vncell" width="22%" valign="top">&nbsp;</td>
                   <td class="vncell" width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

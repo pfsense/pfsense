@@ -1542,6 +1542,9 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url_file);
         curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        /* Don't verify SSL peers since we don't have the certificates to do so. */
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '5');

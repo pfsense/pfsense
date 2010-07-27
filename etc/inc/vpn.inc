@@ -86,7 +86,7 @@ function vpn_ipsec_configure($ipchg = false)
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
 
-	if(isset($config['ipsec']['preferredoldsa']))
+	if(isset($config['ipsec']['preferoldsa']))
 		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
 	else
 		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");

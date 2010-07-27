@@ -75,10 +75,10 @@ if ($_POST) {
 	/* input validation */
 	if (isset($id) && ($a_secret[$id])) {
 		$reqdfields = explode(" ", "usernamefld");
-		$reqdfieldsn = explode(",", "Username");
+		$reqdfieldsn = array(gettext("Username"));
 	} else {
 		$reqdfields = explode(" ", "usernamefld passwordfld");
-		$reqdfieldsn = explode(",", "Username,Password");
+		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

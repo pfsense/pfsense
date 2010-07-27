@@ -37,7 +37,7 @@
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
-$pgtitle = array("OpenVPN", "Client");
+$pgtitle = array(gettext("OpenVPN"), gettext("Client"));
 $statusurl = "status_openvpn.php";
 $logurl = "diag_logs_openvpn.php";
 
@@ -145,7 +145,7 @@ if ($_POST) {
 
 		$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
 		if (($portused != $vpnid) && ($portused != 0))
-			$input_errors[] = "The specified 'Local port' is in use. Please select another value";
+			$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
 	}
 
 	if ($result = openvpn_validate_host($pconfig['server_addr'], 'Server host or address'))
@@ -164,7 +164,7 @@ if ($_POST) {
 
 		if ($pconfig['proxy_authtype'] != "none") {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd']))
-				$input_errors[] = "User name and password are required for proxy with authentication.";
+				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 		}
 	}
 
@@ -181,21 +181,21 @@ if ($_POST) {
 	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
-			$input_errors[] = "The field 'Shared Key' does not appear to be valid";
+			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable'])
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
-			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
+			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
+		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -360,10 +360,10 @@ function autotls_change() {
 			<form action="vpn_openvpn_client.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">General information</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("General information"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
@@ -374,12 +374,12 @@ function autotls_change() {
 									<td>
 										&nbsp;
 										<span class="vexpl">
-											<strong>Disable this client</strong><br>
+											<strong><?=gettext("Disable this client"); ?></strong><br>
 										</span>
 									</td>
 								</tr>
 							</table>
-							Set this option to disable this client without removing it from the list.
+							<?=gettext("Set this option to disable this client without removing it from the list"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -428,7 +428,7 @@ function autotls_change() {
                                                         </td>
                                         </tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Interface</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="interface" class="formselect">
 								<?php
@@ -457,7 +457,7 @@ function autotls_change() {
 						<td width="78%" class="vtable">
 							<input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>"/>
 							<br/>
-							Set this option if you would like to bind to a specific port.
+							<?=gettext("Set this option if you would like to bind to a specific port"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -491,14 +491,14 @@ function autotls_change() {
 								<tr>
                                                                         <td align="right" width="25%">
                                                                                 <span class="vexpl">
-                                                                                         &nbsp;Authentication method :&nbsp;
+                                                                                         &nbsp;<?=gettext("Authentication method"); ?> :&nbsp;
                                                                                 </span>
                                                                         </td>
                                                                         <td>
 										<select name="proxy_authtype" id="proxy_authtype" class="formfld select" onChange="useproxy_changed()">
-											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected"; ?>>none</option>
-											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected"; ?>>basic</option>
-											<option value="ntlm" <?php if ($pconfig['proxy_authtype'] == "ntlm") echo "selected"; ?>>ntlm</option>
+											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected"; ?>><?=gettext("none"); ?></option>
+											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected"; ?>><?=gettext("basic"); ?></option>
+											<option value="ntlm" <?php if ($pconfig['proxy_authtype'] == "ntlm") echo "selected"; ?>><?=gettext("ntlm"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -508,7 +508,7 @@ function autotls_change() {
                                                                 <tr>
                                                                         <td align="right" width="25%">
                                                                                 <span class="vexpl">
-                                                                                         &nbsp;Username :&nbsp;
+                                                                                         &nbsp;<?=gettext("Username"); ?> :&nbsp;
                                                                                 </span>
                                                                         </td>
                                                                         <td>
@@ -518,7 +518,7 @@ function autotls_change() {
                                                                 <tr>
                                                                         <td align="right" width="25%">
                                                                                 <span class="vexpl">
-                                                                                         &nbsp;Password :&nbsp;
+                                                                                         &nbsp;<?=gettext("Password"); ?> :&nbsp;
                                                                                 </span>
                                                                         </td>
                                                                         <td>
@@ -529,7 +529,7 @@ function autotls_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Server host name resolution</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Server host name resolution"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -539,32 +539,32 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Infinitely resolve server
+											<?=gettext("Infinitely resolve server"); ?>
 										</span>
 									</td>
 								</tr>
 							</table>
-							Continuously attempt to resolve the server host
-							name. Useful when communicating with a server
-							that is not permanently connected to the Internet.
+							<?=gettext("Continuously attempt to resolve the server host " .
+							"name. Useful when communicating with a server " .
+							"that is not permanently connected to the Internet"); ?>.
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable"> 
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>">
 							<br>
-							You may enter a description here for your reference (not parsed).
+							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Cryptographic Settings</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Cryptographic Settings"); ?></td>
 					</tr>
 					<tr id="tls">
-						<td width="22%" valign="top" class="vncellreq">TLS Authentication</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("TLS Authentication"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -574,7 +574,7 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Enable authentication of TLS packets.
+											<?=gettext("Enable authentication of TLS packets"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -588,7 +588,7 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Automatically generate a shared TLS authentication key.
+											<?=gettext("Automatically generate a shared TLS authentication key"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -599,14 +599,14 @@ function autotls_change() {
 									<td>
 										<textarea name="tls" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['tls']);?></textarea>
 										<br/>
-										Paste your shared key here.
+										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr id="tls_ca">
-						<td width="22%" valign="top" class="vncellreq">Peer Certificate Authority</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Authority"); ?></td>
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
@@ -621,7 +621,7 @@ function autotls_change() {
 							</td>
 					</tr>
 					<tr id="tls_cert">
-						<td width="22%" valign="top" class="vncellreq">Client Certificate</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Client Certificate"); ?></td>
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
@@ -636,7 +636,7 @@ function autotls_change() {
 						</td>
 					</tr>
 					<tr id="psk">
-						<td width="22%" valign="top" class="vncellreq">Shared Key</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Shared Key"); ?></td>
 						<td width="78%" class="vtable">
 							<?php if (!$pconfig['shared_key']): ?>
 							<table border="0" cellpadding="2" cellspacing="0">
@@ -647,7 +647,7 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Automatically generate a shared key.
+											<?=gettext("Automatically generate a shared key"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -658,14 +658,14 @@ function autotls_change() {
 									<td>
 										<textarea name="shared_key" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['shared_key']);?></textarea>
 										<br/>
-										Paste your shared key here.
+										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="crypto" class="formselect">
 								<?php
@@ -686,34 +686,34 @@ function autotls_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Tunnel Settings</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Tunnel Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Tunnel Network</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
 							<br>
-							This is the virtual network used for private
-							communications between this client and the
-							server expressed using CIDR (eg. 10.0.8.0/24).
-							The first network address is assumed to be the
-							server address and the second network address
-							will be assigned to the client virtual
-							interface.
+							<?=gettext("This is the virtual network used for private " .
+							"communications between this client and the " .
+							"server expressed using CIDR (eg. 10.0.8.0/24). " .
+							"The first network address is assumed to be the " .
+							"server address and the second network address " .
+							"will be assigned to the client virtual " .
+							"interface"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Remote Network</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							This is a network that will be routed through
-							the tunnel, so that a site-to-site VPN can be
-							established without manually changing the
-							routing tables. Expressed as a CIDR range. If
-							this is a site-to-site VPN, enter here the
-							remote LAN here. You may leave this blank to
-							only communicate with other clients.
+							<?=gettext("This is a network that will be routed through " .
+							"the tunnel, so that a site-to-site VPN can be " .
+							"established without manually changing the " .
+							"routing tables. Expressed as a CIDR range. If " .
+							"this is a site-to-site VPN, enter here the " .
+							"remote LAN here. You may leave this blank to " .
+							"only communicate with other clients"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -721,14 +721,14 @@ function autotls_change() {
 						<td width="78%" class="vtable">
 							<input name="use_shaper" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['use_shaper']);?>"/>
 							<br/>
-							Maximum outgoing bandwidth for this tunnel.
-							Leave empty for no limit. The input value has
-							to be something between 100 bytes/sec and 100
-							Mbytes/sec (entered as bytes per second).
+							<?=gettext("Maximum outgoing bandwidth for this tunnel. " .
+							"Leave empty for no limit. The input value has " .
+							"to be something between 100 bytes/sec and 100 " .
+							"Mbytes/sec (entered as bytes per second)"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Compression</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Compression"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -738,7 +738,7 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Compress tunnel packets using the LZO algorithm.
+											<?=gettext("Compress tunnel packets using the LZO algorithm"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -746,7 +746,7 @@ function autotls_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Type-of-Service</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Type-of-Service"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -756,7 +756,7 @@ function autotls_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Set the TOS IP header value of tunnel packets to match the encapsulated packet value.
+											<?=gettext("Set the TOS IP header value of tunnel packets to match the encapsulated packet value"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -767,17 +767,17 @@ function autotls_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Advanced configuration</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced configuration"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Advanced</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
-										Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon<br/>
-										EXAMPLE: route 10.0.0.0 255.255.255.0;
+										<?=gettext("Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon"); ?><br/>
+										<?=gettext("EXAMPLE: route 10.0.0.0 255.255.255.0;"); ?>
 									</td>
 								</tr>
 							</table>
@@ -786,7 +786,7 @@ function autotls_change() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="Save"> 
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
 							<input name="act" type="hidden" value="<?=$act;?>">
 							<?php if (isset($id) && $a_client[$id]): ?>
 							<input name="id" type="hidden" value="<?=$id;?>">
@@ -800,10 +800,10 @@ function autotls_change() {
 
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="10%" class="listhdrr">Disabled</td>
-					<td width="10%" class="listhdrr">Protocol</td>
-					<td width="30%" class="listhdrr">Server</td>
-					<td width="40%" class="listhdrr">Description</td>
+					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Protocol"); ?></td>
+					<td width="30%" class="listhdrr"><?=gettext("Server"); ?></td>
+					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
 				<?php
@@ -829,11 +829,11 @@ function autotls_change() {
 					</td>
 					<td valign="middle" nowrap class="list">
 						<a href="vpn_openvpn_client.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit client" width="17" height="17" border="0">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit client"); ?>" width="17" height="17" border="0">
 						</a>
 						&nbsp;
-						<a href="vpn_openvpn_client.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client?')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete client" width="17" height="17" border="0">
+						<a href="vpn_openvpn_client.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete client"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>
@@ -844,7 +844,7 @@ function autotls_change() {
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
-						<a href="vpn_openvpn_client.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add client" width="17" height="17" border="0">
+						<a href="vpn_openvpn_client.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add client"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>

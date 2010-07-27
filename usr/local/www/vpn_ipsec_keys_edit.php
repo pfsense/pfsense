@@ -66,21 +66,21 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = explode(",", "Identifier,Pre-shared key");
+	$reqdfieldsn = array(gettext("Identifier,Pre-shared key"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident']))
-		$input_errors[] = "The identifier contains invalid characters.";
+		$input_errors[] = gettext("The identifier contains invalid characters.");
 
 	if (array_key_exists($_POST['ident'], $userids))
-		$input_errors[] = "A user with this name already exists. Add the key to the user instead.";
+		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
 	
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {
 			if ($secretent['ident'] == $_POST['ident']) {
-				$input_errors[] = "Another entry with the same identifier already exists.";
+				$input_errors[] = gettext("Another entry with the same identifier already exists.");
 				break;
 			}
 		}
@@ -97,10 +97,10 @@ if ($_POST) {
 		
 		if (isset($id) && $a_secret[$id]) {
 			$a_secret[$id] = $secretent;
-			$text = "Edited";
+			$text = gettext("Edited");
 		} else {
 			$a_secret[] = $secretent;
-			$text = "Added";
+			$text = gettext("Added");
 		}
 		
 		write_config("{$text} IPsec Pre-Shared Keys");
@@ -111,7 +111,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN: IPsec: Edit pre-shared key";
+$pgtitle = gettext("VPN: IPsec: Edit pre-shared key");
 $statusurl = "diag_ipsec.php";
 $logurl = "diag_logs_ipsec.php";
 
@@ -125,15 +125,15 @@ include("head.inc");
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
-                  <td valign="top" class="vncellreq">Identifier</td>
+                  <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
 					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=$pconfig['ident'];?>">
                     <br>
-This can be either an IP address, fully qualified domain name or an e-mail address.       
+<?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Pre-shared key</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-shared key"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
                   </td>
@@ -141,7 +141,7 @@ This can be either an IP address, fully qualified domain name or an e-mail addre
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

@@ -121,44 +121,44 @@ if ($_POST['submit']) {
 	/* input validation */
 
 	$reqdfields = explode(" ", "user_source group_source");
-	$reqdfieldsn =  explode(",", "User Authentication Source,Group Authentication Source");
+	$reqdfieldsn =  array(gettext("User Authentication Source"),gettext("Group Authentication Source"));
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ($pconfig['pool_enable'])
 		if (!is_ipaddr($pconfig['pool_address']))
-			$input_errors[] = "A valid IP address for 'Virtual Address Pool Network' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'Virtual Address Pool Network' must be specified.");
 
 	if ($pconfig['dns_domain_enable'])
 		if (!is_domain($pconfig['dns_domain']))
-			$input_errors[] = "A valid value for 'DNS Default Domain' must be specified.";
+			$input_errors[] = gettext("A valid value for 'DNS Default Domain' must be specified.");
 
 	if ($pconfig['dns_server_enable']) {
 		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
 			!$pconfig['dns_server3'] && !$pconfig['dns_server4'] )
-			$input_errors[] = "At least one DNS server must be specified to enable the DNS Server option.";
+			$input_errors[] = gettext("At least one DNS server must be specified to enable the DNS Server option.");
 		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1']))
-			$input_errors[] = "A valid IP address for 'DNS Server #1' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'DNS Server #1' must be specified.");
 		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2']))
-			$input_errors[] = "A valid IP address for 'DNS Server #2' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'DNS Server #2' must be specified.");
 		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3']))
-			$input_errors[] = "A valid IP address for 'DNS Server #3' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'DNS Server #3' must be specified.");
 		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4']))
-			$input_errors[] = "A valid IP address for 'DNS Server #4' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'DNS Server #4' must be specified.");
 	}
 
 	if ($pconfig['wins_server_enable']) {
 		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2'])
-			$input_errors[] = "At least one WINS server must be specified to enable the DNS Server option.";
+			$input_errors[] = gettext("At least one WINS server must be specified to enable the DNS Server option.");
 		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1']))
-			$input_errors[] = "A valid IP address for 'WINS Server #1' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'WINS Server #1' must be specified.");
 		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2']))
-			$input_errors[] = "A valid IP address for 'WINS Server #2' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'WINS Server #2' must be specified.");
 	}
 
 	if ($pconfig['login_banner_enable'])
 		if (!strlen($pconfig['login_banner']))
-			$input_errors[] = "A valid value for 'Login Banner' must be specified.";
+			$input_errors[] = gettext("A valid value for 'Login Banner' must be specified.");
 
 	if (!$input_errors) {
 		$client = array();
@@ -210,7 +210,7 @@ if ($_POST['submit']) {
 	}
 }
 
-$pgtitle = array("VPN","IPsec","Mobile");
+$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Mobile"));
 $statusurl = "diag_ipsec.php";
 $logurl = "diag_logs_ipsec.php";
 
@@ -293,12 +293,12 @@ function login_banner_change() {
 	if ($savemsg)
 		print_info_box($savemsg);
 	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
-		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));
 	foreach ($a_phase1 as $ph1ent)
 		if (isset($ph1ent['mobile']))
 			$ph1found = true;
 	if ($pconfig['enable'] && !$ph1found)
-		print_info_box_np("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found.<br>Please click Create to define one.","create","Create Phase1");
+		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br>" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
@@ -308,9 +308,9 @@ function login_banner_change() {
 		<td class="tabnavtbl">
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
-				$tab_array[1] = array("Mobile clients", true, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+				$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
+				$tab_array[1] = array(gettext("Mobile clients"), true, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array(gettext("Pre-shared keys"), false, "vpn_ipsec_keys.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -320,7 +320,7 @@ function login_banner_change() {
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">IKE Extensions</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("IKE Extensions"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -329,7 +329,7 @@ function login_banner_change() {
 										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?>>
 									</td>
 									<td>
-										<strong>Enable IPsec Mobile Client Support</strong>
+										<strong><?=gettext("Enable IPsec Mobile Client Support"); ?></strong>
 									</td>
 								</tr>
 							</table>
@@ -340,24 +340,24 @@ function login_banner_change() {
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">
-							Extended Authentication (Xauth)
+							<?=gettext("Extended Authentication (Xauth)"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">User Authentication</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("User Authentication"); ?></td>
 						<td width="78%" class="vtable">
-							Source:&nbsp;&nbsp;
+							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="user_source" class="formselect" id="user_source">
-								<option value="system">system</option>
+								<option value="system"><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Group Authentication</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Group Authentication"); ?></td>
 						<td width="78%" class="vtable">
-							Source:&nbsp;&nbsp;
+							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="group_source" class="formselect" id="group_source">
-								<option value="system">system</option>
+								<option value="system"><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -366,11 +366,11 @@ function login_banner_change() {
 					</tr>
 					<tr> 
 						<td colspan="2" valign="top" class="listtopic">
-							Client Configuration (mode-cfg)
+							<?=gettext("Client Configuration (mode-cfg)"); ?>
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">Virtual Address Pool</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual Address Pool"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -379,14 +379,14 @@ function login_banner_change() {
 										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
 									</td>
 									<td>
-										Provide a vitual IP address to clients<br>
+										<?=gettext("Provide a vitual IP address to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
-										Network:&nbsp;
+										<?=gettext("Network"); ?>:&nbsp;
 										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=$pconfig['pool_address'];?>">
 										/
 										<select name="pool_netbits" class="formselect" id="pool_netbits">
@@ -402,7 +402,7 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Network List</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Network List"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -411,14 +411,14 @@ function login_banner_change() {
 										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
 									</td>
 									<td>
-										Provide a list of accessible networks to clients<br>
+										<?=gettext("Provide a list of accessible networks to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">DNS Default Domain</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -427,7 +427,7 @@ function login_banner_change() {
 										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
 									</td>
 									<td>
-										Provide a default domain name to clients<br>
+										<?=gettext("Provide a default domain name to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
@@ -441,7 +441,7 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">DNS Servers</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -450,32 +450,32 @@ function login_banner_change() {
 										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
 									</td>
 									<td>
-										Provide a DNS server list to clients<br>
+										<?=gettext("Provide a DNS server list to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
-										Server #1:&nbsp;
+										<?=gettext("Server"); ?> #1:&nbsp;
 										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=$pconfig['dns_server1'];?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
-										Server #2:&nbsp;
+										<?=gettext("Server"); ?> #2:&nbsp;
 										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=$pconfig['dns_server2'];?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
-										Server #3:&nbsp;
+										<?=gettext("Server"); ?> #3:&nbsp;
 										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=$pconfig['dns_server3'];?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
-										Server #4:&nbsp;
+										<?=gettext("Server"); ?> #4:&nbsp;
 										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=$pconfig['dns_server4'];?>">
 									</td>
 								</tr>
@@ -483,7 +483,7 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">WINS Servers</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -492,20 +492,20 @@ function login_banner_change() {
 										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
 									</td>
 									<td>
-										Provide a WINS server list to clients<br>
+										<?=gettext("Provide a WINS server list to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
-										Server #1:&nbsp;
+										<?=gettext("Server"); ?> #1:&nbsp;
 										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
-										Server #2:&nbsp;
+										<?=gettext("Server"); ?> #2:&nbsp;
 										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
 									</td>
 								</tr>
@@ -513,7 +513,7 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Phase2 PFS Group</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Phase2 PFS Group"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -522,14 +522,14 @@ function login_banner_change() {
 										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onClick="pfs_group_change()">
 									</td>
 									<td>
-										Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )<br>
+										<?=gettext("Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )"); ?><br>
 									</td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
-										Group:&nbsp;&nbsp;
+										<?=gettext("Group"); ?>:&nbsp;&nbsp;
 										<select name="pfs_group" class="formselect" id="pfs_group">
 										<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
 											<option value="<?=$keygroup;?>" <?php if ($pconfig['pfs_group'] == $keygroup) echo "selected"; ?>>
@@ -543,7 +543,7 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">Login Banner</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Login Banner"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
@@ -552,7 +552,7 @@ function login_banner_change() {
 										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onClick="login_banner_change()">
 									</td>
 									<td>
-										Provide a login banner to clients<br>
+										<?=gettext("Provide a login banner to clients"); ?><br>
 									</td>
 								</tr>
 							</table>
@@ -569,7 +569,7 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="Save">
+							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 						</td>
 					</tr>
 				</table>

@@ -3,7 +3,7 @@
 /*
 	status_rrd_graph.php
 	Part of pfSense
-	Copyright (C) 2007 Seth Mos <seth.mos@xs4all.nl>
+	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -77,9 +77,11 @@ if ($_POST) {
 	}
 }
 
+
+
 $rrddbpath = "/var/db/rrd/";
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+chdir($rrddbpath);
+$databases = glob("*.rrd");
 
 foreach($databases as $database) {
 	if(stristr($database, "wireless")) {
@@ -90,6 +92,9 @@ foreach($databases as $database) {
 	}
 	if(stristr($database, "cellular")) {
 		$cellular = true;
+	}
+	if(stristr($database, "-vpnusers")) {
+		$vpnusers = true;
 	}
 }
 
@@ -132,6 +137,39 @@ include("head.inc");
                                 if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
                                 $tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
                                 display_top_tabs($tab_array);
+				$tab_array = array();
+				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array(gettext("System"), $tabactive, "status_rrd_graph.php?cat=system");
+				if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array(gettext("Traffic"), $tabactive, "status_rrd_graph.php?cat=traffic");
+				if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array(gettext("Packets"), $tabactive, "status_rrd_graph.php?cat=packets");
+				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
+				$tab_array[] = array(gettext("Quality"), $tabactive, "status_rrd_graph.php?cat=quality");
+				if($queues) {
+					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("Queues"), $tabactive, "status_rrd_graph.php?cat=queues");
+					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("QueueDrops"), $tabactive, "status_rrd_graph.php?cat=queuedrops");
+				}
+				if($wireless) {
+					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("Wireless"), $tabactive, "status_rrd_graph.php?cat=wireless");
+				}
+				if($cellular) {
+					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("Cellular"), $tabactive, "status_rrd_graph.php?cat=cellular");
+				}
+				if($vpnusers) {
+					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
+				}
+				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
+				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array(gettext("Settings"), $tabactive, "status_rrd_graph_settings.php");
+				
+				display_top_tabs($tab_array);
                         ?>
                 </td>
         </tr>
@@ -184,7 +222,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br>
+				<td width="78%"><strong><span class="red"><?=gettext("Note");?>:</span></strong><br>
 					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
 					"take this into account after changing the style.");?>
 				</td>

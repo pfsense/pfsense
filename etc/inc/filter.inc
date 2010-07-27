@@ -1396,18 +1396,10 @@ function filter_nat_rules_generate() {
 	else
 		sigkillbypid("/var/run/inetd.pid", "HUP");
 
-	if($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
-		if($pptpdcfg['mode'] == "server")
-			$pptpdtarget = "127.0.0.1";
-		else if($pptpdcfg['mode'] == "redir")
-			$pptpdtarget = $pptpdcfg['redir'];
-		if($pptpdcfg['mode'] == "redir" && is_array($FilterIflist['wan'])) {
-			/*
-			 * NB: ermal -- the rdr rule below is commented out now that we have a solution
-			 *		for PPTP passthrough. This unbreaks other GRE traffic passing
-			 *		through pfSense.
-			 *		After some more testing this will be removed compeletely.
-			 */
+	$pptpdcfg = $config['pptpd'];
+	if($pptpdcfg['mode'] && $pptpdcfg['mode'] == "redir") {
+		$pptpdtarget = $pptpdcfg['redir'];
+		if(is_ipaddr($pptpdtarget) && is_array($FilterIflist['wan'])) {
 			$natrules .= <<<EOD
 
 # PPTP

@@ -819,10 +819,11 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($realif == $ppp['if']) {
-					if (!isset($ppp['ondemand'])) {
-						killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
-						sleep(2);
-						unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+					killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
+					sleep(2);
+					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+					if (isset($ppp['ondemand']) && !$destroy) {
+						interface_configure("wan");
 					}
 					break;
 				}
@@ -2227,7 +2228,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface);
+			interface_bring_down($interface, true);
 	}
 
 	/* wireless configuration? */
@@ -2764,7 +2765,7 @@ function find_carp_interface($ip) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
 				$carp_ip = get_interface_ip($vip['interface']);
-				$if = `ifconfig | grep '$ip' -B1 | head -n1 | cut -d: -f1`;
+				$if = `ifconfig | grep '$ip ' -B1 | head -n1 | cut -d: -f1`;
 				if ($if)
 					return $if;
 			}

@@ -103,21 +103,21 @@ function vpn_ipsec_configure($ipchg = false)
 	if (!isset($ipseccfg['enable'])) {
 		mwexec("/sbin/ifconfig enc0 down");
 
+		/* send a SIGKILL to be sure */
+		sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
+
 		/* kill racoon */
 		if(is_process_running("racoon"))
 			mwexec("/usr/bin/killall racoon", true);
 		killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
-		
+
 		/* wait for racoon process to die */
 		sleep(2);
 
-		/* send a SIGKILL to be sure */
-		sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
-
 		/* flush SPD and SAD */
-		mwexec("/usr/local/sbin/setkey -FP");
 		mwexec("/usr/local/sbin/setkey -F");
-		
+		mwexec("/usr/local/sbin/setkey -FP");
+
 		/* disallow IPSEC, it is off */
 //		exec("/sbin/sysctl net.inet.ip.ipsec_in_use=0");
 
@@ -162,7 +162,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rg = $ph1ent['remote-gateway'];
 
 				if (!is_ipaddr($rg)) {
-					$dnswatch_list[] = $rg;
+					$dnswatch_list[] = "{$rg} = value";
 					add_hostname_to_watch($rg);
 					$rg = resolve_retry($rg);
 					if (!$rg)

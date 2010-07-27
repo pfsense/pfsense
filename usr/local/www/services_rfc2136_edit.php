@@ -81,7 +81,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$rfc2136 = array();
-		$rfc2136['enable'] = $_POST['enable'] ? false : true;
+		$rfc2136['enable'] = $_POST['enable'] ? true : false;
 		$rfc2136['host'] = $_POST['host'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];

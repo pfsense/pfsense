@@ -139,23 +139,23 @@ if ($_POST) {
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	if ((($method == "pre_shared_key") && (!$pconfig['mobile']))||($method == "xauth_psk_server")) {
 		$reqdfields = explode(" ", "pskey");
-		$reqdfieldsn = explode(",", "Pre-Shared Key");
+		$reqdfieldsn = array(gettext("Pre-Shared Key"));
 	} else {
 		$reqdfields = explode(" ", "certref");
-		$reqdfieldsn = explode(",", "My Certificate");
+		$reqdfieldsn = array(gettext("My Certificate"));
 	}
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";
-		$reqdfieldsn[] = "Remote gateway";
+		$reqdfieldsn[] = gettext("Remote gateway");
 	}
 
 	do_input_validation($pconfig, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
-		$input_errors[] = "The P1 lifetime must be an integer.";
+		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 
 	if (($pconfig['remotegw'] && !is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))) 
-		$input_errors[] = "A valid remote gateway address or host name must be specified.";
+		$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
 
 	if (($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled']) )) {
 		$t = 0;
@@ -163,7 +163,7 @@ if ($_POST) {
 			if ($p1index <> $t) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && !isset($ph1tmp['disabled'])) {
-					$input_errors[] = "The remote gateway \"$tremotegw\" is already used by phase1 \"${ph1tmp['descr']}\".";
+					$input_errors[] = sprintf(gettext("The remote gateway \"%s\" is already used by phase1 \"${ph1tmp['descr']}\"."), $tremotegw);
 				}
 			}
 			$t++;
@@ -191,24 +191,24 @@ if ($_POST) {
 		$input_errors[] = gettext("Please enter a dynamic domain name for 'My Identifier'");
 
 	if ((($pconfig['myid_type'] == "address") && !is_ipaddr($pconfig['myid_data'])))
-		$input_errors[] = "A valid IP address for 'My identifier' must be specified.";
+		$input_errors[] = gettext("A valid IP address for 'My identifier' must be specified.");
 
 	if ((($pconfig['myid_type'] == "fqdn") && !is_domain($pconfig['myid_data'])))
-		$input_errors[] = "A valid domain name for 'My identifier' must be specified.";
+		$input_errors[] = gettext("A valid domain name for 'My identifier' must be specified.");
 
 	if ($pconfig['myid_type'] == "fqdn")
 		if (is_domain($pconfig['myid_data']) == false)
-			$input_errors[] = "A valid FQDN for 'My identifier' must be specified.";
+			$input_errors[] = gettext("A valid FQDN for 'My identifier' must be specified.");
 
 	if ($pconfig['myid_type'] == "user_fqdn") {
 		$user_fqdn = explode("@",$pconfig['myid_data']);
 		if (is_domain($user_fqdn[1]) == false)
-			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
+			$input_errors[] = gettext("A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.");
 	}
 
 	if ($pconfig['myid_type'] == "dyn_dns")
 		if (is_domain($pconfig['myid_data']) == false)
-			$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
+			$input_errors[] = gettext("A valid Dynamic DNS address for 'My identifier' must be specified.");
 
 	/* Peer identity */
 
@@ -230,28 +230,28 @@ if ($_POST) {
 			$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'Peer Identifier'");
 
 		if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data'])))
-			$input_errors[] = "A valid IP address for 'Peer identifier' must be specified.";
+			$input_errors[] = gettext("A valid IP address for 'Peer identifier' must be specified.");
 
 		if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data'])))
-			$input_errors[] = "A valid domain name for 'Peer identifier' must be specified.";
+			$input_errors[] = gettext("A valid domain name for 'Peer identifier' must be specified.");
 
 		if ($pconfig['peerid_type'] == "fqdn")
 			if (is_domain($pconfig['peerid_data']) == false)
-				$input_errors[] = "A valid FQDN for 'Peer identifier' must be specified.";
+				$input_errors[] = gettext("A valid FQDN for 'Peer identifier' must be specified.");
 
 		if ($pconfig['peerid_type'] == "user_fqdn") {
 			$user_fqdn = explode("@",$pconfig['peerid_data']);
 			if (is_domain($user_fqdn[1]) == false)
-				$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.";
+				$input_errors[] = gettext("A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.");
 		}
 	}
 
 	if ($pconfig['dpd_enable']) {
 		if (!is_numeric($pconfig['dpd_delay']))
-			$input_errors[] = "A numeric value must be specified for DPD delay.";
+			$input_errors[] = gettext("A numeric value must be specified for DPD delay.");
 
 		if (!is_numeric($pconfig['dpd_maxfail']))
-			$input_errors[] = "A numeric value must be specified for DPD retries.";
+			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 	}
 
 	/* build our encryption algorithms array */
@@ -330,9 +330,9 @@ if ($_POST) {
 }
 
 if ($pconfig['mobile'])
-	$pgtitle = array("VPN","IPsec","Edit Phase 1", "Mobile Client");
+	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"), gettext("Mobile Client"));
 else
-	$pgtitle = array("VPN","IPsec","Edit Phase 1");
+	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"));
 $statusurl = "diag_ipsec.php";
 $logurl = "diag_logs_ipsec.php";
 
@@ -457,9 +457,9 @@ function dpdchkbox_change() {
 		<td id="tabnav">
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
-				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+				$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
+				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array(gettext("Pre-shared keys"), false, "vpn_ipsec_keys.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -469,21 +469,21 @@ function dpdchkbox_change() {
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">General information</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("General information"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-							<strong>Disable this phase1 entry</strong><br>
+							<strong><?=gettext("Disable this phase1 entry"); ?></strong><br>
 							<span class="vexpl">
-								Set this option to disable this phase1 without
-								removing it from the list.
+								<?=gettext("Set this option to disable this phase1 without " .
+								"removing it from the list"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Interface</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="interface" class="formselect">
 							<?php 
@@ -499,31 +499,31 @@ function dpdchkbox_change() {
 							<?php endforeach; ?>
 							</select>
 							<br>
-							<span class="vexpl">Select the interface for the local endpoint of this phase1 entry.</span>
+							<span class="vexpl"><?=gettext("Select the interface for the local endpoint of this phase1 entry"); ?>.</span>
 						</td>
 					</tr>
 
 					<?php if (!$pconfig['mobile']): ?>
 
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Remote gateway</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
 							<br>
-							Enter the public IP address or host name of the remote gateway
+							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
 					</tr>
 
 					<?php endif; ?>
 
 					<tr>
-						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
 							<br>
 							<span class="vexpl">
-								You may enter a description here
-								for your reference (not parsed).
+								<?=gettext("You may enter a description here " .
+								"for your reference (not parsed)"); ?>.
 							</span>
 						</td>
 					</tr>
@@ -532,11 +532,11 @@ function dpdchkbox_change() {
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">
-							Phase 1 proposal (Authentication)
+							<?=gettext("Phase 1 proposal (Authentication)"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Authentication method</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication method"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="authentication_method" class="formselect" onChange="methodsel_change()">
 							<?php
@@ -551,12 +551,12 @@ function dpdchkbox_change() {
 							</select>
 							<br>
 							<span class="vexpl">
-								Must match the setting chosen on the remote side.
+								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Negotiation mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
 							<?php
@@ -567,11 +567,11 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($mode);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br> <span class="vexpl">Aggressive is more flexible, but less secure.</span>
+							</select> <br> <span class="vexpl"><?=gettext("Aggressive is more flexible, but less secure"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">My identifier</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("My identifier"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="myid_type" class="formselect" onChange="myidsel_change()">
 							<?php foreach ($my_identifier_list as $id_type => $id_params): ?>
@@ -584,7 +584,7 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr id="opt_peerid">
-						<td width="22%" valign="top" class="vncellreq">Peer identifier</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer identifier"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="peerid_type" class="formselect" onChange="peeridsel_change()">
 							<?php
@@ -599,23 +599,23 @@ function dpdchkbox_change() {
 							</select>
 							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
 						<?php if ($pconfig['mobile']) { ?>
-							<br/><br/>NOTE: This is known as the "group" setting on some VPN client implementations.
+							<br/><br/><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>
 						</td>
 					</tr>
 					<tr id="opt_psk">
-						<td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?>
 							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
 							<span class="vexpl">
 							<br>
-								Input your pre-shared key string.
+								<?=gettext("Input your pre-shared key string"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="ealgo" class="formselect" onChange="ealgosel_change()">
 							<?php
@@ -634,7 +634,7 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Hash algorithm"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="halgo" class="formselect">
 							<?php foreach ($p1_halgos as $algo => $algoname): ?>
@@ -645,12 +645,12 @@ function dpdchkbox_change() {
 							</select>
 							<br>
 							<span class="vexpl">
-								Must match the setting chosen on the remote side.
+								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">DH key group</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("DH key group"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="dhgroup" class="formselect">
 							<?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
@@ -661,21 +661,21 @@ function dpdchkbox_change() {
 							</select>
 							<br>
 							<span class="vexpl">
-								<em>1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit</em>
+								<em><?=gettext("1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit"); ?></em>
 								<br>
-								Must match the setting chosen on the remote side.
+								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Lifetime</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
-							seconds
+							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
 					<tr id="opt_cert">
-						<td width="22%" valign="top" class="vncellreq">My Certificate</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate"); ?></td>
 						<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
@@ -689,7 +689,7 @@ function dpdchkbox_change() {
 							</select>
 							<br>
 							<span class="vexpl">
-								Select a certificate previously configured in the Certificate Manager.
+								<?=gettext("Select a certificate previously configured in the Certificate Manager"); ?>.
 							</span>
 						</td>
 					</tr>
@@ -697,40 +697,40 @@ function dpdchkbox_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Options"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">NAT Traversal</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="nat_traversal" class="formselect">
-								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected"; ?>>Disable</option>
-								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>>Enable</option>
-								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>>Force</option>
+								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected"; ?>><?=gettext("Disable"); ?></option>
+								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>><?=gettext("Enable"); ?></option>
+								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>><?=gettext("Force"); ?></option>
 							</select>
 							<br/>
 							<span class="vexpl">
-								Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
-								which can help with clients that are behind restrictive firewalls.
+								<?=gettext("Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed, " .
+								"which can help with clients that are behind restrictive firewalls"); ?>.
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Dead Peer Detection</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Dead Peer Detection"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
-							Enable DPD<br>
+							<?=gettext("Enable DPD"); ?><br>
 							<div id="opt_dpd">
 								<br>
 								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
-								seconds<br>
+								<?=gettext("seconds"); ?><br>
 								<span class="vexpl">
-									Delay between requesting peer acknowledgement.
+									<?=gettext("Delay between requesting peer acknowledgement"); ?>.
 								</span><br>
 								<br>
 								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=$pconfig['dpd_maxfail'];?>">
-								retries<br>
+								<?=gettext("retries"); ?><br>
 								<span class="vexpl">
-									Number of consecutive failures allowed before disconnect.
+									<?=gettext("Number of consecutive failures allowed before disconnect"); ?>.
 								</span>
 								<br>
 							</div>
@@ -746,7 +746,7 @@ function dpdchkbox_change() {
 							<input name="mobile" type="hidden" value="true">
 							<?php endif; ?>
 							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
-							<input name="Submit" type="submit" class="formbtn" value="Save">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 						</td>
 					</tr>
 				</table>

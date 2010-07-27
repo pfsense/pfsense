@@ -52,6 +52,12 @@ function handle_argument_group($iface, $argument2) {
 			interface_bring_down($iface);
 			break;
 		case "start":
+			log_error("DEVD Ethernet attached event for {$iface}");
+			$riface = get_real_interface($iface);
+			exec("/usr/sbin/arp -d -i {$riface} -a");
+			log_error("HOTPLUG: Configuring interface {$iface}");
+			interface_configure($iface);
+			break;
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
 			$riface = get_real_interface($iface);

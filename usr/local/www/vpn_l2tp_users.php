@@ -83,7 +83,7 @@ include("head.inc");
 <?php if (isset($config['l2tp']['radius']['enable']))
 	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used.")); ?>
 <?php if (file_exists($d_l2tpuserdirty_path)): ?><p>
-<?php print_info_box_np(gettext("The l2tp user list has been modified.<br />You must apply the changes in order for them to take effect.<br /><b>Warning: this will terminate all current l2tp sessions!</b>"));?><br />
+<?php print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>");?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -112,12 +112,12 @@ include("head.inc");
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
                   <td class="list" nowrap> <a href="vpn_l2tp_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0" alt="" /></a>
-                     &nbsp;<a href="vpn_l2tp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete user" width="17" height="17" border="0" alt="" /></a></td>
+                     &nbsp;<a href="vpn_l2tp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" width="17" height="17" border="0" alt="" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="2"></td>
-                  <td class="list"> <a href="vpn_l2tp_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0" alt="" /></a></td>
+                  <td class="list"> <a href="vpn_l2tp_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" width="17" height="17" border="0" alt="" /></a></td>
 				</tr>
               </table>
 </div>

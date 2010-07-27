@@ -67,11 +67,10 @@ nanobsd_detect_slice_info();
 $NANOBSD_SIZE = nanobsd_get_size();
 
 if($_POST['bootslice']) {
-	$msg = gettext("Setting slice information, please wait...");
 	echo <<<EOF
 	 	<div id="loading">
 			<img src="/themes/metallic/images/misc/loader.gif"> 
-			$msg
+			gettext("Setting slice information, please wait...")
 			<p/>&nbsp;
 		</div>
 EOF;
@@ -83,11 +82,10 @@ EOF;
 }
 
 if($_POST['destslice']) {
-	$msg = gettext("Duplicating slice.  Please wait, this will take a moment...");
 echo <<<EOF
  	<div id="loading">
 		<img src="/themes/metallic/images/misc/loader.gif">
-		$msg
+		gettext("Duplicating slice.  Please wait, this will take a moment...")
 		<p/>&nbsp;
 	</div>
 EOF;

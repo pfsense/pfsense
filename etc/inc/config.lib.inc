@@ -90,8 +90,8 @@ function encrypted_configxml() {
  * RESULT
  *   $config      - array containing all configuration variables
  ******/
-function parse_config($parse = false) {
-	global $g, $config_parsed;
+function parse_config($parse = false, $parse_extra = true) {
+	global $g, $config_parsed, $config_extra;
 	
 	$lockkey = lock('config');
 	$config_parsed = false;
@@ -152,6 +152,26 @@ function parse_config($parse = false) {
 		}
 		generate_config_cache($config);
 	}
+	/*
+	 *  This is used for external management system add-ons
+	 *  allowing for example multiple configuration sections 
+	 *  from a remote management system that does not clobber 
+	 *  the system specific configuration.  This routine
+	 *  merges the extra configuration data into $config
+	 *  and allows for external management systems to 
+	 *  automatically configure specific services, etc.
+	 */
+	if(file_exists($g['conf_path'] . "/config.extra.xml") && $parse_extra) {
+		if(file_exists($g['tmp_path'] . '/config.extra.cache')) {
+			$config_extra = unserialize(file_get_contents($g['tmp_path'] . '/config.extra.cache'));
+		} else {
+			if($g['booting']) echo ".";
+			$config_extra = parse_xml_config($g['conf_path'] . '/config.extra.xml', $g['xml_rootobj']);
+			if($g['booting']) echo ".";
+			$config = array_merge($config, $config_extra);
+			if($g['booting']) echo ".";
+		}
+	}
 	if($g['booting']) echo ".";
 	alias_make_table($config);
 	$config_parsed = true;
@@ -169,11 +189,19 @@ function parse_config($parse = false) {
  *   boolean	- true on completion
  ******/
 function generate_config_cache($config) {
-	global $g;
+	global $g, $config_extra;
 
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	unset($configcache);
+	/* Used for config.extra.xml */
+	if(file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
+		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
+		fwrite($configcacheextra, serialize($config_extra));
+		fclose($configcacheextra);		
+		unset($configcacheextra);
+	}
 }
 
 function discover_last_backup() {
@@ -457,6 +485,8 @@ function safe_write_file($file, $content, $force_binary) {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
+	$config = parse_config(true, false, false);
+	
 	if($g['bootup']) 
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 

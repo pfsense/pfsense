@@ -138,10 +138,28 @@ function led_kitt() {
 }
 
 /*
+ * Custom pattern for assigning interfaces
+ */
+function led_assigninterfaces() {
+	led_pattern(1, 'AaaAaaaaaaaaaaaa');
+	led_pattern(2, 'aaaaaAaaAaaaaaaa');
+	led_pattern(3, 'aaaaaaaaaaAaaAaa');
+}
+
+/*
  * Return the three LEDs to a standard setup (1=on, 2 and 3 = off)
  */
 function led_normalize() {
 	led_on(1);
+	led_off(2);
+	led_off(3);
+}
+
+/*
+ * Shut off ALL LEDs.
+ */
+function led_alloff() {
+	led_off(1);
 	led_off(2);
 	led_off(3);
 }

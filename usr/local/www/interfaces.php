@@ -228,6 +228,7 @@ if (isset($wancfg['wireless'])) {
 	$wl_regdomains_attr = &$wl_regdomain_xml_attr['regulatory-domains']['rd'];
 	$wl_countries = &$wl_regdomain_xml['country-codes']['country'];
 	$wl_countries_attr = &$wl_regdomain_xml_attr['country-codes']['country'];
+	$pconfig['persistcommonwireless'] = isset($config['wireless']['interfaces'][$wlanbaseif]);
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
@@ -666,7 +667,7 @@ if ($_POST) {
 } // end if($_POST) 
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr;
+	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];
@@ -702,6 +703,11 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_addr'] = $_POST['auth_server_addr'];
 	$wancfg['wireless']['auth_server_port'] = $_POST['auth_server_port'];
 	$wancfg['wireless']['auth_server_shared_secret'] = $_POST['auth_server_shared_secret'];
+	if ($_POST['persistcommonwireless'] == "yes") {
+		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
+			$config['wireless']['interfaces'][$wlanbaseif] = array();
+	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
+		unset($config['wireless']['interfaces'][$wlanbaseif]);
 	if ($_POST['hidessid_enable'] == "yes")
 		$wancfg['wireless']['hidessid']['enable'] = true;
 	else if (isset($wancfg['wireless']['hidessid']['enable']))
@@ -1475,6 +1481,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 						</tr>										
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">Common wireless configuration - Settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell">Persist common settings</td>
+							<td class="vtable">
+								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <? if ($pconfig['persistcommonwireless']) echo "checked";?>>
+								<br/>Enabling this preserves the common wireless configuration through interface deletions and reassignments.
+							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncellreq">Standard</td>

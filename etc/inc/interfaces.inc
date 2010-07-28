@@ -1843,11 +1843,13 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	}
 
 	// Read or write settings at shared area
-	foreach ($shared_settings as $setting) {
-		if ($sync_changes) {
-			$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
-		} else if (isset($config['wireless']['interfaces'][$baseif][$setting])) {
-			$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+	if (isset($config['wireless']['interfaces'][$baseif])) {
+		foreach ($shared_settings as $setting) {
+			if ($sync_changes) {
+				$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
+			} else if (isset($config['wireless']['interfaces'][$baseif][$setting])) {
+				$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+			}
 		}
 	}
 

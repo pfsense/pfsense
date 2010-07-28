@@ -58,18 +58,16 @@ if($_POST['disablecarp'] <> "") {
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
                 	foreach ($viparr as $vip) {
-                        	if (in_array($vip['carpif'], $carps)) {
-                                	switch ($vip['mode']) {
-                                        	case "carp":
-                                        		interface_vip_bring_down($vip);
-                                        		sleep(1);
-                                        	break;
-                                        	case "carpdev-dhcp":
-                                        		interface_vip_bring_down($vip);
-                                        		sleep(1);
-                                        	break;
-                                	}
-                        	}
+                               	switch ($vip['mode']) {
+                                       	case "carp":
+                                       		interface_vip_bring_down($vip);
+                                       		sleep(1);
+                                       	break;
+                                       	case "carpdev-dhcp":
+                                       		interface_vip_bring_down($vip);
+                                       		sleep(1);
+                                       	break;
+                               	}
                 	}
         	}
 		$savemsg = "{$carp_counter} IPs have been disabled.";
@@ -80,17 +78,15 @@ if($_POST['disablecarp'] <> "") {
 		if(is_array($config['virtualip']['vip'])) {
                         $viparr = &$config['virtualip']['vip'];
                         foreach ($viparr as $vip) {
-                                if (in_array($vip['carpif'], $carps)) {
-                                        switch ($vip['mode']) {
-                                                case "carp":
-                                                        interface_carp_configure($vip);
-                                                        sleep(1);
-                                                break;
-                                                case "carpdev-dhcp":
-                                                        interface_carpdev_configure($vip);
-                                                        sleep(1);
-                                                break;
-                                        }
+				switch ($vip['mode']) {
+					case "carp":
+						interface_carp_configure($vip);
+						sleep(1);
+					break;
+					case "carpdev-dhcp":
+						interface_carpdev_configure($vip);
+						sleep(1);
+					break;
                                 }
                         }
                 }

@@ -174,13 +174,13 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
-		    <select name='sn' class="formselect" id='sn'>
+		    /<select name='sn' class="formselect" id='sn'>
 			<?php for ($i = 32; $i >= 1; $i--): ?>
 			<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected"; ?>><?=$i;?></option>
 			<?php endfor; ?>
 		    </select>
                     <br> 
-                    <span class="vexpl">IP address</span></td>
+                    <span class="vexpl">IP address and subnet mask. Use /32 for a single IP.</span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

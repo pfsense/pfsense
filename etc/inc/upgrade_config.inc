@@ -1703,7 +1703,8 @@ function upgrade_054_to_055() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -1740,7 +1741,8 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		/* rename DS source */
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");
@@ -1787,7 +1789,8 @@ function upgrade_054_to_055() {
 
 	}
 	enable_rrd_graphing();
-	echo "Updating configuration...";
+	if ($g['booting'])
+		echo "Updating configuration...";
 }
 
 

@@ -2753,6 +2753,7 @@ function find_number_of_created_carp_interfaces() {
 
 function get_all_carp_interfaces() {
 	$ints = str_replace("\n", " ", `ifconfig | grep "carp:" -B2 | grep ": flag" | cut -d: -f1`);
+	$ints = explode(" ", $ints);
 	return $ints;
 }
 

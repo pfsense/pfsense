@@ -76,4 +76,17 @@ $pagetitle = gentitle( $pgtitle );
 
 if (!isset($closehead))
 	echo "</head>";
+
+/*  If this page is being remotely managed then do not allow the loading of the contents. */
+if($config['remote_managed_pages']['item']) {
+	foreach($config['remote_managed_pages']['item'] as $rmp) {
+		if($rmp == $_SERVER['SCRIPT_NAME']) {
+			include("fbegin.inc");
+			print_info_box_np("This page is currently being managed by a remote machine.");
+			include("fend.inc");
+			exit;
+		}
+	}	
+}
+
 ?>

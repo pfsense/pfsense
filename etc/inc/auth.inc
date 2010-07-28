@@ -976,6 +976,8 @@ function radius_backed($username, $passwd, $authcfg){
 	global $debug, $config;
 	$ret = false;
 
+	require_once("radius.inc");
+
 	$rauth = new Auth_RADIUS_PAP($username, $passwd);
 	if ($authcfg) {
 		$radiusservers = array();
@@ -1115,7 +1117,6 @@ function authenticate_user($username, $password, $authcfg = NULL) {
                         $authenticated = true;
                 break;
         case 'radius':
-		require_once("radius.inc");
                 if (radius_backed($username, $password, $authcfg))
                         $authenticated = true;
                 break;

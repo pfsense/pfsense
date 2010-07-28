@@ -1615,7 +1615,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>										
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
+							<td colspan="2" valign="top" class="listtopic">Network-specific wireless configuration</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncellreq">Mode</td>

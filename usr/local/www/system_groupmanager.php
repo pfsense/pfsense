@@ -412,6 +412,9 @@ function presubmit() {
 								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
 							else
 								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+							$groupcount = count($group['member']);
+							if ($group["name"] == "all")
+								$groupcount = count($config['system']['user']);
 					?>
 					<tr ondblclick="document.location='system_groupmanager.php?act=edit&id=<?=$i;?>'">
 						<td class="listlr">
@@ -431,7 +434,7 @@ function presubmit() {
 							<?=htmlspecialchars($group['description']);?>&nbsp;
 						</td>
 						<td class="listbg">
-							<?=count($group['member'])?>
+							<?=$groupcount;?>
 						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">

@@ -149,7 +149,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20">
                     <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20">
-                    &nbsp;<?=gettext("(confirmation)");?><?php if (isset($id) && $a_secret[$id]): ?><br>
+                    &nbsp;(<?=gettext("confirmation");?>)<?php if (isset($id) && $a_secret[$id]): ?><br>
                     <span class="vexpl"><?=gettext("If you want to change the users' password, ".
                     "enter it here twice.");?></span><?php endif; ?></td>
                 </tr>

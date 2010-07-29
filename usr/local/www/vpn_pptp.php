@@ -309,7 +309,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 			<input type="radio" name="mode" value="redir" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "redir") echo gettext("checked"); ?>>
-                    <?=gettext("Redirect incoming PPTP connections to:");?></td>
+                    <?=gettext("Redirect incoming PPTP connections to");?>:</td>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("PPTP redirection");?></td>
                   <td width="78%" class="vtable"> 
@@ -462,8 +462,8 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
-                    </strong></span><?=gettext("don't forget to ");?><a href="firewall_rules.php?if=pptp">add a firewall rule</a><?=gettext(" to permit ". 
-                    "traffic from PPTP clients!");?></span></td>
+                    </strong></span><?=gettext("don't forget to ");?><a href="firewall_rules.php?if=pptp"><?=gettext("add a firewall rule"); ?></a> <?=gettext("to permit ". 
+                    "traffic from PPTP clients");?>!</span></td>
                 </tr>
               </table>
 </div>

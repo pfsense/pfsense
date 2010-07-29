@@ -372,6 +372,10 @@ upnp_start();
 /* If powerd is enabled, lets launch it */
 activate_powerd();
 
+/* Remove the old shutdown binary if we kept it. */
+if (file_exists("/sbin/shutdown.old"))
+	unlink("/sbin/shutdown.old");
+
 /* done */
 unset($g['booting']);
 

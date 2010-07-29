@@ -39,7 +39,7 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = array("Restarting httpd");
+$pgtitle = array(gettext("Restarting httpd"));
 include("head.inc");
 ?>
 
@@ -47,18 +47,18 @@ include("head.inc");
 <form>
 <?php include("fbegin.inc"); ?>
 
-Mounting file systems read/write...
+<?=gettext("Mounting file systems read/write...");?>
 <?php flush(); sleep(1); conf_mount_rw(); ?>
-Done.<br>
-Forcing all PHP file permissions to 0755...
+<?=gettext("Done.");?><br>
+<?=gettext("Forcing all PHP file permissions to 0755...");?>
 <?php flush(); sleep(1); system('/bin/chmod -R 0755 /usr/local/www/*.php'); ?>
-Done.<br>
-Mounting file systems read only...
+<?=gettext("Done.");?><br>
+<?=gettext("Mounting file systems read only...");?>
 <?php flush(); sleep(1); conf_mount_ro(); ?>
-Done.<br>
-Restarting mini_httpd...
+<?=gettext("Done.");?><br>
+<?=gettext("Restarting mini_httpd...");?>
 <?php flush(); sleep(1); system_webgui_start(); ?>
-Done.<br>
+<?=gettext("Done.");?><br>
 
 <?php
 include("fend.inc");

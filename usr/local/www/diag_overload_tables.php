@@ -98,9 +98,8 @@ include("fbegin.inc");
 	
 <?=gettext("Table");?>: 
 <select id='type' onChange='method_change($F("type"));' name='type'>
-	<option name='<?=$tablename?>' value='<?=$tablename?>'><?=$tablename?></option>
-	<option name='virusprot' value='virusprot'>virusprot</option>
-	<option name='sshlockout' value='sshlockout'>sshlockout</option>
+	<option name='sshlockout' value='sshlockout' <?php if ($tablename == "sshlockout") echo " selected ";?>>sshlockout</option>
+	<option name='virusprot' value='virusprot' <?php if ($tablename == "virusprot") echo " selected ";?>>virusprot</option>
 </select>
 
 <p/>

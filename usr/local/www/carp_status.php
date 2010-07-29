@@ -62,9 +62,9 @@ if($_POST['disablecarp'] <> "") {
 				mwexec("/sbin/ifconfig $int destroy");
 			}
 		}
-		$savemsg = "{$carp_counter} IPs have been disabled.";
+		$savemsg = sprintf(gettext("%s IPs have been disabled."), $carp_counter);
 	} else {
-		$savemsg = "CARP has been enabled.";
+		$savemsg = gettext("CARP has been enabled.");
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");
 		interfaces_carp_setup();
 	}
@@ -72,7 +72,7 @@ if($_POST['disablecarp'] <> "") {
 
 $status = get_carp_status();
 
-$pgtitle = array("Status","CARP");
+$pgtitle = array(gettext("Status"),gettext("CARP"));
 include("head.inc");
 
 ?>
@@ -96,10 +96,10 @@ include("head.inc");
 			if($carpcount > 0) {
 				if($status == false) {
 					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Enable Carp\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
 				} else {
 					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Disable Carp\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp") . "\">";
 				}
 			}
 ?>
@@ -107,13 +107,13 @@ include("head.inc");
 			<p>
 			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td class="listhdrr"><b><center>CARP Interface</center></b></td>
-					<td class="listhdrr"><b><center>Virtual IP</center></b></td>
-					<td class="listhdrr"><b><center>Status</center></b></td>
+					<td class="listhdrr"><b><center><?=gettext("CARP Interface"); ?></center></b></td>
+					<td class="listhdrr"><b><center><?=gettext("Virtual IP"); ?></center></b></td>
+					<td class="listhdrr"><b><center><?=gettext("Status"); ?></center></b></td>
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br>Could not locate any defined CARP interfaces.";
+					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces") . ".";
 					echo "</center>";
 
 					include("fend.inc");
@@ -161,15 +161,15 @@ include("head.inc");
 <p/>
 
 <span class="vexpl">
-<span class="red"><strong>Note:</strong></span>
+<span class="red"><strong><?=gettext("Note"); ?>:</strong></span>
 <br />
-You can configure CARP settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
+<?=gettext("You can configure CARP settings"); ?> <a href="pkg_edit.php?xml=carp_settings.xml&id=0"><?=gettext("here"); ?></a>.
 </span>
 
 <p/>
 
 <?php
-	echo "<br>pfSync nodes:<br>";
+	echo "<br>" . gettext("pfSync nodes") . ":<br>";
 	echo "<pre>";
 	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
 	echo "</pre>";

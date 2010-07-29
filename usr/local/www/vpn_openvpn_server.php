@@ -37,7 +37,7 @@
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
-$pgtitle = array("OpenVPN", "Server");
+$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
 $statusurl = "status_openvpn.php";
 $logurl = "diag_logs_openvpn.php";
 
@@ -175,7 +175,7 @@ if ($_POST) {
 	if (!empty($pconfig['authmode'])) {
 		foreach ($pconfig['authmode'] as $pauthmode) {
 			if ($pauthmode != "Local Database" && $pconfig['mode'] == "server_tls_user") 
-				$input_errors[] = "Only 'Local authentication database'  is allowed with " . $openvpn_server_modes[$pconfig['mode']];
+				$input_errors[] = gettext("Only 'Local authentication database'  is allowed with") . " " . $openvpn_server_modes[$pconfig['mode']];
 		}
 	}
 
@@ -194,7 +194,7 @@ if ($_POST) {
 
 	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
 	if (($portused != $vpnid) && ($portused != 0))
-		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
+		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
 
 	if ($pconfig['autokey_enable'])
 		$pconfig['shared_key'] = openvpn_create_key();
@@ -202,62 +202,62 @@ if ($_POST) {
 	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
-			$input_errors[] = "The field 'Shared Key' does not appear to be valid";
+			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable'])
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
-			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
+			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 
 	if ($pconfig['dns_server_enable']) {
 		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1'])))
-			$input_errors[] = "The field 'DNS Server #1' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'DNS Server #1' must contain a valid IP address");
 		if (!empty($pconfig['dns_server2']) && !is_ipaddr(trim($pconfig['dns_server2'])))
-			$input_errors[] = "The field 'DNS Server #2' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'DNS Server #2' must contain a valid IP address");
 		if (!empty($pconfig['dns_server3']) && !is_ipaddr(trim($pconfig['dns_server3'])))
-			$input_errors[] = "The field 'DNS Server #3' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'DNS Server #3' must contain a valid IP address");
 		if (!empty($pconfig['dns_server4']) && !is_ipaddr(trim($pconfig['dns_server4'])))
-			$input_errors[] = "The field 'DNS Server #4' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'DNS Server #4' must contain a valid IP address");
 	}
 
 	if ($pconfig['ntp_server_enable']) {
 		if (!empty($pconfig['ntp_server1']) && !is_ipaddr(trim($pconfig['ntp_server1'])))
-			$input_errors[] = "The field 'NTP Server #1' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'NTP Server #1' must contain a valid IP address");
 		if (!empty($pconfig['ntp_server2']) && !is_ipaddr(trim($pconfig['ntp_server2'])))
-			$input_errors[] = "The field 'NTP Server #2' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'NTP Server #2' must contain a valid IP address");
 		if (!empty($pconfig['ntp_server3']) && !is_ipaddr(trim($pconfig['ntp_server3'])))
-			$input_errors[] = "The field 'NTP Server #3' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'NTP Server #3' must contain a valid IP address");
 		if (!empty($pconfig['ntp_server4']) && !is_ipaddr(trim($pconfig['ntp_server4'])))
-			$input_errors[] = "The field 'NTP Server #4' must contain a valid IP address";
+			$input_errors[] = gettext("The field 'NTP Server #4' must contain a valid IP address");
 	}
 
 	if ($pconfig['netbios_enable']) {
 		if ($pconfig['wins_server_enable']) {
 			if (!empty($pconfig['wins_server1']) && !is_ipaddr(trim($pconfig['wins_server1'])))
-				$input_errors[] = "The field 'WINS Server #1' must contain a valid IP address";
+				$input_errors[] = gettext("The field 'WINS Server #1' must contain a valid IP address");
 			if (!empty($pconfig['wins_server2']) && !is_ipaddr(trim($pconfig['wins_server2'])))
-				$input_errors[] = "The field 'WINS Server #2' must contain a valid IP address";
+				$input_errors[] = gettext("The field 'WINS Server #2' must contain a valid IP address");
 		}
 		if ($pconfig['nbdd_server_enable'])
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1'])))
-				$input_errors[] = "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address";
+				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 	}
 
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
-		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
+		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));;
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
+		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
 	$reqdfields[] = 'tunnel_network';
-	$reqdfieldsn[] = 'Tunnel network';
+	$reqdfieldsn[] = gettext('Tunnel network');
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -534,10 +534,10 @@ function netbios_change() {
 			<form action="vpn_openvpn_server.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">General information</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("General information"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
@@ -548,12 +548,12 @@ function netbios_change() {
 									<td>
 										&nbsp;
 										<span class="vexpl">
-											<strong>Disable this server</strong><br>
+											<strong><?=gettext("Disable this server"); ?></strong><br>
 										</span>
 									</td>
 								</tr>
 							</table>
-							Set this option to disable this server without removing it from the list.
+							<?=gettext("Set this option to disable this server without removing it from the list"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -604,7 +604,7 @@ function netbios_change() {
 							</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Interface</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="interface" class="formselect">
 								<?php
@@ -635,21 +635,21 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable"> 
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>">
 							<br>
-							You may enter a description here for your reference (not parsed).
+							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Cryptographic Settings</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Cryptographic Settings"); ?></td>
 					</tr>
 					<tr id="tls">
-						<td width="22%" valign="top" class="vncellreq">TLS Authentication</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("TLS Authentication"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -659,7 +659,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Enable authentication of TLS packets.
+											<?=gettext("Enable authentication of TLS packets"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -673,7 +673,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Automatically generate a shared TLS authentication key.
+											<?=gettext("Automatically generate a shared TLS authentication key"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -684,14 +684,14 @@ function netbios_change() {
 									<td>
 										<textarea name="tls" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['tls']);?></textarea>
 										<br/>
-										Paste your shared key here.
+										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr id="tls_ca">
-						<td width="22%" valign="top" class="vncellreq">Peer Certificate Authority</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Authority"); ?></td>
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
@@ -706,7 +706,7 @@ function netbios_change() {
 							</td>
 					</tr>
 					<tr id="tls_cert">
-						<td width="22%" valign="top" class="vncellreq">Server Certificate</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Certificate"); ?></td>
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
@@ -723,7 +723,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr id="tls_dh">
-						<td width="22%" valign="top" class="vncellreq">DH Parameters Length</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("DH Parameters Length"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="dh_length" class="formselect">
 								<?php
@@ -741,7 +741,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr id="psk">
-						<td width="22%" valign="top" class="vncellreq">Shared Key</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Shared Key"); ?></td>
 						<td width="78%" class="vtable">
 							<?php if (!$pconfig['shared_key']): ?>
 							<table border="0" cellpadding="2" cellspacing="0">
@@ -752,7 +752,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Automatically generate a shared key.
+											<?=gettext("Automatically generate a shared key"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -763,14 +763,14 @@ function netbios_change() {
 									<td>
 										<textarea name="shared_key" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['shared_key']);?></textarea>
 										<br/>
-										Paste your shared key here.
+										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="crypto" class="formselect">
 								<?php
@@ -791,24 +791,24 @@ function netbios_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Tunnel Settings</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Tunnel Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Tunnel Network</td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
 							<br>
-							This is the virtual network used for private
-							communications between this server and client
-							hosts expressed using CIDR (eg. 10.0.8.0/24).
-							The first network address will be assigned to
-							the	server virtual interface. The remaining
-							network addresses can optionally be assigned
-							to connecting clients. (see Address Pool)
+							<?=gettext("This is the virtual network used for private " .
+							"communications between this server and client " .
+							"hosts expressed using CIDR (eg. 10.0.8.0/24). " .
+							"The first network address will be assigned to " .
+							"the	server virtual interface. The remaining " .
+							"network addresses can optionally be assigned " .
+							"to connecting clients. (see Address Pool)"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Redirect Gateway</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Redirect Gateway"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -818,7 +818,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Force all client generated traffic through the tunnel.
+											<?=gettext("Force all client generated traffic through the tunnel"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -826,30 +826,30 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr id="local_opts">
-						<td width="22%" valign="top" class="vncell">Local Network</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Local Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
 							<br>
-							This is the network that will be accessible
-							from the remote endpoint. Expressed as a CIDR
-							range. You may leave this blank if you don't
-							want to add a route to the local network
-							through this tunnel on the remote machine.
-							This is generally set to your LAN network.
+							<?=gettext("This is the network that will be accessible " .
+							"from the remote endpoint. Expressed as a CIDR " .
+							"range. You may leave this blank if you don't " .
+							"want to add a route to the local network " .
+							"through this tunnel on the remote machine. " .
+							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
 					<tr id="remote_opts">
-						<td width="22%" valign="top" class="vncell">Remote Network</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							This is a network that will be routed through
-							the tunnel, so that a site-to-site VPN can be
-							established without manually changing the
-							routing tables. Expressed as a CIDR range. If
-							this is a site-to-site VPN, enter here the
-							remote LAN here. You may leave this blank if
-							you don't want a site-to-site VPN.
+							<?=gettext("This is a network that will be routed through " .
+							"the tunnel, so that a site-to-site VPN can be " .
+							"established without manually changing the " .
+							"routing tables. Expressed as a CIDR range. If " .
+							"this is a site-to-site VPN, enter here the " .
+							"remote LAN here. You may leave this blank if " .
+							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -857,11 +857,11 @@ function netbios_change() {
 						<td width="78%" class="vtable">
 							<input name="maxclients" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['maxclients']);?>"/>
 							<br/>
-							Specify the maximum number of clients allowed to concurrently connect to this server.
+							<?=gettext("Specify the maximum number of clients allowed to concurrently connect to this server"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Compression</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Compression"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -871,7 +871,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Compress tunnel packets using the LZO algorithm.
+											<?=gettext("Compress tunnel packets using the LZO algorithm"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -879,7 +879,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Type-of-Service</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Type-of-Service"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -889,7 +889,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Set the TOS IP header value of tunnel packets to match the encapsulated packet value.
+											<?=gettext("Set the TOS IP header value of tunnel packets to match the encapsulated packet value"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -897,7 +897,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr id="inter_client_communication">
-						<td width="22%" valign="top" class="vncell">Inter-client communication</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Inter-client communication"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -907,7 +907,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Allow communication between clients connected to this server
+											<?=gettext("Allow communication between clients connected to this server"); ?>
 										</span>
 									</td>
 								</tr>
@@ -921,10 +921,10 @@ function netbios_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Client Settings</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Client Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Dynamic IP</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic IP"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -934,7 +934,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Allow connected clients to retain their connections if their IP address changes.<br>
+											<?=gettext("Allow connected clients to retain their connections if their IP address changes"); ?>.<br>
 										</span>
 									</td>
 								</tr>
@@ -942,7 +942,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Address Pool</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Address Pool"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -952,7 +952,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Provide a virtual adapter IP address to clients (see Tunnel Network)<br>
+											<?=gettext("Provide a virtual adapter IP address to clients (see Tunnel Network)"); ?><br>
 										</span>
 									</td>
 								</tr>
@@ -960,7 +960,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">DNS Default Domain</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -970,7 +970,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-	                                        Provide a default domain name to clients<br>
+	                                        <?=gettext("Provide a default domain name to clients"); ?><br>
 										</span>
 									</td>
 								</tr>
@@ -985,7 +985,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">DNS Servers</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -995,7 +995,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Provide a DNS server list to clients<br>
+											<?=gettext("Provide a DNS server list to clients"); ?><br>
 										</span>
 									</td>
 								</tr>
@@ -1004,7 +1004,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #1:&nbsp;
+											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
 										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=$pconfig['dns_server1'];?>">
 									</td>
@@ -1012,7 +1012,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #2:&nbsp;
+											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
 										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=$pconfig['dns_server2'];?>">
 									</td>
@@ -1020,7 +1020,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #3:&nbsp;
+											<?=gettext("Server"); ?> #3:&nbsp;
 										</span>
 										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=$pconfig['dns_server3'];?>">
 									</td>
@@ -1028,7 +1028,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #4:&nbsp;
+											<?=gettext("Server"); ?> #4:&nbsp;
 										</span>
 										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=$pconfig['dns_server4'];?>">
 									</td>
@@ -1037,7 +1037,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">NTP Servers</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("NTP Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -1047,7 +1047,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Provide a NTP server list to clients<br>
+											<?=gettext("Provide a NTP server list to clients"); ?><br>
 										</span>
 									</td>
 								</tr>
@@ -1056,7 +1056,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #1:&nbsp;
+											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
 										<input name="ntp_server1" type="text" class="formfld unknown" id="ntp_server1" size="20" value="<?=$pconfig['ntp_server1'];?>">
 									</td>
@@ -1064,7 +1064,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #2:&nbsp;
+											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
 										<input name="ntp_server2" type="text" class="formfld unknown" id="ntp_server2" size="20" value="<?=$pconfig['ntp_server2'];?>">
 									</td>
@@ -1073,7 +1073,7 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">NetBIOS Options</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("NetBIOS Options"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -1083,19 +1083,19 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Enable NetBIOS over TCP/IP<br>
+											<?=gettext("Enable NetBIOS over TCP/IP"); ?><br>
 										</span>
 									</td>
 								</tr>
 							</table>
-							If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled.
+							<?=gettext("If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled"); ?>.
 							<br/>
 							<table border="0" cellpadding="2" cellspacing="0" id="netbios_data">
 								<tr>
 									<td>
 										<br/>
 										<span class="vexpl">
-											Node Type:&nbsp;
+											<?=gettext("Node Type"); ?>:&nbsp;
 										</span>
 										<select name='netbios_ntype' class="formselect">
 										<?php
@@ -1108,32 +1108,32 @@ function netbios_change() {
 										<?php endforeach; ?>
 										</select>
 										<br/>
-										Possible options: b-node (broadcasts), p-node
-										(point-to-point name queries to a WINS server),
-										m-node (broadcast then query name server), and
-										h-node (query name server, then broadcast).
+										<?=gettext("Possible options: b-node (broadcasts), p-node " .
+										"(point-to-point name queries to a WINS server), " .
+										"m-node (broadcast then query name server), and " .
+										"h-node (query name server, then broadcast)"); ?>.
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<br/>
 										<span class="vexpl">
-											Scope ID:&nbsp;
+											<?=gettext("Scope ID"); ?>:&nbsp;
 										</span>
 										<input name="netbios_scope" type="text" class="formfld unknown" id="netbios_scope" size="30" value="<?=htmlspecialchars($pconfig['netbios_scope']);?>">
 										<br/>
-										A NetBIOS Scope	ID provides an extended naming
-										service for	NetBIOS over TCP/IP. The NetBIOS
-										scope ID isolates NetBIOS traffic on a single
-										network to only those nodes with the same
-										NetBIOS scope ID.
+										<?=gettext("A NetBIOS Scope	ID provides an extended naming " .
+										"service for	NetBIOS over TCP/IP. The NetBIOS " .
+										"scope ID isolates NetBIOS traffic on a single " .
+										"network to only those nodes with the same " .
+										"NetBIOS scope ID"); ?>.
 									</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr id="wins_opts">
-						<td width="22%" valign="top" class="vncell">WINS Servers</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
@@ -1143,7 +1143,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Provide a WINS server list to clients<br>
+											<?=gettext("Provide a WINS server list to clients"); ?><br>
 										</span>
 									</td>
 								</tr>
@@ -1152,7 +1152,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #1:&nbsp;
+											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
 										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
 									</td>
@@ -1160,7 +1160,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<span class="vexpl">
-											Server #2:&nbsp;
+											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
 										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
 									</td>
@@ -1175,17 +1175,17 @@ function netbios_change() {
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
-						<td colspan="2" valign="top" class="listtopic">Advanced configuration</td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced configuration"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Advanced</td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
-										Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon<br/>
-										EXAMPLE: push "route 10.0.0.0 255.255.255.0";
+										<?=gettext("Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon"); ?><br/>
+										<?=gettext("EXAMPLE: push \"route 10.0.0.0 255.255.255.0\""); ?>;
 									</td>
 								</tr>
 							</table>
@@ -1199,7 +1199,7 @@ function netbios_change() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="Save"> 
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
 							<input name="act" type="hidden" value="<?=$act;?>">
 							<?php if (isset($id) && $a_server[$id]): ?>
 							<input name="id" type="hidden" value="<?=$id;?>">
@@ -1213,10 +1213,10 @@ function netbios_change() {
 
 			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="10%" class="listhdrr">Disabled</td>
-					<td width="10%" class="listhdrr">Protocol / Port</td>
-					<td width="30%" class="listhdrr">Tunnel Network</td>
-					<td width="40%" class="listhdrr">Description</td>
+					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Protocol / Port"); ?></td>
+					<td width="30%" class="listhdrr"><?=gettext("Tunnel Network"); ?></td>
+					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
 				<?php
@@ -1241,11 +1241,11 @@ function netbios_change() {
 					</td>
 					<td valign="middle" nowrap class="list">
 						<a href="vpn_openvpn_server.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit server" width="17" height="17" border="0">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit server"); ?>" width="17" height="17" border="0">
 						</a>
 						&nbsp;
-						<a href="vpn_openvpn_server.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this server?')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete server" width="17" height="17" border="0">
+						<a href="vpn_openvpn_server.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this server?"); ?>')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete server"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>
@@ -1256,7 +1256,7 @@ function netbios_change() {
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
-						<a href="vpn_openvpn_server.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add server" width="17" height="17" border="0">
+						<a href="vpn_openvpn_server.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add server"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>

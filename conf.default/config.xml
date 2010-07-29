@@ -566,7 +566,7 @@
 		-->
 	</shaper>
 	<ipsec>
-		<preferredoldsa/>
+		<preferoldsa/>
 		<!-- <enable/> -->
 		<!-- syntax:
 		<tunnel>

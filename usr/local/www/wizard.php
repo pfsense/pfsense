@@ -62,7 +62,7 @@ if($_POST['xml'])
 
 if(empty($xml)) {
 	$xml = "not_defined";
-	print_info_box_np("ERROR:  Could not open " . $xml . ".");
+	print_info_box_np(gettext("ERROR:  Could not open ") . $xml . ".");
 	die;
 } else {
 	if (file_exists("{$g['www_path']}/wizards/{$xml}"))
@@ -74,7 +74,7 @@ if(empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np("ERROR: Could not parse {$g['www_path']}/wizards/{$xml} file.");
+	print_info_box_np(printf(gettext("ERROR: Could not parse %s/wizards/%s file."),$g['www_path'],$xml));
 	die;
 }
 

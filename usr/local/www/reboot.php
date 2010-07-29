@@ -41,14 +41,14 @@ require("functions.inc");
 require("captiveportal.inc");
 
 if ($_POST) {
-	if ($_POST['Submit'] == " Yes ") {
-		$rebootmsg = "The system is rebooting now. This may take one minute.";
+	if ($_POST['Submit'] == gettext(" Yes ")) {
+		$rebootmsg = gettext("The system is rebooting now. This may take one minute.");
 	} else {
 		Header("Location: /");
 	}
 }
 
-$pgtitle = array("Diagnostics","Reboot System");
+$pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
 ?>
@@ -56,10 +56,10 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="reboot.php" method="post">
-        <p><strong>Are you sure you want to reboot the system?</strong></p>
+        <p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
         <p> 
-	  <input name="Submit" type="submit" class="formbtn" value=" Yes ">
-	  <input name="Submit" type="submit" class="formbtn" value=" No ">
+	  <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" Yes ");?>">
+	  <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" No ");?>">
         </p>
       </form>
 <?php endif; ?>
@@ -69,10 +69,10 @@ include("head.inc");
 
 <?php
 if ($_POST) {
-	if ($_POST['Submit'] == " Yes ") {
+	if ($_POST['Submit'] == gettext(" Yes ")) {
 		echo "<meta http-equiv=\"refresh\" content=\"70;url=/\">";
 		system_reboot();
-		$rebootmsg = "The system is rebooting now. This may take one minute.";
+		$rebootmsg = gettext("The system is rebooting now. This may take one minute.");
 	} else {
 		exit;
 	}

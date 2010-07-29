@@ -31,7 +31,7 @@
 	pfSense_MODULE:	filter
 */
 
-$pgtitle = "Status : EasyRule";
+$pgtitle = gettext("Status : EasyRule");
 require_once("guiconfig.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");
@@ -66,14 +66,14 @@ include("head.inc"); ?>
 
 <?php if ($message) { ?>
 <br/>
-Message: <?php echo $message; ?>
+<?=gettext("Message"); ?>: <?php echo $message; ?>
 <br/>
 <? } else { ?>
-This is the Easy Rule status page, mainly used to display errors when adding rules.
-If you are seeing this, there apparently was not an error, and you navigated to the
-page directly without telling it what to do.<br/><br/>
-This page is meant to be called from the block/pass buttons on the Firewall Logs page, <a href="diag_logs_filter.php">Status &gt; System Logs,
-Firewall Tab</a>.
+<?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .
+"If you are seeing this, there apparently was not an error, and you navigated to the " .
+"page directly without telling it what to do"); ?>.<br/><br/>
+<?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="diag_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
+"Firewall Tab"); ?></a>.
 <br />
 <? } ?>
 </td></tr></table>

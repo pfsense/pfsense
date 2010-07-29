@@ -37,15 +37,15 @@ if($_REQUEST['action']) {
 	switch($_REQUEST['action']) {
 		case 'load':
 			if(strlen($_REQUEST['file']) < 1) {
-				echo "|5|No file name specified.|";
+				echo "|5|" . gettext("No file name specified") . ".|";
 			} elseif(is_dir($_REQUEST['file'])) {
-				echo "|4|Loading a directory is not supported.|";
+				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
 			} elseif(! is_file($_REQUEST['file'])) {
-				echo "|3|File does not exist or is not a regular file.|";
+				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
 			} else {
 				$data = file_get_contents(urldecode($_REQUEST['file']));
 				if($data === false) {
-					echo "|1|Failed to read file.|";
+					echo "|1|" . gettext("Failed to read file") . ".|";
 				} else {
 					echo "|0|{$_REQUEST['file']}|{$data}|";	
 				}
@@ -53,7 +53,7 @@ if($_REQUEST['action']) {
 			exit;
 		case 'save':
 			if(strlen($_REQUEST['file']) < 1) {
-				echo "|No file name specified.|";
+				echo "|" . gettext("No file name specified") . ".|";
 			} else {
 				conf_mount_rw();
 				$_REQUEST['data'] = str_replace("\r", "", $_REQUEST['data']);
@@ -63,11 +63,11 @@ if($_REQUEST['action']) {
 					if(file_exists("/tmp/config.cache"))
 						unlink("/tmp/config.cache");
 				if($ret === false) {
-					echo "|Failed to write file.|";
+					echo "|" . gettext("Failed to write file") . ".|";
 				} elseif($ret <> strlen($_REQUEST['data'])) {
-					echo "|Error while writing file.|";
+					echo "|" . gettext("Error while writing file") . ".|";
 				} else {
-					echo "|File successfully saved.|";
+					echo "|" . gettext("File successfully saved") . ".|";
 				}
 			}
 			exit;
@@ -86,7 +86,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 
 <script type="text/javascript">	
 	function loadFile() {
-		$("fileStatus").innerHTML = "Loading file ...";
+		$("fileStatus").innerHTML = "<?=gettext("Loading file"); ?> ...";
 		Effect.Appear("fileStatusBox", { duration: 0.5 });
 
 		new Ajax.Request(
@@ -105,7 +105,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 
 		if(values.shift() == "0") {
 			var file = values.shift();
-			$("fileStatus").innerHTML = "File successfully loaded.";
+			$("fileStatus").innerHTML = "<?=gettext("File successfully loaded"); ?>.";
 			$("fileContent").value    = values.join("|");
 
 			var lang = "none";
@@ -128,7 +128,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 	}
 
 	function saveFile(file) {
-		$("fileStatus").innerHTML = "Saving file ...";
+		$("fileStatus").innerHTML = "<?=gettext("Saving file"); ?> ...";
 		Effect.Appear("fileStatusBox", { duration: 0.5 });
 		
 		var fileContent = escape($("fileContent").value);
@@ -165,7 +165,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 <table width="100%" cellpadding="9" cellspacing="9">
 	<tr>
 		<td align="center" class="list">
-			Save / Load from path:
+			<?=gettext("Save / Load from path"); ?>:
 			<input type="text"   class="formfld file" id="fbTarget"         size="45" />
 			<input type="button" class="formbtn"      onclick="loadFile();" value="<?=gettext('Load');?>" />
 			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />

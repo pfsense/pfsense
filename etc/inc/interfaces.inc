@@ -2993,7 +2993,7 @@ function get_interfaces_with_gateway() {
 
 	/* loop interfaces, check config for outbound */
 	foreach($config['interfaces'] as $ifdescr => $ifname) {
-		if (substr($ifdescr, 0, 4) ==  "ovpn")
+		if (substr($ifdescr, 0, 5) ==  "ovpnc")
 			return true;
 
 		switch ($ifname['ipaddr']) {
@@ -3020,7 +3020,7 @@ function interface_has_gateway($friendly) {
 	global $config;
 
 	if (!empty($config['interfaces'][$friendly])) {
-		if (substr($friendly, 0, 4) ==  "ovpn")
+		if (substr($friendly, 0, 5) ==  "ovpnc")
 			return true;
 		$ifname =& $config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {

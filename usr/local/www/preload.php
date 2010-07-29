@@ -3,7 +3,7 @@
 /* make sure we are coming from 127.0.0.1 */
 $ip = $HTTP_SERVER_VARS['REMOTE_ADDR'];
 if($ip <> "127.0.0.1") 
-	die("You are not allowed to access this page.");
+	die(gettext("You are not allowed to access this page."));
 
 /* preload */
 

@@ -22,7 +22,7 @@ $X = upload_progress_meter_get_info( $_GET["UPLOAD_IDENTIFIER"] );
 if (!$X) {
 
    if ( array_key_exists( "e", $_GET ) ) {
-      echo "<HTML><BODY onLoad='window.close();'>Invalid Meter ID! {$_GET["UPLOAD_IDENTIFIER"]}";
+      echo "<HTML><BODY onLoad='window.close();'>" . gettext("Invalid Meter ID") . "! {$_GET["UPLOAD_IDENTIFIER"]}";
       echo ('</BODY></HTML>');
    }else{
       echo ('<HTML><meta HTTP-EQUIV="Refresh" CONTENT="1; url='. $url .'"><BODY></BODY></HTML>');
@@ -42,7 +42,7 @@ if (!$X) {
    $total = nice_value($X['bytes_total']);
 
    if ($X['bytes_total'] > 1 && $X['bytes_uploaded'] >= $X['bytes_total'] && $X['est_sec'] == 0) {
-      echo ('<HTML><BODY onLoad="window.close()"> UPLOAD completed!</BODY></HTML>');
+      echo ('<HTML><BODY onLoad="window.close()"> ' . gettext("UPLOAD completed") . '!</BODY></HTML>');
    } else {
 
 ?>
@@ -52,7 +52,7 @@ if (!$X) {
 
 <meta HTTP-EQUIV="Refresh" CONTENT="1; url=<?=$url?>">
 
-<TITLE><?=gettext("Uploading Files... Please wait ...");?></TITLE>
+<TITLE><?=gettext("Uploading Files"); ?>... <?=gettext("Please wait"); ?> ...</TITLE>
 
 <style type='text/css'> td {font-size: 10pt }</style>
 
@@ -62,7 +62,7 @@ if (!$X) {
 <table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #990000;">
 <tr><td>
 
-   <font face="arial"><b><center><?=gettext("Uploading files...");?></b></center>
+   <font face="arial"><b><center><?=gettext("Uploading files");?>...</b></center>
 
    <br>
 
@@ -81,17 +81,17 @@ if (!$X) {
 
    <TABLE WIDTH="100%">
    <tr>
-   <td align="right"><font face="arial"><b><?=gettext("Time Remaining:");?></td><td><font face="arial"><?=$eta?></td>
+   <td align="right"><font face="arial"><b><?=gettext("Time Remaining");?>:</td><td><font face="arial"><?=$eta?></td>
    <td align="right"><font face="arial"><b><?=gettext("Speed:");?></td><td><font face="arial"><font face="arial"><?=$speed?><?=gettext("KB/sec");?></td>
    </tr>
 
    <tr>
-   <td align="right"><font face="arial"><b><?=gettext("Uploaded:");?></td><td><font face="arial"><?=$upl?></td>
-   <td align="right"><font face="arial"><b><?=gettext("File Size:");?></td><td><font face="arial"><?=$total?></td>
+   <td align="right"><font face="arial"><b><?=gettext("Uploaded");?>:</td><td><font face="arial"><?=$upl?></td>
+   <td align="right"><font face="arial"><b><?=gettext("File Size");?>:</td><td><font face="arial"><?=$total?></td>
    </tr>
 
    <tr>
-   <td align="right"><font face="arial"><b><?=gettext("Completed:");?></td><td><font face="arial"><?=$meter?>%</td>
+   <td align="right"><font face="arial"><b><?=gettext("Completed");?>:</td><td><font face="arial"><?=$meter?>%</td>
    <td align="right"><font face="arial"><b></td><td><font face="arial"></td>
    </tr>
 

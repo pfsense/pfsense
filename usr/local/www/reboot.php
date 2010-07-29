@@ -58,8 +58,8 @@ include("head.inc");
       <form action="reboot.php" method="post">
         <p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
         <p> 
-	  <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" Yes ");?>">
-	  <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" No ");?>">
+	  <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
+	  <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
         </p>
       </form>
 <?php endif; ?>
@@ -69,7 +69,8 @@ include("head.inc");
 
 <?php
 if ($_POST) {
-	if ($_POST['Submit'] == gettext(" Yes ")) {
+	$reply = " " . gettext("Yes") . " ";
+	if ($_POST['Submit'] == $reply) {
 		echo "<meta http-equiv=\"refresh\" content=\"70;url=/\">";
 		system_reboot();
 		$rebootmsg = gettext("The system is rebooting now. This may take one minute.");

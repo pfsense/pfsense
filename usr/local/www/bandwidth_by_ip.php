@@ -56,6 +56,6 @@ for ($x=2; $x<12; $x++){
 
 //no bandwidth usage found
 if ($someinfo == false)
-    echo "no info";
+    echo gettext("no info");
 
 ?>

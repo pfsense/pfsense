@@ -55,7 +55,7 @@ if($config['installedpackages']['carpsettings']) {
 
 if($synchronizetoip) {
 	if($synchronizetoip == $_SERVER['REMOTE_ADDR']) {
-		log_error("Disallowing CARP sync loop.");
+		log_error(gettext("Disallowing CARP sync loop."));
 		die;	
 	}
 }
@@ -64,7 +64,7 @@ $xmlrpc_g = array(
 			"return" => array(
 						"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
 						"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
-						"authfail" => new XML_RPC_Response(new XML_RPC_Value("Authentication failed", $XML_RPC_String))
+						"authfail" => new XML_RPC_Response(new XML_RPC_Value(gettext("Authentication failed"), $XML_RPC_String))
 				)
 		);
 
@@ -76,7 +76,7 @@ $XML_RPC_erruser = 200;
 
 /* EXPOSED FUNCTIONS */
 
-$exec_php_doc = 'XMLRPC wrapper for eval(). This method must be called with two parameters: a string containing the local system\'s password followed by the PHP code to evaluate.';
+$exec_php_doc = gettext("XMLRPC wrapper for eval(). This method must be called with two parameters: a string containing the local system\'s password followed by the PHP code to evaluate.");
 $exec_php_sig = array(
 					array(
 						$XML_RPC_Boolean, // First signature element is return value.
@@ -100,7 +100,7 @@ function exec_php_xmlrpc($raw_params) {
 
 /*****************************/
 
-$exec_shell_doc = 'XMLRPC wrapper for mwexec(). This method must be called with two parameters: a string containing the local system\'s password followed by an shell command to execute.';
+$exec_shell_doc = gettext("XMLRPC wrapper for mwexec(). This method must be called with two parameters: a string containing the local system\'s password followed by an shell command to execute.");
 $exec_shell_sig = array(
 					array(
 						$XML_RPC_Boolean, // First signature element is return value.
@@ -124,7 +124,7 @@ function exec_shell_xmlrpc($raw_params) {
 /*****************************/
 
 
-$backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.';
+$backup_config_section_doc = gettext("XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.");
 $backup_config_section_sig = array(
 								array(
 									$XML_RPC_Struct, // First signature element is return value.
@@ -143,7 +143,7 @@ function backup_config_section_xmlrpc($raw_params) {
 
 /*****************************/
 
-$restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
+$restore_config_section_doc = gettext("XMLRPC wrapper for restore_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $restore_config_section_sig = array(
 								array(
 									$XML_RPC_Boolean,
@@ -158,7 +158,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	write_config(printf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	return $xmlrpc_g['return']['true'];
 }
 
@@ -166,7 +166,7 @@ function restore_config_section_xmlrpc($raw_params) {
 /*****************************/
 
 
-$merge_config_section_doc = 'XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
+$merge_config_section_doc = gettext("XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $merge_config_section_sig = array(
 								array(
 									$XML_RPC_Boolean,
@@ -181,7 +181,7 @@ function merge_installedpackages_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	write_config(printf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	return $xmlrpc_g['return']['true'];
 }
 
@@ -189,7 +189,7 @@ function merge_installedpackages_section_xmlrpc($raw_params) {
 /*****************************/
 
 
-$merge_config_section_doc = 'XMLRPC wrapper for merge_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
+$merge_config_section_doc = gettext("XMLRPC wrapper for merge_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $merge_config_section_sig = array(
 								array(
 									$XML_RPC_Boolean,
@@ -210,7 +210,7 @@ function merge_config_section_xmlrpc($raw_params) {
 
 /*****************************/
 
-$filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
+$filter_configure_doc = gettext("Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.");
 $filter_configure_sig = array(
 							array(
 								$XML_RPC_Boolean,
@@ -234,7 +234,7 @@ function filter_configure_xmlrpc($raw_params) {
 
 /*****************************/
 
-$carp_configure_doc = 'Basic XMLRPC wrapper for configuring CARP interfaces.';
+$carp_configure_doc = gettext("Basic XMLRPC wrapper for configuring CARP interfaces.");
 $carp_configure_sig = array(
 							array(
 								$XML_RPC_Boolean,
@@ -253,7 +253,7 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 
 /*****************************/
 
-$check_firmware_version_doc = 'Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.';
+$check_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.");
 $check_firmware_version_sig = array(
 								array(
 									$XML_RPC_String,
@@ -270,7 +270,7 @@ function check_firmware_version_xmlrpc($raw_params) {
 
 /*****************************/
 
-$reboot_doc = 'Basic XMLRPC wrapper for rc.reboot.';
+$reboot_doc = gettext("Basic XMLRPC wrapper for rc.reboot.");
 $reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 
 function reboot_xmlrpc($raw_params) {

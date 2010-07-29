@@ -84,7 +84,7 @@ binary_update() {
 	rm ${ERR_F} 2>/dev/null
 	/bin/mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
 	# Save the old shutdown binary. If we switch from i386 to amd64 (or back) the reboot binary won't run at the end since it doesn't match up.
-	/bin/cp /sbin/shutdown /sbin/shutdown.old
+	/bin/cp -p /sbin/shutdown /sbin/shutdown.old
 	backup_chflags
 	remove_chflags
 	cd /tmp/patches

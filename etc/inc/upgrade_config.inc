@@ -622,6 +622,8 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['groupname'] = "admins";
 		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
 		$config['system']['user'][0]['uid'] = "0";
+		/* Ensure that we follow what this new "admin" username should be in the session. */
+		$_SESSION["Username"] = "{$config['system']['username']}";
 
 		$config['system']['user'][0]['priv'] = array();
 		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";

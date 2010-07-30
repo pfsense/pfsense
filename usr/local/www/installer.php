@@ -93,7 +93,7 @@ EOF;
 function start_installation() {
 	$fd = fopen("/tmp/installer.sh", "w");
 	if(!$fd) {
-		die("Could not open /tmp/installer.sh for writing");
+		die(gettext("Could not open /tmp/installer.sh for writing"));
 		exit;
 	}	
 	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg && touch /tmp/install_complete");
@@ -112,7 +112,7 @@ function update_installer_status() {
 		return;
 	echo `tail -n20 /tmp/.pc-sysinstall/pc-sysinstall.log`;
 	if(file_exists("/tmp/install_complete")) {
-		echo "Installation completed.";
+		echo gettext("Installation completed.");
 		unlink_if_exists("/tmp/installer.sh");
 	}
 }
@@ -129,12 +129,12 @@ function begin_quick_easy_install() {
 	$disk = installer_find_first_disk();
 	if(!$disk) {
 		// XXX: hide progress bar
-		$savemsg = "Could not find a suitable disk for installation";
-		update_installer_status_win("Could not find a suitable disk for installation.");
+		$savemsg = gettext("Could not find a suitable disk for installation");
+		update_installer_status_win(gettext("Could not find a suitable disk for installation."));
 		return;
 	}
 	write_out_pc_sysinstaller_config($disk);
-	update_installer_status_win("Beginning installation on disk {$disk}.");
+	update_installer_status_win(sprintf(gettext("Beginning installation on disk %s."),$disk));
 	start_installation();
 }
 
@@ -246,7 +246,7 @@ function installer_main() {
 	body_html();
 	$disk = installer_find_first_disk();
 	if(!$disk) 
-		echo "WARNING: Could not find any suitable disks for installation.";
+		echo gettext("WARNING: Could not find any suitable disks for installation.");
 	echo <<<EOF
 	<div id="mainlevel">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">

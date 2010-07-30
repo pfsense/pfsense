@@ -88,7 +88,7 @@ $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
 $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$pgtitle = array("Diagnostics","Execute command");
+$pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
 include("head.inc");
 ?>
 
@@ -150,7 +150,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
       // If nothing in recall buffer, then error.
       if (!arrRecallBuffer.length) {
-         alert( 'Nothing to recall!' );
+         alert( '<?=gettext("Nothing to recall"); ?>!' );
          form.txtCommand.focus();
          return;
       }
@@ -219,8 +219,8 @@ pre {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if (isBlank($_POST['txtCommand'])): ?>
-<p class="red"><strong>Note: this function is unsupported. Use it
-on your own risk!</strong></p>
+<p class="red"><strong><?=gettext("Note: this function is unsupported. Use it " .
+"on your own risk"); ?>!</strong></p>
 <?php endif; ?>
 <?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <?php
@@ -250,10 +250,10 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 <form action="exec.php" method="POST" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
   <table>
 	<tr>
-	  <td colspan="2" valign="top" class="vnsepcell">Execute Shell command</td>
+	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Execute Shell command"); ?></td>
 	</tr>  
     <tr>
-      <td class="label" align="right">Command:</td>
+      <td class="label" align="right"><?=gettext("Command"); ?>:</td>
       <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>"></td>
     </tr>
     <tr>
@@ -261,60 +261,60 @@ if (!isBlank($_POST['txtPHPCommand'])) {
       <td valign="top" class="label">
          <input type="hidden" name="txtRecallBuffer" value="<?=$_POST['txtRecallBuffer'] ?>">
          <input type="button" class="button" name="btnRecallPrev" value="<" onClick="btnRecall_onClick( this.form, -1 );">
-         <input type="submit" class="button" value="Execute">
+         <input type="submit" class="button" value="<?=gettext("Execute"); ?>">
          <input type="button" class="button" name="btnRecallNext" value=">" onClick="btnRecall_onClick( this.form,  1 );">
-         <input type="button"  class="button" value="Clear" onClick="return Reset_onClick( this.form );">
+         <input type="button"  class="button" value="<?=gettext("Clear"); ?>" onClick="return Reset_onClick( this.form );">
       </td>
     </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>
 	</tr>
 	<tr>
-	  <td colspan="2" valign="top" class="vnsepcell">Download</td>
+	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Download"); ?></td>
 	</tr>    
     <tr>
-      <td align="right">File to download:</td>
+      <td align="right"><?=gettext("File to download"); ?>:</td>
       <td>
         <input name="dlPath" type="text" class="formfld file" id="dlPath" size="50">
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">	
-        <input name="submit" type="submit"  class="button" id="download" value="Download">
+        <input name="submit" type="submit"  class="button" id="download" value="<?=gettext("Download"); ?>">
         </td>
     </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>
 	</tr>
 	<tr>
-	  <td colspan="2" valign="top" class="vnsepcell">Upload</td>
+	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Upload"); ?></td>
 	</tr>    
     <tr>
-      <td align="right">File to upload:</td>
+      <td align="right"><?=gettext("File to upload"); ?>:</td>
       <td valign="top" class="label">
 	<input name="ulfile" type="file" class="formfld file" id="ulfile">
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">	
-        <input name="submit" type="submit"  class="button" id="upload" value="Upload"></td>
+        <input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload"); ?>"></td>
     </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>
 	</tr>
 	<tr>
-	  <td colspan="2" valign="top" class="vnsepcell">PHP Execute</td>
+	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("PHP Execute"); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Command:</td>
+		<td align="right"><?=gettext("Command"); ?>:</td>
 		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" type="text" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
 	</tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">
-         <input type="submit" class="button" value="Execute">
+         <input type="submit" class="button" value="<?=gettext("Execute"); ?>">
 	 <p>
-	 <strong>Example:</strong>   interfaces_carp_setup();
+	 <strong><?=gettext("Example"); ?>:</strong>   interfaces_carp_setup();
       </td>
     </tr>
     

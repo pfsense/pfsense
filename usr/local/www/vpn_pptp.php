@@ -304,7 +304,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable"> 
                     <input name="mode" type="radio" onclick="enable_change(false)" value="off"
 				  	<?php if (($pconfig['mode'] != "server") && ($pconfig['mode'] != "redir")) echo "checked";?>>
-                    Off</td>
+                    <?=gettext("Off"); ?></td>
                 <tr> 
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">

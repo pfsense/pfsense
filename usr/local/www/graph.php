@@ -103,18 +103,18 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
     <text id="grid_txt1" x="<?=$width?>" y="<?=$height/4*1?>" <?=$attribs['grid_txt']?> text-anchor="end"> </text>
     <text id="grid_txt2" x="<?=$width?>" y="<?=$height/4*2?>" <?=$attribs['grid_txt']?> text-anchor="end"> </text>
     <text id="grid_txt3" x="<?=$width?>" y="<?=$height/4*3?>" <?=$attribs['grid_txt']?> text-anchor="end"> </text>
-    <text id="graph_in_lbl" x="5" y="8" <?=$attribs['in']?>>In</text>
-    <text id="graph_out_lbl" x="5" y="16" <?=$attribs['out']?>>Out</text>
+    <text id="graph_in_lbl" x="5" y="8" <?=$attribs['in']?>><?=gettext("In"); ?></text>
+    <text id="graph_out_lbl" x="5" y="16" <?=$attribs['out']?>><?=gettext("Out"); ?></text>
     <text id="graph_in_txt" x="20" y="8" <?=$attribs['in']?>> </text>
     <text id="graph_out_txt" x="20" y="16" <?=$attribs['out']?>> </text>
     <text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=$ifname?></text>
-    <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>>Switch to bytes/s</text>
-    <text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>>AutoScale (<?=$scale_type?>)</text>
+    <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
+    <text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
     <text id="datetime" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
-    <text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>>Graph shows last <?=$time_interval*$nb_plot?> seconds</text>
+    <text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=gettext("Graph shows last"); ?> <?=$time_interval*$nb_plot?> <?=gettext("seconds"); ?></text>
     <polygon id="axis_arrow_x" <?=$attribs['axis']?> points="<?=($width) . "," . ($height)?> <?=($width-2) . "," . ($height-2)?> <?=($width-2) . "," . $height?>"/>
     <text id="error" x="<?=$width*0.5?>" y="<?=$height*0.5?>"  visibility="hidden" <?=$attribs['error']?> text-anchor="middle"><?=$error_text?></text>
-    <text id="collect_initial" x="<?=$width*0.5?>" y="<?=$height*0.5?>"  visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle">Collecting initial data, please wait...</text>
+    <text id="collect_initial" x="<?=$width*0.5?>" y="<?=$height*0.5?>"  visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle"><?=gettext("Collecting initial data, please wait"); ?>...</text>
   </g>
   <script type="text/ecmascript">
     <![CDATA[
@@ -126,14 +126,14 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
 if (typeof getURL == 'undefined') {
   getURL = function(url, callback) {
     if (!url)
-      throw 'No URL for getURL';
+      throw '<?=gettext("No URL for getURL"); ?>';
 
     try {
       if (typeof callback.operationComplete == 'function')
         callback = callback.operationComplete;
     } catch (e) {}
     if (typeof callback != 'function')
-      throw 'No callback function for getURL';
+      throw '<?=gettext("No callback function for getURL"); ?>';
 
     var http_request = null;
     if (typeof XMLHttpRequest != 'undefined') {
@@ -149,7 +149,7 @@ if (typeof getURL == 'undefined') {
       }
     }
     if (!http_request)
-      throw 'Both getURL and XMLHttpRequest are undefined';
+      throw '<?=gettext("Both getURL and XMLHttpRequest are undefined"); ?>';
 
     http_request.onreadystatechange = function() {
       if (http_request.readyState == 4) {
@@ -186,13 +186,13 @@ function init(evt) {
 
 function switch_unit(event)
 {
-  SVGDoc.getElementById('switch_unit').firstChild.data = 'Switch to ' + unit + '/s';
+  SVGDoc.getElementById('switch_unit').firstChild.data = '<?=gettext("Switch to"); ?> ' + unit + '/s';
   unit = (unit == 'bits') ? 'bytes' : 'bits';
 }
 
 function switch_scale(event)
 {
-  scale_type = (scale_type == 'up') ? 'follow' : 'up';
+  scale_type = (scale_type == 'up') ? '<?=gettext("follow"); ?>' : '<?=gettext("up"); ?>';
   SVGDoc.getElementById('switch_scale').firstChild.data = 'AutoScale (' + scale_type + ')';
 }
 
@@ -352,21 +352,21 @@ function formatSpeed(speed, unit) {
 function formatSpeedBits(speed) {
   // format speed in bits/sec, input: bytes/sec
   if (speed < 125000)
-    return Math.round(speed / 125) + " Kbps";
+    return Math.round(speed / 125) + " " + <?=gettext("Kbps"); ?>;
   if (speed < 125000000)
-    return Math.round(speed / 1250)/100 + " Mbps";
+    return Math.round(speed / 1250)/100 + " " + <?=gettext("Mbps"); ?>;
   // else
-  return Math.round(speed / 1250000)/100 + " Gbps";  /* wow! */
+  return Math.round(speed / 1250000)/100 + " " + <?=gettext("Gbps"); ?>;  /* wow! */
 }
 
 function formatSpeedBytes(speed) {
   // format speed in bytes/sec, input:  bytes/sec
   if (speed < 1048576)
-    return Math.round(speed / 10.24)/100 + " KB/s";
+    return Math.round(speed / 10.24)/100 + " " + <?=gettext("KB/s"); ?>;
   if (speed < 1073741824)
-    return Math.round(speed / 10485.76)/100 + " MB/s";
+    return Math.round(speed / 10485.76)/100 + " " + <?=gettext("MB/s"); ?>;
   // else
-  return Math.round(speed / 10737418.24)/100 + " GB/s";  /* wow! */
+  return Math.round(speed / 10737418.24)/100 + " " + <?=gettext("GB/s"); ?>;  /* wow! */
 }
 
 function LZ(x) {

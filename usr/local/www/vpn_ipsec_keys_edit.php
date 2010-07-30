@@ -66,7 +66,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = array(gettext("Identifier,Pre-shared key"));
+	$reqdfieldsn = array(gettext("Identifier"),gettext("Pre-shared key"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	

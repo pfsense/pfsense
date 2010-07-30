@@ -1,4 +1,9 @@
 #!/usr/local/bin/php
+#
+# /etc/rc.notifty_message
+# Copyright (C) 2010 Scott Ullrich <sullrich@pfsense.org>.
+# All rights reserved.
+#
 
 <?php
 

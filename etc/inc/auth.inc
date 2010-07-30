@@ -51,10 +51,9 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
 	   $http_host == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
 		$found_host = true;
-	if($config['dyndnses']['dyndns'])
-		foreach($config['dyndnses']['dyndns'] as $dyndns)
-			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
-				$found_host = true;
+	if (($config['dyndns']) and ($config['dyndns']['host'] == $http_host or 
+		 $config['dyndns']['host'] == $_SERVER['SERVER_ADDR']))
+		$found_host = true;
 	if(!empty($config['system']['webgui']['althostnames'])) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)

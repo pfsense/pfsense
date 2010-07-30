@@ -44,19 +44,19 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=gettext("License");?></p>
 
-            <p><strong><?=$g['product_name'];?><?=gettext(" is Copyright ");?>&copy; <?=$g['product_copyright_years'];?><?=gettext(" by ");?><?=$g['product_copyright'];?><br>
-              <?=gettext("All rights reserved.");?></strong></p>
+            <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright'];?><br>
+              <?=gettext("All rights reserved");?>.</strong></p>
 
-            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy;<?=gettext(" 2002-2007 by Manuel Kasper");?>
+            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2007 by Manuel Kasper");?>
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br>
-              <?=gettext("All rights reserved.");?></strong></p>
+              <?=gettext("All rights reserved");?>.</strong></p>
             <p> <?=gettext("Redistribution and use in source and binary forms, with or without");?><br>
               <?=gettext("modification, are permitted provided that the following conditions ".
               "are met");?>:<br>
               <br>
               <?=gettext("1. Redistributions of source code must retain the above copyright ".
               "notice,");?><br>
-              <?=gettext("this list of conditions and the following disclaimer.");?><br>
+              <?=gettext("this list of conditions and the following disclaimer");?>.<br>
               <br>
               <?=gettext("2. Redistributions in binary form must reproduce the above copyright");?><br>
               <?=gettext("notice, this list of conditions and the following disclaimer in ".
@@ -122,7 +122,7 @@ include("head.inc");
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("DHCP lease list page");?></font></em><br>
               <br>
               Peter Allgeyer (<a href="mailto:allgeyer@web.de">allgeyer@web.de</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">&quot;<?=gettext("reject");?>&quot;<?=gettext(" type filter rules; dial-on-demand");?></font></em><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">&quot;<?=gettext("reject");?>&quot; <?=gettext("type filter rules; dial-on-demand");?></font></em><br>
               <br>
               Thierry Lechat (<a href="mailto:dev@lechat.org">dev@lechat.org</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("SVG-based traffic grapher");?></font></em><br>
@@ -134,7 +134,7 @@ include("head.inc");
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("NAT on optional interfaces");?></font></em><br>
               <br>
               Dinesh Nair (<a href="mailto:dinesh@alphaque.com">dinesh@alphaque.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("captive portal: pass-through MAC/IP addresses, RADIUS authentication");?> &amp;<?=gettext(" accounting;");?><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("captive portal: pass-through MAC/IP addresses, RADIUS authentication");?> &amp; <?=gettext("accounting;");?><br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"></font></em><?=gettext("HTTP server concurrency limit");?></font></em><br>
               <br>
               Justin Ellison (<a href="mailto:justin@techadvise.com">justin@techadvise.com</a>)<br>
@@ -150,67 +150,67 @@ include("head.inc");
               Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("OpenVPN support");?></font></em></p>
             <hr size="1">
-            <p>{$g['product_name']}<?=gettext(" is based upon/includes various free software packages, ".
+            <p>{$g['product_name']} <?=gettext("is based upon/includes various free software packages, ".
               "listed below.");?><br>
-              <?=gettext("The author of ");?>{$g['product_name']}<?=gettext(" would like to thank the authors of these
-              software packages for their efforts.");?></p>
+              <?=gettext("The author of ");?>{$g['product_name']}<?=gettext(" would like to thank the authors of these " .
+              "software packages for their efforts");?>.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
-              <?=gettext("Copyright ");?>&copy;<?=gettext(" 1994-2003 FreeBSD, Inc. All rights reserved.");?><br>
+              <?=gettext("Copyright");?> &copy;<?=gettext(" 1994-2003 FreeBSD, Inc. All rights reserved");?>.<br>
               <br>
-              <?=gettext("This product includes PHP, freely available from ");?><a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
-              Copyright &copy; <?=gettext("1999 - 2003 The PHP Group. All rights reserved.");?><br>
+              <?=gettext("This product includes PHP, freely available from");?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999 - 2003 The PHP Group. All rights reserved");?>.<br>
               <br>
-              LightTPD (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
-              Copyright &copy;<?=gettext(" 2004 by Jan Kneschke ");?><jan@kneschke.de>
+              <?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
+              <?=gettext("Copyright"); ?> &copy;<?=gettext(" 2004 by Jan Kneschke ");?><jan@kneschke.de>
               <?=gettext("All rights reserved.");?><br>
               <br>
               <?=gettext("ISC DHCP server ");?>(<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br>
-              Copyright &copy;<?=gettext(" 1996-2003 Internet Software Consortium. All rights ".
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1996-2003 Internet Software Consortium. All rights ".
               "reserved.");?><br>
               <br>
-              PF (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>
+              <?=gettext("PF"); ?> (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>
 			  <br>
-              <?=gettext("MPD - Multi-link PPP daemon for FreeBSD ");?>(<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br>
-              Copyright &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
+              <?=gettext("MPD - Multi-link PPP daemon for FreeBSD");?> (<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br>
+              <?=gettext("Copyright"); ?> &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
 			  <?=gettext("All rights reserved.");?><br>
               <br>
               <?=gettext("Circular log support for FreeBSD syslogd ");?>(<a href="http://software.wwwi.com/syslogd/" target="_blank">http://software.wwwi.com/syslogd</a>)<br>
-              Copyright &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
+              <?=gettext("Copyright"); ?> &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
               <br>
-              <?=gettext("Dnsmasq - a DNS forwarder for NAT firewalls ");?>(<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br>
-              Copyright &copy; 2000-2003 Simon Kelley.<br>
+              <?=gettext("Dnsmasq - a DNS forwarder for NAT firewalls");?> (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br>
+              <?=gettext("Copyright"); ?> &copy; 2000-2003 Simon Kelley.<br>
               <br>
-              Racoon (<a href="http://www.kame.net/racoon" target="_blank">http://www.kame.net/racoon</a>)<br>
-              Copyright &copy;<?=gettext(" 1995-2002 WIDE Project. All rights reserved.");?><br>
+              <?=gettext("Racoon"); ?> (<a href="http://www.kame.net/racoon" target="_blank">http://www.kame.net/racoon</a>)<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2002 WIDE Project. All rights reserved.");?><br>
               <br>
-              msntp (<a href="http://www.hpcf.cam.ac.uk/export" target="_blank">http://www.hpcf.cam.ac.uk/export</a>)<br>
-              Copyright &copy;<?=gettext(" 1996, 1997, 2000 N.M. Maclaren, University of Cambridge. ".
+              <?=gettext("msntp"); ?> (<a href="http://www.hpcf.cam.ac.uk/export" target="_blank">http://www.hpcf.cam.ac.uk/export</a>)<br>
+              <?=gettext("Copyright"); ?> &copy;<?=gettext(" 1996, 1997, 2000 N.M. Maclaren, University of Cambridge. ".
               "All rights reserved.");?><br>
               <br>
-              UCD-SNMP (<a href="http://www.ece.ucdavis.edu/ucd-snmp" target="_blank">http://www.ece.ucdavis.edu/ucd-snmp</a>)<br>
-              Copyright &copy;<?=gettext(" 1989, 1991, 1992 by Carnegie Mellon University.");?><br>
-              Copyright &copy;<?=gettext(" 1996, 1998-2000 The Regents of the University of ".
-              "California. All rights reserved.");?><br>
-              Copyright &copy;<?=gettext(" 2001-2002, Network Associates Technology, Inc. ".
+              <?=gettext("UCD-SNMP"); ?> (<a href="http://www.ece.ucdavis.edu/ucd-snmp" target="_blank">http://www.ece.ucdavis.edu/ucd-snmp</a>)<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1989, 1991, 1992 by Carnegie Mellon University.");?><br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1996, 1998-2000 The Regents of the University of ".
+              "California. All rights reserved");?>.<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("2001-2002, Network Associates Technology, Inc. ".
               "All rights reserved.");?><br>
-              <?=gettext("Portions of this code are copyright ");?>&copy;<?=gettext(" 2001-2002, Cambridge ".
+              <?=gettext("Portions of this code are copyright");?> &copy; <?=gettext("2001-2002, Cambridge ".
               "Broadband Ltd. All rights reserved.");?><br>
               <br>
-              choparp (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br>
-              Copyright &copy; 1997 Takamichi Tateoka (tree@mma.club.uec.ac.jp)<br>
-			 Copyright &copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)<br>
+              <?=gettext("choparp"); ?> (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br>
+              <?=gettext("Copyright"); ?> &copy; 1997 Takamichi Tateoka (tree@mma.club.uec.ac.jp)<br>
+			 <?=gettext("Copyright"); ?> &copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)<br>
               <br>
-              BPALogin (<a href="http://bpalogin.sourceforge.net/" target="_blank">http://bpalogin.sourceforge.net</a>) -<?=gettext(" lightweight portable BIDS2 login client");?><br>
-              Copyright &copy;<?=gettext(" 2001-3 Shane Hyde, and others.");?><br>
+              <?=gettext("BPALogin"); ?> (<a href="http://bpalogin.sourceforge.net/" target="_blank">http://bpalogin.sourceforge.net</a>) - <?=gettext("lightweight portable BIDS2 login client");?><br>
+              <?=gettext("Copyright"); ?> &copy;<?=gettext(" 2001-3 Shane Hyde, and others.");?><br>
               <br>
-              php-radius (<a href="http://www.mavetju.org/programming/php.php" target="_blank">http://www.mavetju.org/programming/php.php</a>)<br>
+              <?=gettext("php-radius"); ?> (<a href="http://www.mavetju.org/programming/php.php" target="_blank">http://www.mavetju.org/programming/php.php</a>)<br>
               <?=gettext("Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved.");?><br>
 			  <?=gettext("This product includes software developed by Edwin Groothuis.");?><br>
 			  <br>
-			  wol (<a href="http://ahh.sourceforge.net/wol" target="_blank">http://ahh.sourceforge.net/wol</a>)<br>
-			  Copyright &copy; 2000,2001,2002,2003,2004 Thomas Krennwallner &lt;krennwallner@aon.at&gt;
+			  <?=gettext("wol"); ?> (<a href="http://ahh.sourceforge.net/wol" target="_blank">http://ahh.sourceforge.net/wol</a>)<br>
+			  <?=gettext("Copyright"); ?> &copy; 2000,2001,2002,2003,2004 Thomas Krennwallner &lt;krennwallner@aon.at&gt;
 			  <br>
-			  OpenVPN (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)
+			  <?=gettext("OpenVPN"); ?> (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)
 			  <?=gettext("Copyright (C) 2002-2005 OpenVPN Solutions LLC ");?><info@openvpn.net>
 			  <?php include("fend.inc"); ?>
 </body>

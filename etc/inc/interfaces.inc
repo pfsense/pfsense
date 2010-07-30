@@ -479,6 +479,11 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	else
 		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
 
+	if (isset($options['encaps']['rxcsum']))
+		pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
+	else
+		pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
+
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
 }

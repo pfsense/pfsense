@@ -368,7 +368,7 @@ function change_protocol() {
 									</td>
 								</tr>
 								<tr>
-									<td>Address:&nbsp;&nbsp;</td>
+									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
 										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=$pconfig['localid_address'];?>">

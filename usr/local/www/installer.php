@@ -142,7 +142,7 @@ function body_html() {
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 	if(strstr($pfSversion, "1.2"))
 		$one_two = true;
-	$pgtitle = "pfSense: Installer";
+	$pgtitle = gettext("pfSense: Installer");
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -224,7 +224,7 @@ function quickeasyinstall_gui() {
 	     						<td class="tabcont" >
 	      							<form action="installer.php" method="post" state="step1_post">
 									<div id="pfsenseinstaller">
-										Starting Installer...  Please wait...<p/>
+										<?=gettext("Starting Installer"); ?>...  <?=gettext("Please wait"); ?>...<p/>
 										{{ Insert progressbar here }}<p/>
 										<textarea name='installeroutput' id='installeroutput' rows="20" cols="80">
 										</textarea>
@@ -258,7 +258,7 @@ function installer_main() {
 	     						<td class="tabcont" >
 	      							<form action="installer.php" method="post" state="step1_post">
 									<div id="pfsenseinstaller">
-										<a onclick="return confirm('Are you sure you want to install pfSense to $disk?')"> href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
+										<a onclick="return confirm('<?=gettext("Are you sure you want to install pfSense to $disk"); ?>?')"> href='installer.php?state=quickeasyinstall'><?=gettext("Quick/Easy installation"); ?></a> 
 										</p>
 									</div>
 	     						</td>

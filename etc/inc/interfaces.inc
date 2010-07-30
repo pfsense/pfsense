@@ -1607,15 +1607,20 @@ function interface_reload_carps($cif) {
 		foreach ($viparr as $vip) {
 			if (in_array($vip['carpif'], $carps)) {
 				switch ($vip['mode']) {
-					case "carp":
+				case "carp":
 					interface_vip_bring_down($vip);
 					sleep(1);
 					interface_carp_configure($vip);
 					break;
-					case "carpdev-dhcp":
+				case "carpdev-dhcp":
 					interface_vip_bring_down($vip);
 					sleep(1);
 					interface_carpdev_configure($vip);
+					break;
+				case "ipalias":
+					interface_vip_bring_down($vip);
+					sleep(1);
+					interface_ipalias_configure($vip);
 					break;
 				}
 			}
@@ -2246,7 +2251,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface, true);
+			interface_bring_down($interface);
 	}
 
 	/* wireless configuration? */

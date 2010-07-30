@@ -61,7 +61,7 @@ foreach ($config['system']['user'] as $id => $user) {
 if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {
 		unset($a_secret[$_GET['id']]);
-		write_config("Deleted IPsec Pre-Shared Key");
+		write_config(gettext("Deleted IPsec Pre-Shared Key"));
 		mark_subsystem_dirty('ipsec');
 		header("Location: vpn_ipsec_keys.php");
 		exit;

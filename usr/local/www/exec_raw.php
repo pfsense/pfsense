@@ -44,7 +44,7 @@ include("guiconfig.inc");
 
 putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 if($_REQUEST['cmd'] == "") {
-	echo "Nothing specified.  Cannot continue.";
+	echo gettext("Nothing specified.  Cannot continue.");
 	exit;
 }
 passthru($_REQUEST['cmd']);

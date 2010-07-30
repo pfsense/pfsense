@@ -76,7 +76,7 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
 		$reqdfields = explode(" ", "username password");
-		$reqdfieldsn = array(gettext("Username,Password"));
+		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
 	}
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

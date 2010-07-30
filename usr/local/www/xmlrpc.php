@@ -202,7 +202,7 @@ function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	$config = array_merge_recursive_unique($config, $params[0]);
+	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
 	return $xmlrpc_g['return']['true'];

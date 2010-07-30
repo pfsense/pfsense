@@ -23,4 +23,9 @@ fi
 
 sleep 1
 
-/sbin/shutdown -r now
+SHUTDOWN=/sbin/shutdown
+if [ -f /sbin/shutdown.old ]; then
+	SHUTDOWN=/sbin/shutdown.old
+fi
+
+$SHUTDOWN -r now

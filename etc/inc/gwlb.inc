@@ -160,11 +160,16 @@ EOD;
 			if (!is_ipaddr($gateway['monitor']))
 				continue;
 
-			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
-			$apingercfg .= "	description \"{$gateway['name']}\"\n";
-			$gwifip = find_interface_ip($gateway['interface']);
+			if($gateway['monitor'] == "127.0.0.{$i}") {
+				$gwifip = "127.0.0.1";
+			} else {
+				$gwifip = find_interface_ip($gateway['interface']);
+			}
 			if (!is_ipaddr($gwifip))
 				continue; //Skip this target
+
+			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+			$apingercfg .= "	description \"{$gateway['name']}\"\n";
 			$apingercfg .= "	srcip \"{$gwifip}\"\n";
 			$alarms = "";
 			$override = false;

@@ -417,6 +417,9 @@ function local_user_get_groups($user, $all = false) {
 				if (in_array($user['uid'], $group['member']))
 					$groups[] = $group['name'];
 
+	if ( $all )
+		$groups[] = "all";
+
 	sort($groups);
 
 	return $groups;
@@ -972,6 +975,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 function radius_backed($username, $passwd, $authcfg){
 	global $debug, $config;
 	$ret = false;
+
+	require_once("radius.inc");
 
 	$rauth = new Auth_RADIUS_PAP($username, $passwd);
 	if ($authcfg) {

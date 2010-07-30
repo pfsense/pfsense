@@ -156,7 +156,7 @@ EOD;
 				foreach ($a_vip as $vipent) {
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
-						if($vipent['advskew'] < "20")
+						if(!empty($vipent['advskew']) && ($vipent['advskew'] < "20"))
 							$skew = 0;
 					}
 				}
@@ -501,12 +501,35 @@ function services_dhcrelay_configure() {
 	$iflist = get_configured_interface_list();
 	foreach ($iflist as $ifname) {
 		$subnet = get_interface_ip($ifname) . "/" . get_interface_subnet($ifname);
-		if (ip_in_subnet($dhcrelaycfg['server'],$subnet))
+		if (ip_in_subnet($dhcrelaycfg['server'],$subnet)) {
 			$destif = get_real_interface($ifname);
+			break;
+		}
+	}
+	if (!isset($destif)) {
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $rtent) {
+				if (ip_in_subnet($dhcrelaycfg['server'], $rtent['network'])) {
+					$a_gateways = return_gateways_array(true);
+					$destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
+				}
+			}
+		}
 	}
 
-	if (!isset($destif))
-		$destif = $config['interfaces']['wan']['if'];
+	if (!isset($destif)) {
+		if (is_array($config['gateways']['gateway_item'])) {
+			foreach ($config['gateways']['gateway_item'] as $gateway) {
+				if (isset($gateway['defaultgw'])) {
+					$a_gateways = return_gateways_array(true);
+                                        $destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
+				}		
+			}
+		} else
+			$destif = get_real_interface("wan");
+	}
 
 	$dhcrelayifs[] = $destif;
 	$dhcrelayifs = array_unique($dhcrelayifs);

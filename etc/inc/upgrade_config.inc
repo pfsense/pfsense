@@ -622,6 +622,8 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['groupname'] = "admins";
 		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
 		$config['system']['user'][0]['uid'] = "0";
+		/* Ensure that we follow what this new "admin" username should be in the session. */
+		$_SESSION["Username"] = "{$config['system']['username']}";
 
 		$config['system']['user'][0]['priv'] = array();
 		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
@@ -1610,8 +1612,9 @@ function upgrade_053_to_054() {
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
 		$gateways = return_gateways_array();
-		if (is_array($config['gateways']['gateway_item']))
+		if (! is_array($config['gateways']['gateway_item']))
 			$config['gateways']['gateway_item'] = array();
+
 		$a_gateways =& $config['gateways']['gateway_item'];
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
@@ -1628,10 +1631,7 @@ function upgrade_053_to_054() {
 					$static_name = "GW_" . strtoupper($interface);
 					if(is_ipaddr($monitor)) {
 						$interface = $static_name;
-						if(is_array($gateways[$static_name]) && isset($gateways[$static_name]['attribute']))
-							$a_gateways[$gateways[$static_name]['attribute']]['monitor'] = $monitor;
-						else
-							$config['interfaces'][$interface]['monitorip'] = $monitor;
+						$config['interfaces'][$interface]['monitorip'] = $monitor;
 					}
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {
@@ -1703,7 +1703,8 @@ function upgrade_054_to_055() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -1740,7 +1741,8 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		/* rename DS source */
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");
@@ -1787,7 +1789,8 @@ function upgrade_054_to_055() {
 
 	}
 	enable_rrd_graphing();
-	echo "Updating configuration...";
+	if ($g['booting'])
+		echo "Updating configuration...";
 }
 
 

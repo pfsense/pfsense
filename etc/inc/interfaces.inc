@@ -475,9 +475,14 @@ function interface_bridge_add_member($bridgeif, $interface) {
 
 	pfSense_get_interface_addresses($bridgeif);
 	if (isset($options['encaps']['txcsum']))
-		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
-	else
 		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
+	else
+		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
+
+	if (isset($options['encaps']['rxcsum']))
+		pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
+	else
+		pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -1824,6 +1829,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 
 	$baseif = interface_get_wireless_base($ifcfg['if']);
 
+	// Sync shared settings for assigned clones
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
 		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
@@ -1841,6 +1847,18 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 		}
 	}
 
+	// Read or write settings at shared area
+	if (isset($config['wireless']['interfaces'][$baseif])) {
+		foreach ($shared_settings as $setting) {
+			if ($sync_changes) {
+				$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
+			} else if (isset($config['wireless']['interfaces'][$baseif][$setting])) {
+				$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+			}
+		}
+	}
+
+	// Sync the mode on the clone creation page with the configured mode on the interface
 	if (interface_is_wireless_clone($ifcfg['if'])) {
 		foreach ($config['wireless']['clone'] as &$clone) {
 			if ($clone['cloneif'] == $ifcfg['if']) {
@@ -2327,21 +2345,20 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		interface_reload_carps($realif);
 	
 	if (!$g['booting']) {
-		if (link_interface_to_gre($interface)) {
-			foreach ($config['gres']['gre'] as $gre)
-				if ($gre['if'] == $interface)
-					interface_gre_configure($gre);
-		}
-		if (link_interface_to_gif($interface)) {
-                	foreach ($config['gifs']['gif'] as $gif)
-				if ($gif['if'] == $interface)
-                        		interface_gif_configure($gif);
-        	}
-		if (link_interface_to_bridge($interface)) {
-			foreach ($config['bridges']['bridged'] as $bridge)
-				if (stristr($bridge['members'], "{$interface}"))
-					interface_bridge_add_member($bridge['bridgeif'], $realif);
-		}
+		unset($gre);
+		$gre = link_interface_to_gre($interface);
+		if (!empty($gre))
+			interface_gre_configure($gre);
+
+		unset($gif);
+		$gif = link_interface_to_gif($interface);
+		if (!empty($gif))
+                       	interface_gif_configure($gif);
+
+		unset($bridgetmp);
+		$bridgetmp = link_interface_to_bridge($interface);
+		if (!empty($bridgetmp))
+			interface_bridge_add_member($bridgetmp, $realif);
 
 		link_interface_to_vips($interface, "update");
 
@@ -2753,6 +2770,7 @@ function find_number_of_created_carp_interfaces() {
 
 function get_all_carp_interfaces() {
 	$ints = str_replace("\n", " ", `ifconfig | grep "carp:" -B2 | grep ": flag" | cut -d: -f1`);
+	$ints = explode(" ", $ints);
 	return $ints;
 }
 
@@ -2872,10 +2890,12 @@ function link_interface_to_vips($int, $action = "") {
 function link_interface_to_bridge($int) {
         global $config;
 
-        if (is_array($config['bridges']['bridged']))
-                foreach ($config['bridges']['bridged'] as $bridge)
-                        if(stristr($bridge['members'], "{$int}"))
+        if (is_array($config['bridges']['bridged'])) {
+                foreach ($config['bridges']['bridged'] as $bridge) {
+			if (in_array($int, explode(',', $bridge['members'])))
                                 return "{$bridge['bridgeif']}";
+		}
+	}
 }
 
 function link_interface_to_gre($interface) {
@@ -2884,7 +2904,7 @@ function link_interface_to_gre($interface) {
         if (is_array($config['gres']['gre']))
                 foreach ($config['gres']['gre'] as $gre)
                         if($gre['if'] == $interface)
-                                return "{$gre['greif']}";
+                                return $gre;
 }
 
 function link_interface_to_gif($interface) {
@@ -2893,7 +2913,7 @@ function link_interface_to_gif($interface) {
         if (is_array($config['gifs']['gif']))
                 foreach ($config['gifs']['gif'] as $gif)
                         if($gif['if'] == $interface)
-                                return "{$gif['gifif']}";
+                                return $gif;
 }
 
 /*
@@ -2979,6 +2999,8 @@ function get_interfaces_with_gateway() {
 
 	/* loop interfaces, check config for outbound */
 	foreach($config['interfaces'] as $ifdescr => $ifname) {
+		if (substr($ifdescr, 0, 5) ==  "ovpnc")
+			return true;
 
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
@@ -3004,6 +3026,8 @@ function interface_has_gateway($friendly) {
 	global $config;
 
 	if (!empty($config['interfaces'][$friendly])) {
+		if (substr($friendly, 0, 5) ==  "ovpnc")
+			return true;
 		$ifname =& $config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":

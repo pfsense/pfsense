@@ -736,7 +736,7 @@ function netbios_change() {
 								<?php endforeach; ?>
 							</select>
 							<span class="vexpl">
-								bits
+								<?=gettext("bits"); ?>
 							</span>
 						</td>
 					</tr>

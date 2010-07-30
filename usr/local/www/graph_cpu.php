@@ -78,8 +78,8 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
     <text id="grid_txt2" x="100%" y="50%" <?=$attribs['grid_txt']?> text-anchor="end">50%</text>
     <text id="grid_txt3" x="100%" y="75%" <?=$attribs['grid_txt']?> text-anchor="end">25%</text>
     <text id="graph_cpu_txt" x="4" y="8" <?=$attribs['cpu']?>> </text>
-    <text id="error" x="50%" y="50%"  visibility="hidden" <?=$attribs['error']?> text-anchor="middle">Cannot get CPU load</text>
-    <text id="collect_initial" x="50%" y="50%"  visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle">Collecting initial data, please wait...</text>
+    <text id="error" x="50%" y="50%"  visibility="hidden" <?=$attribs['error']?> text-anchor="middle"><?=gettext("Cannot get CPU load"); ?></text>
+    <text id="collect_initial" x="50%" y="50%"  visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle"><?=gettext("Collecting initial data, please wait"); ?>...</text>
   </g>
   <script type="text/ecmascript">
     <![CDATA[
@@ -91,14 +91,14 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
 if (typeof getURL == 'undefined') {
   getURL = function(url, callback) {
     if (!url)
-      throw 'No URL for getURL';
+      throw gettext('No URL for getURL');
 
     try {
       if (typeof callback.operationComplete == 'function')
         callback = callback.operationComplete;
     } catch (e) {}
     if (typeof callback != 'function')
-      throw 'No callback function for getURL';
+      throw gettext('No callback function for getURL');
 
     var http_request = null;
     if (typeof XMLHttpRequest != 'undefined') {
@@ -114,7 +114,7 @@ if (typeof getURL == 'undefined') {
       }
     }
     if (!http_request)
-      throw 'Both getURL and XMLHttpRequest are undefined';
+      throw gettext('Both getURL and XMLHttpRequest are undefined');
 
     http_request.onreadystatechange = function() {
       if (http_request.readyState == 4) {

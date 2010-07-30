@@ -358,6 +358,9 @@ pfSenseNanoBSDupgrade)
 	/etc/rc.conf_mount_ro
 	/bin/sync
 
+	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
+	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds." | wall
+
 	sleep 10
 
 	rm -f /var/run/firmwarelock.dirty
@@ -465,6 +468,9 @@ pfSenseupgrade)
 	rm -f /var/run/firmwarelock.dirty
 	rm -f /var/run/firmware.lock
 	/bin/sync
+
+	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  | wall
 
 	# Sleep and allow disks to catch up
 	sleep 10

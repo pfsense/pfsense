@@ -156,7 +156,7 @@ EOD;
 				foreach ($a_vip as $vipent) {
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
-						if($vipent['advskew'] < "20")
+						if(!empty($vipent['advskew']) && ($vipent['advskew'] < "20"))
 							$skew = 0;
 					}
 				}

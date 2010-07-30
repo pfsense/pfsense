@@ -81,7 +81,7 @@ if ($_POST) {
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn, 
-				array(gettext("RADIUS server address"),gettext("RADIUS shared secret"));
+				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
 		}
 		
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

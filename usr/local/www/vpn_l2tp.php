@@ -67,12 +67,12 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['mode'] == "server") {
 		$reqdfields = explode(" ", "localip remoteip");
-		$reqdfieldsn = explode(",", "Server address,Remote start address");
+		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
 
 		if ($_POST['radiusenable']) {
 			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
 			$reqdfieldsn = array_merge($reqdfieldsn,
-				explode(",", "RADIUS server address,RADIUS shared secret"));
+				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

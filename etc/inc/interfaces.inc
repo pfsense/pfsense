@@ -475,9 +475,9 @@ function interface_bridge_add_member($bridgeif, $interface) {
 
 	pfSense_get_interface_addresses($bridgeif);
 	if (isset($options['encaps']['txcsum']))
-		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
-	else
 		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
+	else
+		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -2340,21 +2340,20 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		interface_reload_carps($realif);
 	
 	if (!$g['booting']) {
-		if (link_interface_to_gre($interface)) {
-			foreach ($config['gres']['gre'] as $gre)
-				if ($gre['if'] == $interface)
-					interface_gre_configure($gre);
-		}
-		if (link_interface_to_gif($interface)) {
-                	foreach ($config['gifs']['gif'] as $gif)
-				if ($gif['if'] == $interface)
-                        		interface_gif_configure($gif);
-        	}
-		if (link_interface_to_bridge($interface)) {
-			foreach ($config['bridges']['bridged'] as $bridge)
-				if (stristr($bridge['members'], "{$interface}"))
-					interface_bridge_add_member($bridge['bridgeif'], $realif);
-		}
+		unset($gre);
+		$gre = link_interface_to_gre($interface);
+		if (!empty($gre))
+			interface_gre_configure($gre);
+
+		unset($gif);
+		$gif = link_interface_to_gif($interface);
+		if (!empty($gif))
+                       	interface_gif_configure($gif);
+
+		unset($bridgetmp);
+		$bridgetmp = link_interface_to_bridge($interface);
+		if (!empty($bridgetmp))
+			interface_bridge_add_member($bridgetmp, $realif);
 
 		link_interface_to_vips($interface, "update");
 
@@ -2886,10 +2885,12 @@ function link_interface_to_vips($int, $action = "") {
 function link_interface_to_bridge($int) {
         global $config;
 
-        if (is_array($config['bridges']['bridged']))
-                foreach ($config['bridges']['bridged'] as $bridge)
-                        if(stristr($bridge['members'], "{$int}"))
+        if (is_array($config['bridges']['bridged'])) {
+                foreach ($config['bridges']['bridged'] as $bridge) {
+			if (in_array($int, explode(',', $bridge['members'])))
                                 return "{$bridge['bridgeif']}";
+		}
+	}
 }
 
 function link_interface_to_gre($interface) {
@@ -2898,7 +2899,7 @@ function link_interface_to_gre($interface) {
         if (is_array($config['gres']['gre']))
                 foreach ($config['gres']['gre'] as $gre)
                         if($gre['if'] == $interface)
-                                return "{$gre['greif']}";
+                                return $gre;
 }
 
 function link_interface_to_gif($interface) {
@@ -2907,7 +2908,7 @@ function link_interface_to_gif($interface) {
         if (is_array($config['gifs']['gif']))
                 foreach ($config['gifs']['gif'] as $gif)
                         if($gif['if'] == $interface)
-                                return "{$gif['gifif']}";
+                                return $gif;
 }
 
 /*

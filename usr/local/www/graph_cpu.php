@@ -91,14 +91,14 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
 if (typeof getURL == 'undefined') {
   getURL = function(url, callback) {
     if (!url)
-      throw gettext('No URL for getURL');
+      throw '<?=gettext("No URL for getURL"); ?>';
 
     try {
       if (typeof callback.operationComplete == 'function')
         callback = callback.operationComplete;
     } catch (e) {}
     if (typeof callback != 'function')
-      throw gettext('No callback function for getURL');
+      throw '<?=gettext("No callback function for getURL"); ?>';
 
     var http_request = null;
     if (typeof XMLHttpRequest != 'undefined') {
@@ -114,7 +114,7 @@ if (typeof getURL == 'undefined') {
       }
     }
     if (!http_request)
-      throw gettext('Both getURL and XMLHttpRequest are undefined');
+      throw '<?=gettext("Both getURL and XMLHttpRequest are undefined"); ?>';
 
     http_request.onreadystatechange = function() {
       if (http_request.readyState == 4) {

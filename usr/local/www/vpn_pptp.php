@@ -311,7 +311,8 @@ function enable_change(enable_over) {
 
 			<input type="radio" name="mode" value="redir" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "redir") echo "checked" ?>>
                     <?=gettext("Redirect incoming PPTP connections to");?>:</td>
-
+				<tr>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("PPTP redirection");?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="redir" type="text" class="formfld unknown" id="redir" size="20" value="<?=htmlspecialchars($pconfig['redir']);?>"> 
                     <br>

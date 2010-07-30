@@ -83,7 +83,7 @@ EOF1;
 <html>
 <head>
 	<meta http-equiv="Refresh" content="1; url=<?=$url?>">
-	<title><?=gettext("Uploading Files... Please wait ...");?></title>
+	<title><?=gettext("Uploading Files"); ?>... <?=gettext("Please wait"); ?> ...</title>
 	<style type='text/css'>
 		td {font-size: 10pt }
 	</style>
@@ -92,7 +92,7 @@ EOF1;
 	<table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #990000;">
 	<tr>
 		<td>
-			<font face="arial"><b><center><?=gettext("Uploading file...");?></b></center>
+			<font face="arial"><b><center><?=gettext("Uploading file");?>...</b></center>
 			<br>
 			<table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
 			<tr>
@@ -120,7 +120,7 @@ EOF1;
 				<td align="right">
 					<font face="arial">
 					<b>
-					<?=gettext("Uploaded:");?>
+					<?=gettext("Uploaded");?>:
 				</td>
 				<td>
 					<font face="arial">
@@ -130,7 +130,7 @@ EOF1;
 				<td align="right">
 					<font face="arial">
 					<b>
-					<?=gettext("File Size:");?>
+					<?=gettext("File Size");?>:
 				</td>
 				<td>
 					<font face="arial">
@@ -142,7 +142,7 @@ EOF1;
    				<td align="right">
 					<font face="arial">
 					<b>
-					<?=gettext("Completed:");?>
+					<?=gettext("Completed");?>:
 				</td>
 				<td>
 					<font face="arial">
@@ -152,7 +152,7 @@ EOF1;
    				<td align="right">
 					<font face="arial">
 					<b>
-					<?=gettext("Estimated:");?>
+					<?=gettext("Estimated");?>:
 				</td>
 				<td>
 					<font face="arial">

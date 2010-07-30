@@ -1,0 +1,38 @@
+#!/usr/local/bin/php
+
+<?php
+
+require("config.inc");
+require("functions.inc");
+require("notices.inc");
+
+$arguments = getopt("e:g:m:");
+
+$send_email = false;
+$send_growl = false;
+$message = "";
+
+foreach($arguments as $item => $arg) {
+	switch($item) {
+		case "e":
+			$send_email = true;
+			break;
+		case "g":
+			$send_growl = true;
+			break;
+		case "m":
+			$message = $arg;
+			break;
+	}
+}
+
+if($message) {
+	if($send_email) {
+		notify_via_smtp($message);
+	}
+	if($send_growl) {
+		notify_via_growl($message);
+	}
+}
+
+?>

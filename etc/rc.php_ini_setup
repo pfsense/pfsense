@@ -47,7 +47,7 @@ if [ "$AVAILMEM" -lt "65" ]; then
 	APCSHMEMSIZE="1"
 fi
 if [ "$AVAILMEM" -lt "96" ]; then
-	APCSHMEMSIZE="10"
+	APCSHMEMSIZE="5"
 fi
 if [ "$AVAILMEM" -lt "128" ]; then
 	APCSHMEMSIZE="10"

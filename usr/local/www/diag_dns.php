@@ -82,8 +82,10 @@ if ($_POST) {
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
-			$dig=`dig www.cnn.com A | grep "www.cnn.com" | grep -v ";" | awk '{ print $5 }'`;
-			$resolved = split("\n", $dig);
+			if($resolved) {
+				$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+				$resolved = split("\n", $dig);
+			}
 			$hostname = $host;
 			if ($host != $resolved)
 				$ipaddr = $resolved[0];

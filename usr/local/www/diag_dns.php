@@ -82,6 +82,8 @@ if ($_POST) {
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
+			$dig=`dig www.cnn.com A | grep "www.cnn.com" | grep -v ";" | awk '{ print $5 }'`;
+			$resolved = split("\n", $dig);
 			$hostname = $host;
 			if ($host != $resolved)
 				$ipaddr = $resolved;
@@ -108,10 +110,26 @@ include("head.inc"); ?>
         <tr>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP");?></td>
 		  <td width="78%" class="vtable">
-            <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+            <?=$mandfldhtml;?>
+			<table>
+				<tr><td valign="top">
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+			</td>
+			<td>
 			<? if ($resolved && $type) { ?>
-			=  <font size="+1"><?php echo $resolved; ?><font size="-1>">
+			=  <font size="+1">
+<?php
+				if(is_array($resolved)) { 
+					foreach($resolved as $hostitem) {
+						echo $hostitem . "<br/>";
+					}
+				} else {
+					echo $resolved; 
+				} 
+?>
+				<font size="-1>">
 			<?	} ?>
+			</td></tr></table>
 		  </td>
 		</tr>
 <?php		if($_POST): ?>

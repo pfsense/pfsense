@@ -167,20 +167,26 @@ include("head.inc"); ?>
 			<? if ($resolved && $type) { ?>
 			=  <font size="+1">
 <?php
+				$found = 0;
 				if(is_array($resolved)) { 
 					foreach($resolved as $hostitem) {
-						echo $hostitem . "<br/>";
+						if($hostitem <> "") {
+							echo $hostitem . "<br/>";
+							$found++;
+						}
 					}
 				} else {
 					echo $resolved; 
 				} 
-				if($alias_exists) {
-					echo "An alias already exists for the hostname {$newalias['name']}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
-				} else { 
-					if(!$createdalias) {
-						echo "<a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";
-					} else {
-						echo "Alias created with name {$newalias['name']}";
+				if($found > 0) {
+					if($alias_exists) {
+						echo "<br/>An alias already exists for the hostname {$newalias['name']}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
+					} else { 
+						if(!$createdalias) {
+							echo "<br/><a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";
+						} else {
+							echo "<br/>Alias created with name {$newalias['name']}";
+						}
 					}
 				}
 ?>

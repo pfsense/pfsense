@@ -53,7 +53,7 @@ if($_GET['createalias'] == "true") {
 		foreach($resolved as $re) {
 			if(!$isfirst) 
 				$addresses .= " ";
-			$addresses .= $re;
+			$addresses .= $re . "/32";
 			$isfirst = false;
 		}
 		$newalias = array();
@@ -70,7 +70,7 @@ if($_GET['createalias'] == "true") {
 		if($override) 
 			$alias_exists = false;
 		if($alias_exists == false) {
-			$newalias['name'] = $aliasname . "/32";
+			$newalias['name'] = $aliasname;
 			$newalias['type'] = "network";
 			$newalias['address'] = $addresses;
 			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";

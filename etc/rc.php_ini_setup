@@ -198,12 +198,8 @@ done
 # Get amount of ram installed on this system
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
-if [  $RAM -lt 65 ]; then
+if [  $RAM -lt 97 ]; then
 	cat >>/usr/local/lib/php.ini <<EOF
-; APC Settings
-apc.enabled="0"
-apc.enable_cli="0"
-apc.shm_size="1"
 
 [suhosin]
 suhosin.get.max_array_depth = 5000

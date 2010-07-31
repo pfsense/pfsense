@@ -51,10 +51,12 @@ if($_GET['createalias'] == "true") {
 		$resolved = split("\n", $dig);
 		$isfirst = true;
 		foreach($resolved as $re) {
-			if(!$isfirst) 
-				$addresses .= " ";
-			$addresses .= $re . "/32";
-			$isfirst = false;
+			if($re <> "") {
+				if(!$isfirst) 
+					$addresses .= " ";
+				$addresses .= $re . "/32";
+				$isfirst = false;
+			}
 		}
 		$newalias = array();
 		$aliasname = str_replace(array(".","-"), "_", $host);

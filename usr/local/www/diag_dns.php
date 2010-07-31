@@ -182,7 +182,7 @@ include("head.inc"); ?>
 				} 
 				if($found > 0) {
 					if($alias_exists) {
-						echo "<br/>An alias already exists for the hostname {$newalias['name']}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
+						echo "<br/>An alias already exists for the hostname {$host}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
 					} else { 
 						if(!$createdalias) {
 							echo "<br/><a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";

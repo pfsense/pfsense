@@ -70,8 +70,8 @@ if($_GET['createalias'] == "true") {
 		if($override) 
 			$alias_exists = false;
 		if($alias_exists == false) {
-			$newalias['name'] = $aliasname;
-			$newalias['type'] = "host";
+			$newalias['name'] = $aliasname . "/32";
+			$newalias['type'] = "network";
 			$newalias['address'] = $addresses;
 			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
 			if($override) 

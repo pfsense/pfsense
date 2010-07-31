@@ -198,7 +198,9 @@ done
 # Get amount of ram installed on this system
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
-if [  $RAM -lt 97 ]; then
+export LOWMEM
+if [ "$RAM" -lt "97" ]; then
+	LOWMEM="TRUE"
 	cat >>/usr/local/lib/php.ini <<EOF
 
 [suhosin]
@@ -261,6 +263,16 @@ for EXT in $PHPMODULES; do
 			SHOULDREMOVE="false"
 		fi		
 	done
+	if [ "$LOWMEM" = "TRUE" ]; then
+		if [ "$EXT" = "apc" ]; then
+			SHOULDREMOVE="true"
+		fi
+	fi
+	if [ "$LOWMEM" = "TRUE" ]; then
+		if [ "$EXT" = "xcache" ]; then
+			SHOULDREMOVE="true"
+		fi
+	fi
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt

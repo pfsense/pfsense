@@ -43,6 +43,12 @@ fi
 
 # Calculate APC SHM size according 
 # to detected memory values
+if [ "$AVAILMEM" -lt "65" ]; then
+	APCSHMEMSIZE="1"
+fi
+if [ "$AVAILMEM" -lt "96" ]; then
+	APCSHMEMSIZE="10"
+fi
 if [ "$AVAILMEM" -lt "128" ]; then
 	APCSHMEMSIZE="10"
 fi
@@ -192,6 +198,27 @@ done
 # Get amount of ram installed on this system
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
+if [  $RAM -lt 65 ]; then
+	cat >>/usr/local/lib/php.ini <<EOF
+; APC Settings
+apc.enabled="0"
+apc.enable_cli="0"
+apc.shm_size="1"
+
+[suhosin]
+suhosin.get.max_array_depth = 5000
+suhosin.get.max_array_index_length = 256
+suhosin.get.max_vars = 5000
+suhosin.post.max_array_depth = 5000
+suhosin.post.max_array_index_length = 256
+suhosin.post.max_vars = 5000
+suhosin.request.max_array_depth = 5000
+suhosin.request.max_array_index_length = 256
+suhosin.request.max_vars = 5000
+
+EOF
+
+fi
 if [  $RAM -gt 96 ]; then
 
 	cat >>/usr/local/lib/php.ini <<EOF

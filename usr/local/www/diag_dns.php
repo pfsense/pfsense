@@ -38,6 +38,52 @@ require("guiconfig.inc");
 if ($_GET['host'])
 	$_POST = $_GET;
 
+if($_GET['createalias'] == "true") {
+	$host = trim($_POST['host']);
+	if($_GET['override'])
+		$override = true;
+	$a_aliases = &$config['aliases']['alias'];
+	$type = "hostname";
+	$resolved = gethostbyname($host);
+	if($resolved) {
+		$host = trim($_POST['host']);
+		$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+		$resolved = split("\n", $dig);
+		$isfirst = true;
+		foreach($resolved as $re) {
+			if(!$isfirst) 
+				$addresses .= " ";
+			$addresses .= $re;
+			$isfirst = false;
+		}
+		$newalias = array();
+		$aliasname = str_replace(array(".","-"), "_", $host);
+		$alias_exists = false;
+		$counter=0;
+		foreach($a_aliases as $a) {
+			if($a['name'] == $aliasname) {
+				$alias_exists = true;
+				$id=$counter;
+			}
+			$counter++;
+		}
+		if($override) 
+			$alias_exists = false;
+		if($alias_exists == false) {
+			$newalias['name'] = $aliasname;
+			$newalias['type'] = "host";
+			$newalias['address'] = $addresses;
+			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
+			if($override) 
+				$a_aliases[$id] = $newalias;
+			else
+				$a_aliases[] = $newalias;
+			write_config();
+			$createdalias = true;
+		}
+	}
+}
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -128,8 +174,18 @@ include("head.inc"); ?>
 				} else {
 					echo $resolved; 
 				} 
+				if($alias_exists) {
+					echo "An alias already exists for the hostname {$newalias['name']}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
+				} else { 
+					if(!$createdalias) {
+						echo "<a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";
+					} else {
+						echo "Alias created with name {$newalias['name']}";
+					}
+				}
 ?>
 				<font size="-1>">
+
 			<?	} ?>
 			</td></tr></table>
 		  </td>

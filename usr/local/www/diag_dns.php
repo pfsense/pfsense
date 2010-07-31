@@ -86,7 +86,7 @@ if ($_POST) {
 			$resolved = split("\n", $dig);
 			$hostname = $host;
 			if ($host != $resolved)
-				$ipaddr = $resolved;
+				$ipaddr = $resolved[0];
 		}
 
 		if ($host == $resolved) {

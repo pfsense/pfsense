@@ -216,6 +216,8 @@ function update_installer_status_win($status) {
 
 function begin_quick_easy_install() {
 	global $g;
+	if(file_exists("/tmp/install_complete"))
+		return;
 	unlink_if_exists("/tmp/install_complete");
 	$disk = installer_find_first_disk();
 	if(!$disk) {

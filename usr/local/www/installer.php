@@ -120,11 +120,22 @@ function update_installer_status() {
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
-	$status = `tail -n20 /tmp/.pc-sysinstall/pc-sysinstall.log`;
+	$status = `tail -n30 /tmp/.pc-sysinstall/pc-sysinstall.log`;
 	$status = str_replace("\n", "\\n", $status);
 	$status = str_replace("\n", "\\r", $status);
 	echo "this.document.forms[0].installeroutput.value='$status';\n";
 	// Find out installer progress
+	$progress = "5";
+	if(strstr($status, "Running: dd")) 
+		$progress = "6";
+	if(strstr($status, "Running: gpart create -s GPT")) 
+		$progress = "7";
+	if(strstr($status, "Running: gpart bootcode")) 
+		$progress = "7";
+	if(strstr($status, "Running: newfs -U")) 
+		$progress = "8";
+	if(strstr($status, "Running: sync")) 
+		$progress = "9";
 	if(strstr($status, "/boot /mnt/boot")) 
 		$progress = "10";
 	if(strstr($status, "/COPYRIGHT /mnt/COPYRIGHT"))
@@ -159,6 +170,14 @@ function update_installer_status() {
 		$progress = "90";
 	if(strstr($status, "/var /mnt/var"))
 		$progress = "95";
+	if(strstr($status, "cap_mkdb /etc/login.conf"))
+		$progress = "96";
+	if(strstr($status, "Setting hostname"))
+		$progress = "97";
+	if(strstr($status, "umount -f /mnt"))
+		$progress = "98";
+	if(strstr($status, "umount -f /mnt"))
+		$progress = "99";
 	if(strstr($status, "Installation finished"))
 		$progress = "100";
 	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));
@@ -324,7 +343,7 @@ function quickeasyinstall_gui() {
 													</tr>
 												</table>
 												<br/>
-												<textarea name='installeroutput' id='installeroutput' rows="30" cols="80">
+												<textarea name='installeroutput' id='installeroutput' rows="31" cols="80">
 												</textarea>
 											</div>
 			     						</td>
@@ -382,26 +401,33 @@ EOF;
 
 function installer_main() {
 	global $g;
+	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
+		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	body_html();
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo "WARNING: Could not find any suitable disks for installation.";
 	page_table_start();
 	echo <<<EOF
+		<form action="installer.php" method="post" state="step1_post">
 			<div id="mainlevel">
-				This utility will install pfSense to a hard disk, flash drive, etc. 
+				<center>
+				<b><font face="arial" size="+2">Welcome to the pfSense PCSysInstaller!</b></font><p/>
+				<font face="arial" size="+1">This utility will install pfSense to a hard disk, flash drive, etc.</font>
 				<table width="100%" border="0" cellpadding="5" cellspacing="0">
 			 		<tr>
 			    		<td>
+							<center>
 							<div id="mainarea">
 								<br/>
+								<center>
 								Please select an installer option to begin:
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 			     						<td class="tabcont" >
-			      							<form action="installer.php" method="post" state="step1_post">
 											<div id="pfsenseinstaller">
-												<a onClick="return confirm('Are you sure you want to install pfSense to $disk?');" href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
+												<center>
+												<a href="installer.php?state=quickeasyinstall" onClick="return confirm('Are you sure you want to install pfSense to $disk?')">Quick/Easy installation</a> 
 												</p>
 											</div>
 			     						</td>

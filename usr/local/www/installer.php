@@ -84,7 +84,7 @@ packageType=cpdup
 # Optional Components
 cpdupPaths=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,sys,usr,var
 
-runExtCommand=chmod a+rx /usr/local/bin/after_installation_routines.sh && cd / && /usr/local/bin/after_installation_routines.sh
+# runExtCommand=chmod a+rx /usr/local/bin/after_installation_routines.sh && cd / && /usr/local/bin/after_installation_routines.sh
 EOF;
 	fwrite($fd, $config);
 	fclose($fd);
@@ -103,7 +103,11 @@ function start_installation() {
 		die("Could not open /tmp/installer.sh for writing");
 		exit;
 	}	
-	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg && touch /tmp/install_complete");
+	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg \n");
+	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
+	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
+	fwrite($fd, "touch /tmp/install_complete\n");
+	
 	fclose($fd);
 	exec("chmod a+rx /tmp/installer.sh");
 	mwexec_bg("sh /tmp/installer.sh");
@@ -141,25 +145,25 @@ function update_installer_status() {
 	if(strstr($status, "/boot /mnt/boot")) 
 		$progress = "10";
 	if(strstr($status, "/COPYRIGHT /mnt/COPYRIGHT"))
-		$progress = "20";
+		$progress = "11";
 	if(strstr($status, "/bin /mnt/bin"))
-		$progress = "25";
+		$progress = "12";
 	if(strstr($status, "/conf /mnt/conf"))
-		$progress = "30";
+		$progress = "15";
 	if(strstr($status, "/conf.default /mnt/conf.default"))
-		$progress = "35";
+		$progress = "20";
 	if(strstr($status, "/dev /mnt/dev"))
-		$progress = "40";
+		$progress = "25";
 	if(strstr($status, "/etc /mnt/etc"))
-		$progress = "45";
+		$progress = "30";
 	if(strstr($status, "/home /mnt/home"))
-		$progress = "50";
+		$progress = "35";
 	if(strstr($status, "/kernels /mnt/kernels"))
-		$progress = "55";
+		$progress = "40";
 	if(strstr($status, "/libexec /mnt/libexec"))
-		$progress = "60";
+		$progress = "50";
 	if(strstr($status, "/lib /mnt/lib"))
-		$progress = "65";
+		$progress = "60";
 	if(strstr($status, "/root /mnt/root"))
 		$progress = "70";
 	if(strstr($status, "/sbin /mnt/sbin"))
@@ -195,8 +199,8 @@ function update_installer_status() {
 	}
 	if($progress) 
 		echo "\$('progressbar').style.width='{$progress}%';\n";
-	if($progress == "100") {
-		echo "\$('installerrunning').innerHTML='Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
+	if($progress == "100" && file_exists("/tmp/install_complete")) {
+		echo "\$('installerrunning').innerHTML='<font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
 	}

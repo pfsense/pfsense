@@ -85,7 +85,7 @@ unmount_all_filesystems()
 
    # Last lets the /mnt partition
    #########################################################
-   rc_nohalt "umount -f ${FSMNT}"
+   # rc_nohalt "umount -f ${FSMNT}"
 
     # If are using a ZFS on "/" set it to legacy
    if [ ! -z "${FOUNDZFSROOT}" ]
@@ -100,7 +100,7 @@ unmount_all_filesystems()
    fi
 
    # Unmount our CDMNT
-   rc_nohalt "umount -f ${CDMNT}"
+   # rc_nohalt "umount -f ${CDMNT}"
 
    # Check if we need to run any gmirror syncing
    ls ${MIRRORCFGDIR}/* >/dev/null 2>/dev/null

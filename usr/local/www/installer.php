@@ -30,6 +30,12 @@
 require("globals.inc");
 require("guiconfig.inc");
 
+// Handle other type of file systems
+if($_REQUEST['fstype']) 
+	$fstype = strtoupper($_REQUEST['fstype']);
+else 
+	$fstype = "UFS+S";
+
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
 	Header("Location: /index.php");
 	exit;
@@ -43,13 +49,12 @@ switch ($_REQUEST['state']) {
 	case "update_installer_status":
 		update_installer_status();
 		exit;
-	case "quickeasyinstall":
-		begin_quick_easy_install();
 	default:
 		installer_main();	
 }
 
 function write_out_pc_sysinstaller_config($disk) {
+	global $fstype;
 	$fd = fopen("/PCBSD/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
@@ -72,7 +77,7 @@ commitDiskPart
 # All sizes are expressed in MB
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
 # Size 0 means use the rest of the slice size
-disk0-part=UFS+S 0 / 
+disk0-part={$fstype} 0 / 
 # Do it now!
 commitDiskLabel
 
@@ -336,6 +341,7 @@ function quickeasyinstall_gui() {
 													</table>
 												</div>
 												<br/>
+												<center>
 												<table height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 													<tr>
 														<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
@@ -436,7 +442,11 @@ function installer_main() {
 			     						<td class="tabcont" >
 											<div id="pfsenseinstaller">
 												<center>
-												<a href="installer.php?state=quickeasyinstall" onClick="return confirm('Are you sure you want to install pfSense to $disk?')">Quick/Easy installation</a> 
+												Rescue config.xml<br/>
+												Install pfSense using the <a href="installer.php?state=quickeasyinstall">UFS</a>
+												 or 
+												<a href="installer.php?state=quickeasyinstall&fstype=ZFS">ZFS</a> 
+												filesystem.
 												</p>
 											</div>
 			     						</td>

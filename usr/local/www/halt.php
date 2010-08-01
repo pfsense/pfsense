@@ -49,14 +49,14 @@ require("captiveportal.inc");
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
 		system_halt();
-		$rebootmsg = "The system is halting now. This may take one minute.";
+		$rebootmsg = sprintf(gettext"The system is halting now. This may take one minute.");
 	} else {
-		header("Location: index.php");
+		header(gettext("Location: index.php"));
 		exit;
 	}
 }
 
-$pgtitle = array("Diagnostics","Halt system");
+$pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
 include('head.inc');
 ?>
 
@@ -64,7 +64,7 @@ include('head.inc');
 <?php include("fbegin.inc"); ?>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="halt.php" method="post">
-        <p><strong>Are you sure you want to halt the system?</strong></p>
+        <p><strong><?=gettext("Are you sure you want to halt the system?");?></strong></p>
         <p>
           <input name="Submit" type="submit" class="formbtn" value=" Yes ">
           <input name="Submit" type="submit" class="formbtn" value=" No ">

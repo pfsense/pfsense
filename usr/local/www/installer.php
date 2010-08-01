@@ -27,6 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("globals.inc");
 require("guiconfig.inc");
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
@@ -91,6 +92,7 @@ EOF;
 }
 
 function start_installation() {
+	global $g;
 	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
 	if($ps_running)	
 		return;
@@ -106,33 +108,87 @@ function start_installation() {
 }
 
 function installer_find_first_disk() {
+	global $g;
 	$disk = `/PCBSD/pc-sysinstall/pc-sysinstall disk-list | head -n1 | cut -d':' -f1`;
 	return $disk;
 }
 
 function update_installer_status() {
+	global $g;
 	if(!file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		return;
-	echo `tail -n20 /tmp/.pc-sysinstall/pc-sysinstall.log`;
+	// Ensure status files exist
+	if(!file_exists("/tmp/installer_installer_running"))
+		touch("/tmp/installer_installer_running");
+	if(!file_exists("/tmp/installer_last_progress"))
+		touch("/tmp/installer_last_progress");
+	$status = `tail -n20 /tmp/.pc-sysinstall/pc-sysinstall.log`;
+	echo "this.document.forms[0].installeroutput.value='$status';\n";
+	$installer_running = trim(file_get_contents("/tmp/installer_installer_running"));
+	if($installer_running <> "running") {
+		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+		if($ps_running)	
+			echo "\$('installerrunning').innerHTML='<img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"> Installer running...';\n";
+		file_put_contents("/tmp/installer_installer_running", "running");
+	}
+	// Find out installer progress
+	if(strstr($status, "/boot /mnt/boot")) 
+		$progress = "1";
+	if(strstr($status, "/COPYRIGHT /mnt/COPYRIGHT"))
+		$progress = "2";
+	if(strstr($status, "/bin /mnt/bin"))
+		$progress = "5";
+	if(strstr($status, "/conf /mnt/conf"))
+		$progress = "10";
+	if(strstr($status, "/conf.default /mnt/conf.default"))
+		$progress = "15";
+	if(strstr($status, "/dev /mnt/dev"))
+		$progress = "20";
+	if(strstr($status, "/etc /mnt/etc"))
+		$progress = "25";
+	if(strstr($status, "/home /mnt/home"))
+		$progress = "30";
+	if(strstr($status, "/kernels /mnt/kernels"))
+		$progress = "35";
+	if(strstr($status, "/libexec /mnt/libexec"))
+		$progress = "40";
+	if(strstr($status, "/lib /mnt/lib"))
+		$progress = "45";
+	if(strstr($status, "/root /mnt/root"))
+		$progress = "50";
+	if(strstr($status, "/sbin /mnt/sbin"))
+		$progress = "55";
+	if(strstr($status, "/sys /mnt/sys"))
+		$progress = "60";
+	if(strstr($status, "/usr /mnt/usr"))
+		$progress = "70";
+	if(strstr($status, "/usr /mnt/usr"))
+		$progress = "80";
+	if(strstr($status, "/var /mnt/var"))
+		$progress = "90";
+	if(strstr($status, "Installation finished"))
+		$progress = "100";
+	$last_progress = trim(file_get_contents("/tmp/installer_last_progress"));
+	if($last_progress <> $progress) 
+		echo "\ndocument.progressbar.style.width='{$progress}%';\n";
+	file_put_contents("/tmp/installer_last_progress", trim($progress));
 	if(file_exists("/tmp/install_complete")) {
-		echo "Installation completed.";
+		echo "\$('installerrunning').innerHTML='Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
 		unlink_if_exists("/tmp/installer.sh");
+		file_put_contents("/tmp/installer_installer_running", "finished");
 	}
 }
 
 function update_installer_status_win($status) {
-	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+	global $g;
 	echo "<script type=\"text/javascript\">\n";
-	if($ps_running)	
-		echo "\$('installerrunning').innerHTML='Installer running...';\n";
-	else 
-		echo "\$('installerrunning').innerHTML='Installer finished.';\n";
 	echo "\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
 	echo "installeroutput.scroll = installeroutput.maxScroll;\n";
 	echo "</script>";
 }
 
 function begin_quick_easy_install() {
+	global $g;
 	unlink_if_exists("/tmp/install_complete");
 	$disk = installer_find_first_disk();
 	if(!$disk) {
@@ -147,6 +203,7 @@ function begin_quick_easy_install() {
 }
 
 function body_html() {
+	global $g;
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 	if(strstr($pfSversion, "1.2"))
 		$one_two = true;
@@ -171,12 +228,11 @@ function body_html() {
 					});
 			}
 			function installcallback(transport) {
-				this.document.forms[0].installeroutput.value=transport.responseText;
+				eval(transport.responseText);
 				setTimeout('getinstallerprogress()', 1000);		
 			}
 	</script>
 EOF;
-	include("fbegin.inc");
 
 	if($one_two)
 		echo "<p class=\"pgtitle\">{$pgtitle}</font></p>";
@@ -185,13 +241,14 @@ EOF;
 }
 
 function end_html() {
+	global $g;
 	echo "</form>";
-	include("fend.inc");
 	echo "</body>";
 	echo "</html>";
 }
 
 function template() {
+	global $g;
 	body_html();
 	echo <<<EOF
 	<div id="mainlevel">
@@ -220,70 +277,135 @@ EOF;
 }
 
 function quickeasyinstall_gui() {
+	global $g;
 	body_html();
+	page_table_start();
 	echo <<<EOF
-	<div id="mainlevel">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	 		<tr>
-	    		<td>
-					<div id="mainarea">
-						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-	     						<td class="tabcont" >
-	      							<form action="installer.php" method="post" state="step1_post">
-									<div id="pfsenseinstaller">
-										<div id='installerrunning'>
-											Starting Installer...  Please wait...<p/>
-										</div>
-										{{ Insert progressbar here }}<p/>
-										<textarea name='installeroutput' id='installeroutput' rows="30" cols="80">
-										</textarea>
-									</div>
-	     						</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
+	<form action="installer.php" method="post" state="step1_post">
+	<center>
+		<table width="100%">
+		<tr><td>
+			<div id="mainlevel">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			 		<tr>
+			    		<td>
+							<div id="mainarea">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+			     						<td class="tabcont" >
+											<div id="pfsenseinstaller" width="100%">
+												<div id='installerrunning' width='100%' style="padding:2em; border:1px solid #000000">
+													<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Starting Installer...  Please wait...<p/>
+												</div>
+												<br/>
+												<table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
+													<tr>
+														<td width="5" height="15" background="./themes/{$g['theme']}/images/misc/bar_left.gif" align="top">
+														</td>
+														<td>
+															<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
+																<tr>
+																	<td background="./themes/{$g['theme']}/images/misc/bar_gray.gif">
+																		<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='1%'>
+																	</td>
+																</tr>
+															</table>
+														</td>
+														<td width="5" height="15" background="./themes/{$g['theme']}/images/misc/bar_right.gif" align="top">
+														</td>
+													</tr>
+												</table>
+												<br/>
+												<textarea name='installeroutput' id='installeroutput' rows="30" cols="80">
+												</textarea>
+											</div>
+			     						</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td></tr>
 		</table>
-	</div>
+	</center>
 	<script type="text/javascript">setTimeout('getinstallerprogress()', 250);</script>
+
 EOF;
+	page_table_end();
 	end_html();
 	begin_quick_easy_install();
 }
 
+function page_table_start() {
+	global $g;
+		echo <<<EOF
+	<center>
+		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a>
+		<table cellpadding="5" cellspacing="0" width="640" height="480" style="border:1px solid #000000">
+		<tr height="10" bgcolor="#990000">
+			<td style="border-bottom:1px solid #000000">
+				<font color='white'>
+					<b>
+						pfSense installer
+					</b>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td>
+
+EOF;
+
+}
+
+function page_table_end() {
+	global $g;
+	echo <<<EOF
+			</td>
+		</tr>
+		</table>
+	</center>
+
+EOF;
+	
+}
+
 function installer_main() {
+	global $g;
 	body_html();
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo "WARNING: Could not find any suitable disks for installation.";
+	page_table_start();
 	echo <<<EOF
-	<div id="mainlevel">
-		This utility will install pfSense to a hard disk, flash drive, etc. 
-		<table width="100%" border="0" cellpadding="5" cellspacing="0">
-	 		<tr>
-	    		<td>
-					<div id="mainarea">
-						<br/>
-						Please select an installer option to begin:
-						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-	     						<td class="tabcont" >
-	      							<form action="installer.php" method="post" state="step1_post">
-									<div id="pfsenseinstaller">
-										<a onClick="return confirm('Are you sure you want to install pfSense to $disk?');" href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
-										</p>
-									</div>
-	     						</td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
-		</table>
-	</div>
+			<div id="mainlevel">
+				This utility will install pfSense to a hard disk, flash drive, etc. 
+				<table width="100%" border="0" cellpadding="5" cellspacing="0">
+			 		<tr>
+			    		<td>
+							<div id="mainarea">
+								<br/>
+								Please select an installer option to begin:
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+			     						<td class="tabcont" >
+			      							<form action="installer.php" method="post" state="step1_post">
+											<div id="pfsenseinstaller">
+												<a onClick="return confirm('Are you sure you want to install pfSense to $disk?');" href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
+												</p>
+											</div>
+			     						</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
 EOF;
+	page_table_end();
 	end_html();
 }
 

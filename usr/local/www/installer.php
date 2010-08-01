@@ -120,59 +120,61 @@ function update_installer_status() {
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
-	if(!file_exists("/tmp/installer_last_progress"))
-		touch("/tmp/installer_last_progress");
 	$status = `tail -n20 /tmp/.pc-sysinstall/pc-sysinstall.log`;
+	$status = str_replace("\n", "\\n", $status);
+	$status = str_replace("\n", "\\r", $status);
 	echo "this.document.forms[0].installeroutput.value='$status';\n";
-	$installer_running = trim(file_get_contents("/tmp/installer_installer_running"));
-	if($installer_running <> "running") {
-		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
-		if($ps_running)	
-			echo "\$('installerrunning').innerHTML='<img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"> Installer running...';\n";
-		file_put_contents("/tmp/installer_installer_running", "running");
-	}
 	// Find out installer progress
 	if(strstr($status, "/boot /mnt/boot")) 
-		$progress = "1";
-	if(strstr($status, "/COPYRIGHT /mnt/COPYRIGHT"))
-		$progress = "2";
-	if(strstr($status, "/bin /mnt/bin"))
-		$progress = "5";
-	if(strstr($status, "/conf /mnt/conf"))
 		$progress = "10";
-	if(strstr($status, "/conf.default /mnt/conf.default"))
-		$progress = "15";
-	if(strstr($status, "/dev /mnt/dev"))
+	if(strstr($status, "/COPYRIGHT /mnt/COPYRIGHT"))
 		$progress = "20";
-	if(strstr($status, "/etc /mnt/etc"))
+	if(strstr($status, "/bin /mnt/bin"))
 		$progress = "25";
-	if(strstr($status, "/home /mnt/home"))
+	if(strstr($status, "/conf /mnt/conf"))
 		$progress = "30";
-	if(strstr($status, "/kernels /mnt/kernels"))
+	if(strstr($status, "/conf.default /mnt/conf.default"))
 		$progress = "35";
-	if(strstr($status, "/libexec /mnt/libexec"))
+	if(strstr($status, "/dev /mnt/dev"))
 		$progress = "40";
-	if(strstr($status, "/lib /mnt/lib"))
+	if(strstr($status, "/etc /mnt/etc"))
 		$progress = "45";
-	if(strstr($status, "/root /mnt/root"))
+	if(strstr($status, "/home /mnt/home"))
 		$progress = "50";
-	if(strstr($status, "/sbin /mnt/sbin"))
+	if(strstr($status, "/kernels /mnt/kernels"))
 		$progress = "55";
-	if(strstr($status, "/sys /mnt/sys"))
+	if(strstr($status, "/libexec /mnt/libexec"))
 		$progress = "60";
-	if(strstr($status, "/usr /mnt/usr"))
+	if(strstr($status, "/lib /mnt/lib"))
+		$progress = "65";
+	if(strstr($status, "/root /mnt/root"))
 		$progress = "70";
-	if(strstr($status, "/usr /mnt/usr"))
+	if(strstr($status, "/sbin /mnt/sbin"))
+		$progress = "75";
+	if(strstr($status, "/sys /mnt/sys"))
 		$progress = "80";
-	if(strstr($status, "/var /mnt/var"))
+	if(strstr($status, "/usr /mnt/usr"))
+		$progress = "95";
+	if(strstr($status, "/usr /mnt/usr"))
 		$progress = "90";
+	if(strstr($status, "/var /mnt/var"))
+		$progress = "95";
 	if(strstr($status, "Installation finished"))
 		$progress = "100";
-	$last_progress = trim(file_get_contents("/tmp/installer_last_progress"));
-	if($last_progress <> $progress) 
-		echo "\ndocument.progressbar.style.width='{$progress}%';\n";
-	file_put_contents("/tmp/installer_last_progress", trim($progress));
-	if(file_exists("/tmp/install_complete")) {
+	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));
+	if($installer_running <> "running") {
+		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+		if($ps_running)	{
+			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'; ";
+			if($running_old <> $running) {
+				echo $running;
+				file_put_contents("/tmp/installer_installer_running", "$running");			
+			}
+		}
+	}
+	if($progress) 
+		echo "\$('progressbar').style.width='{$progress}%';\n";
+	if($progress == "100") {
 		echo "\$('installerrunning').innerHTML='Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
@@ -182,8 +184,7 @@ function update_installer_status() {
 function update_installer_status_win($status) {
 	global $g;
 	echo "<script type=\"text/javascript\">\n";
-	echo "\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
-	echo "installeroutput.scroll = installeroutput.maxScroll;\n";
+	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
 	echo "</script>";
 }
 
@@ -212,25 +213,25 @@ function body_html() {
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-		<script type="text/javascript">
-			function getinstallerprogress() {
-				url = 'installer.php';
-				pars = 'state=update_installer_status';
-				callajax(url, pars, installcallback);
-			}
-			function callajax(url, pars, activitycallback) {
-				var myAjax = new Ajax.Request(
-					url,
-					{
-						method: 'post',
-						parameters: pars,
-						onComplete: activitycallback
-					});
-			}
-			function installcallback(transport) {
-				eval(transport.responseText);
-				setTimeout('getinstallerprogress()', 1000);		
-			}
+	<script type="text/javascript">
+		function getinstallerprogress() {
+			url = 'installer.php';
+			pars = 'state=update_installer_status';
+			callajax(url, pars, installcallback);
+		}
+		function callajax(url, pars, activitycallback) {
+			var myAjax = new Ajax.Request(
+				url,
+				{
+					method: 'post',
+					parameters: pars,
+					onComplete: activitycallback
+				});
+		}
+		function installcallback(transport) {
+			setTimeout('getinstallerprogress()', 2000);
+			eval(transport.responseText);
+		}
 	</script>
 EOF;
 
@@ -279,9 +280,9 @@ EOF;
 function quickeasyinstall_gui() {
 	global $g;
 	body_html();
+	echo "<form action=\"installer.php\" method=\"post\" state=\"step1_post\">";
 	page_table_start();
 	echo <<<EOF
-	<form action="installer.php" method="post" state="step1_post">
 	<center>
 		<table width="100%">
 		<tr><td>
@@ -294,24 +295,31 @@ function quickeasyinstall_gui() {
 									<tr>
 			     						<td class="tabcont" >
 											<div id="pfsenseinstaller" width="100%">
-												<div id='installerrunning' width='100%' style="padding:2em; border:1px solid #000000">
-													<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Starting Installer...  Please wait...<p/>
+												<div id='installerrunning' width='100%' style="padding:1em; border:1px dashed #000000">
+													<table>
+														<tr>
+															<td valign="middle">
+																<img src="/themes/{$g['theme']}/images/misc/loader.gif">
+															</td>
+															<td valign="middle">
+																&nbsp;<font size="2"><b>Starting Installer...  Please wait...
+															</td>
+														</tr>
+													</table>
 												</div>
 												<br/>
-												<table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
+												<table height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 													<tr>
-														<td width="5" height="15" background="./themes/{$g['theme']}/images/misc/bar_left.gif" align="top">
+														<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
 														</td>
 														<td>
-															<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-																<tr>
-																	<td background="./themes/{$g['theme']}/images/misc/bar_gray.gif">
-																		<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='1%'>
-																	</td>
-																</tr>
+															<table id="progholder" name="progholder" height='15' width='630' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+																<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+																	<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+																</td>
 															</table>
 														</td>
-														<td width="5" height="15" background="./themes/{$g['theme']}/images/misc/bar_right.gif" align="top">
+														<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
 														</td>
 													</tr>
 												</table>

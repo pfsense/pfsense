@@ -106,8 +106,8 @@ function start_installation() {
 	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg \n");
 	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
+	fwrite($fd, "umount /mnt\n");
 	fwrite($fd, "touch /tmp/install_complete\n");
-	
 	fclose($fd);
 	exec("chmod a+rx /tmp/installer.sh");
 	mwexec_bg("sh /tmp/installer.sh");

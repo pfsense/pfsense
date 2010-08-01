@@ -102,7 +102,8 @@ function start_installation() {
 	if(!$fd) {
 		die("Could not open /tmp/installer.sh for writing");
 		exit;
-	}	
+	}
+	fwrite($fd, "rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null");
 	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg \n");
 	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
@@ -122,8 +123,6 @@ function installer_find_first_disk() {
 
 function update_installer_status() {
 	global $g;
-	if(!file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
-		return;
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
@@ -201,7 +200,7 @@ function update_installer_status() {
 	}
 	if($progress) 
 		echo "\$('progressbar').style.width='{$progress}%';\n";
-	if($progress == "100" && file_exists("/tmp/install_complete")) {
+	if(file_exists("/tmp/install_complete")) {
 		echo "\$('installerrunning').innerHTML='<font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
@@ -351,7 +350,7 @@ function quickeasyinstall_gui() {
 													</tr>
 												</table>
 												<br/>
-												<textarea name='installeroutput' id='installeroutput' rows="31" cols="80">
+												<textarea name='installeroutput' id='installeroutput' rows="31" cols="90">
 												</textarea>
 											</div>
 			     						</td>

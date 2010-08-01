@@ -93,6 +93,8 @@ EOF;
 
 function start_installation() {
 	global $g;
+	if(file_exists("/tmp/install_complete"))
+		return;
 	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
 	if($ps_running)	
 		return;

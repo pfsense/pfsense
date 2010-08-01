@@ -91,6 +91,9 @@ EOF;
 }
 
 function start_installation() {
+	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+	if($ps_running)	
+		return;
 	$fd = fopen("/tmp/installer.sh", "w");
 	if(!$fd) {
 		die("Could not open /tmp/installer.sh for writing");
@@ -118,7 +121,12 @@ function update_installer_status() {
 }
 
 function update_installer_status_win($status) {
+	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
 	echo "<script type=\"text/javascript\">\n";
+	if($ps_running)	
+		echo "\$('installerrunning').innerHTML='Installer running...';\n";
+	else 
+		echo "\$('installerrunning').innerHTML='Installer finished.';\n";
 	echo "\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
 	echo "installeroutput.scroll = installeroutput.maxScroll;\n";
 	echo "</script>";
@@ -224,9 +232,11 @@ function quickeasyinstall_gui() {
 	     						<td class="tabcont" >
 	      							<form action="installer.php" method="post" state="step1_post">
 									<div id="pfsenseinstaller">
-										Starting Installer...  Please wait...<p/>
+										<div id='installerrunning'>
+											Starting Installer...  Please wait...<p/>
+										</div>
 										{{ Insert progressbar here }}<p/>
-										<textarea name='installeroutput' id='installeroutput' rows="20" cols="80">
+										<textarea name='installeroutput' id='installeroutput' rows="30" cols="80">
 										</textarea>
 									</div>
 	     						</td>
@@ -240,6 +250,7 @@ function quickeasyinstall_gui() {
 	<script type="text/javascript">setTimeout('getinstallerprogress()', 250);</script>
 EOF;
 	end_html();
+	begin_quick_easy_install();
 }
 
 function installer_main() {
@@ -249,16 +260,19 @@ function installer_main() {
 		echo "WARNING: Could not find any suitable disks for installation.";
 	echo <<<EOF
 	<div id="mainlevel">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		This utility will install pfSense to a hard disk, flash drive, etc. 
+		<table width="100%" border="0" cellpadding="5" cellspacing="0">
 	 		<tr>
 	    		<td>
 					<div id="mainarea">
+						<br/>
+						Please select an installer option to begin:
 						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 	     						<td class="tabcont" >
 	      							<form action="installer.php" method="post" state="step1_post">
 									<div id="pfsenseinstaller">
-										<a onclick="return confirm('Are you sure you want to install pfSense to $disk?')"> href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
+										<a onClick="return confirm('Are you sure you want to install pfSense to $disk?');" href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
 										</p>
 									</div>
 	     						</td>

@@ -127,7 +127,7 @@ function installer_find_first_disk() {
 }
 
 function update_installer_status() {
-	global $g;
+	global $g, $fstype;
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
@@ -192,11 +192,18 @@ function update_installer_status() {
 		$progress = "99";
 	if(strstr($status, "Installation finished"))
 		$progress = "100";
+	// Check for error and bail if we see one.
+	if(stristr($status, "error")) {
+		$error = true;
+		echo "\$('installerrunning').innerHTML='<font size=\"2\"><b>An error occurred.  Aborting installation.'; ";
+		echo "\$('progressbar').style.width='100%';\n";
+		return;
+	}
 	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));
 	if($installer_running <> "running") {
 		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
 		if($ps_running)	{
-			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'; ";
+			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed) - {$fstype}...</td></tr></table>'; ";
 			if($running_old <> $running) {
 				echo $running;
 				file_put_contents("/tmp/installer_installer_running", "$running");			
@@ -234,6 +241,38 @@ function begin_quick_easy_install() {
 	write_out_pc_sysinstaller_config($disk);
 	update_installer_status_win("Beginning installation on disk {$disk}.");
 	start_installation();
+}
+
+function head_html() {
+	global $g;
+	echo <<<EOF
+<html>
+	<head>
+		<style type='text/css'>
+			a:link { 
+				color: #000000;
+				text-decoration:underline;
+				font-size:14;
+			}
+			a:visited { 
+				color: #000000;
+				text-decoration:underline;
+				font-size:14;
+			}
+			a:hover { 
+				color: #FFFF00;
+				text-decoration: none;
+				font-size:14;
+			}
+			a:active { 
+				color: #FFFF00;
+				text-decoration:underline;
+				font-size:14;
+			}
+		</style>
+	</head>
+EOF;
+
 }
 
 function body_html() {
@@ -283,6 +322,7 @@ function end_html() {
 
 function template() {
 	global $g;
+	head_html();
 	body_html();
 	echo <<<EOF
 	<div id="mainlevel">
@@ -312,6 +352,7 @@ EOF;
 
 function quickeasyinstall_gui() {
 	global $g;
+	head_html();
 	body_html();
 	echo "<form action=\"installer.php\" method=\"post\" state=\"step1_post\">";
 	page_table_start();
@@ -418,6 +459,7 @@ function installer_main() {
 	global $g;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
+	head_html();
 	body_html();
 	$disk = installer_find_first_disk();
 	if(!$disk) 
@@ -437,12 +479,12 @@ function installer_main() {
 								<br/>
 								<center>
 								Please select an installer option to begin:
-								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<table bgcolor="#FFFFFF" class="tabcont" width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
 			     						<td class="tabcont" >
 											<div id="pfsenseinstaller">
 												<center>
-												Rescue config.xml<br/>
+												Rescue config.xml<p/>
 												Install pfSense using the <a href="installer.php?state=quickeasyinstall">UFS</a>
 												 or 
 												<a href="installer.php?state=quickeasyinstall&fstype=ZFS">ZFS</a> 

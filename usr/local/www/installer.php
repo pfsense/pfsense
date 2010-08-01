@@ -103,7 +103,7 @@ function start_installation() {
 		die("Could not open /tmp/installer.sh for writing");
 		exit;
 	}
-	fwrite($fd, "rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null");
+	fwrite($fd, "rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null\n");
 	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg \n");
 	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");

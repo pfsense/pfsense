@@ -127,10 +127,11 @@ function update_installer_status() {
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
-	$status = `tail -n30 /tmp/.pc-sysinstall/pc-sysinstall.log`;
+	$status = `cat /tmp/.pc-sysinstall/pc-sysinstall.log`;
 	$status = str_replace("\n", "\\n", $status);
 	$status = str_replace("\n", "\\r", $status);
 	echo "this.document.forms[0].installeroutput.value='$status';\n";
+	echo "this.document.forms[0].installeroutput.scrollTop = this.document.forms[0].installeroutput.scrollHeight;\n";	
 	// Find out installer progress
 	$progress = "5";
 	if(strstr($status, "Running: dd")) 

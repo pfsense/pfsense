@@ -206,9 +206,9 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 
-$specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 
-$spiflist = get_configured_interface_with_descr(true, true);
+$spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
 	$specialnets[$ifgui] = $ifdesc . " net";
 	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";

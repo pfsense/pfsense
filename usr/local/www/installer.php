@@ -197,6 +197,7 @@ function update_installer_status() {
 		$error = true;
 		echo "\$('installerrunning').innerHTML='<font size=\"2\"><b>An error occurred.  Aborting installation.'; ";
 		echo "\$('progressbar').style.width='100%';\n";
+		unlink("/tmp/install_complete");
 		return;
 	}
 	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));
@@ -280,7 +281,7 @@ function body_html() {
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 	if(strstr($pfSversion, "1.2"))
 		$one_two = true;
-	$pgtitle = "pfSense: Installer";
+	$pgtitle = "{$g['product_name']}: Installer";
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -369,7 +370,7 @@ function quickeasyinstall_gui() {
 									<tr>
 			     						<td class="tabcont" >
 											<div id="pfsenseinstaller" width="100%">
-												<div id='installerrunning' width='100%' style="padding:1em; border:1px dashed #000000">
+												<div id='installerrunning' width='100%' style="padding:8px; border:1px dashed #000000">
 													<table>
 														<tr>
 															<td valign="middle">
@@ -425,13 +426,13 @@ function page_table_start() {
 	global $g;
 		echo <<<EOF
 	<center>
-		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a>
-		<table cellpadding="5" cellspacing="0" width="640" height="480" style="border:1px solid #000000">
+		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a><br/>
+		<table cellpadding="6" cellspacing="0" width="640" height="480" style="border:1px solid #000000">
 		<tr height="10" bgcolor="#990000">
 			<td style="border-bottom:1px solid #000000">
 				<font color='white'>
 					<b>
-						pfSense installer
+						{$g['product_name']} installer
 					</b>
 				</font>
 			</td>
@@ -469,8 +470,8 @@ function installer_main() {
 		<form action="installer.php" method="post" state="step1_post">
 			<div id="mainlevel">
 				<center>
-				<b><font face="arial" size="+2">Welcome to the pfSense PCSysInstaller!</b></font><p/>
-				<font face="arial" size="+1">This utility will install pfSense to a hard disk, flash drive, etc.</font>
+				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} PCSysInstaller!</b></font><p/>
+				<font face="arial" size="+1">This utility will install {$g['product_name']} to a hard disk, flash drive, etc.</font>
 				<table width="100%" border="0" cellpadding="5" cellspacing="0">
 			 		<tr>
 			    		<td>
@@ -479,13 +480,13 @@ function installer_main() {
 								<br/>
 								<center>
 								Please select an installer option to begin:
-								<table bgcolor="#FFFFFF" class="tabcont" width="100%" border="0" cellpadding="5" cellspacing="5">
+								<table class="tabcont" width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
 			     						<td class="tabcont" >
 											<div id="pfsenseinstaller">
 												<center>
 												Rescue config.xml<p/>
-												Install pfSense using the <a href="installer.php?state=quickeasyinstall">UFS</a>
+												Install {$g['product_name']} using the <a href="installer.php?state=quickeasyinstall">UFS</a>
 												 or 
 												<a href="installer.php?state=quickeasyinstall&fstype=ZFS">ZFS</a> 
 												filesystem.

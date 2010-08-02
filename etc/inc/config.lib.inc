@@ -989,7 +989,7 @@ EODD;
 		$config['interfaces']['wan']['if'] = $wanif;
 		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
-			if (is_array($config['interfaces']['lan']) &&
+			if (is_array($config['interfaces']['wan']) &&
 				(!is_array($config['interfaces']['wan']['wireless'])))
 				$config['interfaces']['wan']['wireless'] = array();
 		} else {

@@ -89,7 +89,7 @@ if (!is_array($config['widgets'])) {
 			}
 		}
 
-		write_config("Widget configuration has been changed.");
+		write_config(gettext("Widget configuration has been changed."));
 		header("Location: index.php");
 		exit;
 	}
@@ -145,10 +145,10 @@ EOF;
 		echo "<center>\n";
 		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
 		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
-		echo "Welcome to {$g['product_name']}!<p>\n";
-		echo "One moment while we start the initial setup wizard.<p>\n";
-		echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.<p>\n";
-		echo "To bypass the wizard, click on the {$g['product_name']} logo on the initial page.\n";
+		echo sprintf(gettext("Welcome to %s!<p>\n"),$g['product_name']);
+		echo gettext("One moment while we start the initial setup wizard.<p>\n");
+		echo gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.<p>\n");
+		echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page.\n"),$g['product_name']);
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";
@@ -423,7 +423,7 @@ EOD;
 $closehead = false;
 
 ## Set Page Title and Include Header
-$pgtitle = array("{$g['product_name']} Dashboard");
+$pgtitle = array(gettext("{$g['product_name']} Dashboard"));
 include("head.inc");
 
 echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
@@ -495,10 +495,10 @@ echo $jscriptstr;
 				<div style="clear:both;"></div>
 			</h1>
 			<p>
-			This page allows you to customize the information you want to be displayed!<br/>
-			To get started click the <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> icon to add widgets.<br/>
+			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
+			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> <?=gettext("icon to add widgets.");?><br/>
 			<br/>
-			You can move any widget around by clicking and dragging the title.			
+			<?=gettext("You can move any widget around by clicking and dragging the title.");?>			
 			</p>
 	</div>
 </div>
@@ -510,7 +510,7 @@ echo $jscriptstr;
 
 
 &nbsp;&nbsp;&nbsp;
-		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
 </p>
 
 <div id="niftyOutter">

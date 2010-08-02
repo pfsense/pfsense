@@ -330,9 +330,6 @@ if ($_POST) {
 
 		write_config();
 
-		/* static arp configuration */
-		interfaces_staticarp_configure($if);
-
 		$retval = 0;
 		$retvaldhcp = 0;
 		$retvaldns = 0;

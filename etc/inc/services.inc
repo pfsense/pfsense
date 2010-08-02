@@ -136,6 +136,8 @@ EOD;
 	$dhcpnum = 0;
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
+		interfaces_staticarp_configure($dhcpif);
+
 		if (!isset($dhcpifconf['enable']))
 			continue;
 

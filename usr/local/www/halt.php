@@ -51,7 +51,7 @@ if ($_POST) {
 		system_halt();
 		$rebootmsg = gettext("The system is halting now. This may take one minute.");
 	} else {
-		header(gettext("Location: index.php"));
+		header("Location: index.php");
 		exit;
 	}
 }

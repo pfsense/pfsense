@@ -47,7 +47,7 @@
 $pgtitle = array("Firewall","Aliases","Edit");
 
 // Keywords not allowed in names
-$reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp", "pppoe", "l2tp", "openvpn");
+$reserved_keywords = array("pass", "out", "queue", "max", "min", "PPTP", "PPPoE", "L2TP", "OpenVPN", "IPsec");
 
 require("guiconfig.inc");
 require_once("functions.inc");

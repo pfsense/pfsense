@@ -483,9 +483,9 @@ function installer_main() {
 								<br/>
 								<center>
 								Please select an installer option to begin:
-								<table class="tabcont" width="100%" border="0" cellpadding="5" cellspacing="5">
+								<table width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
-			     						<td class="tabcont" >
+			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
 												Rescue config.xml<p/>

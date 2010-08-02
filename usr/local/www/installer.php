@@ -195,7 +195,7 @@ function update_installer_status() {
 	// Check for error and bail if we see one.
 	if(stristr($status, "error")) {
 		$error = true;
-		echo "\$('installerrunning').innerHTML='<img class='infoboxnpimg' src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.'; ";
+		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.'; ";
 		echo "\$('progressbar').style.width='100%';\n";
 		unlink("/tmp/install_complete");
 		return;
@@ -214,7 +214,7 @@ function update_installer_status() {
 	if($progress) 
 		echo "\$('progressbar').style.width='{$progress}%';\n";
 	if(file_exists("/tmp/install_complete")) {
-		echo "\$('installerrunning').innerHTML='<img class='infoboxnpimg' src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
+		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
 	}

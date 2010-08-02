@@ -77,6 +77,12 @@
 			</description>
 		</field>
 		<field>
+			<fielddescr>Synchronize Users and Groups</fielddescr>
+			<fieldname>synchronizeusers</fieldname>
+			<description>When this option is enabled, this system will automatically sync the users and groups over to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Synchronize rules</fielddescr>
 			<fieldname>synchronizerules</fieldname>
 			<description>When this option is enabled, this system will automatically sync the firewall rules to the other CARP host when changes are made..</description>
@@ -192,3 +198,4 @@
 		filter_configure();
 	</custom_add_php_command_late>
 </packagegui>
+ 

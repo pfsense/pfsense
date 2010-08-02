@@ -455,9 +455,11 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		if (in_array($groupname,$new_groups))
 			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
-		$index = array_search($user['uid'], $group['member']);
-		array_splice($group['member'], $index, 1);
-		$mod_groups[] = $group;
+		if (is_array($group['member'])) {
+			$index = array_search($user['uid'], $group['member']);
+			array_splice($group['member'], $index, 1);
+			$mod_groups[] = $group;
+		}
 	}
 
 	/* sync all modified groups */

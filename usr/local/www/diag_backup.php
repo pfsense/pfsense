@@ -86,7 +86,7 @@ function add_base_packages_menu_items() {
 }
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i','',$string);
 }
 
 function check_and_returnif_section_exists($section) {

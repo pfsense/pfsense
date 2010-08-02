@@ -1002,7 +1002,7 @@ function handle_pppoe_reset($post_array) {
 		$config['cron']['item'][] = $item;
 }
 
-/*	This function can configure PPPoE, MLPPP (PPPoE), PPtP.
+/*	This function can configure PPPoE, MLPPP (PPPoE), PPTP.
 *	It writes the mpd config file to /var/etc every time the link is opened.
 */
 
@@ -1056,7 +1056,7 @@ function interface_ppps_configure($interface) {
 	$subnets = explode(',',$ppp['subnet']);
 	
 	/* We bring up the parent interface first because if DHCP is configured on the parent we need
-	to obtain an address first so we can write it in the mpd .conf file for PPtP and L2tP configs
+	to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
 	*/
 	foreach($ports as $pid => $port){
 		switch ($ppp['type']) {
@@ -1075,7 +1075,7 @@ function interface_ppps_configure($interface) {
 					$localips[$pid] = get_interface_ip($port); // try to get the interface IP from the port
 				
 				if(!is_ipaddr($localips[$pid])){
-					log_error("Could not get a Local IP address for PPtP/L2tP link on {$port} in interfaces_ppps_configure.");
+					log_error("Could not get a Local IP address for PPTP/L2TP link on {$port} in interfaces_ppps_configure.");
 					return 0;
 				}
 				/* XXX: This needs to go away soon! [It's commented out!] */
@@ -1090,7 +1090,7 @@ function interface_ppps_configure($interface) {
 					*/
 				}
 				if(!is_ipaddr($gateways[$pid])){
-					log_error("Could not get a PPtP/L2tP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
+					log_error("Could not get a PPTP/L2TP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
 					return 0;
 				}
 				break;
@@ -1607,15 +1607,20 @@ function interface_reload_carps($cif) {
 		foreach ($viparr as $vip) {
 			if (in_array($vip['carpif'], $carps)) {
 				switch ($vip['mode']) {
-					case "carp":
+				case "carp":
 					interface_vip_bring_down($vip);
 					sleep(1);
 					interface_carp_configure($vip);
 					break;
-					case "carpdev-dhcp":
+				case "carpdev-dhcp":
 					interface_vip_bring_down($vip);
 					sleep(1);
 					interface_carpdev_configure($vip);
+					break;
+				case "ipalias":
+					interface_vip_bring_down($vip);
+					sleep(1);
+					interface_ipalias_configure($vip);
 					break;
 				}
 			}
@@ -2246,7 +2251,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface, true);
+			interface_bring_down($interface);
 	}
 
 	/* wireless configuration? */
@@ -2548,6 +2553,9 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if ($config['interfaces'][$if]['if'] == $interface)
                         return $if;
 
+                if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
+                        return $if;
+
                 /* XXX: ermal - The 3 lines below are totally bogus code. */
                 $int = interface_translate_type_to_real($if);
                 if ($int == $interface)
@@ -2565,10 +2573,10 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                                 $ifdesc = "L2TP";
                                 break;
                 case "pptp":
-                                $ifdesc = "pptp";
+                                $ifdesc = "PPTP";
                                 break;
                 case "pppoe":
-                                $ifdesc = "pppoe";
+                                $ifdesc = "PPPoE";
                                 break;
                 case "openvpn":
                                 $ifdesc = "OpenVPN";
@@ -2578,6 +2586,13 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                                 $ifdesc = "IPsec";
                                 break;
         default:
+                if (isset($config['interfaces'][$interface])) {
+                        if (empty($config['interfaces'][$interface]['descr']))
+                                $ifdesc = strtoupper($interface);
+                        else
+                                $ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
+			break;
+		}
                 /* if list */
                 $ifdescrs = get_configured_interface_with_descr(false, true);
                 foreach ($ifdescrs as $if => $ifname) {
@@ -3091,10 +3106,10 @@ function is_interface_wireless($interface) {
         $friendly = convert_real_interface_to_friendly_interface_name($interface);
         if(!isset($config['interfaces'][$friendly]['wireless'])) {
                 if (preg_match($g['wireless_regex'], $interface)) {
-                        $config['interfaces'][$friendly]['wireless'] = array();
+                        if (isset($config['interfaces'][$friendly]))
+                                $config['interfaces'][$friendly]['wireless'] = array();
                         return true;
                 }
-                unset($config['interfaces'][$friendly]['wireless']);
                 return false;
         } else
                 return true;

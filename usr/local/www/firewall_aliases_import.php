@@ -39,7 +39,7 @@
 
 $pgtitle = array("Firewall","Aliases","Bulk import");
 
-$reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
+$reserved_keywords = array("pass", "out", "queue", "max", "min", "PPTP", "PPPoE", "L2TP", "OpenVPN", "IPsec");
 
 require("guiconfig.inc");
 require_once("util.inc");

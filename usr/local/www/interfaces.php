@@ -71,7 +71,7 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'];
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i','',$string);
 }
 
 if (!is_array($config['gateways']['gateway_item']))
@@ -1462,12 +1462,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
-											for additional PPtP and L2tP configuration options. Save first if you made changes.
+											for additional PPTP and L2TP configuration options. Save first if you made changes.
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											for advanced PPtP and L2tP configuration options.
+											for advanced PPTP and L2TP configuration options.
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1994,10 +1994,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 			}
 		}
 		<?php
-		if ($if == "wan" || $if == "lan")
-			echo "\$('allcfg').show();\n";
-		else
-			echo "show_allcfg(document.iform.enable);";
+		echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
 		?>
 	</script>

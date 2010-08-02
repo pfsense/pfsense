@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #	rc.php_ini_setup
-#	Copyright (C)2008 Scott K Ullrich <sullrich@gmail.com>
+#	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 #	All rights reserved.
 #
 #	Redistribution and use in source and binary forms, with or without
@@ -43,23 +43,29 @@ fi
 
 # Calculate APC SHM size according 
 # to detected memory values
+if [ "$AVAILMEM" -lt "65" ]; then
+	APCSHMEMSIZE="1"
+fi
+if [ "$AVAILMEM" -lt "96" ]; then
+	APCSHMEMSIZE="5"
+fi
 if [ "$AVAILMEM" -lt "128" ]; then
 	APCSHMEMSIZE="10"
 fi
 if [ "$AVAILMEM" -gt "128" ]; then
-	APCSHMEMSIZE="25"
+	APCSHMEMSIZE="15"
 fi
 if [ "$AVAILMEM" -gt "256" ]; then
-	APCSHMEMSIZE="45"
+	APCSHMEMSIZE="20"
 fi
 if [ "$AVAILMEM" -gt "384" ]; then
-	APCSHMEMSIZE="65"
+	APCSHMEMSIZE="25"
 fi
 if [ "$AVAILMEM" -gt "512" ]; then
-	APCSHMEMSIZE="80"
+	APCSHMEMSIZE="30"
 fi
 if [ "$AVAILMEM" -gt "784" ]; then
-	APCSHMEMSIZE="100"
+	APCSHMEMSIZE="35"
 fi
 
 # Set upload directory
@@ -120,7 +126,6 @@ PHPMODULES="apc \
 #	sockets \
 #	Reflection \
 #	mysql \
-
 #	bz2	\
 #	json \
 
@@ -192,6 +197,25 @@ done
 # Get amount of ram installed on this system
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
+export LOWMEM
+if [ "$RAM" -lt "97" ]; then
+	LOWMEM="TRUE"
+	cat >>/usr/local/lib/php.ini <<EOF
+
+[suhosin]
+suhosin.get.max_array_depth = 5000
+suhosin.get.max_array_index_length = 256
+suhosin.get.max_vars = 5000
+suhosin.post.max_array_depth = 5000
+suhosin.post.max_array_index_length = 256
+suhosin.post.max_vars = 5000
+suhosin.request.max_array_depth = 5000
+suhosin.request.max_array_index_length = 256
+suhosin.request.max_vars = 5000
+
+EOF
+
+fi
 if [  $RAM -gt 96 ]; then
 
 	cat >>/usr/local/lib/php.ini <<EOF
@@ -238,6 +262,15 @@ for EXT in $PHPMODULES; do
 			SHOULDREMOVE="false"
 		fi		
 	done
+	# Handle low memory situations
+	if [ "$LOWMEM" = "TRUE" ]; then
+		if [ "$EXT" = "apc" ]; then
+			SHOULDREMOVE="true"
+		fi
+		if [ "$EXT" = "xcache" ]; then
+			SHOULDREMOVE="true"
+		fi
+	fi
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt

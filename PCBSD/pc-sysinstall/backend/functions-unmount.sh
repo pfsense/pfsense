@@ -85,7 +85,7 @@ unmount_all_filesystems()
 
    # Last lets the /mnt partition
    #########################################################
-   rc_nohalt "umount -f ${FSMNT}"
+   # rc_nohalt "umount -f ${FSMNT}"
 
     # If are using a ZFS on "/" set it to legacy
    if [ ! -z "${FOUNDZFSROOT}" ]
@@ -100,7 +100,7 @@ unmount_all_filesystems()
    fi
 
    # Unmount our CDMNT
-   rc_nohalt "umount -f ${CDMNT}"
+   # rc_nohalt "umount -f ${CDMNT}"
 
    # Check if we need to run any gmirror syncing
    ls ${MIRRORCFGDIR}/* >/dev/null 2>/dev/null
@@ -155,7 +155,7 @@ unmount_all_filesystems_failure()
 
      # Last lets the /mnt partition
      #########################################################
-     rc_nohalt "umount -f ${FSMNT}"
+     # rc_nohalt "umount -f ${FSMNT} 2>/dev/null"
 
     fi
    else
@@ -168,7 +168,7 @@ unmount_all_filesystems_failure()
    fi
    
    # Unmount our CDMNT
-   rc_nohalt "umount ${CDMNT}"
+   # rc_nohalt "umount ${CDMNT} 2>/dev/null"
 
    # Import any pools, so they are active at shutdown and ready to boot potentially
    zpool import -a

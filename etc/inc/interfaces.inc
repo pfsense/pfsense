@@ -1002,7 +1002,7 @@ function handle_pppoe_reset($post_array) {
 		$config['cron']['item'][] = $item;
 }
 
-/*	This function can configure PPPoE, MLPPP (PPPoE), PPtP.
+/*	This function can configure PPPoE, MLPPP (PPPoE), PPTP.
 *	It writes the mpd config file to /var/etc every time the link is opened.
 */
 
@@ -1056,7 +1056,7 @@ function interface_ppps_configure($interface) {
 	$subnets = explode(',',$ppp['subnet']);
 	
 	/* We bring up the parent interface first because if DHCP is configured on the parent we need
-	to obtain an address first so we can write it in the mpd .conf file for PPtP and L2tP configs
+	to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
 	*/
 	foreach($ports as $pid => $port){
 		switch ($ppp['type']) {
@@ -1075,7 +1075,7 @@ function interface_ppps_configure($interface) {
 					$localips[$pid] = get_interface_ip($port); // try to get the interface IP from the port
 				
 				if(!is_ipaddr($localips[$pid])){
-					log_error("Could not get a Local IP address for PPtP/L2tP link on {$port} in interfaces_ppps_configure.");
+					log_error("Could not get a Local IP address for PPTP/L2TP link on {$port} in interfaces_ppps_configure.");
 					return 0;
 				}
 				/* XXX: This needs to go away soon! [It's commented out!] */
@@ -1090,7 +1090,7 @@ function interface_ppps_configure($interface) {
 					*/
 				}
 				if(!is_ipaddr($gateways[$pid])){
-					log_error("Could not get a PPtP/L2tP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
+					log_error("Could not get a PPTP/L2TP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
 					return 0;
 				}
 				break;

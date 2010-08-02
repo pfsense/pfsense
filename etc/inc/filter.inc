@@ -707,7 +707,7 @@ function filter_generate_optcfg_array() {
 	if($config['pptpd']['mode'] == "server" || $config['pptpd']['mode'] == "redir") {
 		$oic = array();
 		$oic['if'] = 'pptp';
-		$oic['descr'] = 'PPTP';
+		$oic['descr'] = 'pptp';
 		$oic['ip'] = $config['pptpd']['localip'];
 		$oic['sa'] = $config['pptpd']['remoteip'];
 		$oic['mode'] = $config['pptpd']['mode'];
@@ -735,7 +735,7 @@ function filter_generate_optcfg_array() {
 	if($config['pppoe']['mode'] == "server") {
 		$oic = array();
 		$oic['if'] = 'pppoe';
-		$oic['descr'] = 'PPPoE';
+		$oic['descr'] = 'pppoe';
 		$oic['ip'] = $config['pppoe']['localip'];
 		$oic['sa'] = $config['pppoe']['remoteip'];
 		$oic['mode'] = $config['pppoe']['mode'];

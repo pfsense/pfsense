@@ -71,7 +71,7 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'];
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i','',$string);
 }
 
 if (!is_array($config['gateways']['gateway_item']))

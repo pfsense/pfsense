@@ -97,7 +97,7 @@ EOF;
 }
 
 function start_installation() {
-	global $g;
+	global $g, $fstype;
 	if(file_exists("/tmp/install_complete"))
 		return;
 	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
@@ -121,7 +121,7 @@ function start_installation() {
 }
 
 function installer_find_first_disk() {
-	global $g;
+	global $g, $fstype;
 	$disk = `/PCBSD/pc-sysinstall/pc-sysinstall disk-list | head -n1 | cut -d':' -f1`;
 	return $disk;
 }
@@ -204,7 +204,7 @@ function update_installer_status() {
 	if($installer_running <> "running") {
 		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
 		if($ps_running)	{
-			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed) - {$fstype}...</td></tr></table>'; ";
+			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'; ";
 			if($running_old <> $running) {
 				echo $running;
 				file_put_contents("/tmp/installer_installer_running", "$running");			
@@ -221,14 +221,14 @@ function update_installer_status() {
 }
 
 function update_installer_status_win($status) {
-	global $g;
+	global $g, $fstype;
 	echo "<script type=\"text/javascript\">\n";
 	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
 	echo "</script>";
 }
 
 function begin_quick_easy_install() {
-	global $g;
+	global $g, $fstype;
 	if(file_exists("/tmp/install_complete"))
 		return;
 	unlink_if_exists("/tmp/install_complete");
@@ -245,7 +245,7 @@ function begin_quick_easy_install() {
 }
 
 function head_html() {
-	global $g;
+	global $g, $fstype;
 	echo <<<EOF
 <html>
 	<head>
@@ -277,7 +277,7 @@ EOF;
 }
 
 function body_html() {
-	global $g;
+	global $g, $fstype;
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 	if(strstr($pfSversion, "1.2"))
 		$one_two = true;
@@ -315,14 +315,14 @@ EOF;
 }
 
 function end_html() {
-	global $g;
+	global $g, $fstype;
 	echo "</form>";
 	echo "</body>";
 	echo "</html>";
 }
 
 function template() {
-	global $g;
+	global $g, $fstype;
 	head_html();
 	body_html();
 	echo <<<EOF
@@ -352,7 +352,7 @@ EOF;
 }
 
 function quickeasyinstall_gui() {
-	global $g;
+	global $g, $fstype;
 	head_html();
 	body_html();
 	echo "<form action=\"installer.php\" method=\"post\" state=\"step1_post\">";
@@ -423,7 +423,7 @@ EOF;
 }
 
 function page_table_start() {
-	global $g;
+	global $g, $fstype;
 		echo <<<EOF
 	<center>
 		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a><br/>
@@ -445,7 +445,7 @@ EOF;
 }
 
 function page_table_end() {
-	global $g;
+	global $g, $fstype;
 	echo <<<EOF
 			</td>
 		</tr>
@@ -457,11 +457,14 @@ EOF;
 }
 
 function installer_main() {
-	global $g;
+	global $g, $fstype;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
 	body_html();
+	// Only enable ZFS if this exists.  The install will fail otherwise.
+	if(file_exists("/boot/gptzfsboot")) 
+		$zfs_enabled = "or <a href=\"installer.php?state=quickeasyinstall&fstype=ZFS\">ZFS</a> ";
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo "WARNING: Could not find any suitable disks for installation.";
@@ -487,8 +490,7 @@ function installer_main() {
 												<center>
 												Rescue config.xml<p/>
 												Install {$g['product_name']} using the <a href="installer.php?state=quickeasyinstall">UFS</a>
-												 or 
-												<a href="installer.php?state=quickeasyinstall&fstype=ZFS">ZFS</a> 
+												 {$zfs_enabled}
 												filesystem.
 												</p>
 											</div>

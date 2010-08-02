@@ -366,9 +366,9 @@ function quickeasyinstall_gui() {
 			 		<tr>
 			    		<td>
 							<div id="mainarea">
-								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
-			     						<td class="tabcont" >
+			     						<td>
 											<div id="pfsenseinstaller" width="100%">
 												<div id='installerrunning' width='100%' style="padding:8px; border:1px dashed #000000">
 													<table>

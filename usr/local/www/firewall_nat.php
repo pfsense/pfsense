@@ -261,12 +261,10 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?=$textss;?>
 		    <?php
-			if (!$natent['interface'] || ($natent['interface'] == "wan") && !isset($config['interfaces'][$natent['interface']]['descr']))
-				echo "WAN";
-			else if(strtolower($natent['interface']) == "lan" && !isset($config['interfaces'][$natent['interface']]['descr']))
-				echo "LAN";
+			if (!$natent['interface'])
+				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 			else
-				echo strtoupper($config['interfaces'][$natent['interface']]['descr']);
+				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 		    ?>
                     <?=$textse;?>
                   </td>

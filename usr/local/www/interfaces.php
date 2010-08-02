@@ -1994,10 +1994,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 			}
 		}
 		<?php
-		if ($if == "wan" || $if == "lan")
-			echo "\$('allcfg').show();\n";
-		else
-			echo "show_allcfg(document.iform.enable);";
+		echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
 		?>
 	</script>

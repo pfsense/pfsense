@@ -2583,6 +2583,13 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                                 $ifdesc = "IPsec";
                                 break;
         default:
+                if (isset($config['interfaces'][$interface])) {
+                        if (empty($config['interfaces'][$interface]['descr']))
+                                $ifdesc = strtoupper($interface);
+                        else
+                                $ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
+			break;
+		}
                 /* if list */
                 $ifdescrs = get_configured_interface_with_descr(false, true);
                 foreach ($ifdescrs as $if => $ifname) {

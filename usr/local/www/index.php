@@ -145,9 +145,9 @@ EOF;
 		echo "<center>\n";
 		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
 		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
-		echo sprintf(gettext("Welcome to %s!<p>\n"),$g['product_name']);
-		echo gettext("One moment while we start the initial setup wizard.<p>\n");
-		echo gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.<p>\n");
+		echo sprintf(gettext("Welcome to %s!\n"),$g['product_name']) . "<p>";
+		echo gettext("One moment while we start the initial setup wizard.") . "<p>\n";
+		echo gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.") . "<p>\n";
 		echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page.\n"),$g['product_name']);
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
@@ -449,7 +449,7 @@ echo $jscriptstr;
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
 <div id="widgetcontainer" style="display:none">
-		<div id="content1"><h1>Available Widgets</h1><p><?php
+		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php
 			$widgetfiles_add = $widgetfiles;
 			sort($widgetfiles_add);
 			foreach($widgetfiles_add as $widget) {			
@@ -487,7 +487,7 @@ echo $jscriptstr;
 		<div id="welcome-container">
 			<h1>
 				<div style="float:left;width:80%;padding: 2px">
-					Welcome to the Dashboard page!
+					<?=gettext("Welcome to the Dashboard page"); ?>!
 				</div>
 				<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
@@ -504,9 +504,9 @@ echo $jscriptstr;
 </div>
 
 <input type="hidden" value="" name="sequence" id="sequence">
-<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="<?=gettext("Click here to add widgets"); ?>" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
-<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="Click here for help" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="<?=gettext("Click here for help"); ?>" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
 
 &nbsp;&nbsp;&nbsp;
@@ -662,7 +662,7 @@ echo $jscriptstr;
 			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">
 				<br>	
 					<center>
-						<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="Loading selected widget...">
+						<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="<?=gettext("Loading selected widget"); ?>...">
 					</center>	
 				<br>
 			</div> <?php } if ($divdisplay != "block") $display = none; ?>

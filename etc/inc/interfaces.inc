@@ -3106,10 +3106,10 @@ function is_interface_wireless($interface) {
         $friendly = convert_real_interface_to_friendly_interface_name($interface);
         if(!isset($config['interfaces'][$friendly]['wireless'])) {
                 if (preg_match($g['wireless_regex'], $interface)) {
-                        $config['interfaces'][$friendly]['wireless'] = array();
+                        if (isset($config['interfaces'][$friendly]))
+                                $config['interfaces'][$friendly]['wireless'] = array();
                         return true;
                 }
-                unset($config['interfaces'][$friendly]['wireless']);
                 return false;
         } else
                 return true;

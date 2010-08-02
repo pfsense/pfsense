@@ -148,7 +148,7 @@ EOF;
 		echo sprintf(gettext("Welcome to %s!\n"),$g['product_name']) . "<p>";
 		echo gettext("One moment while we start the initial setup wizard.") . "<p>\n";
 		echo gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.") . "<p>\n";
-		echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page.\n"),$g['product_name']);
+		echo sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."),$g['product_name']) . "\n";
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";

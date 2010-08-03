@@ -613,10 +613,16 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 			<td width="78%" class="vtable">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-				<select name="interface[]" multiple="true" class="formselect" size="3">
+<?php 	$disabled = ""; 
+	if (isset($pconfig['associated-rule-id'])) {
+		$disabled = "disabled";
+		if (!empty($pconfig['interface']))
+			echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' >";
+	}
+	if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+				<select name="interface[]" multiple="true" class="formselect" size="3" <?=$disabled;?>>
 <? else: ?>
-				<select name="interface" class="formselect">
+				<select name="interface" class="formselect" <?=$disabled;?>>
 <?php
    endif;
 				/* add group interfaces */

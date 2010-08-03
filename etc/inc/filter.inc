@@ -996,7 +996,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "") {
-	global $config;
+	global $config, $FilterIflist;
 	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
 		return "# src incorrectly specified\n";
@@ -1007,7 +1007,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		if(is_ipaddr($natip))
 			$tgt = "{$natip}/32";
 		else
-			$tgt = "($if)";
+			$tgt = "(" . $FilterIflist[$if]['if'] . ")";
 	}
 	/* Add the protocol, if defined */
 	if (!empty($proto) && $proto != "any") {
@@ -1049,7 +1049,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		$nat = "nat";
 		$target = "-> {$tgt}";
 	}
-	$if_friendly = convert_friendly_interface_to_friendly_descr($if);
+	$if_friendly = $FilterIflist[$if]['descr'];
 	/* Put all the pieces together */
 	if($if_friendly)
 		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";

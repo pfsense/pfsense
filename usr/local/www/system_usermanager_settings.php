@@ -136,8 +136,6 @@ if(!$pconfig['backend'])
                                         <?php
 						$auth_servers = auth_get_authserver_list();
                                         	foreach ($auth_servers as $auth_server):
-							if ($auth_server['type'] == 'radius')
-								continue;
                                                 	$selected = "";
                                                         if ($auth_server['name'] == $pconfig['authmode'])
                                                         	$selected = "selected";

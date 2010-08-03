@@ -136,6 +136,8 @@ EOD;
 	$dhcpnum = 0;
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
+		interfaces_staticarp_configure($dhcpif);
+
 		if (!isset($dhcpifconf['enable']))
 			continue;
 
@@ -156,7 +158,7 @@ EOD;
 				foreach ($a_vip as $vipent) {
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
-						if($vipent['advskew'] < "20")
+						if(!empty($vipent['advskew']) && ($vipent['advskew'] < "20"))
 							$skew = 0;
 					}
 				}
@@ -501,12 +503,35 @@ function services_dhcrelay_configure() {
 	$iflist = get_configured_interface_list();
 	foreach ($iflist as $ifname) {
 		$subnet = get_interface_ip($ifname) . "/" . get_interface_subnet($ifname);
-		if (ip_in_subnet($dhcrelaycfg['server'],$subnet))
+		if (ip_in_subnet($dhcrelaycfg['server'],$subnet)) {
 			$destif = get_real_interface($ifname);
+			break;
+		}
+	}
+	if (!isset($destif)) {
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $rtent) {
+				if (ip_in_subnet($dhcrelaycfg['server'], $rtent['network'])) {
+					$a_gateways = return_gateways_array(true);
+					$destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
+				}
+			}
+		}
 	}
 
-	if (!isset($destif))
-		$destif = $config['interfaces']['wan']['if'];
+	if (!isset($destif)) {
+		if (is_array($config['gateways']['gateway_item'])) {
+			foreach ($config['gateways']['gateway_item'] as $gateway) {
+				if (isset($gateway['defaultgw'])) {
+					$a_gateways = return_gateways_array(true);
+                                        $destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
+				}		
+			}
+		} else
+			$destif = get_real_interface("wan");
+	}
 
 	$dhcrelayifs[] = $destif;
 	$dhcrelayifs = array_unique($dhcrelayifs);
@@ -613,13 +638,18 @@ function services_dnsmasq_configure() {
 
 		/* Allow DNS Rebind for forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
-			foreach($config['dnsmasq']['domainoverrides'] as $override) {
-				$args .= ' --rebind-domain-ok=/' . $override['domain'] . '/ ';
+			if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
+				foreach($config['dnsmasq']['domainoverrides'] as $override) {
+					$args .= ' --rebind-domain-ok=/' . $override['domain'] . '/ ';
+				}
 			}
 		}
 
+		if(!isset($config['system']['webgui']['nodnsrebindcheck']))
+			$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
+
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq --rebind-localhost-ok --stop-dns-rebind --local-ttl 1 --all-servers --dns-forward-max=5000 --cache-size=10000 {$args}");
+		mwexec("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -879,7 +909,7 @@ EOD;
 				fclose($fd);
 
 				/* invoke nsupdate */
-				$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+				$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
 				if (isset($dnsupdate['usetcp']))
 					$cmd .= " -v";
 				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";

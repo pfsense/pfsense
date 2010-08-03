@@ -168,7 +168,7 @@ defCmdT("pftop -w 150 -a -b -v speed","/usr/local/sbin/pftop -w 150 -a -b -v spe
 defCmdT("resolv.conf","cat /etc/resolv.conf");
 
 defCmdT("Processes","ps xauww");
-defCmdT("dhcpd.conf","cat /var/etc/dhcpd.conf");
+defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("ez-ipupdate.cache","cat /conf/ez-ipupdate.cache");
 
 defCmdT("df","/bin/df");

@@ -91,7 +91,7 @@ function encrypted_configxml() {
  *   $config      - array containing all configuration variables
  ******/
 function parse_config($parse = false) {
-	global $g, $config_parsed;
+	global $g, $config_parsed, $config_extra;
 	
 	$lockkey = lock('config');
 	$config_parsed = false;
@@ -169,11 +169,19 @@ function parse_config($parse = false) {
  *   boolean	- true on completion
  ******/
 function generate_config_cache($config) {
-	global $g;
+	global $g, $config_extra;
 
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	unset($configcache);
+	/* Used for config.extra.xml */
+	if(file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
+		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
+		fwrite($configcacheextra, serialize($config_extra));
+		fclose($configcacheextra);		
+		unset($configcacheextra);
+	}
 }
 
 function discover_last_backup() {
@@ -457,6 +465,10 @@ function safe_write_file($file, $content, $force_binary) {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
+	/* TODO: Not sure what this was added for; commenting out
+	 *       for now, since it was preventing config saving. */
+	// $config = parse_config(true, false, false);
+	
 	if($g['bootup']) 
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 
@@ -977,7 +989,7 @@ EODD;
 		$config['interfaces']['wan']['if'] = $wanif;
 		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
-			if (is_array($config['interfaces']['lan']) &&
+			if (is_array($config['interfaces']['wan']) &&
 				(!is_array($config['interfaces']['wan']['wireless'])))
 				$config['interfaces']['wan']['wireless'] = array();
 		} else {

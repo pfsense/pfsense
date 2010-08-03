@@ -130,12 +130,6 @@ if ($_POST) {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
 		if ($ruleno) {
 			captiveportal_free_ipfw_ruleno($ruleno);
-			$rules = sprintf("%s %s\n", gettext("delete"), $ruleno);
-			$rules .= gettext("delete") . " " . ++$ruleno . "\n";
-			$rules .= captiveportal_passthrumac_configure_entry($mac);
-			file_put_contents("{$g['tmp_path']}/tmpmacedit{$id}", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmpmacedit{$id}");
-			@unlink("{$g['tmp_path']}/tmpmacedit{$id}");
 			$rules = "delete {$ruleno}\n";
 			$rules .= "delete " . ++$ruleno . "\n";
 		}

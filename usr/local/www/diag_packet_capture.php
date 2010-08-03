@@ -41,7 +41,7 @@ require_once("pfsense-utils.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
-$snaplen = 1500;//default packet length
+$snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
 if ($_POST) {
@@ -72,7 +72,7 @@ if ($_POST) {
 
 	} elseif ($_POST['stopbtn']!= "") {
 		$action = gettext("Stop");
-		$processes_running = trim(shell_exec('/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog'));
+		$processes_running = trim(shell_exec('/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep '.$fn.' | /usr/bin/grep -v pflog'));
 
 		//explode processes into an array, (delimiter is new line)
 		$processes_running_array = explode("\n", $processes_running);
@@ -119,12 +119,12 @@ include("fbegin.inc");
 					$interfaces = get_configured_interface_with_descr();
 					foreach ($interfaces as $iface => $ifacename): 
 ?>
-                      <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $selectedif == $iface) echo "selected"; ?>>
+                      <option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
                       <?php echo $ifacename;?>
                       </option>
                       <?php endforeach;?>
                     </select>
-					<br/><?=gettext("Select the interface the traffic will be passing through. Typically this will be the WAN interface.");?>
+					<br/><?=gettext("Select the interface on which to capture traffic. ");?>
 				  </td>
 				</tr>
 			    <tr>
@@ -148,7 +148,7 @@ include("fbegin.inc");
 				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
 				  <td width="83%" class="vtable">
                     <input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
-					<br/><?=gettext("The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.");?>
+					<br/><?=gettext("The Packet length is the number of bytes of each packet that will be captured. Default value is 0, which will capture the entire frame regardless of its size.");?>
 					</td>
 				</tr>
 				<tr>

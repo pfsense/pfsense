@@ -105,8 +105,7 @@ $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfac
 // Firewall
 $firewall_menu = array();
 $firewall_menu[] = array("Aliases", "/firewall_aliases.php");
-if(count($config['interfaces']) > 1) 
-	$firewall_menu[] = array("NAT", "/firewall_nat.php");
+$firewall_menu[] = array("NAT", "/firewall_nat.php");
 $firewall_menu[] = array("Rules", "/firewall_rules.php");
 $firewall_menu[] = array("Schedules", "/firewall_schedule.php");
 $firewall_menu[] = array("Traffic Shaper", "/firewall_shaper.php");

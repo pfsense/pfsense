@@ -38,6 +38,54 @@ require("guiconfig.inc");
 if ($_GET['host'])
 	$_POST = $_GET;
 
+if($_GET['createalias'] == "true") {
+	$host = trim($_POST['host']);
+	if($_GET['override'])
+		$override = true;
+	$a_aliases = &$config['aliases']['alias'];
+	$type = "hostname";
+	$resolved = gethostbyname($host);
+	if($resolved) {
+		$host = trim($_POST['host']);
+		$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+		$resolved = split("\n", $dig);
+		$isfirst = true;
+		foreach($resolved as $re) {
+			if($re <> "") {
+				if(!$isfirst) 
+					$addresses .= " ";
+				$addresses .= $re . "/32";
+				$isfirst = false;
+			}
+		}
+		$newalias = array();
+		$aliasname = str_replace(array(".","-"), "_", $host);
+		$alias_exists = false;
+		$counter=0;
+		foreach($a_aliases as $a) {
+			if($a['name'] == $aliasname) {
+				$alias_exists = true;
+				$id=$counter;
+			}
+			$counter++;
+		}
+		if($override) 
+			$alias_exists = false;
+		if($alias_exists == false) {
+			$newalias['name'] = $aliasname;
+			$newalias['type'] = "network";
+			$newalias['address'] = $addresses;
+			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
+			if($override) 
+				$a_aliases[$id] = $newalias;
+			else
+				$a_aliases[] = $newalias;
+			write_config();
+			$createdalias = true;
+		}
+	}
+}
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -82,9 +130,13 @@ if ($_POST) {
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
+			if($resolved) {
+				$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+				$resolved = split("\n", $dig);
+			}
 			$hostname = $host;
 			if ($host != $resolved)
-				$ipaddr = $resolved;
+				$ipaddr = $resolved[0];
 		}
 
 		if ($host == $resolved) {
@@ -108,10 +160,42 @@ include("head.inc"); ?>
         <tr>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP");?></td>
 		  <td width="78%" class="vtable">
-            <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+            <?=$mandfldhtml;?>
+			<table>
+				<tr><td valign="top">
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+			</td>
+			<td>
 			<? if ($resolved && $type) { ?>
-			=  <font size="+1"><?php echo $resolved; ?><font size="-1>">
+			=  <font size="+1">
+<?php
+				$found = 0;
+				if(is_array($resolved)) { 
+					foreach($resolved as $hostitem) {
+						if($hostitem <> "") {
+							echo $hostitem . "<br/>";
+							$found++;
+						}
+					}
+				} else {
+					echo $resolved; 
+				} 
+				if($found > 0) {
+					if($alias_exists) {
+						echo "<br/><font size='-2'>An alias already exists for the hostname {$host}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
+					} else { 
+						if(!$createdalias) {
+							echo "<br/><font size='-2'><a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";
+						} else {
+							echo "<br/><font size='-2'>Alias created with name {$newalias['name']}";
+						}
+					}
+				}
+?>
+				<font size="-1>">
+
 			<?	} ?>
+			</td></tr></table>
 		  </td>
 		</tr>
 <?php		if($_POST): ?>

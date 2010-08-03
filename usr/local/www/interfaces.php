@@ -71,7 +71,7 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'];
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+	return preg_replace('/[^a-z_0-9]/i','',$string);
 }
 
 if (!is_array($config['gateways']['gateway_item']))
@@ -215,6 +215,8 @@ $pconfig['mtu'] = $wancfg['mtu'];
 
 /* Wireless interface? */
 if (isset($wancfg['wireless'])) {
+	/* Sync first to be sure it displays the actual settings that will be used */
+	interface_sync_wireless_clones($wancfg, false);
 	/* Get wireless modes */
 	$wlanif = get_real_interface($if);
 	if (!does_interface_exist($wlanif))
@@ -228,6 +230,7 @@ if (isset($wancfg['wireless'])) {
 	$wl_regdomains_attr = &$wl_regdomain_xml_attr['regulatory-domains']['rd'];
 	$wl_countries = &$wl_regdomain_xml['country-codes']['country'];
 	$wl_countries_attr = &$wl_regdomain_xml_attr['country-codes']['country'];
+	$pconfig['persistcommonwireless'] = isset($config['wireless']['interfaces'][$wlanbaseif]);
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
@@ -666,7 +669,7 @@ if ($_POST) {
 } // end if($_POST) 
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr;
+	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];
@@ -702,6 +705,11 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_addr'] = $_POST['auth_server_addr'];
 	$wancfg['wireless']['auth_server_port'] = $_POST['auth_server_port'];
 	$wancfg['wireless']['auth_server_shared_secret'] = $_POST['auth_server_shared_secret'];
+	if ($_POST['persistcommonwireless'] == "yes") {
+		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
+			$config['wireless']['interfaces'][$wlanbaseif] = array();
+	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
+		unset($config['wireless']['interfaces'][$wlanbaseif]);
 	if ($_POST['hidessid_enable'] == "yes")
 		$wancfg['wireless']['hidessid']['enable'] = true;
 	else if (isset($wancfg['wireless']['hidessid']['enable']))
@@ -1454,12 +1462,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
-											for additional PPtP and L2tP configuration options. Save first if you made changes.
+											for additional PPTP and L2TP configuration options. Save first if you made changes.
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											for advanced PPtP and L2tP configuration options.
+											for advanced PPTP and L2TP configuration options.
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1475,6 +1483,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 						</tr>										
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">Common wireless configuration - Settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell">Persist common settings</td>
+							<td class="vtable">
+								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <? if ($pconfig['persistcommonwireless']) echo "checked";?>>
+								<br/>Enabling this preserves the common wireless configuration through interface deletions and reassignments.
+							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncellreq">Standard</td>
@@ -1615,7 +1630,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>										
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
+							<td colspan="2" valign="top" class="listtopic">Network-specific wireless configuration</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncellreq">Mode</td>
@@ -1979,10 +1994,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 			}
 		}
 		<?php
-		if ($if == "wan" || $if == "lan")
-			echo "\$('allcfg').show();\n";
-		else
-			echo "show_allcfg(document.iform.enable);";
+		echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
 		?>
 	</script>

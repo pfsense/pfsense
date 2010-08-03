@@ -206,11 +206,12 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 
-$specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 
-$spiflist = get_configured_interface_with_descr(true, true);
+$spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
 	$specialnets[$ifgui] = $ifdesc . " net";
+	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";
 }
 
 $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
@@ -422,11 +423,7 @@ function pprint_address($adr) {
 	if (isset($adr['any'])) {
 		$padr = "*";
 	} else if ($adr['network']) {
-		if (preg_match("/opt[0-999]ip/", $adr['network'])) {
-			$padr = "Interface IP address";
-		} else {
-			$padr = $specialnets[$adr['network']];
-		}
+		$padr = $specialnets[$adr['network']];
 	} else {
 		$padr = $adr['address'];
 	}

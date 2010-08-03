@@ -55,18 +55,41 @@ if($_POST['disablecarp'] <> "") {
 	if($status == true) {
 		$carp_ints = get_all_carp_interfaces();
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
-		$carp_counter = find_number_of_created_carp_interfaces();
-		if (is_array($carp_ints)) {
-			foreach($carp_ints as $int) {
-				mwexec("/sbin/ifconfig $int down");
-				mwexec("/sbin/ifconfig $int destroy");
-			}
-		}
+		if(is_array($config['virtualip']['vip'])) {
+			$viparr = &$config['virtualip']['vip'];
+                	foreach ($viparr as $vip) {
+                               	switch ($vip['mode']) {
+                                       	case "carp":
+                                       		interface_vip_bring_down($vip);
+                                       		sleep(1);
+                                       	break;
+                                       	case "carpdev-dhcp":
+                                       		interface_vip_bring_down($vip);
+                                       		sleep(1);
+                                       	break;
+                               	}
+                	}
+        	}
 		$savemsg = "{$carp_counter} IPs have been disabled.";
 	} else {
 		$savemsg = "CARP has been enabled.";
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");
 		interfaces_carp_setup();
+		if(is_array($config['virtualip']['vip'])) {
+                        $viparr = &$config['virtualip']['vip'];
+                        foreach ($viparr as $vip) {
+				switch ($vip['mode']) {
+					case "carp":
+						interface_carp_configure($vip);
+						sleep(1);
+					break;
+					case "carpdev-dhcp":
+						interface_carpdev_configure($vip);
+						sleep(1);
+					break;
+                                }
+                        }
+                }
 	}
 }
 
@@ -107,7 +130,7 @@ include("head.inc");
 			<p>
 			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td class="listhdrr"><b><center>Carp Interface</center></b></td>
+					<td class="listhdrr"><b><center>CARP Interface</center></b></td>
 					<td class="listhdrr"><b><center>Virtual IP</center></b></td>
 					<td class="listhdrr"><b><center>Status</center></b></td>
 				</tr>

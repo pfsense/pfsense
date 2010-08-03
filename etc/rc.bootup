@@ -164,8 +164,10 @@ $wan_if = get_real_interface();
  *  avoid a reboot and thats a good thing.
  */
 while(is_interface_mismatch() == true) {
+	led_assigninterfaces();
 	echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
 	set_networking_interfaces_ports();
+	led_kitt();
 }
 
 /* convert config and clean backups */
@@ -369,6 +371,10 @@ upnp_start();
 
 /* If powerd is enabled, lets launch it */
 activate_powerd();
+
+/* Remove the old shutdown binary if we kept it. */
+if (file_exists("/sbin/shutdown.old"))
+	unlink("/sbin/shutdown.old");
 
 /* done */
 unset($g['booting']);

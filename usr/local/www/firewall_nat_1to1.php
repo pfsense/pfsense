@@ -117,10 +117,10 @@ include("head.inc");
                 <tr>
 		  <td class="listlr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                   <?php
-					if (!$natent['interface'] || ($natent['interface'] == "wan"))
-						echo "WAN";
+					if (!$natent['interface'])
+						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
-						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">

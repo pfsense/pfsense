@@ -996,7 +996,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "") {
-	global $config;
+	global $config, $FilterIflist;
 	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
 		return "# src incorrectly specified\n";
@@ -1007,7 +1007,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		if(is_ipaddr($natip))
 			$tgt = "{$natip}/32";
 		else
-			$tgt = "($if)";
+			$tgt = "(" . $FilterIflist[$if]['if'] . ")";
 	}
 	/* Add the protocol, if defined */
 	if (!empty($proto) && $proto != "any") {
@@ -1049,7 +1049,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		$nat = "nat";
 		$target = "-> {$tgt}";
 	}
-	$if_friendly = convert_friendly_interface_to_friendly_descr($if);
+	$if_friendly = $FilterIflist[$if]['descr'];
 	/* Put all the pieces together */
 	if($if_friendly)
 		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
@@ -1396,18 +1396,10 @@ function filter_nat_rules_generate() {
 	else
 		sigkillbypid("/var/run/inetd.pid", "HUP");
 
-	if($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
-		if($pptpdcfg['mode'] == "server")
-			$pptpdtarget = "127.0.0.1";
-		else if($pptpdcfg['mode'] == "redir")
-			$pptpdtarget = $pptpdcfg['redir'];
-		if($pptpdcfg['mode'] == "redir" && is_array($FilterIflist['wan'])) {
-			/*
-			 * NB: ermal -- the rdr rule below is commented out now that we have a solution
-			 *		for PPTP passthrough. This unbreaks other GRE traffic passing
-			 *		through pfSense.
-			 *		After some more testing this will be removed compeletely.
-			 */
+	$pptpdcfg = $config['pptpd'];
+	if($pptpdcfg['mode'] && $pptpdcfg['mode'] == "redir") {
+		$pptpdtarget = $pptpdcfg['redir'];
+		if(is_ipaddr($pptpdtarget) && is_array($FilterIflist['wan'])) {
 			$natrules .= <<<EOD
 
 # PPTP

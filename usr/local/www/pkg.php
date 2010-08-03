@@ -49,13 +49,15 @@ $xml = htmlspecialchars($_REQUEST['xml']);
 
 if($xml == "") {
 	print_info_box_np(gettext("ERROR: No package defined."));
-	die;
+	exit;
 } else {
-	$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+	if(file_exists("/usr/local/pkg/" . $xml))
+		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 if($pkg['donotsave'] <> "") {
-	header("Location:  pkg_edit.php?xml=" . $xml);
+	Header("Location: pkg_edit.php?xml=" . $xml);
+	exit;
 }
 
 if ($pkg['include_file'] != "") {
@@ -118,7 +120,7 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<form action="pkg.php" name='pkgform' method="post">
+<form action="pkg.php" method="get">
 <input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>'>
 <? if($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -342,6 +344,11 @@ if ($pkg['tabs'] <> "") {
 NiftyCheck();
 Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
 </script>
+
+<?php
+	echo "<!-- filter_fieldname: {$filter_fieldname} -->";
+	echo "<!-- filter_regex: {$filter_regex} -->";
+?>
 
 </body>
 </html>

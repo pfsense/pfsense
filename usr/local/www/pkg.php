@@ -48,10 +48,10 @@ function gentitle_pkg($pgname) {
 $xml = htmlspecialchars($_REQUEST['xml']);
 
 if($xml == "") {
-            print_info_box_np(gettext("ERROR: No package defined."));
-            die;
+	print_info_box_np(gettext("ERROR: No package defined."));
+	die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+	$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 if($pkg['donotsave'] <> "") {
@@ -73,19 +73,19 @@ if($_REQUEST['startdisplayingat'])
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($_GET['act'] == "del") {
-	    // loop through our fieldnames and automatically setup the fieldnames
-	    // in the environment.  ie: a fieldname of username with a value of
-            // testuser would automatically eval $username = "testuser";
-	    foreach ($evaledvar as $ip) {
+		// loop through our fieldnames and automatically setup the fieldnames
+		// in the environment.  ie: a fieldname of username with a value of
+		// testuser would automatically eval $username = "testuser";
+		foreach ($evaledvar as $ip) {
 			if($pkg['adddeleteeditpagefields']['columnitem'])
 			  foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 				  ${xml_safe_fieldname($column['fielddescr'])} = $ip[xml_safe_fieldname($column['fieldname'])];
 			  }
-	    }
+		}
 
-	    $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+		$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-	    if ($a_pkg[$_GET['id']]) {
+		if ($a_pkg[$_GET['id']]) {
 			unset($a_pkg[$_GET['id']]);
 			write_config();
 			if($pkg['custom_delete_php_command'] <> "") {
@@ -104,7 +104,7 @@ $iflist = get_configured_interface_with_descr(false, true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($pkg['custom_php_global_functions'] <> "")
-        eval($pkg['custom_php_global_functions']);
+	eval($pkg['custom_php_global_functions']);
 
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
@@ -125,29 +125,31 @@ include("fbegin.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {
-    echo '<tr><td>';
-    $tab_array = array();
-    foreach($pkg['tabs']['tab'] as $tab) {
-        if(isset($tab['active'])) {
-                $active = true;
-        } else {
-                $active = false;
-        }
-        $urltmp = "";
-        if($tab['url'] <> "") $urltmp = $tab['url'];
-        if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
+	echo '<tr><td>';
+	$tab_array = array();
+	foreach($pkg['tabs']['tab'] as $tab) {
+		if(isset($tab['active'])) {
+			$active = true;
+		} else {
+			$active = false;
+		}
+		$urltmp = "";
+		if($tab['url'] <> "") 
+			$urltmp = $tab['url'];
+		if($tab['xml'] <> "") 
+			$urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
-        $myurl = getenv("HTTP_HOST");
-        // eval url so that above $myurl item can be processed if need be.
-        $url = str_replace('$myurl', $myurl, $urltmp);
-        $tab_array[] = array(
-                                $tab['text'],
-                                $active,
-                                $url
-                        );
+		$myurl = getenv("HTTP_HOST");
+		// eval url so that above $myurl item can be processed if need be.
+		$url = str_replace('$myurl', $myurl, $urltmp);
+		$tab_array[] = array(
+			$tab['text'],
+			$active,
+			$url
+		);
     }
-    display_top_tabs($tab_array);
-    echo '</td></tr>';
+	display_top_tabs($tab_array);
+	echo '</td></tr>';
 }
 ?>
 <script>
@@ -161,13 +163,12 @@ if ($pkg['tabs'] <> "") {
 		<td class="tabcont">
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php
-				/* Handle sorting bar A-Z and filtering */				
+				/* Handle filtering bar A-Z */				
 				$include_filtering_inputbox = false;
 				$colspan = 0;
-				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") 
 					foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column)
 						$colspan++;
-				}
 				if($pkg['fields']['field']) {
 					// First find the sorting type field if it exists
 					foreach($pkg['fields']['field'] as $field) {
@@ -177,7 +178,7 @@ if ($pkg['tabs'] <> "") {
 							if($field['display_maximum_rows'])
 								$display_maximum_rows = $field['display_maximum_rows'];
 							echo "<tr><td class='listhdrr' colspan='$colspan'><center>";
-							echo "Sorting: ";
+							echo "Filter by: ";
 							$isfirst = true;
 							for($char = 65; $char < 91; $char++) {
 								if(!$isfirst) 
@@ -188,7 +189,7 @@ if ($pkg['tabs'] <> "") {
 							echo "</td></tr>";
 							echo "<tr><td class='listhdrr' colspan='$colspan'><center>";
 							if($field['sortablefields']) {
-								echo "Filter by: <select name='pkg_filter_type'>";
+								echo "Filter field: <select name='pkg_filter_type'>";
 								foreach($field['sortablefields']['item'] as $si) {
 									if($si['name'] == $_REQUEST['pkg_filter_type']) 
 										$SELECTED = "SELECTED";
@@ -210,8 +211,8 @@ if ($pkg['tabs'] <> "") {
 				$cols = 0;
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
 				    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-					echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
-					$cols++;
+						echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
+						$cols++;
 				    }
 				}
 				echo "</tr>";
@@ -344,10 +345,3 @@ Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
 
 </body>
 </html>
-
-<?php
-
-echo "<!-- filter_fieldname: {$filter_fieldname} -->";
-echo "<!-- filter_regex: {$filter_regex} -->";
-
-?>

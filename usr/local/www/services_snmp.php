@@ -290,7 +290,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq">Read Community String</td>
                   <td width="78%" class="vtable"> 
                     <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
-                    <br>In most cases, &quot;public&quot; is used here</br>
+                    <br>The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.</br>
 		  </td>
                 </tr>
 

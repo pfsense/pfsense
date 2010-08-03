@@ -361,14 +361,10 @@ include("head.inc");
                   <td class="listt" align="center"></td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
-					if (!$natent['interface'] || ($natent['interface'] == "wan"))
-					  	echo "WAN";
-                                        else if (!$natent['interface'] || ($natent['interface'] == "lan"))
-                                                 echo "LAN";                                                
-					else if ($natent['interface'] == "openvpn")
-						echo "OpenVPN";
+					if (!$natent['interface'])
+					  	echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
-						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 					?>
                                         &nbsp;
                   </td>

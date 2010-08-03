@@ -622,6 +622,8 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['groupname'] = "admins";
 		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
 		$config['system']['user'][0]['uid'] = "0";
+		/* Ensure that we follow what this new "admin" username should be in the session. */
+		$_SESSION["Username"] = "{$config['system']['username']}";
 
 		$config['system']['user'][0]['priv'] = array();
 		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
@@ -1122,20 +1124,11 @@ function upgrade_047_to_048() {
 		unset($config['dyndns']);
 	}		
 	if (!empty($config['dnsupdate'])) {
-		$config['dnsupdates'][0]['dnsupdate'] = array();
-		$pconfig = array();
-		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate'][0]['enable']);
-		$pconfig['dnsupdate_host'] = $config['dnsupdate'][0]['host'];
-		$pconfig['dnsupdate_ttl'] = $config['dnsupdate'][0]['ttl'];
-		if (!$pconfig['dnsupdate_ttl'])
-			$pconfig['dnsupdate_ttl'] = 60;
-		$pconfig['dnsupdate_keydata'] = $config['dnsupdate'][0]['keydata'];
-		$pconfig['dnsupdate_keyname'] = $config['dnsupdate'][0]['keyname'];
-		$pconfig['dnsupdate_keytype'] = $config['dnsupdate'][0]['keytype'];
-		if (!$pconfig['dnsupdate_keytype'])
-			$pconfig['dnsupdate_keytype'] = "zone";
-		$pconfig['dnsupdate_server'] = $config['dnsupdate'][0]['server'];
-		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate'][0]['usetcp']);
+		$pconfig = $config['dnsupdate'][0];
+		if (!$pconfig['ttl'])
+			$pconfig['ttl'] = 60;
+		if (!$pconfig['keytype'])
+			$pconfig['keytype'] = "zone";
 		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
 		unset($config['dnsupdate']);
@@ -1619,8 +1612,9 @@ function upgrade_053_to_054() {
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
 		$gateways = return_gateways_array();
-		if (is_array($config['gateways']['gateway_item']))
+		if (! is_array($config['gateways']['gateway_item']))
 			$config['gateways']['gateway_item'] = array();
+
 		$a_gateways =& $config['gateways']['gateway_item'];
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
@@ -1637,10 +1631,7 @@ function upgrade_053_to_054() {
 					$static_name = "GW_" . strtoupper($interface);
 					if(is_ipaddr($monitor)) {
 						$interface = $static_name;
-						if(is_array($gateways[$static_name]) && isset($gateways[$static_name]['attribute']))
-							$a_gateways[$gateways[$static_name]['attribute']]['monitor'] = $monitor;
-						else
-							$config['interfaces'][$interface]['monitorip'] = $monitor;
+						$config['interfaces'][$interface]['monitorip'] = $monitor;
 					}
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {
@@ -1705,14 +1696,15 @@ function upgrade_054_to_055() {
 	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
-	echo "done.\n";
+	chdir($rrddbpath);
+	$databases = glob("*-quality.rrd");
 	rsort($databases);
 	foreach($databases as $database) {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -1749,7 +1741,8 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		echo "Migrate RRD database {$database} to new format \n";
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format \n";
 		/* rename DS source */
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");
@@ -1796,7 +1789,8 @@ function upgrade_054_to_055() {
 
 	}
 	enable_rrd_graphing();
-	echo "Updating configuration...";
+	if ($g['booting'])
+		echo "Updating configuration...";
 }
 
 

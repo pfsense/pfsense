@@ -433,21 +433,7 @@ function is_domain($domain) {
 
 /* returns true if $macaddr is a valid MAC address */
 function is_macaddr($macaddr) {
-	if (!is_string($macaddr))
-		return false;
-
-	$maca = explode(":", $macaddr);
-	if (count($maca) != 6)
-		return false;
-
-	foreach ($maca as $macel) {
-		if (($macel === "") || (strlen($macel) > 2))
-			return false;
-		if (preg_match("/[^0-9a-f]/i", $macel))
-			return false;
-	}
-
-	return true;
+	return preg_match('/^[0-9A-F]{2}(?=([:]?))(?:\\1[0-9A-F]{2}){5}$/i', $macaddr) == 1 ? true : false;
 }
 
 /* returns true if $name is a valid name for an alias */

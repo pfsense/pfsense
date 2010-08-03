@@ -50,8 +50,10 @@ if(empty($if)) {
 	/* Find the first interface
 	   that is wireless */
 	foreach($ciflist as $interface => $ifdescr) {
-		if(is_interface_wireless(get_real_interface($interface)))
+		if(is_interface_wireless(get_real_interface($interface))) {
 			$if = $interface;
+			break;
+		}
 	}
 }
 ?>

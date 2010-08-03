@@ -417,6 +417,9 @@ function local_user_get_groups($user, $all = false) {
 				if (in_array($user['uid'], $group['member']))
 					$groups[] = $group['name'];
 
+	if ( $all )
+		$groups[] = "all";
+
 	sort($groups);
 
 	return $groups;
@@ -452,9 +455,11 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		if (in_array($groupname,$new_groups))
 			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
-		$index = array_search($user['uid'], $group['member']);
-		array_splice($group['member'], $index, 1);
-		$mod_groups[] = $group;
+		if (is_array($group['member'])) {
+			$index = array_search($user['uid'], $group['member']);
+			array_splice($group['member'], $index, 1);
+			$mod_groups[] = $group;
+		}
 	}
 
 	/* sync all modified groups */
@@ -972,6 +977,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 function radius_backed($username, $passwd, $authcfg){
 	global $debug, $config;
 	$ret = false;
+
+	require_once("radius.inc");
 
 	$rauth = new Auth_RADIUS_PAP($username, $passwd);
 	if ($authcfg) {

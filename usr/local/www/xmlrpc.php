@@ -229,6 +229,8 @@ function filter_configure_xmlrpc($raw_params) {
 	require_once("openvpn.inc");
 	openvpn_resync_all();
 	services_dhcpd_configure();
+	services_dnsmasq_configure();
+	local_sync_accounts();
 	return $xmlrpc_g['return']['true'];
 }
 

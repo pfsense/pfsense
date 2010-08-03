@@ -168,6 +168,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			case 'cert':
 			case 'ca':
 			case 'user':
+			case 'group':
 				$xml['system'][$section] = $config_copy['system'][$section];
 				break;
 			default:
@@ -269,6 +270,10 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
                                 $sections[] = 'openvpn';
                                 $mergesections[] = 'cert';
                                 $mergesections[] = 'ca';
+                         }
+                         if ($carp['synchronizeusers'] != "") {
+                                $mergesections[] = 'user';
+                                $mergesections[] = 'group';
                          }
                          if ($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
                                 $sections[] = 'dnsmasq';

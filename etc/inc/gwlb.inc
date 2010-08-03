@@ -160,11 +160,16 @@ EOD;
 			if (!is_ipaddr($gateway['monitor']))
 				continue;
 
-			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
-			$apingercfg .= "	description \"{$gateway['name']}\"\n";
-			$gwifip = find_interface_ip($gateway['interface']);
+			if($gateway['monitor'] == "127.0.0.{$i}") {
+				$gwifip = "127.0.0.1";
+			} else {
+				$gwifip = find_interface_ip($gateway['interface']);
+			}
 			if (!is_ipaddr($gwifip))
 				continue; //Skip this target
+
+			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+			$apingercfg .= "	description \"{$gateway['name']}\"\n";
 			$apingercfg .= "	srcip \"{$gwifip}\"\n";
 			$alarms = "";
 			$override = false;
@@ -235,16 +240,13 @@ EOD;
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
 
-	if (is_process_running("apinger")) {
-		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
-	} else {
-		if (is_dir("{$g['tmp_path']}"))
-			chmod("{$g['tmp_path']}", 01777);
-		if (is_dir("{$g['vardb_path']}/rrd"))
-			chown("{$g['vardb_path']}/rrd", "nobody");
-		/* start a new apinger process */
-		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
-	}
+	killbypid("{$g['varrun_path']}/apinger.pid");
+	if (is_dir("{$g['tmp_path']}"))
+		chmod("{$g['tmp_path']}", 01777);
+	if (is_dir("{$g['vardb_path']}/rrd"))
+		chown("{$g['vardb_path']}/rrd", "nobody");
+	/* start a new apinger process */
+	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;
 }

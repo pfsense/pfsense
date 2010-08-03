@@ -224,7 +224,7 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Security Assocications"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
+									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if (isset($pconfig['preferoldsa_enable'])) echo "checked"; ?> />
 									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
 									<br />
 									<?=gettext("By default, if several SAs match, the newest one is " .

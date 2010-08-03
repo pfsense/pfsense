@@ -48,12 +48,9 @@ require_once("guiconfig.inc");
 // Set default table
 $tablename = "sshlockout";
 	
-if($_REQUEST['type'] == "sshlockout") 
-	$tablename = "sshlockout";
+if($_REQUEST['type']) 
+	$tablename = $_REQUEST['type'];
 	
-if($_REQUEST['type'] == "virusprot") 
-	$tablename = "virusprot";
-
 if($_REQUEST['delete']) {
 	if(is_ipaddr($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
@@ -73,6 +70,7 @@ if($_REQUEST['deleteall']) {
 }
 
 exec("/sbin/pfctl -t $tablename -T show", $entries);
+exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
 include("fbegin.inc");
@@ -98,9 +96,13 @@ include("fbegin.inc");
 	
 Table: 
 <select id='type' onChange='method_change($F("type"));' name='type'>
-	<option name='<?=$tablename?>' value='<?=$tablename?>'><?=$tablename?></option>
-	<option name='virusprot' value='virusprot'>virusprot</option>
-	<option name='sshlockout' value='sshlockout'>sshlockout</option>
+	<?php foreach ($tables as $table) {
+		echo "<option name='{$table}' value='{$table}'";
+		if ($tablename == $table)
+			echo " selected ";
+		echo ">{$table}</option>\n";
+		}
+	?>
 </select>
 
 <p/>

@@ -87,26 +87,29 @@ if ($_GET['act'] == "del") {
 		if($is_alias_referenced == false) {
 			if(is_array($config['filter']['rule'])) {
 				foreach($config['filter']['rule'] as $rule) {
-					if($rule['source']['address'] && $rule['source']['address'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
+					if($rule['source']) {
+						if($rule['source']['address'] && $rule['source']['address'] == $alias_name) {
+							$is_alias_referenced = true;
+							$referenced_by = $rule['descr'];
+							break;
+						}
+						if($rule['source']['port'] && $rule['source']['port'] == $alias_name) {
+							$is_alias_referenced = true;
+							$referenced_by = $rule['descr'];
+							break;
+						}
+						if($rule['destination']['address'] && $rule['destination']['address'] == $alias_name) {
+							$is_alias_referenced = true;
+							$referenced_by = $rule['descr'];
+							break;
+						}
 					}
-					if($rule['source']['port'] && $rule['source']['port'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['destination']['address'] && $rule['destination']['address'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['destination']['port'] && $rule['destination']['port'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
+					if($rule['destination'])
+						if($rule['destination']['port'] && $rule['destination']['port'] == $alias_name) {
+							$is_alias_referenced = true;
+							$referenced_by = $rule['descr'];
+							break;
+						}
 				}
 			}
 		}

@@ -318,7 +318,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 						}
 					}
                                 } else {
-					portal_reply_page($redirurl, "error", "Username: {$username} is known with another mac address.",
+					portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
 						$clientmac, $clientip, $username, $password);
 					exit;
 				}

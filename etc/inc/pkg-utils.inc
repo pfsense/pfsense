@@ -484,7 +484,7 @@ function install_package($package, $pkg_info = "") {
 	update_output_window($static_output);
 	if($pkg_info['after_install_info']) 
 		update_output_window($pkg_info['after_install_info']);	
-	start_service($pkg_info['config_file']);
+	start_service($pkg_info['name']);
 	$restart_sync = true;
 }
 

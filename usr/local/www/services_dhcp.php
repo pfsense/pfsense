@@ -252,6 +252,13 @@ if ($_POST) {
 			}
 		}
 
+		$noip = false;
+		foreach ($a_maps as $map)
+			if (empty($map['ipaddr']))
+				$noip = true;
+		if ($_POST['staticarp'] && $noip)
+			$input_errors[] = "Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.";
+
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
@@ -329,9 +336,6 @@ if ($_POST) {
 		$config['dhcpd'][$if]['numberoptions'] = $numberoptions;
 
 		write_config();
-
-		/* static arp configuration */
-		interfaces_staticarp_configure($if);
 
 		$retval = 0;
 		$retvaldhcp = 0;

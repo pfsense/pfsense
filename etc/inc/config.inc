@@ -195,10 +195,14 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 	mwexec("/sbin/mount -a");
 }
 
-
-
 if($g['booting']) echo ".";
 $config = parse_config();
+
+/* set timezone */
+$timezone = $config['system']['timezone'];
+if (!$timezone)
+	$timezone = "Etc/UTC";
+date_default_timezone_set("$timezone");
 
 if($config_parsed == true) {
 	/* process packager manager custom rules */

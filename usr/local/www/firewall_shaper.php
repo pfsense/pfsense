@@ -341,9 +341,9 @@ $tree .= "</ul>";
 
 if (!$dontshow || $newqueue) {
 
-$output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
-$output_form .= "Queue Actions";
-$output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
+$output_form .= "<tr><td width=\"22%\" valign=\"center\" class=\"vncellreq\">";
+$output_form .= "<br />Queue Actions<br />";
+$output_form .= "</td><td valign=\"center\" class=\"vncellreq\" width=\"78%\"><br />";
 
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
 if ($can_add || $addnewaltq) {
@@ -368,9 +368,9 @@ if ($can_add || $addnewaltq) {
 		$output_form .= " value=\"Disable shaper on interface\">";
 	$output_form .= "</a>";  
 }
-$output_form .= "</td></tr>";
+$output_form .= "<br /></td></tr>";
 $output_form .= "</div>";
-} 
+}
 else 
 	$output_form .= "</div>";
 

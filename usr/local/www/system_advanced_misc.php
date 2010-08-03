@@ -51,6 +51,8 @@ require_once("shaper.inc");
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
+$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
+$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
@@ -80,6 +82,14 @@ if ($_POST) {
                         $config['system']['preferoldsa'] = true;
                 else
                         unset($config['system']['preferoldsa']);
+
+		if($_POST['maxmss_enable'] == "yes") {
+                        $config['system']['maxmss_enable'] = true;
+			$config['system']['maxmss'] = $_POST['maxmss'];
+                } else {
+                        unset($config['system']['maxmss_enable']);
+                        unset($config['system']['maxmss']);
+		}
 
 		if($_POST['powerd_enable'] == "yes")
                         $config['system']['powerd_enable'] = true;
@@ -123,6 +133,14 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
+<script type="text/javascript" >
+function maxmss_checked(obj) {
+	if (obj.checked)
+		$('maxmss').enable();
+	else
+		$('maxmss').disable();
+}
+</script>
 	<form action="system_advanced_misc.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
@@ -230,6 +248,18 @@ include("head.inc");
 									<?=gettext("By default, if several SAs match, the newest one is " .
 									"preferred if it's at least 30 seconds old. Select this " .
 									"option to always prefer old SAs over new ones."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked"; ?> onClick="maxmss_checked(this)" />
+									<strong><?=gettext("Enable enforcing maximum mss on traffic through the IPSec VPN"); ?></strong>
+									<br />
+									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1420"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled"; ?>>
+									<br />
+									<?=gettext("Enforce the maximus segment size on TCP flows over IPSec. " .
+									"This helps overcome problems with PMTUD on IPSec VPN links."); ?>
 								</td>
 							</tr>
                                                         <tr>

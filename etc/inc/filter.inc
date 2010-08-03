@@ -391,6 +391,14 @@ function filter_configure_sync() {
 function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
+
+	if (isset($config['system']['maxmss_enable'])) {
+		$maxmss = 1420;
+		if (!empty($config['system']['maxmss']))
+			$maxmss = $config['system']['maxmss'];
+
+		$scrubrules .= "scrub in from any to <vpns> max-mss {$maxmss}\n";
+	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
 		if(isset($scrubcfg['virtual']))

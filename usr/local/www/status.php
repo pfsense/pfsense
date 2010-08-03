@@ -107,7 +107,7 @@ function defCmd($command) {
 /* List all of the commands as an index. */
 function listCmds() {
     global $commands;
-    echo "<p>" . gettext("This status page includes the following information") . ":\n";
+    echo "<p>This status page includes the following information:\n";
     echo "<ul width=\"700\">\n";
     for ($i = 0; isset($commands[$i]); $i++ ) {
         echo "<li><strong><a href=\"#" . $commands[$i][0] . "\">" . $commands[$i][0] . "</a></strong>\n";
@@ -222,10 +222,10 @@ pre {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <strong><?=$currentDate;?></strong>
-<p><span class="red"><strong><?=gettext("Note: make sure to remove any sensitive information " .
-"(passwords, maybe also IP addresses) before posting " .
-"information from this page in public places (like mailing lists)"); ?>!</strong></span><br>
-<?=gettext("Passwords in config.xml have been automatically removed"); ?>.
+<p><span class="red"><strong>Note: make sure to remove any sensitive information
+(passwords, maybe also IP addresses) before posting
+information from this page in public places (like mailing lists)!</strong></span><br>
+Passwords in config.xml have been automatically removed.
 
 <div id="cmdspace" style="width:700px">
 <?php listCmds(); ?>

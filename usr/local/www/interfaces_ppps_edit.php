@@ -420,6 +420,8 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" name="portlists" id="portlists">
 			<td id="serialports"><?php
 				$selected_ports = explode(',',$pconfig['interfaces']);
+				if (!is_dir("/var/spool/lock"))
+					mwexec("/bin/mkdir -p /var/spool/lock");
 				$serialports = pfSense_get_modem_devices();
 				$serport_count = 0;
 				foreach ($serialports as $port) {

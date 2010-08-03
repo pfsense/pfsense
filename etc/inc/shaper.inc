@@ -3944,7 +3944,7 @@ function build_iface_without_this_queue($iface, $qname) {
 				if ($altq)
 						$scheduler = ": " . $altq->GetScheduler();
 	$form = "<tr><td width=\"20%\" >";
-	$form .= "<a href=\"firewall_shaper.php?interface" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
+	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
 		$form .= "<a href=\"firewall_shaper_queues.php?interface=";

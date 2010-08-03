@@ -51,7 +51,7 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = array("Firewall","Traffic Shaper", "Limiter");
+$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Limiter"));
 $statusurl = "status_queues.php";
 
 read_dummynet_config();
@@ -142,7 +142,7 @@ if ($_GET) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
 		} else 
-			$input_errors[] = "Could not create new queue/discipline!";
+			$input_errors[] = gettext("Could not create new queue/discipline!");
 
 			if ($q) {
 				$output_form .= $q->build_form();
@@ -154,7 +154,7 @@ if ($_GET) {
 		if ($queue)  
                        $output_form .= $queue->build_form();
 		else
-			$input_errors[] = "Queue not found!";
+			$input_errors[] = gettext("Queue not found!");
 		break;
 	case "enable":
 		if ($queue) {
@@ -163,7 +163,7 @@ if ($_GET) {
 				write_config();
 				mark_subsystem_dirty('shaper');
 		} else
-				$input_errors[] = "Queue not found!";
+				$input_errors[] = gettext("Queue not found!");
 		break;
 	case "disable":
 		if ($queue) {
@@ -172,7 +172,7 @@ if ($_GET) {
 				write_config();
 				mark_subsystem_dirty('shaper');
 		} else
-				$input_errors[] = "Queue not found!";
+				$input_errors[] = gettext("Queue not found!");
 		break;
 	default:
 		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
@@ -217,7 +217,7 @@ if ($_GET) {
 			read_dummynet_config();
 			$output_form .= $tmp->build_form();			
 		} else
-			$input_errors[] = "Could not add new queue.";
+			$input_errors[] = gettext("Could not add new queue.");
 	} else if ($_POST['apply']) {
 			write_config();
 
@@ -286,7 +286,7 @@ $tree .= "</ul>";
 if (!$dontshow || $newqueue) {
 
 $output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
-$output_form .= "Queue Actions";
+$output_form .= gettext("Queue Actions");
 $output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
 
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
@@ -297,7 +297,7 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add new queue\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\">";
 	$output_form .= "</a>";
 }
 $output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
@@ -308,9 +308,9 @@ if ($queue) {
 $output_form .= "&action=delete\">";
 $output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 if ($queue)
-	$output_form .= " value=\"Delete this queue\">";
+	$output_form .= " value=\"" . gettext("Delete this queue") ."\">";
 else
-	$output_form .= " value=\"Delete virtual interface\">";
+	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\">";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</div>";
@@ -348,17 +348,17 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Limiter", true, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Layer7", false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array("Wizards", false, "firewall_shaper_wizards.php");
+	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
+	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+	$tab_array[2] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php");
+	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -377,7 +377,7 @@ include("fbegin.inc");
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_vinterface.php?pipe=new&action=add">
-			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="Create new limiter" width="17" height="17" border="0">  Create new limiter
+			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0"><?=gettext("Create new limiter");?>
 			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">

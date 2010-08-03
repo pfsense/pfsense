@@ -175,17 +175,17 @@ if ($_POST) {
 	/* input validation */		
 	switch($_POST['type']) {
 		case "ppp":
-			$reqdfields = explode(" ", "interfaces phone");
-			$reqdfieldsn = explode(",", "Link Interface(s),Phone Number");
+			$reqdfields = explode("interfaces phone");
+			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username password ondemand idletimeout");
-				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Dial on demand,Idle timeout value");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Dial on demand"),gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username password");
-				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
@@ -193,23 +193,23 @@ if ($_POST) {
 		case "pptp":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
-				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address,Dial on demand,Idle timeout value");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
 			} else {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
-				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		default:
-			$input_errors[] = "Please choose a Link Type.";
+			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
-		$input_errors[] = "Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.";
+		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
-		$input_errors[] = "The service name contains invalid characters.";
+		$input_errors[] = gettext("The service name contains invalid characters.");
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
-		$input_errors[] = "The idle timeout value must be an integer.";
+		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
 		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) 
 		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
@@ -230,15 +230,15 @@ if ($_POST) {
 	
 	foreach($_POST['interfaces'] as $iface){
 		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
-			$input_errors[] = "A valid local IP address must be specified for {$iface}.";
+			$input_errors[] = sprintf(gettext("A valid local IP address must be specified for %s."),$iface);
 		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) 
-			$input_errors[] = "A valid gateway IP address OR hostname must be specified for {$iface}.";
+			$input_errors[] = sprintf(gettext("A valid gateway IP address OR hostname must be specified for %s."),$iface);
 		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) 
-			$input_errors[] = "The bandwidth value for {$iface} must be an integer.";
+			$input_errors[] = sprintf(gettext("The bandwidth value for %s must be an integer."),$iface);
 		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) 
-			$input_errors[] = "The MTU for {$iface} must be greater than 576 bytes.";
+			$input_errors[] = sprintf(gettext("The MTU for %s must be greater than 576 bytes."),$iface);
 		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) 
-			$input_errors[] = "The MRU for {$iface} must be greater than 576 bytes.";
+			$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."),$iface);
 	}
 
 /*
@@ -370,10 +370,10 @@ if ($_POST) {
 } // end if($_POST)
 
 $closehead = false;
-$pgtitle = array("Interfaces","PPPs","Edit");
+$pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
 include("head.inc");
 
-$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
+$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
 ?>
 	<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
@@ -558,8 +558,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						<td width="22%" valign="top" class="vncell"><?= gettext("Init String"); ?></td>
 						<td width="78%" class="vtable">
 							<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=htmlspecialchars($pconfig['initstr']);?>">
-							<br/><span class="vexpl"><?= gettext("Note: Enter the modem initialization string here. Do NOT include the \"AT\" 
-							string at the beginning of the command. Many modern USB 3G modems don't need an initialization string."); ?></span>
+							<br/><span class="vexpl"><?= gettext("Note: Enter the modem initialization string here. Do NOT include the \"AT\"" . 
+							"string at the beginning of the command. Many modern USB 3G modems don't need an initialization string."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
@@ -613,7 +613,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 										<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 										<br />&nbsp;<br />
-										<span class="red"><strong>Note: </strong></span>
+										<span class="red"><strong><?=gettext("Note ");?>:</strong></span>
 										<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 										</p>
 										<?php if ($pconfig['pppoe_pr_preset']): ?>
@@ -674,55 +674,55 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
 			<td class="vtable">
 				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> <?= gettext("Enable Dial-on-Demand mode"); ?> 
-				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
-				The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?> </span>
+				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. " .  
+				"The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?> </span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td valign="top" class="vncell"><?= gettext("Idle Timeout"); ?></td>
 			<td class="vtable">
 				<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="12" value="<?=htmlspecialchars($pconfig['idletimeout']);?>"> <?= gettext("(seconds) Default is 0, which disables the timeout feature."); ?>
-				<br/> <span class="vexpl"><?= gettext("If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.
-				<br/>When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed."); ?></span>
+				<br/> <span class="vexpl"><?= gettext("If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.");?>
+				<br/><?=gettext("When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Compression"); ?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable vjcomp(compression) (auto-negotiated by default)."); ?>
-				<br/> <span class="vexpl">This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. 
-				You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time 
-				stamping or SACK, which modify TCP options between sequential packets.</span>
+				<br/> <span class="vexpl"><?=gettext("This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. " .
+				"You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time " .
+				"stamping or SACK, which modify TCP options between sequential packets.");?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?= gettext("TCPmssFix"); ?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable tcpmssfix (enabled by default)."); ?>
-				<br/> <span class="vexpl">This option causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount 
-				allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages,
-				the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don't Fragment option is set,
-				this machine sends an ICMP Datagram Too Big message back to the originator and drops the packet. The rogue router drops the ICMP message and the originator never 
-				gets to discover that it must reduce the fragment size or drop the IP Don't Fragment option from its outgoing data.</span>
+				<br/> <span class="vexpl"><?=gettext("This option causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount ". 
+				"allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages, ".
+				"the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don't Fragment option is set, ".
+				"this machine sends an ICMP Datagram Too Big message back to the originator and drops the packet. The rogue router drops the ICMP message and the originator never ".
+				"gets to discover that it must reduce the fragment size or drop the IP Don't Fragment option from its outgoing data.");?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-			<td width="22%" valign="top" class="vncell">ShortSeq</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("ShortSeq");?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable shortseq (auto-negotiated by default)."); ?>
-				<br/> <span class="vexpl"><?= gettext("This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame. 
-				It is not necessary to disable this for connections that are not multi-link."); ?></span>
+				<br/> <span class="vexpl"><?= gettext("This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame. " .
+				"It is not necessary to disable this for connections that are not multi-link."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-			<td width="22%" valign="top" class="vncell">ACFComp</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("ACFComp"); ?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable acfcomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-			<td width="22%" valign="top" class="vncell">ProtoComp</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("ProtoComp"); ?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable protocomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Protocol field compression. This option saves one byte per frame for most frames."); ?></span>
@@ -731,7 +731,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr id="advanced_" name="advanced_">
 			<td>&nbsp;</td>
 			<td>
-			<p><input type="button" onClick="show_advanced(1)" value="Show advanced options"></p>
+			<p><input type="button" onClick="show_advanced(1)" value="<?=gettext("Show advanced options"); ?>"></p>
 			</td>
 			<td style="display:none" id="adv_rows" name="adv_rows"><?=$k;?></td>
 			<td style="display:none" id="adv_show" name="adv_show">0</td>
@@ -739,28 +739,28 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 		<?php for($i=0; $i < $port_count; $i++) : ?>
 		<tr style="display:none" id="link<?=$i;?>">
-			<td width="22%" valign="top" id="linklabel<?=$i;?>" class="vncell"> Link Parameters</td>
+			<td width="22%" valign="top" id="linklabel<?=$i;?>" class="vncell"> <?=gettext("Link Parameters");?></td>
 			<td class="vtable">
 				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> Bandwidth</td>
+						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> <?=gettext("Bandwidth");?></td>
 						<td width="78%" class="vtable">
 						<br/><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
-						<br/> <span class="vexpl">Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.</span>
+						<br/> <span class="vexpl"><?=gettext("Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" id="mtulabel<?=$i;?>" valign="top" class="vncell"> MTU</td>
+					  <td width="22%" id="mtulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MTU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mtu[]" id="mtu<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
-						<br> <span class="vexpl">MTU will default to 1492.</span>
+						<br> <span class="vexpl"><?=gettext("MTU will default to 1492.");?></span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> MRU</td>
+					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
-						<br> <span class="vexpl">MRU will default to 1492.</span>
+						<br> <span class="vexpl"><?=gettext("MRU will default to 1492.");?></span>
 					  </td>
 					</tr>
 				</table
@@ -769,8 +769,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save">
-				<input type="button" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+				<input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">

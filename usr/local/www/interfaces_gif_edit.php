@@ -69,13 +69,13 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = explode(",", "Parent interface,Local address, Remote tunnel address, Remote tunnel network, Local tunnel address");
+	$reqdfieldsn = array(gettext("Parent interface,Local address, Remote tunnel address, Remote tunnel network, Local tunnel address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
 			(!is_ipaddr($_POST['remote-addr']))) {
-		$input_errors[] = "The tunnel local and tunnel remote fields must have valid IP addresses.";
+		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
 
 	foreach ($a_gifs as $gif) {
@@ -83,7 +83,7 @@ if ($_POST) {
 			continue;
 
 		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = "A gif with the network {$gif['remote-network']} is already defined.";
+			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['remote-network']);
 			break;
 		}
 	}
@@ -102,7 +102,7 @@ if ($_POST) {
 
                 $gif['gifif'] = interface_gif_configure($gif);
                 if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif"))
-                        $input_errors[] = "Error occured creating interface, please retry.";
+                        $input_errors[] = gettext("Error occured creating interface, please retry.");
                 else {
                         if (isset($id) && $a_gifs[$id])
                                 $a_gifs[$id] = $gif;
@@ -117,7 +117,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","GIF","Edit");
+$pgtitle = array(gettext("Firewall"),gettext("GIF"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -128,10 +128,10 @@ include("head.inc");
             <form action="interfaces_gif_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">GIF configuration</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("GIF configuration"); ?></td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Parent interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface"); ?></td>
                   <td width="78%" class="vtable">
                     <select name="if" class="formselect">
                       <?php
@@ -145,24 +145,24 @@ include("head.inc");
 		      		?>
                     </select>
 			<br/>
-			<span class="vexpl">The interface here servers as the local address to be used for the gif tunnel.</span></td>
+			<span class="vexpl"><?=gettext("The interface here servers as the local address to be used for the gif tunnel."); ?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif remote address</td>
+                  <td valign="top" class="vncellreq"><?=gettext("gif remote address"); ?></td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=$pconfig['remote-addr'];?>">
                     <br>
-                    <span class="vexpl">Peer address where encapsulated gif packets will be sent. </span></td>
+                    <span class="vexpl"><?=gettext("Peer address where encapsulated gif packets will be sent. "); ?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif tunnel local address</td>
+                  <td valign="top" class="vncellreq"><?=gettext("gif tunnel local address"); ?></td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=$pconfig['tunnel-local-addr'];?>">
                     <br>
-                    <span class="vexpl">Local gif tunnel endpoint</span></td>
+                    <span class="vexpl"><?=gettext("Local gif tunnel endpoint"); ?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif tunnel remote address </td>
+                  <td valign="top" class="vncellreq"><?=gettext("gif tunnel remote address "); ?></td>
                   <td class="vtable">
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
@@ -177,37 +177,37 @@ include("head.inc");
                                         ?>
                     </select>					
                     <br/>
-                    <span class="vexpl">Remote gif address endpoint. The subnet part is used for the determinig the network that is tunneled.</span></td>
+                    <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for the determinig the network that is tunneled."); ?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">Route caching  </td>
+                  <td valign="top" class="vncell"><?=gettext("Route caching  "); ?></td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked";?>>
                     <br>
-                    <span class="vexpl">Specify if route caching can be enabled. Be careful with these settings on dynamic networks. </span></td>
+                    <span class="vexpl"><?=gettext("Specify if route caching can be enabled. Be careful with these settings on dynamic networks. "); ?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">ECN friendly behaviour</td>
+                  <td valign="top" class="vncell"><?=gettext("ECN friendly behaviour"); ?></td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>
                     <span class="vexpl">
-     Note that the ECN friendly behavior violates RFC2893.  This should be
-     used in mutual agreement with the peer.					
+     <?=gettext("Note that the ECN friendly behavior violates RFC2893.  This should be " .
+     "used in mutual agreement with the peer."); ?>					
 					 </span></td>
 			    </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="gifif" value="<?=$pconfig['gifif']; ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_gifs[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

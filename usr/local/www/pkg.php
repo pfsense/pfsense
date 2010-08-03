@@ -301,7 +301,9 @@ if ($pkg['tabs'] <> "") {
 				// Handle pagination and display_maximum_rows
 				if($display_maximum_rows) {
 					if($pagination_counter == $display_maximum_rows) {
-						$nbsp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						$nbsp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						$nbsp .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						$nbsp .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 						echo "<tr><td colspan='$colspan'><center>";
 						$startingat = $startdisplayingat - $display_maximum_rows;
 						if($startingat > -1) {

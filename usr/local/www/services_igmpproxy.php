@@ -87,7 +87,7 @@ include("head.inc");
 <form action="services_igmpproxy.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('igmpproxy')): ?><p>
-<?php print_info_box_np(gettext("The IGMP entry list has been changed") ".<br>" gettext("You must apply the changes in order for them to take effect."));?>
+<?php print_info_box_np(gettext("The IGMP entry list has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">

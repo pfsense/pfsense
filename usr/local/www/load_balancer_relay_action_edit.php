@@ -510,7 +510,7 @@ document.observe("dom:loaded", function() {
 			</td>
 		</tr>
 		<tr align="left" id="tcp_options_row"<?= $pconfig['protocol'] == "tcp" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Options"); ?</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Options"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				XXX: <?=gettext("TODO"); ?>
 				<select id="options" name="options">

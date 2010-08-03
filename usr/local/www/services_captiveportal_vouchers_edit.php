@@ -77,7 +77,7 @@ if ($_POST) {
 
     /* input validation */
     $reqdfields = explode(" ", "number count minutes");
-    $reqdfieldsn = array(gettext("Number"),getext("Count"),gettext("minutes"));
+    $reqdfieldsn = array(gettext("Number"),gettext("Count"),gettext("minutes"));
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -116,7 +116,7 @@ if ($_POST) {
             $rollent['active'] = array();
             voucher_write_used_db($rollent['number'], $rollent['used']);
             voucher_write_active_db($rollent['number'], array());   // create empty DB
-            voucher_log(LOG_INFO, "All {$rollent['count']} vouchers from Roll {$rollent['number']} marked unused");
+            voucher_log(LOG_INFO,printf(gettext("All %s vouchers from Roll %s marked unused"), $rollent['count'], $rollent['number']));
         } else {
             // existing roll has been modified but without changing the count
             // read active and used DB from ramdisk and store it in XML config

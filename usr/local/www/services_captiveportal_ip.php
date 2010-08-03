@@ -160,7 +160,7 @@ include("head.inc");
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
-		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong>to</strong> <?=gettext("the IP address are allowed"); ?></span></td>
+		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong><?=gettext("to"); ?></strong> <?=gettext("the IP address are allowed"); ?></span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>

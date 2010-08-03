@@ -222,8 +222,8 @@ function enable_change(enable_over) {
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong><?=(gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
-                      <?php printf("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.", $g['product_name']); ?></td>
+                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
+                      <?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?></td>
         		  </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>

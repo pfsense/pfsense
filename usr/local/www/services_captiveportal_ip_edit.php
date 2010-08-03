@@ -181,7 +181,7 @@ include("head.inc");
 			<?php endfor; ?>
 		    </select>
                     <br> 
-                    <span class="vexpl"><?=gettext("IP address and subnet mask. Use /32 for a single IP.");?></span></td>
+		    <span class="vexpl"><?=gettext("IP address and subnet mask. Use /32 for a single IP");?>.</span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>

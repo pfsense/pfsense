@@ -113,7 +113,7 @@ if($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if'])
-	$savemsg = "<b> . "gettext("The DHCP Server can only be enabled on interfaces configured with static IP addresses") . ".<p>" . gettext("Only interfaces configured with a static IP will be shown") . ".</p></b>");
+	$savemsg = "<b>" . gettext("The DHCP Server can only be enabled on interfaces configured with static IP addresses") . ".<p>" . gettext("Only interfaces configured with a static IP will be shown") . ".</p></b>";
 
 $iflist = get_configured_interface_with_descr();
 
@@ -578,7 +578,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Range");?></td>
 			<td width="78%" class="vtable">
 				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
-				&nbsp;to&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
+				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
 			</tr>
 			<tr>
@@ -806,9 +806,9 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
-				</strong></span><?php printf(gettext("The DNS servers entered in"); ?><a href="system.php">System:
-				General setup</a> <?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS"); ?>
-				forwarder</a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
+				</strong></span><?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: " .
+				"General setup"); ?></a> <?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS " .
+				"forwarder"); ?></a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
 				"be assigned to clients by the DHCP server"); ?>.<br>
 				<br>
 				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcp_leases.php"><?=gettext("Status: " .

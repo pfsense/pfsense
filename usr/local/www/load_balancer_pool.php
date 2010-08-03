@@ -108,7 +108,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np(gettext("The load balancer configuration has been changed") ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -128,11 +128,11 @@ include("head.inc");
 			$t = new MainTable();
 			$t->edit_uri('load_balancer_pool_edit.php');
 			$t->my_uri('load_balancer_pool.php');
-			$t->add_column('Name','name',10);
-			$t->add_column('Servers','servers',15);
-			$t->add_column('Port','port',10);
-			$t->add_column('Monitor','monitor',15);
-			$t->add_column('Description','desc',30);
+			$t->add_column(gettext('Name'),'name',10);
+			$t->add_column(gettext('Servers'),'servers',15);
+			$t->add_column(gettext('Port'),'port',10);
+			$t->add_column(gettext('Monitor'),'monitor',15);
+			$t->add_column(gettext('Description'),'desc',30);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');

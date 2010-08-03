@@ -202,7 +202,7 @@ function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	$config = array_merge($config, $params[0]);
+	$config = array_merge_recursive_unique($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
 	return $xmlrpc_g['return']['true'];
@@ -229,6 +229,8 @@ function filter_configure_xmlrpc($raw_params) {
 	require_once("openvpn.inc");
 	openvpn_resync_all();
 	services_dhcpd_configure();
+	services_dnsmasq_configure();
+	local_sync_accounts();
 	return $xmlrpc_g['return']['true'];
 }
 

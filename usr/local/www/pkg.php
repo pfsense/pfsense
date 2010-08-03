@@ -120,7 +120,7 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<form action="pkg.php" method="get">
+<form action="pkg.php" name="pkgform" method="get">
 <input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>'>
 <? if($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

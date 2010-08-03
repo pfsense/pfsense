@@ -101,7 +101,7 @@ if ($_GET['act'] == "del") {
 			foreach ($config['nat']['rule'] as $rule) {
 				if($rule['destination']['address'] <> "") {
 					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
-						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
+						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
 					}
 				}
@@ -128,7 +128,7 @@ if ($_GET['act'] == "del") {
 } else if ($_GET['changes'] == "mods")
 	$id = $_GET['id'];
 
-$pgtitle = array("Firewall","Virtual IP Addresses");
+$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
 include("head.inc");
 
 ?>
@@ -143,7 +143,7 @@ include("head.inc");
 		print_info_box($savemsg); 
 	else
 	if (is_subsystem_dirty('vip'))
-		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));
 ?>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -151,8 +151,8 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Virtual IPs", true, "firewall_virtual_ip.php");
-        $tab_array[] = array("CARP Settings", false, "pkg_edit.php?xml=carp_settings.xml&id=0");
+        $tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
+        $tab_array[] = array(gettext("CARP Settings"), false, "pkg_edit.php?xml=carp_settings.xml&id=0");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
@@ -164,9 +164,9 @@ include("head.inc");
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="30%" class="listhdrr">Virtual IP address</td>
-                  <td width="10%" class="listhdrr">Type</td>
-                  <td width="40%" class="listhdr">Description</td>
+                  <td width="30%" class="listhdrr"><?=gettext("Virtual IP address");?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("Type");?></td>
+                  <td width="40%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -200,7 +200,7 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="firewall_virtual_ip_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="firewall_virtual_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="firewall_virtual_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this entry?');?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -220,9 +220,9 @@ include("head.inc");
                 </tr>
 		<tr>
 		  <td colspan="4">
-		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>The virtual IP addresses defined on this page may be used in <a href="firewall_nat.php">NAT</a> mappings.<br>
-                      You can check the status of your CARP Virtual IPs and interfaces <a href="carp_status.php">here</a>.</span></p>
+		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br>
+                      <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
 		  </td>
 		</tr>
               </table>

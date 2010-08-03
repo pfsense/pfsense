@@ -37,9 +37,11 @@
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV
 
-$pgtitle = array("Interfaces","Groups", "Edit");
 
 require("guiconfig.inc");
+require_once("functions.inc");
+
+$pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
 
 if (!is_array($config['ifgroups']['ifgroupentry']))
 	$config['ifgroups']['ifgroupentry'] = array();
@@ -66,10 +68,10 @@ if ($_POST) {
 	if (!isset($id)) {
 		foreach ($a_ifgroups as $groupentry)
 			if ($groupentry['ifname'] == $_POST['ifname'])
-				$input_errors[] = "Group name already exists!";
+				$input_errors[] = gettext("Group name already exists!");
 	}
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
-		$input_errors[] = "Only letters A-Z are allowed as the group name.";
+		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
 
 	$ifaces = get_configured_interface_with_descr();
 	foreach ($ifaces as $gif => $gdescr) {
@@ -205,33 +207,33 @@ function removeRow(el) {
 <form action="interfaces_groups_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-	<td colspan="2" valign="top" class="listtopic">Interface Groups Edit</td>
+	<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface Groups Edit");?></td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq">Group Name</td>
+    <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
     <td class="vtable">
 	<input class="formfld unknown" name="ifname" id="ifname" value="<?=$pconfig['ifname'];?>" />
 	<br />
-	No numbers or spaces are allowed. Only characters in a-zA-Z
+	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncell">Description</td>
+    <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
       <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
       <br />
       <span class="vexpl">
-        You may enter a description here for your reference (not parsed).
+        <?=gettext("You may enter a description here for your reference (not parsed).");?>
       </span>
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport">Member (s)</div></td>
+    <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
     <td width="78%" class="vtable">
       <table id="maintable">
         <tbody>
           <tr>
-            <td><div id="onecolumn">Interface</div></td>
+            <td><div id="onecolumn"><?=gettext("Interface");?></div></td>
           </tr>
 
 	<?php
@@ -257,7 +259,7 @@ function removeRow(el) {
                         </select>
 	</td>
         <td>
-	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
+	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
 	      </td>
           </tr>
 <?php
@@ -272,15 +274,15 @@ function removeRow(el) {
         </tfoot>
 		  </table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
       </a>
 		</td>
   </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
-      <a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" /></a>
+      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+      <a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_ifgroups[$id]): ?>
       <input name="id" type="hidden" value="<?=$id;?>" />
       <?php endif; ?>

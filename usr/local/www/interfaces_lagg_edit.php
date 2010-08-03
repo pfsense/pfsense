@@ -76,7 +76,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");
-	$reqdfieldsn = explode(",", "Member interfaces, Lagg protocol");
+	$reqdfieldsn = array(",", gettext("Member interfaces"), gettext("Lagg protocol"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -89,7 +89,7 @@ if ($_POST) {
 
                 $lagg['laggif'] = interface_lagg_configure($lagg);
                 if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
-                        $input_errors[] = "Error occured creating interface, please retry.";
+                        $input_errors[] = gettext("Error occured creating interface, please retry.");
                 else {
                         if (isset($id) && $a_laggs[$id])
                                 $a_laggs[$id] = $lagg;
@@ -108,7 +108,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","LAGG","Edit");
+$pgtitle = array(gettext("Firewall"),gettext("LAGG"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -119,10 +119,10 @@ include("head.inc");
             <form action="interfaces_lagg_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">LAGG configuration</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("LAGG configuration"); ?></td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Parent interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface"); ?></td>
                   <td width="78%" class="vtable">
                     <select name="members[]" multiple="true" size="4" class="formselect">
                       <?php
@@ -137,10 +137,10 @@ include("head.inc");
 		      		?>
                     </select>
 			<br/>
-			<span class="vexpl">Choose the members that will be used for the link aggregation.</span></td>
+			<span class="vexpl"><?=gettext("Choose the members that will be used for the link aggregation"); ?>.</span></td>
                 </tr>
 		<tr>
-                  <td valign="top" class="vncellreq">Lag proto</td>
+                  <td valign="top" class="vncellreq"><?=gettext("Lag proto"); ?></td>
                   <td class="vtable">
                     <select name="proto" class="formselect" id="proto">
 		<?php
@@ -156,57 +156,57 @@ include("head.inc");
                     <span class="vexpl">
 		   <ul>
 		<li>
-		    <b>failover</b><br/>      
-			Sends and receives traffic only through the master port.  If
-                  the master port becomes unavailable, the next active port is
-                  used.  The first interface added is the master port; any
-                  interfaces added after that are used as failover devices.
+		    <b><?=gettext("failover"); ?></b><br/>      
+			<?=gettext("Sends and receives traffic only through the master port.  If " .
+                  "the master port becomes unavailable, the next active port is " .
+                  "used.  The first interface added is the master port; any " .
+                  "interfaces added after that are used as failover devices."); ?>
 		</li><li>
-     <b>fec</b><br/>          Supports Cisco EtherChannel.  This is a static setup and
-                  does not negotiate aggregation with the peer or exchange
-                  frames to monitor the link.
+     <b><?=gettext("fec"); ?></b><br/>          <?=gettext("Supports Cisco EtherChannel.  This is a static setup and " .
+                  "does not negotiate aggregation with the peer or exchange " .
+                  "frames to monitor the link."); ?>
 		</li><li>
-     <b>lacp</b><br/>         Supports the IEEE 802.3ad Link Aggregation Control Protocol
-                  (LACP) and the Marker Protocol.  LACP will negotiate a set
-                  of aggregable links with the peer in to one or more Link
-                  Aggregated Groups.  Each LAG is composed of ports of the
-                  same speed, set to full-duplex operation.  The traffic will
-                  be balanced across the ports in the LAG with the greatest
-                  total speed, in most cases there will only be one LAG which
-                  contains all ports.  In the event of changes in physical
-                  connectivity, Link Aggregation will quickly converge to a
-                  new configuration.
+     <b><?=gettext("lacp"); ?></b><br/>         <?=gettext("Supports the IEEE 802.3ad Link Aggregation Control Protocol " .
+                  "(LACP) and the Marker Protocol.  LACP will negotiate a set " .
+                  "of aggregable links with the peer in to one or more Link " .
+                  "Aggregated Groups.  Each LAG is composed of ports of the " .
+                  "same speed, set to full-duplex operation.  The traffic will " .
+                  "be balanced across the ports in the LAG with the greatest " .
+                  "total speed, in most cases there will only be one LAG which " .
+                  "contains all ports.  In the event of changes in physical " .
+                  "connectivity, Link Aggregation will quickly converge to a " .
+                  "new configuration."); ?>
 		</li><li>
-     <b>loadbalance</b><br/>  Balances outgoing traffic across the active ports based on
-                  hashed protocol header information and accepts incoming
-                  traffic from any active port.  This is a static setup and
-                  does not negotiate aggregation with the peer or exchange
-                  frames to monitor the link.  The hash includes the Ethernet
-                  source and destination address, and, if available, the VLAN
-                  tag, and the IP source and destination address.
+     <b><?=gettext("loadbalance"); ?></b><br/>  <?=gettext("Balances outgoing traffic across the active ports based on " .
+                  "hashed protocol header information and accepts incoming " .
+                  "traffic from any active port.  This is a static setup and " .
+                  "does not negotiate aggregation with the peer or exchange " .
+                  "frames to monitor the link.  The hash includes the Ethernet " .
+                  "source and destination address, and, if available, the VLAN " .
+                  "tag, and the IP source and destination address") ?>.
 		</li><li>
-     <b>roundrobin</b><br/>   Distributes outgoing traffic using a round-robin scheduler
-                  through all active ports and accepts incoming traffic from
-                  any active port.
+     <b><?=gettext("roundrobin"); ?></b><br/>   <?=gettext("Distributes outgoing traffic using a round-robin scheduler " .
+                  "through all active ports and accepts incoming traffic from " .
+                  "any active port"); ?>.
 		</li><li>
-     <b>none</b><br/>         This protocol is intended to do nothing: it disables any
-                  traffic without disabling the lagg interface itself.
+     <b><?=gettext("none"); ?></b><br/>         <?=gettext("This protocol is intended to do nothing: it disables any " .
+                  "traffic without disabling the lagg interface itself"); ?>.
 		</li>
 	</ul>
 	          </span></td>
 	    </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    "for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="laggif" value="<?=$pconfig['laggif']; ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_laggs[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

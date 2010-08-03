@@ -98,6 +98,8 @@ if ($_GET['act'] == "del") {
 	    }
 }
 
+ob_start();
+
 $iflist = get_configured_interface_with_descr(false, true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
@@ -198,7 +200,7 @@ if ($pkg['tabs'] <> "") {
 							}
 							if($include_filtering_inputbox) 
 								echo "&nbsp;&nbsp;Filter text: <input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "'> <input type='submit' value='Filter'>";
-							echo "</td></tr><tr><td>&nbsp;</td></tr>";
+							echo "</td></tr><tr><td><font siez='-3'>&nbsp;</td></tr>";
 						}
 					}
 				}

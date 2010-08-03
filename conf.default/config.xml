@@ -258,26 +258,6 @@
 		</route>
 		-->
 	</staticroutes>
-	<pppoe>
-		<username></username>
-		<password></password>
-		<provider></provider>
-		<!--
-		<ondemand/>
-		<timeout></timeout>
-		-->
-	</pppoe>
-	<pptp>
-		<username></username>
-		<password></password>
-		<local></local>
-		<subnet></subnet>
-		<remote></remote>
-		<!--
-		<ondemand/>
-		<timeout></timeout>
-		-->
-	</pptp>
 	<dhcpd>
 		<lan>
 			<enable/>

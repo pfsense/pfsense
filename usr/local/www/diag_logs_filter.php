@@ -53,7 +53,7 @@ if($_GET['getrulenum'] or $_POST['getrulenum']) {
 		$rulenum = $_POST['getrulenum'];
 	list($rulenum, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $type);
-	echo "The rule that triggered this action is:\n\n{$rule}";
+	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
 }
 
@@ -87,7 +87,7 @@ if (!$nentries)
 if ($_POST['clear'])
 	clear_log_file($filter_logfile);
 
-$pgtitle = array("Status","System logs","Firewall");
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall"));
 include("head.inc");
 
 ?>
@@ -98,17 +98,17 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", false, "diag_logs.php");
-	$tab_array[] = array("Firewall", true, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+	$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
+	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
+	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
+	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
+	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
+	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
+	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
@@ -117,7 +117,7 @@ include("head.inc");
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr><td colspan="6" align="left">
-			Normal View | <a href="diag_logs_filter_dynamic.php">Dynamic View</a> | <a href="diag_logs_filter_summary.php">Summary View</a><br/><br/>
+			<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a><br/><br/>
 		</td></tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
@@ -125,19 +125,19 @@ include("head.inc");
 		<tr>
 		  <td colspan="6" class="listtopic">
 				<?php if (!$filtertext) { ?>
-			    Last <?php echo count($filterlog);?> firewall log entries.
+				<?php printf(gettext("Last %s firewall log entries."),count($filterlog));?>
 				<?php } else { ?>
-				<?php echo count($filterlog);?> matched log entries.
+				<?php echo count($filterlog). ' ' . gettext("matched log entries."); ?>
 				<?php } ?>
-			    (Max <?php echo $nentries;?>)
+			    	<?php printf(gettext("Max(%s)"),$nentries);?>
 			</tr>
 			<tr>
-			  <td width="10%" class="listhdrr">Act</td>
-			  <td width="10%" class="listhdrr">Time</td>
-			  <td width="15%" class="listhdrr">If</td>
-			  <td width="25%" class="listhdrr">Source</td>
-			  <td width="25%" class="listhdrr">Destination</td>
-			  <td width="15%" class="listhdrr">Proto</td>
+			  <td width="10%" class="listhdrr"><?=gettext("Act");?></td>
+			  <td width="10%" class="listhdrr"><?=gettext("Time");?></td>
+			  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
+			  <td width="25%" class="listhdrr"><?=gettext("Source");?></td>
+			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
+			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
 			</tr><?php foreach ($filterlog as $filterent): ?>
 			<tr>
 			  <td class="listlr" nowrap align="middle">
@@ -155,13 +155,13 @@ include("head.inc");
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 			  ?>
 			  <td class="listr" nowrap>
-				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="Reverse Resolve with DNS"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
-				<a href="easyrule.php?<?php echo "action=block&int={$int}&src={$filterent['srcip']}"; ?>" title="Easy Rule: Add to Block List" onclick="return confirm('Do you really want to add this BLOCK rule?\n\nEasy Rule is still experimental.\nContinue at risk of your own peril.\nBackups are also nice.')"><img border="0" src="/themes/nervecenter/images/icons/icon_block_add.gif"></a>
+				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
+				<a href="easyrule.php?<?php echo "action=block&int={$int}&src={$filterent['srcip']}"; ?>" title="<?=gettext("Easy Rule: Add to Block List");?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.")?>')"><img border="0" src="/themes/nervecenter/images/icons/icon_block_add.gif"></a>
 				<?php echo $srcstr;?>
 			  </td>
 			  <td class="listr" nowrap>
-				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="Reverse Resolve with DNS"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
-				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['srcip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}"; ?>" title="Easy Rule: Pass this traffic" onclick="return confirm('Do you really want to add this PASS rule?\n\nEasy Rule is still experimental.\nContinue at risk of your own peril.\nBackups are also nice.')"><img border="0" src="/themes/nervecenter/images/icons/icon_pass_add.gif"></a>
+				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
+				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['srcip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')"><img border="0" src="/themes/nervecenter/images/icons/icon_pass_add.gif"></a>
 				<?php echo $dststr;?>
 			  </td>
 			  <?php
@@ -173,7 +173,7 @@ include("head.inc");
 <?php else: ?>
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?php echo $nentries;?> firewall log entries</td>
+			  <?php printf(gettext("Last %s firewall log entries"),$nentries);?></td>
 		  </tr>
 		  <?php
 			if($filtertext)

@@ -58,7 +58,7 @@ if ($_POST['clear'])
 
 $filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
 
-$pgtitle = array("Diagnostics","System logs","Firewall");
+$pgtitle = array(gettext("Diagnostics"),gettext("System logs"),gettext("Firewall"));
 include("head.inc");
 
 ?>
@@ -97,17 +97,17 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", false, "diag_logs.php");
-	$tab_array[] = array("Firewall", true, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+	$tab_array[] = array(gettext("Firewall"), true, "diag_logs_filter.php");
+	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
+	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
+	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
+	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
+	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
+	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
@@ -115,19 +115,19 @@ include("head.inc");
      <td>
 	<div id="mainarea">
 		<div class="tabcont">
-			<a href="diag_logs_filter.php">Normal View</a> | Dynamic View | <a href="diag_logs_filter_summary.php">Summary View</a>
+			<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <?=gettext("Dynamic View");?> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
 		</div>
 		<div class="listtopic">
-			Last <?php echo $nentries; ?> records;   Pause:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
+			<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause");?>:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
 		</div>
 		<div id="log">
 			<div class="log-header">
-                                <span class="log-action">Act</span>
-                                <span class="log-time">Time</span>
-                                <span class="log-interface">If</span>
-                                <span class="log-source">Source</span>
-                                <span class="log-destination">Destination</span>
-                                <span class="log-protocol">Proto</span>
+                                <span class="log-action"><?=gettext("Act");?></span>
+                                <span class="log-time"><?=gettext("Time");?></span>
+                                <span class="log-interface"><?=gettext("If");?></span>
+                                <span class="log-source"><?=gettext("Source");?></span>
+                                <span class="log-destination"><?=gettext("Destination");?></span>
+                                <span class="log-protocol"><?=gettext("Proto");?></span>
 			</div>
 			<?php $counter=0; foreach ($filterlog as $filterent): ?>
 			<div class="log-entry"<?php echo is_first_row($counter, count($filterlog)); ?>>

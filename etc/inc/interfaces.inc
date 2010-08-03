@@ -2535,18 +2535,10 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                                         return $vip['interface'];
                         }
                 }
-        } else if (stristr($interface, "carp")) {
-                $index = intval(substr($interface, 4));
-                foreach ($config['virtualip']['vip'] as $counter => $vip) {
-                        if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-                                if ($index == $counter)
-                                        return $vip['interface'];
-                        }
-                }
         }
 
         /* XXX: For speed reasons reference directly the interface array */
-	$ifdescrs = $config['interfaces'];
+	$ifdescrs =& $config['interfaces'];
         //$ifdescrs = get_configured_interface_list(false, true);
 
         foreach ($ifdescrs as $if => $ifname) {
@@ -2556,7 +2548,6 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if (get_real_interface($if) == $interface)
                         return $if;
 
-                /* XXX: ermal - The 3 lines below are totally bogus code. */
                 $int = interface_translate_type_to_real($if);
                 if ($int == $interface)
                         return $ifname;

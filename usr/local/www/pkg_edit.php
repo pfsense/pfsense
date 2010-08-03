@@ -165,6 +165,8 @@ if ($_POST) {
 	if (!$input_errors) {
 		$pkgarr = array();
 		foreach ($pkg['fields']['field'] as $fields) {
+			if($fields['type'] == "sorting")
+				continue;
 			if($fields['type'] == "listtopic")
 				continue;
 			if($fields['type'] == "rowhelper") {
@@ -371,6 +373,8 @@ if ($pkg['tabs'] <> "") {
   $savevalue = gettext("Save");
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { 
+		if ($pkga['type'] == "sorting") 
+			continue;
 
 		if ($pkga['type'] == "listtopic") {
 			echo "<td>&nbsp;</td>";

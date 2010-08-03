@@ -72,7 +72,7 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 	$config['dhcpd'][$if]['staticmap'] = array();
 }
 
-$static_map_enabled=isset($config['dhcpd'][$if]['staticarp']);
+$static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
@@ -123,8 +123,8 @@ if ($_POST) {
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = "A valid MAC address must be specified.";
 	}
-	if($static_map_enabled && !$_POST['ipaddr']) {
-		$input_errors[] = "Static map is enabled.  You must specify an IP address.";
+	if($static_arp_enabled && !$_POST['ipaddr']) {
+		$input_errors[] = "Static ARP is enabled.  You must specify an IP address.";
 	}
 	
 	/* check for overlaps */

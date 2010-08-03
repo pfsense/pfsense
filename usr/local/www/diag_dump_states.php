@@ -50,7 +50,7 @@ if($_GET['action']) {
 			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
 			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
 		} else {
-			echo "invalid input";
+			echo gettext("invalid input");
 		}
 		exit;
 	}
@@ -132,7 +132,7 @@ include("head.inc");
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td>Current state count: <?=$current_statecount?></td>
+					<td><?=gettext("Current state count");?>: <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression");?>:
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />

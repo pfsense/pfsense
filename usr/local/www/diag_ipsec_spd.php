@@ -46,7 +46,7 @@
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array("Status","IPsec","SPD");
+$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
 include("head.inc");
 
 /* delete any SP? */
@@ -69,10 +69,10 @@ $spd = ipsec_dump_spd();
 			<td>
 				<?php
 					$tab_array = array();
-					$tab_array[0] = array("Overview", false, "diag_ipsec.php");
-					$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
-					$tab_array[2] = array("SPD", true, "diag_ipsec_spd.php");
-					$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
+					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
+					$tab_array[1] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
+					$tab_array[2] = array(gettext("SPD"), true, "diag_ipsec_spd.php");
+					$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -83,11 +83,11 @@ $spd = ipsec_dump_spd();
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($spd)): ?>
 						<tr>
-							<td nowrap class="listhdrr">Source</td>
-							<td nowrap class="listhdrr">Destination</td>
-							<td nowrap class="listhdrr">Direction</td>
-							<td nowrap class="listhdrr">Protocol</td>
-							<td nowrap class="listhdrr">Tunnel endpoints</td>
+							<td nowrap class="listhdrr"><?= gettext("Source"); ?></td>
+							<td nowrap class="listhdrr"><?= gettext("Destination"); ?></td>
+							<td nowrap class="listhdrr"><?= gettext("Direction"); ?></td>
+							<td nowrap class="listhdrr"><?= gettext("Protocol"); ?></td>
+							<td nowrap class="listhdrr"><?= gettext("Tunnel endpoints"); ?></td>
 							<td nowrap class="list"></td>
 						</tr>
 						<?php foreach ($spd as $sp): ?>
@@ -105,7 +105,7 @@ $spd = ipsec_dump_spd();
 									$args .= "&dstid=".rawurlencode($sp['dstid']);
 									$args .= "&dir=".rawurlencode($sp['dir']);
 								?>
-								<a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')">
+								<a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('<?= gettext("Do you really want to delete this security policy?"); ?>')">
 									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
 								</a>
 							</td>
@@ -116,19 +116,19 @@ $spd = ipsec_dump_spd();
 					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
 						<tr>
 							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
-							<td>incoming (as seen by firewall)</td>
+							<td><?= gettext("incoming (as seen by firewall)"); ?></td>
 						</tr>
 						<tr>
 							<td colspan="5" height="4"></td>
 						</tr>
 						<tr>
 							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11"></td>
-							<td>outgoing (as seen by firewall)</td>
+							<td><?= gettext("outgoing (as seen by firewall)"); ?></td>
 						</tr>
 						<?php else: ?>
 						<tr>
 							<td>
-								<p><strong>No IPsec security policies.</strong></p>
+								<p><strong><?= gettext("No IPsec security policies."); ?></strong></p>
 							</td>
 						</tr>
 						<?php endif; ?>
@@ -140,8 +140,8 @@ $spd = ipsec_dump_spd();
 
 <p>
 <span class="vexpl">
-<span class="red"><strong>Note:<br></strong></span>
-You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
+<span class="red"><strong><?= gettext("Note"); ?>:<br></strong></span>
+<?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here"); ?></a>.
 </span>
 
 <?php include("fend.inc"); ?>

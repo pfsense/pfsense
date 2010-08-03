@@ -41,7 +41,7 @@
 ##|*MATCH=diag_overload_tables.php*
 ##|-PRIV
 
-$pgtitle = array("Diagnostics", "Overload tables");
+$pgtitle = array(gettext("Diagnostics"), gettext("Overload tables"));
 
 require_once("guiconfig.inc");
 
@@ -94,7 +94,7 @@ include("fbegin.inc");
 	}
 </script>
 	
-Table: 
+<?=gettext("Table");?>: 
 <select id='type' onChange='method_change($F("type"));' name='type'>
 	<?php foreach ($tables as $table) {
 		echo "<option name='{$table}' value='{$table}'";
@@ -109,7 +109,7 @@ Table:
 
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="listhdrr">IP Address</td>
+		<td class="listhdrr"><?=gettext("IP Address");?></td>
 	</tr>
 <?php $count = 0; foreach($entries as $entryA): ?>
 	<?php $entry = trim($entryA); ?>
@@ -126,14 +126,14 @@ Table:
 <?php $count++; endforeach; ?>
 <?php
 	if($count == 0)
-		echo "<tr><td>No entries exist in this table.</td></tr>";
+		echo "<tr><td>" . gettext("No entries exist in this table.") . "</td></tr>";
 ?>
 
 </table>
 
 <?php
 	if($count > 0)
-		echo "<p/>Delete <a href='diag_overload_tables.php?deleteall=true&type={$tablename}'>all</a> entries in this table."
+		echo "<p/>" . gettext("Delete") . " <a href='diag_overload_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
 
 ?>
 

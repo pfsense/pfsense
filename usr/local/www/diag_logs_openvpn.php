@@ -42,7 +42,7 @@
 ##|*MATCH=diag_logs_openvpn.php*
 ##|-PRIV
 
-$pgtitle = array("Status","System logs","OpenVPN");
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("OpenVPN"));
 
 require("guiconfig.inc");
 require_once("vpn.inc");
@@ -66,17 +66,17 @@ include("head.inc");
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", false, "diag_logs.php");
-	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", true, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
+	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
+	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
+	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
+	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
+	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
+	$tab_array[] = array(gettext("OpenVPN"), true, "diag_logs_openvpn.php");
+	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   		</td>
@@ -86,7 +86,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> OpenVPN log entries</td>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s OpenVPN log entries"),$nentries)?></td>
 		  		</tr>
 				<?php dump_clog($openvpn_logfile, $nentries); ?>
 				<tr>

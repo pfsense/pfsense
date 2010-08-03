@@ -51,11 +51,11 @@ if ($_POST) {
 		filter_flush_state_table();
 		if ($savemsg)
 			$savemsg .= " ";
-		$savemsg .= "The state table has been flushed successfully.";
+		$savemsg .= gettext("The state table has been flushed successfully.");
 	}
 }
 
-$pgtitle = array("Diagnostics","Reset state");
+$pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
 include("head.inc");
 
 ?>
@@ -68,8 +68,8 @@ include("head.inc");
 	<tr><td>
 	<?php
 		$tab_array = array();
-		$tab_array[0] = array("States", false, "diag_dump_states.php");
-		$tab_array[1] = array("Reset States", true, "diag_resetstate.php");
+		$tab_array[0] = array(gettext("States"), false, "diag_dump_states.php");
+		$tab_array[1] = array(gettext("Reset States"), true, "diag_resetstate.php");
 		display_top_tabs($tab_array);
 	?>
 	</td></tr>
@@ -80,27 +80,27 @@ include("head.inc");
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable"> <p>
                       <input name="statetable" type="checkbox" id="statetable" value="yes" checked>
-                      <strong>Firewall state table</strong><br>
+                      <strong><?= gettext("Firewall state table"); ?></strong><br>
                       <span class="vexpl"><br>
-                      Resetting the state tables will remove all entries from
-                      the corresponding tables. This means that all open connections
-                      will be broken and will have to be re-established. This
-                      may be necessary after making substantial changes to the
-                      firewall and/or NAT rules, especially if there are IP protocol
-                      mappings (e.g. for PPTP or IPv6) with open connections.<br>
+                      <?=gettext("Resetting the state tables will remove all entries from " .
+                      "the corresponding tables. This means that all open connections " .
+                      "will be broken and will have to be re-established. This " . 
+                      "may be necessary after making substantial changes to the " .
+                      "firewall and/or NAT rules, especially if there are IP protocol " .
+                      "mappings (e.g. for PPTP or IPv6) with open connections."); ?><br>
                       <br>
-                      </span><span class="vexpl">The firewall will normally leave
-                      the state tables intact when changing rules.<br>
+                      </span><span class="vexpl"><?=gettext("The firewall will normally leave " .
+                      "the state tables intact when changing rules."); ?><br>
                       <br>
-                      NOTE: If you reset the firewall state table, the browser
-                      session may appear to be hung after clicking &quot;Reset&quot;.
-                      Simply refresh the page to continue.</span></p>
+                      <?=gettext("NOTE: If you reset the firewall state table, the browser " .
+                      "session may appear to be hung after clicking &quot;Reset&quot;. " .
+                      "Simply refresh the page to continue."); ?></span></p>
                     </td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Reset">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Reset"); ?>">
                   </td>
                 </tr>
               </table>

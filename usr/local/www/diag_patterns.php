@@ -40,13 +40,13 @@
 require("guiconfig.inc");
 
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
-if (($_POST['submit'] == "Upload") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+if (($_POST['submit'] == gettext("Upload")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	if(fileExtension($_FILES['ulfile']['name'])) {
 		move_uploaded_file($_FILES['ulfile']['tmp_name'], "/usr/local/share/protocols/" . $_FILES['ulfile']['name']);
-		$ulmsg = "Uploaded file to /usr/local/share/protocols/" . htmlentities($_FILES['ulfile']['name']);
+		$ulmsg = gettext("Uploaded file to") . " /usr/local/share/protocols/" . htmlentities($_FILES['ulfile']['name']);
 	}
 	else
-		$ulmsg = "Warning: You must upload a file with .pat extension.";
+		$ulmsg = gettext("Warning: You must upload a file with .pat extension.");
 }
 
 //Check if file has correct extension (.pat)
@@ -55,7 +55,7 @@ function fileExtension($nameFile) {
 	return ($format == ".pat");	
 }
 
-$pgtitle = array("Diagnostics","Add layer7 pattern");
+$pgtitle = array(gettext("Diagnostics"), gettext("Add layer7 pattern"));
 include("head.inc");
 ?>
 
@@ -95,24 +95,24 @@ pre {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p><strong>You can upload new layer7 patterns to your system!</strong></p>
+<p><strong><?=gettext("You can upload new layer7 patterns to your system!");?></strong></p>
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <div id="niftyOutter">
 <form action="diag_patterns.php" method="POST" enctype="multipart/form-data" name="frmPattern">
   <table>
 	
   <tr>
-    <td colspan="2" valign="top" class="vnsepcell">Upload</td>
+    <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Upload");?></td>
   </tr>    
     <tr>
-      <td align="right">File to upload:</td>
+      <td align="right"><?=gettext("File to upload");?>:</td>
       <td valign="top" class="label">
 	<input name="ulfile" type="file" class="formfld file" id="ulfile">
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">	
-        <input name="submit" type="submit"  class="button" id="upload" value="Upload"></td>
+	<input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload");?>"></td>
     </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>

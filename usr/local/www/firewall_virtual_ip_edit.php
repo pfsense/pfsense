@@ -101,20 +101,20 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "mode");
-	$reqdfieldsn = explode(",", "Type");
+	$reqdfieldsn = array(gettext("Type"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet'])))
-		$input_errors[] = "A valid IP address must be specified.";
+		$input_errors[] = gettext("A valid IP address must be specified.");
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr)
 		if ($_POST['subnet'] == get_interface_ip($natif))
-			$input_errors[] = "The {$natdescr} IP address may not be used in a virtual entry.";
+			$input_errors[] = sprintf(gettext("The %s IP address may not be used in a virtual entry."),$natdescr);
 
 	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
-	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IPs.";
+	 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");
 
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {
@@ -122,7 +122,7 @@ if ($_POST) {
 			continue;
 
 		if (isset($_POST['subnet']) && $_POST['subnet'] == $vipent['subnet']) {
-			$input_errors[] = "There is already a virtual IP entry for the specified IP address.";
+			$input_errors[] = gettext("There is already a virtual IP entry for the specified IP address.");
 			break;
 		}
 	}
@@ -135,19 +135,19 @@ if ($_POST) {
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
 			if($vip['vhid'] == $_POST['vhid'] and $idtracker <> $id)
-				$input_errors[] = "VHID {$_POST['vhid']} is already in use.  Pick a unique number.";
+				$input_errors[] = sprintf(gettext("VHID %s is already in use.  Pick a unique number."),$_POST['vhid']);
 			$idtracker++;
 		}
 		if($_POST['password'] == "")
-			$input_errors[] = "You must specify a CARP password that is shared between the two VHID members.";
+			$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
 
 		$parent_ip = get_interface_ip($_POST['interface']);
 		$parent_sn = get_interface_subnet($_POST['interface']);
 		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an IP alias in this subnet on this interface.";
+			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		} else if ($parent_sn != $_POST['subnet_bits'])
-			$input_errors[] = "Subnet bits needs to be the same as the parent interface.";
+			$input_errors[] = gettext("Subnet bits needs to be the same as the parent interface.");
 
 		if ($a_vip[$id]['vhid'] != $_POST['vhid'])
 			interface_vip_bring_down($a_vip[$id]);
@@ -229,7 +229,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","Virtual IP Address","Edit");
+$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Address"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -248,9 +248,9 @@ function get_radio_value(obj)
 }
 function enable_change(enable_over) {
 		var note = document.getElementById("typenote");
-		var carpnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
-		var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
-		var ipaliasnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
+		var carpnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
+		var proxyarpnote = document.createTextNode('<?=gettext("This is a CIDR block of proxy ARP addresses.");?>');
+		var ipaliasnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
@@ -338,19 +338,19 @@ function typesel_change() {
             <form action="firewall_virtual_ip_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit Virtual IP</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Virtual IP");?></td>
 				</tr>	
                 <tr>
-		  		  <td width="22%" valign="top" class="vncellreq">Type</td>
+		  		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Type");?></td>
                   <td width="78%" class="vtable">
                     <input name="mode" type="radio" onclick="enable_change(false)" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> Proxy ARP
+					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
-					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
+					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
-					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other
+					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
-					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> IP Alias
+					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> <?=gettext("IP Alias");?>
 <?php
 /*
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carpdev-dhcp"
@@ -361,7 +361,7 @@ function typesel_change() {
 				  </td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq">Interface</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
 					<?php 
@@ -375,22 +375,22 @@ function typesel_change() {
 				  </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">IP Address(es)</td>
+                  <td valign="top" class="vncellreq"><?=gettext("IP Address(es)");?></td>
                   <td class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td>Type:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
                         <td><select name="type" class="formselect" onChange="typesel_change()">
                             <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected"; ?>>
-                            Single address</option>
+                            <?=gettext("Single address");?></option>
                             <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['subnet'])) echo "selected"; ?>>
-                            Network</option>
+                            <?=gettext("Network");?></option>
                             <!-- XXX: Billm, don't let anyone choose this until NAT configuration screens are ready for it <option value="range" <?php if ($pconfig['range']) echo "selected"; ?>>
                             Range</option> -->
                           </select></td>
                       </tr>
                       <tr>
-                        <td>Address:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
                         <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 32; $i >= 1; $i--): ?>
@@ -416,13 +416,13 @@ function typesel_change() {
                   </td>
                 </tr>
 				<tr valign="top">
-				  <td width="22%" class="vncellreq">Virtual IP Password</td>
+				  <td width="22%" class="vncellreq"><?=gettext("Virtual IP Password");?></td>
 				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>">
-					<br>Enter the VHID group password.
+					<br><?=gettext("Enter the VHID group password.");?>
 				  </td>
 				</tr>
 				<tr valign="top">
-				  <td width="22%" class="vncellreq">VHID Group</td>
+				  <td width="22%" class="vncellreq"><?=gettext("VHID Group");?></td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
                             <?php for ($i = 1; $i <= 254; $i++): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected"; ?>>
@@ -430,11 +430,11 @@ function typesel_change() {
                       </option>
                             <?php endfor; ?>
                       </select>
-					<br>Enter the VHID group that the machines will share
+					<br><?=gettext("Enter the VHID group that the machines will share");?>
 				  </td>
 				</tr>
 				<tr valign="top">
-				  <td width="22%" class="vncellreq">Advertising Frequency</td>
+				  <td width="22%" class="vncellreq"><?=gettext("Advertising Frequency");?></td>
 				  <td class="vtable"><select id='advskew' name='advskew'>
                             <?php for ($i = 0; $i <= 254; $i++): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected"; ?>>
@@ -442,19 +442,19 @@ function typesel_change() {
                       </option>
                             <?php endfor; ?>
                       </select>
-					<br>The frequency that this machine will advertise.  0 = master.   Anything above 0 designates a backup.
+					<br><?=gettext("The frequency that this machine will advertise.  0 = master.   Anything above 0 designates a backup.");?>
 				  </td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_vip[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
@@ -465,10 +465,10 @@ function typesel_change() {
 				      <p>
 				      	<span class="vexpl">
 				      		<span class="red">
-				      			<strong>Note:<br></strong>
+				      			<b><?=gettext("Note");?>:<br></b>
 				      		</span>&nbsp;&nbsp;
-				      		ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.
-				      		<p>&nbsp;&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP FAQ</A>.
+				      		<?=gettext("ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.");?>
+				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></A>.
 						</span>
 					  </p>
 				  </td>

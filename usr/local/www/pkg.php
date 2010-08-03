@@ -154,7 +154,7 @@ if ($pkg['tabs'] <> "") {
 ?>
 <script>
 	function setFilter(filtertext) {
-		$('pkg_filter').value = '^' + filtertext + '.*$';
+		$('pkg_filter').value = filtertext;
 		document.pkgform.submit();
 	}
 </script>

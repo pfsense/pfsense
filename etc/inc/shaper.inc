@@ -1235,7 +1235,6 @@ class hfsc_queue extends priq_queue {
 	/*
 	 * HFSC can have nested queues.
 	 */
-
 	function CanHaveChildren() {
 		return true;
 	}
@@ -1603,6 +1602,10 @@ class hfsc_queue extends priq_queue {
 				$this->SetL_m1($cflink['linkshare1']);
                                 $this->SetL_d($cflink['linkshare2']);
 				$this->SetLinkshare();
+			} else {
+				$this->SetL_m1("");
+                                $this->SetL_d("");
+				$this->DisableLinkshare();
 			}
 			if (!empty($cflink['linkshare3'])) {
                                 $this->SetL_m2($cflink['linkshare3']);
@@ -1615,6 +1618,10 @@ class hfsc_queue extends priq_queue {
                                 $this->SetR_m1($cflink['realtime1']);
                                 $this->SetR_d($cflink['realtime2']);
 				$this->SetRealtime();
+			} else {
+                                $this->SetR_m1("");
+                                $this->SetR_d("");
+				$this->DisableRealtime();
 			}
                         if (!empty($cflink['realtime3'])) {
                                 $this->SetR_m2($cflink['realtime3']);
@@ -1627,6 +1634,10 @@ class hfsc_queue extends priq_queue {
                                 $this->SetU_m1($cflink['upperlimit1']);
                                 $this->SetU_d($cflink['upperlimit2']);
 				$this->SetUpperlimit();
+			} else {
+                                $this->SetU_m1("");
+                                $this->SetU_d("");
+				$this->DisableUpperlimit();
 			}
                         if (!empty($cflink['upperlimit3'])) {
                                 $this->SetU_m2($cflink['upperlimit3']);
@@ -2169,6 +2180,8 @@ class cbq_queue extends priq_queue {
 		parent::ReadConfig($q);
 		if (!empty($q['borrow']))
 			$this->SetBorrow("on");
+		else
+			$this->SetBorrow("");
 	}
 		
 	function build_javascript() {
@@ -2443,8 +2456,12 @@ class fairq_queue extends priq_queue {
 		parent::ReadConfig($q);
 		if (!empty($q['buckets']))
 			$this->SetBuckets($q['buckets']);
+		else
+			$this->SetBuckets("");
 		if (!empty($q['hogs']) && is_valid_shaperbw($q['hogs']))
 			$this->SetHogs($q['hogs']);
+		else
+			$this->SetHogs("");
 	}
 		
 	function build_javascript() {

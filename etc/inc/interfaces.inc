@@ -2573,10 +2573,10 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                                 $ifdesc = "L2TP";
                                 break;
                 case "pptp":
-                                $ifdesc = "pptp";
+                                $ifdesc = "PPTP";
                                 break;
                 case "pppoe":
-                                $ifdesc = "pppoe";
+                                $ifdesc = "PPPoE";
                                 break;
                 case "openvpn":
                                 $ifdesc = "OpenVPN";

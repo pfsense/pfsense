@@ -74,8 +74,10 @@ function update_div_rows(data) {
 	var isIE = navigator.appName.indexOf('Microsoft') != -1;
 	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 	var isOpera = navigator.userAgent.indexOf('Opera') != -1;
-	var rulestable = document.getElementById('log');
-	var rows = rulestable.getElementsByTagName('div');
+	var rows = $$('log-entry-mini');
+	if (rows.length == 0) {
+		rows = $$('log-entry');
+	}
 	var showanim = 1;
 	if (isIE) {
 		showanim = 0;

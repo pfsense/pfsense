@@ -180,6 +180,8 @@
 		<!-- <shellcmd></shellcmd> -->
 		<!-- <earlyshellcmd></earlyshellcmd> -->
 		<!-- <harddiskstandby></harddiskstandby> -->
+		<disablesegmentationoffloading/>
+		<disablelargereceiveoffloading/>
 	</system>
 	<interfaces>
 		<wan>

@@ -216,7 +216,7 @@ if ($pkg['tabs'] <> "") {
 				<tr>
 <?php
 				if($display_maximum_rows) {
-					$totalpages = round((count($evaledvar) / $display_maximum_rows), 0);
+					$totalpages = ceil(round((count($evaledvar) / $display_maximum_rows),9));
 					$page = 1;
 					$tmpcount = 0;
 					$tmppp = 0;
@@ -230,7 +230,6 @@ if ($pkg['tabs'] <> "") {
 						$tmpcount++;
 						$tmppp++;
 					}
-					$totalpages++;
 					echo "<tr><td colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
 					echo "<table width='100%'>";
 					echo "<tr>";

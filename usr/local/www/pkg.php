@@ -227,7 +227,8 @@ if ($pkg['tabs'] <> "") {
 						$tmppp++;
 					}
 					$totalpages++;
-					echo "<tr><td colspan='2'><b>Displaying page $page of $totalpages</b></td></tr>";
+					if(!$_REQUEST['pkg_filter'])
+						echo "<tr><td colspan='2'><b>Displaying page $page of $totalpages</b></td></tr>";
 				}
 				$cols = 0;
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {

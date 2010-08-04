@@ -203,7 +203,7 @@ function enable_hardware_offloading($interface) {
 	if(stristr($interface, "vlan")) 
 		return;
 
-	if($config['system']['disablechecksumoffloading']) {
+	if(isset($config['system']['disablechecksumoffloading'])) {
 		if (isset($options['encaps']['txcsum']))
 			pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
 		if (isset($options['encaps']['rxcsum']))
@@ -215,7 +215,7 @@ function enable_hardware_offloading($interface) {
 			pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
 	}
 
-	if($config['system']['disablesegmentationoffloading']) {
+	if(isset($config['system']['disablesegmentationoffloading'])) {
 		if (isset($options['encaps']['tso4']))
 			pfSense_interface_capabilities($interface, -IFCAP_TSO);
 		if (isset($options['encaps']['tso6']))
@@ -227,7 +227,7 @@ function enable_hardware_offloading($interface) {
 			pfSense_interface_capabilities($interface, IFCAP_TSO);
 	}
 
-	if($config['system']['disablelargereceiveoffloading']) {
+	if(isset($config['system']['disablelargereceiveoffloading'])) {
 		if (isset($options['encaps']['lro']))
 			pfSense_interface_capabilities($interface, -IFCAP_LRO);
 	} else {

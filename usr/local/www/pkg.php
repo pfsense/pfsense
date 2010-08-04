@@ -364,6 +364,7 @@ if ($pkg['tabs'] <> "") {
 							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&display_maximum_rows={$display_maximum_rows}'>";
 						$final_footer .=  "<font size='2'>Next page >></a>";	
 						$final_footer .=  "</td></tr></table></td></tr>";
+						$i = count($evaledvar);
 						break;
 					}
 				}

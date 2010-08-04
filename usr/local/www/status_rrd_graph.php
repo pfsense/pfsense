@@ -192,10 +192,10 @@ foreach($databases as $database) {
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
 
-$styles = array('inverse' => 'Inverse',
-		'absolute' => 'Absolute');
+$styles = array('inverse' => gettext('Inverse'),
+		'absolute' => gettext('Absolute'));
 $graphs = array("day", "week", "month", "quarter", "year", "4year");
-$periods = array("current" => "Current Period", "previous" => "Previous Period");
+$periods = array("current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 include("head.inc");

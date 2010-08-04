@@ -72,6 +72,10 @@ $title	      = $pkg['title'];
 if($_REQUEST['startdisplayingat']) 
 	$startdisplayingat = $_REQUEST['startdisplayingat'];
 
+if($_REQUEST['display_maximum_rows']) 
+	if($_REQUEST['display_maximum_rows'])
+		$display_maximum_rows = $_REQUEST['display_maximum_rows'];
+
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($_GET['act'] == "del") {
@@ -177,9 +181,9 @@ if ($pkg['tabs'] <> "") {
 						if($field['type'] == "sorting") {
 							if(isset($field['include_filtering_inputbox'])) 
 								$include_filtering_inputbox = true;
-							if($field['display_maximum_rows']) {
-								$display_maximum_rows = $field['display_maximum_rows'];
-							}
+							if($display_maximum_rows < 1) 
+								if($field['display_maximum_rows']) 
+									$display_maximum_rows = $field['display_maximum_rows'];
 							echo "<tr><td class='listhdrr' colspan='$colspan'><center>";
 							echo "Filter by: ";
 							$isfirst = true;
@@ -227,8 +231,24 @@ if ($pkg['tabs'] <> "") {
 						$tmppp++;
 					}
 					$totalpages++;
-					if(!$_REQUEST['pkg_filter'])
-						echo "<tr><td colspan='2'><b>Displaying page $page of $totalpages</b></td></tr>";
+					if(!$_REQUEST['pkg_filter']) {
+						echo "<tr><td colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
+						echo "<table width='100%'>";
+						echo "<tr>";
+						echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
+						echo "<td align='right'>Rows per page: <select onChange='document.pkgform.submit();' name='display_maximum_rows'>";
+						for($x=0; $x<250; $x++) {
+							if($x == $display_maximum_rows)
+								$SELECTED = "SELECTED";
+							else 
+								$SELECTED = "";
+							echo "<option value='$x' $SELECTED>$x</option>\n";
+							$x=$x+9;
+						}
+						echo "</select></td></tr>";
+						echo "</table>";
+						echo "</td></tr>";
+					}
 				}
 				$cols = 0;
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
@@ -320,7 +340,7 @@ if ($pkg['tabs'] <> "") {
 				echo "</tr>\n";
 				// Handle pagination and display_maximum_rows
 				if($display_maximum_rows) {
-					if($pagination_counter == $display_maximum_rows or 
+					if($pagination_counter == ($display_maximum_rows-1) or 
 					   $i ==  (count($evaledvar)-1)) {
 						$colcount = count($pkg['adddeleteeditpagefields']['columnitem']);
 						$final_footer = "";

@@ -340,6 +340,7 @@ if ($pkg['tabs'] <> "") {
 						else 
 							$endingrecord = $tmppp + $display_maximum_rows;
 						$final_footer .=  "</td><td align='center'>";
+						$tmppp++;
 						$final_footer .=  "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
 						$final_footer .=  "</td><td align='right'>&nbsp;";
 						if(($i+1) < count($evaledvar))

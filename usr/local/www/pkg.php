@@ -346,10 +346,10 @@ if ($pkg['tabs'] <> "") {
 						$final_footer .=  "<td align='left'>";
 						$startingat = $startdisplayingat - $display_maximum_rows;
 						if($startingat > -1) {
-							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat={$startingat}'>";
+							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat={$startingat}&display_maximum_rows={$display_maximum_rows}'>";
 						} else {
 							if($startingnat > 1) 
-								$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=0'>";
+								$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=0&display_maximum_rows={$display_maximum_rows}'>";
 						}
 						$final_footer .=  "<font size='2'><< Previous page</a>";
 						if($tmppp + $display_maximum_rows > count($evaledvar)) 
@@ -361,7 +361,7 @@ if ($pkg['tabs'] <> "") {
 						$final_footer .=  "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
 						$final_footer .=  "</td><td align='right'>&nbsp;";
 						if(($i+1) < count($evaledvar))
-							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "'>";
+							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&display_maximum_rows={$display_maximum_rows}'>";
 						$final_footer .=  "<font size='2'>Next page >></a>";	
 						$final_footer .=  "</td></tr></table></td></tr>";
 						break;

@@ -212,6 +212,7 @@ $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
+$pconfig['mss'] = $wancfg['mss'];
 
 /* Wireless interface? */
 if (isset($wancfg['wireless'])) {
@@ -434,6 +435,8 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) 
 		$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
+	if ($_POST['mss'] && ($_POST['mss'] < 576)) 
+		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = explode(" ", "mode ssid");
@@ -650,6 +653,11 @@ if ($_POST) {
 			unset($wancfg['mtu']);
 		} else {
 			$wancfg['mtu'] = $_POST['mtu'];
+		}
+		if (empty($_POST['mss'])) {
+			unset($wancfg['mss']);
+		} else {
+			$wancfg['mss'] = $_POST['mss'];
 		}
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
@@ -1052,10 +1060,18 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable"> 
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
+								<?=gettext("If you leave this field blank, " .
+								"an MTU of 1500 bytes will be assumed"); ?>.
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("MSS"); ?></td>
+							<td class="vtable"> 
+								<input name="mss" type="text" class="formfld unknown" id="mss" size="8" value="<?=htmlspecialchars($pconfig['mss']);?>">
+								<br>
 								<?=gettext("If you enter a value in this field, then MSS clamping for " .
 								"TCP connections to the value entered above minus 40 (TCP/IP " . 
-								"header size) will be in effect. If you leave this field blank, " .
-								"an MTU of 1500 bytes will be assumed"); ?>.
+								"header size) will be in effect."); ?>. 
 							</td>
 						</tr>
 						<tr>

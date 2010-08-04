@@ -404,8 +404,9 @@ function filter_generate_scrubing() {
 		if(isset($scrubcfg['virtual']))
 			continue;
 		/* set up MSS clamping */
-		if($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp")
-			$mssclamp = "max-mss " . (intval($scrubcfg['mtu'] - 40));
+		if($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
+			$scrubif['if'] != "l2tp")
+			$mssclamp = "max-mss " . (intval($scrubcfg['mss'] - 40));
 		else
 			$mssclamp = "";
 		/* configure no-df for linux nfs and others */
@@ -701,6 +702,7 @@ function filter_generate_optcfg_array() {
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
+		$oic['mss'] = empty($oc['mss']) ? '' : $oc['mss'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];

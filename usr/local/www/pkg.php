@@ -231,24 +231,22 @@ if ($pkg['tabs'] <> "") {
 						$tmppp++;
 					}
 					$totalpages++;
-					if(!$_REQUEST['pkg_filter']) {
-						echo "<tr><td colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
-						echo "<table width='100%'>";
-						echo "<tr>";
-						echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
-						echo "<td align='right'>Rows per page: <select onChange='document.pkgform.submit();' name='display_maximum_rows'>";
-						for($x=0; $x<250; $x++) {
-							if($x == $display_maximum_rows)
-								$SELECTED = "SELECTED";
-							else 
-								$SELECTED = "";
-							echo "<option value='$x' $SELECTED>$x</option>\n";
-							$x=$x+9;
-						}
-						echo "</select></td></tr>";
-						echo "</table>";
-						echo "</td></tr>";
+					echo "<tr><td colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
+					echo "<table width='100%'>";
+					echo "<tr>";
+					echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
+					echo "<td align='right'>Rows per page: <select onChange='document.pkgform.submit();' name='display_maximum_rows'>";
+					for($x=0; $x<250; $x++) {
+						if($x == $display_maximum_rows)
+							$SELECTED = "SELECTED";
+						else 
+							$SELECTED = "";
+						echo "<option value='$x' $SELECTED>$x</option>\n";
+						$x=$x+9;
 					}
+					echo "</select></td></tr>";
+					echo "</table>";
+					echo "</td></tr>";
 				}
 				$cols = 0;
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {

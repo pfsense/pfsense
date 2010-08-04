@@ -241,7 +241,7 @@ if ($pkg['tabs'] <> "") {
 						else 
 							$SELECTED = "";
 						echo "<option value='$x' $SELECTED>$x</option>\n";
-						$x=$x+9;
+						$x=$x+4;
 					}
 					echo "</select></td></tr>";
 					echo "</table>";

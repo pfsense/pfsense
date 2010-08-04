@@ -264,11 +264,8 @@ function handle_ajax($nentries, $tail = 50) {
 		/* We need this to always be in forward order for the AJAX update to work properly */
 		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
 		foreach($filterlog as $log_row) {
-			$time_regex = "";
-			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);
-			$row_time = strtotime($time_regex[1]);
+			$row_time = strtotime($log_row['time']);
 			$img = "<img border='0' src='" . find_action_image($log_row['act']) . "' alt={$log_row['act']} title={$log_row['act']} />";
-			//echo "{$time_regex[1]} - $row_time > $lastsawtime<p>";
 			if($row_time > $lastsawtime) {
 				if ($log_row['proto'] == "TCP")
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";

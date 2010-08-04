@@ -177,8 +177,9 @@ if ($pkg['tabs'] <> "") {
 						if($field['type'] == "sorting") {
 							if(isset($field['include_filtering_inputbox'])) 
 								$include_filtering_inputbox = true;
-							if($field['display_maximum_rows'])
+							if($field['display_maximum_rows']) {
 								$display_maximum_rows = $field['display_maximum_rows'];
+							}
 							echo "<tr><td class='listhdrr' colspan='$colspan'><center>";
 							echo "Filter by: ";
 							$isfirst = true;
@@ -210,6 +211,24 @@ if ($pkg['tabs'] <> "") {
 ?>
 				<tr>
 <?php
+				if($display_maximum_rows) {
+					$totalpages = round((count($evaledvar) / $display_maximum_rows), 0);
+					$page = 1;
+					$tmpcount = 0;
+					$tmppp = 0;
+				    foreach ($evaledvar as $ipa) {
+						if($tmpcount == $display_maximum_rows) {
+							$page++;
+							$tmpcount = 0;
+						}
+						if($tmppp == $startdisplayingat)
+						 	break;
+						$tmpcount++;
+						$tmppp++;
+					}
+					$totalpages++;
+					echo "<tr><td colspan='2'>Displaying page $page of $totalpages</td></tr>";
+				}
 				$cols = 0;
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
 				    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
@@ -300,22 +319,32 @@ if ($pkg['tabs'] <> "") {
 				echo "</tr>\n";
 				// Handle pagination and display_maximum_rows
 				if($display_maximum_rows) {
-					if($pagination_counter == $display_maximum_rows) {
-						$nbsp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						$nbsp .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						$nbsp .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						echo "<tr><td colspan='$colspan'><center>";
+					if($pagination_counter == $display_maximum_rows or 
+					   $i ==  (count($evaledvar)-1)) {
+						$colcount = count($pkg['adddeleteeditpagefields']['columnitem']);
+						$final_footer = "";
+						$final_footer .= "<tr><td colspan='$colcount'>";
+						$final_footer .=  "<table width='100%'><tr>";
+						$final_footer .=  "<td align='left'>";
 						$startingat = $startdisplayingat - $display_maximum_rows;
 						if($startingat > -1) {
-							echo "<font size='2'><a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat={$startingat}'><< Previous page</a>";
+							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat={$startingat}'>";
 						} else {
 							if($startingnat > 1) 
-								echo "<font size='2'><a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=0'><< Previous page</a>{$nbsp}";
+								$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=0'>";
 						}
-						echo "{$nbsp}Displaying {$pagination_counter}/" . count($evaledvar) . " records";
-						if($i < count($evaledvar)) 
-							echo "{$nbsp}<font size='2'><a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "'>Next page >></a>";
-						echo "</td></tr>";
+						$final_footer .=  "<font size='2'><< Previous page</a>";
+						if($tmppp + $display_maximum_rows > count($evaledvar)) 
+							$endingrecord = count($evaledvar);
+						else 
+							$endingrecord = $tmppp + $display_maximum_rows;
+						$final_footer .=  "</td><td align='center'>";
+						$final_footer .=  "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
+						$final_footer .=  "</td><td align='right'>&nbsp;";
+						if(($i+1) < count($evaledvar))
+							$final_footer .=  "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "'>";
+						$final_footer .=  "<font size='2'>Next page >></a>";	
+						$final_footer .=  "</td></tr></table></td></tr>";
 						break;
 					}
 				}
@@ -333,6 +362,7 @@ if ($pkg['tabs'] <> "") {
 						</table>
 					</td>
 				</tr>
+				<?=$final_footer?>
 		</table>
 	</td>
 </tr>

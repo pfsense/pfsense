@@ -79,6 +79,18 @@ if($argv[4] == "NOBACKUP")
 else 
 	$nobackup = false;
 
+// If the repository has been fetched before, build a list of its branches.
+if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch -r", $branch_list, $ret);
+	if($ret == 0 && is_array($branch_list)) {
+		foreach ($branch_list as $branch_item) {
+			$branch_item = substr(strrchr($branch_item, "/"), 1);
+			if (!isset($branches[$branch_item]))
+				$branches[$branch_item] = " ";
+		}
+	}
+}
+
 $found = false;
 foreach($branches as $branchname => $branchdesc) {
 	if($branchname == $branch) 

@@ -849,6 +849,14 @@ function echo_array($array,$return_me=false){
     }
 }
 
+/****f* pfsense-utils/display_top_tabs
+ * NAME
+ *   display_top_tabs - display tabs with rounded edges
+ * INPUTS
+ *   $text      - array of tabs
+ * RESULT
+ *   null
+ ******/
 function display_top_tabs(& $tab_array) {
         global $HTTP_SERVER_VARS;
         global $config;

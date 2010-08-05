@@ -223,8 +223,11 @@ if (isset($wancfg['wireless'])) {
 	if (!does_interface_exist($wlanif))
 		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
+	preg_match("/^(.*?)([0-9]*)$/", $wlanbaseif, $wlanbaseif_split);
 	$wl_modes = get_wireless_modes($if);
 	$wl_chaninfo = get_wireless_channel_info($if);
+	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
+	$wl_sysctl = get_sysctl(array("{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
 	$wl_regdomain_xml_attr = array();
 	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
 	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
@@ -1585,6 +1588,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above"); ?>.
 							</td>
 						</tr>
+						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])): ?>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>
 							<td class="vtable">
@@ -1594,6 +1598,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
 							</td>
 						</tr>
+						<?php endif; ?>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Regulatory settings"); ?></td>
 							<td class="vtable">

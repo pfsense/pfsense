@@ -52,7 +52,7 @@
 
 .newtabmenu li{float:left; margin-right:2px; text-align: center;}
 .newtabmenu a:link, .newtabmenu a:visited{
-	background:url(/images/new_tab_menu.png) right 45px;
+	background:url(images/new_tab_menu.png) right 45px;
 	color:#ffffff; /* noactive font */
 	display:block;
 	/* fix for IE6 */
@@ -65,7 +65,7 @@
 	text-decoration:none;
 }
 .newtabmenu a span{
-	background:url(/images/new_tab_menu.png) left 45px;
+	background:url(images/new_tab_menu.png) left 45px;
 	display:block;
 	/* fix for IE6 */
 	display: inline-block;
@@ -75,7 +75,7 @@
 	padding-left:7px;
 }
 .newtabmenu a:hover{
-	background:url(/images/new_tab_menu.png) right 23px;
+	background:url(images/new_tab_menu.png) right 23px;
 	display:block;
 	/* fix for IE6 */
 	display: inline-block;
@@ -83,7 +83,7 @@
 	color:#ffffff; /* hover over font */
 }
 .newtabmenu a:hover span{
-	background:url(/images/new_tab_menu.png) left 23px;
+	background:url(images/new_tab_menu.png) left 23px;
 	display:block;
 	/* fix for IE6 */
 	display: inline-block;
@@ -94,8 +94,8 @@
 /* 	ACTIVE ELEMENTS					*/
 .newtabmenu_active a:link, .newtabmenu_active a:visited, .newtabmenu_active a:visited, .newtabmenu_active a:hover{
 	color:#000000; /* active font */
-	background:url(/images/new_tab_menu.png) right 0 no-repeat;
+	background:url(images/new_tab_menu.png) right 0 no-repeat;
 } 
 .newtabmenu_active a span, .newtabmenu_active a:hover span{
-	background:url(/images/new_tab_menu.png) left 0 no-repeat;
+	background:url(images/new_tab_menu.png) left 0 no-repeat;
 }

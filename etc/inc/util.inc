@@ -1074,6 +1074,67 @@ function make_dirs($path, $mode = 0755) {
 }
 
 /*
+ * get_sysctl($names)
+ * Get values of sysctl OID's listed in $names (accepts an array or a single
+ * name) and return an array of key/value pairs set for those that exist
+ */
+function get_sysctl($names) {
+	if (empty($names))
+		return array();
+
+	if (is_array($names)) {
+		$name_list = array();
+		foreach ($names as $name) {
+			$name_list[] = escapeshellarg($name);
+		}
+	} else
+		$name_list = array(escapeshellarg($names));
+
+	exec("/sbin/sysctl -i " . implode(" ", $name_list), $output);
+	$values = array();
+	foreach ($output as $line) {
+		$line = explode(": ", $line, 2);
+		if (count($line) == 2)
+			$values[$line[0]] = $line[1];
+	}
+
+	return $values;
+}
+
+/*
+ * set_sysctl($value_list)
+ * Set sysctl OID's listed as key/value pairs and return
+ * an array with keys set for those that succeeded
+ */
+function set_sysctl($values) {
+	if (empty($values))
+		return array();
+
+	$value_list = array();
+	foreach ($values as $key => $value) {
+		$value_list[] = escapeshellarg($key) . "=" . escapeshellarg($value);
+	}
+
+	exec("/sbin/sysctl -i " . implode(" ", $value_list), $output, $success);
+
+	/* Retry individually if failed (one or more read-only) */
+	if ($success <> 0 && count($value_list) > 1) {
+		foreach ($value_list as $value) {
+			exec("/sbin/sysctl -i " . $value, $output);
+		}
+	}
+
+	$ret = array();
+	foreach ($output as $line) {
+		$line = explode(": ", $line, 2);
+		if (count($line) == 2)
+			$ret[$line[0]] = true;
+	}
+
+	return $ret;
+}
+
+/*
  *     get_memory()
  *     returns an array listing the amount of
  *     memory installed in the hardware

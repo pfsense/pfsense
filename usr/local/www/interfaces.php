@@ -227,7 +227,8 @@ if (isset($wancfg['wireless'])) {
 	$wl_modes = get_wireless_modes($if);
 	$wl_chaninfo = get_wireless_channel_info($if);
 	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
-	$wl_sysctl = get_sysctl(array("{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
+	$wl_sysctl = get_sysctl(array("{$wl_sysctl_prefix}.diversity", "{$wl_sysctl_prefix}.txantenna", "{$wl_sysctl_prefix}.rxantenna",
+	                              "{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
 	$wl_regdomain_xml_attr = array();
 	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
 	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
@@ -241,6 +242,9 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['ssid'] = $wancfg['wireless']['ssid'];
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
+	$pconfig['diversity'] = $wancfg['wireless']['diversity'];
+	$pconfig['txantenna'] = $wancfg['wireless']['txantenna'];
+	$pconfig['rxantenna'] = $wancfg['wireless']['rxantenna'];
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
 	$pconfig['regdomain'] = $wancfg['wireless']['regdomain'];
 	$pconfig['regcountry'] = $wancfg['wireless']['regcountry'];
@@ -721,6 +725,18 @@ function handle_wireless_post() {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
 		unset($config['wireless']['interfaces'][$wlanbaseif]);
+	if (isset($_POST['diversity']) && $_POST['diversity'] != "")
+		$wancfg['wireless']['diversity'] = $_POST['diversity'];
+	else if (isset($wancfg['wireless']['diversity']))
+		unset($wancfg['wireless']['diversity']);
+	if (isset($_POST['txantenna']) && $_POST['txantenna'] != "")
+		$wancfg['wireless']['txantenna'] = $_POST['txantenna'];
+	else if (isset($wancfg['wireless']['txantenna']))
+		unset($wancfg['wireless']['txantenna']);
+	if (isset($_POST['rxantenna']) && $_POST['rxantenna'] != "")
+		$wancfg['wireless']['rxantenna'] = $_POST['rxantenna'];
+	else if (isset($wancfg['wireless']['rxantenna']))
+		unset($wancfg['wireless']['rxantenna']);
 	if ($_POST['hidessid_enable'] == "yes")
 		$wancfg['wireless']['hidessid']['enable'] = true;
 	else if (isset($wancfg['wireless']['hidessid']['enable']))
@@ -1588,6 +1604,53 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above"); ?>.
 							</td>
 						</tr>
+						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("Antenna settings"); ?></td>
+							<td class="vtable">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])): ?>
+										<td>
+											<?=gettext("Diversity"); ?><br/>
+											<select name="diversity" class="formselect" id="diversity">
+												<option <? if (empty($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['diversity'] == '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
+												<option <? if ($pconfig['diversity'] == '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
+											</select>
+										</td>
+										<td>&nbsp;&nbsp</td>
+										<?php endif; ?>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])): ?>
+										<td>
+											<?=gettext("Transmit antenna"); ?><br/>
+											<select name="txantenna" class="formselect" id="txantenna">
+												<option <? if (empty($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+											</select>
+										</td>
+										<td>&nbsp;&nbsp</td>
+										<?php endif; ?>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
+										<td>
+											<?=gettext("Receive antenna"); ?><br/>
+											<select name="rxantenna" class="formselect" id="rxantenna">
+												<option <? if (empty($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+											</select>
+										</td>
+										<?php endif; ?>
+									</tr>
+								</table>
+								<br/>
+								<?=gettext("Note: The antenna numbers do not always match up with the labels on the card."); ?>
+							</td>
+						</tr>
+						<?php endif; ?>
 						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])): ?>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>

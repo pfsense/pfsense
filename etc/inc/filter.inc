@@ -1152,8 +1152,8 @@ function filter_nat_rules_generate() {
 	} else {
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status("Creating outbound NAT rules");
-		$tonathosts = "";
-		$numberofnathosts = 0;
+		$tonathosts = "self ";
+		$numberofnathosts = 1;
 
 		if(is_array($config['staticroutes']['route'])) {
 			foreach ($config['staticroutes']['route'] as $route) {

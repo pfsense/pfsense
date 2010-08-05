@@ -393,7 +393,7 @@ function filter_generate_scrubing() {
 	$scrubrules = "";
 
 	if (isset($config['system']['maxmss_enable'])) {
-		$maxmss = 1420;
+		$maxmss = 1400;
 		if (!empty($config['system']['maxmss']))
 			$maxmss = $config['system']['maxmss'];
 

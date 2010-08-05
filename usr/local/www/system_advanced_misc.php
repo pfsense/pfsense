@@ -254,12 +254,12 @@ function maxmss_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked"; ?> onClick="maxmss_checked(this)" />
-									<strong><?=gettext("Enable enforcing maximum mss on traffic through the IPSec VPN"); ?></strong>
+									<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
 									<br />
-									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1420"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled"; ?>>
+									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled"; ?>>
 									<br />
-									<?=gettext("Enforce the maximus segment size on TCP flows over IPSec. " .
-									"This helps overcome problems with PMTUD on IPSec VPN links."); ?>
+									<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
+									"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
 								</td>
 							</tr>
                                                         <tr>

@@ -817,7 +817,7 @@ include("head.inc");
 			</td>
 			</tr>
 		</table>
-		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>

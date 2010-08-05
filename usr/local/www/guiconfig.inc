@@ -861,12 +861,29 @@ function display_top_tabs(& $tab_array) {
         global $HTTP_SERVER_VARS;
         global $config;
         global $g;
-
+		global $tab_array_indent;
+		global $tab_array_space;
+		global $tab_array_char_limit;
+		
         /*  does the user have access to this tab?
          *  master user has access to everything.
          *  if the user does not have access, simply
          *  unset the tab item.
          */
+		 
+		/* empty string code */ 
+		if ($tab_array_indent == '')
+		{
+			$tab_array_indent = 0;
+		}
+		if ($tab_array_space == '')
+		{
+			$tab_array_space = 1;
+		}
+		if ($tab_array_char_limit == '')
+		{
+			$tab_array_char_limit = 82;
+		}
 
         $tab_temp = array ();
         foreach ($tab_array as $ta)
@@ -917,7 +934,7 @@ function display_top_tabs(& $tab_array) {
 
         // If the character count of the tab names is > 670
         // then show a select item dropdown menubox.
-        if($tabcharcount > 82) {
+         if($tabcharcount > $tab_array_char_limit) {
                 echo "Currently viewing: ";
                 echo "<select name='TabSelect' onchange='tabs_will_go(this)'>\n";
                 foreach ($tab_array as $ta) {
@@ -934,47 +951,21 @@ function display_top_tabs(& $tab_array) {
                 echo " function tabs_will_go(obj){ document.location = obj.value; }";
                 echo "</script>";
         }  else {
-                echo "<table cellpadding='0' cellspacing='0'>\n";
-                echo " <tr>\n";
+		//////>>>
+                echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
+                echo "<!-- Tabbed bar code-->\n";
+				echo "<ul class=\"newtabmenu\">\n";
                 $tabscounter = 0;
                 foreach ($tab_array as $ta) {
                         if ($ta[1] == true) {
-                                echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
+								echo "  <li class=\"newtabmenu_active\"><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
                         } else {
-                                echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+								echo "  <li><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
                         }
                         $tabscounter++;
                 }
-                echo "</tr>\n<tr>\n";
-                foreach ($tab_array as $ta) {
-                        if ($ta[1] == true) {
-                                echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-                                echo "&nbsp;&nbsp;&nbsp;";
-                                echo "<font size='-12'>&nbsp;</font></B></td>\n";
-                        } else {
-                                echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[
-2]}'>";
-                                echo "<font color='{$font_color}'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
-                                echo "<font size='-12'>&nbsp;</font></B></td>\n";
-                        }
-                }
-                echo "</tr>\n<tr>\n";
-                foreach ($tab_array as $ta) {
-                        if ($ta[1] == true) {
-                                echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
-                        } else {
-                                echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
-                        }
-                        $tabscounter++;
-                }
-                echo " </tr>\n";
-                echo "</table>\n";
-                echo "<script type=\"text/javascript\">";
-                echo "NiftyCheck();\n";
-                echo "Rounded(\"div#tabactive\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_active_bg}\",\"smooth\");\n";
-                for ($x = 0; $x < $tabscounter; $x++)
-                        echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_inactive_bg}\",\"smooth\");\n";
-                echo "</script>";
+                echo "</ul>\n</div>\n";
+		////////>>>>
         }
 }
 

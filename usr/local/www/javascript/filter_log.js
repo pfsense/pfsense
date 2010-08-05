@@ -74,9 +74,9 @@ function update_div_rows(data) {
 	var isIE = navigator.appName.indexOf('Microsoft') != -1;
 	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 	var isOpera = navigator.userAgent.indexOf('Opera') != -1;
-	var rows = $$('log-entry-mini');
+	var rows = $$('.log-entry-mini');
 	if (rows.length == 0) {
-		rows = $$('log-entry');
+		rows = $$('.log-entry');
 	}
 	var showanim = 1;
 	if (isIE) {
@@ -88,40 +88,24 @@ function update_div_rows(data) {
 		startat = 0;
 	}
 	data = data.slice(startat, data.length);
-	
+
 	for(var x=0; x<data.length; x++) {
-		var numrows = rows.length;
 		/*    if reverse logging is enabled we need to show the
 		 *    records in a reverse order with new items appearing
 		 *    on the top
 		 */
 		if(isReverse == false) {
-			for (var i = 2; i < numrows; i++) {
-				nextrecord = i + 1;
-				if(nextrecord < numrows)
-					rows[i].innerHTML = rows[nextrecord].innerHTML;
+			for (var i = 1; i < rows.length; i++) {
+				nextrecord = i - 1;
+				rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
 		} else {
-			for (var i = numrows; i > 0; i--) {
+			for (var i = rows.length - 2; i > 0; i--) {
 				nextrecord = i + 1;
-				if(nextrecord < numrows)
-					rows[nextrecord].innerHTML = rows[i].innerHTML;
+				rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
 		}
-		var item = document.getElementById('firstrow');
-		if(x == data.length-1) {
-			/* nothing */
-			showanim = false;
-		} else {
-			showanim = false;
-		}
-		if (showanim) {
-			item.style.display = 'none';
-			item.innerHTML = data[x];
-			new Effect.Appear(item);
-		} else {
-			item.innerHTML = data[x];
-		}
+		$('firstrow').update(data[x]);
 	}
 }
 function toggle_pause() {

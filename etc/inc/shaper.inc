@@ -333,6 +333,8 @@ class altq_root_queue {
 	function ReadConfig(&$conf) {
 		if (isset($conf['tbrconfig']))
 			$this->SetTbrConfig($conf['tbrconfig']);
+		else
+			$this->SetTbrConfig($conf['tbrconfig']);
 		$this->SetBandwidth($conf['bandwidth']);
 		if ($conf['bandwidthtype'] <> "")
 			$this->SetBwscale($conf['bandwidthtype']);
@@ -347,6 +349,8 @@ class altq_root_queue {
 		}
 		if (isset($conf['qlimit']) && $conf['qlimit'] <> "")
 			$this->SetQlimit($conf['qlimit']);
+		else
+			$this->SetQlimit("");
 		if (isset($conf['name']))
 			$this->SetQname($conf['name']);		
 		if (!empty($conf['enabled']))

@@ -1,5 +1,5 @@
 .rtop,.artop{display:block}
-.rtop *,.artop *{display:block;height:0px;overflow:hidden;font-size:1px}
+.rtop *,.artop *{display:block;height:1px;overflow:hidden;font-size:1px}
 .artop *{border-style: solid;border-width:0 0px}
 .r1,.rl1,.re1,.rel1{margin-left:5px}
 .r1,.rr1,.re1,.rer1{margin-right:5px}
@@ -17,5 +17,5 @@
 .re2,.rer2,.ra1,.rar1,.rx3,.rxr3,.rxs1,.rxsr1{border-right-width:2px}
 .rxl1,.rxl2,.rxl3,.rxl4,.rxsl1,.rxsl2,.ral1,.ral2,.ral3,.ral4,.rasl1,.rasl2{border-right-width:0}
 .rxr1,.rxr2,.rxr3,.rxr4,.rxsr1,.rxsr2,.rar1,.rar2,.rar3,.rar4,.rasr1,.rasr2{border-left-width:0}
-.r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:0px}
+.r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:2px}
 .rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}

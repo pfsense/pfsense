@@ -79,8 +79,6 @@ if($argv[4] == "NOBACKUP")
 else 
 	$nobackup = false;
 
-exec("mkdir -p /root/pfsense/$BRANCHTAG");
-
 $found = false;
 foreach($branches as $branchname => $branchdesc) {
 	if($branchname == $branch) 
@@ -103,6 +101,7 @@ if(!$found) {
 	}
 	if(!$found) {
 		echo "\nNo valid branch found.  Exiting.\n\n";
+		conf_mount_ro();
 		exit;
 	}
 }
@@ -125,11 +124,13 @@ if(!$command_split[2] && !$argv[3]) {
 if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	if(!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
+		conf_mount_ro();
 		exit();
 	}
 	echo "===> Restoring previous CVSSync backup... Please wait...\n";
 	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
+	conf_mount_ro();
 	exit();
 } else {
 	$nobackup = true; // do not backup embedded, livecd
@@ -145,7 +146,6 @@ if($nobackup == false) {
 }
 
 echo "===> Checking out $branch\n";
-exec("mkdir -p /root/pfsense/$branch");
 
 // Git commands for resetting to the specified branch
 if($branch == "build_commit") {
@@ -187,6 +187,7 @@ foreach($merge_repos as $merge_repo) {
 	if($ret <> 0) {
 		echo "\nMerge failed.  Aborting sync.\n\n";
 		run_cmds($git_cmd);
+		conf_mount_ro();
 		exit;
 	}
 }

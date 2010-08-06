@@ -749,21 +749,7 @@ function delete_package($pkg, $pkgid) {
 	$configfile = $pkg_info['configurationfile'];
 	if(empty($configfile)) 
 		return;
-	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "\nLoading package configuration $configfile... ";
-		update_output_window($static_output);
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
-		/*   if a require exists, include it.  this will
-		 *   show us where an error exists in a package
-		 *   instead of making us blindly guess
-		 */
-		if($pkg_config['include_file'] <> "") {
-			$static_output .= "\nLoading package instructions...\n";
-			update_output_window($static_output);
-			if (file_exists($pkg_config['include_file']))
-				require_once($pkg_config['include_file']);
-		}
-	}
+
 	$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";
 	update_output_window($static_output);
 	if (!empty($pkg))

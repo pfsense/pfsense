@@ -86,10 +86,11 @@ if ($_GET['act'] == "del") {
 	if ($a_nat[$_GET['id']]) {
 		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
 			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
+			mark_subsystem_dirty('filter');
 		}
 		unset($a_nat[$_GET['id']]);
 		write_config();
-		mark_subsystem_dirty('nat');
+		mark_subsystem_dirty('natconf');
 		header("Location: firewall_nat.php");
 		exit;
 	}

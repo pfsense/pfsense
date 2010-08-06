@@ -64,7 +64,7 @@ else
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
-$pconfig['tftpinterface'] = $config['system']['tftpinterface']; 
+$pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 
 if ($_POST) {
 
@@ -355,7 +355,7 @@ function update_description(itemnum) {
 										$ifdescs = get_configured_interface_with_descr();
 										foreach ($ifdescs as $ifent => $ifdesc):
 ?>
-											<option value="<?=$ifent;?>" <?php if (stristr($pconfig['tftpinterface'], $ifent)) echo "selected"; ?>><?=gettext($ifdesc);?></option>
+											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected"; ?>><?=gettext($ifdesc);?></option>
 <?php									endforeach; ?>
 									</select>
 									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>

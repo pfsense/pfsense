@@ -785,7 +785,7 @@ function delete_package_recursive($pkg) {
 	exec("/usr/sbin/pkg_info -r {$pkg} 2>&1", $info);
 	remove_freebsd_package($pkg);
 	$pkgdb = "";
-	exec("/bin/ls /var/db/pkg", $pkgdb);
+	exec("/bin/ls {$g['vardb_path']}/pkg", $pkgdb);
 	foreach($info as $line) {
 		$depend = trim(array_pop(explode(":", $line)));
 		if(in_array($depend, $pkgdb)) 

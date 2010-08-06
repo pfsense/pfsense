@@ -243,6 +243,9 @@ EOD;
 	killbypid("{$g['varrun_path']}/apinger.pid");
 	if (is_dir("{$g['tmp_path']}"))
 		chmod("{$g['tmp_path']}", 01777);
+	if (!is_dir("{$g['vardb_path']}/rrd")) {
+		mkdir("{$g['vardb_path']}/rrd", 0775);
+	}
 	if (is_dir("{$g['vardb_path']}/rrd"))
 		chown("{$g['vardb_path']}/rrd", "nobody");
 	/* start a new apinger process */

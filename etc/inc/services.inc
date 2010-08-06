@@ -84,6 +84,21 @@ function services_dhcpd_configure() {
 	fclose($fd);
 	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 
+	if ($g['booting']) {
+		if ($g['platform'] != "pfSense") {
+			/* restore the leases, if we have them */
+			if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
+				$dhcprestore = "";
+				$dhcpreturn = "";
+				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
+				$dhcprestore = implode(" ", $dhcprestore);
+				if($dhcpreturn <> 0) {
+					log_error("DHCP leases restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
+				}
+			}
+		}
+	}
+
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
 	$Iflist = get_configured_interface_list();

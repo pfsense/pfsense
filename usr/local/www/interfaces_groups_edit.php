@@ -98,8 +98,21 @@ if ($_POST) {
 		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
 
 			foreach ($config['filter']['rule'] as $ridx => $rule) {
-				if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
-					$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+				if (isset($rule['floating'])) {
+					$rule_ifs = explode(",", $rule['interface']);
+					$rule_changed = false;
+					foreach ($rule_ifs as $rule_if_id => $rule_if) {
+						if ($rule_if == $a_ifgroups[$id]['ifname']) {
+							$rule_ifs[$rule_if_id] = $_POST['ifname'];
+							$rule_changed = true;
+						}
+					}
+					if ($rule_changed)
+						$config['filter']['rule'][$ridx]['interface'] = implode(",", $rule_ifs);
+				} else {
+					if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
+						$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+				}
 			}
 			foreach ($config['nat']['rule'] as $ridx => $rule) {
 				if ($rule['interface'] == $a_ifgroups[$id]['ifname'])

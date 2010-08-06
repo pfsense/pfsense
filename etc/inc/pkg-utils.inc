@@ -695,6 +695,10 @@ function install_package_xml($pkg) {
 			$static_output .= "\tServices... ";
 			update_output_window($static_output);
 			foreach($pkg_config['service'] as $service) {
+				if(is_array($config['installedpackages']['service']))
+					foreach($config['installedpackages']['service'] as $aservice)
+						if($aservice['name'] == $service['name'])
+							continue 2;
 				$config['installedpackages']['service'][] = $service;
 			}
 			$static_output .= "done.\n";

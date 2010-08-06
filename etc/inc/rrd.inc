@@ -228,8 +228,8 @@ function enable_rrd_graphing() {
 		/* create directory if needed */
 		if (!is_dir($rrddbpath)) {
 			mkdir($rrddbpath, 0775);
-			chown($rrddbpath, "nobody");
 		}
+		chown($rrddbpath, "nobody");
 
 		if ($g['booting']) {
 			if ($g['platform'] != "pfSense") {
@@ -678,6 +678,11 @@ function enable_rrd_graphing() {
 	} else {
 		/* kill off traffic collectors */
 		kill_traffic_collector();
+	}
+
+	$databases = glob("{$rrddbpath}/*.rrd");
+	foreach($databases as $database) {
+		chown($database, "nobody");
 	}
 
 	if($g['booting']) 

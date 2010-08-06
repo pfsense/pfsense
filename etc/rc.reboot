@@ -16,6 +16,7 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	rm -rf /tmp/*
 else
 	/etc/rc.backup_rrd.sh
+	/etc/rc.backup_dhcpleases.sh
 fi
 
 sleep 1

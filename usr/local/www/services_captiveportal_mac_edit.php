@@ -73,6 +73,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['bw_up'] = $a_passthrumacs[$id]['bw_up'];
 	$pconfig['bw_down'] = $a_passthrumacs[$id]['bw_down'];
 	$pconfig['descr'] = $a_passthrumacs[$id]['descr'];
+	$pconfig['username'] = $a_passthrumacs[$id]['username'];
 }
 
 if ($_POST) {
@@ -113,6 +114,8 @@ if ($_POST) {
 			$mac['bw_up'] = $_POST['bw_up'];
 		if ($_POST['bw_down'])
 			$mac['bw_down'] = $_POST['bw_down'];
+		if ($_POST['username'])
+			$mac['username'] = $_POST['username'];
 		
 		$mac['descr'] = $_POST['descr'];
 
@@ -182,6 +185,9 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
                     <?php if (isset($id) && $a_passthrumacs[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
+                    <?php endif; ?>
+		    <?php if (isset($pconfig['username']) && $pconfig['username']): ?>
+                    <input name="username" type="hidden" value="<?=htmlspecialchars($pconfig['username']);?>">
                     <?php endif; ?>
                   </td>
                 </tr>

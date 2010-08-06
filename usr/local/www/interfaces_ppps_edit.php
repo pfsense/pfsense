@@ -175,7 +175,7 @@ if ($_POST) {
 	/* input validation */		
 	switch($_POST['type']) {
 		case "ppp":
-			$reqdfields = explode("interfaces phone");
+			$reqdfields = explode(" ", "interfaces phone");
 			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;

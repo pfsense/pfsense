@@ -66,13 +66,9 @@ if ($_POST) {
 
 		$retval = 0;
 
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
-
 		unlink_if_exists("/tmp/config.cache");
 		$retval |= filter_configure();
+		$savemsg = get_std_save_message($retval);
 
 		if ($retval == 0) {
 			clear_subsystem_dirty('natconf');
@@ -172,13 +168,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
-<?php
-	if($savemsg)
-		print_info_box_np("{$savemsg}<br>" .  gettext("The NAT configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect.") );
-   else
-		print_info_box_np( gettext("The NAT configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect.") );
-?>
+<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>

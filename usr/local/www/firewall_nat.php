@@ -307,7 +307,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                         <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
                       </tr>
                       <tr>
-					    <td align="center" valign="middle"><a href="firewall_nat.php?act=del&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?> onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"></a></td>
+					    <td align="center" valign="middle"><a href="firewall_nat.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>></a></td>
 			<td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new nat based on this one");?>" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

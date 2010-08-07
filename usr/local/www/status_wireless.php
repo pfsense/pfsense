@@ -79,7 +79,7 @@ foreach($ciflist as $interface => $ifdescr) {
 }
 if($_POST['rescanwifi'] <> "") {
 	$rwlif = get_real_interface($if);
-	mwexec("/sbin/ifconfig {$rwlif} scan 2>&1");
+	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
 }
 display_top_tabs($tab_array);
 ?>

@@ -139,6 +139,9 @@ if(!$pconfig['backend'])
                                                 	$selected = "";
                                                         if ($auth_server['name'] == $pconfig['authmode'])
                                                         	$selected = "selected";
+							if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
+								$selected = "selected";
+
                                         ?>
                                         <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
                                         <?php   endforeach; ?>

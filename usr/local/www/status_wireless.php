@@ -77,6 +77,10 @@ foreach($ciflist as $interface => $ifdescr) {
 		$tab_array[] = array("Status ($ifdescr)", $enabled, "status_wireless.php?if={$interface}");
 	}
 }
+if($_POST['rescanwifi'] <> "") {
+	$rwlif = get_real_interface($if);
+	mwexec("/sbin/ifconfig {$rwlif} scan 2>&1");
+}
 display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -87,6 +91,7 @@ display_top_tabs($tab_array);
 
 
 	/* table header */
+	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"disablecarp\" value=\"Rescan\"><br/></td></tr>\n";
 	print "<tr><td colspan=7><b>Nearby access points or ad-hoc peers.<br/></td></tr>\n";
 	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";

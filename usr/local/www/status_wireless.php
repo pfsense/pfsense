@@ -77,8 +77,8 @@ foreach($ciflist as $interface => $ifdescr) {
 		$tab_array[] = array("Status ($ifdescr)", $enabled, "status_wireless.php?if={$interface}");
 	}
 }
+$rwlif = get_real_interface($if);
 if($_POST['rescanwifi'] <> "") {
-	$rwlif = get_real_interface($if);
 	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
 	$savemsg = "Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.";
 }
@@ -92,7 +92,7 @@ display_top_tabs($tab_array);
 <?php
 
 	/* table header */
-	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"disablecarp\" value=\"Rescan\"><br/></td></tr>\n";
+	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"rescanwifi\" value=\"Rescan\"><br/></td></tr>\n";
 	print "<tr><td colspan=7><b>Nearby access points or ad-hoc peers.<br/></td></tr>\n";
 	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
@@ -105,7 +105,6 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	$rwlif = get_real_interface($if);
 	exec("/sbin/ifconfig {$rwlif} list scan 2>&1", $states, $ret);
 	/* Skip Header */
 	array_shift($states);

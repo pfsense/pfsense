@@ -517,6 +517,7 @@ if ($_POST) {
 
 		// If we have an associated nat rule, make sure the source and destination doesn't change
 		if( isset($a_filter[$id]['associated-rule-id']) ) {
+			$filterent['interface'] = $a_filter[$id]['interface'];
 			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];

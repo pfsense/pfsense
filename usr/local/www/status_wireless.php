@@ -92,6 +92,7 @@ display_top_tabs($tab_array);
 <?php
 
 	/* table header */
+	print "<input type=\"hidden\" name=\"if\" id=\"if\" value=\"{$if}\">\n";
 	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"rescanwifi\" value=\"Rescan\"><br/></td></tr>\n";
 	print "<tr><td colspan=7><b>Nearby access points or ad-hoc peers.<br/></td></tr>\n";
 	print "\n<tr>";

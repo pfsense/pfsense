@@ -775,19 +775,16 @@ include("fbegin.inc"); ?>
 							<?php
 							$linkedrule = "";
 							if (is_array($config['filter']['rule'])) {
-								$filter_id = 0;
-							      foreach ($config['filter']['rule'] as $filter_rule) {
+							      foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 								if (isset($filter_rule['associated-rule-id'])) {
 									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
 									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
 										echo " SELECTED";
-										$linkedrule = sprintf("<br /><a href=\"firewall_rules_edit.php?id=%s\">%s</a><br/>", $filter_id, gettext("View the filter rule"));
+										$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">" . gettext("View the filter rule") . "</a><br/>";
 									}
 									echo ">". htmlspecialchars('Rule ' . $filter_rule['descr']) . "</option>\n";
 
 								}
-								if ($filter_rule['interface'] == $pconfig['interface'])
-									$filter_id++;
 							      }
 							}
 							if (isset($pconfig['associated-rule-id']))

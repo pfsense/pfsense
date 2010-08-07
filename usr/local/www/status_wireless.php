@@ -80,7 +80,9 @@ foreach($ciflist as $interface => $ifdescr) {
 if($_POST['rescanwifi'] <> "") {
 	$rwlif = get_real_interface($if);
 	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
+	$savemsg = "Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.";
 }
+if ($savemsg) print_info_box($savemsg);
 display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -88,7 +90,6 @@ display_top_tabs($tab_array);
 <div id="mainarea">
 <table class="tabcont" colspan="3" cellpadding="3" width="100%">
 <?php
-
 
 	/* table header */
 	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"disablecarp\" value=\"Rescan\"><br/></td></tr>\n";

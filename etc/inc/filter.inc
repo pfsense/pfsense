@@ -594,16 +594,16 @@ function filter_generate_gateways() {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
 						} else
 							$routeto .= "( {$int} {$gatewayip} ) ";
-						$foundlb = 1;
+						$foundlb++;
 						} else
 							log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
 					}
 					$route = "";
 					if ($foundlb > 0) {
 						$route = " route-to { {$routeto} } ";
-					if($idx > 1)
+					if($foundlb > 1)
 						$route .= " round-robin ";
-					if (isset($config['system']['lb_use_sticky']))
+					if ($foundlb > 1 && isset($config['system']['lb_use_sticky']))
 						$route .= " sticky-address ";
 				}
 			}

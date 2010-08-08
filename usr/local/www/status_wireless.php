@@ -180,7 +180,10 @@ display_top_tabs($tab_array);
 
 ?>
 </table>
-</div>
+</div><br>
+                  <b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br>
+                  <b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
+                  	S = Short preamble, s = Short slot time
 </td></tr>
 </table>
 

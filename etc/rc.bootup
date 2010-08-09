@@ -101,6 +101,8 @@ $g['booting'] = true;
 /* parse the configuration and include all functions used below */
 require_once("/etc/inc/config.inc");
 echo ".";
+require_once("/etc/inc/config.console.inc");
+echo ".";
 require_once("/etc/inc/auth.inc");
 echo ".";
 require_once("/etc/inc/functions.inc");

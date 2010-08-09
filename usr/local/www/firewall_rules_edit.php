@@ -517,6 +517,7 @@ if ($_POST) {
 
 		// If we have an associated nat rule, make sure the source and destination doesn't change
 		if( isset($a_filter[$id]['associated-rule-id']) ) {
+			$filterent['interface'] = $a_filter[$id]['interface'];
 			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
@@ -613,10 +614,16 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 			<td width="78%" class="vtable">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-				<select name="interface[]" multiple="true" class="formselect" size="3">
+<?php 	$disabled = ""; 
+	if (isset($pconfig['associated-rule-id'])) {
+		$disabled = "disabled";
+		if (!empty($pconfig['interface']))
+			echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' >";
+	}
+	if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+				<select name="interface[]" multiple="true" class="formselect" size="3" <?=$disabled;?>>
 <? else: ?>
-				<select name="interface" class="formselect">
+				<select name="interface" class="formselect" <?=$disabled;?>>
 <?php
    endif;
 				/* add group interfaces */

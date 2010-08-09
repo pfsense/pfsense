@@ -2062,4 +2062,11 @@ function upgrade_063_to_064() {
 	}
 }
 
+function upgrade_064_to_065() {
+	/* Disable TSO and LRO in upgraded configs */
+	global $config;
+	$config['system']['disablesegmentationoffloading'] = true;
+	$config['system']['disablelargereceiveoffloading'] = true;
+}
+
 ?>

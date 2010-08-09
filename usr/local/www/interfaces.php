@@ -212,6 +212,7 @@ $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
+$pconfig['mss'] = $wancfg['mss'];
 
 /* Wireless interface? */
 if (isset($wancfg['wireless'])) {
@@ -222,8 +223,12 @@ if (isset($wancfg['wireless'])) {
 	if (!does_interface_exist($wlanif))
 		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
+	preg_match("/^(.*?)([0-9]*)$/", $wlanbaseif, $wlanbaseif_split);
 	$wl_modes = get_wireless_modes($if);
 	$wl_chaninfo = get_wireless_channel_info($if);
+	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
+	$wl_sysctl = get_sysctl(array("{$wl_sysctl_prefix}.diversity", "{$wl_sysctl_prefix}.txantenna", "{$wl_sysctl_prefix}.rxantenna",
+	                              "{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
 	$wl_regdomain_xml_attr = array();
 	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
 	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
@@ -237,6 +242,9 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['ssid'] = $wancfg['wireless']['ssid'];
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
+	$pconfig['diversity'] = $wancfg['wireless']['diversity'];
+	$pconfig['txantenna'] = $wancfg['wireless']['txantenna'];
+	$pconfig['rxantenna'] = $wancfg['wireless']['rxantenna'];
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
 	$pconfig['regdomain'] = $wancfg['wireless']['regdomain'];
 	$pconfig['regcountry'] = $wancfg['wireless']['regcountry'];
@@ -434,6 +442,8 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) 
 		$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
+	if ($_POST['mss'] && ($_POST['mss'] < 576)) 
+		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = explode(" ", "mode ssid");
@@ -651,6 +661,11 @@ if ($_POST) {
 		} else {
 			$wancfg['mtu'] = $_POST['mtu'];
 		}
+		if (empty($_POST['mss'])) {
+			unset($wancfg['mss']);
+		} else {
+			$wancfg['mss'] = $_POST['mss'];
+		}
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
 		}
@@ -710,6 +725,18 @@ function handle_wireless_post() {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
 		unset($config['wireless']['interfaces'][$wlanbaseif]);
+	if (isset($_POST['diversity']) && $_POST['diversity'] != "")
+		$wancfg['wireless']['diversity'] = $_POST['diversity'];
+	else if (isset($wancfg['wireless']['diversity']))
+		unset($wancfg['wireless']['diversity']);
+	if (isset($_POST['txantenna']) && $_POST['txantenna'] != "")
+		$wancfg['wireless']['txantenna'] = $_POST['txantenna'];
+	else if (isset($wancfg['wireless']['txantenna']))
+		unset($wancfg['wireless']['txantenna']);
+	if (isset($_POST['rxantenna']) && $_POST['rxantenna'] != "")
+		$wancfg['wireless']['rxantenna'] = $_POST['rxantenna'];
+	else if (isset($wancfg['wireless']['rxantenna']))
+		unset($wancfg['wireless']['rxantenna']);
 	if ($_POST['hidessid_enable'] == "yes")
 		$wancfg['wireless']['hidessid']['enable'] = true;
 	else if (isset($wancfg['wireless']['hidessid']['enable']))
@@ -983,7 +1010,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
 		<?php if (is_subsystem_dirty('interfaces')): ?><p>
-		<?php print_info_box_np(printf(gettext("The '%s' configuration has been changed."),$wancfg['descr'])."<p>".gettext("You must apply the changes in order for them to take effect.")."<p>".gettext("Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
+		<?php print_info_box_np(sprintf(gettext("The '%s' configuration has been changed."),$wancfg['descr'])."<p>".gettext("You must apply the changes in order for them to take effect.")."<p>".gettext("Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
 		<?php endif; ?>
 		<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1052,10 +1079,18 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable"> 
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
+								<?=gettext("If you leave this field blank, " .
+								"an MTU of 1500 bytes will be assumed"); ?>.
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("MSS"); ?></td>
+							<td class="vtable"> 
+								<input name="mss" type="text" class="formfld unknown" id="mss" size="8" value="<?=htmlspecialchars($pconfig['mss']);?>">
+								<br>
 								<?=gettext("If you enter a value in this field, then MSS clamping for " .
 								"TCP connections to the value entered above minus 40 (TCP/IP " . 
-								"header size) will be in effect. If you leave this field blank, " .
-								"an MTU of 1500 bytes will be assumed"); ?>.
+								"header size) will be in effect."); ?>. 
 							</td>
 						</tr>
 						<tr>
@@ -1569,6 +1604,54 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above"); ?>.
 							</td>
 						</tr>
+						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("Antenna settings"); ?></td>
+							<td class="vtable">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"])): ?>
+										<td>
+											<?=gettext("Diversity"); ?><br/>
+											<select name="diversity" class="formselect" id="diversity">
+												<option <? if (empty($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['diversity'] == '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
+												<option <? if ($pconfig['diversity'] == '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
+											</select>
+										</td>
+										<td>&nbsp;&nbsp</td>
+										<?php endif; ?>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"])): ?>
+										<td>
+											<?=gettext("Transmit antenna"); ?><br/>
+											<select name="txantenna" class="formselect" id="txantenna">
+												<option <? if (empty($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <? if ($pconfig['txantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+											</select>
+										</td>
+										<td>&nbsp;&nbsp</td>
+										<?php endif; ?>
+										<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
+										<td>
+											<?=gettext("Receive antenna"); ?><br/>
+											<select name="rxantenna" class="formselect" id="rxantenna">
+												<option <? if (empty($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <? if ($pconfig['rxantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+											</select>
+										</td>
+										<?php endif; ?>
+									</tr>
+								</table>
+								<br/>
+								<?=gettext("Note: The antenna numbers do not always match up with the labels on the card."); ?>
+							</td>
+						</tr>
+						<?php endif; ?>
+						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.slottime"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.acktimeout"]) && isset($wl_sysctl["{$wl_sysctl_prefix}.ctstimeout"])): ?>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>
 							<td class="vtable">
@@ -1578,6 +1661,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
 							</td>
 						</tr>
+						<?php endif; ?>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Regulatory settings"); ?></td>
 							<td class="vtable">

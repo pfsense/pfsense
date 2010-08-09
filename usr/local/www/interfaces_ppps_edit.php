@@ -175,7 +175,7 @@ if ($_POST) {
 	/* input validation */		
 	switch($_POST['type']) {
 		case "ppp":
-			$reqdfields = explode("interfaces phone");
+			$reqdfields = explode(" ", "interfaces phone");
 			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
@@ -420,13 +420,11 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" name="portlists" id="portlists">
 			<td id="serialports"><?php
 				$selected_ports = explode(',',$pconfig['interfaces']);
-				$serial = glob("/dev/cua*");
-				$modems = glob("/dev/modem*");
-				$serialports = array_merge($serial, $modems);
+				if (!is_dir("/var/spool/lock"))
+					mwexec("/bin/mkdir -p /var/spool/lock");
+				$serialports = pfSense_get_modem_devices();
 				$serport_count = 0;
 				foreach ($serialports as $port) {
-					if(preg_match("/\.(lock|init)$/", $port))
-						continue;
 					$serport_count++;
 					echo $port.",".trim($port);
 					if (in_array($port,$selected_ports))

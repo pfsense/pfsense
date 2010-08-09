@@ -84,6 +84,21 @@ function services_dhcpd_configure() {
 	fclose($fd);
 	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 
+	if ($g['booting']) {
+		if ($g['platform'] != "pfSense") {
+			/* restore the leases, if we have them */
+			if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
+				$dhcprestore = "";
+				$dhcpreturn = "";
+				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
+				$dhcprestore = implode(" ", $dhcprestore);
+				if($dhcpreturn <> 0) {
+					log_error("DHCP leases restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
+				}
+			}
+		}
+	}
+
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
 	$Iflist = get_configured_interface_list();
@@ -158,7 +173,7 @@ EOD;
 				foreach ($a_vip as $vipent) {
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
-						if(!empty($vipent['advskew']) && ($vipent['advskew'] < "20"))
+						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
 							$skew = 0;
 					}
 				}
@@ -435,7 +450,7 @@ function interfaces_staticarp_configure($if) {
         /* Enable staticarp, if enabled */
         if(isset($config['dhcpd'][$if]['staticarp'])) {
                 mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp " );
-                mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
+                mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
                 if (is_array($config['dhcpd'][$if]['staticmap'])) {
 
                         foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
@@ -446,7 +461,7 @@ function interfaces_staticarp_configure($if) {
                 }
         } else {
                 mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
-                mwexec("/usr/sbin/arp -da > /dev/null 2>&1 ");
+                mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
         }
 
         return 0;

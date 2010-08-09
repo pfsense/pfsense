@@ -391,13 +391,22 @@ function filter_configure_sync() {
 function filter_generate_scrubing() {
 	global $config, $FilterIflist;
 	$scrubrules = "";
+
+	if (isset($config['system']['maxmss_enable'])) {
+		$maxmss = 1400;
+		if (!empty($config['system']['maxmss']))
+			$maxmss = $config['system']['maxmss'];
+
+		$scrubrules .= "scrub in from any to <vpns> max-mss {$maxmss}\n";
+	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
 		if(isset($scrubcfg['virtual']))
 			continue;
 		/* set up MSS clamping */
-		if($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp")
-			$mssclamp = "max-mss " . (intval($scrubcfg['mtu'] - 40));
+		if($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
+			$scrubif['if'] != "l2tp")
+			$mssclamp = "max-mss " . (intval($scrubcfg['mss'] - 40));
 		else
 			$mssclamp = "";
 		/* configure no-df for linux nfs and others */
@@ -585,16 +594,16 @@ function filter_generate_gateways() {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
 						} else
 							$routeto .= "( {$int} {$gatewayip} ) ";
-						$foundlb = 1;
+						$foundlb++;
 						} else
 							log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
 					}
 					$route = "";
 					if ($foundlb > 0) {
 						$route = " route-to { {$routeto} } ";
-					if($idx > 1)
+					if($foundlb > 1)
 						$route .= " round-robin ";
-					if (isset($config['system']['lb_use_sticky']))
+					if ($foundlb > 1 && isset($config['system']['lb_use_sticky']))
 						$route .= " sticky-address ";
 				}
 			}
@@ -693,6 +702,7 @@ function filter_generate_optcfg_array() {
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
+		$oic['mss'] = empty($oc['mss']) ? '' : $oc['mss'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];
@@ -880,7 +890,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 		else
 			$rflctintrange = "";
 		$dstaddr = $dstaddr[0];
-		if(empty($dstaddr) || strtolower(trim($dstaddr)) == "port")
+		if(empty($dstaddr) || trim($dstaddr) == "0.0.0.0" || strtolower(trim($dstaddr)) == "port")
 			return "";
 
 		if(isset($rule['destination']['any'])) {
@@ -1231,8 +1241,6 @@ function filter_nat_rules_generate() {
 					/* create outbound nat entries for all local networks */
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", 500, "", 500, $target, 500, false);
-					$natrules .= filter_nat_rules_generate_if($if,
-						"{$macroortable}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));
 					$natrules .= "\n";

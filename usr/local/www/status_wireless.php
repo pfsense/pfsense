@@ -77,6 +77,12 @@ foreach($ciflist as $interface => $ifdescr) {
 		$tab_array[] = array(printf(gettext("Status (%s)"),$ifdescr), $enabled, "status_wireless.php?if={$interface}");
 	}
 }
+$rwlif = get_real_interface($if);
+if($_POST['rescanwifi'] <> "") {
+	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
+	$savemsg = gettext("Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.");
+}
+if ($savemsg) print_info_box($savemsg);
 display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -85,9 +91,10 @@ display_top_tabs($tab_array);
 <table class="tabcont" colspan="3" cellpadding="3" width="100%">
 <?php
 
-
 	/* table header */
-	printf(gettext("%s%s%sNearby access points or ad-hoc peers.%s%s%s%s"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
+	print "<input type=\"hidden\" name=\"if\" id=\"if\" value=\"{$if}\">\n";
+	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"rescanwifi\" value=\"Rescan\"><br/></td></tr>\n";
+	print "<tr><td colspan=7><b>" . gettext("Nearby access points or ad-hoc peers") . ".<br/></td></tr>\n";
 	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>SSID</td>";
@@ -99,7 +106,6 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	$rwlif = get_real_interface($if);
 	exec("/sbin/ifconfig {$rwlif} list scan 2>&1", $states, $ret);
 	/* Skip Header */
 	array_shift($states);
@@ -174,7 +180,10 @@ display_top_tabs($tab_array);
 
 ?>
 </table>
-</div>
+</div><br>
+                  <b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br>
+                  <b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
+                  	S = Short preamble, s = Short slot time
 </td></tr>
 </table>
 

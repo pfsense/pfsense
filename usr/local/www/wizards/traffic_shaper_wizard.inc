@@ -682,6 +682,7 @@ $gamesplist['lineage2'] = array();
 $gamesplist['battlenet'] = array();
 	/* Blizzard Publishing games */
 	$gamesplist['battlenet'][] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
+	$gamesplist['battlenet'][] = array('Battle.NET-2', 'tcp', '1119', '1119', 'both');
 
 $gamesplist['worldofwarcraft'] = array();
 	$gamesplist[] = array('WoW', 'tcp', '3724', '3724', 'both');

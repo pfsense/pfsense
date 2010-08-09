@@ -1,0 +1,101 @@
+/* 
+	new_tab_menu.css
+	part of pfSense
+	Copyright (C) 2010-2011 Robert Zelaya
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+	
+
+	Replace your old tab menu with the following code. To add a second tab menu line just cut and paste again.
+	The following code is dependent on new_tab_menu.css and images/new_tab_menu.png.
+
+			<tr>
+				<td>
+					<?php
+						$tab_array_indent = 0; // move to the line in px
+						$tab_array_space = 1; // space betwen lines in px
+						$tab_array_char_limit = 82; // number or chr before the drop down box
+						$tab_array = array();
+						$tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
+						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+						$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+						display_top_tabs($tab_array);
+					?>
+				</td>
+			</tr>
+			
+*/
+
+.newtabmenu ul, li{border:0; margin:0; padding:0; list-style:none;}
+
+.newtabmenu li{float:left; margin-right:2px; text-align: center;}
+.newtabmenu a:link, .newtabmenu a:visited{
+	background:url(images/new_tab_menu.png) right 45px;
+	color:#ffffff; /* noactive font */
+	display:block;
+	/* fix for IE6 */
+	display: inline-block;
+	/*     END     */
+	font-weight:bold;
+	font-size:.9em;
+	height:20px;
+	line-height:20px;
+	text-decoration:none;
+}
+.newtabmenu a span{
+	background:url(images/new_tab_menu.png) left 45px;
+	display:block;
+	/* fix for IE6 */
+	display: inline-block;
+	/*     END     */
+	height:20px;
+	margin-right:7px;
+	padding-left:7px;
+}
+.newtabmenu a:hover{
+	background:url(images/new_tab_menu.png) right 23px;
+	display:block;
+	/* fix for IE6 */
+	display: inline-block;
+	/*     END     */
+	color:#ffffff; /* hover over font */
+}
+.newtabmenu a:hover span{
+	background:url(images/new_tab_menu.png) left 23px;
+	display:block;
+	/* fix for IE6 */
+	display: inline-block;
+	/*     END     */
+}
+
+/* -------------------------------- */
+/* 	ACTIVE ELEMENTS					*/
+.newtabmenu_active a:link, .newtabmenu_active a:visited, .newtabmenu_active a:visited, .newtabmenu_active a:hover{
+	color:#000000; /* active font */
+	background:url(images/new_tab_menu.png) right 0 no-repeat;
+} 
+.newtabmenu_active a span, .newtabmenu_active a:hover span{
+	background:url(images/new_tab_menu.png) left 0 no-repeat;
+}

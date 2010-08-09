@@ -194,7 +194,7 @@ $ui_databases = array_merge($dbheader, $databases);
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
-$graphs = array("day", "week", "month", "quarter", "year", "4year");
+$graphs = array("12hour", "day", "week", "month", "quarter", "year", "4year");
 $periods = array("current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
@@ -217,6 +217,18 @@ function get_dates($curperiod, $graph) {
 			$offset = 0;
 	}
 	switch($graph) {
+		case "12hour":
+			switch($offset) {
+				case 0;
+					$houroffset = 0;
+					break;
+				default:
+					$houroffset = ($offset * 12) - 12;
+					break;
+			}
+			$start = mktime((8 + $houroffset), 0, 0, $curmonth, $curday, $curyear);
+			$end = mktime((8 + $houroffset) + 12, 0, 0, $curmonth, $curday, $curyear);
+			break;
 		case "day":
 			$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
 			$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);

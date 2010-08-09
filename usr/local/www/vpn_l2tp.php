@@ -350,7 +350,7 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Encyrption type");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption type");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><select name="paporchap" id="paporchap">
 			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " SELECTED"; ?>><?=gettext("CHAP"); ?></option>

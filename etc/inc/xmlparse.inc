@@ -153,7 +153,7 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
         }
 	$cfg =parse_xml_config_raw($cffile, $rootobj, $isstring);
 	if ($cfg == -1)
-		die("XML error: not $rootboj object found!\n");
+		return array();
 	
 	return $cfg;
 }

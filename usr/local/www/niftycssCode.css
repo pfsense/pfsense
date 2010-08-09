@@ -1,6 +1,6 @@
 .rtop,.artop{display:block}
 .rtop *,.artop *{display:block;height:1px;overflow:hidden;font-size:1px}
-.artop *{border-style: solid;border-width:0 1px}
+.artop *{border-style: solid;border-width:0 0px}
 .r1,.rl1,.re1,.rel1{margin-left:5px}
 .r1,.rr1,.re1,.rer1{margin-right:5px}
 .r2,.rl2,.re2,.rel2,.ra1,.ral1{margin-left:3px}

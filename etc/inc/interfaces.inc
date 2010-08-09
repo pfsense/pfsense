@@ -1827,7 +1827,9 @@ function interface_wireless_clone($realif, $wlcfg) {
 function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	global $config, $g;
 
-	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel', 'distance', 'regdomain', 'regcountry', 'reglocation');
+	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel',
+	                         'diversity', 'txantenna', 'rxantenna', 'distance',
+	                         'regdomain', 'regcountry', 'reglocation');
 
 	if(!is_interface_wireless($ifcfg['if']))
 		return;
@@ -1841,9 +1843,15 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
 				foreach ($shared_settings as $setting) {
 					if ($sync_changes) {
-						$config['interfaces'][$if]['wireless'][$setting] = $ifcfg['wireless'][$setting];
+						if (isset($ifcfg['wireless'][$setting]))
+							$config['interfaces'][$if]['wireless'][$setting] = $ifcfg['wireless'][$setting];
+						else if (isset($config['interfaces'][$if]['wireless'][$setting]))
+							unset($config['interfaces'][$if]['wireless'][$setting]);
 					} else {
-						$ifcfg['wireless'][$setting] = $config['interfaces'][$if]['wireless'][$setting];
+						if (isset($config['interfaces'][$if]['wireless'][$setting]))
+							$ifcfg['wireless'][$setting] = $config['interfaces'][$if]['wireless'][$setting];
+						else if (isset($ifcfg['wireless'][$setting]))
+							unset($ifcfg['wireless'][$setting]);
 					}
 				}
 				if (!$sync_changes)
@@ -1856,9 +1864,15 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	if (isset($config['wireless']['interfaces'][$baseif])) {
 		foreach ($shared_settings as $setting) {
 			if ($sync_changes) {
-				$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
+				if (isset($ifcfg['wireless'][$setting]))
+					$config['wireless']['interfaces'][$baseif][$setting] = $ifcfg['wireless'][$setting];
+				else if (isset($config['wireless']['interfaces'][$baseif][$setting]))
+					unset($config['wireless']['interfaces'][$baseif][$setting]);
 			} else if (isset($config['wireless']['interfaces'][$baseif][$setting])) {
-				$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+				if (isset($config['wireless']['interfaces'][$baseif][$setting]))
+					$ifcfg['wireless'][$setting] = $config['wireless']['interfaces'][$baseif][$setting];
+				else if (isset($ifcfg['wireless'][$setting]))
+					unset($ifcfg['wireless'][$setting]);
 			}
 		}
 	}
@@ -1906,11 +1920,13 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	$hostapd = "/usr/sbin/hostapd";
 	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
 	$ifconfig = "/sbin/ifconfig";
+	$sysctl = "/sbin/sysctl";
 	$killall = "/usr/bin/killall";
 
 	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
 	$wlcmd = array();
+	$wl_sysctl = array();
 	/* Make sure it's up */
 	$wlcmd[] = "up";
 	/* Set a/b/g standard */
@@ -1937,6 +1953,18 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 			$wlcmd[] = "channel " . escapeshellarg($wlcfg['channel']);
 		}
 	}
+
+	/* Set antenna diversity value */
+	if(isset($wlcfg['diversity']))
+		$wl_sysctl[] = "diversity=" . escapeshellarg($wlcfg['diversity']);
+
+	/* Set txantenna value */
+	if(isset($wlcfg['txantenna']))
+		$wl_sysctl[] = "txantenna=" . escapeshellarg($wlcfg['txantenna']);
+
+	/* Set rxantenna value */
+	if(isset($wlcfg['rxantenna']))
+		$wl_sysctl[] = "rxantenna=" . escapeshellarg($wlcfg['rxantenna']);
 
 	/* set Distance value */
 	if($wlcfg['distance'])
@@ -2124,6 +2152,16 @@ EOD;
 	 */
 
 	$baseif = interface_get_wireless_base($if);
+	preg_match("/^(.*?)([0-9]*)$/", $baseif, $baseif_split);
+	$wl_sysctl_prefix = 'dev.' . $baseif_split[1] . '.' . $baseif_split[2];
+
+	/* set sysctls for the wireless interface */
+	if (!empty($wl_sysctl)) {
+		fwrite($fd_set, "# sysctls for {$baseif}\n");
+		foreach ($wl_sysctl as $wl_sysctl_line) {
+			fwrite($fd_set, "{$sysctl} {$wl_sysctl_prefix}.{$wl_sysctl_line}\n");
+		}
+	}
 
 	/* set ack timers according to users preference (if he/she has any) */
 	if($distance) {

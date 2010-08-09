@@ -78,8 +78,6 @@ if ($_POST) {
 		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname'])
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 	}
-	$ifgroupentry = array();
-	$ifgroupentry['ifname'] = $_POST['ifname'];
 	$members = "";
 	$isfirst = 0;
 	/* item is a normal ifgroupentry type */
@@ -93,10 +91,44 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		$ifgroupentry = array();
 		$ifgroupentry['members'] = $members;
 		$ifgroupentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 
-		if (isset($id) && $a_ifgroups[$id]) {
+		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
+
+			foreach ($config['filter']['rule'] as $ridx => $rule) {
+				if (isset($rule['floating'])) {
+					$rule_ifs = explode(",", $rule['interface']);
+					$rule_changed = false;
+					foreach ($rule_ifs as $rule_if_id => $rule_if) {
+						if ($rule_if == $a_ifgroups[$id]['ifname']) {
+							$rule_ifs[$rule_if_id] = $_POST['ifname'];
+							$rule_changed = true;
+						}
+					}
+					if ($rule_changed)
+						$config['filter']['rule'][$ridx]['interface'] = implode(",", $rule_ifs);
+				} else {
+					if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
+						$config['filter']['rule'][$ridx]['interface'] = $_POST['ifname'];
+				}
+			}
+			foreach ($config['nat']['rule'] as $ridx => $rule) {
+				if ($rule['interface'] == $a_ifgroups[$id]['ifname'])
+					$config['nat']['rule'][$ridx]['interface'] = $_POST['ifname'];
+			}
+			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+			if (count($omembers) > 0) {
+				foreach ($omembers as $ifs) {
+					$realif = get_real_interface($ifs);
+					if ($realif)
+						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+				}
+			}
+			$ifgroupentry['ifname'] = $_POST['ifname'];
+			$a_ifgroups[$id] = $ifgroupentry;
+		} else if (isset($id) && $a_ifgroups[$id]) {
 			$omembers = explode(" ", $a_ifgroups[$id]['members']);
 			$nmembers = explode(" ", $members);
 			$delmembers = array_diff($omembers, $nmembers);
@@ -107,9 +139,12 @@ if ($_POST) {
 						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
 				}
 			}
+			$ifgroupentry['ifname'] = $_POST['ifname'];
 			$a_ifgroups[$id] = $ifgroupentry;
-		} else
+		} else {
+			$ifgroupentry['ifname'] = $_POST['ifname'];
 			$a_ifgroups[] = $ifgroupentry;
+		}
 
 		write_config();
 

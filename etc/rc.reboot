@@ -15,10 +15,8 @@ PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "pfSense" ]; then
 	rm -rf /tmp/*
 else
-	/etc/rc.conf_mount_rw
-	# Save the rrd databases to the config path.
-	cd / && tar -czf /cf/conf/rrd.tgz -C / var/db/rrd/*.rrd
-	/etc/rc.conf_mount_ro
+	/etc/rc.backup_rrd.sh
+	/etc/rc.backup_dhcpleases.sh
 fi
 
 sleep 1

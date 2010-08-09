@@ -114,16 +114,6 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent['destination']['any'] = true;
 					$natent['staticnatport'] = true;
 					$a_out[] = $natent;
-
-					$natent = array();
-					$natent['source']['network'] = "{$osn}/{$ossubnet}";
-                                        $natent['dstport'] = "5060";
-                                        $natent['descr'] = sprintf(gettext("Auto created rule for SIP - %s to %s"),$ifdesc,$ifdesc2);
-                                        $natent['target'] = "";
-                                        $natent['interface'] = $if2;
-                                        $natent['destination']['any'] = true;
-                                        $natent['staticnatport'] = true;
-                                        $a_out[] = $natent;
 					
 					$natent = array();
                                         $natent['source']['network'] = "{$osn}/{$ossubnet}";

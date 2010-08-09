@@ -112,19 +112,19 @@ if ($_POST) {
 		}
 
 		if($_POST['disablechecksumoffloading'] == "yes") {
-			$config['system']['disablechecksumoffloading'] = $_POST['disablechecksumoffloading'];
+			$config['system']['disablechecksumoffloading'] = true;
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
 		}
 
 		if($_POST['disablesegmentationoffloading'] == "yes") {
-			$config['system']['disablesegmentationoffloading'] = $_POST['disablesegmentationoffloading'];
+			$config['system']['disablesegmentationoffloading'] = true;
 		} else {
 			unset($config['system']['disablesegmentationoffloading']);
 		}
 
 		if($_POST['disablelargereceiveoffloading'] == "yes") {
-			$config['system']['disablelargereceiveoffloading'] = $_POST['disablelargereceiveoffloading'];
+			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
 			unset($config['system']['disablelargereceiveoffloading']);
 		}

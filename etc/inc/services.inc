@@ -1305,4 +1305,46 @@ function upnp_start() {
 	}
 }
 
+function install_cron_job($command, $active=false, $minute="0", $hour="*", $monthday="*", $month="*", $weekday="*", $who="root") {
+	global $config, $g;
+
+	$is_installed = false;
+
+	if(!$config['cron']['item'])
+		return;
+
+	$x=0;
+	foreach($config['cron']['item'] as $item) {
+		if(strstr($item['command'], $command)) {
+			$is_installed = true;
+			break;
+		}
+		$x++;
+	}
+
+	if($active) {
+		$cron_item = array();
+		$cron_item['minute'] = $minute;
+		$cron_item['hour'] = $hour;
+		$cron_item['mday'] = $monthday;
+		$cron_item['month'] = $month;
+		$cron_item['wday'] = $weekday;
+		$cron_item['who'] = $who;
+		$cron_item['command'] = $command;
+		if(!$is_installed) {
+			$config['cron']['item'][] = $cron_item;
+			write_config("Installed cron job for {$command}");
+		} else {
+			$config['cron']['item'][$x] = $cron_item;
+			write_config("Updated cron job for {$command}");
+		}
+	} else {
+		if(($is_installed == true) && ($x > 0)) {
+			unset($config['cron']['item'][$x]);
+			write_config("Remvoed cron job for {$command}");
+		}
+	}
+	configure_cron();
+}
+
 ?>

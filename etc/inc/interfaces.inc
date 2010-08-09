@@ -473,7 +473,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	if ($mtu != $mtum)
 		pfSense_interface_mtu($interface, $mtu);
 
-	pfSense_get_interface_addresses($bridgeif);
+	$options = pfSense_get_interface_addresses($bridgeif);
 	if (isset($options['encaps']['txcsum']))
 		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
 	else

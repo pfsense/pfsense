@@ -262,10 +262,10 @@ function prot_change() {
 											$https_disabled = "disabled";
 									?>
 									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onClick="prot_change()">
-									HTTP
+									<?=gettext("HTTP"); ?>
 									&nbsp;&nbsp;&nbsp;
 									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onClick="prot_change()">
-									HTTPS
+									<?=gettext("HTTPS"); ?>
 									<?php if (!$certs_available): ?>
 									<br/>
 									<?=gettext("No Certificates have been defined. You must"); ?>

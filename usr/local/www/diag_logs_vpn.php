@@ -120,7 +120,7 @@ include("head.inc");
 			<?=gettext("Choose which type of VPN you want to view.");?>
 		  </td></tr><tr>
 		  <td colspan="4">
-			<?php $vpns = array("pptp" => "PPTP", "pppoe" => "PPPoE", "l2tp" => "L2TP");
+			<?php $vpns = array("pptp" => gettext("PPTP"), "pppoe" => gettext("PPPoE"), "l2tp" => gettext("L2TP"));
 				foreach ($vpns as $kvpn => $dvpn):
 			?>
 				<a href="/diag_logs_vpn.php?vpntype=<?=$kvpn;?>" >
@@ -143,7 +143,7 @@ include("head.inc");
           </table>
 <br />
 <input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
 </form>
 	</td>
   </tr>

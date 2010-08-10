@@ -53,6 +53,7 @@ else
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
+	$pconfig['mode'] = $a_pool[$id]['mode'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
 	$pconfig['servers'] = &$a_pool[$id]['servers'];
@@ -70,8 +71,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "name port monitor servers");
-	$reqdfieldsn = array(gettext("Name"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
+	$reqdfields = explode(" ", "name mode port monitor servers");
+	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -110,6 +111,7 @@ if ($_POST) {
 			$changedesc .= sprintf(gettext(" modified '%s' pool:"), $poolent['name']);
 		
 		update_if_changed("name", $poolent['name'], $_POST['name']);
+		update_if_changed("mode", $poolent['mode'], $_POST['mode']);
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
@@ -168,6 +170,15 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+			</td>
+		</tr>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
+			<td width="78%" class="vtable" colspan="2">
+				<select id="mode" name="mode" onChange="enforceFailover(); checkPoolControls();">
+					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "value=\"{$pconfig['name']}\"";?>>Load Balance</option>
+					<option value="failover"   <?if($pconfig['mode'] == "failover") echo "value=\"{$pconfig['name']}\"";?>>Manual Failover</option>
+				</select>
 			</td>
 		</tr>
 		<tr align="left">
@@ -249,8 +260,8 @@ function clearcombo(){
 						</td>
 
 						<td valign="middle">
-							<input class="formbtn" type="button" name="moveToEnabled" value=">" onclick="moveOptions(document.iform.serversDisabledSelect, document.iform.serversSelect);" /><br/>
-							<input class="formbtn" type="button" name="moveToDisabled" value="<" onclick="moveOptions(document.iform.serversSelect, document.iform.serversDisabledSelect);" />
+							<input class="formbtn" type="button" id="moveToEnabled" name="moveToEnabled" value=">" onclick="moveOptions(document.iform.serversDisabledSelect, document.iform.serversSelect); checkPoolControls();" /><br/>
+							<input class="formbtn" type="button" id="moveToDisabled" name="moveToDisabled" value="<" onclick="moveOptions(document.iform.serversSelect, document.iform.serversDisabledSelect); checkPoolControls();" />
 						</td>
 
 						<td>

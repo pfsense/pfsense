@@ -110,6 +110,44 @@ function moveOptions(theSelFrom, theSelTo)
 	}
 }
 
+function checkPoolControls() {
+	var active = document.iform.serversSelect;
+	var inactive = document.iform.serversDisabledSelect;
+	if ($("mode").value == "failover") {
+		if ($("serversSelect").length > 0) {
+			$("moveToEnabled").disabled=1;
+		} else {
+			$("moveToEnabled").disabled=0;
+		}
+	} else {
+		$("moveToEnabled").disabled=0;
+	}
+}
+
+function enforceFailover() {
+	if ($("mode").value != "failover") {
+		return;
+	}
+	var active = document.iform.serversSelect;
+	var inactive = document.iform.serversDisabledSelect;
+	var count = 0;
+	var moveText = new Array();
+	var moveVals = new Array();
+	var i;
+	if (active.length > 1) {
+		// Move all but one entry to the disabled list
+		for (i=active.length-1; i>0; i--) {
+			moveText[count] = active.options[i].text;
+			moveVals[count] = active.options[i].value;
+			deleteOption(active, i);
+			count++;
+		}
+		for (i=count-1; i>=0; i--) {
+			addOption(inactive, moveText[i], moveVals[i]);
+		}
+	}
+}
+
 // functions up() and down() modified from http://www.babailiica.com/js/sorter/
 
 function up(obj) {

@@ -413,11 +413,11 @@ if ($_POST) {
 			}
 		}
 
+		if (isset($_POST['tag']))
+			$filterent['tag'] = $_POST['tag'];
+		if (isset($_POST['tagged']))
+			$filterent['tagged'] = $_POST['tagged'];
 		if ($if == "FloatingRules" || isset($_POST['floating'])) {
-			if (isset($_POST['tag']))
-				$filterent['tag'] = $_POST['tag'];
-			if (isset($_POST['tagged']))
-				$filterent['tagged'] = $_POST['tagged'];
 			$filterent['direction'] = $_POST['direction'];
 			if (isset($_POST['quick']) && $_POST['quick'] <> "")
 				$filterent['quick'] = $_POST['quick'];

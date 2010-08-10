@@ -648,12 +648,6 @@ $priv_list['page-services-dynamicdnsclients']['descr'] = "Allow access to the 'S
 $priv_list['page-services-dynamicdnsclients']['match'] = array();
 $priv_list['page-services-dynamicdnsclients']['match'][] = "services_dyndns.php*";
 
-$priv_list['page-status-rrdgraphs'] = array();
-$priv_list['page-status-rrdgraphs']['name'] = "WebCfg - Status: RRD Graphs page";
-$priv_list['page-status-rrdgraphs']['descr'] = "Allow access to the 'Status: RRD Graphs' page.";
-$priv_list['page-status-rrdgraphs']['match'] = array();
-$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_settings.php*";
-
 $priv_list['page-system-usermanager-settings-testldap'] = array();
 $priv_list['page-system-usermanager-settings-testldap']['name'] = "WebCfg - System: User Manager: Settings: Test LDAP page";
 $priv_list['page-system-usermanager-settings-testldap']['descr'] = "Allow access to the 'System: User Manager: Settings: Test LDAP' page.";
@@ -774,6 +768,7 @@ $priv_list['page-status-rrdgraphs']['descr'] = "Allow access to the 'Status: RRD
 $priv_list['page-status-rrdgraphs']['match'] = array();
 $priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_settings.php*";
 $priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_img.php*";
+$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph.php*";
 
 $priv_list['page-status-services'] = array();
 $priv_list['page-status-services']['name'] = "WebCfg - Status: Services page";

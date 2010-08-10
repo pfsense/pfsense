@@ -317,7 +317,7 @@ if ($_GET['act'] == "add") {
 				break;
 		}
 		$newifname = 'opt' . $i;
-		$descr = sprintf(gettext("OPT '%s'"),$i);
+		$descr = "OPT" . $i;
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	}

@@ -121,7 +121,7 @@ if($g['services_dhcp_server_enable'])
 	$services_menu[] = array("DHCP Server", "/services_dhcp.php");
 $services_menu[] = array("Dynamic DNS", "/services_dyndns.php");
 $services_menu[] = array("IGMP proxy", "/services_igmpproxy.php");
-$services_menu[] = array("Load Balancer", "/load_balancer_monitor.php");
+$services_menu[] = array("Load Balancer", "/load_balancer_pool.php");
 $services_menu[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
 $services_menu[] = array("PPPoE Server", "/vpn_pppoe.php");
 $services_menu[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");

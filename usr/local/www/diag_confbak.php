@@ -149,7 +149,7 @@ include("head.inc");
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (is_array($confvers)): ?>
 						<tr>
-							<td colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="Diff"></td>
+							<td colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="<?=gettext("Diff"); ?>"></td>
 							<td width="30%" class="listhdrr"><?=gettext("Date");?></td>
 							<td width="70%" class="listhdrr"><?=gettext("Configuration Change");?></td>
 						</tr>
@@ -203,7 +203,7 @@ include("head.inc");
 						</tr>
 						<?php endforeach; ?>
 						<tr>
-							<td colspan="2"><input type="submit" name="diff" value="Diff"></td>
+							<td colspan="2"><input type="submit" name="diff" value="<?=gettext("Diff"); ?>"></td>
 							<td colspan="5"></td>
 						</tr>
 						<?php else: ?>

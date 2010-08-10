@@ -162,7 +162,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
-Interface:
+<?=gettext("Interface"); ?>:
 <select name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {

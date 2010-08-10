@@ -84,10 +84,8 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	if($a_vs[$i]) {
 		$a_vs[$i]['pool'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['pool']]}\">{$a_vs[$i]['pool']}</a>";
 		if ($a_vs[$i]['sitedown'] != '') {
-			unset($a_vs[$i]['sitedown']);
 			$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">{$a_vs[$i]['sitedown']}</a>";
 		} else {
-			unset($a_vs[$i]['sitedown']);
 			$a_vs[$i]['sitedown'] = 'none';
 		}
 	}

@@ -772,12 +772,6 @@ $priv_list['page-status-rrdgraphs'] = array();
 $priv_list['page-status-rrdgraphs']['name'] = "WebCfg - Status: RRD Graphs page";
 $priv_list['page-status-rrdgraphs']['descr'] = "Allow access to the 'Status: RRD Graphs' page.";
 $priv_list['page-status-rrdgraphs']['match'] = array();
-$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph.php*";
-
-$priv_list['page-status-rrdgraphs'] = array();
-$priv_list['page-status-rrdgraphs']['name'] = "WebCfg - Status: RRD Graphs page";
-$priv_list['page-status-rrdgraphs']['descr'] = "Allow access to the 'Status: RRD Graphs' page.";
-$priv_list['page-status-rrdgraphs']['match'] = array();
 $priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_settings.php*";
 
 $priv_list['page-status-services'] = array();

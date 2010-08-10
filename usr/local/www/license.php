@@ -150,10 +150,10 @@ include("head.inc");
               Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("OpenVPN support");?></font></em></p>
             <hr size="1">
-            <p>{$g['product_name']} <?=gettext("is based upon/includes various free software packages, ".
+            <p><?= "{$g['product_name']} " . gettext("is based upon/includes various free software packages, ".
               "listed below.");?><br>
-              <?=gettext("The author of ");?>{$g['product_name']}<?=gettext(" would like to thank the authors of these " .
-              "software packages for their efforts");?>.</p>
+              <?php printf(gettext("The author of %s would like to thank the authors of these " .
+              "software packages for their efforts"),$g['product_name']);?>.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
               <?=gettext("Copyright");?> &copy;<?=gettext(" 1994-2003 FreeBSD, Inc. All rights reserved");?>.<br>
               <br>

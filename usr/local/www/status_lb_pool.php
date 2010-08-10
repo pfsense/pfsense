@@ -134,10 +134,10 @@ foreach( (array) $relayctl as $line) {
 						PRINT "<tr>";
 						switch ($vipent['mode']) {
 						  case 'loadbalance':
-							if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."' checked=1></td>";
+							if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."' checked></td>";
 							break;
 						  case 'failover':
-							if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."' selected></td>";
+							if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."' checked></td>";
 							break;
 						}
 						PRINT "<td bgcolor=".$bgcolor."> {$svr[0]}:{$vipent['port']} </td></tr>";
@@ -145,7 +145,17 @@ foreach( (array) $relayctl as $line) {
                                 }
 				foreach ((array) $vipent['serversdisabled'] as $server) {
                                        	$svr = split("\|", $server);
-					if($svr[0]!="") PRINT "<tr><td><input type='checkbox'></td><td> {$svr[0]}:{$vipent['port']} </td></tr>";
+
+					PRINT "<tr>";
+					switch ($vipent['mode']) {
+					  case 'loadbalance':
+						if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."'></td>";
+						break;
+					  case 'failover':
+						if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."'></td>";
+						break;
+					}
+					PRINT "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
 				}
                         ?>
 			</table>

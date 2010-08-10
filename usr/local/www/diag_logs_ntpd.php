@@ -87,7 +87,7 @@ include("head.inc");
 		  <?php dump_clog($ntpd_logfile, $nentries); ?>
 		<tr><td><br>
 		<form action="diag_logs_ntpd.php" method="post">
-			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
+			<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
 		</table>
 	</div>
 </form>

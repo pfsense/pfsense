@@ -773,6 +773,7 @@ $priv_list['page-status-rrdgraphs']['name'] = "WebCfg - Status: RRD Graphs page"
 $priv_list['page-status-rrdgraphs']['descr'] = "Allow access to the 'Status: RRD Graphs' page.";
 $priv_list['page-status-rrdgraphs']['match'] = array();
 $priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_settings.php*";
+$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_img.php*";
 
 $priv_list['page-status-services'] = array();
 $priv_list['page-status-services']['name'] = "WebCfg - Status: Services page";
@@ -1109,6 +1110,9 @@ $priv_list['page-status-trafficgraph']['name'] = "WebCfg - Status: Traffic Graph
 $priv_list['page-status-trafficgraph']['descr'] = "Allow access to the 'Status: Traffic Graph' page.";
 $priv_list['page-status-trafficgraph']['match'] = array();
 $priv_list['page-status-trafficgraph']['match'][] = "status_graph.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "bandwidth_by_ip.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "graph.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "traffic_graphs.widget.php*";
 
 $priv_list['page-services-captiveportal-vouchers'] = array();
 $priv_list['page-services-captiveportal-vouchers']['name'] = "WebCfg - Services: Captive portal Vouchers page";
@@ -1157,7 +1161,6 @@ $priv_list['page-firewall-schedules-edit']['name'] = "WebCfg - Firewall: Schedul
 $priv_list['page-firewall-schedules-edit']['descr'] = "Allow access to the 'Firewall: Schedules: Edit' page.";
 $priv_list['page-firewall-schedules-edit']['match'] = array();
 $priv_list['page-firewall-schedules-edit']['match'][] = "firewall_schedule_edit.php*";
-
 
 $priv_rmvd = array();
 

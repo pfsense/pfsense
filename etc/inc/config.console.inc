@@ -411,13 +411,8 @@ EODD;
 		write_config();
 		echo "done.\n";
 
-		echo <<<EOD
-
-
-
-EOD;
-
 		fclose($fp);
+
 		if($g['booting'])
 			return;
 
@@ -459,6 +454,14 @@ EOD;
 	echo "No link-up detected.\n";
 
 	return null;
+}
+
+function interfaces_setup() {
+	global $iflist, $config, $g, $fp;
+
+	$iflist = get_interface_list();
+
+	
 }
 
 function vlan_setup() {

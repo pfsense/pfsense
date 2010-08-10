@@ -62,7 +62,7 @@
 	$addr_blank = false;
 
 	/* build an interface collection */
-	$ifdescrs = get_configured_interface_with_descr();
+	$ifdescrs = get_configured_interface_with_descr(false, true);
 	$j = count($ifdescrs);
 	
 	/* grab interface that we will operate on, unless there is only one

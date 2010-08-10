@@ -473,7 +473,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	if ($mtu != $mtum)
 		pfSense_interface_mtu($interface, $mtu);
 
-	pfSense_get_interface_addresses($bridgeif);
+	$options = pfSense_get_interface_addresses($bridgeif);
 	if (isset($options['encaps']['txcsum']))
 		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
 	else
@@ -1350,9 +1350,9 @@ EOD;
 
 		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
-	set pptp self {$localips[$pid]}
-	set pptp peer {$gateways[$pid]}
-	set pptp disable windowing
+	set {$type} self {$localips[$pid]}
+	set {$type} peer {$gateways[$pid]}
+	set {$type} disable windowing
 
 EOD;
 		}

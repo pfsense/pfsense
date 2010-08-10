@@ -421,9 +421,15 @@ add 65307 set 1 deny layer2 not mac-type ip
 EOD;
 
 	$rulenum = 65310;
-	$ips = "255.255.255.255 ";
-	foreach ($cpips as $cpip)
-		$ips .= "or {$cpip} ";
+	$ipcount = 0;
+	foreach ($cpips as $cpip) {
+		if($ipcount == 0) {
+			$ips = "{$cpip} ";
+		} else {
+			$ips .= "or {$cpip} ";
+		}
+		$ipcount++;
+	}
 	$ips = "{ {$ips} }";
 	$cprules .= "add {$rulenum} set 1 pass ip from any to {$ips} in\n";
 	$rulenum++;

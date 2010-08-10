@@ -96,9 +96,6 @@ function vpn_ipsec_configure($ipchg = false)
 	$a_phase1 = $config['ipsec']['phase1'];
 	$a_phase2 = $config['ipsec']['phase2'];
 	$a_client = $config['ipsec']['client'];
-	$lanip = get_interface_ip("lan");
-	$lansn = get_interface_subnet("lan");
-	$lansa = gen_subnet($lanip, $lansn);
 
 	if (!isset($ipseccfg['enable'])) {
 		mwexec("/sbin/ifconfig enc0 down");
@@ -755,8 +752,13 @@ EOD;
 
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
 			if ($config['interfaces']['lan']) {
-				$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
-				$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+				$lanip = get_interface_ip("lan");
+				if (!empty($lanip) && is_ipaddr($lanip)) {
+					$lansn = get_interface_subnet("lan");
+					$lansa = gen_subnet($lanip, $lansn);
+					$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+					$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+				}
 			}
 
 			foreach ($a_phase2 as $ph2ent) {

@@ -100,6 +100,16 @@ EOF;
 	nanobsd_detect_slice_info();
 }
 
+if (isset($_POST['rrdbackup'])) {
+	$config['system']['rrdbackup'] = $_POST['rrdbackup'];
+	install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
+}
+if (isset($_POST['dhcpbackup'])) {
+	$config['system']['dhcpbackup'] = $_POST['dhcpbackup'];
+	install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
+}
+
+
 if ($savemsg)
 	print_info_box($savemsg)
 
@@ -164,6 +174,49 @@ if ($savemsg)
 					</tr>
 					<tr>
 						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate slice'></form></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Periodic Data Backup");?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("RRD Backup");?></td>
+						<td width="78%" class="vtable">
+							<form action="diag_nanobsd.php" method="post" name="iform">
+								<?=gettext("Frequency");?>:
+								<select name='rrdbackup'>
+									<option value='0' <? if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>>Disable</option>
+								<? for ($x=1; $x<=24; $x++) { ?>
+									<option value='<?= $x ?>' <? if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> hour<? if ($x>1) echo "s"; ?></option>
+								<? } ?>
+								</select>
+								<br/>
+								<?=gettext("This will peridoically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+								<br/>
+								<br/>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("DHCP Leases Backup");?></td>
+						<td width="78%" class="vtable">
+							<form action="diag_nanobsd.php" method="post" name="iform">
+								<?=gettext("Frequency");?>:
+								<select name='dhcpbackup'>
+									<option value='0' <? if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>>Disable</option>
+								<? for ($x=1; $x<=24; $x++) { ?>
+									<option value='<?= $x ?>' <? if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> hour<? if ($x>1) echo "s"; ?></option>
+								<? } ?>
+								</select>
+								<br/>
+								<?=gettext("This will peridoically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+								<br/>
+								<br/>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Save'></form></td>
 					</tr>
 <?php if(file_exists("/conf/upgrade_log.txt")): ?>
 					<tr>

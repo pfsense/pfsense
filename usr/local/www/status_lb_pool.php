@@ -99,11 +99,6 @@ foreach( (array) $relayctl as $line) {
 		  <td width="30%" class="listhdr"><?=gettext("Description");?></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_pool as $vipent):
-				$svr=($vipent['servers'][0]);
-				if(trim($svr)=='10.1.10.101')
-				  $vipent['mode']='loadbalance';
-				if(trim($svr)=='10.1.10.121')
-				  $vipent['mode']='failover';
 			  ?>
                 <tr>
                   <td class="listlr">

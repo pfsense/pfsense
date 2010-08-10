@@ -131,7 +131,7 @@ include("head.inc");
 					<td>
 						<br>
 						<form action="diag_logs_ipsec.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="Clear log">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
 						</form>
 					</td>
 				</tr>

@@ -87,7 +87,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic"><?php printf (gettext("Last <?=$nentries;?> PPP log entries"),$nentries);?></td>
+					<td colspan="2" class="listtopic"><?php printf (gettext("Last $nentries PPP log entries"),$nentries);?></td>
 		  		</tr>
 				<?php
 				foreach($ppp_logarr as $logent){
@@ -110,7 +110,7 @@ include("head.inc");
 					<td>
 						<br>
 						<form action="diag_logs_ppp.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="Clear log">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
 						</form>
 					</td>
 				</tr>

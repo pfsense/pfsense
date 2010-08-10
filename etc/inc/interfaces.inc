@@ -1350,9 +1350,9 @@ EOD;
 
 		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
-	set pptp self {$localips[$pid]}
-	set pptp peer {$gateways[$pid]}
-	set pptp disable windowing
+	set {$type} self {$localips[$pid]}
+	set {$type} peer {$gateways[$pid]}
+	set {$type} disable windowing
 
 EOD;
 		}

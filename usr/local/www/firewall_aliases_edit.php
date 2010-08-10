@@ -656,7 +656,7 @@ EOD;
         </tfoot>
 		  </table>
 			<div id="addrowbutton"><a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" /></div>
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></div>
       </a>
 		</td>
   </tr>

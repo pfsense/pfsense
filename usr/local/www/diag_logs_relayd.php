@@ -87,7 +87,7 @@ include("head.inc");
 		  </tr>
 		  <?php dump_clog($relayd_logfile, $nentries); ?>
 		<tr><td><br><form action="diag_logs_relayd.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
 		</table>
 	</div>
 </form>

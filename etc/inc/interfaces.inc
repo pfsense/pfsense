@@ -824,11 +824,13 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($realif == $ppp['if']) {
-					killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
-					sleep(2);
+					if (file_exists("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid")) {
+						killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
+						sleep(2);
+					}
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 					if (isset($ppp['ondemand']) && !$destroy) {
-						interface_configure("wan");
+						interface_configure($interface);
 					}
 					break;
 				}

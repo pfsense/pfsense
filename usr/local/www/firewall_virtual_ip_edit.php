@@ -248,9 +248,9 @@ function get_radio_value(obj)
 }
 function enable_change(enable_over) {
 		var note = document.getElementById("typenote");
-		var carpnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
-		var proxyarpnote = document.createTextNode('<?=gettext("This is a CIDR block of proxy ARP addresses.");?>');
-		var ipaliasnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
+		var carpnote = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
+		var proxyarpnote = document.createTextNode("<?=gettext("This is a CIDR block of proxy ARP addresses.");?>");
+		var ipaliasnote = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;

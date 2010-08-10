@@ -33,9 +33,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-status-rrdgraphs
-##|*NAME=Status: RRD Graphs page
-##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
+##|*IDENT=page-status-rrdgraph-settings
+##|*NAME=Status: RRD Graphs settings page
+##|*DESCR=Allow access to the 'Status: RRD Graphs: settings' page.
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV
 

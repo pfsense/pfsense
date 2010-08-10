@@ -267,11 +267,12 @@ function return_gateways_status() {
 	foreach($apingerstatus as $line) {
 		$info = explode("|", $line);
 		$target = $info[0];
-		$status[$target]['name'] = $info[1];
-		$status[$target]['lastcheck'] = $info[4] ? date('r', $info[4]) : date('r');
-		$status[$target]['delay'] = empty($info[5]) ? 0 : $info[5];
-		$status[$target]['loss'] = empty($info[6]) ? "0.0%" : $info[6] . "";
-		$status[$target]['status'] = trim($info[7]);
+		$status[$target]['srcip'] = $info[1];
+		$status[$target]['name'] = $info[2];
+		$status[$target]['lastcheck'] = $info[5] ? date('r', $info[5]) : date('r');
+		$status[$target]['delay'] = empty($info[6]) ? 0 : $info[6];
+		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : $info[7] . "";
+		$status[$target]['status'] = trim($info[8]);
 	}
 	return($status);
 }

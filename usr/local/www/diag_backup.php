@@ -272,7 +272,7 @@ if ($_POST) {
 					/* read the file contents */
 					$data = file_get_contents($_FILES['conffile']['tmp_name']);
 					if(!$data) {
-						log_error(gettext("Warning, could not read file") . " " . $_FILES['conffile']['tmp_name']);
+						log_error(sprintf(gettext("Warning, could not read file %s"), $_FILES['conffile']['tmp_name']));
 						return 1;
 					}
 
@@ -301,7 +301,7 @@ if ($_POST) {
 						}
 					} else {
 						if(!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
-							$input_errors[] = gettext("You have selected to restore the full configuration but we could not locate a") . " " . $g['xml_rootobj'] . " " . gettext("tag.");
+							$input_errors[] = sprintf(gettext("You have selected to restore the full configuration but we could not locate a %s tag."), $g['xml_rootobj']);
 						} else {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
@@ -584,7 +584,7 @@ function backuparea_change(obj) {
 						<table id="encrypt_opts">
 							<tr>
 								<td>
-									<span class="vexpl"><?=gettext("Password"); ?> :</span>
+									<span class="vexpl"><?=gettext("Password:"); ?> </span>
 								</td>
 								<td>
 									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
@@ -592,7 +592,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<span class="vexpl"><?=gettext("confirm"); ?> :</span>
+									<span class="vexpl"><?=gettext("confirm:"); ?> </span>
 								</td>
 								<td>
 									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
@@ -642,7 +642,7 @@ function backuparea_change(obj) {
 							</tr>
 						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>"></p>
-                      	<p><strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
+                      	<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>

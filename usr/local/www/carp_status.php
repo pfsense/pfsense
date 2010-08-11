@@ -136,7 +136,7 @@ include("head.inc");
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces") . ".";
+					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
 					include("fend.inc");

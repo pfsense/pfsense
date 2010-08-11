@@ -77,6 +77,7 @@ foreach( (array) $relayctl as $line) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
+<form action="status_lb_pool.php" method="POST">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -213,10 +214,16 @@ foreach( (array) $relayctl as $line) {
 			$i++;
 		 endforeach;
 		 ?>
+		<tr>
+			<td colspan="5">
+			<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>">
+			<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>"> 
+			</td>
+		</tr>
               </table>
 	   </div>
 	</table>
-
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

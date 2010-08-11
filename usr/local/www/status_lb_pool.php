@@ -131,30 +131,34 @@ foreach( (array) $relayctl as $line) {
 					default:
 						$bgcolor = "lightcoral";
 				}
-				PRINT "<tr>";
+				echo "<tr>";
 				switch ($vipent['mode']) {
 					case 'loadbalance':
-						if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."' checked></td>";
+						if($svr[0]!="")
+							echo "<td><input type='checkbox' name='{$vipent['name']}_{$svr[0]}' checked></td>";
 						break;
 					case 'failover':
-						if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."' checked></td>";
+						if($svr[0]!="")
+							echo "<td><input type='radio' name='{$vipent['name']}' checked></td>";
 						break;
 				}
-				PRINT "<td bgcolor=".$bgcolor."> {$svr[0]}:{$vipent['port']} </td></tr>";
+				echo "<td bgcolor={$bgcolor}> {$svr[0]}:{$vipent['port']} </td></tr>";
 			}
 		}
 		foreach ((array) $vipent['serversdisabled'] as $server) {
 			$svr = split("\|", $server);
-			PRINT "<tr>";
+			echo "<tr>";
 			switch ($vipent['mode']) {
 				case 'loadbalance':
-					if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."'></td>";
+					if($svr[0]!="")
+						echo "<td><input type='checkbox' name='{$vipent['name']}_{$svr[0]}'></td>";
 					break;
 				case 'failover':
-					if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."'></td>";
+					if($svr[0]!="")
+						echo "<td><input type='radio' name='{$vipent['name']}'></td>";
 					break;
 			}
-			PRINT "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
+			echo "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
 		}
 		?>
 		</table>

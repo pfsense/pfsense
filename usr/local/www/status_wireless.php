@@ -140,7 +140,7 @@ display_top_tabs($tab_array);
 
 	/* table header */
         print "\n<tr>";
-	printf(gettext("%s%s%sAssociated or ad-hoc peers.%s%s%s%s"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
+	printf("%s%s%s" . gettext("Associated or ad-hoc peers") ."%s%s%s%s",'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>ADDR</td>";
 	print "<td><b><font color='#ffffff'>AID</td>";

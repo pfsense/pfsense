@@ -74,7 +74,7 @@ if(empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np(printf(gettext("ERROR: Could not parse %s/wizards/%s file."),$g['www_path'],$xml));
+	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."),$g['www_path'],$xml));
 	die;
 }
 

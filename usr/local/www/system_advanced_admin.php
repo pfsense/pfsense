@@ -325,7 +325,7 @@ function prot_change() {
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
 									<br/>
-									<?php sprintf(gettext("When this is unchecked, access to the webConfigurator " .
+									<?php printf(gettext("When this is unchecked, access to the webConfigurator " .
 									"on the %s interface is always permitted, regardless of the user-defined firewall " .
 									"rule set. Check this box to disable this automatically added rule, so access " .
 									"to the webConfigurator is controlled by the user-defined firewall rules " .

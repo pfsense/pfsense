@@ -248,7 +248,7 @@ if ($_POST) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
 					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
-						$input_errors[] = printf(gettext("The subnet range cannot overlap with virtual IP address %s."),$vip['subnet']);
+						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."),$vip['subnet']);
 			}
 		}
 
@@ -274,7 +274,7 @@ if ($_POST) {
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
-				$input_errors[] = printf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
+				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
 		}
 	}
 

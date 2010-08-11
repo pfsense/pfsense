@@ -158,7 +158,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(printf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	return $xmlrpc_g['return']['true'];
 }
 
@@ -181,7 +181,7 @@ function merge_installedpackages_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(printf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	return $xmlrpc_g['return']['true'];
 }
 

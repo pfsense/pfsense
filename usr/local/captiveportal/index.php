@@ -76,11 +76,12 @@ if ($orig_host != $ourhostname) {
 
     exit;
 }
-
 if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
     $redirurl = urldecode($matches[1]);
 if ($_POST['redirurl'])
     $redirurl = $_POST['redirurl'];
+if (!empty($config['captiveportal']['redirurl']))
+	$redirurl = $config['captiveportal']['redirurl'];
 
 $macfilter = !isset($config['captiveportal']['nomacfilter']);
 $passthrumac = isset($config['captiveportal']['passthrumacadd']);
@@ -197,35 +198,35 @@ exit;
 exit;
 
 function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null) {
-    global $g, $config;
+	global $g, $config;
 
-    /* Get captive portal layout */
-    if ($type == "redir") {
-	header("Location: {$redirurl}");
-	return;
-    } else if ($type == "login")
-        $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal.html");
-    else
-        $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
+	/* Get captive portal layout */
+	if ($type == "redir") {
+		header("Location: {$redirurl}");
+		return;
+	} else if ($type == "login")
+		$htmltext = get_include_contents("{$g['varetc_path']}/captiveportal.html");
+	else
+		$htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
 
-    /* substitute other variables */
-    if (isset($config['captiveportal']['httpslogin'])) {
-        $htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
-        $htmltext = str_replace("#PORTAL_ACTION#", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
-    } else {
+	/* substitute other variables */
+	if (isset($config['captiveportal']['httpslogin'])) {
+		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
+		$htmltext = str_replace("#PORTAL_ACTION#", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
+	} else {
 		$ifip = portal_ip_from_client_ip($clientip);
-    	if (!$ifip)
-        	$ourhostname = $config['system']['hostname'] . ":8000";
-    	else
-        	$ourhostname = "{$ifip}:8000";
-        $htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
-        $htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
-    }
+		if (!$ifip)
+			$ourhostname = $config['system']['hostname'] . ":8000";
+		else
+			$ourhostname = "{$ifip}:8000";
+		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
+		$htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
+	}
 
-    $htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
-    $htmltext = str_replace("\$PORTAL_MESSAGE\$", htmlspecialchars($message), $htmltext);
-    $htmltext = str_replace("\$CLIENT_MAC\$", htmlspecialchars($clientmac), $htmltext);
-    $htmltext = str_replace("\$CLIENT_IP\$", htmlspecialchars($clientip), $htmltext);
+	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
+	$htmltext = str_replace("\$PORTAL_MESSAGE\$", htmlspecialchars($message), $htmltext);
+	$htmltext = str_replace("\$CLIENT_MAC\$", htmlspecialchars($clientmac), $htmltext);
+	$htmltext = str_replace("\$CLIENT_IP\$", htmlspecialchars($clientip), $htmltext);
 
 	// Special handling case for captive portal master page so that it can be ran 
 	// through the PHP interpreter using the include method above.  We convert the

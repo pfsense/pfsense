@@ -162,52 +162,10 @@ foreach( (array) $relayctl as $line) {
 			</table>
                   </td>
                   <td class="listr" >
-			<table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-				if ($vipent['type'] == "gateway") {
-					$poolfile = "{$g['tmp_path']}/{$vipent['name']}.pool";
-					if(file_exists("$poolfile")) {
-						$poolstatus = file_get_contents("$poolfile");
-					}
-                                        foreach ((array) $vipent['servers'] as $server) {
-						$lastchange = "";
-                                                $svr = split("\|", $server);
-						$monitorip = $svr[1];
-						$logstates = return_clog($lb_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
-
-						$logstates = $logstates[0];
-
-						if(stristr($logstates, $monitorip)) {
-							$date = preg_split("/[ ]+/" , $logstates);
-							$lastchange = "$date[0] $date[1] $year $date[2]";
-						}
-						if(stristr($poolstatus, $monitorip)) {
-							$online = gettext("Online");
-							$bgcolor = "lightgreen";
-							$change = $now - strtotime("$lastchange");
-							if($change < 300) {
-								$bgcolor = "khaki";
-							}
-						} else {
-							$online = gettext("Offline");
-							$bgcolor = "lightcoral";
-						}
-						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-						if($lastchange <> "") {
-							PRINTF(gettext("Last change %s"),$lastchange);
-						} else {
-							PRINT(gettext("No changes found in logfile"));
-						}
-						PRINT "</td></tr>";
-                                        }
-                                } else {
-					PRINT "<tr><td> {$vipent['monitor']} </td></tr>";
-                                }
-                        ?>
-			</table>
+			<?php echo $vipent['monitor']; ?>
                   </td>
                   <td class="listbg" >
-					<?=$vipent['desc'];?>
+			<?=$vipent['desc'];?>
                   </td>
                 </tr>
 		<?php

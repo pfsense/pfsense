@@ -118,7 +118,7 @@ include("head.inc");
 			<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <?=gettext("Dynamic View");?> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
 		</div>
 		<div class="listtopic">
-			<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause");?>:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
+			<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
 		</div>
 		<div id="log">
 			<div class="log-header">
@@ -149,7 +149,7 @@ include("head.inc");
      </td>
   </tr>
 </table>
-<p><span class="vexpl"><a href="http://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
+<p><span class="vexpl"><a href="http://doc.pfsense.org/index.php/What_are_TCP_Flags%3F"><?=gettext("TCP Flags"); ?></a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
 
 <?php include("fend.inc"); ?>
 </body>

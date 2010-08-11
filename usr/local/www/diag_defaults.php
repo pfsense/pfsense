@@ -64,7 +64,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
 <form action="diag_defaults.php" method="post">
-              <p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will")?>:
+              <p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?>
 
 		<ul>
 		  <li><?=gettext("Reset to factory defaults");?></li>

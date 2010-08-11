@@ -176,8 +176,8 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="mode" name="mode" onChange="enforceFailover(); checkPoolControls();">
-					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "value=\"{$pconfig['name']}\"";?>>Load Balance</option>
-					<option value="failover"   <?if($pconfig['mode'] == "failover") echo "value=\"{$pconfig['name']}\"";?>>Manual Failover</option>
+					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected";?>>Load Balance</option>
+					<option value="failover"  <?if($pconfig['mode'] == "failover") echo "selected";?>>Manual Failover</option>
 				</select>
 			</td>
 		</tr>

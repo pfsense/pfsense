@@ -99,14 +99,14 @@ foreach( (array) $relayctl as $line) {
 		<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
 		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
 		</tr>
-		<?php $i = 0; foreach ($a_pool as $vipent): ?>
+		<?php $i = 0; foreach ($a_pool as $pool): ?>
 		<tr>
 		<td class="listlr">
-			<?=$vipent['name'];?>
+			<?=$pool['name'];?>
 		</td>
 		<td class="listr" align="center" >
 		<?php
-		switch($vipent['mode']) {
+		switch($pool['mode']) {
 			case "loadbalance":
 				echo "Load balancing";
 				break;
@@ -121,10 +121,10 @@ foreach( (array) $relayctl as $line) {
 		<td class="listr" align="center" >
 		<table border="0" cellpadding="0" cellspacing="2">
 		<?php
-		foreach ((array) $vipent['servers'] as $server) {
+		foreach ((array) $pool['servers'] as $server) {
 			$svr = split("\|", $server);
 			if($svr[0]!="") {
-				switch ($relay_hosts[$vipent['name'].":".$vipent['port']][$svr[0]]['state']) {
+				switch ($relay_hosts[$pool['name'].":".$pool['port']][$svr[0]]['state']) {
 					case 'up':
 						$bgcolor = "lightgreen";
 						break;
@@ -132,42 +132,42 @@ foreach( (array) $relayctl as $line) {
 						$bgcolor = "lightcoral";
 				}
 				echo "<tr>";
-				switch ($vipent['mode']) {
+				switch ($pool['mode']) {
 					case 'loadbalance':
 						if($svr[0]!="")
-							echo "<td><input type='checkbox' name='{$vipent['name']}_{$svr[0]}' checked></td>";
+							echo "<td><input type='checkbox' name='{$pool['name']}_{$svr[0]}' checked></td>";
 						break;
 					case 'failover':
 						if($svr[0]!="")
-							echo "<td><input type='radio' name='{$vipent['name']}' checked></td>";
+							echo "<td><input type='radio' name='{$pool['name']}' checked></td>";
 						break;
 				}
-				echo "<td bgcolor={$bgcolor}> {$svr[0]}:{$vipent['port']} </td></tr>";
+				echo "<td bgcolor={$bgcolor}> {$svr[0]}:{$pool['port']} </td></tr>";
 			}
 		}
-		foreach ((array) $vipent['serversdisabled'] as $server) {
+		foreach ((array) $pool['serversdisabled'] as $server) {
 			$svr = split("\|", $server);
 			echo "<tr>";
-			switch ($vipent['mode']) {
+			switch ($pool['mode']) {
 				case 'loadbalance':
 					if($svr[0]!="")
-						echo "<td><input type='checkbox' name='{$vipent['name']}_{$svr[0]}'></td>";
+						echo "<td><input type='checkbox' name='{$pool['name']}_{$svr[0]}'></td>";
 					break;
 				case 'failover':
 					if($svr[0]!="")
-						echo "<td><input type='radio' name='{$vipent['name']}'></td>";
+						echo "<td><input type='radio' name='{$pool['name']}'></td>";
 					break;
 			}
-			echo "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
+			echo "<td> {$svr[0]}:{$pool['port']} </td></tr>";
 		}
 		?>
 		</table>
 		</td>
 		<td class="listr" >
-			<?php echo $vipent['monitor']; ?>
+			<?php echo $pool['monitor']; ?>
 		</td>
 		<td class="listbg" >
-			<?=$vipent['desc'];?>
+			<?=$pool['desc'];?>
 		</td>
 		</tr>
 		<?php

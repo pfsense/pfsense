@@ -87,6 +87,11 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" valign="top" class="vncellt">Version</td>
 			<td width="75%" class="listr">
 				<strong><?php readfile("/etc/version"); ?></strong>
+				(<?php
+					$arch = "";
+					exec('uname -m', $arch);
+					echo $arch[0];
+				?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />

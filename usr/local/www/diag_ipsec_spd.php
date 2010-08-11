@@ -140,8 +140,8 @@ $spd = ipsec_dump_spd();
 
 <p>
 <span class="vexpl">
-<span class="red"><strong><?= gettext("Note"); ?>:<br></strong></span>
-<?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here"); ?></a>.
+<span class="red"><strong><?= gettext("Note:"); ?><br></strong></span>
+<?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here."); ?></a>
 </span>
 
 <?php include("fend.inc"); ?>

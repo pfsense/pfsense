@@ -779,7 +779,7 @@ function interface_reconfigure($interface = "wan") {
 	interface_configure($interface, true);
 }
 
-function interface_vip_bring_down(&$vip) {
+function interface_vip_bring_down($vip) {
 	global $g;
 
 	switch ($vip['mode']) {

@@ -145,7 +145,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("Bootup");?></td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								<?=gettext("Bootup slice is currently");?>: <?php echo $ACTIVE_SLICE; ?>
+								<?=gettext("Bootup slice is currently:");?> <?php echo $ACTIVE_SLICE; ?>
 								<br/><br/><?=gettext("This will switch the bootup slice to the alternate slice.");?>
 								<br/>
 								<input type='hidden' name='bootslice' value='switch'>
@@ -162,7 +162,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("Duplicate bootup slice");?></td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">						
-								<?=gettext("Destination slice");?>:							
+								<?=gettext("Destination slice:");?>
 								<select name='destslice'>
 									<option value='<?php echo $COMPLETE_PATH; ?>'>
 										<?php echo "{$COMPLETE_BOOT_PATH} -> {$TOFLASH}"; ?>
@@ -185,11 +185,11 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("RRD Backup");?></td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								<?=gettext("Frequency");?>:
+								<?=gettext("Frequency:");?>
 								<select name='rrdbackup'>
-									<option value='0' <? if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>>Disable</option>
+									<option value='0' <? if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
 								<? for ($x=1; $x<=24; $x++) { ?>
-									<option value='<?= $x ?>' <? if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> hour<? if ($x>1) echo "s"; ?></option>
+									<option value='<?= $x ?>' <? if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><? if ($x>1) echo "s"; ?></option>
 								<? } ?>
 								</select>
 								<br/>
@@ -202,11 +202,11 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("DHCP Leases Backup");?></td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								<?=gettext("Frequency");?>:
+								<?=gettext("Frequency:");?>
 								<select name='dhcpbackup'>
-									<option value='0' <? if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>>Disable</option>
+									<option value='0' <? if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
 								<? for ($x=1; $x<=24; $x++) { ?>
-									<option value='<?= $x ?>' <? if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> hour<? if ($x>1) echo "s"; ?></option>
+									<option value='<?= $x ?>' <? if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><? if ($x>1) echo "s"; ?></option>
 								<? } ?>
 								</select>
 								<br/>
@@ -216,7 +216,7 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Save'></form></td>
+						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='<?=gettext("Save"); ?>'></form></td>
 					</tr>
 <?php if(file_exists("/conf/upgrade_log.txt")): ?>
 					<tr>

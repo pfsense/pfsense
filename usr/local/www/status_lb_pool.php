@@ -39,7 +39,10 @@
 ##|*MATCH=status_lb_pool.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -73,11 +76,54 @@ foreach( (array) $relayctl as $line) {
 	}
 }
 
+if ($_POST) {
+	if ($_POST['apply']) {
+		$retval = 0;
+		$retval |= filter_configure();
+		$retval |= relayd_configure();
+		$savemsg = get_std_save_message($retval);
+		clear_subsystem_dirty('loadbalancer');
+	} else {
+		/* Keep a list of servers we find in POST variables */
+		$newservers = array();
+		foreach ($_POST as $name => $value) {
+			/* Look through the POST vars to find the pool data */
+			if (strpos($name, '|') !== false){
+				list($poolname, $ip) = explode("|", $name);
+				$ip = str_replace('_', '.', $ip);
+				$newservers[$poolname][] = $ip;
+			} elseif (is_ipaddr($value)) {
+				$newservers[$name][] = $value;
+			}
+		}
+		foreach ($a_pool as & $pool) {
+			if (is_array($pool['servers']) && is_array($pool['serversdisabled'])) {
+				$oldservers = array_merge($pool['servers'], $pool['serversdisabled']);
+			} elseif (is_array($pool['servers'])) {
+				$oldservers = $pool['servers'];
+			} elseif (is_array($pool['serversdisabled'])) {
+				$oldservers = $pool['serversdisabled'];
+			} else {
+				$oldservers = array();
+			}
+			if (is_array($newservers[$pool['name']])) {
+				$pool['servers'] = $newservers[$pool['name']];
+				$pool['serversdisabled'] = array_diff($oldservers, $newservers[$pool['name']]);
+			}
+		}
+		mark_subsystem_dirty('loadbalancer');
+		write_config("Updated load balancer pools via status screen.");
+	}
+}
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <form action="status_lb_pool.php" method="POST">
+<?php if (is_subsystem_dirty('loadbalancer')): ?><p>
+<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
+<?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr><td class="tabnavtbl">
 	<?php
@@ -99,7 +145,7 @@ foreach( (array) $relayctl as $line) {
 		<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
 		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
 		</tr>
-		<?php $i = 0; foreach ($a_pool as $pool): ?>
+		<?php foreach ($a_pool as & $pool): ?>
 		<tr>
 		<td class="listlr">
 			<?=$pool['name'];?>
@@ -135,11 +181,11 @@ foreach( (array) $relayctl as $line) {
 				switch ($pool['mode']) {
 					case 'loadbalance':
 						if($svr[0]!="")
-							echo "<td><input type='checkbox' name='{$pool['name']}_{$svr[0]}' checked></td>";
+							echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $svr[0])."' checked></td>\n";
 						break;
 					case 'failover':
 						if($svr[0]!="")
-							echo "<td><input type='radio' name='{$pool['name']}' checked></td>";
+							echo "<td><input type='radio' name='{$pool['name']}' value='{$svr[0]}' checked></td>\n";
 						break;
 				}
 				echo "<td bgcolor={$bgcolor}> {$svr[0]}:{$pool['port']} </td></tr>";
@@ -151,11 +197,11 @@ foreach( (array) $relayctl as $line) {
 			switch ($pool['mode']) {
 				case 'loadbalance':
 					if($svr[0]!="")
-						echo "<td><input type='checkbox' name='{$pool['name']}_{$svr[0]}'></td>";
+						echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $svr[0])."'></td>\n";
 					break;
 				case 'failover':
 					if($svr[0]!="")
-						echo "<td><input type='radio' name='{$pool['name']}'></td>";
+						echo "<td><input type='radio' name='{$pool['name']}' value='{$svr[0]}'></td>\n";
 					break;
 			}
 			echo "<td> {$svr[0]}:{$pool['port']} </td></tr>";
@@ -170,10 +216,7 @@ foreach( (array) $relayctl as $line) {
 			<?=$pool['desc'];?>
 		</td>
 		</tr>
-		<?php
-			$i++;
-		 endforeach;
-		 ?>
+		<?php endforeach; ?>
 		<tr>
 			<td colspan="5">
 			<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>">

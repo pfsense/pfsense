@@ -191,7 +191,7 @@ function enable_change(enable_over) {
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
-			<td width="78%" class="vtable"><?=gettext("Number of log entries to show") . ":"?>
+			<td width="78%" class="vtable"><?=gettext("Number of log entries to show:")?>
                           <input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>"></td>
                       </tr>
                       <tr>
@@ -271,7 +271,7 @@ function enable_change(enable_over) {
                       </tr>
                       <tr>
                         <td width="22%" height="53" valign="top">&nbsp;</td>
-						<td width="78%"><strong><span class="red"><?=gettext("Note") . ":"?></span></strong><br>
+						<td width="78%"><strong><span class="red"><?=gettext("Note:")?></span></strong><br>
                           <?=gettext("syslog sends UDP datagrams to port 514 on the specified " .
                           "remote syslog server. Be sure to set syslogd on the " .
 						  "remote server to accept syslog messages from");?> <?=$g['product_name']?>.

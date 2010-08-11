@@ -139,7 +139,7 @@ if ($_POST) {
 		if(isset($id) && $a_monitor[$id])
 			$monent = $a_monitor[$id];
 		if($monent['name'] != "")
-			$changedesc .= " " . sprintf(gettext("modified '%s' monitor"), $monent['name']) . ":";
+			$changedesc .= " " . sprintf(gettext("modified '%s' monitor:"), $monent['name']);
 		
 		update_if_changed("name", $monent['name'], $pconfig['name']);
 		update_if_changed("type", $monent['type'], $pconfig['type']);

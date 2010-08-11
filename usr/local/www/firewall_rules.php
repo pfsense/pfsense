@@ -758,7 +758,7 @@ if($_REQUEST['undodrag']) {
 		  <td colspan="10">
   &nbsp;<p/>
   <strong>
-	<span class="red"><?=gettext("Hint") . ":";?></span>
+	<span class="red"><?=gettext("Hint:");?></span>
   </strong><br>
 	<ul>
   <li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .

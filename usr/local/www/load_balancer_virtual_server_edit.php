@@ -96,9 +96,9 @@ if ($_POST) {
 		if(isset($id) && $a_vs[$id])
 			$vsent = $a_vs[$id];
 		if($vsent['name'] != "")
-			$changedesc .= " " . sprintf(gettext("modified '%s' vs"), $vsent['name']) . ":";
+			$changedesc .= " " . sprintf(gettext("modified '%s' vs:"), $vsent['name']);
 		else
-			$changedesc .= " " . sprintf(gettext("created '%s' vs"), $_POST['name']) . ":";
+			$changedesc .= " " . sprintf(gettext("created '%s' vs:"), $_POST['name']);
 
 		update_if_changed("name", $vsent['name'], $_POST['name']);
 		update_if_changed("desc", $vsent['desc'], $_POST['desc']);

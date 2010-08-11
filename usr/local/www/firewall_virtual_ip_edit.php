@@ -149,7 +149,7 @@ if ($_POST) {
 		} else if ($parent_sn != $_POST['subnet_bits'])
 			$input_errors[] = gettext("Subnet bits needs to be the same as the parent interface.");
 
-		if ($a_vip[$id]['vhid'] != $_POST['vhid'])
+		if (isset($id) && ($a_vip[$id]) && $a_vip[$id]['vhid'] != $_POST['vhid'])
 			interface_vip_bring_down($a_vip[$id]);
 	}
 

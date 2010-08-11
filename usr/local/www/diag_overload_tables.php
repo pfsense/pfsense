@@ -94,7 +94,7 @@ include("fbegin.inc");
 	}
 </script>
 	
-<?=gettext("Table");?>: 
+<?=gettext("Table:");?> 
 <select id='type' onChange='method_change($F("type"));' name='type'>
 	<?php foreach ($tables as $table) {
 		echo "<option name='{$table}' value='{$table}'";

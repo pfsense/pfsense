@@ -167,44 +167,45 @@ if ($_POST) {
 		<td class="listr" align="center" >
 		<table border="0" cellpadding="0" cellspacing="2">
 		<?php
+		$pool_hosts=array();
 		foreach ((array) $pool['servers'] as $server) {
-			$svr = split("\|", $server);
-			if($svr[0]!="") {
-				switch ($relay_hosts[$pool['name'].":".$pool['port']][$svr[0]]['state']) {
+			$svr['ip']['addr']=$server;
+			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server['ip']]['state'];
+			$pool_hosts[]=$svr;
+		}
+		foreach ((array) $pool['serversdisabled'] as $server) {
+			$svr['ip']['addr']="$server";
+			$svr['ip']['state']='disabled';
+			$pool_hosts[]=$svr;
+		}
+		asort($pool_hosts);
+
+		foreach ((array) $pool_hosts as $server) {
+			if($server['ip']['addr']!="") {
+				switch ($server['ip']['state']) {
 					case 'up':
 						$bgcolor = "lightgreen";
+						$checked = "checked";
+						break;
+					case 'disabled':
+						$bgcolor = "white";
+						$checked = "";
 						break;
 					default:
 						$bgcolor = "lightcoral";
+						$checked = "checked";
 				}
 				echo "<tr>";
 				switch ($pool['mode']) {
 					case 'loadbalance':
-						if($svr[0]!="")
-							echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $svr[0])."' checked></td>\n";
+						echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $server['ip']['addr'])."' {$checked}></td>\n";
 						break;
 					case 'failover':
-						if($svr[0]!="")
-							echo "<td><input type='radio' name='{$pool['name']}' value='{$svr[0]}' checked></td>\n";
+						echo "<td><input type='radio' name='{$pool['name']}' value='{$server['ip']['addr']}' {$checked}></td>\n";
 						break;
 				}
-				echo "<td bgcolor={$bgcolor}> {$svr[0]}:{$pool['port']} </td></tr>";
+				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} </td></tr>";
 			}
-		}
-		foreach ((array) $pool['serversdisabled'] as $server) {
-			$svr = split("\|", $server);
-			echo "<tr>";
-			switch ($pool['mode']) {
-				case 'loadbalance':
-					if($svr[0]!="")
-						echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $svr[0])."'></td>\n";
-					break;
-				case 'failover':
-					if($svr[0]!="")
-						echo "<td><input type='radio' name='{$pool['name']}' value='{$svr[0]}'></td>\n";
-					break;
-			}
-			echo "<td> {$svr[0]}:{$pool['port']} </td></tr>";
 		}
 		?>
 		</table>

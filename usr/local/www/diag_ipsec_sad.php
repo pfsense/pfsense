@@ -107,7 +107,7 @@ if ($_GET['act'] == "del") {
 									$args .= "&proto=" . rawurlencode($sa['proto']);
 									$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
 								?>
-								<a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security association?')">
+								<a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
 									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
 								</a>
 							</td>
@@ -129,8 +129,8 @@ if ($_GET['act'] == "del") {
 <p/>
 
 <span class="vexpl">
-<span class="red"><strong><?=gettext("Note");?>:<br></strong></span>
-<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here");?></a>.
+<span class="red"><strong><?=gettext("Note:");?><br></strong></span>
+<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
 </span>
 
 <?php include("fend.inc"); ?>

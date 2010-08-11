@@ -132,7 +132,7 @@ $sad = ipsec_dump_sad();
 
 <span class="vexpl">
 	<span class="red">
-		<strong><?=gettext("Note");?>:<br /></strong>
+		<strong><?=gettext("Note:");?><br /></strong>
 	</span>
 	<?=gettext("You can configure your IPsec");?> 
 	<a href="vpn_ipsec.php">here</a>.

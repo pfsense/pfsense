@@ -275,6 +275,7 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_strict_rekey'] = isset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
 		$pconfig['passphrase'] = $wancfg['wireless']['wpa']['passphrase'];
 		$pconfig['ieee8021x'] = isset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
+		$pconfig['rsn_preauth'] = isset($wancfg['wireless']['wpa']['rsn_preauth']['enable']);
 		$pconfig['ext_wpa_sw'] = $wancfg['wireless']['wpa']['ext_wpa_sw'];
 		$pconfig['wpa_enable'] = isset($wancfg['wireless']['wpa']['enable']);
 	}
@@ -745,6 +746,10 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa']['mac_acl_enable'] = true;
 	else if (isset($wancfg['wireless']['wpa']['mac_acl_enable']))
 		unset($wancfg['wireless']['wpa']['mac_acl_enable']);
+	if ($_POST['rsn_preauth'] == "yes")
+		$wancfg['wireless']['wpa']['rsn_preauth']['enable'] = true;
+	else 
+		unset($wancfg['wireless']['wpa']['rsn_preauth']['enable']);
 	if ($_POST['ieee8021x'] == "yes")
 		$wancfg['wireless']['wpa']['ieee8021x']['enable'] = true;
 	else if (isset($wancfg['wireless']['wpa']['ieee8021x']['enable']))
@@ -1945,6 +1950,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Server Shared Secret"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>">
+								<br/>
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
+							<td class="vtable">
+								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <? if ($pconfig['rsn_preauth']) echo "checked"; ?>>
 								<br/>
 							</td>
 						</tr>

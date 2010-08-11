@@ -2119,12 +2119,18 @@ wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
 wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
 wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 {$wpa_passphrase}
-#Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
-#rsn_preauth=1
-#rsn_preauth_interfaces=eth0
 
 EOD;
 
+if (isset($wlcfg['wpa']['rsn_preauth'])) {
+	$wpa .= <<<EOD
+# Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
+rsn_preauth=1
+rsn_preauth_interfaces={$if}
+
+EOD;
+
+}
 				if($wlcfg['auth_server_addr'] && $wlcfg['auth_server_shared_secret']) {
 					$auth_server_port = "1812";
 					if($wlcfg['auth_server_port']) 

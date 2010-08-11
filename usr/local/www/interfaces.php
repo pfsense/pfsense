@@ -275,7 +275,7 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_strict_rekey'] = isset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
 		$pconfig['passphrase'] = $wancfg['wireless']['wpa']['passphrase'];
 		$pconfig['ieee8021x'] = isset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
-		$pconfig['rsn_preauth'] = isset($wancfg['wireless']['wpa']['rsn_preauth']['enable']);
+		$pconfig['rsn_preauth'] = isset($wancfg['wireless']['wpa']['rsn_preauth']);
 		$pconfig['ext_wpa_sw'] = $wancfg['wireless']['wpa']['ext_wpa_sw'];
 		$pconfig['wpa_enable'] = isset($wancfg['wireless']['wpa']['enable']);
 	}
@@ -747,9 +747,9 @@ function handle_wireless_post() {
 	else if (isset($wancfg['wireless']['wpa']['mac_acl_enable']))
 		unset($wancfg['wireless']['wpa']['mac_acl_enable']);
 	if ($_POST['rsn_preauth'] == "yes")
-		$wancfg['wireless']['wpa']['rsn_preauth']['enable'] = true;
+		$wancfg['wireless']['wpa']['rsn_preauth'] = true;
 	else 
-		unset($wancfg['wireless']['wpa']['rsn_preauth']['enable']);
+		unset($wancfg['wireless']['wpa']['rsn_preauth']);
 	if ($_POST['ieee8021x'] == "yes")
 		$wancfg['wireless']['wpa']['ieee8021x']['enable'] = true;
 	else if (isset($wancfg['wireless']['wpa']['ieee8021x']['enable']))

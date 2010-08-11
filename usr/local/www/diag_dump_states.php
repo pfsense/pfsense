@@ -132,9 +132,9 @@ include("head.inc");
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td><?=gettext("Current state count");?>: <?=$current_statecount?></td>
+					<td><?=gettext("Current state count:");?> <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
-						<?=gettext("Filter expression");?>:
+						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					<td>

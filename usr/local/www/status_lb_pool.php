@@ -28,7 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_MODULE:	routing
 */
 
@@ -50,7 +50,7 @@ $lb_logfile = "{$g['varlog_path']}/relayd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
-        $nentries = 50;
+	$nentries = 50;
 
 $now = time();
 $year = date("Y");
@@ -63,13 +63,13 @@ $relay_hosts=Array();
 foreach( (array) $relayctl as $line) {
 	$t=split("\t", $line);
 	switch (trim($t[1])) {
-	  case "table":
-		$curpool=trim($t[2]);		
-	  break;
-	  case "host":
-		$curhost=trim($t[2]);
-		$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
-	  break;
+		case "table":
+			$curpool=trim($t[2]);
+		break;
+		case "host":
+			$curhost=trim($t[2]);
+			$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
+		break;
 	}
 }
 
@@ -79,95 +79,93 @@ foreach( (array) $relayctl as $line) {
 <?php include("fbegin.inc"); ?>
 <form action="status_lb_pool.php" method="POST">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">
-  <?php
-        /* active tabs */
-        $tab_array = array();
-        $tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
-        $tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
-        display_top_tabs($tab_array);
-  ?>
-  </td></tr>
-  <tr>
-    <td>
+	<tr><td class="tabnavtbl">
+	<?php
+	/* active tabs */
+	$tab_array = array();
+	$tab_array[] = array(gettext("Pools"), true, "status_lb_pool.php");
+	$tab_array[] = array(gettext("Virtual Servers"), false, "status_lb_vs.php");
+	display_top_tabs($tab_array);
+	?>
+	</td></tr>
+	<tr>
+	<td>
 	<div id="mainarea">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" name="sortabletable" id="sortabletable">
-                <tr>
-		  <td width="10%" class="listhdrr"><?=gettext("Name");?></td>
-		  <td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
-		  <td width="10%" class="listhdrr"><?=gettext("Servers");?></td>
-		  <td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
-		  <td width="30%" class="listhdr"><?=gettext("Description");?></td>
-				</tr>
-			  <?php $i = 0; foreach ($a_pool as $vipent):
-			  ?>
-                <tr>
-                  <td class="listlr">
-				<?=$vipent['name'];?>
-                  </td>
-                  <td class="listr" align="center" >
-			<?php
-                                switch($vipent['mode']) {
-				  case "loadbalance":
-					echo "Load balancing";
-					break;
-				  case "failover":
-					echo "Manual failover";
-					break;
-				  default:
-					echo "(default)";
-				  }
-			?>
-                  </td>
-                  <td class="listr" align="center" >
-			<table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-                                foreach ((array) $vipent['servers'] as $server) {
-                                        $svr = split("\|", $server);
-					if($svr[0]!="") {
-						switch ($relay_hosts[$vipent['name'].":".$vipent['port']][$svr[0]]['state']) {
-						  case 'up':
-						    $bgcolor = "lightgreen";
-						    break;
-						  default:
-						    $bgcolor = "lightcoral";
-						}
-						PRINT "<tr>";
-						switch ($vipent['mode']) {
-						  case 'loadbalance':
-							if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."' checked></td>";
-							break;
-						  case 'failover':
-							if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."' checked></td>";
-							break;
-						}
-						PRINT "<td bgcolor=".$bgcolor."> {$svr[0]}:{$vipent['port']} </td></tr>";
-					}
-                                }
-				foreach ((array) $vipent['serversdisabled'] as $server) {
-                                       	$svr = split("\|", $server);
-
-					PRINT "<tr>";
-					switch ($vipent['mode']) {
-					  case 'loadbalance':
-						if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."'></td>";
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" name="sortabletable" id="sortabletable">
+		<tr>
+		<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
+		<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
+		<td width="10%" class="listhdrr"><?=gettext("Servers");?></td>
+		<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
+		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
+		</tr>
+		<?php $i = 0; foreach ($a_pool as $vipent): ?>
+		<tr>
+		<td class="listlr">
+			<?=$vipent['name'];?>
+		</td>
+		<td class="listr" align="center" >
+		<?php
+		switch($vipent['mode']) {
+			case "loadbalance":
+				echo "Load balancing";
+				break;
+			case "failover":
+				echo "Manual failover";
+				break;
+			default:
+				echo "(default)";
+		}
+		?>
+		</td>
+		<td class="listr" align="center" >
+		<table border="0" cellpadding="0" cellspacing="2">
+		<?php
+		foreach ((array) $vipent['servers'] as $server) {
+			$svr = split("\|", $server);
+			if($svr[0]!="") {
+				switch ($relay_hosts[$vipent['name'].":".$vipent['port']][$svr[0]]['state']) {
+					case 'up':
+						$bgcolor = "lightgreen";
 						break;
-					  case 'failover':
-						if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."'></td>";
-						break;
-					}
-					PRINT "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
+					default:
+						$bgcolor = "lightcoral";
 				}
-                        ?>
-			</table>
-                  </td>
-                  <td class="listr" >
+				PRINT "<tr>";
+				switch ($vipent['mode']) {
+					case 'loadbalance':
+						if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."' checked></td>";
+						break;
+					case 'failover':
+						if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."' checked></td>";
+						break;
+				}
+				PRINT "<td bgcolor=".$bgcolor."> {$svr[0]}:{$vipent['port']} </td></tr>";
+			}
+		}
+		foreach ((array) $vipent['serversdisabled'] as $server) {
+			$svr = split("\|", $server);
+			PRINT "<tr>";
+			switch ($vipent['mode']) {
+				case 'loadbalance':
+					if($svr[0]!="") PRINT "<td><input type='checkbox' name='".$vipent['name']."_".$svr[0]."'></td>";
+					break;
+				case 'failover':
+					if($svr[0]!="") PRINT "<td><input type='radio' name='".$vipent['name']."'></td>";
+					break;
+			}
+			PRINT "<td> {$svr[0]}:{$vipent['port']} </td></tr>";
+		}
+		?>
+		</table>
+		</td>
+		<td class="listr" >
 			<?php echo $vipent['monitor']; ?>
-                  </td>
-                  <td class="listbg" >
+		</td>
+		<td class="listbg" >
 			<?=$vipent['desc'];?>
-                  </td>
-                </tr>
+		</td>
+		</tr>
 		<?php
 			$i++;
 		 endforeach;
@@ -175,11 +173,11 @@ foreach( (array) $relayctl as $line) {
 		<tr>
 			<td colspan="5">
 			<input name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>">
-			<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>"> 
+			<input name="Reset"  type="reset"  class="formbtn" value="<?= gettext("Reset"); ?>">
 			</td>
 		</tr>
-              </table>
-	   </div>
+		</table>
+	</div>
 	</table>
 </form>
 <?php include("fend.inc"); ?>

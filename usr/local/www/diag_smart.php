@@ -11,7 +11,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("Diagnostics", "S.M.A.R.T. Monitor Tools");
+$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
 $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";
@@ -65,9 +65,9 @@ function add_colors($string)
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
-	$replacements[0] = '<b><font color="#00ff00">PASSED</font></b>';
-	$replacements[1] = '<b><font color="#ff0000">FAILED</font></b>';
-	$replacements[2] = '<font color="#ff0000">Warning</font>';
+	$replacements[0] = '<b><font color="#00ff00">' . gettext("PASSED") . '</font></b>';
+	$replacements[1] = '<b><font color="#ff0000">' . gettext("FAILED") . '</font></b>';
+	$replacements[2] = '<font color="#ff0000">' . gettext("Warning") . '</font>';
 	ksort($patterns);
 	ksort($replacements);
 	return preg_replace($patterns, $replacements, $string);
@@ -110,7 +110,7 @@ switch($action)
 		<form action="smartmon.php" method="post" name="abort">
 		<input type="hidden" name="device" value="' . $_POST['device'] . '" />
 		<input type="hidden" name="action" value="abort" />
-		<input type="submit" name="submit" value="Abort" />
+		<input type="submit" name="submit" value="' . gettext("Abort") . '" />
 		</form>
 		</pre>';
 		break;
@@ -151,7 +151,7 @@ switch($action)
 			if($_POST['testemail'])
 			{
 // FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
-				$savemsg = "Email sent to " . $config['system']['smartmonemail'];
+				$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
 				smartmonctl("stop");
 				smartmonctl("start");
 			}
@@ -191,8 +191,8 @@ switch($action)
 				<td>
 					<?php
 					$tab_array = array();
-					$tab_array[0] = array("Information/Tests", false, $_SERVER['PHP_SELF'] . "?action=default");
-					$tab_array[1] = array("Config", true, $_SERVER['PHP_SELF'] . "?action=config");
+					$tab_array[0] = array(gettext("Information/Tests"), false, $_SERVER['PHP_SELF'] . "?action=default");
+					$tab_array[1] = array(gettext("Config"), true, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
 				?>
 				</td>
@@ -203,10 +203,10 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Config</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Config"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Email Adress</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Email Adress"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="text" name="smartmonemail" value="<?=$pconfig['smartmonemail']?>"/>
 					</td>
@@ -216,7 +216,7 @@ switch($action)
 					<td width="78%">
 						<input type="hidden" name="action" value="config" />
 						<input type="hidden" name="email" value="true" />
-						<input type="submit" name="submit" value="Save" class="formbtn" />
+						<input type="submit" name="submit" value="<?=gettext("Save"); ?>" class="formbtn" />
 					</td>
 				</tr>
 			</tbody>
@@ -228,12 +228,12 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Test email</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Test email"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						Send test email to <?=$config['system']['smartmonemail']?>
+						<?php printf(gettext("Send test email to %s"), $config['system']['smartmonemail']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -241,7 +241,7 @@ switch($action)
 					<td width="78%">
 						<input type="hidden" name="action" value="config" />
 						<input type="hidden" name="testemail" value="true" />
-						<input type="submit" name="submit" value="Send" class="formbtn" />
+						<input type="submit" name="submit" value="<?=gettext("Send"); ?>" class="formbtn" />
 					</td>
 				</tr>
 			</tbody>
@@ -263,7 +263,7 @@ switch($action)
 				<td>
 					<?php
 					$tab_array = array();
-					$tab_array[0] = array("Information/Tests", true, $_SERVER['PHP_SELF']);
+					$tab_array[0] = array(gettext("Information/Tests"), true, $_SERVER['PHP_SELF']);
 					//$tab_array[1] = array("Config", false, $_SERVER['PHP_SELF'] . "?action=config");
 					display_top_tabs($tab_array);
 				?>
@@ -275,20 +275,20 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Info</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Info"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Info type</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Info type"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="radio" name="type" value="i" />Info<br />
-						<input type="radio" name="type" value="H" checked />Health<br />
-						<input type="radio" name="type" value="c" />SMART Capabilities<br />
-						<input type="radio" name="type" value="A" />Attributes<br />
-						<input type="radio" name="type" value="a" />All<br />
+						<input type="radio" name="type" value="i" /><?=gettext("Info"); ?><br />
+						<input type="radio" name="type" value="H" checked /><?=gettext("Health"); ?><br />
+						<input type="radio" name="type" value="c" /><?=gettext("SMART Capabilities"); ?><br />
+						<input type="radio" name="type" value="A" /><?=gettext("Attributes"); ?><br />
+						<input type="radio" name="type" value="a" /><?=gettext("All"); ?><br />
 					</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
@@ -304,7 +304,7 @@ switch($action)
 					<td width="22%" valign="top">&nbsp;</td>
 					<td width="78%">
 						<input type="hidden" name="action" value="info" />
-						<input type="submit" name="submit" value="View" class="formbtn" />
+						<input type="submit" name="submit" value="<?=gettext("View"); ?>" class="formbtn" />
 					</td>
 				</tr>
 			</tbody>
@@ -315,19 +315,19 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Perform Self Tests</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Perform Self Tests"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Test type</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Test type"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="radio" name="testType" value="offline" />Offline<br />
-						<input type="radio" name="testType" value="short" checked />Short<br />
-						<input type="radio" name="testType" value="long" />Long<br />
-						<input type="radio" name="testType" value="conveyance" />Conveyance (ATA Disks Only)<br />
+						<input type="radio" name="testType" value="offline" /><?=gettext("Offline"); ?><br />
+						<input type="radio" name="testType" value="short" checked /><?=gettext("Short"); ?><br />
+						<input type="radio" name="testType" value="long" /><?=gettext("Long"); ?><br />
+						<input type="radio" name="testType" value="conveyance" /><?=gettext("Conveyance (ATA Disks Only)"); ?><br />
 					</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
@@ -343,7 +343,7 @@ switch($action)
 					<td width="22%" valign="top">&nbsp;</td>
 					<td width="78%">
 						<input type="hidden" name="action" value="test" />
-						<input type="submit" name="submit" value="Test" class="formbtn" />
+						<input type="submit" name="submit" value="<?=gettext("Test"); ?>" class="formbtn" />
 					</td>
 				</tr>
 			</tbody>
@@ -354,17 +354,17 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">View Logs</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("View Logs"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Log type</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Log type"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="radio" name="type" value="error" checked />Error<br />
-						<input type="radio" name="type" value="selftest" />Self Test<br />
+						<input type="radio" name="type" value="error" checked /><?=gettext("Error"); ?><br />
+						<input type="radio" name="type" value="selftest" /><?=gettext("Self Test"); ?><br />
 					</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
@@ -380,7 +380,7 @@ switch($action)
 					<td width="22%" valign="top">&nbsp;</td>
 					<td width="78%">
 						<input type="hidden" name="action" value="logs" />
-						<input type="submit" name="submit" value="View" class="formbtn" />
+						<input type="submit" name="submit" value="<?=gettext("View"); ?>" class="formbtn" />
 					</td>
 				</tr>
 			</tbody>
@@ -391,10 +391,10 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Abort tests</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Abort tests"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Device: /dev/"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="device">
 						<?php
@@ -410,7 +410,7 @@ switch($action)
 					<td width="22%" valign="top">&nbsp;</td>
 					<td width="78%">
 						<input type="hidden" name="action" value="abort" />
-						<input type="submit" name="submit" value="Abort" class="formbtn" onclick="return confirm('Do you really want to abort the test?')" />
+						<input type="submit" name="submit" value="<?=gettext("Abort"); ?>" class="formbtn" onclick="return confirm('<?=gettext("Do you really want to abort the test?"); ?>')" />
 					</td>
 				</tr>
 			</tbody>
@@ -425,7 +425,7 @@ switch($action)
 // print back button on pages
 if(isset($_POST['submit']) && $_POST['submit'] != "Save")
 {
-	echo '<br /><a href="' . $_SERVER['PHP_SELF'] . '">Back</a>';
+	echo '<br /><a href="' . $_SERVER['PHP_SELF'] . '">' . gettext("Back") . '</a>';
 }
 ?>
 <br />

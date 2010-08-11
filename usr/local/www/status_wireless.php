@@ -74,7 +74,7 @@ foreach($ciflist as $interface => $ifdescr) {
 		$enabled = false;
 		if($if == $interface)
 			$enabled = true;
-		$tab_array[] = array(sprintf(gettext("Status") . " (%s)",$ifdescr), $enabled, "status_wireless.php?if={$interface}");
+		$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
 	}
 }
 $rwlif = get_real_interface($if);

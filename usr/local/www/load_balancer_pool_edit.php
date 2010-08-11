@@ -226,7 +226,7 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Server IP Address"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;"> 
-				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform);"><br>
+				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform); enforceFailover(); checkPoolControls();"><br>
 			</td>
 		</tr>
 		<tr>

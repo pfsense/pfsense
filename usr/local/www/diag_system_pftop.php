@@ -96,7 +96,7 @@ else
 		print_input_errors($input_errors);
 ?>
 	<form method="post">
-	<?=gettext("Sort type"); ?>: 
+	<?=gettext("Sort type:"); ?> 
 	<select name='sorttype' id='sorttype' onChange='this.form.submit();'>
 		<option value='<?=$sorttype?>'><?=$sorttype?></option>
 		<option value='age'><?=gettext("age");?></option>

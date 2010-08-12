@@ -74,8 +74,9 @@ if ($_POST) {
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
 
-		$retval = vpn_ipsec_configure();
 		write_config();
+
+		$retval = vpn_ipsec_configure();
 	}
 }
 

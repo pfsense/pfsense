@@ -187,6 +187,12 @@ if (isset($_GET['dup']))
 
 if ($_POST) {
 
+	if( isset($a_filter[$id]['associated-rule-id']) ) {
+		$_POST['proto'] = $pconfig['proto'];
+		if ($pconfig['proto'] == "icmp")
+			$_POST['icmptype'] = $pconfig['icmptype'];
+	}
+
 	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
 		$input_errors[] = gettext("Reject type rules only works when the protocol is set to TCP.");
 
@@ -260,8 +266,8 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
 	if ( isset($a_filter[$id]['associated-rule-id'])===false ) {
-		$redqfields[] = "src";
-		$redqfields[] = "dst";
+		$reqdfields[] = "src";
+		$reqdfields[] = "dst";
 	}
 	$reqdfieldsn = explode(",", "Type,Protocol");
 	if ( isset($a_filter[$id]['associated-rule-id'])===false ) {
@@ -518,6 +524,14 @@ if ($_POST) {
 		// If we have an associated nat rule, make sure the source and destination doesn't change
 		if( isset($a_filter[$id]['associated-rule-id']) ) {
 			$filterent['interface'] = $a_filter[$id]['interface'];
+			if (isset($a_filter[$id]['protocol']))
+				$filterent['protocol'] = $a_filter[$id]['protocol'];
+			else if (isset($filterent['protocol']))
+				unset($filterent['protocol']);
+			if ($a_filter[$id]['protocol'] == "icmp" && $a_filter[$id]['icmptype'])
+				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
+			else if (isset($filterent['icmptype']))
+				unset($filterent['icmptype']);
 			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
@@ -611,19 +625,41 @@ include("head.inc");
 			</td>
 		</tr>
 <? endif; ?>
+<?php $edit_disabled = ""; ?>
+<?php if( isset($pconfig['associated-rule-id']) ): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Associated filter rule");?></td>
+			<td width="78%" class="vtable">
+				<span class="red"><strong><?=gettext("NOTE: ");?></strong></span><?=gettext("This is associated to a NAT rule.");?><br />
+				<?=gettext("You cannot edit the interface, protocol, source, or destination of associated filter rules.");?><br />
+				<br />
+				<?php
+					$edit_disabled = "disabled";
+					if (is_array($config['nat']['rule'])) {
+						foreach( $config['nat']['rule'] as $index => $nat_rule ) {
+							if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
+								echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br>";
+								break;
+							}
+						}
+					}
+					echo "<input name='associated-rule-id' id='associated-rule-id' type='hidden' value='{$pconfig['associated-rule-id']}' >";
+					if (!empty($pconfig['interface']))
+						echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' >";
+				?>
+				<script type="text/javascript">
+				editenabled = 0;
+				</script>
+			</td>
+		</tr>
+<?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 			<td width="78%" class="vtable">
-<?php 	$disabled = ""; 
-	if (isset($pconfig['associated-rule-id'])) {
-		$disabled = "disabled";
-		if (!empty($pconfig['interface']))
-			echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' >";
-	}
-	if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-				<select name="interface[]" multiple="true" class="formselect" size="3" <?=$disabled;?>>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+				<select name="interface[]" multiple="true" class="formselect" size="3" <?=$edit_disabled;?>>
 <? else: ?>
-				<select name="interface" class="formselect" <?=$disabled;?>>
+				<select name="interface" class="formselect" <?=$edit_disabled;?>>
 <?php
    endif;
 				/* add group interfaces */
@@ -684,7 +720,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">
-				<select name="proto" class="formselect" onchange="proto_change()">
+				<select <?=$edit_disabled;?> name="proto" class="formselect" onchange="proto_change()">
 <?php
 				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IGMP any carp pfsync");
 				foreach ($protocols as $proto): ?>
@@ -698,7 +734,7 @@ include("head.inc");
 		<tr id="icmpbox" name="icmpbox">
 			<td valign="top" class="vncell"><?=gettext("ICMP type");?></td>
 			<td class="vtable">
-				<select name="icmptype" class="formselect">
+				<select <?=$edit_disabled;?> name="icmptype" class="formselect">
 <?php
 				$icmptypes = array(
 				"" => gettext("any"),
@@ -731,28 +767,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source");?></td>
 			<td width="78%" class="vtable">
-				<?php $edit_disabled=false; ?>
-				<?php if( isset($pconfig['associated-rule-id']) ): ?>
-					<span class="red"><strong><?=gettext("NOTE: ");?></strong></span><?=gettext("This is associated to a NAT rule.");?><br />
-					<?=gettext("You cannot edit the source and destination of associated filter rules.");?><br />
-					<br />
-					<?php
-						$edit_disabled=true;
-						if (is_array($config['nat']['rule'])) {
-							foreach( $config['nat']['rule'] as $index => $nat_rule ) {
-								if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
-									echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br>";
-									break;
-								}
-							}
-						}
-					?>
-					<br />
-					<script type="text/javascript">
-					editenabled = 0;
-					</script>
-				<?php endif; ?>
-				<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+				<input <?=$edit_disabled;?> name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
 				<strong><?=gettext("not");?></strong>
 				<br />
 				<?=gettext("Use this option to invert the sense of the match.");?>
@@ -762,7 +777,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srctype" class="formselect" onChange="typesel_change()">
+							<select <?=$edit_disabled;?> name="srctype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>><?=gettext("any");?></option>
@@ -792,8 +807,8 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
 						<td>
-							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcmask" class="formselect" id="srcmask">
+							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+							<select <?=$edit_disabled;?> name="srcmask" class="formselect" id="srcmask">
 <?php						for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
@@ -803,7 +818,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show source port range");?></a>
+					<input <?=$edit_disabled;?> type="button" onClick="show_source_port_range()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show source port range");?></a>
 				</div>
 			</td>
 		</tr>
@@ -814,27 +829,27 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
+							<select <?=$edit_disabled;?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
 						</td>
 					</tr>
 					<tr>
 						<td><?=gettext("to");?>:</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcendport" class="formselect" onchange="ext_change()">
+							<select <?=$edit_disabled;?> name="srcendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
 							</select>
-							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
 						</td>
 					</tr>
 				</table>
@@ -845,7 +860,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination");?></td>
 			<td width="78%" class="vtable">
-				<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
+				<input <?=$edit_disabled;?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
 				<strong><?=gettext("not");?></strong>
 					<br />
 				<?=gettext("Use this option to invert the sense of the match.");?>
@@ -855,7 +870,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
+							<select <?=$edit_disabled;?> name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>><?=gettext("any");?></option>
@@ -885,9 +900,9 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
 						<td>
-							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input <?=$edit_disabled;?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstmask" class="formselect" id="dstmask">
+							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
 <?php
 							for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
@@ -905,27 +920,27 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
+							<select <?=$edit_disabled;?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
 						</td>
 					</tr>
 					<tr>
 						<td><?=gettext("to");?>:</td>
 						<td>
-							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
+							<select <?=$edit_disabled;?> name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-								<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
 						</td>
 					</tr>
 				</table>

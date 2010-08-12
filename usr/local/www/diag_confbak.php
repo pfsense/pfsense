@@ -106,7 +106,7 @@ include("head.inc");
 		if($savemsg)
 			print_info_box($savemsg);
 	?>
-	<? if ($diff) { ?>
+	<?php if ($diff) { ?>
 	<table align="center" valign="middle" width="100%" border="0" cellspacing="0" style="padding-top: 4px; padding-bottom: 4px;">
 		<tr><td><?=gettext("Configuration diff from");?> <?php echo date(gettext("n/j/y H:i:s"), $oldtime); ?> <?=gettext("to");?> <?php echo date(gettext("n/j/y H:i:s"), $newtime); ?></td></tr>
 		<?php foreach ($diff as $line) {
@@ -130,7 +130,7 @@ include("head.inc");
 		<?php } ?>
 	</table>
 	<br />
-	<? } ?>
+	<?php } ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
@@ -178,9 +178,9 @@ include("head.inc");
 							<td class="list">
 								<?php if ($c < (count($confvers) - 1)) { ?>
 								<input type="radio" name="newtime" value="<?php echo $version['time'];?>">
-								<? } else { ?>
+								<?php } else { ?>
 								&nbsp;
-								<? }
+								<?php }
 								$c++; ?>
 							</td>
 							<td class="listlr"> <?= $date ?></td>

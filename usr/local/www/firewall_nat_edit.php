@@ -775,6 +775,7 @@ include("fbegin.inc"); ?>
 							<?php
 							$linkedrule = "";
 							if (is_array($config['filter']['rule'])) {
+							      filter_rules_sort();
 							      foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 								if (isset($filter_rule['associated-rule-id'])) {
 									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";

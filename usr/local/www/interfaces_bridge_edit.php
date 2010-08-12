@@ -278,7 +278,7 @@ function show_source_port_range() {
                 </td>
 			</tr>
                 <tr style="display:none" id="sprtable1" name="sprtable1">
-                  <td valign="top" class="vncell" align="middle">RSTP/STP  </td>
+                  <td valign="top" class="vncell" align="middle"><?=gettext("RSTP/STP"); ?>  </td>
                   <td class="vtable">
 					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked";?>>
 					<span class="vexpl"><strong><?=gettext("Enable spanning tree options for this bridge."); ?> </strong></span>

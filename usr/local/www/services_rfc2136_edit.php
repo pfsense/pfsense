@@ -205,7 +205,7 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
                     </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem: " .
                     "General setup %sor allow the DNS server list to be overridden " .
                     "by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">', '</a>');?></span></td>

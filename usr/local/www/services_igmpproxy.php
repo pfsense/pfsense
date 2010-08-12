@@ -158,7 +158,7 @@ include("head.inc");
   </tr>
 <tr>
   <td class="tabcont" colspan="4">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
   </td>
 </tr>
 </table>

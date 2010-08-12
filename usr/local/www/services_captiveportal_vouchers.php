@@ -310,9 +310,9 @@ function enable_change(enable_change) {
 "captive portal for the configured time. Once a voucher is activated, " .
 "its clock is started and runs uninterrupted until it expires. During that " .
 "time, the voucher can be re-used from the same or a different computer. If the voucher " .
-"is used again from another computer, the previous session is stopped"); ?>.
+"is used again from another computer, the previous session is stopped."); ?>
 <?php else: ?>
-<?=gettext("Enable Voucher support first using the checkbox above and hit Save at the bottom"); ?>.</td>
+<?=gettext("Enable Voucher support first using the checkbox above and hit Save at the bottom."); ?></td>
 <?php endif;?>
 	</tr>
 	<tr>
@@ -320,56 +320,56 @@ function enable_change(enable_change) {
       <td class="vtable">
         <textarea name="publickey" cols="65" rows="4" id="publickey" class="formpre"><?=htmlspecialchars($pconfig['publickey']);?></textarea>
         <br>
-    <?=gettext("Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers"); ?>.</td>
+    <?=gettext("Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers."); ?></td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("Voucher private key"); ?></td>
       <td class="vtable">
         <textarea name="privatekey" cols="65" rows="5" id="privatekey" class="formpre"><?=htmlspecialchars($pconfig['privatekey']);?></textarea>
         <br>
-    <?=gettext("Paste an RSA private key (64 Bit or smaller) in PEM format here. This key is only used to generate encrypted vouchers and doesn't need to be available if the vouchers have been generated offline"); ?>.</td>
+    <?=gettext("Paste an RSA private key (64 Bit or smaller) in PEM format here. This key is only used to generate encrypted vouchers and doesn't need to be available if the vouchers have been generated offline."); ?></td>
 	</tr>
 	<tr> 
        <td width="22%" valign="top" class="vncellreq"><?=gettext("Character set"); ?></td>
        <td width="78%" class="vtable">
          <input name="charset" type="text" class="formfld" id="charset" size="80" value="<?=htmlspecialchars($pconfig['charset']);?>">
          <br>
-         <?=gettext("Tickets are generated with the specified character set. It should contain printable characters (numbers, lower case and upper case letters) that are hard to confuse with others. Avoid e.g. 0/O and l/1"); ?>.</td>
+         <?=gettext("Tickets are generated with the specified character set. It should contain printable characters (numbers, lower case and upper case letters) that are hard to confuse with others. Avoid e.g. 0/O and l/1."); ?></td>
     </tr>
 	<tr> 
        <td width="22%" valign="top" class="vncellreq"># <?=gettext("of Roll Bits"); ?></td>
        <td width="78%" class="vtable">
          <input name="rollbits" type="text" class="formfld" id="rollbits" size="2" value="<?=htmlspecialchars($pconfig['rollbits']);?>">
          <br>
-         <?=gettext("Reserves a range in each voucher to store the Roll# it belongs to. Allowed range: 1..31. Sum of Roll+Ticket+Checksum bits must be one Bit less than the RSA key size"); ?>.</td>
+         <?=gettext("Reserves a range in each voucher to store the Roll# it belongs to. Allowed range: 1..31. Sum of Roll+Ticket+Checksum bits must be one Bit less than the RSA key size."); ?></td>
     </tr>
 	<tr> 
        <td width="22%" valign="top" class="vncellreq"># <?=gettext("of Ticket Bits"); ?></td>
        <td width="78%" class="vtable">
          <input name="ticketbits" type="text" class="formfld" id="ticketbits" size="2" value="<?=htmlspecialchars($pconfig['ticketbits']);?>">
          <br>
-         <?=gettext("Reserves a range in each voucher to store the Ticket# it belongs to. Allowed range: 1..16. Using 16 bits allows a roll to have up to 65535 vouchers. A bit array, stored in RAM and in the config, is used to mark if a voucher has been used. A bit array for 65535 vouchers requires 8 KB of storage"); ?>.</td>
+         <?=gettext("Reserves a range in each voucher to store the Ticket# it belongs to. Allowed range: 1..16. Using 16 bits allows a roll to have up to 65535 vouchers. A bit array, stored in RAM and in the config, is used to mark if a voucher has been used. A bit array for 65535 vouchers requires 8 KB of storage."); ?></td>
     </tr>
 	<tr> 
        <td width="22%" valign="top" class="vncellreq"># <?=gettext("of Checksum Bits"); ?></td>
        <td width="78%" class="vtable">
          <input name="checksumbits" type="text" class="formfld" id="checksumbits" size="2" value="<?=htmlspecialchars($pconfig['checksumbits']);?>">
          <br>
-         <?=gettext("Reserves a range in each voucher to store a simple checksum over Roll# and Ticket#. Allowed range is 0..31"); ?>.</td>
+         <?=gettext("Reserves a range in each voucher to store a simple checksum over Roll# and Ticket#. Allowed range is 0..31."); ?></td>
     </tr>
 	<tr> 
        <td width="22%" valign="top" class="vncellreq"><?=gettext("Magic Number"); ?></td>
        <td width="78%" class="vtable">
          <input name="magic" type="text" class="formfld" id="magic" size="20" value="<?=htmlspecialchars($pconfig['magic']);?>">
          <br>
-         <?=gettext("Magic number stored in every voucher. Verified during voucher check. Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked"); ?>.</td>
+         <?=gettext("Magic number stored in every voucher. Verified during voucher check. Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked."); ?></td>
     </tr>
     <tr> 
        <td width="22%" valign="top" class="vncellreq"><?=gettext("Save Interval"); ?></td>
        <td width="78%" class="vtable">
          <input name="saveinterval" type="text" class="formfld" id="saveinterval" size="4" value="<?=htmlspecialchars($pconfig['saveinterval']);?>">
          <?=gettext("Minutes"); ?><br>
-         <?=gettext("The list of active and used vouchers can be stored in the system's configuration file once every x minutes to survive power outages. No save is done if no new vouchers have been activated.  Enter 0 to never write runtime state to XML config"); ?>.</td>
+         <?=gettext("The list of active and used vouchers can be stored in the system's configuration file once every x minutes to survive power outages. No save is done if no new vouchers have been activated.  Enter 0 to never write runtime state to XML config."); ?></td>
     </tr>
     <tr> 
        <td width="22%" valign="top" class="vncellreq"><?=gettext("Invalid Voucher Message"); ?></td>
@@ -391,8 +391,8 @@ function enable_change(enable_change) {
     </tr>
     <tr>
      <td colspan="2" class="list"><p class="vexpl">
-     <span class="red"><strong> <?=gettext("Note"); ?>:<br>   </strong></span>
-      <?=gettext("Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings"); ?>.
+     <span class="red"><strong> <?=gettext("Note:"); ?><br>   </strong></span>
+      <?=gettext("Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings."); ?>
       </p>
      </td>
     </tr>

@@ -209,7 +209,7 @@ include("head.inc");
 			<span class="vexpl">
 					<span class="red">
 						<strong>
-							<?=gettext("Note");?>:<br>
+							<?=gettext("Note:");?><br>
             			</strong>
 					</span><?=gettext("This service can be used to wake up (power on) computers by sending special"); ?> &quot;<?=gettext("Magic Packets"); ?>&quot;. <?=gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");?>
 			</span>

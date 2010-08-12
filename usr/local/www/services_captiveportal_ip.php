@@ -154,9 +154,9 @@ include("head.inc");
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
-	  <?=gettext("Note"); ?>:<br>
+	  <?=gettext("Note:"); ?><br>
 	  </strong></span>
-	  <?=gettext("Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying"); ?> <em><?=gettext("from"); ?></em> <?=gettext("addresses, it may be used to always allow pass-through access from a client behind the captive portal"); ?>.</p>
+	  <?=gettext("Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal."); ?></p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>

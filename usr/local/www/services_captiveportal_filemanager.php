@@ -199,21 +199,21 @@ include("head.inc");
   <?php endif; ?>
 	</table>
 	<span class="vexpl"><span class="red"><strong>
-	<?=gettext("Note"); ?>:<br>
+	<?=gettext("Note:"); ?><br>
 	</strong></span>
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
 	"You may reference them directly from your portal page HTML code using relative paths. " .
 	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
-	"file manager. Then you can include it in your portal page like this"); ?>:<br><br>
+	"file manager. Then you can include it in your portal page like this:"); ?><br><br>
 	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
 	<br><br>
 	<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
-	"to your custom page from the initial page by using text similar to"); ?>:
+	"to your custom page from the initial page by using text similar to:"); ?>
 	<br><br>
 	<tt>&lt;a href="/captiveportal-aup.php?redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
 	<br><br>
-	<?=gettext("The total size limit for all files is"); ?> <?=format_bytes($g['captiveportal_element_sizelimit']);?>.</span>
+	<?=printf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']));?></span>
 </td>
 </tr>
 </table>

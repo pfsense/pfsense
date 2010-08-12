@@ -623,8 +623,8 @@ include("head.inc");
 				<input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
 				<?=gettext("seconds");?><br>
 				<?=gettext("This is used for clients that do not ask for a specific " .
-				"expiration time"); ?>.<br>
-				<?=gettext("The default is 7200 seconds");?>.
+				"expiration time."); ?><br>
+				<?=gettext("The default is 7200 seconds.");?>
 			</td>
 			</tr>
 			<tr>
@@ -633,12 +633,12 @@ include("head.inc");
 				<input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
 				<?=gettext("seconds");?><br>
 				<?=gettext("This is the maximum lease time for clients that ask".
-				" for a specific expiration time"); ?>.<br>
-				<?=gettext("The default is 86400 seconds");?>.
+				" for a specific expiration time."); ?><br>
+				<?=gettext("The default is 86400 seconds.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP");?>:</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
@@ -657,7 +657,7 @@ include("head.inc");
 					<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span class="red"><strong><?=gettext("Note");?>:</strong></span> <?=gettext("Only the machines listed below will be able to communicate with the firewall on this NIC.");?>
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("Only the machines listed below will be able to communicate with the firewall on this NIC.");?>
 					</td>
 					</tr>
 				</table>
@@ -674,8 +674,8 @@ include("head.inc");
 					<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
 					<p>
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
-					<?=gettext("Note: Leave blank to disable dynamic DNS registration");?>.<br />
-					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server");?>.
+					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
+					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
 			</tr>
@@ -805,14 +805,14 @@ include("head.inc");
 			</tr>
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
 				</strong></span><?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: " .
 				"General setup"); ?></a> <?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS " .
 				"forwarder"); ?></a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
-				"be assigned to clients by the DHCP server"); ?>.<br>
+				"be assigned to clients by the DHCP server."); ?><br>
 				<br>
 				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcp_leases.php"><?=gettext("Status: " .
-				"DHCP leases"); ?></a> <?=gettext("page"); ?>.<br>
+				"DHCP leases"); ?></a> <?=gettext("page."); ?><br>
 				</span></p>
 			</td>
 			</tr>

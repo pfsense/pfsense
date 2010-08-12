@@ -156,7 +156,7 @@ function enable_change(enable_over) {
                   </td>
                 </tr>
                 <tr>
-                  <td><p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+                  <td><p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
                       </strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
                      " service (if enabled) will automatically serve the LAN IP".
                      " address as a DNS server to DHCP clients so they will use".

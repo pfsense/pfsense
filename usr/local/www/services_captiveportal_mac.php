@@ -165,9 +165,9 @@ include("head.inc");
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>
-	<?=gettext("Note"); ?>:<br>
+	<?=gettext("Note:"); ?><br>
 	</strong></span>
-	<?=gettext("Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page"); ?>. </span></td>
+	<?=gettext("Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page."); ?> </span></td>
 	<td class="list">&nbsp;</td>
 	</tr>
   </table>

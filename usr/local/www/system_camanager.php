@@ -81,8 +81,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['name'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = gettext("Certificate Authority")." {$name} ".
-				gettext("successfully deleted")."<br/>";
+	$savemsg = sprintf(gettext("Certificate Authority %s successfully deleted"), $name) . "<br/>";
 }
 
 if ($act == "new") {
@@ -248,7 +247,7 @@ function method_change() {
 		<td id="mainarea">
 			<div class="tabcont">
 
-				<?php if ($act == "new" || $act == gettext("save") || $input_errors): ?>
+				<?php if ($act == "new" || $act == gettext("Save") || $input_errors): ?>
 
 				<form action="system_camanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -323,14 +322,14 @@ function method_change() {
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
 								</select>
-								<?=gettext(bits);?>
+								<?=gettext("bits");?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
 								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-								<?=gettext(days);?>
+								<?=gettext("days");?>
 							</td>
 						</tr>
 						<tr>
@@ -342,7 +341,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("US");?>
 											<em><?=gettext("( two letters )");?></em>
@@ -353,7 +352,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("Texas");?>
 										</td>
@@ -363,7 +362,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("Austin");?>
 										</td>
@@ -373,7 +372,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("My Company Inc.");?>
 										</td>
@@ -383,7 +382,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_email']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("admin@mycompany.com");?>
 										</td>
@@ -393,7 +392,7 @@ function method_change() {
 										<td align="left">
 											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
 											&nbsp;
-											<em>ex:</em>
+											<em><?=gettext("ex:");?></em>
 											&nbsp;
 											<?=gettext("internal-ca");?>
 										</td>

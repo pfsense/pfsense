@@ -201,7 +201,7 @@ include("head.inc");
 		  </tr>
 		</table>
             </form>
-			<p><b><?=gettext("Note");?>:</b>  <?=gettext("Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.");?></p>
+			<p><b><?=gettext("Note:");?></b>  <?=gettext("Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.");?></p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

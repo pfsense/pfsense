@@ -82,8 +82,7 @@ if ($act == "del") {
 	$name = $a_cert[$id]['name'];
 	unset($a_cert[$id]);
 	write_config();
-	$savemsg = gettext("Certificate")." {$name} ".
-				gettext("successfully deleted")."<br/>";
+	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br/>";
 }
 
 if ($act == "new") {
@@ -754,10 +753,10 @@ function internalca_change() {
 						<td class="listr"><?=$caname;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
-							<a href="system_certmanager.php?act=exp&id=<?=$i;?>")">
+							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_certmanager.php?act=key&id=<?=$i;?>")">
+							<a href="system_certmanager.php?act=key&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">

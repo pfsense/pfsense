@@ -321,7 +321,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint"); ?>: 24 <?=gettext("is"); ?> 255.255.255.0
+                    <br><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
                   </td>
                 </tr>
                 <tr>
@@ -338,7 +338,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint"); ?>: 10 <?=gettext("is ten L2TP clients"); ?>
+                    <br><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
                   </td>
                 </tr>
 		<tr>
@@ -402,7 +402,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td colspan="2">
 			<span class="vexpl">
-				<strong class="red"><?=gettext("Note");?>:</strong><br />
+				<strong class="red"><?=gettext("Note:");?></strong><br />
 				<?=gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!");?>
 			</span>
                   </td>

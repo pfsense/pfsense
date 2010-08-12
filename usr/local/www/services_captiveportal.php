@@ -588,8 +588,8 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 						echo "<option value=\"$radiusvendor\">$radiusvendor</option>\n";
 				}
 				?></select><br>
-				<?=printf(gettext("If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and " .
-				"the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = %s WAN IP address."),
+				<?php printf(gettext("If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and " .
+				"the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = %s's WAN IP address."),
 					$g['product_name']);?></td>
 			</tr>
 		</table>
@@ -628,7 +628,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
       <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-	<?=printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
+	<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS certificate"); ?></td>
@@ -668,11 +668,11 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		  <br>
 		  <br>
 		<?php endif; ?>
-			<?=
+			<?php
 				printf(
-					gettext("Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). " .
-							"Make sure to include a form (POST to %s) with a submit button (%s) and a hidden field with %s and %s. " .
-							"Include the %s and %s and/or %s input fields if authentication is enabled, otherwise it will always fail."),
+					gettext('Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). ' .
+							'Make sure to include a form (POST to %1$s) with a submit button (%2$s) and a hidden field with %3$s and %4$s. ' .
+							'Include the %5$s and %6$s and/or %7$s input fields if authentication is enabled, otherwise it will always fail.'),
 					"&quot;{$PORTAL_ACTION}&quot;",
 					"name=&quot;accept&quot;",
 					"name=&quot;redirurl&quot;",

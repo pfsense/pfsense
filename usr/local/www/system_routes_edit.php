@@ -304,7 +304,7 @@ include("head.inc");
 						optn.value = value;
 						selectbox.options.add(optn);
 						selectbox.selectedIndex = (selectbox.options.length-1);
-						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?=printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?>
+						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?>
 					}				
 					function report_failure() {
 						alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");

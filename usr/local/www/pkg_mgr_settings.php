@@ -89,7 +89,7 @@ function enable_altpkgrepourl(enable_over) {
 <?php
 	$version = file_get_contents("/etc/version");
 	$tab_array = array();
-	$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+	$tab_array[] = array(sprintf(gettext("%s packages"), $version), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Settings"), true, "pkg_mgr_settings.php");
 	display_top_tabs($tab_array);
@@ -106,10 +106,10 @@ function enable_altpkgrepourl(enable_over) {
 		<td class="vtable">
 			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked"; ?>> <?=gettext("Use a different URL server for packages other than");?> <?php echo $g['product_website']; ?><br>
 			<table>
-			<tr><td><?=gettext("Base URL");?>:</td><td><input name="pkgrepourl" type="input" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>"></td></tr>
+			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="input" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>"></td></tr>
 			</table>
 			<span class="vexpl">
-				<?=sprintf(gettext("This is where %s will check for packages when the"),$g['product_name']);?>, <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed");?>.
+				<?=sprintf(gettext("This is where %s will check for packages when the"),$g['product_name']);?>, <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
 				</span>
 				</td>
 	</tr>

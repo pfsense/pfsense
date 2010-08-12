@@ -379,7 +379,7 @@ function typesel_change() {
                   <td class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
                         <td><select name="type" class="formselect" onChange="typesel_change()">
                             <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected"; ?>>
                             <?=gettext("Single address");?></option>
@@ -390,7 +390,7 @@ function typesel_change() {
                           </select></td>
                       </tr>
                       <tr>
-                        <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
                         <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 32; $i >= 1; $i--): ?>
@@ -465,7 +465,7 @@ function typesel_change() {
 				      <p>
 				      	<span class="vexpl">
 				      		<span class="red">
-				      			<b><?=gettext("Note");?>:<br></b>
+				      			<b><?=gettext("Note:");?><br></b>
 				      		</span>&nbsp;&nbsp;
 				      		<?=gettext("ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.");?>
 				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></A>.

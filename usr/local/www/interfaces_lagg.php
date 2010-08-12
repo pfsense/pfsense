@@ -135,9 +135,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note"); ?>:<br>
+				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
-				  <?=gettext("LAGG allows for link aggregation, bonding and fault tolerance. Only unassigned interfaces can be added to LAGG"); ?>.
+				  <?=gettext("LAGG allows for link aggregation, bonding and fault tolerance. Only unassigned interfaces can be added to LAGG."); ?>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

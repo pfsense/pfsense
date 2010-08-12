@@ -167,7 +167,7 @@ switch($_GET['mode']) {
 			update_status($_GET['pkg']  . " " . gettext("installation completed."));
 			update_output_window($status);
 		} else {
-			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']);
+			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
 		}
 		break;
 	case "reinstallall":

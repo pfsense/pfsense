@@ -124,7 +124,7 @@ include("fbegin.inc");
                       </option>
                       <?php endforeach;?>
                     </select>
-					<br/><?=gettext("Select the interface on which to capture traffic. ");?>
+					<br/><?=gettext("Select the interface on which to capture traffic.");?>
 				  </td>
 				</tr>
 			    <tr>
@@ -133,7 +133,7 @@ include("fbegin.inc");
                     <input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 					<br/><?=gettext("This value is either the Source or Destination IP address. The packet capture will look for this address in either field.");?>
 					<br/><?=gettext("This value can be a domain name or IP address.");?>
-					<br/><?=gettext("If you leave this field blank, all packets on the specified interface will be captured. ");?>
+					<br/><?=gettext("If you leave this field blank, all packets on the specified interface will be captured.");?>
 					</td>
 				</tr>
 				<tr>
@@ -167,7 +167,7 @@ include("fbegin.inc");
 						<option value="-vv -e" <?php if ($detail == "-vv -e") echo "selected"; ?>><?=gettext("Full");?></option>
 					</select>
 					<br/><?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br/><b>" .
-							gettext("Note") . ":</b> " .
+							gettext("Note:") . "</b> " .
 							gettext("This option does not affect the level of detail when downloading the packet capture.");?>
 				</tr>
 				<tr>
@@ -191,14 +191,14 @@ include("fbegin.inc");
 					if ($processcheck != false)
 						$processisrunning = true;
 						
-					if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
+					if (($action == "Stop" or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
 				  	else {
 					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";
 				  	}
 					if (file_exists($fp.$fn) and $processisrunning != true) {
 						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\">";
-						echo "&nbsp;&nbsp;(" . gettext("The packet capture file was last updated") . ": " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
+						echo "&nbsp;&nbsp;(" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
 					}
 ?>
 				  </td>
@@ -240,7 +240,7 @@ include("fbegin.inc");
 					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $searchhost $searchport");
 					} else  {
 						//action = stop
-						echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured") . ":</strong><br/>");
+						echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured:") . "</strong><br/>");
 ?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 <?php

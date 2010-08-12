@@ -96,7 +96,7 @@ function post_choices() {
 	<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
 	<input type='button' value='<?=gettext("Close"); ?>' onClick="window.close();">
 <?php else: ?>
-	<b><?=gettext("Please select which containers to Authenticate against");?>:</b>
+	<b><?=gettext("Please select which containers to Authenticate against:");?></b>
 	<p/>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
   	 <tr>

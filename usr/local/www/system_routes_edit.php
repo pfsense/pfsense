@@ -184,7 +184,7 @@ include("head.inc");
 			?>
                     </select> <br />
 			<div id='addgwbox'>
-				<?=gettext("Choose which gateway this route applies to or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one");?></a>.
+				<?=gettext("Choose which gateway this route applies to or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one.");?></a>
 								</div>
 								<div id='notebox'>
 								</div>
@@ -196,14 +196,14 @@ include("head.inc");
 										<table bgcolor="#990000" cellpadding="1" cellspacing="1">
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway"); ?>:</b></center></td>
+												<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway:"); ?></b></center></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td width="45%" align="right"><font color="white"><?=gettext("Default gateway"); ?>:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+												<td width="45%" align="right"><font color="white"><?=gettext("Default gateway:"); ?></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 											</tr>												
 											<tr>
-												<td width="45%" align="right"><font color="white"><?=gettext("Interface"); ?>:</td>
+												<td width="45%" align="right"><font color="white"><?=gettext("Interface:"); ?></td>
 												<td><select name="addinterfacegw" id="addinterfacegw">
 												<?php $gwifs = get_configured_interface_with_descr();
 													foreach($gwifs as $fif => $dif)
@@ -212,13 +212,13 @@ include("head.inc");
 												</select></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white"><?=gettext("Gateway Name"); ?>:</td><td><input id="name" name="name" value="GW"></td>
+												<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></td><td><input id="name" name="name" value="GW"></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white"><?=gettext("Gateway IP"); ?>:</td><td><input id="gatewayip" name="gatewayip"></td>
+												<td align="right"><font color="white"><?=gettext("Gateway IP:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white"><?=gettext("Description"); ?>:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+												<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
@@ -242,7 +242,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
@@ -304,10 +304,10 @@ include("head.inc");
 						optn.value = value;
 						selectbox.options.add(optn);
 						selectbox.selectedIndex = (selectbox.options.length-1);
-						$('notebox').innerHTML="<p/><strong>NOTE:</strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'>here</a>.";
+						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?=printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?>
 					}				
 					function report_failure() {
-						alert("<?=gettext("Sorry, we could not create your gateway at this time"); ?>.");
+						alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");
 						hide_add_gateway();
 					}
 					function save_callback(transport) {

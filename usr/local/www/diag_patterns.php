@@ -105,7 +105,7 @@ pre {
     <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Upload");?></td>
   </tr>    
     <tr>
-      <td align="right"><?=gettext("File to upload");?>:</td>
+      <td align="right"><?=gettext("File to upload:");?></td>
       <td valign="top" class="label">
 	<input name="ulfile" type="file" class="formfld file" id="ulfile">
 	</td></tr>

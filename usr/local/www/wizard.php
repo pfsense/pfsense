@@ -62,13 +62,13 @@ if($_POST['xml'])
 
 if(empty($xml)) {
 	$xml = "not_defined";
-	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml);
+	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 	die;
 } else {
 	if (file_exists("{$g['www_path']}/wizards/{$xml}"))
 		$pkg = parse_xml_config_pkg("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
 	else {
-		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml);
+		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 		die;
 	}
 }

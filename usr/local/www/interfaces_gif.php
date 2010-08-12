@@ -104,7 +104,7 @@ include("head.inc");
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr"><?=gettext("Interface"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Tunnel to"); ?>...</td>
+                  <td width="20%" class="listhdrr"><?=gettext("Tunnel to..."); ?></td>
                   <td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list"></td>
 				</tr>

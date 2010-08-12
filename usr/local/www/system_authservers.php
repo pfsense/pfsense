@@ -749,11 +749,11 @@ ldap_bindchange();
 ldap_urlchange();
 <?php if (!isset($id)): ?>
 ldap_tmplchange();
-<? endif; ?>
-<? endif; ?>
+<?php endif; ?>
+<?php endif; ?>
 <?php if (!isset($id) || $pconfig['type'] == "radius"): ?>
 radius_srvcschange();
-<? endif; ?>
+<?php endif; ?>
 //-->
 </script>
 </body>

@@ -70,7 +70,7 @@ if (!$X) {
 	<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" align="top"></td>
 	<td>
 		<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-			<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif"><?echo("<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' WIDTH='$meter%'>");?></td>
+			<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif"><?php echo("<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' WIDTH='$meter%'>");?></td>
 		</table>
 
 	</td>

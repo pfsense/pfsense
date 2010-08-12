@@ -1325,12 +1325,12 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a>
 											<?=gettext("to edit PPP configuration."); ?>
 											</td>
-										<? else: ?>
+										<?php else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
 											<?=gettext("to create a PPP configuration."); ?>
 											</td>
-										<? endif; ?>	
+										<?php endif; ?>	
 									</tr>
 								</table>
 							</td>
@@ -1431,12 +1431,12 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a> 
 											<?=gettext("for additional PPPoE configuration options. Save first if you made changes."); ?>
 											</td>
-										<? else: ?>
+										<?php else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
 											<?=gettext("for advanced PPPoE configuration options and MLPPP configuration."); ?>
 											</td>
-										<? endif; ?>	
+										<?php endif; ?>	
 									</tr>
 								</table>
 							</td>
@@ -1499,12 +1499,12 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here");?></a> 
 											<?=gettext("for additional PPTP and L2TP configuration options. Save first if you made changes.");?>
 											</td>
-										<? else: ?>
+										<?php else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here");?></a>
 											<?=gettext("for advanced PPTP and L2TP configuration options");?>.
 											</td>
-										<? endif; ?>	
+										<?php endif; ?>	
 									</tr>
 								</table>
 							</td>
@@ -1522,7 +1522,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Persist common settings");?></td>
 							<td class="vtable">
-								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <? if ($pconfig['persistcommonwireless']) echo "checked";?>>
+								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked";?>>
 								<br/><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments.");?>
 							</td>
 						</tr>
@@ -1546,9 +1546,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncellreq">802.11g OFDM <?=gettext("Protection Mode"); ?></td>
 							<td class="vtable">
 								<select name="protmode" class="formselect" id="protmode">
-									<option <? if ($pconfig['protmode'] == 'off') echo "selected";?> value="off"><?=gettext("Protection mode off"); ?></option>
-									<option <? if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
-									<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'off') echo "selected";?> value="off"><?=gettext("Protection mode off"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
 								</select>
 								<br/>
 								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network."); ?>
@@ -1579,7 +1579,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
 							<td class="vtable">
 								<select name="channel" class="formselect" id="channel">
-									<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+									<option <?php if ($pconfig['channel'] == 0) echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
 									<?php
 									foreach($wl_modes as $wl_standard => $wl_channels) {
 										if($wl_standard == "11g") { $wl_standard = "11b/g"; }
@@ -1614,9 +1614,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Diversity"); ?><br/>
 											<select name="diversity" class="formselect" id="diversity">
-												<option <? if (empty($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <? if ($pconfig['diversity'] == '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
-												<option <? if ($pconfig['diversity'] == '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
+												<option <?php if (empty($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['diversity'] == '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
+												<option <?php if ($pconfig['diversity'] == '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -1625,10 +1625,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Transmit antenna"); ?><br/>
 											<select name="txantenna" class="formselect" id="txantenna">
-												<option <? if (empty($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <? if ($pconfig['txantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <? if ($pconfig['txantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <? if ($pconfig['txantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (empty($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['txantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['txantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['txantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -1637,10 +1637,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Receive antenna"); ?><br/>
 											<select name="rxantenna" class="formselect" id="rxantenna">
-												<option <? if (empty($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <? if ($pconfig['rxantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <? if ($pconfig['rxantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <? if ($pconfig['rxantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (empty($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<?php endif; ?>
@@ -1667,7 +1667,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable">
 								<?=gettext("Regulatory domain"); ?><br/>
 								<select name="regdomain" class="formselect" id="regdomain">
-									<option <? if (empty($pconfig['regdomain'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if (empty($pconfig['regdomain'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
 										echo "<option ";
@@ -1683,7 +1683,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/><br/>
 								<?=gettext("Country (listed with country code and regulatory domain)"); ?><br/>
 								<select name="regcountry" class="formselect" id="regcountry">
-									<option <? if (empty($pconfig['regcountry'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if (empty($pconfig['regcountry'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_countries as $wl_country_key => $wl_country) {
 										echo "<option ";
@@ -1699,10 +1699,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/><br/>
 								<?=gettext("Location"); ?><br/>
 								<select name="reglocation" class="formselect" id="reglocation">
-									<option <? if (empty($pconfig['reglocation'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-									<option <? if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor"><?=gettext("Indoor"); ?></option>
-									<option <? if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
-									<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
+									<option <?php if (empty($pconfig['reglocation'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor"><?=gettext("Indoor"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
 								</select>
 								<br/><br/>
 								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended."); ?>
@@ -1720,9 +1720,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 							<td class="vtable">
 								<select name="mode" class="formselect" id="mode">
-									<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
-									<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
-									<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -1737,11 +1737,11 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("Minimum wireless standard"); ?></td>
 							<td class="vtable">
 								<select name="puremode" class="formselect" id="puremode">
-									<option <? if ($pconfig['puremode'] == 'any') echo "selected";?> value="any"><?=gettext("Any"); ?></option>
+									<option <?php if ($pconfig['puremode'] == 'any') echo "selected";?> value="any"><?=gettext("Any"); ?></option>
 									<?php if (isset($wl_modes['11g'])): ?>
-									<option <? if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g"><?=gettext("802.11g"); ?></option>
+									<option <?php if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g"><?=gettext("802.11g"); ?></option>
 									<?php endif; ?>
-									<option <? if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n"><?=gettext("802.11n"); ?></option>
+									<option <?php if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n"><?=gettext("802.11n"); ?></option>
 								</select>
 								<br/>
 								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)."); ?>
@@ -1751,7 +1751,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.11g only"); ?></td>
 							<td class="vtable">
-								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <? if ($pconfig['puremode'] == '11g') echo "checked";?>>
+								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked";?>>
 								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)."); ?>
 							</td>
 						</tr>
@@ -1759,7 +1759,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Allow intra-BSS communication"); ?></td>
 							<td class="vtable">
-								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
+								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked";?>>
 								<br/>
 								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly."); ?>
 								<br/>
@@ -1769,14 +1769,14 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
 							<td class="vtable">
-								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
+								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked";?>>
 								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable Hide SSID"); ?></td>
 							<td class="vtable">
-								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <? if ($pconfig['hidessid_enable']) echo "checked";?>>
+								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked";?>>
 								<br/>
 								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
 								<br/>
@@ -1786,7 +1786,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WEP"); ?></td>
 							<td class="vtable"> 
-								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>>
+								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked"; ?>>
 								<strong><?=gettext("Enable WEP"); ?></strong>
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
@@ -1800,7 +1800,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>">
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="1" <? if ($pconfig['txkey'] == 1) echo "checked";?>>
+											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked";?>>
 										</td>
 									</tr>
 									<tr>
@@ -1809,7 +1809,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>">
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="2" <? if ($pconfig['txkey'] == 2) echo "checked";?>>
+											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked";?>>
 										</td>
 									</tr>
 									<tr>
@@ -1818,7 +1818,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>">
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="3" <? if ($pconfig['txkey'] == 3) echo "checked";?>>
+											<input name="txkey" type="radio" value="3" <?php if ($pconfig['txkey'] == 3) echo "checked";?>>
 										</td>
 									</tr>
 									<tr>
@@ -1827,7 +1827,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>">
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="4" <? if ($pconfig['txkey'] == 4) echo "checked";?>>
+											<input name="txkey" type="radio" value="4" <?php if ($pconfig['txkey'] == 4) echo "checked";?>>
 										</td>
 									</tr>
 								</table>
@@ -1839,7 +1839,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WPA"); ?></td>
 							<td class="vtable">
-								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
+								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked"; ?>>
 								<strong><?=gettext("Enable WPA"); ?></strong>
 								<br/><br/>
 								<table border="0" cellspacing="0" cellpadding="0">
@@ -1861,9 +1861,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("WPA Mode"); ?></td>
 							<td class="vtable">
 								<select name="wpa_mode" class="formselect" id="wpa_mode">
-									<option <? if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1"><?=gettext("WPA"); ?></option>
-									<option <? if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2"><?=gettext("WPA2"); ?></option>
-									<option <? if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1"><?=gettext("WPA"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2"><?=gettext("WPA2"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -1871,9 +1871,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("WPA Key Management Mode"); ?></td>
 							<td class="vtable"> 
 								<select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre Shared Key"); ?></option>
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre Shared Key"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -1881,9 +1881,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
 							<td class="vtable">
 								<select name="auth_algs" class="formselect" id="auth_algs">
-									<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1"><?=gettext("Open System Authentication"); ?></option>
-									<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
-									<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1"><?=gettext("Open System Authentication"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 								<br/><?=gettext("Note: Shared Key Authentication requires WEP."); ?></br>
 							</td>
@@ -1892,37 +1892,37 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("WPA Pairwise"); ?></td>
 							<td class="vtable">
 								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
-									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
-									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
-									<option <? if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP"><?=gettext("TKIP"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP"><?=gettext("TKIP"); ?></option>
 								</select>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
-								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
+								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
 								<br/><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<? echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
+								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
 								<br/><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <? if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
+								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
 								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
-								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
+								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?>>
 								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
 								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
@@ -1948,7 +1948,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/>
 							</td>
 						</tr>
-						<? endif; ?>
+						<?php endif; ?>
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>

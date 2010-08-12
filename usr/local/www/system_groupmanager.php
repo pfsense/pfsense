@@ -471,7 +471,7 @@ function presubmit() {
 					</tr>
 				</table>
 			
-				<? endif; ?>
+				<?php endif; ?>
 
 			</div>     
 		</td>

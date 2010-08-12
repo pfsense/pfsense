@@ -426,7 +426,7 @@ include("fbegin.inc");
                                         <input type="button" value="<?=gettext("Remove Shaper")?>" class="formbtn">
                                 </a>
                         </td><td width="75%"> </td></tr>
-<? endif; ?>
+<?php endif; ?>
 			<tr>
 			<td width="25%" valign="top" algin="left">
 			<?php

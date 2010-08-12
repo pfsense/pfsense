@@ -116,7 +116,7 @@ if ($_GET['order']) {
 </td></tr>
 <tr>
 <td class="tabcont">
-<? endif; ?>
+<?php endif; ?>
 
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>

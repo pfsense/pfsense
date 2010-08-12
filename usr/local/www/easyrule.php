@@ -58,7 +58,7 @@ if(stristr($retval, "error") == true)
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
@@ -68,13 +68,13 @@ include("head.inc"); ?>
 <br/>
 <?=gettext("Message"); ?>: <?php echo $message; ?>
 <br/>
-<? } else { ?>
+<?php } else { ?>
 <?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .
 "If you are seeing this, there apparently was not an error, and you navigated to the " .
 "page directly without telling it what to do"); ?>.<br/><br/>
 <?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="diag_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
 "Firewall Tab"); ?></a>.
 <br />
-<? } ?>
+<?php } ?>
 </td></tr></table>
 <?php include("fend.inc"); ?>

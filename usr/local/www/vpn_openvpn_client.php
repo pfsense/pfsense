@@ -857,7 +857,7 @@ function autotls_change() {
 				</tr>
 			</table>
 
-			<? endif; ?>
+			<?php endif; ?>
 
 		</td>
 	</tr>

@@ -226,7 +226,7 @@ include("head.inc");
 				</div>
 			</td>
 		</tr>
-		<? else: ?>
+		<?php else: ?>
 		<tr>
 			<td>
 				<div id="mainarea">
@@ -268,7 +268,7 @@ include("head.inc");
 				</div>
 			</td>
 		</tr>
-		<? endif; ?>
+		<?php endif; ?>
 	</table>
 <?php include("fend.inc"); ?>
 </body>

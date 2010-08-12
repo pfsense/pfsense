@@ -1264,7 +1264,7 @@ function netbios_change() {
 
 			<?=gettext("Additional OpenVPN servers can be added here.");?>
 
-			<? endif; ?>
+			<?php endif; ?>
 
 		</td>
 	</tr>

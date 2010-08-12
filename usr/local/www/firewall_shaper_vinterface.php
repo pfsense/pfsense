@@ -369,7 +369,7 @@ include("fbegin.inc");
 <?php if (count($dummynet_pipe_list) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
                         </td><td width="75%"> </td></tr>
-<? endif; ?>
+<?php endif; ?>
 			<tr>
 			<td width="25%" valign="top" algin="left">
 			<?php

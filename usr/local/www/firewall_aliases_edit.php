@@ -279,7 +279,7 @@ if ($_POST) {
 			}
 		}
 		if ($wrongaliases <> "")
-			$input_errors[] = sprintf(gettext('The alias(es): %1$s %2$scannot be nested because they are not of the same type.'), $wrongaliases, " \n");
+			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
 	}
 
 	if (!$input_errors) {

@@ -628,7 +628,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
       <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-    	<?=printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
+	<?=printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS certificate"); ?></td>

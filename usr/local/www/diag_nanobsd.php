@@ -161,7 +161,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Duplicate bootup slice");?></td>
 						<td width="78%" class="vtable">
-							<form action="diag_nanobsd.php" method="post" name="iform">						
+							<form action="diag_nanobsd.php" method="post" name="iform">
 								<?=gettext("Destination slice:");?>
 								<select name='destslice'>
 									<option value='<?php echo $COMPLETE_PATH; ?>'>

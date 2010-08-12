@@ -133,7 +133,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-					<span class="vexpl"><b><?=gettext("Note:");?></b></span><?=gettext("Multi-wan is not supported from this utility currently.");?> 
+					<span class="vexpl"><b><?=gettext("Note:");?></b></span><?=gettext("Multi-wan is not supported from this utility currently.");?>
 				 </td>
 				</tr>					
 			</table>

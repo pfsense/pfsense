@@ -77,7 +77,7 @@ if ($_POST) {
     	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Port"),gettext("Relay Protocol"));
       break;
     }
-  }    
+  }
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -192,21 +192,21 @@ document.observe("dom:loaded", function() {
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
-		    		<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
+					<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
                   </td>
 			</tr>
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
-		    		<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
+					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
                   </td>
 			</tr>
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Virtual Server Pool"); ?></td>
 					<td width="78%" class="vtable" colspan="2">
 			<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
-				<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>    
+				<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
 			<?php else: ?>
 				<select id="pool" name="pool">
 			<?php
@@ -225,7 +225,7 @@ document.observe("dom:loaded", function() {
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Fall Back Pool"); ?></td>
 					<td width="78%" class="vtable" colspan="2">
 					<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
-						<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>    
+						<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
 					<?php else: ?>
 						<select id="sitedown" name="sitedown">
 							<option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>><?=gettext("none"); ?></option>
@@ -238,7 +238,7 @@ document.observe("dom:loaded", function() {
             				}
             			?>
             			</select>
-                  		<br><b><?=gettext("NOTE:"); ?></b> <?=gettext("This is the server that clients will be redirected to if *ALL* servers in the pool are offline."); ?>
+				<br><b><?=gettext("NOTE:"); ?></b> <?=gettext("This is the server that clients will be redirected to if *ALL* servers in the pool are offline."); ?>
 				  <?php endif; ?>
                   </td>
 				</tr>
@@ -249,7 +249,7 @@ document.observe("dom:loaded", function() {
                   <td width="78%" class="vtable" colspan="2">
                     <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=$pconfig['mode'] == 'redirect' ? ' checked="checked"': ''?>> Redirect
                     <input id="relay_mode" type="radio" name="mode" value="relay"<?=$pconfig['mode'] == 'relay' ? ' checked="checked"': ''?>> Relay
-                             
+
                   <br>
                   </td>
 				</tr>
@@ -272,7 +272,7 @@ document.observe("dom:loaded", function() {
 				</tr>
                 <tr align="left">
                   <td align="left" valign="bottom">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>"> 
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
 					<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">

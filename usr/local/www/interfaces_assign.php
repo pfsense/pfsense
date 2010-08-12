@@ -425,9 +425,9 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select name="<?=$ifname;?>" id="<?=$ifname;?>">
+		<select onChange="javascript:$('savediv').appear();" name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
-			<option value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
+			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
 				<?php if ($portinfo['isvlan']) {
 					$descr = sprintf(gettext("VLAN %s on %s"),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
@@ -490,8 +490,10 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
-<p>
+<div name='savediv' id='savediv' style='display:none;'>
+	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
+	<p>
+</div>
 </p>
 <ul>
   <li><span class="vexpl"><?=gettext("change the IP address of your computer"); ?></span></li>

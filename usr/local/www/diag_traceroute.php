@@ -114,10 +114,10 @@ if (!isset($do_traceroute)) {
 				</tr>
 				<tr>
 				<td valign="top" colspan="2">
-				<p><span class="vexpl"><span class="red"><b><?=gettext("Note");?>:</b></span><?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?><p>
+				<p><span class="vexpl"><span class="red"><b><?=gettext("Note:");?></b></span><?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?><p>
 				<? if ($do_traceroute) {
 					echo "<font face='terminal' size='2'>";
-					echo("<br><strong>Traceroute output:</strong><br>");
+					echo("<br><strong>" . gettext("Traceroute output:") . "</strong><br>");
 					echo('<pre>');
 					ob_end_flush();
 					if($_REQUEST['useicmp'])
@@ -133,7 +133,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-					<span class="vexpl"><b><?=gettext("Note");?>:</b></span><?=gettext("Multi-wan is not supported from this utility currently.");?> 
+					<span class="vexpl"><b><?=gettext("Note:");?></b></span><?=gettext("Multi-wan is not supported from this utility currently.");?> 
 				 </td>
 				</tr>					
 			</table>

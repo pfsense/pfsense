@@ -71,13 +71,13 @@ read_layer7_config();
 
 if($_GET['reset'] <> "") {
 	// kill all ipfw-classifyd processes
-	mwexec("killall -9 ipfw-classifyd"); 
+	mwexec("killall -9 ipfw-classifyd");
 	exit;
 }
 
 if ($_GET) {
 	if ($_GET['container'])
-        	$name = trim($_GET['container']);        
+		$name = trim($_GET['container']);
         if ($_GET['action'])
                 $action = $_GET['action'];
 }
@@ -124,7 +124,7 @@ if ($_GET) {
 else if ($_POST) {
 	$show_proto_form = true;
 	unset($input_errors);
-	
+
 	if($_POST['submit']) {
 		if (isset($layer7_rules_list[$name])) {
 			$l7r = $layer7_rules_list[$name];
@@ -199,7 +199,7 @@ else if ($_POST) {
 		write_config();
 		mark_subsystem_dirty('shaper');
 		unset($container);
-		
+
 		header("Location: firewall_shaper_layer7.php");
 		exit;
 	}
@@ -230,7 +230,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
-                                        
+
 <script language="javascript">
 
 var initial_count = new Array();
@@ -248,24 +248,24 @@ js_behaviours_limiter = array_limiter(js_behaviours_limiter);
 
 function array_altq(a_behav) {
 	var index;
-	<? if (!empty($avail_behaviours_altq)) {
+	<?php if (!empty($avail_behaviours_altq)) {
 	  foreach ($avail_behaviours_altq as $key => $queue) { ?>
 	    name = "<?= $queue; ?>";
-	    index = <? echo $key; ?>;
+	    index = <?= $key; ?>;
 	    a_behav[index] = name;
-	<? }
+	<?php }
 	} ?>
 	return a_behav;
 }
 
 function array_limiter(a_behav) {
 	var index;
-	<? if (!empty($avail_behaviours_limiter)) {
+	<?php if (!empty($avail_behaviours_limiter)) {
 	  foreach ($avail_behaviours_limiter as $key => $limiter) { ?>
 		name = "<?= $limiter; ?>";
-		index = <? echo $key; ?>;
+		index = <?= $key; ?>;
 		a_behav[index] = name;
-	<? }
+	<?php }
 	} ?>
 	return a_behav;
 }
@@ -275,19 +275,19 @@ function fillProtocol() {
 	var protocol = '<select name="protocol[]" id="protocol" style="font-size:8pt">';
 	var name;
 
-	<? foreach ($avail_protos as $key => $proto) { ?>
+	<?php foreach ($avail_protos as $key => $proto) { ?>
 		name = "<?= $proto; ?>";
 		protocol += "<option value=" + name + ">" + name + "</option>";
-	<? } ?>
+	<?php } ?>
 	protocol += "</select>";
-	
+
 	return protocol;
 }
 
 function fillStructure() {
 	var structure = '<select name="structure[]" id="structure" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
 	var name;
-	<? foreach ($avail_structures as $key => $struct) { ?>
+	<?php foreach ($avail_structures as $key => $struct) { ?>
 		name = "<?= $struct; ?>";
 		if(name == "queue") {
 		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "</option>";}
@@ -296,54 +296,54 @@ function fillStructure() {
 		  if(name == "limiter") {
 		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "</option>";}
 		  }
-		  else structure += "<option value=" + name + ">" + name + "</option>"; //action		  		
-		}		
-	<? } ?>
+		  else structure += "<option value=" + name + ">" + name + "</option>"; //action
+		}
+	<?php } ?>
 	structure += "</select>";
-	
+
 	return structure;
 }
-		
+
 //Used by default to fill the values when inserting a new row.
 function fillBehaviour() {
 	var behaviour = '<select name="behaviour[]" id="behaviour" style="width:80px; font-size:8pt">';
 	var name;
-	<? foreach ($avail_behaviours_action as $key => $behav) { ?>
+	<?php foreach ($avail_behaviours_action as $key => $behav) { ?>
 		name = "<?= $behav; ?>";
 		behaviour += "<option value=" + name + ">" + name + "</option>";
-	<? } ?>
+	<?php } ?>
 	behaviour += "</select>";
-	
+
 	return behaviour;
 }
 
 /* Change the values on behaviours select when changing the structure row */
 function changeBehaviourValues(row) {
 	var selectedRow = row.rowIndex - 2; //because row.rowIndex returns 2, not 0
-	var structureSelected = document.getElementsByName("structure[]")[selectedRow].value;		
-	
+	var structureSelected = document.getElementsByName("structure[]")[selectedRow].value;
+
 	//Select the behaviours values to array a_behav
-	var a_behav = new Array();	
+	var a_behav = new Array();
 	if (structureSelected == "action") {
 		a_behav = js_behaviours_action; //static
 	}
 	else {
-		if (structureSelected == "queue") {			
+		if (structureSelected == "queue") {
 			a_behav = js_behaviours_altq;
 		}
-		else {							
+		else {
 			a_behav = js_behaviours_limiter;
-		}					
-	}			
-	
+		}
+	}
+
 	//Build the html statement with the array values previously selected
 	var new_behav;
 	var name;
 	for(i=0; i<a_behav.length; i++) {
-		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "</option>";	
+		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "</option>";
 	}
-		
-	document.getElementsByName("behaviour[]")[selectedRow].innerHTML = new_behav;		
+
+	document.getElementsByName("behaviour[]")[selectedRow].innerHTML = new_behav;
 }
 
 /* Add row to the table */
@@ -358,9 +358,9 @@ function addRow(table_id) {
   // determining real count of added fields
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
-  
-  var remove = '<input type = "image" src = "/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" value = "Delete" />';
-  
+
+  var remove = '<input type = "image" src = "/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" value = "Delete" />';
+
   try {
     var newRow = tbl.insertRow(rows_count);
     var newCell = newRow.insertCell(0);
@@ -371,11 +371,11 @@ function addRow(table_id) {
     newCell.innerHTML = fillBehaviour();
     var newCell = newRow.insertCell(3);
     newCell.innerHTML = remove;
-  }   
+  }
   catch (ex) {
     //if exception occurs
     alert(ex);
-  }   
+  }
 }
 
 /* Remove row from the table */
@@ -390,7 +390,7 @@ function removeRow(tbl,row) {
 </script>
 
 <?php
-include("fbegin.inc"); 
+include("fbegin.inc");
 ?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -417,16 +417,16 @@ include("fbegin.inc");
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-		
+
 		<?php if (count($layer7_rules_list) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
                         </td><td width="75%"> </td></tr>
-		
-		<? endif; ?>
+
+		<?php endif; ?>
 			<tr>
 			<td width="25%" valign="top" algin="left">
 			<?php
-				echo $tree; 
+				echo $tree;
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_layer7.php?action=add">
@@ -438,7 +438,7 @@ include("fbegin.inc");
 			<?
 				echo $output;
 			?>
-			
+
 			<!-- Layer 7 rules form -->
 			<?php if($show_proto_form): ?>
 			<td width = "22%" valign = "top" class = "vncellreq">
@@ -450,7 +450,7 @@ include("fbegin.inc");
                         <td width = "78%" class = "vtable">
                                 <table width="236" id = "maintable">
 					<tbody>
-                                                    
+
 						<tr>
                                                         <td colspan = "4">
                                                             <div style = "font-size: 8pt; padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066;"
@@ -481,7 +481,7 @@ include("fbegin.inc");
                                                                 <?=gettext("Behaviour"); ?>
                                                             </div>
                                                         </td>
-                                                </tr>                                                                                                        
+                                                </tr>
                                                 <!-- PHP Code to generate the existing rules -->
 						<?php
 						if($container) {
@@ -492,7 +492,7 @@ include("fbegin.inc");
 							<select name="protocol[]" class="formselect" id="protocol" style="font-size:8pt">
 							<?php foreach($avail_protos as $proto): ?>
 							<option value="<?=$proto;?>" <?php if ($proto == $l7rule->GetRProtocol()) echo "selected"; ?>><?=$proto;?></option>
-							<? endforeach; ?>
+							<?php endforeach; ?>
 							</select>
 						</td>
 						<td>
@@ -512,7 +512,7 @@ include("fbegin.inc");
 							    else {
 							      if($struct == "action") { ?>
 								  <option value="<?=$struct ?>" <?php if ($struct == $l7rule->GetRStructure()) echo "selected"; ?>><?=$struct;?></option>
-							      <?php }							      							      
+							      <?php }
 							    }
 							  }
 							} ?>
@@ -523,31 +523,31 @@ include("fbegin.inc");
 							<?php if($l7rule->GetRStructure() == "action"): ?>
 								<?php foreach($avail_behaviours_action as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected"; ?>><?=$behaviour;?></option>
-								<? endforeach; ?>
+								<?php endforeach; ?>
 								</select>
-							<? endif; ?>
+							<?php endif; ?>
 							<?php if($l7rule->GetRStructure() == "queue"): ?>
 								<?php foreach($avail_behaviours_altq as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected"; ?>><?=$behaviour;?></option>
-								<? endforeach; ?>
+								<?php endforeach; ?>
 								</select>
-							<? endif; ?>
+							<?php endif; ?>
 							<?php if($l7rule->GetRStructure() == "limiter"): ?>
 								<?php foreach($avail_behaviours_limiter as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected"; ?>><?=$behaviour;?></option>
-								<? endforeach; ?>
+								<?php endforeach; ?>
 								</select>
-							<? endif; ?>							
+							<?php endif; ?>
 						</td>
 						<td>
-							<input type="image" src="/themes/<? echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow('maintable',this.parentNode.parentNode); return false;" value="<?=gettext("Delete"); ?>" />
+							<input type="image" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow('maintable',this.parentNode.parentNode); return false;" value="<?=gettext("Delete"); ?>" />
 						</td>
 						</tr>
-						
+
 						<?php
 							} //end foreach
 						} //end if
-						?>  
+						?>
                                         </tbody>
 
                                         <tfoot>
@@ -572,13 +572,13 @@ include("fbegin.inc");
 				<a href= "firewall_shaper_layer7.php">
                                 <input id = "cancelbutton"
                                 name = "cancelbutton" type = "button" class = "formbtn" value = "<?=gettext("Cancel"); ?>" /></a>
-				
+
 				<?php if($container): ?>
 						<input id = "delete" type="submit" class="formbtn" name="delete" value="<?=gettext("Delete"); ?>"></a>
-				<? endif ?>
+				<?php endif ?>
                         </td>
                         </tr>
-			<? endif; ?>
+			<?php endif; ?>
 			<!-- End of layer7 rules form -->
 			</table>
 
@@ -590,7 +590,7 @@ include("fbegin.inc");
 </table>
 </form>
 
-<?php include("fend.inc"); 
+<?php include("fend.inc");
 ?>
 </body>
 </html>

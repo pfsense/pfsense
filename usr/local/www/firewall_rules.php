@@ -438,7 +438,7 @@ if($_REQUEST['undodrag']) {
 						continue;
 					$isadvset = check_for_advaned_options($filterent);
 					if($isadvset)
-						$advanced_set = sprintf("<img src=\"./themes/%s/images/icons/icon_advanced.gif\" title=\"%s: %s\" border=\"0\">", $g['theme'], gettext("advanced settings set"), $isadvset);
+						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = ""
 				?>

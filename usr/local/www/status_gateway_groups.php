@@ -97,7 +97,7 @@ include("head.inc");
 
 			echo "<tr>";
 			foreach($priorities as $number => $tier) {
-				printf(gettext("%sTier %s%s"), "<td width='120'>", $number, "</td>");
+				echo "<td width='120'>" . sprintf(gettext("Tier %s"), $number) . "</td>";
 			}
 			echo "</tr>\n";
 

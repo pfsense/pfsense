@@ -62,7 +62,7 @@ $statusurl = "status_queues.php";
 $output_form = "";
 
 $default_layer7shaper_msg = "<tr><td colspan=\"4\">";
-$default_layer7shaper_msg .= sprintf("<p><span class=\"vexpl\"><span class=\"red\"><strong>%s:<br>", gettext("Note"));
+$default_layer7shaper_msg .= "<p><span class=\"vexpl\"><span class=\"red\"><strong>" . gettext("Note") . ":<br>";
 $default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a><br>";
 $default_layer7shaper_msg .= "</td></tr>";
 

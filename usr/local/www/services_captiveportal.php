@@ -117,9 +117,10 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* make sure no interfaces are bridged */
-		foreach ($pconfig['cinterface'] as $cpbrif)
-			if (link_interface_to_bridge($cpbrif)) 
-				$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
+		if (is_array($_POST['cinterface']))
+			foreach ($pconfig['cinterface'] as $cpbrif)
+				if (link_interface_to_bridge($cpbrif))
+					$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
 
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
@@ -169,7 +170,8 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['captiveportal']['interface'] = implode(",", $_POST['cinterface']);
+		if (is_array($_POST['cinterface']))
+			$config['captiveportal']['interface'] = implode(",", $_POST['cinterface']);
 		$config['captiveportal']['maxproc'] = $_POST['maxproc'];
 		$config['captiveportal']['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
@@ -222,7 +224,8 @@ if ($_POST) {
 
 		$savemsg = get_std_save_message($retval);
 		
-		$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
+		if (is_array($_POST['cinterface']))
+			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
 	}
 }
 include("head.inc");

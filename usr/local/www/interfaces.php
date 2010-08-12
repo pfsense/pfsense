@@ -1080,7 +1080,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
 								<?=gettext("If you leave this field blank, " .
-								"an MTU of 1500 bytes will be assumed"); ?>.
+								"an MTU of 1500 bytes will be assumed."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1090,7 +1090,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br>
 								<?=gettext("If you enter a value in this field, then MSS clamping for " .
 								"TCP connections to the value entered above minus 40 (TCP/IP " . 
-								"header size) will be in effect."); ?>. 
+								"header size) will be in effect."); ?> 
 							</td>
 						</tr>
 						<tr>
@@ -1143,7 +1143,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											</select>
 											<br/>
 											<div id='addgwbox'>
-												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one"); ?></a>.
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
 											</div>
 											<div id='notebox'>
 											</div>
@@ -1157,7 +1157,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
 																<tr><td>&nbsp;</td>
 																<tr>
-																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway"); ?>:</font></b></center></td>
+																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></center></td>
 																</tr>
 																<tr><td>&nbsp;</td>
 																<?php
@@ -1165,16 +1165,16 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 																	$checked = " CHECKED";
 																?>
 																<tr>
-																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway"); ?>:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway:"); ?></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 																</tr>												
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway Name"); ?>:</td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway IP"); ?>:</td><td><input id="gatewayip" name="gatewayip"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IP:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Description"); ?>:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
@@ -1213,7 +1213,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<br>
 											<?=gettext("The value in this field is sent as the DHCP client identifier " .
 											"and hostname when requesting a DHCP lease. Some ISPs may require " .
-											"this (for client identification)"); ?>.
+											"this (for client identification)."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -1232,7 +1232,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 												?>
 											</select>
 											<?=gettext("The value in this field is used as a fixed alias IP address by the " .
-											"DHCP client"); ?>.
+											"DHCP client."); ?>
 										</td>
 									</tr>
 								</table>
@@ -1249,7 +1249,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td width="78%" class="vtable">
 											<table border="0" cellpadding="0" cellspacing="0">
 												<tr id="trcountry">
-													<td><?=gettext("Country"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Country:"); ?> &nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="country" id="country" onChange="providers_list()">
 															<option></option>
@@ -1257,7 +1257,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 													</td>
 												</tr>
 												<tr id="trprovider" style="display:none">
-													<td><?=gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
 															<option></option>
@@ -1265,7 +1265,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 													</td>
 												</tr>
 												<tr id="trproviderplan" style="display:none">
-													<td><?=gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Plan:"); ?> &nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
 															<option></option>
@@ -1322,13 +1322,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									<td width="22%" valign="top" class="vncell"><?=gettext("Advanced PPP"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here "); ?></a>
-											<?=gettext("to edit PPP configuration"); ?>.
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a>
+											<?=gettext("to edit PPP configuration."); ?>
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?></a>
-											<?=gettext("to create a PPP configuration"); ?>.
+											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
+											<?=gettext("to create a PPP configuration."); ?>
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1364,13 +1364,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td width="78%" class="vtable">
 											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>>
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
-											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected"); ?>.
+											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature"); ?>.
+											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -1398,7 +1398,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 														<?=gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 														<br />&nbsp;<br />
-														<span class="red"><strong><?=gettext("Note"); ?>: </strong></span>
+														<span class="red"><strong><?=gettext("Note:"); ?> </strong></span>
 														<?=gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 														</p>
 														<?php if ($pconfig['pppoe_pr_preset']): ?>
@@ -1429,12 +1429,12 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a> 
-											<?=gettext("for additional PPPoE configuration options. Save first if you made changes"); ?>.
+											<?=gettext("for additional PPPoE configuration options. Save first if you made changes."); ?>
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
-											<?=gettext("for advanced PPPoE configuration options and MLPPP configuration"); ?>.
+											<?=gettext("for advanced PPPoE configuration options and MLPPP configuration."); ?>
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1483,13 +1483,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td width="78%" class="vtable">
 											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
-											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected"); ?>.
+											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature"); ?>.
+											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -1497,7 +1497,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here");?></a> 
-											<?=gettext("for additional PPTP and L2TP configuration options. Save first if you made changes");?>.
+											<?=gettext("for additional PPTP and L2TP configuration options. Save first if you made changes.");?>
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
@@ -1523,7 +1523,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("Persist common settings");?></td>
 							<td class="vtable">
 								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <? if ($pconfig['persistcommonwireless']) echo "checked";?>>
-								<br/><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments");?>.
+								<br/><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments.");?>
 							</td>
 						</tr>
 						<tr>
@@ -1551,7 +1551,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
 								</select>
 								<br/>
-								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network"); ?>.
+								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network."); ?>
 								<br/>
 							</td>
 						</tr>
@@ -1572,7 +1572,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									}
 									?>
 								</select><br/>
-								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting"); ?>.
+								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1601,7 +1601,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/>
 								<?=gettext("Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)"); ?>
 								<br/>
-								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above"); ?>.
+								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above."); ?>
 							</td>
 						</tr>
 						<?php if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])): ?>
@@ -1679,7 +1679,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									?>
 								</select>
 								<br/>
-								<?=gettext("Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work"); ?>.
+								<?=gettext("Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work."); ?>
 								<br/><br/>
 								<?=gettext("Country (listed with country code and regulatory domain)"); ?><br/>
 								<select name="regcountry" class="formselect" id="regcountry">
@@ -1705,9 +1705,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
 								</select>
 								<br/><br/>
-								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended"); ?>.
+								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended."); ?>
 								<br/>
-								<?=gettext("Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported"); ?>.
+								<?=gettext("Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1739,20 +1739,20 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<select name="puremode" class="formselect" id="puremode">
 									<option <? if ($pconfig['puremode'] == 'any') echo "selected";?> value="any"><?=gettext("Any"); ?></option>
 									<?php if (isset($wl_modes['11g'])): ?>
-									<option <? if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g">802.11g</option>
+									<option <? if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g"><?=gettext("802.11g"); ?></option>
 									<?php endif; ?>
-									<option <? if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n">802.11n</option>
+									<option <? if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n"><?=gettext("802.11n"); ?></option>
 								</select>
 								<br/>
-								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)"); ?>.
+								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)."); ?>
 							</td>
 						</tr>
 						<?php elseif (isset($wl_modes['11g'])): ?>
 						<tr>
-							<td valign="top" class="vncell">802.11g <?=gettext("only"); ?></td>
+							<td valign="top" class="vncell"><?=gettext("802.11g only"); ?></td>
 							<td class="vtable">
 								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <? if ($pconfig['puremode'] == '11g') echo "checked";?>>
-								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)"); ?>.
+								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)."); ?>
 							</td>
 						</tr>
 						<?php endif; ?>
@@ -1761,16 +1761,16 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable">
 								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
 								<br/>
-								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly"); ?>.
+								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly."); ?>
 								<br/>
-								<?=gettext("Disabling the internal bridging is useful when traffic is to be processed with packet filtering"); ?>.
+								<?=gettext("Disabling the internal bridging is useful when traffic is to be processed with packet filtering."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
 							<td class="vtable">
 								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
-								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)"); ?>.
+								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1780,7 +1780,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/>
 								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
 								<br/>
-								<?=gettext("(this might create problems for some clients)"); ?>.
+								<?=gettext("(this might create problems for some clients)."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1795,7 +1795,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>&nbsp;<?=gettext("TX key"); ?>&nbsp;</td>
 									</tr>
 									<tr>
-										<td><?=gettext("Key"); ?> 1:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key 1:"); ?>&nbsp;&nbsp;</td>
 										<td>
 											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>">
 										</td>
@@ -1804,7 +1804,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										</td>
 									</tr>
 									<tr>
-										<td><?=gettext("Key"); ?> 2:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key 2:"); ?>&nbsp;&nbsp;</td>
 										<td>
 											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>">
 										</td>
@@ -1813,7 +1813,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										</td>
 									</tr>
 									<tr>
-										<td><?=gettext("Key"); ?> 3:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key 3:"); ?>&nbsp;&nbsp;</td>
 										<td>
 											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>">
 										</td>
@@ -1822,7 +1822,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										</td>
 									</tr>
 									<tr>
-										<td><?=gettext("Key"); ?> 4:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key 4:"); ?>&nbsp;&nbsp;</td>
 										<td>
 											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>">
 										</td>
@@ -1832,8 +1832,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									</tr>
 								</table>
 								<br/>
-								<?=gettext("40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by '0x'"); ?>.<br/>
-								<?=gettext("104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'"); ?>.
+								<?=gettext("40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by '0x'."); ?><br/>
+								<?=gettext("104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1848,13 +1848,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>&nbsp;<?=gettext("WPA Pre Shared Key"); ?>&nbsp;</td>
 									</tr>
 									<tr>
-										<td><?=gettext("PSK"); ?>:&nbsp;&nbsp;</td>
+										<td><?=gettext("PSK:"); ?>&nbsp;&nbsp;</td>
 										<td>
 											<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>">
 										</td>
 									</tr>
 								</table>
-								<br/><?=gettext("Passphrase must be from 8 to 63 characters"); ?>.
+								<br/><?=gettext("Passphrase must be from 8 to 63 characters."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1883,9 +1883,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<select name="auth_algs" class="formselect" id="auth_algs">
 									<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1"><?=gettext("Open System Authentication"); ?></option>
 									<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
-									<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3">Both</option>
+									<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
-								<br/><?=gettext("Note: Shared Key Authentication requires WEP"); ?>.</br>
+								<br/><?=gettext("Note: Shared Key Authentication requires WEP."); ?></br>
 							</td>
 						</tr>
 						<tr>
@@ -1902,29 +1902,29 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
 								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
-								<br/><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time"); ?>.
+								<br/><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<? echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
-								<br/><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time"); ?>.
+								<br/><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <? if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
-								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates"); ?>.
+								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
-								<br/><?=gettext("Setting this option will enable 802.1x authentication"); ?>.
-								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\""); ?>.
+								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
+								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1935,14 +1935,14 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Server Port"); ?></td>
+							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>">
-								<br/><?=gettext("Leave blank for the default 1812 port"); ?>.
+								<br/><?=gettext("Leave blank for the default 1812 port."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Server Shared Secret"); ?></td>
+							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Shared Secret"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>">
 								<br/>
@@ -1963,9 +1963,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<strong><?=gettext("Block private networks"); ?></strong><br>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
-								<?=gettext("well as loopback addresses (127/8)"); ?>.&nbsp;&nbsp; <?=gettext("You should generally " .
+								<?=gettext("well as loopback addresses (127/8)."); ?>&nbsp;&nbsp; <?=gettext("You should generally " .
 								"leave this option turned on, unless your WAN network lies in such " .
-								"a private address space, too"); ?>. 
+								"a private address space, too."); ?> 
 							</td>
 						</tr>
 						<tr>
@@ -1974,9 +1974,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
 								<strong><?=gettext("Block bogon networks"); ?></strong><br>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
-								"(but not RFC 1918) or not yet assigned by IANA"); ?>.&nbsp;&nbsp;
+								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;
 								<?=gettext("Bogons are prefixes that should never appear in the Internet routing table, " .
-								"and obviously should not appear as the source address in any packets you receive"); ?>.
+								"and obviously should not appear as the source address in any packets you receive."); ?>
 							</td>
 						</tr>
 					</table> <!-- End "allcfg" table -->
@@ -2057,7 +2057,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 			optn.value = value;
 			selectbox.options.add(optn);
 			selectbox.selectedIndex = (selectbox.options.length-1);
-			$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
+			$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
 		}				
 		function report_failure() {
 			alert("Sorry, we could not create your gateway at this time.");

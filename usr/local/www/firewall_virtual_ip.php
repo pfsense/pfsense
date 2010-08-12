@@ -220,7 +220,7 @@ include("head.inc");
                 </tr>
 		<tr>
 		  <td colspan="4">
-		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
                       </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br>
                       <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
 		  </td>

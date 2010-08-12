@@ -87,7 +87,7 @@ pre { font-size: 1.15em; }
 					<tr>
 						<td>
 							<font size="+1">
-								<b><?=gettext("Currently loaded bogons table");?>:</b><p/>
+								<b><?=gettext("Currently loaded bogons table:");?></b><p/>
 								<pre>
 <?php echo $bogons; ?>
 								</pre>

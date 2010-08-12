@@ -191,7 +191,7 @@ include("fbegin.inc");
 					if ($processcheck != false)
 						$processisrunning = true;
 						
-					if (($action == "Stop" or $action == "") and $processisrunning != true)
+					if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
 				  	else {
 					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";

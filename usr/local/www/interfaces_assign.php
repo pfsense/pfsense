@@ -182,9 +182,9 @@ if ($_POST['apply']) {
 	/* Deliver error message for any port with more than one assignment */
 	foreach ($portifmap as $portname => $ifnames) {
 		if (count($ifnames) > 1) {
-			$errstr = sprintf(gettext("Port %s ".
-				" was assigned to %s" .
-				" interfaces:"), $portname, count($ifnames));
+			$errstr = sprintf(gettext('Port %1$s '.
+				' was assigned to %2$s' .
+				' interfaces:'), $portname, count($ifnames));
 				
 			foreach ($portifmap[$portname] as $ifn)
 				$errstr .= " " . $ifn;
@@ -429,7 +429,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
 				<?php if ($portinfo['isvlan']) {
-					$descr = sprintf(gettext("VLAN %s on %s"),$portinfo['tag'],$portinfo['if']);
+					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
 					$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);

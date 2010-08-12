@@ -930,7 +930,7 @@ if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 		usleep(500);
 }
 if(($graphcmdreturn <> 0) || (! $data)) {
-	log_error(sprintf(gettext("Failed to create graph with error code %s, the error is: %s"),$graphcmdreturn,$graphcmdoutput));
+	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
 	if(strstr($curdatabase, "queues")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
 		exec("/bin/rm -f $rrddbpath$curif$queues");

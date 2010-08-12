@@ -235,7 +235,7 @@ foreach ($rawdata as $line) {
 	}
 }
 
-function getHostName($mac,$ip)
+function _getHostName($mac,$ip)
 {
 	global $dhcpmac, $dhcpip;
 
@@ -273,7 +273,7 @@ ob_implicit_flush(1);
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
 foreach ($data as &$entry) {
-	$dns = trim(getHostName($entry['mac'], $entry['ip']));
+	$dns = trim(_getHostName($entry['mac'], $entry['ip']));
 	if(trim($dns))
 		$entry['dnsresolve'] = "$dns";
 	else

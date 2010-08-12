@@ -370,14 +370,14 @@ function sourcesel_change() {
                   <td width="78%" class="vtable">
                     <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
-		        <td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
+		        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
 			<td>
 			    <select name="source_type" class="formselect" onChange="sourcesel_change()">
                               <option value="any" <?php if ($pconfig['source'] == "any") echo "selected"; ?>><?=gettext("any");?></option>
                               <option value="network" <?php if ($pconfig['source'] != "any") echo "selected"; ?>><?=gettext("Network");?></option>
                             </select>
 			</td></tr>
-                        <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" class="formfld unknown" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
@@ -389,7 +389,7 @@ function sourcesel_change() {
                         <td><span class="vexpl"><?=gettext("Enter the source network for the outbound NAT mapping.");?></span></td>
                       </tr>
                       <tr>
-                        <td><?=gettext("Source port");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
                         <td><input name="sourceport" type="text" class="formfld unknown" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
 blank for any)");?></td>
                       </tr>
@@ -404,7 +404,7 @@ blank for any)");?></td>
                     <br>
                     <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
-                        <td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
                         <td><select name="destination_type" class="formselect" onChange="typesel_change()">
                             <option value="any"<?php if ($pconfig['destination'] == "any") echo " selected"; ?>>
                             <?=gettext("any");?></option>
@@ -413,7 +413,7 @@ blank for any)");?></td>
                           </select></td>
                       </tr>
                       <tr>
-                        <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
                         <td><input name="destination" type="text" class="formfld unknown" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
@@ -428,7 +428,7 @@ blank for any)");?></td>
                           "the outbound NAT mapping.");?></span></td>
                       </tr>
                       <tr>
-                        <td><?=gettext("Destination port");?>:&nbsp;&nbsp;</td>
+                        <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
                         <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
 any)");?></td>
                       </tr>
@@ -440,7 +440,7 @@ any)");?></td>
                   <td width="78%" class="vtable">
 			<table border="0" cellspacing="1" cellpadding="1">
 			<tr>
-			  <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+			  <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 			  <td><select name="target" class="formselect">
 				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>><?=gettext("Interface address");?></option>
 <?php	if (is_array($config['virtualip']['vip'])):
@@ -472,14 +472,14 @@ any)");?></td>
 			</span>
 			</td></tr>
 			<tr>
-                          <td><?=gettext("Port");?>:&nbsp;&nbsp;</td>
+                          <td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl"><?=gettext("Enter the source port for the outbound NAT mapping.");?></span>
 			</td></tr>
                         <tr>
-                          <td><?=gettext("Static-port");?>:&nbsp;&nbsp;</td>
+                          <td><?=gettext("Static-port:");?>&nbsp;&nbsp;</td>
                           <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
 			</tr>
 			</table>

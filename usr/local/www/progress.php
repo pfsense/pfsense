@@ -12,7 +12,7 @@ else
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 
 function nice_value($x) {
-   if ($x < 100)  $x;
+   if ($x < 100)    return $x;
    if ($x < 10000)  return sprintf("%.2fKB", $x/1000);
    if ($x < 900000) return sprintf("%dKB", $x/1000);
    return sprintf("%.2fMB", $x/1000/1000);
@@ -27,6 +27,7 @@ if (!$X) {
    }else{
       echo ('<HTML><meta HTTP-EQUIV="Refresh" CONTENT="1; url='. $url .'"><BODY></BODY></HTML>');
    }
+   exit;
 
 } else {
 
@@ -43,7 +44,9 @@ if (!$X) {
 
    if ($X['bytes_total'] > 1 && $X['bytes_uploaded'] >= $X['bytes_total'] && $X['est_sec'] == 0) {
       echo ('<HTML><BODY onLoad="window.close()"> ' . gettext("UPLOAD completed") . '!</BODY></HTML>');
-   } else {
+      exit;
+   }
+}
 
 ?>
 

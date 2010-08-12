@@ -439,7 +439,7 @@ function show_source_port_range() {
 	     "the bridge."); ?>		
 					</span>
 		<p class="vexpl"><span class="red"><strong>
-					 <?=gettext("Note"); ?>:<br>
+					 <?=gettext("Note:"); ?><br>
                                   </strong></span>
                  <?=gettext("The span interface cannot be part of the bridge member interfaces."); ?>
                                         </span>
@@ -483,7 +483,7 @@ function show_source_port_range() {
 	     <?=gettext("Allow interface to automatically detect edge status.  This is the " .
 	     "default for all interfaces added to a bridge."); ?>
 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note"); ?>:<br>
+				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
 		 <?=gettext("This will disable the autoedge status of interfaces."); ?>
 					</span></td>
@@ -527,7 +527,7 @@ function show_source_port_range() {
 	     "checking the full duplex link status.  This is the default for " .
 	     "interfaces added to the bridge."); ?>
 		 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note"); ?>:<br>
+				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
 		 <?=gettext("The interfaces selected here will be removed from default autoedge status."); ?>
 					</span></td>

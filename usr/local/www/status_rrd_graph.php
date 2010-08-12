@@ -386,7 +386,7 @@ function get_dates($curperiod, $graph) {
 					?>
 					</select>
 					
-					<?
+					<?php
 					if($curcat <> "custom") {
 					?>
 						<?=gettext("Period");?>:

@@ -141,9 +141,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note"); ?>:<br>
+				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
-				  <?=gettext("Here you can configure bridging of interfaces"); ?>.
+				  <?=gettext("Here you can configure bridging of interfaces."); ?>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

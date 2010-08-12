@@ -323,7 +323,7 @@ function get_dates($curperiod, $graph) {
 				</tr>
 				<tr>
                                         <td colspan="2" class="list">
-					<?=gettext("Graphs");?>:
+					<?=gettext("Graphs:");?>
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 
@@ -375,7 +375,7 @@ function get_dates($curperiod, $graph) {
 					?>
 					</select>
 
-					<?=gettext("Style");?>:
+					<?=gettext("Style:");?>
 					<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 					foreach ($styles as $style => $styled) {
@@ -389,7 +389,7 @@ function get_dates($curperiod, $graph) {
 					<?php
 					if($curcat <> "custom") {
 					?>
-						<?=gettext("Period");?>:
+						<?=gettext("Period:");?>
 						<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 						<?php
 						foreach ($periods as $period => $value) {
@@ -409,7 +409,7 @@ function get_dates($curperiod, $graph) {
 						<?=gettext("End:");?>
 						<input type="text" name="end" class="formfldunknown" length="32" value="<?php echo $now;?>">
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
-						<?
+						<?php
 						$curdatabase = $curoption;
 						$graph = "custom-$curdatabase";
 						if(in_array($curdatabase, $databases)) {

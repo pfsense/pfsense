@@ -153,7 +153,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 
 </table>
 
-<?
+<?php
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));

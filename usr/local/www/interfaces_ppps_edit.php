@@ -474,7 +474,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="78%" class="vtable">
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr id="trcountry" style="display:none">
-						<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+						<td><?= gettext("Country:"); ?> &nbsp;&nbsp;</td>
 						<td>
 							<select class="formselect" name="country" id="country" onChange="providers_list()">
 								<option></option>
@@ -482,7 +482,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						</td>
 					</tr>
 					<tr id="trprovider" style="display:none">
-						<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+						<td><?= gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 						<td>
 							<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
 								<option></option>
@@ -490,7 +490,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						</td>
 					</tr>
 					<tr id="trproviderplan" style="display:none">
-						<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+						<td><?= gettext("Plan:"); ?> &nbsp;&nbsp;</td>
 						<td>
 							<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
 								<option></option>
@@ -611,7 +611,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 										<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 										<br />&nbsp;<br />
-										<span class="red"><strong><?=gettext("Note ");?>:</strong></span>
+										<span class="red"><strong><?=gettext("Note:");?></strong></span>
 										<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 										</p>
 										<?php if ($pconfig['pppoe_pr_preset']): ?>

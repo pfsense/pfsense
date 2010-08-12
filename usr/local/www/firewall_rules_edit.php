@@ -760,7 +760,7 @@ include("head.inc");
 				<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srctype" class="formselect" onChange="typesel_change()">
 <?php
@@ -790,7 +790,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
 							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcmask" class="formselect" id="srcmask">
@@ -812,7 +812,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -825,7 +825,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to");?>:</td>
+						<td><?=gettext("to:");?></td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -853,7 +853,7 @@ include("head.inc");
 					<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
@@ -883,7 +883,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
 							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
@@ -903,7 +903,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -916,7 +916,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to");?>:</td>
+						<td><?=gettext("to:");?></td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -978,7 +978,7 @@ include("head.inc");
 					<input type="button" onClick="show_advanced_sourceos()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showsourceosadv" <? if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
-					<?=gettext("OS Type");?>:&nbsp;
+					<?=gettext("OS Type:");?>&nbsp;
 					<select name="os" id="os" class="formselect">
 <?php
 						$ostypes = array(

@@ -51,7 +51,7 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"));
 
-function check_for_advaned_options(&$item) {
+function check_for_advanced_options(&$item) {
 	$item_set = "";
 	if($item['max'])
 		$item_set .= "max {$item['max']} ";
@@ -62,9 +62,9 @@ function check_for_advaned_options(&$item) {
 	if($item['max-src-states'])
 		$item_set .= "max-src-states {$item['max-src-states']} ";
 	if($item['statetype'] != "keep state" && $item['statetype'] != "")
-		$item_set .= "statetype {$item['statetype']} {$item['statetype']}";
+		$item_set .= "statetype {$item['statetype']} ";
 	if($item['statetimeout'])
-		$item_set .= "statetimeout {$item['statetimeout']}";
+		$item_set .= "statetimeout {$item['statetimeout']} ";
 	if($item['nosync'])
 		$item_set .= "nosync ";
 	if($item['max-src-conn-rate'])
@@ -436,9 +436,9 @@ if($_REQUEST['undodrag']) {
 						continue;
 					if (isset($filterent['floating']) && "FloatingRules" != $if)
 						continue;
-					$isadvset = check_for_advaned_options($filterent);
+					$isadvset = check_for_advanced_options($filterent);
 					if($isadvset)
-						$advanced_set = sprintf("<img src=\"./themes/%s/images/icons/icon_advanced.gif\" title=\"%s: %s\" border=\"0\">", $g['theme'], gettext("advanced settings set"), $isadvset);
+						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = ""
 				?>

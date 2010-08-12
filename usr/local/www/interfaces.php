@@ -178,7 +178,7 @@ $pconfig['enable'] = isset($wancfg['enable']);
 if (is_array($config['aliases']['alias'])) {
 	foreach($config['aliases']['alias'] as $alias) {
 		if($alias['name'] == $wancfg['descr']) {
-			$input_errors[] = sprintf(gettext("Sorry, an alias with the name '%s' already exists."),$wancfg['descr']);
+			$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."),$wancfg['descr']);
 		}
 	}
 }
@@ -275,6 +275,7 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_strict_rekey'] = isset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
 		$pconfig['passphrase'] = $wancfg['wireless']['wpa']['passphrase'];
 		$pconfig['ieee8021x'] = isset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
+		$pconfig['rsn_preauth'] = isset($wancfg['wireless']['wpa']['rsn_preauth']);
 		$pconfig['ext_wpa_sw'] = $wancfg['wireless']['wpa']['ext_wpa_sw'];
 		$pconfig['wpa_enable'] = isset($wancfg['wireless']['wpa']['enable']);
 	}
@@ -745,6 +746,10 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa']['mac_acl_enable'] = true;
 	else if (isset($wancfg['wireless']['wpa']['mac_acl_enable']))
 		unset($wancfg['wireless']['wpa']['mac_acl_enable']);
+	if ($_POST['rsn_preauth'] == "yes")
+		$wancfg['wireless']['wpa']['rsn_preauth'] = true;
+	else 
+		unset($wancfg['wireless']['wpa']['rsn_preauth']);
 	if ($_POST['ieee8021x'] == "yes")
 		$wancfg['wireless']['wpa']['ieee8021x']['enable'] = true;
 	else if (isset($wancfg['wireless']['wpa']['ieee8021x']['enable']))
@@ -832,7 +837,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = sprintf(gettext("Unable to change mode to %s .  You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
+			$input_errors[] = sprintf(gettext("Unable to change mode to %s.  You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
 			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
 		}
@@ -840,7 +845,7 @@ function check_wireless_mode() {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),sprintf(gettext("'%s'"),$pconfig['descr']));
+$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
 $statusurl = "status_interfaces.php";
 
 $closehead = false;
@@ -1010,7 +1015,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
 		<?php if (is_subsystem_dirty('interfaces')): ?><p>
-		<?php print_info_box_np(sprintf(gettext("The '%s' configuration has been changed."),$wancfg['descr'])."<p>".gettext("You must apply the changes in order for them to take effect.")."<p>".gettext("Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
+		<?php print_info_box_np(sprintf(gettext("The %s configuration has been changed."),$wancfg['descr'])."<p>".gettext("You must apply the changes in order for them to take effect.")."<p>".gettext("Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
 		<?php endif; ?>
 		<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1178,7 +1183,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
-																	<td colspan="2">
+																	<td>&nbsp;</td>
+																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
 																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
@@ -1948,6 +1954,13 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<br/>
 							</td>
 						</tr>
+						<tr>
+							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
+							<td class="vtable">
+								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <? if ($pconfig['rsn_preauth']) echo "checked"; ?>>
+								<br/>
+							</td>
+						</tr>
 						<?php endif; ?>
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
@@ -1979,10 +1992,6 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								"and obviously should not appear as the source address in any packets you receive."); ?>
 							</td>
 						</tr>
-					</table> <!-- End "allcfg" table -->
-					</div> <!-- End "allcfg" div -->
-
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="100" valign="top">
 								&nbsp;
@@ -1998,7 +2007,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
 							</td>
 						</tr>
-					</table>
+					</table> <!-- End "allcfg" table -->
+					</div> <!-- End "allcfg" div -->
 				</td>
 			</tr>
 		</table>

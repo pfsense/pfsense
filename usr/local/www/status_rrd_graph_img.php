@@ -189,7 +189,7 @@ $rrdcolors = "./themes/{$g['theme']}/rrdcolors.inc.php";
 if(file_exists($rrdcolors)) {
 	include($rrdcolors);
 } else {
-	log_error(printf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"),$g['theme']));
+	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"),$g['theme']));
 	$colortrafficup = array("666666", "CCCCCC");
 	$colortrafficdown = array("990000", "CC0000");
 	$colorpacketsup = array("666666", "CCCCCC");
@@ -910,7 +910,7 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 }
 else {
 	$data = false;
-	log_error(printf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
+	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
 } 
 
 /* check modification time to see if we need to generate image */
@@ -930,16 +930,16 @@ if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 		usleep(500);
 }
 if(($graphcmdreturn <> 0) || (! $data)) {
-	log_error(printf(gettext("Failed to create graph with error code %s, the error is: %s"),$graphcmdreturn,$graphcmdoutput));
+	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
 	if(strstr($curdatabase, "queues")) {
-		log_error(printf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
+		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
 		exec("/bin/rm -f $rrddbpath$curif$queues");
 		flush();
 		usleep(500);
 		enable_rrd_graphing();
 	}
 	if(strstr($curdatabase, "queuesdrop")) {
-		log_error(printf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
+		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
 		exec("/bin/rm -f $rrddbpath$curdatabase");
 		flush();
 		usleep(500);

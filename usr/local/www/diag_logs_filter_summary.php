@@ -204,7 +204,7 @@ include("head.inc"); ?>
 		</td></tr>
 		<tr><td align="center">
 
-<?php printf (gettext("This is a firewall log summary, of the last %s lines of the firewall log (Max %s)."), $gotlines, $lines)?><br />
+<?php printf (gettext('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines)?><br />
 <?=gettext("NOTE: IE8 users must enable compatibility view.")?>
 
 <?php

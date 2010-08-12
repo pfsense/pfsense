@@ -163,7 +163,7 @@ if ($_POST) {
 			if ($p1index <> $t) {
 				$tremotegw = $pconfig['remotegw'];
 				if (($ph1tmp['remote-gateway'] == $tremotegw) && !isset($ph1tmp['disabled'])) {
-					$input_errors[] = sprintf(gettext("The remote gateway \"%s\" is already used by phase1 \"${ph1tmp['descr']}\"."), $tremotegw);
+					$input_errors[] = sprintf(gettext('The remote gateway "%1$s" is already used by phase1 "%2$s".'), $tremotegw, $ph1tmp['descr']);
 				}
 			}
 			$t++;

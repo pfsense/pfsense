@@ -139,7 +139,7 @@ if (!$remote_version) {
 	if(isset($curcfg['alturl']['enable']))
 		$static_text .= gettext("Could not contact custom update server.") . "\\n";
 	else
-		$static_text .= sprintf(gettext("Could not contact %s update server %s%s"), $g['product_name'], $updater_url, "\\n");
+		$static_text .= sprintf(gettext('Could not contact %1$s update server %2$s%3$s'), $g['product_name'], $updater_url, "\\n");
 } else {
 	$static_text .= gettext("Obtaining current version information...");
 	update_output_window($static_text);

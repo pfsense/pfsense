@@ -206,6 +206,7 @@ switch($action)
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Config"); ?></td>
 				</tr>
 				<tr>
+					<td width="22%" valign="top" class="vncell"><?=gettext("Email Address"); ?></td>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Email Adress"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="text" name="smartmonemail" value="<?=$pconfig['smartmonemail']?>"/>

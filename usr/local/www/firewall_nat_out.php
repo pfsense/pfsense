@@ -108,7 +108,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
 					$natent['dstport'] = "500";
-					$natent['descr'] = sprintf(gettext("Auto created rule for ISAKMP - %s to %s"),$ifdesc,$ifdesc2);
+					$natent['descr'] = sprintf(gettext('Auto created rule for ISAKMP - %1$s to %2$s'),$ifdesc,$ifdesc2);
 					$natent['target'] = "";
 					$natent['interface'] = $if2;
 					$natent['destination']['any'] = true;
@@ -118,7 +118,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
                                         $natent['source']['network'] = "{$osn}/{$ossubnet}";
                                         $natent['sourceport'] = "";
-                                        $natent['descr'] = sprintf(gettext("Auto created rule for %s to %s"),$ifdesc,$ifdesc2);
+                                        $natent['descr'] = sprintf(gettext('Auto created rule for %1$s to %2$s'),$ifdesc,$ifdesc2);
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;

@@ -120,7 +120,7 @@ if ($_POST) {
 		}
 		if (!$input_errors) {
 			if (!interface_wireless_clone($clone['cloneif'], $clone)) {
-				$input_errors[] = sprintf(gettext("Error creating interface with mode %s.  The %s interface may not support creating more clones with the selected mode."), $wlan_modes[$clone['mode']], $clone['if']);
+				$input_errors[] = sprintf(gettext('Error creating interface with mode %1$s.  The %2$s interface may not support creating more clones with the selected mode.'), $wlan_modes[$clone['mode']], $clone['if']);
 			} else {
 				if (isset($id) && $a_clones[$id]) {
 					if ($clone['if'] != $a_clones[$id]['if'])

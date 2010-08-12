@@ -176,8 +176,8 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="mode" name="mode" onChange="enforceFailover(); checkPoolControls();">
-					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "value=\"{$pconfig['name']}\"";?>><?=gettext("Load Balance"); ?></option>
-					<option value="failover"   <?if($pconfig['mode'] == "failover") echo "value=\"{$pconfig['name']}\"";?>><?=gettext("Manual Failover"); ?></option>
+					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected";?>><?=gettext("Load Balance");?></option>
+					<option value="failover"  <?if($pconfig['mode'] == "failover") echo "selected";?>><?=gettext("Manual Failover");?></option>
 				</select>
 			</td>
 		</tr>
@@ -226,7 +226,7 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Server IP Address"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;"> 
-				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform);"><br>
+				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform); enforceFailover(); checkPoolControls();"><br>
 			</td>
 		</tr>
 		<tr>

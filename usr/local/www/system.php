@@ -334,7 +334,7 @@ include("head.inc");
 								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?>
 							</strong>
 							<br/>
-							<?php sprintf(gettext("If this option is set, '%s' will " .
+							<?php printf(gettext("If this option is set, %s will " .
 							"use DNS servers assigned by a DHCP/PPP server on WAN " .
 							"for its own purposes (including the DNS forwarder). " .
 							"However, they will not be assigned to DHCP and PPTP " .

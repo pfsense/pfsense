@@ -260,7 +260,7 @@ if ($_POST) {
 					if (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
 					 && !is_iprange($_POST["address{$x}"]))
-						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type']);
+						$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s alias.'), $_POST["address{$x}"], $_POST['type']);
 				}
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
@@ -279,7 +279,7 @@ if ($_POST) {
 			}
 		}
 		if ($wrongaliases <> "")
-			$input_errors[] = sprintf(gettext("The alias(es): %s %scannot be nested cause they are not of the same type."), $wrongaliases, " \n");
+			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
 	}
 
 	if (!$input_errors) {

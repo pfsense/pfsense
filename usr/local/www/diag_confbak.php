@@ -46,7 +46,7 @@ if($_GET['newver'] != "") {
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0)
 
-	$savemsg = sprintf(gettext("Successfully reverted to timestamp %s with description \"%s\"."), date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
+	$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
 	else
 		$savemsg = gettext("Unable to revert to the selected configuration.");
 	conf_mount_ro();
@@ -56,7 +56,7 @@ if($_GET['rmver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
-	$savemsg = sprintf(gettext("Deleted backup with timestamp %s and description \"%s\"."), date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
+	$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
 	conf_mount_ro();
 }
 

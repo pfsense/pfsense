@@ -116,7 +116,7 @@ if ($_POST) {
             $rollent['active'] = array();
             voucher_write_used_db($rollent['number'], $rollent['used']);
             voucher_write_active_db($rollent['number'], array());   // create empty DB
-            voucher_log(LOG_INFO,printf(gettext("All %s vouchers from Roll %s marked unused"), $rollent['count'], $rollent['number']));
+            voucher_log(LOG_INFO,sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
         } else {
             // existing roll has been modified but without changing the count
             // read active and used DB from ramdisk and store it in XML config

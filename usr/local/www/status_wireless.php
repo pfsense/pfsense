@@ -74,7 +74,7 @@ foreach($ciflist as $interface => $ifdescr) {
 		$enabled = false;
 		if($if == $interface)
 			$enabled = true;
-		$tab_array[] = array(printf(gettext("Status (%s)"),$ifdescr), $enabled, "status_wireless.php?if={$interface}");
+		$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
 	}
 }
 $rwlif = get_real_interface($if);
@@ -140,7 +140,7 @@ display_top_tabs($tab_array);
 
 	/* table header */
         print "\n<tr>";
-	printf(gettext("%s%s%sAssociated or ad-hoc peers.%s%s%s%s"),'<tr>','<td colspan=7>','<b>','<br/>','</td>','</tr>','\n');
+        print "<tr><td colspan=7><b>" . gettext("Associated or ad-hoc peers") . "<br/></td></tr>\n";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>ADDR</td>";
 	print "<td><b><font color='#ffffff'>AID</td>";

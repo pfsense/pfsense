@@ -501,7 +501,7 @@ include("fbegin.inc"); ?>
                       <?php endforeach; ?>
                     </select> <br> <span class="vexpl"><?=gettext("Choose which IP protocol " .
                     "this rule should match."); ?><br>
-                    <?=gettext("Hint: in most cases, you should specify"); ?> <em>TCP</em> &nbsp;<?=gettext("here"); ?>.</span></td>
+                    <?=gettext("Hint: in most cases, you should specify"); ?> <em><?=gettext("TCP"); ?></em> &nbsp;<?=gettext("here."); ?></span></td>
                 </tr>
 		<tr id="showadvancedboxsrc" name="showadvancedboxsrc">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source"); ?></td>
@@ -515,12 +515,12 @@ include("fbegin.inc"); ?>
 				<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
 				<strong><?=gettext("not"); ?></strong>
 				<br />
-				<?=gettext("Use this option to invert the sense of the match"); ?>.
+				<?=gettext("Use this option to invert the sense of the match."); ?>
 				<br />
 				<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Type:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<select name="srctype" class="formselect" onChange="typesel_change()">
 <?php
@@ -550,7 +550,7 @@ include("fbegin.inc"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<input autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
 							<select name="srcmask" class="formselect" id="srcmask">
@@ -568,7 +568,7 @@ include("fbegin.inc"); ?>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("from:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<select name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -581,7 +581,7 @@ include("fbegin.inc"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to"); ?>:</td>
+						<td><?=gettext("to:"); ?></td>
 						<td>
 							<select name="srcendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -604,12 +604,12 @@ include("fbegin.inc"); ?>
 				<input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
 				<strong><?=gettext("not"); ?></strong>
 					<br />
-				<?=gettext("Use this option to invert the sense of the match"); ?>.
+				<?=gettext("Use this option to invert the sense of the match."); ?>
 					<br />
 					<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Type:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<select name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
@@ -658,7 +658,7 @@ include("fbegin.inc"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
@@ -678,7 +678,7 @@ include("fbegin.inc"); ?>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from"); ?>:&nbsp;&nbsp;</td>
+						<td><?=gettext("from:"); ?>&nbsp;&nbsp;</td>
 						<td>
 							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -691,7 +691,7 @@ include("fbegin.inc"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to"); ?>:</td>
+						<td><?=gettext("to:"); ?></td>
 						<td>
 							<select name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
@@ -706,7 +706,7 @@ include("fbegin.inc"); ?>
 				</table>
 				<br />
 				<span class="vexpl">
-					<?=gettext("Specify the port or port range for the destination of the packet for this mapping"); ?>.
+					<?=gettext("Specify the port or port range for the destination of the packet for this mapping."); ?>
 					<br />
 					<?=gettext("Hint: you can leave the"); ?> <em>'<?=gettext("to"); ?>'</em> <?=gettext("field empty if you only want to map a single port"); ?>
 				</span>
@@ -717,7 +717,7 @@ include("fbegin.inc"); ?>
                   <td width="78%" class="vtable">
                     <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
                     <br> <span class="vexpl"><?=gettext("Enter the internal IP address of " .
-                    "the server on which you want to map the ports"); ?>.<br>
+                    "the server on which you want to map the ports."); ?><br>
                     <?=gettext("e.g."); ?> <em>192.168.1.12</em></span></td>
                 </tr>
                 <tr name="lprtr" id="lprtr">
@@ -738,7 +738,7 @@ include("fbegin.inc"); ?>
                     <span class="vexpl"><?=gettext("Specify the port on the machine with the " .
                     "IP address entered above. In case of a port range, specify " .
                     "the beginning port of the range (the end port will be calculated " .
-                    "automatically)"); ?>.<br>
+                    "automatically)."); ?><br>
                     <?=gettext("Hint: this is usually identical to the 'from' port above"); ?></span></td>
                 </tr>
                 <tr>
@@ -746,7 +746,7 @@ include("fbegin.inc"); ?>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl"><?=gettext("You may enter a description here " .
-                    "for your reference (not parsed)"); ?>.</span></td>
+                    "for your reference (not parsed)."); ?></span></td>
                 </tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync"); ?></td>
@@ -771,7 +771,7 @@ include("fbegin.inc"); ?>
 					<td width="78%" class="vtable">
 						<select name="associated-rule-id">
 							<option value=""><?=gettext("None"); ?></option>
-							<option value="pass" <?php if($pconfig['associated-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
+							<option value="pass" <?php if($pconfig['associated-rule-id'] == "pass") echo " SELECTED"; ?>><?=gettext("Pass"); ?></option>
 							<?php
 							$linkedrule = "";
 							if (is_array($config['filter']['rule'])) {

@@ -176,8 +176,8 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="mode" name="mode" onChange="enforceFailover(); checkPoolControls();">
-					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "value=\"{$pconfig['name']}\"";?>>Load Balance</option>
-					<option value="failover"   <?if($pconfig['mode'] == "failover") echo "value=\"{$pconfig['name']}\"";?>>Manual Failover</option>
+					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "value=\"{$pconfig['name']}\"";?>><?=gettext("Load Balance"); ?></option>
+					<option value="failover"   <?if($pconfig['mode'] == "failover") echo "value=\"{$pconfig['name']}\"";?>><?=gettext("Manual Failover"); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -192,7 +192,7 @@ function clearcombo(){
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
-				<div id="monitorport_desc"><?=gettext("This is the port your servers are listening on"); ?>.</div>
+				<div id="monitorport_desc"><?=gettext("This is the port your servers are listening on."); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -217,7 +217,7 @@ function clearcombo(){
 						}
 					?>
 				<?php else: ?>
-					<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a monitor IP address on the monitors tab if you wish to use this feature"); ?>.
+					<b><?=gettext("NOTE"); ?>:</b> <?=gettext("Please add a monitor IP address on the monitors tab if you wish to use this feature."); ?>
 				<?php endif; ?>
 				</select>
 			</td>

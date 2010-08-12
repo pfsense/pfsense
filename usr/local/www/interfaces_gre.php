@@ -130,7 +130,7 @@ include("head.inc");
 				</tr>
         <tr>
                 <td class="tabcont" colspan="3">
-                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
+                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
                     </td>
                 </tr>
               </table>

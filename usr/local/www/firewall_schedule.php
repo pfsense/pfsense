@@ -108,7 +108,8 @@ include("head.inc");
 	<?php $i = 0; foreach ($a_schedules as $schedule): ?>
 	<tr>
 	   <td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($schedule['name']); 
+			<?=htmlspecialchars($schedule['name']);?>
+					<?php
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 					 if ($schedstatus) { ?>
 					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="<?=gettext("Schedule is currently active");?>" width="17" height="17" border="0">
@@ -206,7 +207,7 @@ include("head.inc");
 							$timeFriendly = $starttime . "-" . $stoptime;
 							$description = $timerange['rangedescr'];	
 							
-							?><tr><td><?echo $dayFriendly;?></td><td><?echo $timeFriendly;?></td><td><?echo $description;?></td><tr/><?php
+							?><tr><td><?=$dayFriendly;?></td><td><?=$timeFriendly;?></td><td><?=$description;?></td><tr/><?php
 						}
 					}//end for?></table>
 	  </td>

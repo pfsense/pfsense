@@ -170,7 +170,7 @@ if ($_POST) {
 		$pool_hosts=array();
 		foreach ((array) $pool['servers'] as $server) {
 			$svr['ip']['addr']=$server;
-			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server['ip']]['state'];
+			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
 			$pool_hosts[]=$svr;
 		}
 		foreach ((array) $pool['serversdisabled'] as $server) {

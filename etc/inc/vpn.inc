@@ -535,7 +535,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						chmod($keypath, 0600);
 
-						$ca = lookup_ca($cert['caref']);
+						$ca = lookup_ca($ph1ent['caref']);
 						if ($ca) {
 							$cafile = "ca-".$ikeid.".crt";
 							$capath = $g['varetc_path']."/".$cafile;

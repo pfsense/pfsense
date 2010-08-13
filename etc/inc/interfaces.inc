@@ -1107,13 +1107,6 @@ function interface_ppps_configure($interface) {
 				break;
 		}
 	}
-
-	/* generate mpd.conf */
-	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
-	if (!$fd) {
-		log_error("Error: cannot open mpd_{$interface}.conf in interface_ppps_configure().\n");
-		return 0;
-	}
 	
 	if (is_array($ports) && count($ports) > 1)
 		$multilink = "enable";
@@ -1295,6 +1288,12 @@ EOD;
 
 EOD;
 
+		if (!empty($mrrus[$pid]))
+			$mpdconf .= <<<EOD
+	set link mrru {$mrrus[$pid]}
+
+EOD;
+
 		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}
@@ -1362,9 +1361,20 @@ EOD;
 		$mpdconf .= "\topen\r\n";
 	} //end foreach($port)
 
-	// Write out mpd_ppp.conf
-	fwrite($fd, $mpdconf);
-	fclose($fd);
+
+	/* Generate mpd.conf. If mpd_[interface].conf exists in the conf path, then link to it instead of generating a fresh conf file. */
+	if (file_exists("{$g['conf_path']}/mpd_{$interface}.conf"))
+		mwexec("/bin/ln -s {$g['conf_path']}/mpd_{$interface}.conf {$g['varetc_path']}/.");
+	else {
+		$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
+		if (!$fd) {
+			log_error("Error: cannot open mpd_{$interface}.conf in interface_ppps_configure().\n");
+			return 0;
+		}
+		// Write out mpd_ppp.conf
+		fwrite($fd, $mpdconf);
+		fclose($fd);
+	}
 
 	// Create the uptime log if requested and if it doesn't exist already, or delete it if it is no longer requested.
 	if (isset($ppp['uptime'])) {

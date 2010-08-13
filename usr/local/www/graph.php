@@ -352,21 +352,21 @@ function formatSpeed(speed, unit) {
 function formatSpeedBits(speed) {
   // format speed in bits/sec, input: bytes/sec
   if (speed < 125000)
-    return Math.round(speed / 125) + " " + <?=gettext("Kbps"); ?>;
+    return Math.round(speed / 125) + " <?=gettext("Kbps"); ?>";
   if (speed < 125000000)
-    return Math.round(speed / 1250)/100 + " " + <?=gettext("Mbps"); ?>;
+    return Math.round(speed / 1250)/100 + " <?=gettext("Mbps"); ?>";
   // else
-  return Math.round(speed / 1250000)/100 + " " + <?=gettext("Gbps"); ?>;  /* wow! */
+  return Math.round(speed / 1250000)/100 + " <?=gettext("Gbps"); ?>";  /* wow! */
 }
 
 function formatSpeedBytes(speed) {
   // format speed in bytes/sec, input:  bytes/sec
   if (speed < 1048576)
-    return Math.round(speed / 10.24)/100 + " " + <?=gettext("KB/s"); ?>;
+    return Math.round(speed / 10.24)/100 + " <?=gettext("KB/s"); ?>";
   if (speed < 1073741824)
-    return Math.round(speed / 10485.76)/100 + " " + <?=gettext("MB/s"); ?>;
+    return Math.round(speed / 10485.76)/100 + " <?=gettext("MB/s"); ?>";
   // else
-  return Math.round(speed / 10737418.24)/100 + " " + <?=gettext("GB/s"); ?>;  /* wow! */
+  return Math.round(speed / 10737418.24)/100 + " <?=gettext("GB/s"); ?>";  /* wow! */
 }
 
 function LZ(x) {

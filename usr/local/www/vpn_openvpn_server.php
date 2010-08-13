@@ -249,7 +249,7 @@ if ($_POST) {
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));;
+		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');

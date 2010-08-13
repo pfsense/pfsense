@@ -536,20 +536,22 @@ function vpn_ipsec_configure($ipchg = false)
 						chmod($keypath, 0600);
 
 						$ca = lookup_ca($cert['caref']);
-						$cafile = "ca-".$ikeid.".crt";
-						$capath = $g['varetc_path']."/".$cafile;
+						if ($ca) {
+							$cafile = "ca-".$ikeid.".crt";
+							$capath = $g['varetc_path']."/".$cafile;
 
-						if (!file_put_contents($capath, base64_decode($ca['crt'])))
-						{
-							log_error("Error: Cannot write phase1 CA certificate file for {$ph1ent['name']}");
-							continue;
+							if (!file_put_contents($capath, base64_decode($ca['crt'])))
+							{
+								log_error("Error: Cannot write phase1 CA certificate file for {$ph1ent['name']}");
+								continue;
+							}
+
+							chmod($capath, 0600);
+							$caline = "ca_type x509 \"".basename($capath)."\";";
 						}
-
-						chmod($capath, 0600);
 
 						$certline = "certificate_type x509 \"".basename($certpath)."\" \"".basename($keypath)."\";";
 
-						$caline = "ca_type x509 \"".basename($capath)."\";";
 					}
 
 					$ealgos = '';

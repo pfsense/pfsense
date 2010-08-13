@@ -230,7 +230,7 @@ function prefill_provider() {
 			$('username').setValue('');
 			$('password').setValue('');
 			if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
-				$('phone').setValue('*777');
+				$('phone').setValue('#777');
 				$('apn').setValue('');
 			} else {
 				$('phone').setValue('*99#');

@@ -51,6 +51,7 @@ function show_hide_linkfields(options){
 		var bwlabel = "bwlabel" + count;
 		var mtu = "mtu" + count;
 		var mru = "mru" + count;
+		var mrru = "mrru" + count;
 		var ipfields = "ip_fields" + count;
 		var gwfields = "gw_fields" + count;
 		var localip = "localip" + count;
@@ -65,6 +66,7 @@ function show_hide_linkfields(options){
 		$(bw).name = "bandwidth[]";
 		$(mtu).name = "mtu[]";
 		$(mru).name = "mru[]";
+		$(mrru).name = "mrru[]";
 		$(localip).name = "localip[]";
 		$(subnet).name = "subnet[]";
 		$(gateway).name = "gateway[]";
@@ -76,6 +78,7 @@ function show_hide_linkfields(options){
 				$(bw).name = "bandwidth[" + options[i].value + "]";
 				$(mtu).name = "mtu[" + options[i].value + "]";
 				$(mru).name = "mru[" + options[i].value + "]";
+				$(mrru).name = "mrru[" + options[i].value + "]";
 				$(localiplabel).innerHTML = "Local IP (" + options[i].value + ")";
 				$(gatewaylabel).innerHTML = "Gateway (" + options[i].value + ")";
 				$(localip).name = "localip[" + options[i].value + "]";

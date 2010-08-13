@@ -76,7 +76,7 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['bandwidth'] = explode(",",$a_ppps[$id]['bandwidth']);
 	$pconfig['mtu'] = explode(",",$a_ppps[$id]['mtu']);
 	$pconfig['mru'] = explode(",",$a_ppps[$id]['mru']);
-	$pconfig['mrru'] = $a_ppps[$id]['mrru'];
+	$pconfig['mrru'] = explode(",",$a_ppps[$id]['mrru']);
 	if (isset($a_ppps[$id]['shortseq']))
 		$pconfig['shortseq'] = true;
 	if (isset($a_ppps[$id]['acfcomp']))
@@ -340,6 +340,7 @@ if ($_POST) {
 		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
 		$ppp['mtu'] = implode(',', $port_data['mtu']);
 		$ppp['mru'] = implode(',', $port_data['mru']);
+		$ppp['mrru'] = implode(',', $port_data['mrru']);
 		
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
@@ -758,7 +759,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
-						<br> <span class="vexpl"><?=gettext("MRU will default to 1492.");?></span>
+						<br> <span class="vexpl"><?=gettext("MRU will be auto-negotiated by default.");?></span>
+					  </td>
+					</tr>
+					<tr>
+					  <td width="22%" id="mrrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRRU"); ?></td>
+					  <td width="78%" class="vtable">
+						<input name="mrru[]" id="mrru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mrru'][$i]);?>">
+						<br> <span class="vexpl"><?=gettext("MRRU will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 				</table

@@ -1295,6 +1295,12 @@ EOD;
 
 EOD;
 
+		if (!empty($mrrus[$pid]))
+			$mpdconf .= <<<EOD
+	set link mrru {$mrrus[$pid]}
+
+EOD;
+
 		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}

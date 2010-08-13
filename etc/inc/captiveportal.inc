@@ -55,7 +55,7 @@ function captiveportal_configure() {
 	if (isset($config['captiveportal']['enable'])) {
 
 		if ($g['booting'])
-			echo "Starting captive portal... ";
+			echo gettext("Starting captive portal... ");
 
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
@@ -253,7 +253,7 @@ EOD;
 
 			$fd = @fopen("{$g['vardb_path']}/captiveportal_radius.db", "w");
 			if (!$fd) {
-				printf("Error: cannot open radius DB file in captiveportal_configure().\n");
+				printf(gettext("Error: cannot open radius DB file in captiveportal_configure().%s"), "\n");
 				return 1;
 			} else if (isset($radiusip2, $radiuskey2)) {
 				fwrite($fd,$radiusip . "," . $radiusport . "," . $radiusacctport . "," . $radiuskey . "\n"
@@ -265,7 +265,7 @@ EOD;
 		}
 
 		if ($g['booting'])
-			echo "done\n";
+			printf(gettext("done%s"), "\n");
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
@@ -996,7 +996,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
     if (is_null($ruleno)) {
         $auth_list = array();
         $auth_list['auth_val'] = 1;
-        $auth_list['error'] = "System reached maximum login capacity";
+        $auth_list['error'] = gettext("System reached maximum login capacity");
         unlock($captiveportallck);
         return $auth_list;
     }
@@ -1086,7 +1086,7 @@ function captiveportal_write_elements() {
 		foreach ($config['captiveportal']['element'] as $data) {
 			$fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
 			if (!$fd) {
-				printf("Error: cannot open '{$data['name']}' in captiveportal_write_elements().\n");
+				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
 			$decoded = base64_decode($data['content']);

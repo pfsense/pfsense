@@ -45,7 +45,7 @@ function ext_change() {
 
 function show_source_port_range() {
 	document.getElementById("sprtable").style.display = '';
-	document.getElementById("showadvancedboxspr").innerHTML='';
+	document.getElementById("showadvancedboxspr").style.display = 'none';
 }
 
 function typesel_change() {
@@ -120,11 +120,12 @@ function proto_change() {
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
 		document.getElementById("dprtr").style.display = '';
 		if (editenabled) {
-			document.getElementById("showadvancedboxspr").innerHTML='<p><input type="button" onClick="show_source_port_range()" value="Advanced"></input> - Show source port range</a>';
+			document.getElementById("showadvancedboxspr").style.display = 'table-row';
 		}
 	} else {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';
+		document.getElementById("showadvancedboxspr").style.display = 'none';
 	}
 }
 

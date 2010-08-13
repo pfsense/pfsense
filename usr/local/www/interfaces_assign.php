@@ -383,7 +383,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect)."));?><br>
+	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php elseif($savemsg): ?>
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>

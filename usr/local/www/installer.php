@@ -456,7 +456,7 @@ function verify_before_install() {
 					</div>
 					<center>
 						<p/>
-						<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';">  
+						<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';"> &nbsp;&nbsp;
 						<input type="submit" value="Begin installation"> 
 					</center>
 				</td>
@@ -545,7 +545,7 @@ function page_table_start() {
 	echo <<<EOF
 	<center>
 		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a><br/>
-		<table cellpadding="6" cellspacing="0" width="640" height="480" style="border:1px solid #000000">
+		<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
 		<tr height="10" bgcolor="#990000">
 			<td style="border-bottom:1px solid #000000">
 				<font color='white'>
@@ -640,7 +640,8 @@ EOF;
 													</script>
 													<div id='contentdiv' style="display:none;">
 														{$custom_txt}<p/>
-														<input type="submit" value="Next >"
+														<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';"> &nbsp;&nbsp
+														<input type="submit" value="Next">
 													</div>
 													<script type="text/javascript">
 														\$('contentdiv').appear();
@@ -655,6 +656,7 @@ EOF;
 					</tr>
 				</table>
 			</div>
+
 EOF;
 	page_table_end();
 	end_html();
@@ -692,11 +694,8 @@ function installer_main() {
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
-													<table cellspacing="3" cellpadding="3" style="border: 1px dashed;">
+													<table cellspacing="4" cellpadding="4" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-															Rescue config.xml
-														</td></tr>
-														<tr bgcolor="#AAAAAA"><td align="center">
 															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a>
 														</td></tr>
 													 	{$zfs_enabled}

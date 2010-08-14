@@ -30,6 +30,8 @@
 require("globals.inc");
 require("guiconfig.inc");
 
+define('PC_SYSINSTALL', '/PCBSD/pc-sysinstall/pc-sysinstall');
+
 // Handle other type of file systems
 if($_REQUEST['fstype']) 
 	$fstype = strtoupper($_REQUEST['fstype']);
@@ -124,6 +126,27 @@ function installer_find_first_disk() {
 	global $g, $fstype;
 	$disk = `/PCBSD/pc-sysinstall/pc-sysinstall disk-list | head -n1 | cut -d':' -f1`;
 	return $disk;
+}
+
+// Return an array with all disks information.
+function installer_find_all_disks() {
+	global $g, $fstype;
+	$disk = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-list`);
+	$disks_array = array();
+	foreach($disk as $d) {
+		$disks_info = split(":", $d);
+		$tmp_array = array();
+		$disk_info = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-info {$disks_info[0]}`);
+		foreach($disk_info as $di) { 
+			$di_s = split("=", $di);
+			if($di_s[0])
+				$tmp_array[$di_s[0]] = $di_s[1];
+		}
+		$tmp_array['disk'] = trim($disks_info[0]);
+		$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
+		$disks_array[] = $tmp_array;
+	}
+	return $disks_array;
 }
 
 function update_installer_status() {
@@ -456,6 +479,57 @@ EOF;
 	
 }
 
+function installer_custom() {
+	global $g, $fstype;
+	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
+		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
+	head_html();
+	body_html();
+	// Only enable ZFS if this exists.  The install will fail otherwise.
+	if(file_exists("/boot/gptzfsboot")) 
+		$zfs_enabled = "or <a href=\"installer.php?state=quickeasyinstall&fstype=ZFS\">ZFS</a> ";
+	$disk = installer_find_first_disk();
+	if(!$disk) 
+		echo gettext("WARNING: Could not find any suitable disks for installation.");
+	page_table_start();
+	echo <<<EOF
+		<form action="installer.php" method="post" state="step1_post">
+			<div id="mainlevel">
+				<center>
+				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} PCSysInstaller!</b></font><p/>
+				<font face="arial" size="+1">This utility will install {$g['product_name']} to a hard disk, flash drive, etc.</font>
+				<table width="100%" border="0" cellpadding="5" cellspacing="0">
+			 		<tr>
+			    		<td>
+							<center>
+							<div id="mainarea">
+								<br/>
+								<center>
+								Please select an installer option to begin:
+								<table width="100%" border="0" cellpadding="5" cellspacing="5">
+									<tr>
+			     						<td>
+											<div id="pfsenseinstaller">
+												<center>
+												Rescue config.xml<p/>
+												Install {$g['product_name']} using the <a href="installer.php?state=quickeasyinstall">UFS</a>
+												 {$zfs_enabled}
+												filesystem.
+												</p>
+											</div>
+			     						</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+EOF;
+	page_table_end();
+	end_html();
+}
+
 function installer_main() {
 	global $g, $fstype;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
@@ -506,5 +580,9 @@ EOF;
 	page_table_end();
 	end_html();
 }
+
+echo "<pre>";
+print_r(installer_find_all_disks());
+echo "</pre>";
 
 ?>

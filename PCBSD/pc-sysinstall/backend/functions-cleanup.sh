@@ -42,7 +42,7 @@ zfs_cleanup_unmount()
     cat ${FSMNT}/etc/rc.conf 2>/dev/null | grep 'zfs_enable="YES"' >/dev/null 2>/dev/null
     if [ "$?" != "0" ]
     then
-      echo 'zfs_enable="YES"' >>${FSMNT}/etc/rc.conf
+      #echo 'zfs_enable="YES"' >>${FSMNT}/etc/rc.conf
     fi
 
     sleep 2
@@ -73,9 +73,9 @@ zfs_cleanup_unmount()
       do
         if [ "${ZMNT}" != "/" ]
         then
-          rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
-          rc_halt "zfs unmount ${ZPOOLNAME}${ZMNT}"
-          sleep 2
+          #rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
+          #rc_halt "zfs unmount ${ZPOOLNAME}${ZMNT}"
+          #sleep 2
         fi
       done 
     fi

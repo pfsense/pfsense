@@ -134,6 +134,8 @@ function installer_find_all_disks() {
 	$disk = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
+		if(!$d) 
+			continue;
 		$disks_info = split(":", $d);
 		$tmp_array = array();
 		$disk_info = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-info {$disks_info[0]}`);
@@ -580,5 +582,8 @@ EOF;
 	page_table_end();
 	end_html();
 }
+
+echo "<pre>";
+print_r(installer_find_all_disks());
 
 ?>

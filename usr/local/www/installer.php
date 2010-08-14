@@ -581,8 +581,4 @@ EOF;
 	end_html();
 }
 
-echo "<pre>";
-print_r(installer_find_all_disks());
-echo "</pre>";
-
 ?>

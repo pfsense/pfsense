@@ -71,6 +71,7 @@ foreach( (array) $relayctl as $line) {
 		break;
 		case "host":
 			$curhost=trim($t[2]);
+			$relay_hosts[$curpool][$curhost]['avail']=trim($t[3]);
 			$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
 		break;
 	}
@@ -141,7 +142,7 @@ if ($_POST) {
 		<tr>
 		<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
 		<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
-		<td width="10%" class="listhdrr"><?=gettext("Servers");?></td>
+		<td width="20%" class="listhdrr"><?=gettext("Servers");?></td>
 		<td width="10%" class="listhdrr"><?=gettext("Monitor");?></td>
 		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
 		</tr>
@@ -164,18 +165,20 @@ if ($_POST) {
 		}
 		?>
 		</td>
-		<td class="listr" align="center" >
-		<table border="0" cellpadding="0" cellspacing="2">
+		<td class="listr" align="center">
+		<table border="0" cellpadding="2" cellspacing="0">
 		<?php
 		$pool_hosts=array();
 		foreach ((array) $pool['servers'] as $server) {
 			$svr['ip']['addr']=$server;
 			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
+			$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
 			$pool_hosts[]=$svr;
 		}
 		foreach ((array) $pool['serversdisabled'] as $server) {
 			$svr['ip']['addr']="$server";
 			$svr['ip']['state']='disabled';
+			$svr['ip']['avail']='disabled';
 			$pool_hosts[]=$svr;
 		}
 		asort($pool_hosts);
@@ -204,7 +207,11 @@ if ($_POST) {
 						echo "<td><input type='radio' name='{$pool['name']}' value='{$server['ip']['addr']}' {$checked}></td>\n";
 						break;
 				}
-				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} </td></tr>";
+				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} </td><td bgcolor={$bgcolor}>";
+#				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} ";
+				if($server['ip']['avail'])
+				  echo " ({$server['ip']['avail']}) ";
+				echo "</td></tr>";
 			}
 		}
 		?>

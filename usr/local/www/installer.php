@@ -433,8 +433,8 @@ function verify_before_install() {
 									<div>
 										<center>
 											<div id="pfsensetemplate">
-												<table bgcolor="FFFF00" width="380" height="50" cellpadding="5" style="border:1px dashed;">
-													<tr>
+												<table bgcolor="FFFF00" width="400" height="30" cellpadding="2" style="border:1px dashed;">
+													<tr valign="middle">
 														<td>
 															<center><b>Please verify that the following is correct:</b></center>
 														</td>
@@ -586,8 +586,6 @@ function installer_custom() {
 			<input type="hidden" name="state" value="verify_before_install">
 			<div id="mainlevel">
 				<center>
-				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} PCSysInstaller!</b></font><p/>
-				<font face="arial" size="+1">This utility will install {$g['product_name']} to a hard disk, flash drive, etc.</font>
 				<table width="100%" border="0" cellpadding="5" cellspacing="0">
 			 		<tr>
 			    		<td>
@@ -609,7 +607,16 @@ EOF;
 		$custom_txt = gettext("WARNING: Could not find any suitable disks for installation.");
 	} else {
 		// Prepare disk selection dropdown
-		$custom_txt = "Disk: <select name='disk'>\n";
+		$custom_txt = <<<EOF
+												<table bgcolor="FFFF00" width="400" height="30" cellpadding="2" style="border:1px dashed;">
+													<tr valign="middle">
+														<td>
+															<center><b>Select the installation parameters for {$g['product_name']}:</b></center>
+														</td>
+													</tr>
+												</table><p/>
+EOF;
+		$custom_txt .= "Disk: <select name='disk'>\n";
 		foreach($disks as $disk) {
 			$disksize = format_bytes($disk['size'] * 1048576);
 			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>\n";
@@ -661,7 +668,7 @@ function installer_main() {
 	body_html();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "<a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem</a><p/>";
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem</a></td></tr>";
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo gettext("WARNING: Could not find any suitable disks for installation.");
@@ -685,11 +692,21 @@ function installer_main() {
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
-													Rescue config.xml<p/>
-													<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
-												 	{$zfs_enabled}
-													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a><p/>
-													<a href='/'>Cancel and return to Dashboard</a>
+													<table cellspacing="3" cellpadding="3" style="border: 1px dashed;">
+														<tr bgcolor="#CECECE"><td align="center">
+															Rescue config.xml
+														</td></tr>
+														<tr bgcolor="#AAAAAA"><td align="center">
+															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a>
+														</td></tr>
+													 	{$zfs_enabled}
+														<tr bgcolor="#AAAAAA"><td align="center">
+															<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
+														</td></tr>
+														<tr bgcolor="#CECECE"><td align="center">
+															<a href='/'>Cancel and return to Dashboard</a>
+														</td></tr>
+													</table>
 												</center>
 											</div>
 			     						</td>

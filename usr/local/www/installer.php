@@ -407,7 +407,6 @@ function verify_before_install() {
 	     						<td class="tabcont" >
 									<div>
 										<center>
-			      							<form action="installer.php" method="post">
 											<div id="pfsensetemplate">
 												Please verify parameters before we begin installation:<p/>
 												<table>

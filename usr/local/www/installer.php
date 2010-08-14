@@ -577,6 +577,7 @@ EOF;
 		foreach($disks as $disk) 
 			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disk['desc']}</option>\n";
 		$custom_txt .= "</select><p/>\n";
+		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
 		// Prepare disk types
 		$custom_txt .=  "Filesystem type: <select name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";

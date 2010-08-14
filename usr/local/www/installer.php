@@ -32,12 +32,6 @@ require("guiconfig.inc");
 
 define('PC_SYSINSTALL', '/PCBSD/pc-sysinstall/pc-sysinstall');
 
-// Handle other type of file systems
-if($_REQUEST['fstype']) 
-	$fstype = strtoupper($_REQUEST['fstype']);
-else 
-	$fstype = "UFS+S";
-
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
 	Header("Location: /index.php");
 	exit;
@@ -45,18 +39,24 @@ if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
 
 // Main switch dispatcher
 switch ($_REQUEST['state']) {
-	case "quickeasyinstall":
-		quickeasyinstall_gui();
-		break;
 	case "update_installer_status":
 		update_installer_status();
+		exit;
+	case "custominstall":
+		installer_custom();
+		exit;
+	case "begin_install":
+		installing_gui();
+		begin_install();
+		exit;
+	case "verify_before_install":
+		verify_before_install();
 		exit;
 	default:
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk) {
-	global $fstype;
+function write_out_pc_sysinstaller_config($disk, $fstype = "ufs") {
 	$fd = fopen("/PCBSD/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
@@ -240,6 +240,7 @@ function update_installer_status() {
 		echo "\$('progressbar').style.width='{$progress}%';\n";
 	if(file_exists("/tmp/install_complete")) {
 		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
+		echo "\$('pbdiv').fade();\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
 	}
@@ -252,19 +253,29 @@ function update_installer_status_win($status) {
 	echo "</script>";
 }
 
-function begin_quick_easy_install() {
-	global $g, $fstype;
+function begin_install() {
+	global $g;
 	if(file_exists("/tmp/install_complete"))
 		return;
 	unlink_if_exists("/tmp/install_complete");
-	$disk = installer_find_first_disk();
+	if($_REQUEST['disk'])
+		$disk = $_REQUEST['disk'];
+	else 
+		$disk = installer_find_first_disk();
 	if(!$disk) {
-		// XXX: hide progress bar
+		echo "<script type=\"text/javascript\">";
+		echo "\$('pbdiv').fade();\n";
+		echo "</script>";
 		$savemsg = gettext("Could not find a suitable disk for installation");
 		update_installer_status_win(gettext("Could not find a suitable disk for installation."));
 		return;
 	}
-	write_out_pc_sysinstaller_config($disk);
+	// Handle other type of file systems
+	if($_REQUEST['fstype']) 
+		$fstype = strtoupper($_REQUEST['fstype']);
+	else 
+		$fstype = "UFS+S";
+	write_out_pc_sysinstaller_config($disk, $fstype);
 	update_installer_status_win(sprintf(gettext("Beginning installation on disk %s."),$disk));
 	start_installation();
 }
@@ -376,7 +387,52 @@ EOF;
 	end_html();
 }
 
-function quickeasyinstall_gui() {
+function verify_before_install() {
+	global $g, $fstype;
+	head_html();
+	body_html();
+	page_table_start();
+	echo <<<EOF
+	<form method="post" action="installer.php">
+	<input type="hidden" name="fstype" value="{$_REQUEST['fstype']}">
+	<input type="hidden" name="disk" value="{$_REQUEST['disk']}">
+	<input type="hidden" name="state" value="begin_install">
+	<div id="mainlevel">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	 		<tr>
+	    		<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+	     						<td class="tabcont" >
+									<div>
+										<center>
+			      							<form action="installer.php" method="post">
+											<div id="pfsensetemplate">
+												Please verify parameters before we begin installation:<p/>
+												<table>
+													<tr><td align="right">Target Disk:</td><td>{$_REQUEST['disk']}</td></tr>
+													<tr><td align="right">Filesystem type:</td><td>{$_REQUEST['fstype']}</td></tr>
+												</table>
+												<p/>
+												<input type="submit" value="Begin installation">
+											</div>
+										</center>
+									</div>
+	     						</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+EOF;
+	page_table_end();
+	end_html();
+}
+
+function installing_gui() {
 	global $g, $fstype;
 	head_html();
 	body_html();
@@ -407,24 +463,26 @@ function quickeasyinstall_gui() {
 														</tr>
 													</table>
 												</div>
-												<br/>
-												<center>
-												<table height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-													<tr>
-														<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
-														</td>
-														<td>
-															<table id="progholder" name="progholder" height='15' width='630' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-																<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
-																	<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-																</td>
-															</table>
-														</td>
-														<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
-														</td>
-													</tr>
-												</table>
-												<br/>
+												<div id='pbdiv'>
+													<br/>
+													<center>
+													<table id='pbtable' height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+														<tr>
+															<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
+															</td>
+															<td>
+																<table id="progholder" name="progholder" height='15' width='630' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+																	<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+																		<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+																	</td>
+																</table>
+															</td>
+															<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+															</td>
+														</tr>
+													</table>
+													<br/>
+												</div>
 												<textarea name='installeroutput' id='installeroutput' rows="31" cols="90">
 												</textarea>
 											</div>
@@ -444,7 +502,6 @@ function quickeasyinstall_gui() {
 EOF;
 	page_table_end();
 	end_html();
-	begin_quick_easy_install();
 }
 
 function page_table_start() {
@@ -487,15 +544,10 @@ function installer_custom() {
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
 	body_html();
-	// Only enable ZFS if this exists.  The install will fail otherwise.
-	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "or <a href=\"installer.php?state=quickeasyinstall&fstype=ZFS\">ZFS</a> ";
-	$disk = installer_find_first_disk();
-	if(!$disk) 
-		echo gettext("WARNING: Could not find any suitable disks for installation.");
 	page_table_start();
 	echo <<<EOF
-		<form action="installer.php" method="post" state="step1_post">
+		<form action="installer.php" method="post">
+			<input type="hidden" name="state" value="verify_before_install">
 			<div id="mainlevel">
 				<center>
 				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} PCSysInstaller!</b></font><p/>
@@ -507,17 +559,43 @@ function installer_custom() {
 							<div id="mainarea">
 								<br/>
 								<center>
-								Please select an installer option to begin:
 								<table width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
-												Rescue config.xml<p/>
-												Install {$g['product_name']} using the <a href="installer.php?state=quickeasyinstall">UFS</a>
-												 {$zfs_enabled}
-												filesystem.
-												</p>
+												<div id='loadingdiv'>
+													<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Probing disks, please wait...
+												</div>
+EOF;
+	$disks = installer_find_all_disks();
+	if(!$disks)  {
+		$custom_txt = gettext("WARNING: Could not find any suitable disks for installation.");
+	} else {
+		// Prepare disk selection dropdown
+		$custom_txt = "Disk: <select name='disk'>\n";
+		foreach($disks as $disk) 
+			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disk['desc']}</option>\n";
+		$custom_txt .= "</select><p/>\n";
+		// Prepare disk types
+		$custom_txt .=  "Filesystem type: <select name='fstype'>\n";
+		$custom_txt .=  "<option value='ufs'>UFS</option>\n";
+		if(file_exists("/boot/gptzfsboot")) 
+			$custom_txt .= "<option value='zfs'>ZFS</option>\n";
+		$custom_txt .= "</select>\n";
+	}
+	echo <<<EOF
+													<script type="text/javascript">
+														\$('loadingdiv').fade();
+													</script>
+													<div id='contentdiv' style="display:none;">
+														{$custom_txt}<p/>
+														<input type="submit" value="Next >"
+													</div>
+													<script type="text/javascript">
+														\$('contentdiv').appear();
+													</script>
+												</center>
 											</div>
 			     						</td>
 									</tr>
@@ -540,7 +618,7 @@ function installer_main() {
 	body_html();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "or <a href=\"installer.php?state=quickeasyinstall&fstype=ZFS\">ZFS</a> ";
+		$zfs_enabled = "<a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem</a><p/>";
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo gettext("WARNING: Could not find any suitable disks for installation.");
@@ -564,11 +642,11 @@ function installer_main() {
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
-												Rescue config.xml<p/>
-												Install {$g['product_name']} using the <a href="installer.php?state=quickeasyinstall">UFS</a>
-												 {$zfs_enabled}
-												filesystem.
-												</p>
+													Rescue config.xml<p/>
+													<a href="installer.php?state=verify_before_install">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
+												 	{$zfs_enabled}
+													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
+												</center>
 											</div>
 			     						</td>
 									</tr>

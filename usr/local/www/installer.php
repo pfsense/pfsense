@@ -615,16 +615,17 @@ EOF;
 														</td>
 													</tr>
 												</table><p/>
+												<table>
 EOF;
-		$custom_txt .= "Disk: <select name='disk'>\n";
+		$custom_txt .= "<tr><td align='right'><b>Disk:</td><td><select name='disk'>\n";
 		foreach($disks as $disk) {
 			$disksize = format_bytes($disk['size'] * 1048576);
 			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>\n";
 		}
-		$custom_txt .= "</select><p/>\n";
+		$custom_txt .= "</select></td></tr>\n";
 		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
 		// Prepare disk types
-		$custom_txt .=  "Filesystem type: <select name='fstype'>\n";
+		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
 		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
 		$release = trim(`uname -r | cut -d'.' -f1`);
@@ -632,7 +633,7 @@ EOF;
 			$custom_txt .=  "<option value='UFS+J'>UFS + Journaling</option>\n";
 		if(file_exists("/boot/gptzfsboot")) 
 			$custom_txt .= "<option value='ZFS'>ZFS</option>\n";
-		$custom_txt .= "</select>\n";
+		$custom_txt .= "</select>\n</td></tr></table><p/>";
 	}
 	echo <<<EOF
 													<script type="text/javascript">
@@ -647,6 +648,8 @@ EOF;
 														\$('contentdiv').appear();
 													</script>
 												</center>
+												</td></tr>
+												</table>
 											</div>
 			     						</td>
 									</tr>

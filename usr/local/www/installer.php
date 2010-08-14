@@ -456,7 +456,7 @@ function verify_before_install() {
 					</div>
 					<center>
 						<p/>
-						<input type="button" value="Cancel" onClick="javascript:document.location='/';">  
+						<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';">  
 						<input type="submit" value="Begin installation"> 
 					</center>
 				</td>
@@ -688,7 +688,8 @@ function installer_main() {
 													Rescue config.xml<p/>
 													<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
 												 	{$zfs_enabled}
-													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
+													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a><p/>
+													<a href='/'>Cancel and return to Dashboard</a>
 												</center>
 											</div>
 			     						</td>

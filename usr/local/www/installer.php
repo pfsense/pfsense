@@ -56,7 +56,7 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "ufs") {
+function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S") {
 	$fd = fopen("/PCBSD/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
@@ -579,9 +579,10 @@ EOF;
 		$custom_txt .= "</select><p/>\n";
 		// Prepare disk types
 		$custom_txt .=  "Filesystem type: <select name='fstype'>\n";
-		$custom_txt .=  "<option value='ufs'>UFS</option>\n";
+		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
+		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
 		if(file_exists("/boot/gptzfsboot")) 
-			$custom_txt .= "<option value='zfs'>ZFS</option>\n";
+			$custom_txt .= "<option value='ZFS'>ZFS</option>\n";
 		$custom_txt .= "</select>\n";
 	}
 	echo <<<EOF

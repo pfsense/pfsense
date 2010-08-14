@@ -442,9 +442,10 @@ function verify_before_install() {
 												</table>
 												<p/>
 												<table>
-													<tr><td align="right"><b>Target Disk:</td><td>{$_REQUEST['disk']}</td></tr>
-													<tr><td align="right"><b>Disk size:</td><td>{$disksize}</td></tr>
-													<tr><td align="right"><b>Filesystem type:</td><td>{$_REQUEST['fstype']}</td></tr>
+													<tr><td align="right"><b>Disk:</td><td>{$_REQUEST['disk']}</td></tr>
+													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
+													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
+													<tr><td align="right"><b>Filesystem:</td><td>{$_REQUEST['fstype']}</td></tr>
 												</table>
 											</div>
 										</center>
@@ -685,7 +686,7 @@ function installer_main() {
 											<div id="pfsenseinstaller">
 												<center>
 													Rescue config.xml<p/>
-													<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=ufs">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
+													<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
 												 	{$zfs_enabled}
 													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
 												</center>

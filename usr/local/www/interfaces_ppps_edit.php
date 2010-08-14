@@ -540,14 +540,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>">
 						</td>
 					</tr>
 			
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN wait"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN wait"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
 							<br/><span class="vexpl"><?= gettext("Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds)."); ?></span>

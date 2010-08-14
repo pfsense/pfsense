@@ -128,7 +128,7 @@ function installer_find_first_disk() {
 	return $disk;
 }
 
-function get_disk_info($diskname) {
+function pcsysinstall_get_disk_info($diskname) {
 	global $g, $fstype;
 	$disk = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-list`);
 	$disks_array = array();
@@ -415,7 +415,7 @@ function verify_before_install() {
 	head_html();
 	body_html();
 	page_table_start();
-	$disk = get_disk_info($_REQUEST['disk']);
+	$disk = pcsysinstall_get_disk_info($_REQUEST['disk']);
 	$disksize = format_bytes($disk['size'] * 1048576);
 	echo <<<EOF
 	<form method="post" action="installer.php">

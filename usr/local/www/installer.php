@@ -637,7 +637,7 @@ EOF;
 	}
 	echo <<<EOF
 													<script type="text/javascript">
-														\$('loadingdiv').fade();
+														\$('loadingdiv').style.visibility='hidden';
 													</script>
 													<div id='contentdiv' style="display:none;">
 														{$custom_txt}<p/>
@@ -692,12 +692,13 @@ function installer_main() {
 								<br/>
 								<center>
 								Please select an installer option to begin:
+								<p/>
 								<table width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
-													<table cellspacing="4" cellpadding="4" style="border: 1px dashed;">
+													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
 															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a>
 														</td></tr>

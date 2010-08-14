@@ -374,9 +374,6 @@ run_final_cleanup()
    setup_geli_loading
  fi
 
- # Set a hostname on the install system
- setup_hostname
-
  # Set the root_pw if it is specified
  set_root_pw
 

@@ -427,9 +427,9 @@ function verify_before_install() {
 	 		<tr>
 	    		<td>
 					<div id="mainarea">
-						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
-	     						<td>
+	     						<td >
 									<div>
 										<center>
 											<div id="pfsensetemplate">

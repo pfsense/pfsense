@@ -128,6 +128,29 @@ function installer_find_first_disk() {
 	return $disk;
 }
 
+function get_disk_info($diskname) {
+	global $g, $fstype;
+	$disk = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-list`);
+	$disks_array = array();
+	foreach($disk as $d) {
+		if(!$d) 
+			continue;
+		$disks_info = split(":", $d);
+		$tmp_array = array();
+		if($disks_info[0] == $diskname) {
+			$disk_info = split("\n", `/PCBSD/pc-sysinstall/pc-sysinstall disk-info {$disks_info[0]}`);
+			foreach($disk_info as $di) { 
+				$di_s = split("=", $di);
+				if($di_s[0])
+					$tmp_array[$di_s[0]] = $di_s[1];
+			}
+			$tmp_array['disk'] = trim($disks_info[0]);
+			$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
+			return $tmp_array;
+		}
+	}
+}
+
 // Return an array with all disks information.
 function installer_find_all_disks() {
 	global $g, $fstype;
@@ -392,6 +415,8 @@ function verify_before_install() {
 	head_html();
 	body_html();
 	page_table_start();
+	$disk = get_disk_info($_REQUEST['disk']);
+	$disksize = format_bytes($disk['size'] * 1048576);
 	echo <<<EOF
 	<form method="post" action="installer.php">
 	<input type="hidden" name="fstype" value="{$_REQUEST['fstype']}">
@@ -408,13 +433,19 @@ function verify_before_install() {
 									<div>
 										<center>
 											<div id="pfsensetemplate">
-												Please verify parameters before we begin installation:<p/>
-												<table>
-													<tr><td align="right">Target Disk:</td><td>{$_REQUEST['disk']}</td></tr>
-													<tr><td align="right">Filesystem type:</td><td>{$_REQUEST['fstype']}</td></tr>
+												<table bgcolor="FFFF00" width="380" height="50" cellpadding="5" style="border:1px dashed;">
+													<tr>
+														<td>
+															<center><b>Please verify that the following is correct:</b></center>
+														</td>
+													</tr>
 												</table>
 												<p/>
-												<input type="submit" value="Begin installation">
+												<table>
+													<tr><td align="right"><b>Target Disk:</td><td>{$_REQUEST['disk']}</td></tr>
+													<tr><td align="right"><b>Disk size:</td><td>{$disksize}</td></tr>
+													<tr><td align="right"><b>Filesystem type:</td><td>{$_REQUEST['fstype']}</td></tr>
+												</table>
 											</div>
 										</center>
 									</div>
@@ -422,6 +453,11 @@ function verify_before_install() {
 							</tr>
 						</table>
 					</div>
+					<center>
+						<p/>
+						<input type="button" value="Cancel" onClick="javascript:document.location='/';">  
+						<input type="submit" value="Begin installation"> 
+					</center>
 				</td>
 			</tr>
 		</table>
@@ -573,8 +609,10 @@ EOF;
 	} else {
 		// Prepare disk selection dropdown
 		$custom_txt = "Disk: <select name='disk'>\n";
-		foreach($disks as $disk) 
-			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disk['desc']}</option>\n";
+		foreach($disks as $disk) {
+			$disksize = format_bytes($disk['size'] * 1048576);
+			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>\n";
+		}
 		$custom_txt .= "</select><p/>\n";
 		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
 		// Prepare disk types
@@ -647,7 +685,7 @@ function installer_main() {
 											<div id="pfsenseinstaller">
 												<center>
 													Rescue config.xml<p/>
-													<a href="installer.php?state=verify_before_install">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
+													<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=ufs">Easy installation of {$g['product_name']} using the UFS filesystem</a><p/>
 												 	{$zfs_enabled}
 													<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
 												</center>

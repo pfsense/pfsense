@@ -30,7 +30,7 @@
 require("globals.inc");
 require("guiconfig.inc");
 
-define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall');
+define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
 	Header("Location: /index.php");
@@ -111,7 +111,7 @@ function start_installation() {
 		exit;
 	}
 	fwrite($fd, "rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null\n");
-	fwrite($fd, "/usr/sbin/pc-sysinstall/pc-sysinstall -c /usr/sbin/pc-sysinstall/examples/pfSense-install.cfg \n");
+	fwrite($fd, "/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh -c /usr/sbin/pc-sysinstall/examples/pfSense-install.cfg \n");
 	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "mkdir /mnt/tmp\n");
@@ -124,13 +124,13 @@ function start_installation() {
 
 function installer_find_first_disk() {
 	global $g, $fstype;
-	$disk = `/usr/sbin/pc-sysinstall/pc-sysinstall disk-list | head -n1 | cut -d':' -f1`;
+	$disk = `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list | head -n1 | cut -d':' -f1`;
 	return $disk;
 }
 
 function pcsysinstall_get_disk_info($diskname) {
 	global $g, $fstype;
-	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall disk-list`);
+	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
 		if(!$d) 
@@ -138,7 +138,7 @@ function pcsysinstall_get_disk_info($diskname) {
 		$disks_info = split(":", $d);
 		$tmp_array = array();
 		if($disks_info[0] == $diskname) {
-			$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall disk-info {$disks_info[0]}`);
+			$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
 			foreach($disk_info as $di) { 
 				$di_s = split("=", $di);
 				if($di_s[0])
@@ -154,14 +154,14 @@ function pcsysinstall_get_disk_info($diskname) {
 // Return an array with all disks information.
 function installer_find_all_disks() {
 	global $g, $fstype;
-	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall disk-list`);
+	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh/pc-sysinstall.sh.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
 		if(!$d) 
 			continue;
 		$disks_info = split(":", $d);
 		$tmp_array = array();
-		$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall disk-info {$disks_info[0]}`);
+		$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
 		foreach($disk_info as $di) { 
 			$di_s = split("=", $di);
 			if($di_s[0])

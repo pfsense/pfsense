@@ -672,10 +672,10 @@ function installer_main() {
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
 	body_html();
+	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
 		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
-	$disk = installer_find_first_disk();
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">

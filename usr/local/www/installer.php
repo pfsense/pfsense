@@ -30,7 +30,7 @@
 require("globals.inc");
 require("guiconfig.inc");
 
-define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall');
+define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall');
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
 	Header("Location: /index.php");

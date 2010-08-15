@@ -28,14 +28,24 @@
 */
 
 define('ZEROMQ_AUTH_FAIL', 'authfail');
+define('ZEROMQ_TRUE', 'true');
+define('ZEROMQ_FASLE', 'false');
+
+$do_not_include_config_gui_inc = true;
+require("auth.inc"):
 
 /* zeromq_send: Send a message to a member node */
-function zeromq_send($protocol = "tcp", $ipaddress, $port, $message) {
-	if(!$ipaddress || !$port || !$message) 
+function zeromq_send($protocol = "tcp", $ipaddress, $port, $method, $params, $username, $password) {
+	if(!$ipaddress || !$port || !$message || !$username || !$password) 
 		return;
 	
+	/* Set calling function and auth information */
+	$params['username'] = $username;
+	$params['password'] = $password;
+	$params['function'] = $method;
+	
 	/* Serialize the data we are going to send over */
-	$serialized = serialize($message);
+	$serialized = serialize($params);
 
 	/* Create new queue object */
 	$queue = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REQ, "MySock1");
@@ -103,17 +113,31 @@ function zeromq_server($protocol = "tcp", $ipaddress, $port) {
 	}
 }
 
-function zeromq_auth(&$params) {
-	global $config, $g;
-	$localpass =  $config['system']['user'][0]['password'];	
-	if(crypt($params[0], $localpass) == $localpass) {
-		array_shift($params);
-		return true;
-	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {
-		unset($params['xmlrpcauth']);
+function zeromq_auth($params) {
+	global $config, $g;	
+
+	$username = $params['username'];
+	$password = $params['password'];
+	
+	$user = getUserEntry($username);
+	if (!$user)
 		return false;
+
+	if (is_account_disabled($username) || is_account_expired($username))
+		return false;
+
+	if ($user['password']) {
+		$passwd = crypt($passwd, $user['password']);
+		if ($passwd == $user['password'])
+			return true;
 	}
-	unset($params['xmlrpcauth']);
+
+	if ($user['md5-hash']) {
+		$passwd = md5($passwd);
+		if ($passwd == $user['md5-hash'])
+			return true;
+	}
+
 	return false;
 }
 
@@ -128,7 +152,7 @@ function exec_php_zeromq($raw_params) {
 		$response = XML_RPC_encode($toreturn);
 		return new XML_RPC_Response($response);
 	} else
-		return $xmlrpc_g['return']['true'];
+		return ZEROMQ_FASLE;
 }
 
 function exec_shell_zeromq($raw_params) {
@@ -138,7 +162,7 @@ function exec_shell_zeromq($raw_params) {
 		return ZEROMQ_AUTH_FAIL;
 	$shell_cmd = $params[0];
 	mwexec($shell_cmd);
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function backup_config_section_zeromq($raw_params) {
@@ -158,7 +182,7 @@ function restore_config_section_zeromq($raw_params) {
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function merge_installedpackages_section_zeromq($raw_params) {
@@ -169,7 +193,7 @@ function merge_installedpackages_section_zeromq($raw_params) {
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function merge_config_section_zeromq($raw_params) {
@@ -180,7 +204,7 @@ function merge_config_section_zeromq($raw_params) {
 	$config = array_merge_recursive_unique($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function filter_configure_zeromq($raw_params) {
@@ -197,7 +221,7 @@ function filter_configure_zeromq($raw_params) {
 	services_dhcpd_configure();
 	services_dnsmasq_configure();
 	local_sync_accounts();
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function interfaces_carp_configure_zeromq($raw_params) {
@@ -207,7 +231,7 @@ function interfaces_carp_configure_zeromq($raw_params) {
 		return ZEROMQ_AUTH_FAIL;
 	interfaces_carp_setup();
 	interfaces_vips_configure();
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function check_firmware_version_zeromq($raw_params) {
@@ -223,7 +247,7 @@ function reboot_zeromq($raw_params) {
 	if(!zeromq_auth($params))
 		return ZEROMQ_AUTH_FAIL;
 	mwexec_bg("/etc/rc.reboot");
-	return $xmlrpc_g['return']['true'];
+	return ZEROMQ_FASLE;
 }
 
 function get_notices_zeromq($raw_params) {

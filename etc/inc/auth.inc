@@ -46,8 +46,8 @@
  * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
  * file courtesy of Michael Retterklieber.
  */
-
-require_once("config.gui.inc");
+if(!$do_not_include_config_gui_inc)
+	require_once("config.gui.inc");
 
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */

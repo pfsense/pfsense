@@ -605,7 +605,7 @@ EOF;
 	ob_flush();
 	$disks = installer_find_all_disks();
 	if(!$disks)  {
-		$custom_txt = gettext("WARNING: Could not find any suitable disks for installation.");
+		$custom_txt = gettext("ERROR: Could not find any suitable disks for installation.");
 	} else {
 		// Prepare disk selection dropdown
 		$custom_txt = <<<EOF
@@ -676,8 +676,6 @@ function installer_main() {
 	if(file_exists("/boot/gptzfsboot")) 
 		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	$disk = installer_find_first_disk();
-	if(!$disk) 
-		echo gettext("WARNING: Could not find any suitable disks for installation.");
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">
@@ -699,6 +697,15 @@ function installer_main() {
 			     						<td>
 											<div id="pfsenseinstaller">
 												<center>
+EOF;
+	if(!$disk) {
+		echo gettext("ERROR: Could not find any suitable disks for installation.");
+		echo "</div></td></tr></table></div></table></div>";
+		end_html();
+		exit;
+	}
+	echo <<<EOF
+
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
 															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>

@@ -673,7 +673,7 @@ function installer_main() {
 	body_html();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem</a></td></tr>";
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	$disk = installer_find_first_disk();
 	if(!$disk) 
 		echo gettext("WARNING: Could not find any suitable disks for installation.");
@@ -700,7 +700,7 @@ function installer_main() {
 												<center>
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem</a>
+															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">

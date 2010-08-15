@@ -94,9 +94,9 @@ function parse_redirects($rdr_a) {
     $line = $rdr_a[$i];
     if (preg_match("/^[0-9]+/", $line)) {
       $regs = array();
-      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z]+)\s+([a-z]+)/", $line, $regs)) {
-        $vs[$regs[1]] = array();
-        $vs[$regs[1]]['status'] = $regs[2];
+      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z\s]+)\s+([a-z]+)/", $line, $regs)) {
+        $vs[trim($regs[1])] = array();
+        $vs[trim($regs[1])]['status'] = trim($regs[2]);
       }
     }
   }

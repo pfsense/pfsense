@@ -263,7 +263,7 @@ function update_installer_status() {
 		echo "\$('progressbar').style.width='{$progress}%';\n";
 	if(file_exists("/tmp/install_complete")) {
 		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"reboot.php\">reboot</a> to continue';\n";
-		echo "\$('pbdiv').fade();\n";
+		echo "\$('pbdiv').Fade();\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
 	}
@@ -287,7 +287,7 @@ function begin_install() {
 		$disk = installer_find_first_disk();
 	if(!$disk) {
 		echo "<script type=\"text/javascript\">";
-		echo "\$('pbdiv').fade();\n";
+		echo "\$('pbdiv').Fade();\n";
 		echo "</script>";
 		$savemsg = gettext("Could not find a suitable disk for installation");
 		update_installer_status_win(gettext("Could not find a suitable disk for installation."));

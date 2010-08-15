@@ -73,7 +73,8 @@ zfs_cleanup_unmount()
       do
         if [ "${ZMNT}" != "/" ]
         then
-          rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
+          #rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
+          rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}"
           #rc_halt "zfs unmount ${ZPOOLNAME}${ZMNT}"
           #sleep 2
         fi

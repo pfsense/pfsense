@@ -115,7 +115,7 @@ function start_installation() {
 	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "mkdir /mnt/tmp\n");
-	fwrite($fd, "umount /mnt\n");
+//	fwrite($fd, "umount /mnt\n");
 	fwrite($fd, "touch /tmp/install_complete\n");
 	fclose($fd);
 	exec("chmod a+rx /tmp/installer.sh");

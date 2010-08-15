@@ -29,9 +29,11 @@ version=`cat /etc/version`
 echo "Mounting filesystems..."
 
 # Handle ZFS read-only case
-WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
-if [ "$WHEREISROOT" != "" ]; then
-	/sbin/zfs set readonly=off $WHEREISROOT
+if [ -f /usr/bin/grep ]; then
+	WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
+	if [ "$WHEREISROOT" != "" ]; then
+		/sbin/zfs set readonly=off $WHEREISROOT
+	fi
 fi
 
 if [ "$PLATFORM" = "cdrom" ]; then

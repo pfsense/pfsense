@@ -1,0 +1,244 @@
+<?php 
+/*
+	zeromq.inc
+	part of the pfSense project (http://www.pfsense.com)
+	Copyright 2010 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+define('ZEROMQ_AUTH_FAIL', 'authfail');
+
+/* zeromq_send: Send a message to a member node */
+function zeromq_send($protocol = "tcp", $ipaddress, $port, $message) {
+	if(!$ipaddress || !$port || !$message) 
+		return;
+	
+	/* Serialize the data we are going to send over */
+	$serialized = serialize($message);
+
+	/* Create new queue object */
+	$queue = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REQ, "MySock1");
+	$queue->connect("{$protocol}://{$ipaddress}:{$port}");
+
+	/* Assign socket 1 to the queue, send and receive */
+	$result = $queue->send($serialized)->recv();
+
+	/* Unserialize the return and return */
+	$unserializedresult = unserialize($result);
+	
+	/* Return the result to the caller */
+	return $unserializedresult;
+}
+
+function zeromq_server($protocol = "tcp", $ipaddress, $port) {
+	if(!$ipaddress || !$port) 
+		return;
+	$server = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REP);
+	$server->bind("{$protocol}://{$ipaddress}:{$port}");
+	/* Loop receiving and echoing back */
+	while ($msg = $server->recv()) {
+	    $message = unserialize($msg);
+		switch ($message['function']) {
+			case "pfsense.exec_shell":
+				$function_to_call = "exec_shell_zeromq";
+			break;
+			case "pfsense.exec_php":
+				$function_to_call = "exec_php_zeromq";
+			break;
+			case "pfsense.filter_configure":
+				$function_to_call = "filter_configure_zeromq";
+			break;
+			case "pfsense.interfaces_carp_configure":
+				$function_to_call = "interfaces_carp_configure_zeromq";
+			break;
+			case "pfsense.backup_config_section":
+				$function_to_call = "backup_config_section_zeromq";
+			break;
+			case "pfsense.restore_config_section":
+				$function_to_call = "restore_config_section_zeromq";
+			break;
+			case "pfsense.merge_config_section":
+				$function_to_call = "merge_config_section_zeromq";
+			break;
+			case "pfsense.merge_installedpackages_section_zeromq":
+				$function_to_call = "merge_installedpackages_section_zeromq";
+			break;
+			case "pfsense.check_firmware_version":
+				$function_to_call = "check_firmware_version_zeromq";
+			break;
+			case "pfsense.reboot":
+				$function_to_call = "reboot_zeromq";
+			break;
+			case "pfsense.get_notices":
+				$function_to_call = "get_notices_zeromq";
+			break;
+		}
+		if(!$function_to_call) 
+			return;
+		// Call function that is being invoked
+		$result = $function_to_call($message);
+	    /* echo back the result */
+	    $server->send($result);  
+	}
+}
+
+function zeromq_auth(&$params) {
+	global $config, $g;
+	$localpass =  $config['system']['user'][0]['password'];	
+	if(crypt($params[0], $localpass) == $localpass) {
+		array_shift($params);
+		return true;
+	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {
+		unset($params['xmlrpcauth']);
+		return false;
+	}
+	unset($params['xmlrpcauth']);
+	return false;
+}
+
+function exec_php_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	$exec_php = $params[0];
+	eval($exec_php);
+	if($toreturn) {
+		$response = XML_RPC_encode($toreturn);
+		return new XML_RPC_Response($response);
+	} else
+		return $xmlrpc_g['return']['true'];
+}
+
+function exec_shell_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	$shell_cmd = $params[0];
+	mwexec($shell_cmd);
+	return $xmlrpc_g['return']['true'];
+}
+
+function backup_config_section_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	$val = array_intersect_key($config, array_flip($params[0]));
+	return new XML_RPC_Response(XML_RPC_encode($val));
+}
+
+function restore_config_section_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	$config = array_merge($config, $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	return $xmlrpc_g['return']['true'];
+}
+
+function merge_installedpackages_section_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	return $xmlrpc_g['return']['true'];
+}
+
+function merge_config_section_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params))
+	 	return ZEROMQ_AUTH_FAIL;
+	$config = array_merge_recursive_unique($config, $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	return $xmlrpc_g['return']['true'];
+}
+
+function filter_configure_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params))
+		return ZEROMQ_AUTH_FAIL;
+	filter_configure();
+	system_routing_configure();
+	setup_gateways_monitor();
+	relayd_configure();
+	require_once("openvpn.inc");
+	openvpn_resync_all();
+	services_dhcpd_configure();
+	services_dnsmasq_configure();
+	local_sync_accounts();
+	return $xmlrpc_g['return']['true'];
+}
+
+function interfaces_carp_configure_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) 
+		return ZEROMQ_AUTH_FAIL;
+	interfaces_carp_setup();
+	interfaces_vips_configure();
+	return $xmlrpc_g['return']['true'];
+}
+
+function check_firmware_version_zeromq($raw_params) {
+	global  $XML_RPC_String;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params)) return ZEROMQ_AUTH_FAIL;
+	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
+}
+
+function reboot_zeromq($raw_params) {
+	global $config, $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params))
+		return ZEROMQ_AUTH_FAIL;
+	mwexec_bg("/etc/rc.reboot");
+	return $xmlrpc_g['return']['true'];
+}
+
+function get_notices_zeromq($raw_params) {
+	global $g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!zeromq_auth($params))
+		return ZEROMQ_AUTH_FAIL;
+	require("notices.inc");
+	if(!$params) {
+		$toreturn = get_notices();
+	} else {
+		$toreturn = get_notices($params);
+	}
+	$response = new XML_RPC_Response(XML_RPC_encode($toreturn));
+	return $response;
+}
+
+?>

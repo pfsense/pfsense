@@ -61,11 +61,11 @@ function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = 
 	if(!$fd) {
 		return true;
 	}
-	if($swapsize) {
+	if($swapsize <> "") {
 		$diskareas =  "disk0-part=SWAP {$swapsize} none \n";
-		$diskareas .= "disk1-part={$fstype} 0 / \n";
+		$diskareas .= "disk0-part={$fstype} 0 /\n";
 	} else {
-		$diskareas = "disk1-part={$fstype} 0 / \n";
+		$diskareas = "disk0-part={$fstype} 0 /\n";
 	}
 	$config = <<<EOF
 # Sample configuration file for an installation using pc-sysinstall
@@ -424,11 +424,13 @@ function verify_before_install() {
 	page_table_start();
 	$disk = pcsysinstall_get_disk_info($_REQUEST['disk']);
 	$disksize = format_bytes($disk['size'] * 1048576);
+	$swapsize = $_REQUEST['swapsize'];
 	echo <<<EOF
 	<form method="post" action="installer.php">
 	<input type="hidden" name="fstype" value="{$_REQUEST['fstype']}">
 	<input type="hidden" name="disk" value="{$_REQUEST['disk']}">
 	<input type="hidden" name="state" value="begin_install">
+	<input type="hidden" name="swapsize" value="{$_REQUEST['swapsize']}">
 	<div id="mainlevel">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	 		<tr>
@@ -452,6 +454,7 @@ function verify_before_install() {
 													<tr><td align="right"><b>Disk:</td><td>{$_REQUEST['disk']}</td></tr>
 													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
 													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
+													<tr><td align="right"><b>SWAP Size:</td><td>{$_REQUEST['swapsize']}</td></tr>
 													<tr><td align="right"><b>Filesystem:</td><td>{$_REQUEST['fstype']}</td></tr>
 												</table>
 											</div>
@@ -625,7 +628,7 @@ EOF;
 												</table><p/>
 												<table>
 EOF;
-		$custom_txt .= "<tr><td align='right'><b>Swap size</td><td><input type='text' value='200M'></td></tr>\n";
+		$custom_txt .= "<tr><td align='right'><b>Swap size</td><td><input name='swapsize' type='text' value='200M'></td></tr>\n";
 		$custom_txt .= "<tr><td align='right'><b>Disk:</td><td><select name='disk'>\n";
 		foreach($disks as $disk) {
 			$disksize = format_bytes($disk['size'] * 1048576);

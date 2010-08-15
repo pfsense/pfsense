@@ -1183,8 +1183,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
-																	<td>&nbsp;</td>
-																	<td>
+																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondiv'>
 																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
@@ -1992,6 +1991,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								"and obviously should not appear as the source address in any packets you receive."); ?>
 							</td>
 						</tr>
+					</table> <!-- End "allcfg" table -->
+					</div> <!-- End "allcfg" div -->
+
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="100" valign="top">
 								&nbsp;
@@ -2007,8 +2010,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
 							</td>
 						</tr>
-					</table> <!-- End "allcfg" table -->
-					</div> <!-- End "allcfg" div -->
+					</table>
 				</td>
 			</tr>
 		</table>

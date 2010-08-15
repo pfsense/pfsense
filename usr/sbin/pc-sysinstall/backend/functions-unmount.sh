@@ -126,7 +126,7 @@ unmount_all_filesystems()
     # If are using a ZFS on "/" set it to legacy
    if [ ! -z "${FOUNDZFSROOT}" ]
    then
-     rc_halt "zfs set mountpoint=legacy ${FOUNDZFSROOT}"
+     #rc_halt "zfs set mountpoint=legacy ${FOUNDZFSROOT}"
    fi
 
    # If we need to relabel "/" do it now

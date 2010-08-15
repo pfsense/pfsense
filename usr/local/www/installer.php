@@ -250,9 +250,9 @@ function update_installer_status() {
 	// Check for error and bail if we see one.
 	if(stristr($status, "error")) {
 		$error = true;
-		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href='installer.php'>Back</a> to webInstaller</a>; ";
+		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href=\"installer.php\">Back</a> to webInstaller'; ";
 		echo "\$('progressbar').style.width='100%';\n";
-		unlink("/tmp/install_complete");
+		unlink_if_exists("/tmp/install_complete");
 		return;
 	}
 	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));

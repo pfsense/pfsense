@@ -154,7 +154,7 @@ function pcsysinstall_get_disk_info($diskname) {
 // Return an array with all disks information.
 function installer_find_all_disks() {
 	global $g, $fstype;
-	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh/pc-sysinstall.sh.sh disk-list`);
+	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
 		if(!$d) 

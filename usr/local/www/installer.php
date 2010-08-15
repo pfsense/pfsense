@@ -602,6 +602,7 @@ function installer_custom() {
 													<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Probing disks, please wait...
 												</div>
 EOF;
+	ob_flush();
 	$disks = installer_find_all_disks();
 	if(!$disks)  {
 		$custom_txt = gettext("WARNING: Could not find any suitable disks for installation.");

@@ -36,7 +36,7 @@
 # User-editable configuration variables
 
 # Set this to the program location
-PROGDIR="/usr/share/pc-sysinstall"
+PROGDIR="/usr/sbin/pc-sysinstall"
 export PROGDIR
 
 # Set this to the components location

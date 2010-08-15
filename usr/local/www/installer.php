@@ -681,7 +681,7 @@ function installer_main() {
 		<form action="installer.php" method="post" state="step1_post">
 			<div id="mainlevel">
 				<center>
-				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} PCSysInstaller!</b></font><p/>
+				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} webInstaller!</b></font><p/>
 				<font face="arial" size="+1">This utility will install {$g['product_name']} to a hard disk, flash drive, etc.</font>
 				<table width="100%" border="0" cellpadding="5" cellspacing="0">
 			 		<tr>

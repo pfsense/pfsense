@@ -62,7 +62,7 @@ function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = 
 		return true;
 	}
 	if($swapsize) {
-		$diskareas =  "disk0-part=SWAP $swap none \n";
+		$diskareas =  "disk0-part=SWAP {$swapsize} none \n";
 		$diskareas .= "disk1-part={$fstype} 0 / \n";
 	} else {
 		$diskareas = "disk1-part={$fstype} 0 / \n";

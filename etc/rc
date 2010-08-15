@@ -28,6 +28,12 @@ version=`cat /etc/version`
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
+# Handle ZFS read-only case
+WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
+if [ "$WHEREISROOT" != "" ]; then
+	/sbin/zfs set readonly=off $WHEREISROOT
+fi
+
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
 fi

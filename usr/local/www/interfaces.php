@@ -1183,7 +1183,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
-																	<td colspan="2">
+																	<td>&nbsp;</td>
+																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
 																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
@@ -1996,10 +1997,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="100" valign="top">
+							<td width="22%" valign="top">
 								&nbsp;
 							</td>
-							<td>
+							<td width="78%">
 								<br/>
 								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">

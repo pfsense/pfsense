@@ -56,10 +56,16 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S") {
+function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false) {
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
+	}
+	if($swapsize) {
+		$diskareas =  "disk0-part=SWAP $swap none \n";
+		$diskareas .= "disk1-part={$fstype} 0 / \n";
+	} else {
+		$diskareas = "disk1-part={$fstype} 0 / \n";
 	}
 	$config = <<<EOF
 # Sample configuration file for an installation using pc-sysinstall
@@ -79,7 +85,8 @@ commitDiskPart
 # All sizes are expressed in MB
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
 # Size 0 means use the rest of the slice size
-disk0-part={$fstype} 0 / 
+{$diskareas}
+
 # Do it now!
 commitDiskLabel
 
@@ -618,6 +625,7 @@ EOF;
 												</table><p/>
 												<table>
 EOF;
+		$custom_txt .= "<tr><td align='right'><b>Swap size</td><td><input type='text' value='200M'></td></tr>\n";
 		$custom_txt .= "<tr><td align='right'><b>Disk:</td><td><select name='disk'>\n";
 		foreach($disks as $disk) {
 			$disksize = format_bytes($disk['size'] * 1048576);
@@ -675,7 +683,7 @@ function installer_main() {
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS&swapsize=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">
@@ -708,7 +716,7 @@ EOF;
 
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
+															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">

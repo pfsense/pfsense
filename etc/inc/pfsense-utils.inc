@@ -433,11 +433,11 @@ function get_carp_interface_status($carpinterface) {
 		$carp_query = split("\n", `/sbin/ifconfig $carpinterface | grep carp`);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER")) 
-			return "MASTER";
+			return gettext("MASTER");
 		if(stristr($int, "BACKUP")) 
-			return "BACKUP";
+			return gettext("BACKUP");
 		if(stristr($int, "INIT")) 
-			return "INIT";
+			return gettext("INIT");
 	}
 	return;
 }
@@ -466,7 +466,7 @@ function add_rule_to_anchor($anchor, $rule, $label) {
 function remove_text_from_file($file, $text) {
 	global $fd_log;
 	if($fd_log)
-		fwrite($fd_log, "Adding needed text items:\n");
+		fwrite($fd_log, sprintf(gettext("Adding needed text items:%s"), "\n"));
 	$filecontents = file_get_contents($file);
 	$textTMP = str_replace($text, "", $filecontents);
 	$text = $textTMP;
@@ -515,7 +515,7 @@ function after_sync_bump_adv_skew() {
 		}
 	}
 	if($processed_skew == 1)
-		write_config("After synch increase advertising skew");
+		write_config(gettext("After synch increase advertising skew"));
 }
 
 /*
@@ -560,16 +560,16 @@ function WakeOnLan($addr, $mac)
 	// send it to the broadcast address using UDP
 	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 	if ($s == false) {
-		log_error("Error creating socket!");
-		log_error("Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s)));
+		log_error(gettext("Error creating socket!"));
+		log_error(sprintf(gettext("Error code is '%s' - %s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
 	} else {
 		// setting a broadcast option to socket:
 		$opt_ret =  socket_set_option($s, 1, 6, TRUE);
 		if($opt_ret < 0)
-			log_error("setsockopt() failed, error: " . strerror($opt_ret));
+			log_error(sprintf(gettext("setsockopt() failed, error: %s"), strerror($opt_ret)));
 		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
 		socket_close($s);
-		log_error("Magic Packet sent ({$e}) to {$addr} MAC={$mac}");
+		log_error(sprintf(gettext("Magic Packet sent (%s) to {%s} MAC=%s"), $e, $addr, $mac));
 		return true;
 	}
 
@@ -646,7 +646,7 @@ function restore_config_section($section, $new_contents) {
 	@unlink($g['tmp_path'] . "/tmpxml");
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
-	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section));
 	conf_mount_ro();
 	return;
 }
@@ -667,7 +667,7 @@ function merge_config_section($section, $new_contents) {
 	$section_xml = parse_xml_config($fname, $section);
 	$config[$section] = $section_xml;
 	unlink($fname);
-	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section));
 	conf_mount_ro();
 	return;
 }
@@ -812,10 +812,10 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	}
 	$resp = $cli->send($msg, $timeout);
 	if(!$resp) {
-		log_error("XMLRPC communication error: " . $cli->errstr);
+		log_error(sprintf(gettext("XMLRPC communication error: %s"), $cli->errstr));
 		return false;
 	} elseif($resp->faultCode()) {
-		log_error("XMLRPC request failed with error " . $resp->faultCode() . ": " . $resp->faultString());
+		log_error(sprintf(gettext("XMLRPC request failed with error %s: %s"), $resp->faultCode(), $resp->faultString()));
 		return false;
 	} else {
 		return XML_RPC_Decode($resp->value());
@@ -890,13 +890,13 @@ function reload_interfaces_sync() {
 
 	/* XXX: Use locks?! */
 	if (file_exists("{$g['tmp_path']}/reloading_all")) {
-		log_error("WARNING: Recursive call to interfaces sync!");
+		log_error(gettext("WARNING: Recursive call to interfaces sync!"));
 		return;
 	}
 	touch("{$g['tmp_path']}/reloading_all");
 
 	if($g['debug'])
-		log_error("reload_interfaces_sync() is starting.");
+		log_error(gettext("reload_interfaces_sync() is starting."));
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -904,17 +904,17 @@ function reload_interfaces_sync() {
 	/* enable routing */
 	system_routing_enable();
 	if($g['debug'])
-		log_error("Enabling system routing");
+		log_error(gettext("Enabling system routing"));
 
 	if($g['debug'])
-		log_error("Cleaning up Interfaces");
+		log_error(gettext("Cleaning up Interfaces"));
 
 	/* set up interfaces */
 	interfaces_configure();
 
 	/* remove reloading_all trigger */
 	if($g['debug'])
-		log_error("Removing {$g['tmp_path']}/reloading_all");
+		log_error(sprintf(gettext("Removing %s/reloading_all"), $g['tmp_path']));
 
 	/* start devd back up */
 	mwexec("/bin/rm {$g['tmp_path']}/reload*");
@@ -961,7 +961,7 @@ function reload_all_sync() {
 
 	/* XXX: Use locks?! */
         if (file_exists("{$g['tmp_path']}/reloading_all")) {
-                log_error("WARNING: Recursive call to reload all sync!");
+                log_error(gettext("WARNING: Recursive call to reload all sync!"));
                 return;
         }
 	touch("{$g['tmp_path']}/reloading_all");
@@ -1031,7 +1031,7 @@ function auto_login() {
 	}
 	if (!$fd) {
 		conf_mount_ro();
-		log_error("Enabling auto login was not possible.");
+		log_error(gettext("Enabling auto login was not possible."));
 		return;
 	}
 	foreach($getty_split as $gs) {
@@ -1179,7 +1179,7 @@ function get_ppp_uptime($port){
  		}
 		return convert_seconds_to_hms($sec);
 	} else {
-		$total_time = "No history data found!";
+		$total_time = gettext("No history data found!");
 		return $total_time;
 	}
 }
@@ -1287,7 +1287,7 @@ function get_interface_info($ifdescr) {
 			break;
 		if (!file_exists($dev)) {
 			$ifinfo['nodevice'] = 1;
-			$ifinfo['pppinfo'] = $dev . " device not present! Is the modem attached to the system?";	
+			$ifinfo['pppinfo'] = $dev . " " . gettext("device not present! Is the modem attached to the system?");	
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
 		if (isset($ppp['uptime']))
@@ -1327,8 +1327,8 @@ function get_interface_info($ifdescr) {
 			if (preg_match("/status: (.*)$/", $ici, $matches)) {
 				if ($matches[1] != "active")
 					$ifinfo['status'] = $matches[1];
-				if($ifinfo['status'] == "running")
-					$ifinfo['status'] = "up";
+				if($ifinfo['status'] == gettext("running"))
+					$ifinfo['status'] = gettext("up");
 			}
 			if (preg_match("/channel (\S*)/", $ici, $matches)) {
 				$ifinfo['channel'] = $matches[1];
@@ -1363,13 +1363,13 @@ function get_interface_info($ifdescr) {
 	if($bridge) {
 		$bridge_text = `/sbin/ifconfig {$bridge}`;
 		if(stristr($bridge_text, "blocking") <> false) {
-			$ifinfo['bridge'] = "<b><font color='red'>blocking</font></b> - check for ethernet loops";
+			$ifinfo['bridge'] = "<b><font color='red'>" . gettext("blocking") . "</font></b> - " . gettext("check for ethernet loops");
 			$ifinfo['bridgeint'] = $bridge;
 		} else if(stristr($bridge_text, "learning") <> false) {
-			$ifinfo['bridge'] = "learning";
+			$ifinfo['bridge'] = gettext("learning");
 			$ifinfo['bridgeint'] = $bridge;
 		} else if(stristr($bridge_text, "forwarding") <> false) {
-			$ifinfo['bridge'] = "forwarding";
+			$ifinfo['bridge'] = gettext("forwarding");
 			$ifinfo['bridgeint'] = $bridge;
 		}
 	}
@@ -1480,7 +1480,7 @@ function compare_hostname_to_dnscache($hostname) {
 
 	if(trim($oldcontents) != trim($contents)) {
 		if($g['debug']) {
-			log_error("DNSCACHE: Found old IP {$oldcontents} and new IP {$contents}");
+			log_error(sprintf(gettext("DNSCACHE: Found old IP %s and new IP %s"), $oldcontents, $contents));
 		}
 		return ($oldcontents);
 	} else {
@@ -1647,11 +1647,11 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 	if($debug) fwrite($fd, print_r($pconfig, true));
 
 	if($fieldb) {
-		if($debug) fwrite($fd, "fieldb exists\n");
+		if($debug) fwrite($fd, sprintf(gettext("fieldb exists%s"), "\n"));
 		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
 			if($debug) fwrite($fd, "$i\n");
 			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
-				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %s to %s%s"), $origname, $new_alias_name, "\n"));
 				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
 			}
 		}	
@@ -1660,7 +1660,7 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
 			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
 				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
-				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %s to %s%s"), $origname, $new_alias_name, "\n"));
 			}
 		}
 	}

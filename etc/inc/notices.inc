@@ -73,12 +73,12 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
 	if(!$queueout) {
-		log_error("Could not open {$notice_path} for writing");
+		log_error(printf(gettext("Could not open %s for writing"), $notice_path));
 		return;
 	}
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	log_error("New alert found: {$notice}");
+	log_error(printf(gettext("New alert found: %s"), $notice));
 	/* soekris */
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 1 > /dev/led/error");
@@ -323,11 +323,11 @@ function notify_via_smtp($message) {
 	fclose($fd);
 
 	if($smtp->SendMessage($from, array($to), $headers, $message)) {
-		log_error("Message sent to {$to} OK");
+		log_error(sprintf(gettext("Message sent to %s OK"), $to));
 		return;
 	} else {
-		log_error("Could not send the message to {$to} -- Error: {$smtp->error}");
-		return("Could not send the message to {$to} -- Error: {$smtp->error}");
+		log_error(sprintf(gettext("Could not send the message to %s -- Error: %s"), $to, $smtp->error));
+		return(sprintf(gettext("Could not send the message to %s -- Error: %s"), $to, $smtp->error));
 	}
 
 }

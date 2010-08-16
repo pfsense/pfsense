@@ -111,7 +111,9 @@ PHPMODULES="apc \
 	mbstring \
 	shmop \
 # Page compression
-	zlib"
+	zlib \
+# ZeroMQ
+	zmq"
 
 # Modules previously included.
 # can be turned on by touching

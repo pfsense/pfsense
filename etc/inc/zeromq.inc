@@ -32,7 +32,7 @@ define('ZEROMQ_TRUE', 'true');
 define('ZEROMQ_FASLE', 'false');
 
 $do_not_include_config_gui_inc = true;
-require("auth.inc"):
+require("auth.inc");
 
 /* zeromq_send: Send a message to a member node */
 function zeromq_send($protocol = "tcp", $ipaddress, $port, $method, $params, $username, $password) {

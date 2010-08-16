@@ -230,7 +230,7 @@ EOD;
 					mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 						" " . escapeshellarg($gateway['gateway']));
-					log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+					log_error(sprintf(gettext("Removing static route for monitor %s and adding a new route through %s"), $gateway['monitor'], $gateway['gateway']));
 				}
 			}
 		}
@@ -383,13 +383,13 @@ function return_gateway_groups_array() {
 						continue;
 					}
 					if (stristr($status['status'], "down")) {
-						$msg = "MONITOR: $gwname has high latency, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
 						log_error($msg);
 						notify_via_growl($msg);
 					} elseif (stristr($status['status'], "loss")) {
 						if (strstr($group['trigger'], "loss")) {
 							/* packet loss */
-							$msg = "MONITOR: $gwname has packet loss, removing from routing group";
+							$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
 							log_error($msg);
 							notify_via_growl($msg);
 						} else {
@@ -398,6 +398,7 @@ function return_gateway_groups_array() {
 					} elseif (stristr($status['status'], "delay")) {
 						if (strstr($group['trigger'] , "latency")) {
 							/* high latency */
+							$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
 							$msg = "MONITOR: $gwname has high latency, removing from routing group";
 							log_error($msg);
 							notify_via_growl($msg);
@@ -413,7 +414,7 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				$msg = "All gateways are unavailable, proceeding with configured XML settings!";
+				$msg = gettext("All gateways are unavailable, proceeding with configured XML settings!");
 				log_error($msg);
 				notify_via_growl($msg);
 				foreach($group['item'] as $item) {
@@ -468,7 +469,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 		}
 	}
 	if($changed && $current_gw)
-		write_config("Updating gateway group gateway for $interface - new gateway is $current_gw");
+		write_config(sprintf(gettext("Updating gateway group gateway for %s - new gateway is %s"), $interfac, $current_gw));
 }
 
 function lookup_gateway_ip_by_name($name) {

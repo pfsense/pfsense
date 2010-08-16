@@ -492,12 +492,10 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </div>
 </p>
 <ul>
-  <li><span class="vexpl"><?=gettext("change the IP address of your computer"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("renew its DHCP lease"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("access the webConfigurator with the new IP address"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
-</ul></td>
-	</tr>
+	<li><span class="vexpl"><?=gettext("interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
+</ul>
+</td>
+</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

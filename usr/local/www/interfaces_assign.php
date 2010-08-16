@@ -231,8 +231,6 @@ if ($_POST['apply']) {
 						interface_configure($ifname, true);
 					}
 				}
-
-				touch("/tmp/reload_interfaces");
 			}
 		}
 	

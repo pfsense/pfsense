@@ -486,7 +486,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<div name='savediv' id='savediv' style='display:none;'>
+<div name='savediv' id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
 	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
 	<p>
 </div>

@@ -303,7 +303,7 @@ function filter_configure_sync() {
 		if(is_array($line_split))
 			$line_error = sprintf(gettext("The line in question reads [%d]: %s"), $line_number, $line_split[$line_number-1]);
 		if($line_error and $line_number) {
-			$error_msg = gettext("There were error(s) loading the rules: %s - %s"), $rules_error, $line_error);
+			$error_msg = sprintf(gettext("There were error(s) loading the rules: %s - %s"), $rules_error, $line_error);
 			file_notice("filter_load", $error_msg, "Filter Reload", "");
 			log_error($error_msg);
 			update_filter_reload_status($error_msg);
@@ -2122,7 +2122,7 @@ EOD;
 			/*	  this shouldnt ever happen but instead of breaking the clients ruleset
 			 *	  log an error.
 			 */
-			log_error(sprintf(gettext("ERROR!  PPTP enabled but could not resolve the %s"), \$pptpdtarget"));
+			log_error(gettext("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget"));
 		}
 	}
 

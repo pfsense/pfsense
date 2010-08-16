@@ -1255,22 +1255,16 @@ function get_interface_info($ifdescr) {
 			$ifinfo['dhcplink'] = "down";
 
 		break;
-	/* PPPoE interface? -> get status from virtual interface */
+	/* PPPoE/PPTP/L2TP interface? -> get status from virtual interface */
 	case "pppoe":
+	case "pptp":
+	case "l2tp":
 		if ($ifinfo['status'] == "up" && !isset($link0))
 			/* get PPPoE link status for dial on demand */
-			$ifinfo['pppoelink'] = "up";
+			$ifinfo["{$link_type}link"] = "up";
 		else
-			$ifinfo['pppoelink'] = "down";
+			$ifinfo["{$link_type}link"] = "down";
 
-		break;
-	/* PPTP interface? -> get status from virtual interface */
-	case "pptp":
-		if ($ifinfo['status'] == "up" && !isset($link0))
-			/* get PPTP link status for dial on demand */
-			$ifinfo['pptplink'] = "up";
-		else
-			$ifinfo['pptplink'] = "down";
 		break;
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "ppp":

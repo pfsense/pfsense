@@ -72,15 +72,15 @@ $openvpn_dh_lengths = array(
 	1024, 2048, 4096 );
 
 $openvpn_server_modes = array(
-	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
-	'p2p_shared_key' => "Peer to Peer ( Shared Key )",
-	'server_tls' => "Remote Access ( SSL/TLS )",
-	'server_user' => "Remote Access ( User Auth )",
-	'server_tls_user' => "Remote Access ( SSL/TLS + User Auth )");
+	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
+	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )"),
+	'server_tls' => gettext("Remote Access ( SSL/TLS )"),
+	'server_user' => gettext("Remote Access ( User Auth )"),
+	'server_tls_user' => gettext("Remote Access ( SSL/TLS + User Auth )"));
 
 $openvpn_client_modes = array(
-	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
-	'p2p_shared_key' => "Peer to Peer ( Shared Key )" );
+	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
+	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )") );
 
 function openvpn_create_key() {
 
@@ -168,21 +168,21 @@ function openvpn_get_cipherlist() {
 		$words = explode(' ', $line);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
-	$ciphers["none"] = "None (No Encryption)";
+	$ciphers["none"] = gettext("None (No Encryption)");
 	return $ciphers;
 }
 
 function openvpn_validate_host($value, $name) {
 	$value = trim($value);
 	if (empty($value) || (!is_domain($value) && !is_ipaddr($value)))
-		return "The field '$name' must contain a valid IP address or domain name.";
+		return sprintf(gettext("The field '%s' must contain a valid IP address or domain name."), $name);
 	return false;
 }
 
 function openvpn_validate_port($value, $name) {
 	$value = trim($value);
 	if (empty($value) || !is_numeric($value) || $value < 0 || ($value > 65535))
-		return "The field '$name' must contain a valid port, ranging from 0 to 65535.";
+		return sprintf(gettext("The field '%s' must contain a valid port, ranging from 0 to 65535."), $name);
 	return false;
 }
 
@@ -191,7 +191,7 @@ function openvpn_validate_cidr($value, $name) {
 	if (!empty($value)) {
 		list($ip, $mask) = explode('/', $value);
 		if (!is_ipaddr($ip) or !is_numeric($mask) or ($mask > 32) or ($mask < 0))
-			return "The field '$name' must contain a valid CIDR range.";
+			return sprintf(gettext("The field '%s' must contain a valid CIDR range."), $name);
 	}
 	return false;
 }

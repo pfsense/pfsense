@@ -474,14 +474,14 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$init = "on";
 					$genp = "off";
-					$pcheck = "claim";
+					$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "claim";
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
 							$passive = "passive on;";
-							$pcheck = "obey";
+							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
 							$genp = "on";
 						} else {
 							$init = "off";
@@ -535,7 +535,23 @@ function vpn_ipsec_configure($ipchg = false)
 
 						chmod($keypath, 0600);
 
+						$ca = lookup_ca($ph1ent['caref']);
+						if ($ca) {
+							$cafile = "ca-".$ikeid.".crt";
+							$capath = $g['varetc_path']."/".$cafile;
+
+							if (!file_put_contents($capath, base64_decode($ca['crt'])))
+							{
+								log_error("Error: Cannot write phase1 CA certificate file for {$ph1ent['name']}");
+								continue;
+							}
+
+							chmod($capath, 0600);
+							$caline = "ca_type x509 \"".basename($capath)."\";";
+						}
+
 						$certline = "certificate_type x509 \"".basename($certpath)."\" \"".basename($keypath)."\";";
+
 					}
 
 					$ealgos = '';
@@ -570,6 +586,7 @@ remote {$rgip}
 	initial_contact = {$init};
 	nat_traversal = {$natt};
 	{$certline}
+	{$caline}
 	{$dpdline1}
 	{$dpdline2}
 	support_proxy on;

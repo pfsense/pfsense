@@ -95,6 +95,8 @@ $sad = ipsec_dump_sad();
 							if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
 								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent))
 									$icon = "pass";
+								elseif(!isset($config['ipsec']['enable']))
+									$icon = "block";
 								else
 									$icon = "reject";
 					?>

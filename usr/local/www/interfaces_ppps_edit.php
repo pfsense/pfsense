@@ -540,14 +540,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>">
 						</td>
 					</tr>
 			
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN wait"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN wait"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
 							<br/><span class="vexpl"><?= gettext("Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds)."); ?></span>
@@ -558,7 +558,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						<td width="78%" class="vtable">
 							<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=htmlspecialchars($pconfig['initstr']);?>">
 							<br/><span class="vexpl"><?= gettext("Note: Enter the modem initialization string here. Do NOT include the \"AT\"" . 
-							"string at the beginning of the command. Many modern USB 3G modems don't need an initialization string."); ?></span>
+							" string at the beginning of the command. Many modern USB 3G modems don't need an initialization string."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
@@ -716,14 +716,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?=gettext("ACFComp"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable acfcomp(compression) (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable acfcomp (compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?=gettext("ProtoComp"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable protocomp(compression) (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable protocomp (compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Protocol field compression. This option saves one byte per frame for most frames."); ?></span>
 			</td>
 		</tr>

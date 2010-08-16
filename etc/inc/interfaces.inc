@@ -3126,16 +3126,19 @@ function is_altq_capable($int) {
          */
 	$capable = array("age", "ale", "an", "ath", "aue", "awi", "bce",
 			"bfe", "bge", "dc", "de", "ed", "em", "ep", "fxp", "gem",
-			"hme", "ipw", "iwi", "jme", "le", "msk", "mxge", "my", "nfe",
+			"hme", "igb", "ipw", "iwi", "jme", "le", "msk", "mxge", "my", "nfe",
 			"npe", "nve", "ral", "re", "rl", "rum", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
-			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng", "ppp");
+			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
+			"l2tp", "ppp");
 
         $int_family = preg_split("/[0-9]+/", $int);
 
         if (in_array($int_family[0], $capable))
                 return true;
-	else if (stristr($int_family, "vlan")) /* VLANs are name $parent.$vlan now */
+	else if (stristr($int_family, "vlan")) /* VLANs are name $parent_$vlan now */
+		return true;
+	else if (stristr($int_family, "_wlan")) /* WLANs are name $parent_$wlan now */
 		return true;
         else
                 return false;

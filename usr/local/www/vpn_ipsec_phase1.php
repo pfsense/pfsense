@@ -89,12 +89,14 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
+	$pconfig['proposal_check'] = $a_phase1[$p1index]['proposal_check'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") || 
 		($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
+		$pconfig['caref'] = $a_phase1[$p1index]['caref'];
 	}
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
@@ -141,8 +143,8 @@ if ($_POST) {
 		$reqdfields = explode(" ", "pskey");
 		$reqdfieldsn = array(gettext("Pre-Shared Key"));
 	} else {
-		$reqdfields = explode(" ", "certref");
-		$reqdfieldsn = array(gettext("My Certificate"));
+		$reqdfields = explode(" ", "caref certref");
+		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
 	}
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";
@@ -291,8 +293,9 @@ if ($_POST) {
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
 		$ph1ent['certref'] = $pconfig['certref'];
+		$ph1ent['caref'] = $pconfig['caref'];
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
-
+		$ph1ent['proposal_check'] = $pconfig['proposal_check'];
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 
@@ -373,24 +376,28 @@ function methodsel_change() {
 			document.getElementById('opt_psk').style.display = 'none';
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
+			document.getElementById('opt_ca').style.display = '';
 			break;
 		case 'xauth_rsa_server':
 		case 'rsasig':
 			document.getElementById('opt_psk').style.display = 'none';
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
+			document.getElementById('opt_ca').style.display = '';
 			break;
 <?php if ($pconfig['mobile']) { ?>
 		case 'pre_shared_key':
 			document.getElementById('opt_psk').style.display = 'none';
 			document.getElementById('opt_peerid').style.display = 'none';
 			document.getElementById('opt_cert').style.display = 'none';
+			document.getElementById('opt_ca').style.display = 'none';
 			break;
 <?php } ?>
 		default: /* psk modes*/
 			document.getElementById('opt_psk').style.display = '';
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = 'none';
+			document.getElementById('opt_ca').style.display = 'none';
 			break;
 	}
 }
@@ -614,6 +621,22 @@ function dpdchkbox_change() {
 							</span>
 						</td>
 					</tr>
+					<tr id="proposal_check">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Proposal Checking"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="proposal_check" class="formselect">
+								<option value="" <?php if (empty($pconfig['proposal_check'])) echo "selected"; ?>>Default</option>
+								<option value="obey" <?php if ($pconfig['proposal_check'] == "obey") echo "selected"; ?>>Obey</option>
+								<option value="strict" <?php if ($pconfig['proposal_check'] == "strict") echo "selected"; ?>>Strict</option>
+								<option value="claim" <?php if ($pconfig['proposal_check'] == "claim") echo "selected"; ?>>Claim</option>
+								<option value="exact" <?php if ($pconfig['proposal_check'] == "exact") echo "selected"; ?>>Exact</option>
+							</select>
+							<br>
+							<span class="vexpl">
+								<?=gettext("Specifies the action of lifetime length, key length, and PFS of the phase 2 selection on the responder side, and the action of lifetime check in phase 1."); ?>
+							</span>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
@@ -690,6 +713,25 @@ function dpdchkbox_change() {
 							<br>
 							<span class="vexpl">
 								<?=gettext("Select a certificate previously configured in the Certificate Manager"); ?>.
+							</span>
+						</td>
+					</tr>
+					<tr id="opt_ca">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate Authority"); ?></td>
+						<td width="78%" class="vtable">
+							<select name='caref' class="formselect">
+							<?php
+								foreach ($config['system']['ca'] as $ca):
+									$selected = "";
+									if ($pconfig['caref'] == $ca['refid'])
+										$selected = "selected";
+							?>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['name'];?></option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								<?=gettext("Select a certificate authority previously configured in the Certificate Manager"); ?>.
 							</span>
 						</td>
 					</tr>

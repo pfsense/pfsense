@@ -1992,11 +1992,15 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								"and obviously should not appear as the source address in any packets you receive."); ?>
 							</td>
 						</tr>
+					</table> <!-- End "allcfg" table -->
+					</div> <!-- End "allcfg" div -->
+
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="100" valign="top">
+							<td width="22%" valign="top">
 								&nbsp;
 							</td>
-							<td>
+							<td width="78%">
 								<br/>
 								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
@@ -2007,8 +2011,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
 							</td>
 						</tr>
-					</table> <!-- End "allcfg" table -->
-					</div> <!-- End "allcfg" div -->
+					</table>
 				</td>
 			</tr>
 		</table>

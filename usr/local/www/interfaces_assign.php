@@ -157,8 +157,6 @@ if ($_POST['apply']) {
 			$savemsg = get_std_save_message($retval);
 		else
 			$savemsg = $retval;
-
-		unlink_if_exists("/tmp/reload_interfaces");
 	}
 
 } else if ($_POST) {
@@ -231,8 +229,6 @@ if ($_POST['apply']) {
 						interface_configure($ifname, true);
 					}
 				}
-
-				touch("/tmp/reload_interfaces");
 			}
 		}
 	
@@ -383,7 +379,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect)."));?><br>
+	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php elseif($savemsg): ?>
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>
@@ -425,7 +421,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select onChange="javascript:$('savediv').appear();" name="<?=$ifname;?>" id="<?=$ifname;?>">
+		<select onChange="javascript:\$('savediv').appear();" name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
 				<?php if ($portinfo['isvlan']) {

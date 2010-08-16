@@ -28,6 +28,16 @@ version=`cat /etc/version`
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
+# Handle ZFS read-only case
+if [ "$PLATFORM" = "pfSense" ]; then
+	if [ -f /usr/bin/grep ]; then
+		WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
+		if [ "$WHEREISROOT" != "" ]; then
+			/sbin/zfs set readonly=off $WHEREISROOT
+		fi
+	fi
+fi
+
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
 fi
@@ -112,7 +122,6 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs/bin
 	mkdir /tmp/unionfs/boot
 	mkdir /tmp/unionfs/confdefault
-	mkdir /tmp/unionfs/PCBSD
 	echo -n "Mounting unionfs directories:"
 	echo -n " usr"
 	mount_unionfs /tmp/unionfs/usr /usr/
@@ -127,7 +136,6 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	echo -n " conf.default"
 	mount_unionfs /tmp/unionfs/confdefault /conf.default/
 	echo -n " installer"
-	mount_unionfs /tmp/unionfs/PCBSD /PCBSD/
 	echo "... done."
 fi
 

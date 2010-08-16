@@ -94,9 +94,9 @@ function parse_redirects($rdr_a) {
     $line = $rdr_a[$i];
     if (preg_match("/^[0-9]+/", $line)) {
       $regs = array();
-      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z]+)\s+([a-z]+)/", $line, $regs)) {
-        $vs[$regs[1]] = array();
-        $vs[$regs[1]]['status'] = $regs[2];
+      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z\s]+)\s+([a-z]+)/", $line, $regs)) {
+        $vs[trim($regs[1])] = array();
+        $vs[trim($regs[1])]['status'] = trim($regs[2]);
       }
     }
   }
@@ -130,9 +130,9 @@ include("head.inc");
               <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
-				  <td width="10%" class="listhdrr"><?=gettext("Port"); ?></td>
+				  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Servers"); ?></td>
-                  <td width="30%" class="listhdrr"><?=gettext("Status"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Status"); ?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
@@ -141,7 +141,7 @@ include("head.inc");
 				<?=$vsent['name'];?>
                   </td>
                   <td class="listr" align="center" >
-                                <?=$vsent['port'];?>
+                                <?=$vsent['ipaddr']." : ".$vsent['port'];?>
                                 <br />
                   </td>
                   <td class="listr" align="center" >
@@ -158,19 +158,25 @@ include("head.inc");
 			</table>
                   </td>
                   <?php
-                  switch ($rdr_a[$vsent['name']]['status']) {
+                  switch (trim($rdr_a[$vsent['name']]['status'])) {
                     case 'active':
                       $bgcolor = "lightgreen";
+					  $rdr_a[$vsent['name']]['status'] = "Active";
                       break;
-                    default:
+                    case 'down':
                       $bgcolor = "lightcoral";
+					  $rdr_a[$vsent['name']]['status'] = "Down";
+					  break;
+					default:
+                      $bgcolor = "lightgray";
+					  $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
                   }
                   ?>
-                  <td class="listr" bgcolor="<?=$bgcolor?>">
-                  <?=$rdr_a[$vsent['name']]['status']?>
+                  <td class="listr">
+                  <table border="0" cellpadding="3" cellspacing="2"><tr><td bgcolor="<?=$bgcolor?>"> <?=$rdr_a[$vsent['name']]['status']?> </td></tr></table>
                   </td>
                   <td class="listbg" >
-						<?=$vipent['desc'];?>
+						<?=$vsent['desc'];?>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>

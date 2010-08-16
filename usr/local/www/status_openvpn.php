@@ -136,6 +136,9 @@ include("head.inc"); ?>
 		</td>
 	</tr>
 	<tr>
+<?php if ($server['mode'] == "p2p_shared_key"): ?>
+		<td>Status data is not available for shared key servers.</td>
+<?php else: ?>
 		<td>
 			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
@@ -182,6 +185,7 @@ include("head.inc"); ?>
 
 		</table>
 		</td>
+<? endif; ?>
 	</tr>
 </table>
 

@@ -719,6 +719,7 @@ function openvpn_get_active_servers() {
 	
 			$server = array();
 			$server['port'] = $settings['local_port'];
+			$server['mode'] = $settings['mode'];
 			if ($settings['description'])
 				$server['name'] = "{$settings['description']} {$prot}:{$port}";
 			else

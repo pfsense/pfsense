@@ -59,9 +59,9 @@ function encrypted_configxml() {
 			if(tagfile_deformat($configtxt, $configtxt, "config.xml")) {
 				$fp = fopen('php://stdin', 'r');
 				$data = "";
-				echo "\n\n*** Encrypted config.xml detected ***\n";
+				echo "\n\n" . gettext("*** Encrypted config.xml detected ***") . "\n";
 				while($data == "") {
-					echo "\nEnter the password to decrypt config.xml: ";
+					echo "\n" . gettext("Enter the password to decrypt config.xml:") . " ";
 					$decrypt_password = chop(fgets($fp));
 					$data = decrypt_data($configtxt, $decrypt_password);
 					if(!strstr($data, "<pfsense>"))
@@ -71,10 +71,10 @@ function encrypted_configxml() {
 						fwrite($fd, $data);
 						fclose($fd);
 						exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
-						echo "\nConfig.xml unlocked.\n";
+						echo "\n" . gettext("Config.xml unlocked.") . "\n";
 						fclose($fp);
 					} else {
-						echo "\nInvalid password entered.  Please try again.\n";
+						echo "\n" . gettext("Invalid password entered.  Please try again.") . "\n";
 					}
 				}
 			}
@@ -98,12 +98,12 @@ function parse_config($parse = false) {
 	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
-			log_error("No config.xml found, attempting last known config restore.");
-			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+			log_error(gettext("No config.xml found, attempting last known config restore."));
+			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			unlock($lockkey);
-			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+			die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
 		}
 	}
 	if($g['booting']) echo ".";
@@ -119,13 +119,13 @@ function parse_config($parse = false) {
 			}
 		} else {
 			if(!file_exists($g['conf_path'] . "/config.xml")) {
-				log_error("No config.xml found, attempting last known config restore.");
-				file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+				log_error(gettext("No config.xml found, attempting last known config restore."));
+				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 				$last_backup = discover_last_backup();
 				if ($last_backup)
 					restore_backup("/cf/conf/backup/{$last_backup}");
 				else
-					log_error("Could not restore config.xml.");
+					log_error(gettext("Could not restore config.xml."));
 			}
 			unlock($lockkey);
 			$config = parse_config(true);
@@ -134,13 +134,13 @@ function parse_config($parse = false) {
 	} else {
 		if(!file_exists($g['conf_path'] . "/config.xml")) {
 			if($g['booting']) echo ".";
-			log_error("No config.xml found, attempting last known config restore.");
-			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+			log_error(gettext("No config.xml found, attempting last known config restore."));
+			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
 			else
-				log_error("Could not restore config.xml.");
+				log_error(gettext("Could not restore config.xml."));
 		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		if($config == "-1") {
@@ -201,8 +201,8 @@ function restore_backup($file) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file","/cf/conf/config.xml");
-		log_error("{$g['product_name']} is restoring the configuration $file");
-		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
+		log_error(sprintf(gettext("%s is restoring the configuration %s"), $g['product_name'], $file));
+		file_notice("config.xml", sprintf(gettext("%s is restoring the configuration %s"), $g['product_name'], $file), "pfSenseConfigurator", "");
 		conf_mount_ro();
 	}
 }
@@ -224,30 +224,30 @@ function parse_config_bootup() {
 			if ($g['booting']) {
 				if (strstr($g['platform'], "cdrom")) {
 					/* try copying the default config. to the floppy */
-					echo "Resetting factory defaults...\n";
+					echo gettext("Resetting factory defaults...") . "\n";
 					reset_factory_defaults(true);
 					if (file_exists("{$g['conf_path']}/config.xml")) {
 						/* do nothing, we have a file. */
 					} else {
-						echo "No XML configuration file found - using factory defaults.\n";
-						echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
-						echo "file is inserted. If it isn't, your configuration changes will be lost\n";
-						echo "on reboot.\n";
+						echo gettext("No XML configuration file found - using factory defaults.") . "\n";
+						echo gettext("Make sure that the configuration floppy disk with the conf/config.xml") . "\n";
+						echo gettext("file is inserted. If it isn't, your configuration changes will be lost") . "\n";
+						echo gettext("on reboot.") . "\n";
 					}
 				} else {
 					$last_backup = discover_last_backup();
 					if($last_backup) {
-						log_error("No config.xml found, attempting last known config restore.");
-						file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+						log_error(gettext("No config.xml found, attempting last known config restore."));
+						file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 						restore_backup("/cf/conf/backup/{$last_backup}");
 					}
 					if(!file_exists("{$g['conf_path']}/config.xml")) {
-						echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
+						printf(gettext("XML configuration file not found.  %s cannot continue booting.%s"), $g['product_name'], "\n");
 						mwexec("/sbin/halt");
 						exit;
 					}
-					log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
-					file_notice("config.xml", "Last known config found and restored.  Please double check your configuration file for accuracy.", "pfSenseConfigurator", "");
+					log_error(gettext("Last known config found and restored.  Please double check your configuration file for accuracy."));
+					file_notice("config.xml", gettext("Last known config found and restored.  Please double check your configuration file for accuracy."), "pfSenseConfigurator", "");
 				}
 			} else {
 				unlock($lockkey);
@@ -258,12 +258,12 @@ function parse_config_bootup() {
 	if (filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
-			log_error("No config.xml found, attempting last known config restore.");
-			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+			log_error(gettext("No config.xml found, attempting last known config restore."));
+			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			unlock($lockkey);
-			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+			die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
 		}
 	}
 	unlock($lockkey);
@@ -309,7 +309,7 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])
-			echo "Disk is dirty.  Running fsck -y\n";
+			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	}
@@ -320,7 +320,7 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/mount -u -w /");
 	/* we could not mount this correctly.  kick off fsck */
 	if($status <> 0) {
-		log_error("File system is dirty.  Launching FSCK for /");
+		log_error(gettext("File system is dirty.  Launching FSCK for /"));
 		mwexec("/sbin/fsck -y /");
 		$status = mwexec("/sbin/mount -u -w /");
 	}
@@ -366,7 +366,7 @@ function conf_mount_ro() {
 function convert_config() {
 	global $config, $g;
 	$now = date("H:i:s");
-	log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
+	log_error(sprintf(gettext("Start Configuration upgrade at %s, set execution timeout to 15 minutes"), $now));
 	//ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
@@ -376,8 +376,8 @@ function convert_config() {
 		if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
 			if($config['cron']['item'][$x]['hour'] == "*" ) {
 		        $config['cron']['item'][$x]['hour'] = "3";
-		 		write_config("Updated bogon update frequency to 3am");
-		 		log_error("Updated bogon update frequency to 3am");
+		 		write_config(gettext("Updated bogon update frequency to 3am"));
+		 		log_error(gettext("Updated bogon update frequency to 3am"));
 		 	}       
 		}
 	}
@@ -401,13 +401,13 @@ function convert_config() {
 	}
 
 	$now = date("H:i:s");
-	log_error("Ended Configuration upgrade at $now");
+	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 
 	if ($prev_version != $config['version'])
-		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
+		write_config(sprintf(gettext("Upgraded config version level from %s to %s"), $prev_version, $config['version']));
 
 	if($g['booting'])
-		echo "Loading new configuration...";
+		echo gettext("Loading new configuration...");
 }
 
 /****f* config/safe_write_file
@@ -470,7 +470,7 @@ function write_config($desc="Unknown", $backup = true) {
 	// $config = parse_config(true, false, false);
 	
 	if($g['bootup']) 
-		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
+		log_error(gettext("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml"));
 
 	if($backup)
 		backup_config();
@@ -480,7 +480,7 @@ function write_config($desc="Unknown", $backup = true) {
 
 	/* Log the running script so it's not entirely unlogged what changed */
 	if ($desc == "Unknown")
-		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
+		$desc = sprintf(gettext("%s made unknown change"), $_SERVER['SCRIPT_NAME']);
 
 	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
 	$config['revision']['username'] = $_SESSION["Username"];
@@ -493,9 +493,9 @@ function write_config($desc="Unknown", $backup = true) {
 
 	/* write new configuration */
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
-		log_error("WARNING: Config contents could not be save. Could not open file!");
+		log_error(gettext("WARNING: Config contents could not be save. Could not open file!"));
 		unlock($lockkey);
-		file_notice("config.xml", "Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));
 		return -1;
 	}
 	
@@ -593,7 +593,7 @@ function config_restore($conffile) {
 
 	conf_mount_ro();
 
-	write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
+	write_config(gettext("Reverted to") . " " . array_pop(explode("/", $conffile)) . ".", false);
 
 	return 0;
 }
@@ -608,9 +608,9 @@ function config_install($conffile) {
 		return 1;
 
 	if($g['booting'] == true)
-		echo "Installing configuration...\n";
+		echo gettext("Installing configuration...") . "\n";
 	else
-		log_error("Installing configuration ....");
+		log_error(gettext("Installing configuration ...."));
 
 	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
@@ -634,13 +634,13 @@ function config_validate($conffile) {
 	$xml_parser = xml_parser_create();
 
 	if (!($fp = fopen($conffile, "r"))) {
-		$xmlerr = "XML error: unable to open file";
+		$xmlerr = gettext("XML error: unable to open file");
 		return false;
 	}
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			$xmlerr = sprintf("%s at line %d",
+			$xmlerr = sprintf(gettext("%s at line %d"),
 						xml_error_string(xml_get_error_code($xml_parser)),
 						xml_get_current_line_number($xml_parser));
 			return false;
@@ -686,9 +686,9 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 				echo ".";
 			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
 			if($newxml == "-1") {
-				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				unlink($backup);
-				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				continue;
 			}
 			if($newxml['revision']['description'] == "")
@@ -723,7 +723,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	conf_mount_ro();
 
 	if($g['booting'] && $i)
-		print "done.\n";
+		print gettext("done.") . "\n";
 	if (!$lock)
 		unlock($lockkey);
 }

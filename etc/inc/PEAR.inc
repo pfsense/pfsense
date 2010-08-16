@@ -158,7 +158,7 @@ class PEAR
     {
         $classname = strtolower(get_class($this));
         if ($this->_debug) {
-            print "PEAR constructor called, class=$classname\n";
+            printf(gettext("PEAR constructor called, class=%s%s"), $classname, "\n");
         }
         if ($error_class !== null) {
             $this->_error_class = $error_class;
@@ -195,7 +195,7 @@ class PEAR
      */
     function _PEAR() {
         if ($this->_debug) {
-            printf("PEAR destructor called, class=%s\n", strtolower(get_class($this)));
+            printf(gettext("PEAR destructor called, class=%s%s"), strtolower(get_class($this)), "\n");
         }
     }
 
@@ -334,12 +334,12 @@ class PEAR
                 if (is_callable($options)) {
                     $setoptions = $options;
                 } else {
-                    trigger_error("invalid error callback", E_USER_WARNING);
+                    trigger_error(gettext("invalid error callback"), E_USER_WARNING);
                 }
                 break;
 
             default:
-                trigger_error("invalid error mode", E_USER_WARNING);
+                trigger_error(gettext("invalid error mode"), E_USER_WARNING);
                 break;
         }
     }
@@ -442,17 +442,17 @@ class PEAR
                     $deleted = false;
                 }
             }
-            return $deleted ? true : PEAR::raiseError("The expected error you submitted does not exist"); // IMPROVE ME
+            return $deleted ? true : PEAR::raiseError(gettext("The expected error you submitted does not exist")); // IMPROVE ME
         } elseif (!empty($error_code)) {
             // $error_code comes alone, trying to unset it
             if ($this->_checkDelExpect($error_code)) {
                 return true;
             } else {
-                return PEAR::raiseError("The expected error you submitted does not exist"); // IMPROVE ME
+                return PEAR::raiseError(gettext("The expected error you submitted does not exist")); // IMPROVE ME
             }
         } else {
             // $error_code is empty
-            return PEAR::raiseError("The expected error you submitted is empty"); // IMPROVE ME
+            return PEAR::raiseError(gettext("The expected error you submitted is empty")); // IMPROVE ME
         }
     }
 
@@ -592,12 +592,12 @@ class PEAR
                 if (is_callable($options)) {
                     $def_options = $options;
                 } else {
-                    trigger_error("invalid error callback", E_USER_WARNING);
+                    trigger_error(gettext("invalid error callback"), E_USER_WARNING);
                 }
                 break;
 
             default:
-                trigger_error("invalid error mode", E_USER_WARNING);
+                trigger_error(gettext("invalid error mode"), E_USER_WARNING);
                 break;
         }
         $stack[] = array($mode, $options);
@@ -629,12 +629,12 @@ class PEAR
                 if (is_callable($options)) {
                     $setoptions = $options;
                 } else {
-                    trigger_error("invalid error callback", E_USER_WARNING);
+                    trigger_error(gettext("invalid error callback"), E_USER_WARNING);
                 }
                 break;
 
             default:
-                trigger_error("invalid error mode", E_USER_WARNING);
+                trigger_error(gettext("invalid error mode"), E_USER_WARNING);
                 break;
         }
         return true;
@@ -863,7 +863,7 @@ class PEAR_Error
             }
         }
         if ($this->mode & PEAR_ERROR_EXCEPTION) {
-            trigger_error("PEAR_ERROR_EXCEPTION is obsolete, use class PEAR_ErrorStack for exceptions", E_USER_WARNING);
+            trigger_error(gettext("PEAR_ERROR_EXCEPTION is obsolete, use class PEAR_ErrorStack for exceptions"), E_USER_WARNING);
             eval('$e = new Exception($this->message, $this->code);$e->PEAR_Error = $this;throw($e);');
         }
     }
@@ -1020,8 +1020,8 @@ class PEAR_Error
             } else {
                 $callback = $this->callback;
             }
-            return sprintf('[%s: message="%s" code=%d mode=callback '.
-                           'callback=%s prefix="%s" info="%s"]',
+            return sprintf(gettext('[%s: message="%s" code=%d mode=callback '.
+                           'callback=%s prefix="%s" info="%s"]'),
                            strtolower(get_class($this)), $this->message, $this->code,
                            $callback, $this->error_message_prefix,
                            $this->userinfo);
@@ -1038,8 +1038,8 @@ class PEAR_Error
         if ($this->mode & PEAR_ERROR_RETURN) {
             $modes[] = 'return';
         }
-        return sprintf('[%s: message="%s" code=%d mode=%s level=%s '.
-                       'prefix="%s" info="%s"]',
+        return sprintf(gettext('[%s: message="%s" code=%d mode=%s level=%s '.
+                       'prefix="%s" info="%s"]'),
                        strtolower(get_class($this)), $this->message, $this->code,
                        implode("|", $modes), $levels[$this->level],
                        $this->error_message_prefix,

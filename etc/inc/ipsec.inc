@@ -36,21 +36,21 @@
 
 /* IPsec defines */
 $my_identifier_list = array(
-	'myaddress' => array( 'desc' => 'My IP address', 'mobile' => true ),
-	'address' => array( 'desc' => 'IP address', 'mobile' => true ),
-	'fqdn' => array( 'desc' => 'Distinguished name', 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => 'User distinguished name', 'mobile' => true ),
-	'asn1dn' => array( 'desc' => 'ASN.1 distinguished Name', 'mobile' => true ),
-	'keyid tag' => array( 'desc' => 'KeyID tag', 'mobile' => true ),
-	'dyn_dns' => array( 'desc' => 'Dynamic DNS', 'mobile' => true ));
+	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
+	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
+	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
+	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
+	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
+	'keyid tag' => array( 'desc' => gettext('KeyID tag'), 'mobile' => true ),
+	'dyn_dns' => array( 'desc' => gettext('Dynamic DNS'), 'mobile' => true ));
 
 $peer_identifier_list = array(
-	'peeraddress' => array( 'desc' => 'Peer IP address', 'mobile' => false ),
-	'address' => array( 'desc' => 'IP address', 'mobile' => false ),
-	'fqdn' => array( 'desc' => 'Distinguished name', 'mobile' => true ),
-	'user_fqdn' => array( 'desc' => 'User distinguished name', 'mobile' => true ),
-	'asn1dn' => array( 'desc' => 'ASN.1 distinguished Name', 'mobile' => true ),
-	'keyid tag' => array( 'desc' =>'KeyID tag', 'mobile' => true ));
+	'peeraddress' => array( 'desc' => gettext('Peer IP address'), 'mobile' => false ),
+	'address' => array( 'desc' => gettext('IP address'), 'mobile' => false ),
+	'fqdn' => array( 'desc' => gettext('Distinguished name'), 'mobile' => true ),
+	'user_fqdn' => array( 'desc' => gettext('User distinguished name'), 'mobile' => true ),
+	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
+	'keyid tag' => array( 'desc' =>gettext('KeyID tag'), 'mobile' => true ));
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
@@ -213,9 +213,9 @@ function ipsec_idinfo_to_text(& $idinfo) {
         case "network":
             return $idinfo['address']."/".$idinfo['netbits'];
 	case "mobile":
-		return "Mobile Client";
+		return gettext("Mobile Client");
 	case "none":
-		return "None";
+		return gettext("None");
         default:
             return strtoupper($idinfo['type']);
     }

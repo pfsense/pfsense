@@ -492,7 +492,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </div>
 </p>
 <ul>
-	<li><span class="vexpl"><?=gettext("interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
+	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
 </ul>
 </td>
 </tr>

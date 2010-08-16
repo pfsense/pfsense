@@ -747,7 +747,7 @@ function openvpn_get_active_servers() {
 						continue;
 	
 					/* parse end of output line */
-					if (strstr($line, "END"))
+					if (strstr($line, "END") || strstr($line, "ERROR"))
 						break;
 	
 					/* parse client list line */
@@ -827,7 +827,7 @@ function openvpn_get_active_clients() {
 						$client['remote_host'] = $list[4];
 					}
 					/* parse end of output line */
-					if (strstr($line, "END"))
+					if (strstr($line, "END") || strstr($line, "ERROR"))
 						break;
 				}
 	

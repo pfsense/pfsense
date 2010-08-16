@@ -157,8 +157,6 @@ if ($_POST['apply']) {
 			$savemsg = get_std_save_message($retval);
 		else
 			$savemsg = $retval;
-
-		unlink_if_exists("/tmp/reload_interfaces");
 	}
 
 } else if ($_POST) {

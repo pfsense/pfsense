@@ -93,7 +93,7 @@ function services_dhcpd_configure() {
 				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
 				$dhcprestore = implode(" ", $dhcprestore);
 				if($dhcpreturn <> 0) {
-					log_error("DHCP leases restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
+					log_error(sprintf(gettext("DHCP leases restore failed exited with %s, the error is: %s%s"), $dhcpreturn, $dhcprestore, "\n"));
 				}
 			}
 		}
@@ -104,14 +104,14 @@ function services_dhcpd_configure() {
 	$Iflist = get_configured_interface_list();
 		
 	if ($g['booting'])
-		echo "Starting DHCP service...";
+		echo gettext("Starting DHCP service...");
 	else
 		sleep(1);
 
 	/* write dhcpd.conf */
 	$fd = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpd.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open dhcpd.conf in services_dhcpd_configure().\n");
+		printf(gettext("Error: cannot open dhcpd.conf in services_dhcpd_configure().%s"), "\n");
 		return 1;
 	}
 
@@ -178,7 +178,7 @@ EOD;
 					}
 				}
 			} else {
-				log_error("Warning!  DHCP Failover setup and no CARP virtual IP's defined!");
+				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IP's defined!"));
 			}
 			if($skew > 10) {
 				$type = "secondary";
@@ -377,7 +377,7 @@ EOD;
 		join(" ", $dhcpdifs));
 
 	if ($g['booting']) {
-		print "done.\n";
+		print gettext("done.") . "\n";
 	}
 
 	return 0;
@@ -426,14 +426,14 @@ EOD;
 
         $igmpfl = fopen($g['tmp_path'] . "/igmpproxy.conf", "w");
         if (!$igmpfl) {
-                log_error("Could not write Igmpproxy configuration file!");
+                log_error(gettext("Could not write Igmpproxy configuration file!"));
                 return;
         }
         fwrite($igmpfl, $igmpconf);
         fclose($igmpfl);
 
         mwexec("/usr/local/sbin/igmpproxy -c " . $g['tmp_path'] . "/igmpproxy.conf");
-        log_error("Started Igmpproxy service sucsesfully.");
+        log_error(gettext("Started Igmpproxy service sucsesfully."));
 
         return 0;
 }
@@ -495,7 +495,7 @@ function services_dhcrelay_configure() {
 		return 0;
 
 	if ($g['booting'])
-		echo "Starting DHCP relay service...";
+		echo gettext("Starting DHCP relay service...");
 	else
 		sleep(1);
 
@@ -594,7 +594,7 @@ function services_dyndns_configure($int = "") {
 
 	if (is_array($dyndnscfg)) {
 		if ($g['booting']) 
-			echo "Starting DynDNS clients...";
+			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
 			if (!empty($int) && $int != $dyndns['interface'])
@@ -609,7 +609,7 @@ function services_dyndns_configure($int = "") {
 		}
 
 		if ($g['booting'])
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 	}
 
 	return 0;
@@ -630,7 +630,7 @@ function services_dnsmasq_configure() {
 	if (isset($config['dnsmasq']['enable'])) {
 
 		if ($g['booting'])
-			echo "Starting DNS forwarder...";
+			echo gettext("Starting DNS forwarder...");
 		else
 			sleep(1);
 
@@ -667,7 +667,7 @@ function services_dnsmasq_configure() {
 		mwexec("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
 
 		if ($g['booting'])
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 	}
 
 	if (!$g['booting']) {
@@ -693,12 +693,12 @@ function services_snmpd_configure() {
 	if (isset($config['snmpd']['enable'])) {
 
 		if ($g['booting'])
-			echo "Starting SNMP daemon... ";
+			echo gettext("Starting SNMP daemon... ");
 
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
-			printf("Error: cannot open snmpd.conf in services_snmpd_configure().\n");
+			printf(gettext("Error: cannot open snmpd.conf in services_snmpd_configure().%s"),"\n");
 			return 1;
 		}
 
@@ -846,7 +846,7 @@ EOD;
 			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
 
 		if ($g['booting'])
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 	}
 
 	return 0;
@@ -1241,8 +1241,8 @@ function configure_cron() {
 	
 	if (is_array($config['cron']['item'])) {
 		$crontab_contents .= "#\n";
-		$crontab_contents .= "# pfSense specific crontab entries\n";
-		$crontab_contents .= "# Created: " . date("F j, Y, g:i a") . "\n";
+		$crontab_contents .= "# " . gettext("pfSense specific crontab entries") . "\n";
+		$crontab_contents .= "# " .gettext( "Created:") . " " . date("F j, Y, g:i a") . "\n";
 		$crontab_contents .= "#\n";
 
 		foreach ($config['cron']['item'] as $item) {
@@ -1256,8 +1256,8 @@ function configure_cron() {
 		}
     
 		$crontab_contents .= "\n#\n";
-		$crontab_contents .= "# If possible do not add items to this file manually.\n";
-		$crontab_contents .= "# If you do so, this file must be terminated with a blank line (e.g. new line)\n";
+		$crontab_contents .= "# " . gettext("If possible do not add items to this file manually.") . "\n";
+		$crontab_contents .= "# " . gettext("If you do so, this file must be terminated with a blank line (e.g. new line)") . "\n";
 		$crontab_contents .= "#\n\n";
 	}
 	
@@ -1294,10 +1294,10 @@ function upnp_start() {
 
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 		if($g['booting']) {
-			echo "Starting UPnP service... ";
+			echo gettext("Starting UPnP service... ");
 			require_once('/usr/local/pkg/miniupnpd.inc');
 			sync_package_miniupnpd();
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 		}
 		else {
 			upnp_action('start');
@@ -1333,15 +1333,15 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 		$cron_item['command'] = $command;
 		if(!$is_installed) {
 			$config['cron']['item'][] = $cron_item;
-			write_config("Installed cron job for {$command}");
+			write_config(sprintf(gettext("Installed cron job for %s"), $command));
 		} else {
 			$config['cron']['item'][$x] = $cron_item;
-			write_config("Updated cron job for {$command}");
+			write_config(sprintf(gettext("Updated cron job for %s"), $command));
 		}
 	} else {
 		if(($is_installed == true) && ($x > 0)) {
 			unset($config['cron']['item'][$x]);
-			write_config("Remvoed cron job for {$command}");
+			write_config(sprintf(gettext("Remvoed cron job for %s"), $command));
 		}
 	}
 	configure_cron();

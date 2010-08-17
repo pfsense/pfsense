@@ -56,10 +56,10 @@ function updateCPU(x) {
 		$("cpuwidtha").style.width = x + 'px';
 	if($('cpuwidthb'))
 		$("cpuwidthb").style.width = (100 - x) + 'px';
-		/* Load CPU Graph widget if enabled */
-		if(typeof GraphValue == 'function') {
-			GraphValue(graph[0], x);
-		}
+	/* Load CPU Graph widget if enabled */
+	if(widgetActive('cpu_graphs')) {
+		GraphValue(graph[0], x);
+	}
 }
 
 function updateTemp(x) {

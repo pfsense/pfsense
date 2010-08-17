@@ -2422,10 +2422,9 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
  	
-	if (!$g['booting'])
-		interface_reload_carps($realif);
-	
 	if (!$g['booting']) {
+		interface_reload_carps($realif);
+
 		unset($gre);
 		$gre = link_interface_to_gre($interface);
 		if (!empty($gre))

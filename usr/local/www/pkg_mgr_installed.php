@@ -142,7 +142,7 @@ include("head.inc");
 							<td class="listr">
 								<?php
 									if($pkg['supportedbybsdperimeter'])  
-										echo "YES";
+										echo $pkg['supportedbybsdperimeter'];
 									else 
 										echo "NO";
 								?>

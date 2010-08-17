@@ -203,7 +203,7 @@ include("head.inc");
 						<td class="listr" style="overflow: hidden;">
 							<?php
 								if($index['supportedbybsdperimeter']) 
-									echo "YES";
+									echo $index['supportedbybsdperimeter'];
 								else 
 									echo "NO";
 								

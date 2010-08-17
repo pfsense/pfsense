@@ -42,7 +42,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);
-		log_error("RRD dump failed exited with $dumpret, the error is: $dumpout");
+		log_error(sprintf(gettext("RRD dump failed exited with %s, the error is: %s"), $dumpret, $dumpout));
 	}
 	return($dumpret);
 }
@@ -53,7 +53,7 @@ function create_new_rrd($rrdcreatecmd) {
 	exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
-		log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput");
+		log_error(sprintf(gettext("RRD create failed exited with %s, the error is: %s"), $rrdcreatereturn, $rrdcreateoutput));
 	}
 	return $rrdcreatereturn;
 }
@@ -67,7 +67,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error("Import RRD has $numdsold DS values and $numrraold RRA databases, new format RRD has $numdsnew DS values and $numrranew RRA databases");
+	log_error(sprintf(gettext("Import RRD has %s DS values and %s RRA databases, new format RRD has %s DS values and %s RRA databases"), $numdsold, $numrraold, $numdsnew ,$numrranew));
 	
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
@@ -151,7 +151,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 
 	$numrranew = count($rrdoldxml['rra']);
 	$numdsnew = count($rrdoldxml['ds']);
-	log_error("The new RRD now has $numdsnew DS values and $numrranew RRA databases");
+	log_error(sprintf(gettext("The new RRD now has %s DS values and %s RRA databases"), $numdsnew, $numrranew));
 	return $rrdoldxml;
 }
 
@@ -159,7 +159,7 @@ function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
 	if($g['booting']) 
-		echo "Generating RRD graphs...";
+		echo gettext("Generating RRD graphs...");
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
@@ -238,7 +238,7 @@ function enable_rrd_graphing() {
 					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
 					$rrdrestore = implode(" ", $rrdrestore);
 					if($rrdreturn <> 0) {
-						log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+						log_error(sprintf(gettext("RRD restore failed exited with %s, the error is: %s%s"), $rrdreturn, $rrdrestore, "\n"));
 					}
 				}
 			}
@@ -662,7 +662,7 @@ function enable_rrd_graphing() {
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		log_error("Creating rrd update script");
+		log_error(gettext("Creating rrd update script"));
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
@@ -686,7 +686,7 @@ function enable_rrd_graphing() {
 	}
 
 	if($g['booting']) 
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 		
 }
 

@@ -102,10 +102,11 @@ include("head.inc");
 				<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Category"); ?></td>
+						<td width="20%" class="listhdrr"><?=gettext("Category"); ?></td>
 <!--					<td width="10%" class="listhdrr">Size</td>	-->
 						<td width="5%" class="listhdrr"><?=gettext("Status"); ?></td>
 						<td width="5%" class="listhdrr"><?=gettext("Package Info"); ?></td>
+						<td width="5%" class="listhdrr"><?=gettext("Supported by BSD Perimeter"); ?></td>
 						<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 					</tr>
 					<?php
@@ -198,6 +199,15 @@ include("head.inc");
 							echo gettext("No info, check the") . " <a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
 						}
 						?>
+						</td>
+						<td class="listr" style="overflow: hidden;">
+							<?php
+								if($index['supportedbybsdperimeter']) 
+									echo "YES";
+								else 
+									echo "NO";
+								
+							?>
 						</td>
 						<td class="listbg" class="listbg" style="overflow: hidden;">
 							<?= $index['descr'] ?>

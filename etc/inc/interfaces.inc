@@ -349,12 +349,8 @@ function interface_bridge_configure(&$bridge) {
 
 	$flags = 0;
 	if ($commonrx == false)
-		$flags |= -IFCAP_RXCSUM;
-	else
 		$flags |= IFCAP_RXCSUM;
 	if ($commontx == false)
-		$flags |= -IFCAP_TXCSUM;
-	else
 		$flags |= IFCAP_TXCSUM;
 		
 	/* Add interfaces to bridge */
@@ -369,7 +365,7 @@ function interface_bridge_configure(&$bridge) {
 		}
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($realif1, $smallermtu);
-		pfSense_interface_capabilities($realif1, $flags);
+		pfSense_interface_capabilities($realif1, -$flags);
 		interfaces_bring_up($realif1);
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
 	}
@@ -494,15 +490,14 @@ function interface_bridge_add_member($bridgeif, $interface) {
 		pfSense_interface_mtu($interface, $mtu);
 
 	$options = pfSense_get_interface_addresses($bridgeif);
-	if (isset($options['encaps']['txcsum']))
-		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
-	else
-		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
+	$flags = 0;
+	if (!isset($options['encaps']['txcsum']))
+		$flags |= IFCAP_TXCSUM;
 
-	if (isset($options['encaps']['rxcsum']))
-		pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
-	else
-		pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
+	if (!isset($options['encaps']['rxcsum']))
+		$flags |= IFCAP_RXCSUM;
+
+	pfSense_interface_capabilities($interface, -$flags);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -2376,6 +2371,49 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	}
 	if (!empty($wancfg['mtu']))
 		pfSense_interface_mtu($realif, $wancfg['mtu']);
+
+	/* skip vlans for checksumming and polling */
+        if (!stristr($realif, "vlan")) {
+		$options = pfSense_get_interface_addresses($realif);
+		$flags = 0;
+		if(isset($config['system']['disablechecksumoffloading'])) {
+			if (isset($options['encaps']['txcsum']))
+				$flags |= IFCAP_TXCSUM;
+			if (isset($options['encaps']['rxcsum']))
+				$flags |= IFCAP_RXCSUM;
+        	} else {
+ 			if (!isset($options['caps']['txcsum']))
+				$flags |= IFCAP_TXCSUM;
+			if (!isset($options['caps']['rxcsum']))
+				$flags |= IFCAP_RXCSUM;
+        	}
+
+        	if(isset($config['system']['disablesegmentationoffloading'])) {
+                	if (isset($options['encaps']['tso4']))
+				$flags |= IFCAP_TSO;
+                	if (isset($options['encaps']['tso6']))
+				$flags |= IFCAP_TSO;
+        	} else {
+                	if (!isset($options['caps']['tso4']))
+				$flags |= IFCAP_TSO;
+                	if (!isset($options['caps']['tso6']))
+				$flags |= IFCAP_TSO;
+        	}
+
+        	if(isset($config['system']['disablelargereceiveoffloading'])) {
+                	if (isset($options['encaps']['lro']))
+				$flags |= IFCAP_LRO;
+        	} else {
+                	if (!isset($options['caps']['lro']))
+				$flags |= IFCAP_LRO;
+        	}
+
+        	/* if the NIC supports polling *AND* it is enabled in the GUI */
+        	if (!isset($config['system']['polling']) || !isset($options['caps']['polling'])) {
+			$flags |= IFCAP_POLLING;
+		}
+               	pfSense_interface_capabilities($realif, -$flags);
+	}
 
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);

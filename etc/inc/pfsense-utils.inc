@@ -180,68 +180,19 @@ function get_dns_servers() {
 function enable_hardware_offloading($interface) {
 	global $g, $config;
 
-	if(stristr($interface,"lnc"))
+	if(isset($config['system']['do_not_use_nic_microcode']))
 		return;
 
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = get_real_interface($interface);
-	if($int <> "") 
-		$interface = $int;
-	$int_family = preg_split("/[0-9]+/", $interface);
-	$options = pfSense_get_interface_addresses($interface);
-	if (!is_array($options))
+	if(empty($int)) 
 		return;
+	$int_family = preg_split("/[0-9]+/", $int);
 	$supported_ints = array('fxp');
 	if (in_array($int_family, $supported_ints)) {
-		if(isset($config['system']['do_not_use_nic_microcode']))
-			continue;
-		if(does_interface_exist($interface)) 
-			pfSense_interface_flags($interface, IFF_LINK0);
+		if(does_interface_exist($int)) 
+			pfSense_interface_flags($int, IFF_LINK0);
 	}
-
-	/* skip vlans for checksumming and polling */
-	if(stristr($interface, "vlan")) 
-		return;
-
-	if(isset($config['system']['disablechecksumoffloading'])) {
-		if (isset($options['encaps']['txcsum']))
-			pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
-		if (isset($options['encaps']['rxcsum']))
-			pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
-	} else {
-		if (isset($options['caps']['txcsum']))
-			pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
-		if (isset($options['caps']['rxcsum']))
-			pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
-	}
-
-	if(isset($config['system']['disablesegmentationoffloading'])) {
-		if (isset($options['encaps']['tso4']))
-			pfSense_interface_capabilities($interface, -IFCAP_TSO);
-		if (isset($options['encaps']['tso6']))
-			pfSense_interface_capabilities($interface, -IFCAP_TSO);
-	} else {
-		if (isset($options['caps']['tso4']))
-			pfSense_interface_capabilities($interface, IFCAP_TSO);
-		if (isset($options['caps']['tso6']))
-			pfSense_interface_capabilities($interface, IFCAP_TSO);
-	}
-
-	if(isset($config['system']['disablelargereceiveoffloading'])) {
-		if (isset($options['encaps']['lro']))
-			pfSense_interface_capabilities($interface, -IFCAP_LRO);
-	} else {
-		if (isset($options['caps']['lro']))
-			pfSense_interface_capabilities($interface, IFCAP_LRO);
-	}
-
-
-	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	$polling = isset($config['system']['polling']);	
-	if($polling && isset($options['caps']['polling']))
-		pfSense_interface_capabilities($interface, IFCAP_POLLING);
-	else
-		pfSense_interface_capabilities($interface, -IFCAP_POLLING);
 
 	return;
 }
@@ -359,22 +310,21 @@ function setup_polling() {
 
 	setup_polling_defaults();
 
-	$supported_ints = array('bge', 'dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
+	if (isset($config['system']['polling']))
+		mwexec("/sbin/sysctl kern.polling.idle_poll=1");
+	else
+		mwexec("/sbin/sysctl kern.polling.idle_poll=0");
 
 	/* if list */
 	$iflist = get_configured_interface_list();
 
 	foreach ($iflist as $ifent => $ifname) {
-		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$ifdevice = substr($real_interface, 0, -1);
-		if(!in_array($ifdevice, $supported_ints)) {
-			continue;
-        }
-		if(isset($config['system']['polling'])) {
-			mwexec("/sbin/ifconfig {$real_interface} polling");
-			mwexec("/sbin/sysctl kern.polling.idle_poll=1");
-		} else {
-			mwexec("/sbin/ifconfig {$real_interface} -polling");
+		$real_interface = get_real_interface($ifname);
+		if (interface_supports_polling($real_interface)) {
+			if (isset($config['system']['polling']))
+				pfSense_interface_capabilities($real_interface, IFCAP_POLLING);
+			else
+				pfSense_interface_capabilities($real_interface, -IFCAP_POLLING);
 		}
 	}
 }

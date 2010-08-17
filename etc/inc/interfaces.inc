@@ -327,9 +327,16 @@ function interface_bridge_configure(&$bridge) {
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
+	$commonrx = true;
+	$commontx = true;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
-		$mtu = get_interface_mtu($realif);
+		$opts = pfSense_get_interface_addresses($realif);
+		$mtu = $opts['mtu'];
+		if (!isset($opts['encaps']['txcsum']))
+			$commontx = false;
+		if (!isset($opts['encaps']['rxcsum']))
+			$commonrx = false;
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
 		else if (!empty($mtu) && $mtu < $smallermtu)
@@ -340,16 +347,29 @@ function interface_bridge_configure(&$bridge) {
 	if ($smallermtu == 0)
 		$smallermtu = 1500; 
 
+	$flags = 0;
+	if ($commonrx == false)
+		$flags |= -IFCAP_RXCSUM;
+	else
+		$flags |= IFCAP_RXCSUM;
+	if ($commontx == false)
+		$flags |= -IFCAP_TXCSUM;
+	else
+		$flags |= IFCAP_TXCSUM;
+		
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		$realif1 = get_real_interface($member);
 		$realif =  escapeshellarg($realif1);
-		/* make sure the parent interface is up */
-		pfSense_interface_mtu($realif, $smallermtu);
-		if(!$realif) 
+		if (!$realif) {
 			log_error("realif not defined in interfaces bridge - up");
+			continue;
+		}
+		/* make sure the parent interface is up */
+		pfSense_interface_mtu($realif1, $smallermtu);
+		pfSense_interface_capabilities($realif1, $flags);
 		interfaces_bring_up($realif1);
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
 	}

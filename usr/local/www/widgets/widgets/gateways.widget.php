@@ -68,7 +68,7 @@ $counter = 1;
 								<?=$gateway['loss'];?>
 								<?php $counter++; ?>
 				  </td>
-                  <td class="listr" id=\"gateway<?=$counter?>\" >
+                  <td class="listr" id="gateway<?=$counter?>" >
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
 				if (stristr($gateway['status'], "down")) {

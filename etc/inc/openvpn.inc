@@ -719,6 +719,7 @@ function openvpn_get_active_servers() {
 	
 			$server = array();
 			$server['port'] = $settings['local_port'];
+			$server['mode'] = $settings['mode'];
 			if ($settings['description'])
 				$server['name'] = "{$settings['description']} {$prot}:{$port}";
 			else
@@ -747,7 +748,7 @@ function openvpn_get_active_servers() {
 						continue;
 	
 					/* parse end of output line */
-					if (strstr($line, "END"))
+					if (strstr($line, "END") || strstr($line, "ERROR"))
 						break;
 	
 					/* parse client list line */
@@ -827,7 +828,7 @@ function openvpn_get_active_clients() {
 						$client['remote_host'] = $list[4];
 					}
 					/* parse end of output line */
-					if (strstr($line, "END"))
+					if (strstr($line, "END") || strstr($line, "ERROR"))
 						break;
 				}
 	

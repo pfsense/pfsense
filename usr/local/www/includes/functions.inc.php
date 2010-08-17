@@ -33,23 +33,23 @@ function get_gatewaystats() {
 			$data .= ",";
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
-		$data .= $gw['gateway'] . ",";
+		$data .= lookup_gateway_ip_by_name($gw['name']) . ",";
 		$data .= $gw['delay'] . ",";
 		$data .= $gw['loss'] . ",";
-        switch($gw['status']) {
-			case "None":
+        switch(strtolower($gw['status'])) {
+			case "none":
 				$online = "Online";
 				$bgcolor = "lightgreen";
 				break;
-			case "\"down\"":
+			case "down":
 				$online = "Offline";
 				$bgcolor = "lightcoral";
 				break;
-			case "\"delay\"":
+			case "delay":
 				$online = "Warning, Latency";
 				$bgcolor = "khaki";
 				break;
-			case "\"loss\"":
+			case "loss":
 				$online = "Warning, Packetloss";
 				$bgcolor = "khaki";
 				break;

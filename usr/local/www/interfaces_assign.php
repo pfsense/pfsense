@@ -421,7 +421,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select onChange="javascript:\$('savediv').appear();" name="<?=$ifname;?>" id="<?=$ifname;?>">
+		<select onChange="javascript:$('savediv').appear();" name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
 				<?php if ($portinfo['isvlan']) {
@@ -486,18 +486,16 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<div name='savediv' id='savediv' style='display:none;'>
+<div name='savediv' id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
 	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
 	<p>
 </div>
 </p>
 <ul>
-  <li><span class="vexpl"><?=gettext("change the IP address of your computer"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("renew its DHCP lease"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("access the webConfigurator with the new IP address"); ?></span></li>
-  <li><span class="vexpl"><?=gettext("interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
-</ul></td>
-	</tr>
+	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
+</ul>
+</td>
+</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

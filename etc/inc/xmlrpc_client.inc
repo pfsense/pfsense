@@ -166,13 +166,13 @@ $GLOBALS['XML_RPC_err'] = array(
  * @global array $GLOBALS['XML_RPC_str']
  */
 $GLOBALS['XML_RPC_str'] = array(
-    'unknown_method'      => 'Unknown method',
-    'invalid_return'      => 'Invalid return payload: enable debugging to examine incoming payload',
-    'incorrect_params'    => 'Incorrect parameters passed to method',
-    'introspect_unknown'  => 'Can\'t introspect: method unknown',
-    'http_error'          => 'Didn\'t receive 200 OK from remote server.',
-    'not_response_object' => 'The requested method didn\'t return an XML_RPC_Response object.',
-    'invalid_request'     => 'Invalid request payload',
+    'unknown_method'      => gettext("Unknown method"),
+    'invalid_return'      => gettext("Invalid return payload: enable debugging to examine incoming payload"),
+    'incorrect_params'    => gettext("Incorrect parameters passed to method"),
+    'introspect_unknown'  => gettext("Can't introspect: method unknown"),
+    'http_error'          => gettext("Didn't receive 200 OK from remote server."),
+    'not_response_object' => gettext("The requested method didn't return an XML_RPC_Response object."),
+    'invalid_request'     => gettext("Invalid request payload"),
 );
 
 
@@ -295,7 +295,7 @@ function XML_RPC_se($parser_resource, $name, $attrs)
     if (count($XML_RPC_xh[$parser]['stack']) == 0) {
         if ($name != 'METHODRESPONSE' && $name != 'METHODCALL') {
             $XML_RPC_xh[$parser]['isf'] = 2;
-            $XML_RPC_xh[$parser]['isf_reason'] = 'missing top level xmlrpc element';
+            $XML_RPC_xh[$parser]['isf_reason'] = gettext('missing top level xmlrpc element');
             return;
         }
     } else {
@@ -303,7 +303,7 @@ function XML_RPC_se($parser_resource, $name, $attrs)
         if (!in_array($XML_RPC_xh[$parser]['stack'][0], $XML_RPC_valid_parents[$name])) {
             $name = $GLOBALS['XML_RPC_func_ereg_replace']('[^a-zA-Z0-9._-]', '', $name);
             $XML_RPC_xh[$parser]['isf'] = 2;
-            $XML_RPC_xh[$parser]['isf_reason'] = "xmlrpc element $name cannot be child of {$XML_RPC_xh[$parser]['stack'][0]}";
+            $XML_RPC_xh[$parser]['isf_reason'] = sprintf(gettext("xmlrpc element %s cannot be child of %s"), $name, $XML_RPC_xh[$parser]['stack'][0]);
             return;
         }
     }
@@ -466,7 +466,7 @@ function XML_RPC_ee($parser_resource, $name)
             // we have an I4, INT or a DOUBLE
             // we must check that only 0123456789-.<space> are characters here
             if (!$GLOBALS['XML_RPC_func_ereg']("^[+-]?[0123456789 \t\.]+$", $XML_RPC_xh[$parser]['ac'])) {
-                XML_RPC_Base::raiseError('Non-numeric value received in INT or DOUBLE',
+                XML_RPC_Base::raiseError(gettext('Non-numeric value received in INT or DOUBLE'),
                                          XML_RPC_ERROR_NON_NUMERIC_FOUND);
                 $XML_RPC_xh[$parser]['value'] = XML_RPC_ERROR_NON_NUMERIC_FOUND;
             } else {
@@ -889,8 +889,10 @@ class XML_RPC_Client extends XML_RPC_Base {
     function send($msg, $timeout = 0)
     {
         if (!is_a($msg, 'XML_RPC_Message')) {
-            $this->errstr = 'send()\'s $msg parameter must be an'
-                          . ' XML_RPC_Message object.';
+            $this->errstr = sprintf(
+                gettext(
+                    "send()'s %s parameter must be an XML_RPC_Message object."
+                ), $msg);
             $this->raiseError($this->errstr, XML_RPC_ERROR_PROGRAMMING);
             return 0;
         }
@@ -960,15 +962,15 @@ class XML_RPC_Client extends XML_RPC_Base {
          * but keep it here for backwards compatibility.
          */
         if (!$fp && $this->proxy) {
-            $this->raiseError('Connection to proxy server '
+            $this->raiseError(gettext('Connection to proxy server ')
                               . $this->proxy . ':' . $this->proxy_port
-                              . ' failed. ' . $this->errstr,
+                              . gettext(' failed. ') . $this->errstr,
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
         } elseif (!$fp) {
-            $this->raiseError('Connection to RPC server '
+            $this->raiseError(gettext('Connection to RPC server ')
                               . $server . ':' . $port
-                              . ' failed. ' . $this->errstr,
+                              . gettext(' failed. ') . $this->errstr,
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
         }
@@ -1351,7 +1353,7 @@ class XML_RPC_Message extends XML_RPC_Base
         if (isset($this->params[$i])) {
             return $this->params[$i];
         } else {
-            $this->raiseError('The submitted request did not contain this parameter',
+            $this->raiseError(gettext('The submitted request did not contain this parameter'),
                               XML_RPC_ERROR_INCORRECT_PARAMS);
             return new XML_RPC_Response(0, $XML_RPC_err['incorrect_params'],
                                         $XML_RPC_str['incorrect_params']);
@@ -1382,7 +1384,7 @@ class XML_RPC_Message extends XML_RPC_Base
     function setConvertPayloadEncoding($in)
     {
         if ($in && !function_exists('mb_convert_encoding')) {
-            return $this->raiseError('mb_convert_encoding() is not available',
+            return $this->raiseError(gettext('mb_convert_encoding() is not available'),
                               XML_RPC_ERROR_PROGRAMMING);
         }
         $this->convert_payload_encoding = $in;
@@ -1611,14 +1613,15 @@ class XML_RPC_Value extends XML_RPC_Base
     function addScalar($val, $type = 'string')
     {
         if ($this->mytype == 1) {
-            $this->raiseError('Scalar can have only one value',
+            $this->raiseError(gettext('Scalar can have only one value'),
                               XML_RPC_ERROR_INVALID_TYPE);
             return 0;
         }
         $typeof = $GLOBALS['XML_RPC_Types'][$type];
         if ($typeof != 1) {
-            $this->raiseError("Not a scalar type (${typeof})",
-                              XML_RPC_ERROR_INVALID_TYPE);
+            $this->raiseError(
+                sprintf(gettext("Not a scalar type (%s)"), $typeof),
+                XML_RPC_ERROR_INVALID_TYPE);
             return 0;
         }
 
@@ -1653,7 +1656,7 @@ class XML_RPC_Value extends XML_RPC_Base
     {
         if ($this->mytype != 0) {
             $this->raiseError(
-                    'Already initialized as a [' . $this->kindOf() . ']',
+                    sprintf(gettext('Already initialized as a [%s]'), $this->kindOf()),
                     XML_RPC_ERROR_ALREADY_INITIALIZED);
             return 0;
         }
@@ -1669,7 +1672,7 @@ class XML_RPC_Value extends XML_RPC_Base
     {
         if ($this->mytype != 0) {
             $this->raiseError(
-                    'Already initialized as a [' . $this->kindOf() . ']',
+                    sprintf(gettext('Already initialized as a [%s]'), $this->kindOf()),
                     XML_RPC_ERROR_ALREADY_INITIALIZED);
             return 0;
         }

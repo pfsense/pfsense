@@ -32,158 +32,167 @@
 */
 
 function step1_submitphpaction() {
-		if (!isset($_POST['numberofconnections'])) {
-			$message=gettext("You need to specify the number of local interfaces connected.");
-			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
-			exit;
-		}			
-		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
-			$message=gettext("The number of local interfaces supported is between 1 and 100.");
-			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
-			exit;
-		}	
+	global $stepid, $savemsg;
+
+	if (!isset($_POST['numberofconnections'])) {
+		$savemsg=gettext("You need to specify the number of local interfaces connected.");
+		$stepid--;
+	}			
+	if (intval($_POST['numberofconnections']) < 1) {
+		$savemsg=gettext("The number of local connection needs to be greater than 1.");
+		$stepid--;
+	}	
 }
 
 function step2_stepbeforeformdisplay() {
-		global $config, $pkg;
+	global $config, $pkg;
+	global $stepid, $savemsg;
 
-		$numberofinterfaces = 0;
-		$iflist = array();
-		$iflisttmp = get_configured_interface_with_descr();
-                foreach ($iflisttmp as $if => $ifdesc) {
-                        if (!is_altq_capable(get_real_interface($if)))
-                                continue;
-                        $numberofinterfaces++;
-                        $iflist[$if] = $ifdesc;
-                }
-		$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
-		if ($numberofconnections > $numberofinterfaces) {
-			$message=gettext("You do not have {$numberofconnections} of local interfaces!");
-			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
-			exit;
-		}
+	$numberofinterfaces = 0;
+	$iflist = array();
+	$iflisttmp = get_configured_interface_with_descr();
+        foreach ($iflisttmp as $if => $ifdesc) {
+        	if (!is_altq_capable(get_real_interface($if)))
+                	continue;
+                $numberofinterfaces++;
+                $iflist[$if] = $ifdesc;
+	}
+	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
+	if ($numberofconnections > $numberofinterfaces) {
+		$savemsg=gettext("You do not have {$numberofconnections} of local interfaces!");
+		$stepid--;
+		return;
+	}
 
-		$fields =& $pkg['step'][1]['fields']['field'];
-			
-		/*
-		unset($config['ezshaper']['step2']);
-		$config['ezshaper']['step2'] = array();
-		write_config();
-		*/
-		$fields = array();
+	$fields =& $pkg['step'][1]['fields']['field'];
+		
+	/*
+	unset($config['ezshaper']['step2']);
+	$config['ezshaper']['step2'] = array();
+	write_config();
+	*/
+	$fields = array();
+
+	$field = array();
+	$field['name'] = "Setup WAN(upload) scheduler";
+	$field['type'] = "listtopic";
+	$fields[] = $field;
+	$field = array();
+	$field['name'] = "Upload Scheduler";
+	$field['type'] = "select";
+	$field['typehint'] = "Queueing discipline to apply on the upload of this link.";
+	$field['options']['option'] = array();
+	$opts = array();
+	$opts['name'] = "HFSC";
+	$opts['value'] = "HFSC";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['name'] = "CBQ";
+	$opts['value'] = "CBQ";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['name'] = "PRIQ";
+	$opts['value'] = "PRIQ";
+	$field['options']['option'][] = $opts;
+	$field['bindstofield'] = "ezshaper->step2->uploadscheduler";
+	$fields[] = $field;
+
+	$field = array();
+	$field['name'] = "Setup link speed details";
+	$field['type'] = "listtopic";
+	$fields[] = $field;
+	$field = array();
+	$field['name'] = "connupload";
+	$field['displayname'] = "Link Upload";
+	$field['type'] = "input";
+	$field['bindstofield'] = "ezshaper->step2->connupload";
+	$field['combinefieldsbegin'] = "true";
+	$fields[] = $field;
+
+	$field = array();
+	$field['combinefieldsend'] = "true";	
+	$field['dontdisplayname'] = "true";
+	$field['dontcombinecells'] = "true";
+	$field['name'] = "connuploadspeed";
+	$field['typehint'] = "Upload bandwidth on this connection.";
+	$field['type'] = "select";
+	$field['options']['option'] = array();
+	$opts = array();
+	$opts['value'] = "Kb";
+	$opts['name'] = "Kbit/s";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['value'] = "Mb";
+	$opts['name'] = "Mbit/s";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['value'] = "Gb";
+	$opts['name'] = "Gbit/s";
+	$field['options']['option'][] = $opts;
+	$field['bindstofield'] = "ezshaper->step2->connuploadspeed";
+	$fields[] = $field;
+
+	$field = array();
+	$field['name'] = "conndownload";
+	$field['displayname'] = "Link Download";
+	$field['type'] = "input";
+	$field['bindstofield'] = "ezshaper->step2->conndownload";
+	$field['combinefieldsbegin'] = "true";
+	$fields[] = $field;
+
+	$field = array();
+	$field['combinefieldsend'] = "true";
+	$field['dontdisplayname'] = "true";
+	$field['dontcombinecells'] = "true";
+	$field['name'] = "conndownloadspeed";
+	$field['typehint'] = "Download bandwidth on this connection.";
+	$field['type'] = "select";
+	$field['options']['option'] = array();
+	$opts = array();
+	$opts['value'] = "Kb";
+	$opts['name'] = "Kbit/s";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['value'] = "Mb";
+	$opts['name'] = "Mbit/s";
+	$field['options']['option'][] = $opts;
+	$opts = array();
+	$opts['value'] = "Gb";
+	$opts['name'] = "Gbit/s";
+	$field['options']['option'][] = $opts;
+	$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
+	$fields[] = $field;
+
+	for ($i = 0; $i < $numberofconnections; $i++) {
 
 		$field = array();
-		$field['name'] = "Setup WAN scheduler";
+		$interface_friendly = $i+1;
+		$field['name'] = "Setup connection speed and scheduler information for LAN interface #{$interface_friendly}";
 		$field['type'] = "listtopic";
 		$fields[] = $field;
-		$field = array();
-		$field['name'] = "Upload Scheduler";
-		$field['type'] = "select";
-		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
-		$field['options']['option'] = array();
-		$opts = array();
-		$opts['name'] = "HFSC";
-		$opts['value'] = "HFSC";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['name'] = "CBQ";
-		$opts['value'] = "CBQ";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['name'] = "PRIQ";
-		$opts['value'] = "PRIQ";
-		$field['options']['option'][] = $opts;
-		$field['bindstofield'] = "ezshaper->step2->uploadscheduler";
-		$fields[] = $field;
-
-		$field = array();
-		$field['name'] = "Setup connection speeds";
-		$field['type'] = "listtopic";
-		$fields[] = $field;
-		$field = array();
-		$field['name'] = "connupload";
-		$field['type'] = "input";
-		$field['bindstofield'] = "ezshaper->step2->connupload";
-		$field['combinefieldsbegin'] = "true";
-		$fields[] = $field;
-
-		$field = array();
-		$field['combinefieldsend'] = "true";	
-		$field['dontdisplayname'] = "true";
-		$field['dontcombinecells'] = "true";
-		$field['name'] = "connuploadspeed";
-		$field['typehint'] = "Upload bandwidth on this connection.";
-		$field['type'] = "select";
-		$field['options']['option'] = array();
-		$opts = array();
-		$opts['value'] = "Kb";
-		$opts['name'] = "Kbit/s";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['value'] = "Mb";
-		$opts['name'] = "Mbit/s";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['value'] = "Gb";
-		$opts['name'] = "Gbit/s";
-		$field['options']['option'][] = $opts;
-		$field['bindstofield'] = "ezshaper->step2->connuploadspeed";
-		$fields[] = $field;
-
-		$field = array();
-		$field['name'] = "conndownload";
-		$field['type'] = "input";
-		$field['bindstofield'] = "ezshaper->step2->conndownload";
-		$field['combinefieldsbegin'] = "true";
-		$fields[] = $field;
-
-		$field = array();
-		$field['combinefieldsend'] = "true";
-		$field['dontdisplayname'] = "true";
-		$field['dontcombinecells'] = "true";
-		$field['name'] = "conndownloadspeed";
-		$field['typehint'] = "Download bandwidth on this connection.";
-		$field['type'] = "select";
-		$field['options']['option'] = array();
-		$opts = array();
-		$opts['value'] = "Kb";
-		$opts['name'] = "Kbit/s";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['value'] = "Mb";
-		$opts['name'] = "Mbit/s";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['value'] = "Gb";
-		$opts['name'] = "Gbit/s";
-		$field['options']['option'][] = $opts;
-		$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
-		$fields[] = $field;
-
-		for ($i = 0; $i < $numberofconnections; $i++) {
-
-			$field = array();
-			$interface_friendly = $i+1;
-			$field['name'] = "Setup connection speed and scheduler information for interface #{$interface_friendly}";
-			$field['type'] = "listtopic";
-			$fields[] = $field;
 
 			$field = array();
 			$field['name'] = "conn{$i}interface";
+			$field['displayname'] = "LAN interface";
 			$field['type'] = "select";
 			$field['typehint'] = "Interface of this connection.";
 			$field['options']['option'] = array();
+			$ifselect = 0;
 			foreach ($iflist as $ifname => $ifdescr) {
+				if ($ifselect > 0 && $ifselect == ($i + 1))
+					$field['value'] = $ifname;
                                 $opts = array();
                                 $opts['displayname'] = $ifdescr;
                                 $opts['name'] = $ifname;
                                 $opts['value'] = $ifname;
                                 $field['options']['option'][] = $opts;
+				$ifselect++;
                         }
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
 			$fields[] = $field;
 
 			$field['name'] = "conn{$i}downloadscheduler";
+			$field['displayname'] = "LAN Scheduler";
 			$field['type'] = "select";
 			$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
 			$field['options']['option'] = array();
@@ -208,50 +217,50 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "Next";
 		$field['type'] = "submit";
 		$fields[] = $field;
-
 }
 
 function step2_stepsubmitphpaction() {
 	global $config;
+	global $stepid, $savemsg;
 	$sumdownloads = 0;
 	
 	/* Input Validation */
-	$steps = intval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
+	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 		for ($j = $j; $j < $steps; $j++) {
 			if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
-				$message=gettext("You cannot select the same interface for connections {$i} and {$j}.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-				exit;
+				$savemsg=gettext("You cannot select the same interface for different LAN #{$i} and LAN #{$j}.");
+				$stepid--;
+				return;
 			}
 		}
 	}
 	if (!is_numeric($_POST["connupload"])) {
-		$message = gettext("Upload bandwidth of connection is not valid.");
-		header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-		exit;
+		$savemsg= gettext("Upload bandwidth of connection is not valid.");
+		$stepid--;
+		return;
 	}
 	if (!is_numeric($_POST["conndownload"])) {
-		$message = gettext("Download bandwidth of connection is not valid.");
-		header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-		exit;
+		$savemsg= gettext("Download bandwidth of connection is not valid.");
+		$stepid--;
+		return;
 	}
 	$upbw = floatval($_POST["connupload"]);
 	$downbw = floatval($_POST["conndownload"]);
-	if ($upbw == 0 || $downbw = 0) {
-		$message = gettext("You cannot specify 0 bandwidth!");
-		header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-		exit;
+	if ($upbw < 1 || $downbw < 1) {
+		$savemsg = gettext("You cannot specify bandwidth less than 1!");
+		$stepid--;
+		return;
 	}
 	if (intval($upbw) < 128 && $_POST["connuploadspeed"] == "Kb" && trim($_POST["connscheduler"]) == "CBQ") {
-		$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
-		header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-		exit;
+		$savemsg=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
+		$stepid--;
+		return;
 	}
 	if ($downbw < 128 && $_POST["conndownloadspeed"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
-		$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
-		header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=1&message={$message}");
-		exit;
+		$savemsg=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
+		$stepid--;
+		return;
 	}
 
 	/* This is necessary since the wizard expects pecnefined fields. */
@@ -268,22 +277,18 @@ function step2_stepsubmitphpaction() {
 		$config['ezshaper']['step2']["conn{$i}downloadscheduler"] = $_POST["conn{$i}downloadscheduler"];
 		$config['ezshaper']['step2']["conn${i}interface"] = $_POST["conn{$i}interface"];
     }
-
-	/* Not needed, called by wizard.php */
-//	write_config();
 }
 
 function step3_stepsubmitphpaction() {
 	global $config;
+	global $stepid, $savemsg;
 
 	if($_POST['address']) {
-		if(!is_ipaddr($_POST['address'])) {
-			if(!is_alias($_POST['address'])) {
-				/* item is not an ip or alias.  error out */
-				$message=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
-				exit;
-			}
+		if(!is_ipaddroralias($_POST['address'])) {
+			/* item is not an ip or alias.  error out */
+			$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
+			$stepid--;
+			return;
 		}
 	}
 
@@ -291,81 +296,85 @@ function step3_stepsubmitphpaction() {
 	for ($i = 0; $i < $steps; $i++) {
 		if ($_POST["connupload"]) {
 			if (!is_numeric($_POST["connupload"])) {
-					$message = gettext("Upload bandwidth of connection {$i} is not valid.");
-					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
-					exit;
-				}
+				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
+				$stepid--;
+				return;
+			}
 			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
 			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
 			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
 			if ((0.8 * $ifbw) < $input_bw) {
-				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
-				exit;
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+				$stepid--;
+				return;
 			}	
 		}
 	}
 }
 
 function step4_stepsubmitphpaction() {
-		global $config;
+	global $config;
+	global $stepid, $savemsg;
 
-		if ( $_POST['enable'] ) {
-			if(!$_POST['bandwidth']) {
-				$message="You need to specify a value for bandwidth!";
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-				exit;
-			}
-			if(!is_numeric($_POST['bandwidth'])) {
-				$message="The posted value is not a valid bandwidth.";
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");	
-				exit;
-			}
-
-			if ($_POST['bandwidthspeed'] <> "%") {
-					$message = gettext("Only percentage bandwidth specification is allowed.");
-					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-					exit;
-			}
-			$bw = $_POST['bandwidth'];
-			if($bw > 15 && $bw < 2) {
-				$message="Values should be between 2% and 15%!";
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-				exit;
-			}
-
-			if($_POST['address'] <> "" && !is_ipaddr($_POST['address'])) {
-				if(!is_alias($_POST['address'])) {
-					/* item is not an ip or alias.  error out */
-					$message=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
-					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-				}	
-			}
+	if ( $_POST['enable'] ) {
+		if(!$_POST['bandwidth']) {
+			$savemsg="You need to specify a value for bandwidth!";
+			$stepid--;
+			return;
+		}
+		if(!is_numeric($_POST['bandwidth'])) {
+			$savemsg="The posted value is not a valid bandwidth.";
+			$stepid--;
+			return;
 		}
 
+		if ($_POST['bandwidthspeed'] <> "%") {
+			$savemsg = gettext("Only percentage bandwidth specification is allowed.");
+			$stepid--;
+			return;
+		}
+		$bw = $_POST['bandwidth'];
+		if($bw > 15 && $bw < 2) {
+			$savemsg="Values should be between 2% and 15%!";
+			$stepid--;
+			return;
+		}
+
+		if($_POST['address']) {
+			if(!is_ipaddroralias($_POST['address'])) {
+				/* item is not an ip or alias.  error out */
+				$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
+				$stepid--;
+				return;
+			}	
+		}
+	}
 }
 
 function step5_stepsubmitphpaction() {
+	global $stepid, $savemsg;
+
 	if ( $_POST['enable'] ) {
 		if (isset($_POST['bandwidth']) && $_POST['bandwidth'] <> "") {
 			if(!is_numeric($_POST['bandwidth'])) {
-				$message="Posted value is not a valid bandwidth.";
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=4&message={$message}");
+				$savemsg="Posted value is not a valid bandwidth.";
+				$stepid--;
+				return;
 
 			}
 			if ($_POST['bandwidthspeed'] <> "%") {
-					$message = gettext("Only percentage bandwidth specification is allowed.");
-					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=4&message={$message}");
-					exit;
+				$savemsg = gettext("Only percentage bandwidth specification is allowed.");
+				$stepid--;
+				return;
 			}
 			$bw = $_POST['bandwidth'];
 			if($bw > 15 && $bw < 2) {
-				$message="Values should be between 2% and 15%!";
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-				exit;
+				$savemsg="Values should be between 2% and 15%!";
+				$stepid--;
+				return;
 			}
-		} 
+		}
 	}
 }
 
@@ -718,9 +727,9 @@ function apply_all_choosen_items() {
 	 * Doing it here makes sense since we can wipe the previous config only after 
 	 * the user decides to do so, finishing the wizard.
 	 */
-	if(isset($config['shaper']['queue']))
+	if (isset($config['shaper']['queue']))
 		unset($config['shaper']['queue']);
-	/* XXX: This is ecnundant, because this should be handled by converter at startup. */
+	/* XXX: This is redundant, because this should be handled by converter at startup. */
 	if(isset($config['shaper']['rule']))
 		unset($config['shaper']['rule']);
 	foreach ($config['filter']['rule'] as $key => $rule)
@@ -731,7 +740,7 @@ function apply_all_choosen_items() {
 	unset($altq_list_queues);
 	$altq_list_queues = array();
 
-	$steps = floatval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
+	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 
 		$tmppath = array();	

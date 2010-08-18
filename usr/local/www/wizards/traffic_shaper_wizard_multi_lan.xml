@@ -80,6 +80,7 @@
 				<typehint>Prioritize Voice over IP traffic</typehint>
 				<description>This will raise the priority of VOIP traffic above all other traffic.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;enable</bindstofield>
+				<enablefields>provider,address,downloadspeed,downloadspeedunit,uploadspeed,uploadspeedunit</enablefields>
 			</field>
 			<field>
 				<name>Next</name>
@@ -208,7 +209,7 @@
 				<type>checkbox</type>
 				<typehint>Penalize IP or Alias</typehint>
 				<description>This will lower the priority of traffic from this IP or alias.</description>
-				<enablefields>Address,Bandwidth</enablefields>
+				<enablefields>address,bandwidth,bandwidthspeed</enablefields>
 				<bindstofield>ezshaper-&gt;step4-&gt;enable</bindstofield>
 			</field>
 			<field>
@@ -221,7 +222,7 @@
 			</field>
 			<field>
 				<name>Address</name>
-				<type>input</type>
+				<type>inputalias</type>
 				<description>This allows you to just provide the IP address of the computer(s) to penalize. NOTE: You can also use a Firewall Alias in this location.</description>
 				<bindstofield>ezshaper-&gt;step4-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>

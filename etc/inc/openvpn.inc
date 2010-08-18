@@ -404,7 +404,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		$conf .= "lport {$settings['local_port']}\n";
 
 		// The management port to listen on
-		$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
+		// Use unix socket to overcome the problem on any type of server
+		$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
+		//$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 
 		if ($settings['maxclients'])
 			$conf .= "max-clients {$settings['maxclients']}\n";
@@ -445,7 +447,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		// If local_port is used, bind the management port
 		if ($settings['local_port']) {
 			$conf .= "lport {$settings['local_port']}\n";
-			$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
+			// Use unix socket to overcome the problem on any type of server
+			$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
+			//$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 		}
 
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
@@ -709,8 +713,9 @@ function openvpn_resync_all($interface = "") {
 }
 
 function openvpn_get_active_servers() {
+	global $config, $g;
+
 	$servers = array();
-	global $config;
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
 	
@@ -726,7 +731,10 @@ function openvpn_get_active_servers() {
 				$server['name'] = "Server {$prot}:{$port}";
 			$server['conns'] = array();
 	
-			$tcpsrv = "tcp://127.0.0.1:{$port}";
+			$vpnid = $settings['vpnid'];
+                        $mode_id = "server{$vpnid}";
+			$server['mgmt'] = $mode_id;
+                        $tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
 			$errval;
 			$errstr;
 	
@@ -786,8 +794,9 @@ function openvpn_get_active_servers() {
 }
 
 function openvpn_get_active_clients() {
+	global $config, $g;
+
 	$clients = array();
-	global $config;
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
 	
@@ -801,7 +810,10 @@ function openvpn_get_active_clients() {
 			else
 				$client['name'] = "Client {$prot}:{$port}";
 	
-			$tcpcli = "tcp://127.0.0.1:{$port}";
+			$vpnid = $settings['vpnid'];
+        		$mode_id = "client{$vpnid}";
+			$client['mgmt'] = $mode_id;
+			$tcpcli = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
 			$errval;
 			$errstr;
 	

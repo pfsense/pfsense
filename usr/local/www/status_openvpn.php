@@ -64,7 +64,10 @@ if($_GET['action']) {
 
 
 function kill_client($port, $remipp) {
-	$tcpsrv = "tcp://127.0.0.1:{$port}";
+	global $g;
+
+	//$tcpsrv = "tcp://127.0.0.1:{$port}";
+	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
 	$errval;
 	$errstr;
 
@@ -173,7 +176,7 @@ include("head.inc"); ?>
 				</td>
 				<td class='list'>
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					   onclick="killClient('<?php echo $server['port']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
+					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
 					   title='<?=gettext("Kill client connection from"); ?> <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>

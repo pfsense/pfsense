@@ -733,6 +733,7 @@ function openvpn_get_active_servers() {
 			/* open a tcp connection to the management port of each server */
 			$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
 			if ($fp) {
+				stream_set_timeout($fp, 1);
 	
 				/* send our status request */
 				fputs($fp, "status 2\n");
@@ -809,7 +810,7 @@ function openvpn_get_active_clients() {
 			/* open a tcp connection to the management port of each cli */
 			$fp = @stream_socket_client($tcpcli, $errval, $errstr, 1);
 			if ($fp) {
-	
+				stream_set_timeout($fp, 1);
 				/* send our status request */
 				fputs($fp, "state 1\n");
 	

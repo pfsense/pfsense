@@ -72,6 +72,7 @@ function kill_client($port, $remipp) {
 	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
 	$killed = -1;
 	if ($fp) {
+		stream_set_timeout($fp, 1);
 		fputs($fp, "kill {$remipp}\n");
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);

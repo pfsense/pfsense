@@ -146,7 +146,7 @@
 				<type>checkbox</type>
 				<typehint>Penalize IP or Alias</typehint>
 				<description>This will lower the priority of traffic from this IP or alias.</description>
-				<enablefields>Address,Bandwidth</enablefields>
+				<enablefields>address,bandwidth,bandwidthspeed</enablefields>
 				<bindstofield>ezshaper-&gt;step4-&gt;enable</bindstofield>
 			</field>
 			<field>

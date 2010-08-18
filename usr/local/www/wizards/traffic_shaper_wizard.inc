@@ -714,8 +714,6 @@ function apply_all_choosen_items() {
 			else if ($sched == "HFSC") {
 				$lkbw = 0.20 * $remainbw;
 				$tmpcf['linkshare3'] = "{$lkbw}%";
-			 	$tmpcf['linkshare2'] = 100;
-				$tmpcf['linkshare1'] = "0b";	
 				$tmpcf['linkshare'] = "on";
 				$tmpcf['bandwidth'] = $lkbw; 
 				$tmpcf['bandwidthtype'] = "%";
@@ -777,8 +775,6 @@ function apply_all_choosen_items() {
 						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					} else if ($sched == "HFSC") {
 						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare1'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['linkshare2'] = 300;
 						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['upperlimit'] = "on";
 						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
@@ -795,8 +791,6 @@ function apply_all_choosen_items() {
 					} else if ($sched == "HFSC") {
 						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
 						$tmpcf['linkshare'] = "on";
-                                                $tmpcf['linkshare1'] = "{$tmpbw}%";
-                                                $tmpcf['linkshare2'] = 300;
                                                 $tmpcf['linkshare3'] = "{$tmpbw}%";
                                                 $tmpcf['upperlimit'] = "on";
                                                 $tmpcf['upperlimit3'] = "{$tmpbw}%";
@@ -841,9 +835,7 @@ function apply_all_choosen_items() {
 						$tmpcf['realtime3'] = "{$voipbw}%";
 					}
 					$tmpcf['realtime'] = "on";
-					$tmpcf['realtime2'] = "10";
 					$tmpcf['bandwidth'] = 32;
-					$tmpcf['realtime1'] = "0b";
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
@@ -873,8 +865,6 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
                                         $gamesbw = $remainbw * 0.2; /* 20% bandwidth */
 					$tmpcf['linkshare'] = "on";
-                                       	$tmpcf['linkshare1'] = "0b";
-                                        $tmpcf['linkshare2'] = "50";
                                         $tmpcf['linkshare3'] = "{$gamesbw}%";
 					$tmpcf['bandwidth'] = "{$gamesbw}";
 					$tmpcf['bandwidthtype'] = "%";
@@ -906,8 +896,6 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
 					$tmpcf['linkshare'] = "on";
 					$otherbw = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['linkshare1'] = "0b";
-					$tmpcf['linkshare2'] = 200;
 					$tmpcf['linkshare3'] = "{$otherbw}%";
 					$tmpcf['bandwidth'] = $otherbw;
 					$tmpcf['bandwidthtype'] = "%";
@@ -941,18 +929,15 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
 					if ($penalty) {
 						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
-						$tmpcf['linkshare1'] = "{$penaltybw}{$penaltybwunit}";
 						$tmpcf['bandwidth'] = $penaltybw;
 						$tmpcf['bandwidthtype'] = $penaltybwunit;
 					} else {
 						$lsbw = $remainbw * 0.05;
-						$tmpcf['linkshare1'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['bandwidth'] = $lsbw;
                                                 $tmpcf['bandwidthtype'] = "%";
 					}
 					$tmpcf['linkshare'] = "on";
-					$tmpcf['linkshare2'] = 500;
 				}
 				array_push($tmppath, "qOthersLow");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
@@ -1077,13 +1062,9 @@ function apply_all_choosen_items() {
                                 	$tmpcf['bandwidthtype'] = "Kb";
                         	}
                         	else if ($sched == "HFSC") {
-                                	$tmpcf['linkshare1'] = $tmpcf['linkshare3'] = $lanbw/1000 ."Kb";
+                                	$tmpcf['linkshare3'] = $lanbw/1000 ."Kb";
                                 	$tmpcf['upperlimit'] = "on";
                                 	$tmpcf['upperlimit3'] = $lanbw/1000 ."Kb";
-
-
-                                	$tmpcf['linkshare2'] = 100;
-                                	//$tmpcf['linkshare1'] = "0b";
                                 	$tmpcf['linkshare'] = "on";
                                 	$tmpcf['bandwidth'] =  $lanbw/1000;
                                 	$tmpcf['bandwidthtype'] = "Kb";
@@ -1117,8 +1098,6 @@ function apply_all_choosen_items() {
 			else if ($sched == "HFSC") {
 				$lkbw = 0.20 * $remainbw;
 				$tmpcf['linkshare3'] = "{$lkbw}%";
-			 	$tmpcf['linkshare2'] = 100;
-				$tmpcf['linkshare1'] = "0b";	
 				$tmpcf['linkshare'] = "on";
 				$tmpcf['bandwidth'] = $lkbw; 
 				$tmpcf['bandwidthtype'] = "%";
@@ -1180,8 +1159,6 @@ function apply_all_choosen_items() {
 						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					} else if ($sched == "HFSC") {
 						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare1'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
-						$tmpcf['linkshare2'] = 300;
 						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['upperlimit'] = "on";
 						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
@@ -1198,8 +1175,6 @@ function apply_all_choosen_items() {
 					} else if ($sched == "HFSC") {
 						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
 						$tmpcf['linkshare'] = "on";
-                                                $tmpcf['linkshare1'] = "{$tmpbw}%";
-                                                $tmpcf['linkshare2'] = 300;
                                                 $tmpcf['linkshare3'] = "{$tmpbw}%";
                                                 $tmpcf['upperlimit'] = "on";
                                                 $tmpcf['upperlimit3'] = "{$tmpbw}%";
@@ -1244,9 +1219,7 @@ function apply_all_choosen_items() {
 						$tmpcf['realtime3'] = "{$voipbw}%";
 					}
 					$tmpcf['realtime'] = "on";
-					$tmpcf['realtime2'] = "10";
 					$tmpcf['bandwidth'] = 32;
-					$tmpcf['realtime1'] = "0b";
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
@@ -1276,8 +1249,6 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
                                         $gamesbw = $remainbw * 0.2; /* 20% bandwidth */
 					$tmpcf['linkshare'] = "on";
-                                       	$tmpcf['linkshare1'] = "0b";
-                                        $tmpcf['linkshare2'] = "50";
                                         $tmpcf['linkshare3'] = "{$gamesbw}%";
 					$tmpcf['bandwidth'] = "{$gamesbw}";
 					$tmpcf['bandwidthtype'] = "%";
@@ -1309,8 +1280,6 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
 					$tmpcf['linkshare'] = "on";
 					$otherbw = $remainbw * 0.1; /* 10% bandwidth */
-					$tmpcf['linkshare1'] = "0b";
-					$tmpcf['linkshare2'] = 200;
 					$tmpcf['linkshare3'] = "{$otherbw}%";
 					$tmpcf['bandwidth'] = $otherbw;
 					$tmpcf['bandwidthtype'] = "%";
@@ -1344,18 +1313,15 @@ function apply_all_choosen_items() {
 				} else if ($sched == "HFSC") {
 					if ($penalty) {
 						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
-						$tmpcf['linkshare1'] = "{$penaltybw}{$penaltybwunit}";
 						$tmpcf['bandwidth'] = $penaltybw;
 						$tmpcf['bandwidthtype'] = $penaltybwunit;
 					} else {
 						$lsbw = $remainbw * 0.05;
-						$tmpcf['linkshare1'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['bandwidth'] = $lsbw;
                                                 $tmpcf['bandwidthtype'] = "%";
 					}
 					$tmpcf['linkshare'] = "on";
-					$tmpcf['linkshare2'] = 500;
 				}
 				array_push($tmppath, "qOthersLow");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);

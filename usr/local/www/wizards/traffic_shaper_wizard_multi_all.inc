@@ -683,49 +683,49 @@ function apply_all_choosen_items() {
 		$upfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
                 $upbw = floatval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
 
-			if ($config['ezshaper']['step3']['enable']) {
-					$voip = true;
-					$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
-					$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
-					if ($sched != "HFSC") {
-						if ($voipbwunit == "%") 
-							$factor =  $upbw/100;
-						else
-							$factor = wizard_get_bandwidthtype_scale($voipbwunit);
-						$remainbw += $voipbw * $factor;
-					} else
-						$remainbw += 32000; /* 32Kbit/s forHFSC linksharing */
-					//echo "<br/>" .$remainbw . " : hmmm " .intval($config['ezshaper']['step3']["conn{$i}upload"]) ."/". $factor;
+		if ($config['ezshaper']['step3']['enable']) {
+			$voip = true;
+			$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
+			$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
+			if ($sched != "HFSC") {
+				if ($voipbwunit == "%") 
+					$factor =  $upbw/100;
+				else
+					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
+				$remainbw += $voipbw * $factor;
+			} else
+				$remainbw += 32000; /* 32Kbit/s forHFSC linksharing */
+				//echo "<br/>" .$remainbw . " : hmmm " .intval($config['ezshaper']['step3']["conn{$i}upload"]) ."/". $factor;
 			}
 			if ($config['ezshaper']['step4']['enable']) {
-					$penalty = true;
-					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-					if ($penaltybwunit == "%")
-						$factor = $upbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
-					$remainbw += $penaltybw * $factor;
-					//echo "<br/>".$remainbw . " : hmmm " . ($config['ezshaper']['step4']['bandwidth']) . " / " .$factor;
+				$penalty = true;
+				$penaltybw = $config['ezshaper']['step4']['bandwidth'];
+				$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+				if ($penaltybwunit == "%")
+					$factor = $upbw/100;
+				else
+					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
+				$remainbw += $penaltybw * $factor;
+				//echo "<br/>".$remainbw . " : hmmm " . ($config['ezshaper']['step4']['bandwidth']) . " / " .$factor;
 			} else {
-					$penalty = false;
-					$penaltybw = 0;
+				$penalty = false;
+				$penaltybw = 0;
 			}
 			if ($config['ezshaper']['step5']['enable']) {
 				$p2p = true;
 				if ($config['ezshaper']['step5']['p2pcatchall']) {
-						$p2pcatchall = true;
-						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-						if ($p2pcatchbwunit == "%")
-							$factor = $upbw/100;
-						else
-							$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
-						$remainbw += $p2pcatchbw * $factor;
-						//echo "<br/>".$remainbw . " : hmmm " . floatval($config['ezshaper']['step5']['bandwidth']) ."/".$factor;
+					$p2pcatchall = true;
+					$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
+					$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+					if ($p2pcatchbwunit == "%")
+						$factor = $upbw/100;
+					else
+						$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
+					$remainbw += $p2pcatchbw * $factor;
+					//echo "<br/>".$remainbw . " : hmmm " . floatval($config['ezshaper']['step5']['bandwidth']) ."/".$factor;
 				} else {
-						$p2pcatchall = false;
-						$p2pcatchbw = 0;
+					$p2pcatchall = false;
+					$p2pcatchbw = 0;
 				}
 			} else {
 				$p2p = false;
@@ -749,7 +749,7 @@ function apply_all_choosen_items() {
 			if (intval($remainbw) > 0 && intval($remainbw) > 30) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$message}");
-				return;
+				exit;
 			} else {
 				$remainbw = 100 - $remainbw;
 			}
@@ -1147,7 +1147,7 @@ function apply_all_choosen_items() {
 			if (intval($remainbw) > 0 && intval($remainbw) > 40) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$message}");
-				return;
+				exit;
 			} else {
 				$remainbw = 100 - $remainbw;
 			}

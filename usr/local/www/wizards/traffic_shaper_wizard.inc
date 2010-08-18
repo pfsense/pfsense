@@ -690,7 +690,7 @@ function apply_all_choosen_items() {
 			if ($remainbw > 0 && $remainbw > 30) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
-				return;
+				exit;
 			} else {
 				$remainbw = 100 - $remainbw;
 			}
@@ -1042,7 +1042,7 @@ function apply_all_choosen_items() {
 			if ($remainbw > 0 && $remainbw > 30) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
-				return;
+				exit;
 			} else {
 				$remainbw = 100 - $remainbw;
 			}

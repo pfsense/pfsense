@@ -191,6 +191,7 @@ function step2_stepbeforeformdisplay() {
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
 			$fields[] = $field;
 
+		$field = array();
 			$field['name'] = "conn{$i}downloadscheduler";
 			$field['displayname'] = "LAN Scheduler";
 			$field['type'] = "select";

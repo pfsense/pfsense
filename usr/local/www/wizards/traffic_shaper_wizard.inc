@@ -127,6 +127,7 @@ function step2_stepbeforeformdisplay() {
 		$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
 		$fields[] = $field;
 
+		$field = array();
 		$field['displayname'] = "Upload Scheduler";
 		$field['name'] = "conn{$i}uploadscheduler";
 		$field['type'] = "select";
@@ -308,6 +309,7 @@ function step3_stepbeforeformdisplay() {
 	$field['type'] = "listtopic";
 	$voipfields[] = $field;
 
+	$field = array();
 	$field['name'] = "Provider";
 	$enablefields[] = "Provider";
 	$field['type'] = "select";

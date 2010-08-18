@@ -265,8 +265,8 @@ function step2_stepsubmitphpaction() {
 			}
 			$upbw = $_POST["conn{$i}upload"];
 			$downbw = $_POST["conn{$i}download"];
-			if ($upbw == 0 || $downbw = 0) {
-                        	$savemsg = gettext("You cannot specify 0 bandwidth!");
+			if ($upbw < 1 || $downbw < 1) {
+                        	$savemsg = gettext("You cannot specify bandwidth smaller than 1!");
 				$stepid--;
                                 return;
 			}
@@ -332,6 +332,7 @@ function step3_stepbeforeformdisplay() {
 	$field['type'] = "listtopic";
 	$voipfields[] = $field;
 
+	$field = array();
 	$field['name'] = "Provider";
 	$enablefields[] = "Provider";
 	$field['type'] = "select";

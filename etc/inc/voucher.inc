@@ -89,7 +89,7 @@ function voucher_auth($voucher_received, $test = 0) {
                     list($timestamp,$minutes) = explode(",", $line);
                     // we have an already active voucher here.
                     $remaining = intval((($timestamp + 60*$minutes) - time())/60);
-                    $test_result[] = "$voucher ($roll/$nr) active and good for $remaining Minutes";
+                    $test_result[] = sprintf(gettext("%s (%s/%s) active and good for %d Minutes"), $voucher, $roll, $nr, $remaining);
                     $total_minutes += $remaining;
                 } else {
                     // voucher not used. Check if ticket Id is on the roll (not too high)
@@ -100,22 +100,22 @@ function voucher_auth($voucher_received, $test = 0) {
                     $pos = $nr >> 3; // divide by 8 -> octet
                     $mask = 1 << ($nr % 8);
                     if (ord($bitstring[$roll][$pos]) & $mask) {
-                        $test_result[] = "$voucher ($roll/$nr) already used and expired";
+                        $test_result[] = sprintf(gettext("%s (%s/%s) already used and expired"), $voucher, $roll, $nr);
                         $total_minutes = -1;    // voucher expired
                         $error++;
                     } else {
                         // mark bit for this voucher as used
                         $bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
-                        $test_result[] = "$voucher ($roll/$nr) good for {$minutes_per_roll[$roll]} Minutes";
+                        $test_result[] = sprintf(gettext("%s (%s/%s) good for %d Minutes"), $voucher, $roll, $nr, $minutes_per_roll[$roll]);
                         $total_minutes += $minutes_per_roll[$roll];
                     }
                 }
             } else {
-                $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
+                $test_result[] = sprintf(gettext("%s (%s/%s): not found on any registererd Roll"), $voucher, $roll, $nr);
             }
         } else {
             // hmm, thats weird ... not what I expected
-            $test_result[] = "$voucher invalid: $result !!";
+            $test_result[] = "$voucher " . gettext("invalid:") . " $result !!";
             $error++;
         }
     }
@@ -123,9 +123,9 @@ function voucher_auth($voucher_received, $test = 0) {
     // if this was a test call, we're done. Return the result.
     if ($test) {
         if ($error) {
-            $test_result[] = "Access denied!";
+            $test_result[] = gettext("Access denied!");
         } else {
-            $test_result[] = "Access granted for $total_minutes Minutes in total.";
+            $test_result[] = sprintf(gettext("Access granted for %d Minutes in total."), $total_minutes);
         }
 	unlock($voucherlck);
         return $test_result;
@@ -198,7 +198,7 @@ function voucher_configure() {
         $pubkey = base64_decode($config['voucher']['publickey']);
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
         if (!$fd) {
-            printf("Error: cannot write voucher.public\n");
+            printf(gettext("Error: cannot write voucher.public") . "\n");
 	    unlock($voucherlck);
             return 1;
         }
@@ -209,7 +209,7 @@ function voucher_configure() {
         /* write config file used by voucher binary to decode vouchers */
         $fd = fopen("{$g['varetc_path']}/voucher.cfg", "w");
         if (!$fd) {
-            printf("Error: cannot write voucher.cfg\n");
+            printf(gettext("Error: cannot write voucher.cfg") . "\n");
 	    unlock($voucherlck);
             return 1;
         }

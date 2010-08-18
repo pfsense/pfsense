@@ -171,53 +171,52 @@ function step2_stepbeforeformdisplay() {
 		$field['type'] = "listtopic";
 		$fields[] = $field;
 
-			$field = array();
-			$field['name'] = "conn{$i}interface";
-			$field['displayname'] = "LAN interface";
-			$field['type'] = "select";
-			$field['typehint'] = "Interface of this connection.";
-			$field['options']['option'] = array();
-			$ifselect = 0;
-			foreach ($iflist as $ifname => $ifdescr) {
-				if ($ifselect > 0 && $ifselect == ($i + 1))
-					$field['value'] = $ifname;
-                                $opts = array();
-                                $opts['displayname'] = $ifdescr;
-                                $opts['name'] = $ifname;
-                                $opts['value'] = $ifname;
-                                $field['options']['option'][] = $opts;
-				$ifselect++;
-                        }
-			$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
-			$fields[] = $field;
-
 		$field = array();
-			$field['name'] = "conn{$i}downloadscheduler";
-			$field['displayname'] = "LAN Scheduler";
-			$field['type'] = "select";
-			$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
-			$field['options']['option'] = array();
-			$opts = array();
-			$opts['name'] = "HFSC";
-			$opts['value'] = "HFSC";
-			$field['options']['option'][] = $opts;
-			$opts = array();
-			$opts['name'] = "CBQ";
-			$opts['value'] = "CBQ";
-			$field['options']['option'][] = $opts;
-			$opts = array();
-			$opts['name'] = "PRIQ";
-			$opts['value'] = "PRIQ";
-			$field['options']['option'][] = $opts;
-			$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadscheduler";
-			$fields[] = $field;
-
+		$field['name'] = "conn{$i}interface";
+		$field['displayname'] = "LAN interface";
+		$field['type'] = "select";
+		$field['typehint'] = "Interface of this connection.";
+		$field['options']['option'] = array();
+		$ifselect = 0;
+		foreach ($iflist as $ifname => $ifdescr) {
+			if ($ifselect > 0 && $ifselect == ($i + 1))
+				$field['value'] = $ifname;
+                        $opts = array();
+                        $opts['displayname'] = $ifdescr;
+                        $opts['name'] = $ifname;
+                        $opts['value'] = $ifname;
+                        $field['options']['option'][] = $opts;
+			$ifselect++;
 		}
+		$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
+		$fields[] = $field;
 
 		$field = array();
-		$field['name'] = "Next";
-		$field['type'] = "submit";
+		$field['name'] = "conn{$i}downloadscheduler";
+		$field['displayname'] = "LAN Scheduler";
+		$field['type'] = "select";
+		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
+		$field['options']['option'] = array();
+		$opts = array();
+		$opts['name'] = "HFSC";
+		$opts['value'] = "HFSC";
+		$field['options']['option'][] = $opts;
+		$opts = array();
+		$opts['name'] = "CBQ";
+		$opts['value'] = "CBQ";
+		$field['options']['option'][] = $opts;
+		$opts = array();
+		$opts['name'] = "PRIQ";
+		$opts['value'] = "PRIQ";
+		$field['options']['option'][] = $opts;
+		$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadscheduler";
 		$fields[] = $field;
+	}
+
+	$field = array();
+	$field['name'] = "Next";
+	$field['type'] = "submit";
+	$fields[] = $field;
 }
 
 function step2_stepsubmitphpaction() {

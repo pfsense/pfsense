@@ -110,8 +110,8 @@ function upgrade_010_to_011() {
 			$fr['interface'] = $ifmap[$fr['interface']];
 		else {
 			/* remove the rule */
-			echo "\nWarning: filter rule removed " .
-				"(interface '{$fr['interface']}' does not exist anymore).";
+			printf(gettext("%sWarning: filter rule removed " .
+				"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
 			unset($config['filter']['rule'][$i]);
 			continue;
 		}
@@ -122,8 +122,8 @@ function upgrade_010_to_011() {
 				$fr['source']['network'] = $ifmap[$fr['source']['network']];
 			else {
 				/* remove the rule */
-				echo "\nWarning: filter rule removed " .
-					"(source network '{$fr['source']['network']}' does not exist anymore).";
+				printf(gettext("%sWarning: filter rule removed " .
+					"(source network '%s' does not exist anymore)."), "\n", $fr['source']['network']);
 				unset($config['filter']['rule'][$i]);
 				continue;
 			}
@@ -135,8 +135,8 @@ function upgrade_010_to_011() {
 				$fr['destination']['network'] = $ifmap[$fr['destination']['network']];
 			else {
 				/* remove the rule */
-				echo "\nWarning: filter rule removed " .
-					"(destination network '{$fr['destination']['network']}' does not exist anymore).";
+				printf(gettext("%sWarning: filter rule removed " .
+					"(destination network '%s' does not exist anymore)."), "\n", $fr['destination']['network']);
 				unset($config['filter']['rule'][$i]);
 				continue;
 			}
@@ -155,8 +155,8 @@ function upgrade_010_to_011() {
 			$fr['interface'] = $ifmap[$fr['interface']];
 		else {
 			/* remove the rule */
-			echo "\nWarning: traffic shaper rule removed " .
-				"(interface '{$fr['interface']}' does not exist anymore).";
+			printf(gettext("%sWarning: traffic shaper rule removed " .
+				"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
 			unset($config['pfqueueing']['rule'][$i]);
 			continue;
 		}

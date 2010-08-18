@@ -39,8 +39,8 @@ function step1_submitphpaction() {
 		$stepid--;
 		return;
 	}			
-	if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
-		$savemsg=gettext("The number of connections supported is between 1 and 100.");
+	if (intval($_POST['numberofconnections']) < 1) {
+		$savemsg=gettext("The number of connections should be greater than 1.");
 		$stepid--;
 		return;
 	}	
@@ -223,7 +223,7 @@ function step2_stepsubmitphpaction() {
 	/* Input Validation */
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
-		for ($j = $j; $j < $steps; $j++) {
+		for ($j = $i + 1; $j < $steps; $j++) {
 			$wannum = $i+1;
 			if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
 				$savemsg=gettext("You cannot select the same interface for WAN# {$wannum} and WAN #{$j}.");

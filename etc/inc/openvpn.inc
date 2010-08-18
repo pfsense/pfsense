@@ -752,6 +752,10 @@ function openvpn_get_active_servers() {
 					/* read the next line */
 					$line = fgets($fp, 1024);
 	
+					$info = stream_get_meta_data($fp);
+					if ($info['timed_out'])
+						break;
+
 					/* parse header list line */
 					if (strstr($line, "HEADER"))
 						continue;
@@ -830,7 +834,11 @@ function openvpn_get_active_clients() {
 				while (!feof($fp)) {
 					/* read the next line */
 					$line = fgets($fp, 1024);
-	
+					
+					$info = stream_get_meta_data($fp);
+					if ($info['timed_out'])
+						break;	
+
 					/* Get the client state */
 					if (strstr($line,"CONNECTED")) {
 						$client['status']="up";
@@ -853,6 +861,10 @@ function openvpn_get_active_clients() {
 						/* read the next line */
 						$line = fgets($fp, 1024);
 	
+						$info = stream_get_meta_data($fp);
+						if ($info['timed_out'])
+							break;	
+
 						if (strstr($line,"TCP/UDP read bytes")) {
 							$list = explode(",", $line);
 							$client['bytes_recv'] = $list[1];

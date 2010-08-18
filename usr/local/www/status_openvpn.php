@@ -79,6 +79,11 @@ function kill_client($port, $remipp) {
 		fputs($fp, "kill {$remipp}\n");
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out'])
+				break;
+
 			/* parse header list line */
 			if (strpos($line, "INFO:"))
 				continue;

@@ -404,7 +404,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		$conf .= "lport {$settings['local_port']}\n";
 
 		// The management port to listen on
-		$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
+		// Use unix socket to overcome the problem on any type of server
+		$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
+		//$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 
 		if ($settings['maxclients'])
 			$conf .= "max-clients {$settings['maxclients']}\n";
@@ -445,7 +447,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		// If local_port is used, bind the management port
 		if ($settings['local_port']) {
 			$conf .= "lport {$settings['local_port']}\n";
-			$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
+			// Use unix socket to overcome the problem on any type of server
+			$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
+			//$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 		}
 
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
@@ -709,8 +713,9 @@ function openvpn_resync_all($interface = "") {
 }
 
 function openvpn_get_active_servers() {
+	global $config, $g;
+
 	$servers = array();
-	global $config;
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
 	
@@ -726,13 +731,17 @@ function openvpn_get_active_servers() {
 				$server['name'] = "Server {$prot}:{$port}";
 			$server['conns'] = array();
 	
-			$tcpsrv = "tcp://127.0.0.1:{$port}";
+			$vpnid = $settings['vpnid'];
+                        $mode_id = "server{$vpnid}";
+			$server['mgmt'] = $mode_id;
+                        $tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
 			$errval;
 			$errstr;
 	
 			/* open a tcp connection to the management port of each server */
 			$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
 			if ($fp) {
+				stream_set_timeout($fp, 1);
 	
 				/* send our status request */
 				fputs($fp, "status 2\n");
@@ -743,6 +752,10 @@ function openvpn_get_active_servers() {
 					/* read the next line */
 					$line = fgets($fp, 1024);
 	
+					$info = stream_get_meta_data($fp);
+					if ($info['timed_out'])
+						break;
+
 					/* parse header list line */
 					if (strstr($line, "HEADER"))
 						continue;
@@ -785,8 +798,9 @@ function openvpn_get_active_servers() {
 }
 
 function openvpn_get_active_clients() {
+	global $config, $g;
+
 	$clients = array();
-	global $config;
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
 	
@@ -800,7 +814,10 @@ function openvpn_get_active_clients() {
 			else
 				$client['name'] = "Client {$prot}:{$port}";
 	
-			$tcpcli = "tcp://127.0.0.1:{$port}";
+			$vpnid = $settings['vpnid'];
+        		$mode_id = "client{$vpnid}";
+			$client['mgmt'] = $mode_id;
+			$tcpcli = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
 			$errval;
 			$errstr;
 	
@@ -809,7 +826,7 @@ function openvpn_get_active_clients() {
 			/* open a tcp connection to the management port of each cli */
 			$fp = @stream_socket_client($tcpcli, $errval, $errstr, 1);
 			if ($fp) {
-	
+				stream_set_timeout($fp, 1);
 				/* send our status request */
 				fputs($fp, "state 1\n");
 	
@@ -817,7 +834,11 @@ function openvpn_get_active_clients() {
 				while (!feof($fp)) {
 					/* read the next line */
 					$line = fgets($fp, 1024);
-	
+					
+					$info = stream_get_meta_data($fp);
+					if ($info['timed_out'])
+						break;	
+
 					/* Get the client state */
 					if (strstr($line,"CONNECTED")) {
 						$client['status']="up";
@@ -840,6 +861,10 @@ function openvpn_get_active_clients() {
 						/* read the next line */
 						$line = fgets($fp, 1024);
 	
+						$info = stream_get_meta_data($fp);
+						if ($info['timed_out'])
+							break;	
+
 						if (strstr($line,"TCP/UDP read bytes")) {
 							$list = explode(",", $line);
 							$client['bytes_recv'] = $list[1];

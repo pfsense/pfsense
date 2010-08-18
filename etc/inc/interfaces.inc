@@ -327,9 +327,16 @@ function interface_bridge_configure(&$bridge) {
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
+	$commonrx = true;
+	$commontx = true;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
-		$mtu = get_interface_mtu($realif);
+		$opts = pfSense_get_interface_addresses($realif);
+		$mtu = $opts['mtu'];
+		if (!isset($opts['encaps']['txcsum']))
+			$commontx = false;
+		if (!isset($opts['encaps']['rxcsum']))
+			$commonrx = false;
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
 		else if (!empty($mtu) && $mtu < $smallermtu)
@@ -340,16 +347,25 @@ function interface_bridge_configure(&$bridge) {
 	if ($smallermtu == 0)
 		$smallermtu = 1500; 
 
+	$flags = 0;
+	if ($commonrx == false)
+		$flags |= IFCAP_RXCSUM;
+	if ($commontx == false)
+		$flags |= IFCAP_TXCSUM;
+		
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		$realif1 = get_real_interface($member);
 		$realif =  escapeshellarg($realif1);
-		/* make sure the parent interface is up */
-		pfSense_interface_mtu($realif, $smallermtu);
-		if(!$realif) 
+		if (!$realif) {
 			log_error(gettext("realif not defined in interfaces bridge - up"));
+			continue;
+		}
+		/* make sure the parent interface is up */
+		pfSense_interface_mtu($realif1, $smallermtu);
+		pfSense_interface_capabilities($realif1, -$flags);
 		interfaces_bring_up($realif1);
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
 	}
@@ -474,15 +490,14 @@ function interface_bridge_add_member($bridgeif, $interface) {
 		pfSense_interface_mtu($interface, $mtu);
 
 	$options = pfSense_get_interface_addresses($bridgeif);
-	if (isset($options['encaps']['txcsum']))
-		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
-	else
-		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
+	$flags = 0;
+	if (!isset($options['encaps']['txcsum']))
+		$flags |= IFCAP_TXCSUM;
 
-	if (isset($options['encaps']['rxcsum']))
-		pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
-	else
-		pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
+	if (!isset($options['encaps']['rxcsum']))
+		$flags |= IFCAP_RXCSUM;
+
+	pfSense_interface_capabilities($interface, -$flags);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -2357,6 +2372,49 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!empty($wancfg['mtu']))
 		pfSense_interface_mtu($realif, $wancfg['mtu']);
 
+	/* skip vlans for checksumming and polling */
+        if (!stristr($realif, "vlan")) {
+		$options = pfSense_get_interface_addresses($realif);
+		$flags = 0;
+		if(isset($config['system']['disablechecksumoffloading'])) {
+			if (isset($options['encaps']['txcsum']))
+				$flags |= IFCAP_TXCSUM;
+			if (isset($options['encaps']['rxcsum']))
+				$flags |= IFCAP_RXCSUM;
+        	} else {
+ 			if (!isset($options['caps']['txcsum']))
+				$flags |= IFCAP_TXCSUM;
+			if (!isset($options['caps']['rxcsum']))
+				$flags |= IFCAP_RXCSUM;
+        	}
+
+        	if(isset($config['system']['disablesegmentationoffloading'])) {
+                	if (isset($options['encaps']['tso4']))
+				$flags |= IFCAP_TSO;
+                	if (isset($options['encaps']['tso6']))
+				$flags |= IFCAP_TSO;
+        	} else {
+                	if (!isset($options['caps']['tso4']))
+				$flags |= IFCAP_TSO;
+                	if (!isset($options['caps']['tso6']))
+				$flags |= IFCAP_TSO;
+        	}
+
+        	if(isset($config['system']['disablelargereceiveoffloading'])) {
+                	if (isset($options['encaps']['lro']))
+				$flags |= IFCAP_LRO;
+        	} else {
+                	if (!isset($options['caps']['lro']))
+				$flags |= IFCAP_LRO;
+        	}
+
+        	/* if the NIC supports polling *AND* it is enabled in the GUI */
+        	if (!isset($config['system']['polling']) || !isset($options['caps']['polling'])) {
+			$flags |= IFCAP_POLLING;
+		}
+               	pfSense_interface_capabilities($realif, -$flags);
+	}
+
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);
 	unset($interface_ip_arr_cache[$realif]);
@@ -2402,10 +2460,9 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
  	
-	if (!$g['booting'])
-		interface_reload_carps($realif);
-	
 	if (!$g['booting']) {
+		interface_reload_carps($realif);
+
 		unset($gre);
 		$gre = link_interface_to_gre($interface);
 		if (!empty($gre))

@@ -64,7 +64,10 @@ if($_GET['action']) {
 
 
 function kill_client($port, $remipp) {
-	$tcpsrv = "tcp://127.0.0.1:{$port}";
+	global $g;
+
+	//$tcpsrv = "tcp://127.0.0.1:{$port}";
+	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
 	$errval;
 	$errstr;
 
@@ -72,9 +75,15 @@ function kill_client($port, $remipp) {
 	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
 	$killed = -1;
 	if ($fp) {
+		stream_set_timeout($fp, 1);
 		fputs($fp, "kill {$remipp}\n");
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out'])
+				break;
+
 			/* parse header list line */
 			if (strpos($line, "INFO:"))
 				continue;
@@ -172,7 +181,7 @@ include("head.inc"); ?>
 				</td>
 				<td class='list'>
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					   onclick="killClient('<?php echo $server['port']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
+					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
 					   title='<?=gettext("Kill client connection from"); ?> <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>

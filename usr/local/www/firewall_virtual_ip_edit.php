@@ -156,6 +156,8 @@ if ($_POST) {
 	if (isset($id) && ($a_vip[$id])) {
 		if ($a_vip[$id]['mode'] != $_POST['mode'])
 			interface_vip_bring_down($a_vip[$id]);
+		if ($a_vip[$id]['interface'] != $_POST['interface'])
+			interface_vip_bring_down($a_vip[$id]);
 	}
 
 	if (!$input_errors) {
@@ -202,8 +204,6 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_vip[$id]) {
-			if ($_POST['mode'] == "ipalias")
-				interface_vip_bring_down($a_vip[$id]);
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
 				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet'])

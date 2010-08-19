@@ -1493,7 +1493,7 @@ class XML_RPC_Message extends XML_RPC_Base
             !$GLOBALS['XML_RPC_func_ereg']('^HTTP/[0-9\.]+ 10[0-9]([A-Z ]+)?[\r\n]+HTTP/[0-9\.]+ 200', $data))
         {
                 $errstr = substr($data, 0, strpos($data, "\n") - 1);
-                error_log('HTTP error, got response: ' . $errstr);
+                error_log(gettext("HTTP error, got response: ") . $errstr);
                 $r = new XML_RPC_Response(0, $XML_RPC_err['http_error'],
                                           $XML_RPC_str['http_error'] . ' (' .
                                           $errstr . ')');
@@ -1519,7 +1519,7 @@ class XML_RPC_Message extends XML_RPC_Base
         if (!xml_parse($parser_resource, $data, sizeof($data))) {
             // thanks to Peter Kocks <peter.kocks@baygate.com>
             if (xml_get_current_line_number($parser_resource) == 1) {
-                $errstr = 'XML error at line 1, check URL';
+                $errstr = gettext("XML error at line 1, check URL");
             } else {
                 $errstr = sprintf('XML error: %s at line %d',
                                   xml_error_string(xml_get_error_code($parser_resource)),

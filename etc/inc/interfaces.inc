@@ -2322,7 +2322,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface);
+			interface_bring_down($interface, true);
 	}
 
 	/* wireless configuration? */

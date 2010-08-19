@@ -150,6 +150,7 @@ function filter_delete_states_for_down_gateways() {
 				mwexec("/sbin/pfctl -b {$gateway['srcip']}");
 				mwexec("/sbin/pfctl -K {$gateway['srcip']}");
 				mwexec("/sbin/pfctl -k {$gateway['srcip']}");
+				mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$gateway['srcip']}");
 			}
 		}
 	}

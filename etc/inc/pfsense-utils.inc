@@ -275,26 +275,6 @@ function is_schedule_inuse($schedule) {
 	return false;
 }
 
-/****f* pfsense-utils/setup_polling_defaults
- * NAME
- *   sets up sysctls for polling
- * INPUTS
- *
- * RESULT
- *   null
- * NOTES
- *
- ******/
-function setup_polling_defaults() {
-	global $g, $config;
-	if($config['system']['polling_each_burst'])
-		mwexec("sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
-	if($config['system']['polling_burst_max'])
-		mwexec("sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
-	if($config['system']['polling_user_frac'])
-		mwexec("sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
-}
-
 /****f* pfsense-utils/setup_polling
  * NAME
  *   sets up polling
@@ -315,18 +295,12 @@ function setup_polling() {
 	else
 		mwexec("/sbin/sysctl kern.polling.idle_poll=0");
 
-	/* if list */
-	$iflist = get_configured_interface_list();
-
-	foreach ($iflist as $ifent => $ifname) {
-		$real_interface = get_real_interface($ifname);
-		if (interface_supports_polling($real_interface)) {
-			if (isset($config['system']['polling']))
-				pfSense_interface_capabilities($real_interface, IFCAP_POLLING);
-			else
-				pfSense_interface_capabilities($real_interface, -IFCAP_POLLING);
-		}
-	}
+	if($config['system']['polling_each_burst'])
+		mwexec("/sbin/sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+	if($config['system']['polling_burst_max'])
+		mwexec("/sbin/sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+	if($config['system']['polling_user_frac'])
+		mwexec("/sbin/sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
 }
 
 /****f* pfsense-utils/setup_microcode

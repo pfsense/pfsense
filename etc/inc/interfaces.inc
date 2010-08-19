@@ -2372,9 +2372,16 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!empty($wancfg['mtu']))
 		pfSense_interface_mtu($realif, $wancfg['mtu']);
 
+	$options = pfSense_get_interface_addresses($realif);
+	if (is_array($options) && isset($options['caps']['polling'])) {
+		if (isset($config['system']['polling']))
+			pfSense_interface_capabilities($realif, IFCAP_POLLING);
+		else
+			pfSense_interface_capabilities($realif, -IFCAP_POLLING);
+	}
+
 	/* skip vlans for checksumming and polling */
-        if (!stristr($realif, "vlan")) {
-		$options = pfSense_get_interface_addresses($realif);
+        if (!stristr($realif, "vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))

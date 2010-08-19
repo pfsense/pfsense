@@ -657,91 +657,91 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'] = array();
 
 		$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
-		$config['sysctl']['item'][0]['desc'] =    "Drop packets to closed TCP ports without returning a RST";
+		$config['sysctl']['item'][0]['desc'] =    gettext("Drop packets to closed TCP ports without returning a RST");
 		$config['sysctl']['item'][0]['value'] =   "default";
 
 		$config['sysctl']['item'][1]['tunable'] = "net.inet.udp.blackhole";
-		$config['sysctl']['item'][1]['desc'] =    "Do not send ICMP port unreachable messages for closed UDP ports";
+		$config['sysctl']['item'][1]['desc'] =    gettext("Do not send ICMP port unreachable messages for closed UDP ports");
 		$config['sysctl']['item'][1]['value'] =   "default";
 
 		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
-		$config['sysctl']['item'][2]['desc'] =    "Randomize the ID field in IP packets (default is 0: sequential IP IDs)";
+		$config['sysctl']['item'][2]['desc'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
 		$config['sysctl']['item'][2]['value'] =   "default";
 
 		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
-		$config['sysctl']['item'][3]['desc'] =    "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)";
+		$config['sysctl']['item'][3]['desc'] =    gettext("Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)");
 		$config['sysctl']['item'][3]['value'] =   "default";
 
 		$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
-		$config['sysctl']['item'][4]['desc'] =    "Sending of IPv4 ICMP redirects";
+		$config['sysctl']['item'][4]['desc'] =    gettext("Sending of IPv4 ICMP redirects");
 		$config['sysctl']['item'][4]['value'] =   "default";
 
 		$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
-		$config['sysctl']['item'][5]['desc'] =    "Sending of IPv6 ICMP redirects";
+		$config['sysctl']['item'][5]['desc'] =    gettext("Sending of IPv6 ICMP redirects");
 		$config['sysctl']['item'][5]['value'] =   "default";
 
 		$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
-		$config['sysctl']['item'][6]['desc'] =    "Generate SYN cookies for outbound SYN-ACK packets";
+		$config['sysctl']['item'][6]['desc'] =    gettext("Generate SYN cookies for outbound SYN-ACK packets");
 		$config['sysctl']['item'][6]['value'] =   "default";
 
 		$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
-		$config['sysctl']['item'][7]['desc'] =    "Maximum incoming TCP datagram size";
+		$config['sysctl']['item'][7]['desc'] =    gettext("Maximum incoming TCP datagram size");
 		$config['sysctl']['item'][7]['value'] =   "default";
 
 		$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
-		$config['sysctl']['item'][8]['desc'] =    "Maximum outgoing TCP datagram size";
+		$config['sysctl']['item'][8]['desc'] =    gettext("Maximum outgoing TCP datagram size");
 		$config['sysctl']['item'][8]['value'] =   "default";
 
 		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['desc'] =    "Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)";
+		$config['sysctl']['item'][9]['desc'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
 		$config['sysctl']['item'][9]['value'] =   "default";
 
 		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['desc'] =    "Do not delay ACK to try and piggyback it onto a data packet";
+		$config['sysctl']['item'][10]['desc'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
 		$config['sysctl']['item'][10]['value'] =   "default";
 
 		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['desc'] =    "Maximum outgoing UDP datagram size";
+		$config['sysctl']['item'][11]['desc'] =    gettext("Maximum outgoing UDP datagram size");
 		$config['sysctl']['item'][11]['value'] =   "default";
 
 		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['desc'] =    "Handling of non-IP packets which are not passed to pfil (see if_bridge(4))";
+		$config['sysctl']['item'][12]['desc'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
 		$config['sysctl']['item'][12]['value'] =   "default";
 
 		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['desc'] =    "Allow unprivileged access to tap(4) device nodes";
+		$config['sysctl']['item'][13]['desc'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
 		$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
-		$config['sysctl']['item'][14]['desc'] =    "Verbosity of the rndtest driver (0: do not display results on console)";
+		$config['sysctl']['item'][14]['desc'] =    gettext("Verbosity of the rndtest driver (0: do not display results on console)");
 		$config['sysctl']['item'][14]['value'] =   "default";
 
 		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['desc'] =    "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())";
+		$config['sysctl']['item'][15]['desc'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][15]['value'] =   "default";
 
 		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
+		$config['sysctl']['item'][16]['desc'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
 		$config['sysctl']['item'][16]['value'] =   "default";
 
 		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['desc'] =    "Set ICMP Limits";
+		$config['sysctl']['item'][17]['desc'] =    gettext("Set ICMP Limits");
 		$config['sysctl']['item'][17]['value'] =   "default";
 
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['desc'] =    "TCP Offload engine";
+		$config['sysctl']['item'][18]['desc'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][18]['value'] =   "default";
 
 		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
-		$config['sysctl']['item'][19]['desc'] =    "TCP Offload engine - BCE";
+		$config['sysctl']['item'][19]['desc'] =    gettext("TCP Offload engine - BCE");
 		$config['sysctl']['item'][19]['value'] =   "default";
 		
 		$config['sysctl']['item'][20]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][20]['desc'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][20]['desc'] =    gettext("Set the ephemeral port range starting port");
 		$config['sysctl']['item'][20]['value'] =   "default";
 
 		$config['sysctl']['item'][21]['tunable'] = "hw.syscons.kbd_reboot ";
-		$config['sysctl']['item'][21]['desc'] =    "Enables ctrl+alt+delete";
+		$config['sysctl']['item'][21]['desc'] =    gettext("Enables ctrl+alt+delete");
 		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}

@@ -483,10 +483,9 @@ function services_dhcrelay_configure() {
 	$dhcrelayenable = false;
 	if(is_array($dhcrelaycfg)) {
 		foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-			if (isset($dhcrelayifconf['enable']) &&
-				(($dhcrelayif == "lan") ||
+			if (isset($dhcrelayifconf['enable']) ||
 				(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-				$config['interfaces'][$dhcrelayif]['if'] && (!link_interface_to_bridge($dhcrelayif)))))
+				(!link_interface_to_bridge($dhcrelayif))))
 				$dhcrelayenable = true;
 		}
 	}
@@ -505,9 +504,8 @@ function services_dhcrelay_configure() {
 		$ifcfg = $config['interfaces'][$dhcrelayif];
 
 		if (!isset($dhcrelayifconf['enable']) ||
-			(($dhcrelayif != "lan") &&
-			(!isset($ifcfg['enable']) || !$ifcfg['if'] || 
-			link_interface_to_bridge($dhcrelayif))))
+			(!isset($ifcfg['enable']) ||
+			link_interface_to_bridge($dhcrelayif)))
 			continue;
 
 		$dhcrelayifs[] = get_real_interface($dhcrelayif);
@@ -535,6 +533,23 @@ function services_dhcrelay_configure() {
 		}
 	}
 
+	if (!isset($destif)) {
+		/* Create a array from the existing route table */
+        	exec("/usr/bin/netstat -rnf inet", $route_str);
+        	array_shift($route_str);
+        	array_shift($route_str);
+        	array_shift($route_str);
+        	array_shift($route_str);
+        	$route_arr = array();
+        	foreach($route_str as $routeline) {
+                	$items = preg_split("/[ ]+/i", $routeline);
+			if (ip_in_subnet($$dhcrelaycfg['server'], $items[0])) {
+				$destif = trim($items[2]);
+				break;
+			}
+        	}
+	}
+	
 	if (!isset($destif)) {
 		if (is_array($config['gateways']['gateway_item'])) {
 			foreach ($config['gateways']['gateway_item'] as $gateway) {

@@ -144,13 +144,10 @@ function filter_delete_states_for_down_gateways() {
 	global $config;
 
 	$a_gateways = return_gateways_status();
-	foreach ($a_gateways as $gateway) {
+	foreach ($a_gateways as $gwip => $gateway) {
 		if (stristr($status['status'], "down")) {
-			if (is_ipaddr($gateway['srcip'])) {
-				mwexec("/sbin/pfctl -b {$gateway['srcip']}");
-				mwexec("/sbin/pfctl -K {$gateway['srcip']}");
-				mwexec("/sbin/pfctl -k {$gateway['srcip']}");
-				mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$gateway['srcip']}");
+			if (is_ipaddr($gateway['srcip']) && is_ipaddr($gwip)) {
+				mwexec("/sbin/pfctl -b {$gateway['srcip']} -b {$gwip}");
 			}
 		}
 	}

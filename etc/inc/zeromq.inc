@@ -211,7 +211,7 @@ function backup_config_section_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;
-	$val = array_intersect_key($config, array_flip($params[0]));
+	$val = array_intersect_key($config, array_flip($params[3]));
 	return serialize($val);
 }
 
@@ -220,8 +220,8 @@ function restore_config_section_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false) 
 		return ZEROMQ_AUTH_FAIL;
-	$config = array_merge($config, $params[0]);
-	$mergedkeys = implode(",", array_keys($params[0]));
+	$config = array_merge($config, $params[3]);
+	$mergedkeys = implode(",", array_keys($params[3]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
 	return ZEROMQ_FASLE;
 }
@@ -232,7 +232,7 @@ function merge_installedpackages_section_zeromq($raw_params) {
 	if(zeromq_auth($raw_params) == false) 
 		return ZEROMQ_AUTH_FAIL;
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
-	$mergedkeys = implode(",", array_keys($params[0]));
+	$mergedkeys = implode(",", array_keys($params[3]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
 	return ZEROMQ_FASLE;
 }
@@ -243,7 +243,7 @@ function merge_config_section_zeromq($raw_params) {
 	if(zeromq_auth($raw_params) == false)
 	 	return ZEROMQ_AUTH_FAIL;
 	$config = array_merge_recursive_unique($config, $params[0]);
-	$mergedkeys = implode(",", array_keys($params[0]));
+	$mergedkeys = implode(",", array_keys($params[3]));
 	write_config("Merged in config ({$mergedkeys} sections) from ZeroMQ client.");
 	return ZEROMQ_FASLE;
 }

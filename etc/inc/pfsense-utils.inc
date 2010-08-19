@@ -288,8 +288,6 @@ function is_schedule_inuse($schedule) {
 function setup_polling() {
 	global $g, $config;
 
-	setup_polling_defaults();
-
 	if (isset($config['system']['polling']))
 		mwexec("/sbin/sysctl kern.polling.idle_poll=1");
 	else

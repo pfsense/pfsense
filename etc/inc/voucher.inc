@@ -181,7 +181,7 @@ function voucher_configure() {
     if (isset($config['voucher']['enable'])) {
 
         if ($g['booting']) {
-            echo "Enabling voucher support... ";
+            echo gettext("Enabling voucher support... ");
         }
 
         // start cron if we're asked to save runtime DB periodically
@@ -245,7 +245,7 @@ function voucher_configure() {
             }
 		
 	    unlock($voucherlck);
-            echo "done\n";
+            echo gettext("done") . "\n";
         }
     }
     return 0;
@@ -263,7 +263,7 @@ function voucher_write_used_db($roll, $vdb) {
         fwrite($fd, $vdb . "\n");
         fclose($fd);
     } else {
-        voucher_log(LOG_ERR, "cant write {$g['vardb_path']}/voucher_used_$roll.db");
+        voucher_log(LOG_ERR, sprintf(gettext("cant write %s/voucher_used_%s.db"), $g['vardb_path'], $roll));
     }
 }
 
@@ -342,7 +342,7 @@ function voucher_read_used_db($roll) {
             $vdb = trim(fgets($fd));
             fclose($fd);
         } else {
-            voucher_log(LOG_ERR, "cant read {$g['vardb_path']}/voucher_used_$roll.db");
+            voucher_log(LOG_ERR, sprintf(gettext("cant read %s/voucher_used_%s.db"), $g['vardb_path'], $roll));
         }
     }
     return base64_decode($vdb);
@@ -361,7 +361,7 @@ function voucher_log($priority, $message) {
     define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-    syslog($priority, "Voucher: " . $message);
+    syslog($priority, gettext("Voucher: ") . $message);
     closelog();
 }
 

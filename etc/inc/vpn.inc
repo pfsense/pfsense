@@ -1346,7 +1346,7 @@ EOD;
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		echo gettext("done") . "\n";
 
 	return 0;
 }

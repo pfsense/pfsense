@@ -477,20 +477,10 @@ function services_dhcrelay_configure() {
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
 
-	$dhcrelaycfg = $config['dhcrelay'];
+	$dhcrelaycfg =& $config['dhcrelay'];
 
 	/* DHCPRelay enabled on any interfaces? */
-	$dhcrelayenable = false;
-	if(is_array($dhcrelaycfg)) {
-		foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-			if (isset($dhcrelayifconf['enable']) ||
-				(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-				(!link_interface_to_bridge($dhcrelayif))))
-				$dhcrelayenable = true;
-		}
-	}
-
-	if (!$dhcrelayenable)
+	if (!isset($dhcrelaycfg['enable']))
 		return 0;
 
 	if ($g['booting'])
@@ -498,72 +488,79 @@ function services_dhcrelay_configure() {
 	else
 		sleep(1);
 
-	$dhcrelayifs = array();
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
+	$iflist = get_configured_interface_list();
 
-		$ifcfg = $config['interfaces'][$dhcrelayif];
-
-		if (!isset($dhcrelayifconf['enable']) ||
-			(!isset($ifcfg['enable']) ||
-			link_interface_to_bridge($dhcrelayif)))
+	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
+	foreach ($dhcifaces as $dhcrelayif) {
+		if (!isset($iflist[$dhcrelayif]) ||
+			link_interface_to_bridge($dhcrelayif))
 			continue;
 
-		$dhcrelayifs[] = get_real_interface($dhcrelayif);
+		if (is_ipaddr(get_interface_ip($dhcrelayif)))
+			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 	}
 
-	/* In order for the relay to work, it needs to be active on the
-	   interface in which the destination server sits */
-	$iflist = get_configured_interface_list();
-	foreach ($iflist as $ifname) {
-		$subnet = get_interface_ip($ifname) . "/" . get_interface_subnet($ifname);
-		if (ip_in_subnet($dhcrelaycfg['server'],$subnet)) {
-			$destif = get_real_interface($ifname);
-			break;
+	/* 
+	 * In order for the relay to work, it needs to be active
+	 * on the interface in which the destination server sits.
+	 */
+	$srvips = explode(",", $dhcrelaycfg['server']);
+	foreach ($srvips as $srcidx => $srvip) {
+		unset($destif);
+		foreach ($iflist as $ifname) {
+			$subnet = get_interface_ip($ifname);
+			if (!is_ipaddr($subnet))
+				continue;
+			$subnet .=  "/" . get_interface_subnet($ifname);
+			if (ip_in_subnet($srvip, $subnet)) {
+				$destif = get_real_interface($ifname);
+				break;
+			}
 		}
-	}
-	if (!isset($destif)) {
-		if (is_array($config['staticroutes']['route'])) {
-			foreach ($config['staticroutes']['route'] as $rtent) {
-				if (ip_in_subnet($dhcrelaycfg['server'], $rtent['network'])) {
-					$a_gateways = return_gateways_array(true);
-					$destif = $a_gateways[$rtent['gateway']]['interface'];
-					break;
+		if (!isset($destif)) {
+			if (is_array($config['staticroutes']['route'])) {
+				foreach ($config['staticroutes']['route'] as $rtent) {
+					if (ip_in_subnet($srvip, $rtent['network'])) {
+						$a_gateways = return_gateways_array(true);
+						$destif = $a_gateways[$rtent['gateway']]['interface'];
+						break;
+					}
 				}
 			}
 		}
-	}
 
-	if (!isset($destif)) {
-		/* Create a array from the existing route table */
-        	exec("/usr/bin/netstat -rnf inet", $route_str);
-        	array_shift($route_str);
-        	array_shift($route_str);
-        	array_shift($route_str);
-        	array_shift($route_str);
-        	$route_arr = array();
-        	foreach($route_str as $routeline) {
-                	$items = preg_split("/[ ]+/i", $routeline);
-			if (ip_in_subnet($$dhcrelaycfg['server'], $items[0])) {
-				$destif = trim($items[2]);
-				break;
-			}
-        	}
-	}
-	
-	if (!isset($destif)) {
-		if (is_array($config['gateways']['gateway_item'])) {
-			foreach ($config['gateways']['gateway_item'] as $gateway) {
-				if (isset($gateway['defaultgw'])) {
-					$a_gateways = return_gateways_array(true);
-                                        $destif = $a_gateways[$rtent['gateway']]['interface'];
+		if (!isset($destif)) {
+			/* Create a array from the existing route table */
+        		exec("/usr/bin/netstat -rnWf inet", $route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		$route_arr = array();
+        		foreach($route_str as $routeline) {
+                		$items = preg_split("/[ ]+/i", $routeline);
+				if (ip_in_subnet($srvip, $items[0])) {
+					$destif = trim($items[2]);
 					break;
-				}		
-			}
-		} else
-			$destif = get_real_interface("wan");
-	}
+				}
+        		}
+		}
+	
+		if (!isset($destif)) {
+			if (is_array($config['gateways']['gateway_item'])) {
+				foreach ($config['gateways']['gateway_item'] as $gateway) {
+					if (isset($gateway['defaultgw'])) {
+						$a_gateways = return_gateways_array(true);
+                                        	$destif = $a_gateways[$rtent['gateway']]['interface'];
+						break;
+					}		
+				}
+			} else
+				$destif = get_real_interface("wan");
+		}
 
-	$dhcrelayifs[] = $destif;
+		$dhcrelayifs[] = $destif;
+	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/* fire up dhcrelay */
@@ -572,7 +569,7 @@ function services_dhcrelay_configure() {
 	if (isset($dhcrelaycfg['agentoption']))
 		$cmd .=  " -a -m replace";
 
-	$cmd .= " {$dhcrelaycfg['server']}";
+	$cmd .= " " . implode(" ", $srvips);
 	mwexec($cmd);
 
 	return 0;

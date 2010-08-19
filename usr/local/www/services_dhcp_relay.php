@@ -1,9 +1,9 @@
 <?php
 /*
-	services_dhcp.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	services_dhcp_relay.php
 
 	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
+	Copyright (C) 2010 	Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

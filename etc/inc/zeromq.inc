@@ -33,7 +33,6 @@ define('ZEROMQ_FASLE', 'false');
 
 $do_not_include_config_gui_inc = true;
 require("auth.inc");
-require("xmlrpc.inc");
 
 //$debug = true; 
 
@@ -81,7 +80,6 @@ function zeromq_server($protocol = "tcp", $ipaddress = "127.0.0.1", $port = "888
 	if($debug) 
 		echo "Entering while() loop\n";
 	while ($msg = $server->recv()) {
-		//$message = unserialize($msg);
 		// Convert the XML to a PHP array
 		$message = unserialize($msg);
 		if($debug) {
@@ -224,7 +222,7 @@ function restore_config_section_zeromq($raw_params) {
 		return ZEROMQ_AUTH_FAIL;
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
 	return ZEROMQ_FASLE;
 }
 
@@ -235,7 +233,7 @@ function merge_installedpackages_section_zeromq($raw_params) {
 		return ZEROMQ_AUTH_FAIL;
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	write_config(sprintf(gettext("Merged in config (%s sections) from ZeroMQ client."),$mergedkeys));
 	return ZEROMQ_FASLE;
 }
 
@@ -246,7 +244,7 @@ function merge_config_section_zeromq($raw_params) {
 	 	return ZEROMQ_AUTH_FAIL;
 	$config = array_merge_recursive_unique($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	write_config("Merged in config ({$mergedkeys} sections) from ZeroMQ client.");
 	return ZEROMQ_FASLE;
 }
 
@@ -278,7 +276,7 @@ function interfaces_carp_configure_zeromq($raw_params) {
 }
 
 function check_firmware_version_zeromq($raw_params) {
-	global  $XML_RPC_String;
+	global $config, $g, $debug;
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false) 
 		return ZEROMQ_AUTH_FAIL;
@@ -295,7 +293,7 @@ function reboot_zeromq($raw_params) {
 }
 
 function get_notices_zeromq($raw_params) {
-	global $g;
+	global $config, $g, $debug;
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;

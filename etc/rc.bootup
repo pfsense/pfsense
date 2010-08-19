@@ -214,7 +214,7 @@ setup_polling();
 echo "done.\n";
 
 /* setup interface microcode which improves tcp/ip speed */
-echo "Setting up microcode and tx/rx offloading...";
+echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
 

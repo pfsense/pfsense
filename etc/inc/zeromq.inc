@@ -35,7 +35,7 @@ $do_not_include_config_gui_inc = true;
 require("auth.inc");
 require("xmlrpc.inc");
 
-$debug = true; 
+//$debug = true; 
 
 /* zeromq_send: Send a message to a member node */
 function zeromq_send($protocol = "tcp", $ipaddress = "127.0.0.1", $port = "8888", 

@@ -374,6 +374,10 @@ if ($_POST) {
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		case "none":
+		case "dhcp":
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
+				$input_errors[] = "You have to reassign the interface to be able to configure as {$_POST['type']}.";
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");

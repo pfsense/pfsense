@@ -228,6 +228,11 @@ if(!$debugging)
 /* re-make hosts file after configuring interfaces */
 system_hosts_generate();
 
+/* start OpenVPN server & clients */
+echo "Syncing OpenVPN settings...";
+openvpn_resync_all();
+echo "done.\n";
+
 /* generate resolv.conf */
 system_resolvconf_generate();
 
@@ -253,11 +258,6 @@ echo "done.\n";
 echo "Synchronizing user settings...";
 if (empty($config['system']['webgui']['backend']))
 	local_sync_accounts();
-echo "done.\n";
-
-/* start OpenVPN server & clients */
-echo "Syncing OpenVPN settings...";
-openvpn_resync_all();
 echo "done.\n";
 
 if($avail > 0 and $avail < 65) {

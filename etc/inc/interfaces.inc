@@ -713,7 +713,10 @@ function interfaces_configure() {
 			$delayed_list[$if] = $ifname;
 		else if (strstr($realif, "gif"))
 			$delayed_list[$if] = $ifname;
-		else {
+		else if (strstr($realif, "ovpn")) {
+			//echo "Delaying OpenVPN interface configuration...done.\n";
+			continue;
+		} else {
 			if ($g['booting'])
 				echo "Configuring {$ifname} interface...";
 			if($g['debug'])

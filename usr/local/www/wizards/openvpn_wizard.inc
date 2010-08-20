@@ -437,7 +437,7 @@ function step12_submitphpaction() {
 		exit;
 	}
 
-	if (isset($pconfig['step6']['uselist'])) {
+	if (isset($pconfig['step6']['uselist']) && !empty($pconfig['step6']['certca'])) {
 		$ca = array();
 		$ca['refid'] = uniqid();
 		$ca['name'] = $pconfig['step6']['certca'];

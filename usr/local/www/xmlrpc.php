@@ -155,7 +155,14 @@ $restore_config_section_sig = array(
 function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
+	if (isset($params[0]['virtualip'])) {
+		if(is_array($config['virtualip']['vip'])) {
+			foreach ($config['virtualip']['vip'] as $vip)
+				interface_vip_bring_down($vip);
+		}
+	}
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
@@ -201,7 +208,14 @@ $merge_config_section_sig = array(
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
+	if (isset($params[0]['virtualip'])) {
+                if(is_array($config['virtualip']['vip'])) {
+                        foreach ($config['virtualip']['vip'] as $vip)
+                                interface_vip_bring_down($vip);
+                }
+        }
 	$config = array_merge_recursive_unique($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");

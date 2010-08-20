@@ -166,6 +166,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	$config = array_merge($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+	interfaces_vips_configure();
 	return $xmlrpc_g['return']['true'];
 }
 
@@ -219,6 +220,7 @@ function merge_config_section_xmlrpc($raw_params) {
 	$config = array_merge_recursive_unique($config, $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	interfaces_vips_configure();
 	return $xmlrpc_g['return']['true'];
 }
 

@@ -34,6 +34,12 @@ require_once("functions.inc");
 require_once("filter.inc");	
 require_once("shaper.inc");	
 
-interface_configure("wan");
+$argument = str_replace("\n", "", $argv[1]);
+if (empty($argument))
+	interface_configure("wan");
+else {
+	if (!empty($config['interfaces'][$argument]))
+		interface_configure($argument);
+}
 
 ?>

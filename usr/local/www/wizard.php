@@ -173,8 +173,8 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
-
 <?php
+
 	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
 		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
 	else 
@@ -321,10 +321,6 @@ function showchange() {
 <img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
 <div style="width:800px;background-color:#ffffff" id="roundme">
-<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2">
-    <!-- wizard goes here -->
-    <tr><td>&nbsp;</td></tr>
-    <tr><td colspan='2'>
 <?php
 	if ($savemsg)
 		print_info_box($savemsg);
@@ -332,7 +328,10 @@ function showchange() {
 		print_info_box(htmlspecialchars($_GET['message']));
 	if ($_POST['message'] != "")
 		print_info_box(htmlspecialchars($_POST['message']));
-?></td></tr>
+?>
+<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2">
+    <!-- wizard goes here -->
+    <tr><td>&nbsp;</td></tr>
  <tr>
 	<td class="tabcont">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">

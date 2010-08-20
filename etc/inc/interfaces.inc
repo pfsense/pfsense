@@ -844,9 +844,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 						sleep(2);
 					}
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-					if (isset($ppp['ondemand']) && !$destroy) {
-						interface_configure($interface);
-					}
+					if (isset($ppp['ondemand']) && !$destroy)
+						file_put_contents("{$g['tmp_path']}/interface_configure", $interface);
 					break;
 				}
 			}
@@ -2322,7 +2321,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface);
+			interface_bring_down($interface, true);
 	}
 
 	/* wireless configuration? */
@@ -2372,9 +2371,16 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if (!empty($wancfg['mtu']))
 		pfSense_interface_mtu($realif, $wancfg['mtu']);
 
+	$options = pfSense_get_interface_addresses($realif);
+	if (is_array($options) && isset($options['caps']['polling'])) {
+		if (isset($config['system']['polling']))
+			pfSense_interface_capabilities($realif, IFCAP_POLLING);
+		else
+			pfSense_interface_capabilities($realif, -IFCAP_POLLING);
+	}
+
 	/* skip vlans for checksumming and polling */
-        if (!stristr($realif, "vlan")) {
-		$options = pfSense_get_interface_addresses($realif);
+        if (!stristr($realif, "vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))
@@ -2847,7 +2853,7 @@ function guess_interface_from_ip($ipaddress) {
 		return false;
 	}
 	/* create a route table we can search */
-	exec("netstat -rnW", $output, $ret);
+	exec("netstat -rnWf inet", $output, $ret);
 	foreach($output as $line) {
 		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
 			$fields = preg_split("/[ ]+/", $line);

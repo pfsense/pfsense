@@ -2069,4 +2069,25 @@ function upgrade_064_to_065() {
 	$config['system']['disablelargereceiveoffloading'] = true;
 }
 
+function upgrade_065_to_066() {
+	global $config;
+
+	$dhcrelaycfg =& $config['dhcrelay'];
+
+        if (is_array($dhcrelaycfg)) {
+        	$dhcrelayifs = array();
+		$foundifs = false;
+        	/* DHCPRelay enabled on any interfaces? */
+                foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
+                        if (isset($dhcrelayifconf['enable'])) {
+				$dhcrelayifs[] = $dhcrelayif;
+				unset($dhcrelaycfg['dhcrelayif']);
+				$foundifs = true;
+			}
+                }
+		if ($foundifs == true)
+			$dhcrelaycfg['interface'] = implode(",", $dhcrelayifs);
+        }
+}
+
 ?>

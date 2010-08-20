@@ -339,8 +339,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	conf_mount_rw();
+
 	/* filter out spaces from descriptions  */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
+
 	/* okay first of all, cause we are just hiding the PPPoE HTML
 	 * fields releated to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
@@ -355,11 +357,13 @@ if ($_POST) {
 		unset($_POST['pppoe_pr_preset_val']);
 	}
 	/* optional interface if list */
-	$iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr(false, true);
 	/* description unique? */
 	foreach ($iflist as $ifent => $ifdescr) {
-		if ($if != $ifent && $ifdescr == $_POST['descr'])
+		if ($if != $ifent && $ifdescr == $_POST['descr']) {
 			$input_errors[] = gettext("An interface with the specified description already exists.");
+			break;
+		}
 	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
@@ -370,6 +374,10 @@ if ($_POST) {
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		case "none":
+		case "dhcp":
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
+				$input_errors[] = "You have to reassign the interface to be able to configure as {$_POST['type']}.";
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");

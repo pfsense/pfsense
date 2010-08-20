@@ -82,10 +82,12 @@ if ($_GET['act'] == "delpriv") {
 	$privdeleted = $priv_list[$a_group[$id]['priv'][$_GET['privid']]]['name'];
 	unset($a_group[$id]['priv'][$_GET['privid']]);
 
-	foreach ($a_group[$id]['member'] as $uid) {
-		$user = getUserEntryByUID($uid);
-		if ($user)
-			local_user_set($user);
+	if (is_array($a_group[$id]['member'])) {
+		foreach ($a_group[$id]['member'] as $uid) {
+			$user = getUserEntryByUID($uid);
+			if ($user)
+				local_user_set($user);
+		}
 	}
 
 	write_config();

@@ -96,10 +96,12 @@ if ($_POST) {
 		else
 			$a_group['priv'] = array_merge($a_group['priv'], $pconfig['sysprivs']);
 
-		foreach ($a_group['member'] as $uid) {
-			$user = getUserEntryByUID($uid);
-			if ($user)
-				local_user_set($user);
+		if (is_array($a_group['member'])) {
+			foreach ($a_group['member'] as $uid) {
+				$user = getUserEntryByUID($uid);
+				if ($user)
+					local_user_set($user);
+			}
 		}
 
 		admin_groups_sort();

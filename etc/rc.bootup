@@ -208,6 +208,16 @@ echo "Starting Secure Shell Services...";
 mwexec_bg("/etc/sshd");
 echo "done.\n";
 
+/* setup polling */
+echo "Setting up polling defaults...";
+setup_polling();
+echo "done.\n";
+
+/* setup interface microcode which improves tcp/ip speed */
+echo "Setting up interfaces microcode...";
+setup_microcode();
+echo "done.\n";
+
 /* set up interfaces */
 if(!$debugging)
 	mute_kernel_msgs();
@@ -305,14 +315,6 @@ voucher_configure();
 
 /* run any shell commands specified in config.xml */
 system_do_shell_commands();
-
-/* setup polling */
-setup_polling();
-
-/* setup interface microcode which improves tcp/ip speed */
-echo "Setting up microcode and tx/rx offloading...";
-setup_microcode();
-echo "done.\n";
 
 /* start IPsec tunnels */
 vpn_ipsec_configure();

@@ -338,9 +338,12 @@ if ($_POST) {
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
-		$ppp['mtu'] = implode(',', $port_data['mtu']);
-		$ppp['mru'] = implode(',', $port_data['mru']);
-		$ppp['mrru'] = implode(',', $port_data['mrru']);
+		if (is_array($port_data['mtu']))
+			$ppp['mtu'] = implode(',', $port_data['mtu']);
+		if (is_array($port_data['mru']))
+			$ppp['mru'] = implode(',', $port_data['mru']);
+		if (is_array($port_data['mrru']))
+			$ppp['mrru'] = implode(',', $port_data['mrru']);
 		
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists

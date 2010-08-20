@@ -1086,14 +1086,14 @@ class priq_queue {
                 $form .= "</td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">";
-		$form .= "Queue Name</td><td width=\"78%\" class=\"vtable\">";
+		$form .= gettext("Queue Name") . "</td><td width=\"78%\" class=\"vtable\">";
 		$form .= "<input name=\"name\" type=\"text\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
 		$form .= htmlspecialchars($this->GetQname());
 		$form .= "\">";
 		$form .= "<br /> <span class=\"vexpl\">" . gettext("Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.");
 		$form .= "</span><br /></td>";
 		$form .= "</tr><tr>";
-		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">Priority</td>";
+		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">" . gettext("Priority") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
 		$form .= htmlspecialchars($this->GetQpriority());
 		$form .= "\">";
@@ -1813,19 +1813,19 @@ class hfsc_queue extends priq_queue {
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Gbit/s</option>";
+		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Mbit/s</option>";
+		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Kbit/s</option>";
+		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
-		$form .= ">Bit/s</option>";
+		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
 			$form .= " selected=\"yes\"";
@@ -1841,7 +1841,7 @@ class hfsc_queue extends priq_queue {
 		$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
 		if($this->GetUpperlimit()<> "") 
 			$form .=  " CHECKED ";
-		$form .= "onChange=\"enable_upperlimit()\"> Upperlimit:</td><td><input size=\"6\" value=\"";
+		$form .= "onChange=\"enable_upperlimit()\"> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_m1());
 		$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
 		if ($this->GetUpperlimit() == "")
@@ -1860,7 +1860,7 @@ class hfsc_queue extends priq_queue {
 		$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
 		if($this->GetRealtime() <> "") 
 			$form .=  " CHECKED ";
-		$form .= "onChange=\"enable_realtime()\"> Real time:</td><td><input size=\"6\" value=\"";
+		$form .= "onChange=\"enable_realtime()\"> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_m1());
 		$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
 		if ($this->GetRealtime() == "")
@@ -2290,19 +2290,19 @@ class cbq_queue extends priq_queue {
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Gbit/s</option>";
+		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Mbit/s</option>";
+		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Kbit/s</option>";
+		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
-		$form .= ">Bit/s</option>";
+		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
 			$form .= " selected=\"yes\"";
@@ -2557,19 +2557,19 @@ class fairq_queue extends priq_queue {
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Gbit/s</option>";
+		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Mbit/s</option>";
+		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Kbit/s</option>";
+		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
-		$form .= ">Bit/s</option>";
+		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
 			$form .= " selected=\"yes\"";
@@ -2962,15 +2962,15 @@ class dnpipe_class extends dummynet_class {
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Kbit/s</option>";
+		$form .= ">" .gettext( "Kbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Mbit/s</option>";
+		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
-		$form .= ">Gbit/s</option>";		
+		$form .= ">" . gettext("Gbit/s") . "</option>";		
 		$form .= "<option value=\"\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
@@ -3016,7 +3016,7 @@ class dnpipe_class extends dummynet_class {
                 $form .= "</div></td></tr>";
                 $form .= "<tr style=\"display:none\" id=\"sprtable\" name=\"sprtable\">";
 
-		$form .= "<td valign=\"center\" class=\"vncellreq\">Delay</td>";
+		$form .= "<td valign=\"center\" class=\"vncellreq\">" . gettext("Delay") . "</td>";
 		$form .= "<td valign=\"center\" class=\"vncellreq\">";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\">";
@@ -3024,7 +3024,7 @@ class dnpipe_class extends dummynet_class {
 			  .  "should specify 0 here (or leave the field empty)") . "</span>";
 		$form .= "</td></tr><br/>";
       		$form .= "<tr style=\"display:none\" id=\"sprtable1\" name=\"sprtable1\">";
-		$form .= "<td valign=\"center\" class=\"vncellreq\">Packet loss rate</td>";
+		$form .= "<td valign=\"center\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
 		$form .= "<td valign=\"center\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
@@ -3657,7 +3657,7 @@ function layer7_start_l7daemon() {
 	    /* Only reread the configuration rather than restart to avoid loosing information. */
 	    exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
 	    if (count($l7pid) > 0) {
-		log_error("Sending HUP signal to {$l7pid[0]}");
+		log_error(sprintf(gettext("Sending HUP signal to %s"), $l7pid[0]));
 		mwexec("/bin/kill -HUP {$l7pid[0]}");
 	    } else {
 		// XXX: Hardcoded number of packets to garbage collect and queue length..

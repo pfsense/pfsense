@@ -844,9 +844,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 						sleep(2);
 					}
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-					if (isset($ppp['ondemand']) && !$destroy) {
-						interface_configure($interface);
-					}
+					if (isset($ppp['ondemand']) && !$destroy)
+						file_put_contents("{$g['tmp_path']}/interface_configure", $interface);
 					break;
 				}
 			}

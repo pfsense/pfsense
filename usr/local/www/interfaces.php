@@ -360,8 +360,10 @@ if ($_POST) {
 	$iflist = get_configured_interface_with_descr(false, true);
 	/* description unique? */
 	foreach ($iflist as $ifent => $ifdescr) {
-		if ($if != $ifent && $ifdescr == $_POST['descr'])
+		if ($if != $ifent && $ifdescr == $_POST['descr']) {
 			$input_errors[] = gettext("An interface with the specified description already exists.");
+			break;
+		}
 	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")

@@ -213,7 +213,7 @@ function filter_configure_sync() {
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
 		if($g['booting'] == true)
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 		unlock($filterlck);
 		return;
 	}
@@ -385,7 +385,7 @@ function filter_configure_sync() {
 
 	update_filter_reload_status(gettext("Done"));
 	if($g['booting'] == true)
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 
 	return 0;
 }

@@ -339,8 +339,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	conf_mount_rw();
+
 	/* filter out spaces from descriptions  */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
+
 	/* okay first of all, cause we are just hiding the PPPoE HTML
 	 * fields releated to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
@@ -355,7 +357,7 @@ if ($_POST) {
 		unset($_POST['pppoe_pr_preset_val']);
 	}
 	/* optional interface if list */
-	$iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr(false, true);
 	/* description unique? */
 	foreach ($iflist as $ifent => $ifdescr) {
 		if ($if != $ifent && $ifdescr == $_POST['descr'])

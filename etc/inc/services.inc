@@ -448,6 +448,9 @@ function interfaces_staticarp_configure($if) {
 
         $ifcfg = $config['interfaces'][$if];
 
+	if (empty($if) || empty($ifcfg['if']))
+		return 0;
+
         /* Enable staticarp, if enabled */
         if(isset($config['dhcpd'][$if]['staticarp'])) {
                 mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp " );

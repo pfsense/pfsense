@@ -208,8 +208,10 @@ if ($_POST) {
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
-	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
-		$input_errors[] = gettext("The service name contains invalid characters.");
+	if ($_POST['provider'] && !is_domain($_POST['provider']))
+		$input_errors[] = gettext("The Service name contains invalid characters.");
+	if ($_POST['provider'] && $_POST['null_service'])
+		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
@@ -315,9 +317,10 @@ if ($_POST) {
 			case "pppoe":
 				if (!empty($_POST['provider']))
 					$ppp['provider'] = $_POST['provider'];
-				else
+				else{
 					unset($ppp['provider']);
-				$ppp['provider'] = $_POST['null_service'] ? true : false;
+					$ppp['provider'] = $_POST['null_service'] ? true : false;
+				}
 				if (!empty($_POST['pppoe-reset-type']))
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				else

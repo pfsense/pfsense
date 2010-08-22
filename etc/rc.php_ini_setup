@@ -112,6 +112,9 @@ PHPMODULES="apc \
 	shmop \
 # Page compression
 	zlib \
+# SQLlite
+	sqlite \
+	pdo \
 # ZeroMQ
 	zmq"
 
@@ -122,7 +125,6 @@ PHPMODULES="apc \
 #	sysvsem \
 #	sysvshm \
 #	bcmath \
-#	sqlite \
 #	tokenizer \
 #	uploadprogress \
 #	sockets \

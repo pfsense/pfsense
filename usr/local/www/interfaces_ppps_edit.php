@@ -106,6 +106,8 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
+			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider']))
+				$pconfig['null_service'] = true;
 			/* ================================================ */
 			/* = force a connection reset at a specific time? = */
 			/* ================================================ */
@@ -315,6 +317,7 @@ if ($_POST) {
 					$ppp['provider'] = $_POST['provider'];
 				else
 					unset($ppp['provider']);
+				$ppp['provider'] = $_POST['null_service'] ? true : false;
 				if (!empty($_POST['pppoe-reset-type']))
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				else
@@ -586,8 +589,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
-						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty"); ?></span>
+						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">&nbsp;&nbsp;
+						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['provider']) and empty($pconfig['provider'])) echo "checked"; ?>> <?= gettext("Configure a NULL Service name"); ?> 
+							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty. If empty Service name will not be configured. Check the \"Configure NULL\" box to configure a blank Service name."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
@@ -748,7 +752,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> <?=gettext("Bandwidth");?></td>
 						<td width="78%" class="vtable">
 						<br/><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
-						<br/> <span class="vexpl"><?=gettext("Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
+						<br/> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
 					  </td>
 					</tr>
 					<tr>
@@ -762,14 +766,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
-						<br> <span class="vexpl"><?=gettext("MRU will be auto-negotiated by default.");?></span>
+						<br> <span class="vexpl">MRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mrrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mrru[]" id="mrru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mrru'][$i]);?>">
-						<br> <span class="vexpl"><?=gettext("MRRU will be auto-negotiated by default.");?></span>
+						<br> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections.");?> MRRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 				</table

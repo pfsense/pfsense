@@ -593,7 +593,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
 						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">&nbsp;&nbsp;
-						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['provider']) and empty($pconfig['provider'])) echo "checked"; ?>> <?= gettext("Configure a NULL Service name"); ?> 
+						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['null_service'])) echo "checked"; ?>> <?= gettext("Configure a NULL Service name"); ?> 
 							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty. If empty Service name will not be configured. Check the \"Configure NULL\" box to configure a blank Service name."); ?></span>
 						</td>
 					</tr>

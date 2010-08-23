@@ -114,8 +114,8 @@ PHPMODULES="apc \
 	zlib \
 # SQLlite
 	spl \
-	sqlite \
 	pdo \
+	sqlite \
 # ZeroMQ
 	zmq"
 

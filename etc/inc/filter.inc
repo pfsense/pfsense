@@ -145,7 +145,7 @@ function filter_delete_states_for_down_gateways() {
 
 	$a_gateways = return_gateways_status();
 	foreach ($a_gateways as $gwip => $gateway) {
-		if (stristr($status['status'], "down")) {
+		if (stristr($gateway['status'], "down")) {
 			if (is_ipaddr($gateway['srcip']) && is_ipaddr($gwip)) {
 				mwexec("/sbin/pfctl -b {$gateway['srcip']} -b {$gwip}");
 			}

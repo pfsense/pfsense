@@ -103,7 +103,7 @@ $g = array(
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
-	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
+	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
 	"help_base_url" => "/help.php"
 );
 

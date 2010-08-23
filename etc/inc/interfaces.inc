@@ -3193,7 +3193,7 @@ function is_altq_capable($int) {
 	$capable = array("age", "ale", "an", "ath", "aue", "awi", "bce",
 			"bfe", "bge", "dc", "de", "ed", "em", "ep", "fxp", "gem",
 			"hme", "igb", "ipw", "iwi", "jme", "le", "msk", "mxge", "my", "nfe",
-			"npe", "nve", "ral", "re", "rl", "rum", "run", "sf", "sis", "sk",
+			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp");

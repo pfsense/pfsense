@@ -295,8 +295,14 @@ mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
 	services_dnsupdate_process();
 
+/* start DHCP service */
+services_dhcpd_configure();
+
 /* start dnsmasq service */
 services_dnsmasq_configure();
+
+/* start dhcpleases dhpcp hosts leases program */
+system_dhcpleases_configure();
 
 /* start dyndns service */
 @touch("{$g['tmp_path']}/update_dyndns");
@@ -333,9 +339,6 @@ filter_configure_sync();
 
 /* load graphing functions */
 enable_rrd_graphing();
-
-/* start DHCP service */
-services_dhcpd_configure();
 
 /* startup OLSR if needed */
 setup_wireless_olsr();

@@ -1425,6 +1425,9 @@ function upgrade_051_to_052() {
 					if (substr($tmpstr,0 ,6) == "devtun") {
 						$assigned = true;
 						continue;
+					} else if (substr($tmpstr, 0, 5) == "local") {
+						$localip = substr($tmpstr, 6);
+						$server['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
 				}
@@ -1524,6 +1527,9 @@ function upgrade_051_to_052() {
 					if (substr($tmpstr,0 ,6) == "devtun") {
 						$assigned = true;
 						continue;
+					} else if (substr($tmpstr, 0, 5) == "local") {
+                                                $localip = substr($tmpstr, 6);
+                                                $client['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
 				}

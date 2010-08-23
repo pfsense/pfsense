@@ -259,9 +259,13 @@ if [ -f /var/run/php_modules_load_errors.txt ]; then
 	rm /var/run/php_modules_load_errors.txt
 fi 
 
+for EXT in $PHPMODULES; do
+	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | tr '[:upper:]' '[:lower:]'`"
+done
+
 # Check loaded modules and remove anything that did not load correctly
 LOADED_MODULES=`php -m | tr '[:upper:]' '[:lower:]' 2>/dev/null | grep -v "\["`
-for EXT in $PHPMODULES; do
+for EXT in $PHPMODULESLC; do
 	SHOULDREMOVE="true"
 	for LM in $LOADED_MODULES; do
 		if [ "$EXT" = "$LM" ]; then

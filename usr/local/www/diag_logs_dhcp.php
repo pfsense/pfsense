@@ -50,8 +50,11 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) 
+if ($_POST['clear']) {
 	clear_log_file($dhcpd_logfile);
+	killbyname("dhcpd");
+	services_dhcpd_configure();
+}
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("DHCP"));
 include("head.inc");
@@ -88,7 +91,8 @@ include("head.inc");
 		  </tr>
 		  <?php dump_clog($dhcpd_logfile, $nentries); ?>
 		<tr><td><br><form action="diag_logs_dhcp.php" method="post">
-			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>"></td></tr>
+			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>"></td>
+			<td>NOTE: Clearing the log file will restart the DHCP daemon.</td></tr>
 		</table>
 	</div>
 </form>

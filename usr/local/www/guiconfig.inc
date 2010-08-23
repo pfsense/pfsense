@@ -247,7 +247,7 @@ function print_input_errors($input_errors) {
 	<table border="0" cellspacing="0" cellpadding="4" width="100%">
 	<tr>
 		<td class="inputerrorsleft">
-			<img src="./themes/{$g['theme']}/images/icons/icon_error.gif">
+			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif">
 		</td>
 		<td class="inputerrorsright">
 			<span class="errmsg"><p>

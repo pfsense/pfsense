@@ -722,8 +722,6 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	fclose($bakout);
 	conf_mount_ro();
 
-	if($g['booting'] && $i)
-		print gettext("done.") . "\n";
 	if (!$lock)
 		unlock($lockkey);
 }

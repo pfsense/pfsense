@@ -141,13 +141,30 @@ function filter_configure() {
 }
 
 function filter_delete_states_for_down_gateways() {
-	global $config;
+	global $config, $GatewaysList;
 
 	$a_gateways = return_gateways_status();
-	foreach ($a_gateways as $gwip => $gateway) {
-		if (stristr($status['status'], "down")) {
-			if (is_ipaddr($gateway['srcip']) && is_ipaddr($gwip)) {
-				mwexec("/sbin/pfctl -b {$gateway['srcip']} -b {$gwip}");
+	if (is_array($GatewaysList)) {
+                foreach ($GatewaysList as $gwname => $gateway) {
+			if (empty($gateway['monitor']))
+				continue;
+			if (!is_ipaddr($gateway['monitor']))
+				continue;
+			if (strstr($gateway['monitor'], "127.0.0."))
+				continue;
+			if (empty($a_gateways[$gateway['monitor']]))
+				continue;
+			$gwstatus =& $a_gateways[$gateway['monitor']];
+			if (strstr($gwstatus['status'], "down")) {
+                        	$gwip = $gateway['gateway'];
+                        	if (!is_ipaddr($gwip))
+                                	$gwip = get_interface_gateway($gateway['friendlyiface']);
+                        	if (is_ipaddr($gwstatus['srcip'])) {
+					$cmd = "/sbin/pfctl -b {$gateway['srcip']} ";
+					if (is_ipaddr($gwip))
+						$cmd .= "-b {$gwip}";
+					mwexec($cmd);
+				}
 			}
 		}
 	}

@@ -43,30 +43,14 @@
 	require_once('guiconfig.inc');
 	require_once("interfaces.inc");
 
-	$ifinfo = array();
-
 	$if = $_GET['if'];
 
 	$realif = get_real_interface($if);
 	if(!$realif)
 		$realif = $if; // Need for IPSec case interface.
 
-	/* run netstat to determine link info */
-	$linkinfo = "";
-	unset($linkinfo);
-	exec("/usr/bin/netstat -I {$realif} -nWb -f link", $linkinfo);
-	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	if (preg_match("/^enc|^tun|^pppoe|^pptp/i", $realif)) {
-		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['inbytes'] = $linkinfo[6];
-		$ifinfo['outpkts'] = $linkinfo[7];
-		$ifinfo['outbytes'] = $linkinfo[9];
-	} else {
-		$ifinfo['inpkts'] = $linkinfo[4];
-		$ifinfo['inbytes'] = $linkinfo[7];
-		$ifinfo['outpkts'] = $linkinfo[8];
-		$ifinfo['outbytes'] = $linkinfo[10];
-	}
+	$ifinfo = pfSense_get_interface_stats($realif);
+
 	$temp = gettimeofday();
 	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;
 	

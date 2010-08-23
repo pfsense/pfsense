@@ -227,6 +227,14 @@ function system_hosts_generate() {
 	fwrite($fd, $hosts);
 	fclose($fd);
 
+	system_dhcpleases_configure();
+
+	return 0;
+}
+
+function system_dhcpleases_configure() {
+	global $configure, $g;
+
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if (isset($config['dnsmasq']['regdhcp'])) {
 		/* Make sure we do not error out */
@@ -239,8 +247,6 @@ function system_hosts_generate() {
                 sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
                 @unlink("{$g['varrun_path']}/dhcpleases.pid");
         }
-
-	return 0;
 }
 
 function system_hostname_configure() {

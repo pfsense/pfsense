@@ -106,6 +106,8 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
+			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider']))
+				$pconfig['null_service'] = true;
 			/* ================================================ */
 			/* = force a connection reset at a specific time? = */
 			/* ================================================ */
@@ -206,8 +208,10 @@ if ($_POST) {
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
-	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
-		$input_errors[] = gettext("The service name contains invalid characters.");
+	if ($_POST['provider'] && !is_domain($_POST['provider']))
+		$input_errors[] = gettext("The Service name contains invalid characters.");
+	if ($_POST['provider'] && $_POST['null_service'])
+		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if ($_POST['pppoe-reset-type'] == "custom" && $_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
@@ -313,8 +317,10 @@ if ($_POST) {
 			case "pppoe":
 				if (!empty($_POST['provider']))
 					$ppp['provider'] = $_POST['provider'];
-				else
+				else{
 					unset($ppp['provider']);
+					$ppp['provider'] = $_POST['null_service'] ? true : false;
+				}
 				if (!empty($_POST['pppoe-reset-type']))
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				else
@@ -338,9 +344,12 @@ if ($_POST) {
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
-		$ppp['mtu'] = implode(',', $port_data['mtu']);
-		$ppp['mru'] = implode(',', $port_data['mru']);
-		$ppp['mrru'] = implode(',', $port_data['mrru']);
+		if (is_array($port_data['mtu']))
+			$ppp['mtu'] = implode(',', $port_data['mtu']);
+		if (is_array($port_data['mru']))
+			$ppp['mru'] = implode(',', $port_data['mru']);
+		if (is_array($port_data['mrru']))
+			$ppp['mrru'] = implode(',', $port_data['mrru']);
 		
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
@@ -583,8 +592,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
-						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty"); ?></span>
+						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">&nbsp;&nbsp;
+						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['null_service'])) echo "checked"; ?>> <?= gettext("Configure a NULL Service name"); ?> 
+							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty. Service name will not be configured if this field is empty. Check the \"Configure NULL\" box to configure a blank Service name."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
@@ -745,7 +755,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> <?=gettext("Bandwidth");?></td>
 						<td width="78%" class="vtable">
 						<br/><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
-						<br/> <span class="vexpl"><?=gettext("Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
+						<br/> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
 					  </td>
 					</tr>
 					<tr>
@@ -759,14 +769,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
-						<br> <span class="vexpl"><?=gettext("MRU will be auto-negotiated by default.");?></span>
+						<br> <span class="vexpl">MRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mrrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRRU"); ?></td>
 					  <td width="78%" class="vtable">
 						<input name="mrru[]" id="mrru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mrru'][$i]);?>">
-						<br> <span class="vexpl"><?=gettext("MRRU will be auto-negotiated by default.");?></span>
+						<br> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections.");?> MRRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 				</table

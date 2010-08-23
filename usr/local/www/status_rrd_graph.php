@@ -227,12 +227,13 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime((8 + $houroffset), 0, 0, $curmonth, $curday, $curyear);
-			if($offset == 0)
+			if(($offset != 0) || (($start + ($end - (12 * 3600)) ) > 0) ) {
 				$end = mktime((8 + $houroffset) + 12, 0, 0, $curmonth, $curday, $curyear);
+			}
 			break;
 		case "day":
 			$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
@@ -245,27 +246,27 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
 			break;
 		case "month":
 			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "quarter":
 			$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "year":
 			$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 			break;
 		case "4year": 
 			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 			break;
 	}

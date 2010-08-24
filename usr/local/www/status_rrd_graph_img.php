@@ -32,7 +32,7 @@
 	pfSense_MODULE:	system
 */
 
-require("global.inc");
+require("globals.inc");
 require("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");

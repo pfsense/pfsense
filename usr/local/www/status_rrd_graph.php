@@ -444,11 +444,19 @@ function get_dates($curperiod, $graph) {
 								$replace = array(" :: ", "", $friendly);
 								switch($curoption) {
 									case "outbound":
+										/* make sure we do not show the placeholder databases in the outbound view */
+										if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+											continue 2;
+										}
 										/* only show interfaces with a gateway */
 										$optionc = "$optionc[0]";
 										if(!interface_has_gateway($optionc)) {
-											if(!isset($gateways_arr))
-												$gateways_arr = return_gateways_array();
+											if(!isset($gateways_arr)) {
+												if(preg_match("/quality/i", $curdatabase))
+													$gateways_arr = return_gateways_array();
+												else
+													$gateways_arr = array();
+											}
 											$found_gateway = false;
 											foreach ($gateways_arr as $gw) {
 												if ($gw['name'] == $optionc) {
@@ -511,10 +519,18 @@ function get_dates($curperiod, $graph) {
 									$replace = array(" :: ", "", $friendly);
 									switch($curoption) {
 										case "outbound":
+											/* make sure we do not show the placeholder databases in the outbound view */
+											if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+												continue 2;
+											}
+											/* only show interfaces with a gateway */
 											$optionc = "$optionc[0]";
 											if(!interface_has_gateway($optionc)) {
 												if(!isset($gateways_arr))
-													$gateways_arr = return_gateways_array();
+													if(preg_match("/quality/i", $curdatabase))
+														$gateways_arr = return_gateways_array();
+													else
+														$gateways_arr = array();
 												$found_gateway = false;
 												foreach ($gateways_arr as $gw) {
 													if ($gw['name'] == $optionc) {

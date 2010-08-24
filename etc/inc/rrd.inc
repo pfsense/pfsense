@@ -371,6 +371,7 @@ function enable_rrd_graphing() {
 					foreach($config['openvpn']['openvpn-server'] as $server) {
 						if("ovpns{$server['vpnid']}" == $ifname) {
 							$port = $server['local_port'];
+							$vpnid = $server['vpnid'];
 						}
 					}
 				}
@@ -383,7 +384,7 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= " echo \"quit\"\n";
 				$rrdupdatesh .= "}\n";
 				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$vpnusers N:\\\n";
-				$rrdupdatesh .= "`list_current_users | nc localhost {$port} | awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | wc -l | awk '{print $1}'`\n";
+				$rrdupdatesh .= "`list_current_users | nc -U {$g['varetc_path']}/openvpn/server{$vpnid}.sock | awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | wc -l | awk '{print $1}'` &\n";
 			}
 
 			/* QUEUES, set up the queues databases */

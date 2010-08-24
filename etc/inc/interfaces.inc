@@ -1059,7 +1059,7 @@ function interface_ppps_configure($interface) {
 	
 	if($g['booting']) {
 		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
-		echo " configuring {$upper_type} on {$descr} interface...\n";
+		echo "starting {$pppif} link...";
 		// Do not re-configure the interface if we are booting and it's already been started
 		if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;

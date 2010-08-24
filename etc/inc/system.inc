@@ -233,20 +233,20 @@ function system_hosts_generate() {
 }
 
 function system_dhcpleases_configure() {
-	global $configure, $g;
-
+	global $config, $g;
+	
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if (isset($config['dnsmasq']['regdhcp'])) {
 		/* Make sure we do not error out */
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-                if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
-                        sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-                else
-                        mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$syscfg['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
-        } else {
-                sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
-                @unlink("{$g['varrun_path']}/dhcpleases.pid");
-        }
+		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
+				sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
+		else
+			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+	} else {
+		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
+		@unlink("{$g['varrun_path']}/dhcpleases.pid");
+	}
 }
 
 function system_hostname_configure() {

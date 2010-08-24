@@ -358,9 +358,9 @@ function get_dates($curperiod, $graph) {
 
 						switch($curcat) {
 							case "system":
-								$optioncf = str_replace($search, $replace, $optionc[1]);
-								echo "<option value=\"$optioncf\"";
-								$prettyprint = ucwords(str_replace($search, $replace, $optioncf));
+								$optionc = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optionc\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 								break;
 							default:
 								/* Deduce a interface if possible and use the description */

@@ -301,9 +301,6 @@ services_dhcpd_configure();
 /* start dnsmasq service */
 services_dnsmasq_configure();
 
-/* start dhcpleases dhpcp hosts leases program */
-system_dhcpleases_configure();
-
 /* start dyndns service */
 @touch("{$g['tmp_path']}/update_dyndns");
 

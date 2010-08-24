@@ -559,7 +559,7 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { \\\n";
 		$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } \\\n";
 		$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { processes = \$1; } \\\n";
-		$rrdupdatesh .= "else if ( \$1 == \"CPU:\" ) { user = \$2; nice = \$4; sys = \$6; interrupt = \$8; } \\\n";
+		$rrdupdatesh .= "else if ( \$1 == \"CPU:\" ) { user = \$3; nice = \$5; sys = \$7; interrupt = \$9; } \\\n";
 		$rrdupdatesh .= "} END { printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes }'`\n\n";
 
 		/* End CPU statistics */

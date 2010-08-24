@@ -1,9 +1,12 @@
 <?php
 /*
 	captiveportal.inc
-	part of m0n0wall (http://m0n0.ch/wall)
+	part of pfSense (http://www.pfSense.org)
 
-	Copyright (C) 2009 Ermal Luçi
+	originally part of m0n0wall (http://m0n0.ch/wall)
+
+	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
+	Copyright (C) 2009 Ermal Luçi <ermal.luci@gmail.com>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -91,30 +94,77 @@ function captiveportal_configure() {
 		else {
 			/* example/template page */
 			$htmltext = <<<EOD
-<html>
-<head>
-<title>{$g['product_name']} captive portal</title>
-</head>
-<body>
-<center>
-<h2>{$g['product_name']} captive portal</h2>
-Welcome to the {$g['product_name']} Captive Portal!
-<p>
-<form method="post" action="\$PORTAL_ACTION\$">
-<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
-<table>
-   <tr><td>Username:</td><td><input name="auth_user" type="text"></td></tr>
-   <tr><td>Password:</td><td><input name="auth_pass" type="password"></td></tr>
-   <tr><td>&nbsp;</td></tr>
-   <tr>
-     <td colspan="2">
-	<center><input name="accept" type="submit" value="Continue"></center>
-     </td>
-   </tr>
-</table>
-</center>
-</form>
-</body>
+<html> 
+	<body> 
+		<form method="post" action="$PORTAL_ACTION$"> 
+		<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+			<center>
+				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
+					<tr height="10" bgcolor="#990000">
+						<td style="border-bottom:1px solid #000000">
+							<font color='white'>
+								<b>
+									{$g['product_name']} captive portal
+								</b>
+							</font>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div id="mainlevel">
+								<center>
+									<table width="100%" border="0" cellpadding="5" cellspacing="0">
+								 		<tr>
+								    		<td>
+												<center>
+													<div id="mainarea">
+														<center>
+															<table width="100%" border="0" cellpadding="5" cellspacing="5">
+																<tr>
+										     						<td>
+																		<div id="maindivarea">
+																			<center>
+																				<div id='statusbox'>
+																					<font color='red' face='arial' size='+1'>
+																						<b>
+																							$PORTAL_MESSAGE$
+																						</b>
+																					</font>
+																				</div>
+																				<br/>
+																				<div id='loginbox'>
+																					<table>
+																					   <tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
+																					   <tr><td>&nbsp;</td></tr>
+																					   <tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+																					   <tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+																					   <tr><td>&nbsp;</td></tr>
+																					   <tr>
+																					     <td colspan="2">
+																							<center><input name="accept" type="submit" value="Continue"></center>
+																					     </td>
+																					   </tr>
+																					</table>
+																				</div>
+																			</center>
+																		</div>
+										     						</td>
+																</tr>
+															</table>
+														</center>
+													</div>
+												</center>
+											</td>
+										</tr>
+									</table>
+								</center>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</center>
+		</form>
+	</body> 
 </html>
 
 
@@ -142,18 +192,77 @@ EOD;
 		else {
 			/* example page */
 			$errtext = <<<EOD
-<html>
-<head>
-<title>Authentication error</title>
-</head>
-<body>
-<font color="#cc0000"><h2>Authentication error</h2></font>
-<b>
-Username and/or password invalid.
-<br><br>
-<a href="javascript:history.back(); ">Go back</a>
-</b>
-</body>
+<html> 
+	<body> 
+		<form method="post" action="$PORTAL_ACTION$"> 
+		<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+			<center>
+				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
+					<tr height="10" bgcolor="#990000">
+						<td style="border-bottom:1px solid #000000">
+							<font color='white'>
+								<b>
+									{$g['product_name']} captive portal
+								</b>
+							</font>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div id="mainlevel">
+								<center>
+									<table width="100%" border="0" cellpadding="5" cellspacing="0">
+								 		<tr>
+								    		<td>
+												<center>
+													<div id="mainarea">
+														<center>
+															<table width="100%" border="0" cellpadding="5" cellspacing="5">
+																<tr>
+										     						<td>
+																		<div id="maindivarea">
+																			<center>
+																				<div id='statusbox'>
+																					<font color='red' face='arial' size='+1'>
+																						<b>
+																							$PORTAL_MESSAGE$
+																						</b>
+																					</font>
+																				</div>
+																				<br/>
+																				<div id='loginbox'>
+																					<table>
+																					   <tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
+																					   <tr><td>&nbsp;</td></tr>
+																					   <tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+																					   <tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+																					   <tr><td>&nbsp;</td></tr>
+																					   <tr>
+																					     <td colspan="2">
+																							<center><input name="accept" type="submit" value="Continue"></center>
+																					     </td>
+																					   </tr>
+																					</table>
+																				</div>
+																			</center>
+																		</div>
+										     						</td>
+																</tr>
+															</table>
+														</center>
+													</div>
+												</center>
+											</td>
+										</tr>
+									</table>
+								</center>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</center>
+		</form>
+	</body> 
 </html>
 
 EOD;

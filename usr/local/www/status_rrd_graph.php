@@ -447,11 +447,20 @@ function get_dates($curperiod, $graph) {
 										/* only show interfaces with a gateway */
 										$optionc = "$optionc[0]";
 										if(!interface_has_gateway($optionc)) {
-											if(!preg_match("/($optionc)-(quality)/", $curdatabase)) {
+											if(!isset($gateways_arr))
+												$gateways_arr = return_gateways_array();
+											$found_gateway = false;
+											foreach ($gateways_arr as $gw) {
+												if ($gw['name'] == $optionc) {
+													$found_gateway = true;
+													break;
+												}
+											}
+											if(!$found_gateway) {
 												continue 2;
 											}
 										}
-										if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
+										if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 											continue 2;
 										}
 										break;
@@ -463,7 +472,7 @@ function get_dates($curperiod, $graph) {
 										break;
 									default:
 										/* just use the name here */
-										if(! preg_match("/($curoption)[-.]/i", $curdatabase)) {
+										if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 											continue 2;
 										}
 								}
@@ -502,11 +511,23 @@ function get_dates($curperiod, $graph) {
 									$replace = array(" :: ", "", $friendly);
 									switch($curoption) {
 										case "outbound":
+											$optionc = "$optionc[0]";
 											if(!interface_has_gateway($optionc)) {
-												continue 2; 
-											}
-											if(! stristr($curdatabase, $optionc)) {
+												if(!isset($gateways_arr))
+													$gateways_arr = return_gateways_array();
+												$found_gateway = false;
+												foreach ($gateways_arr as $gw) {
+													if ($gw['name'] == $optionc) {
+														$found_gateway = true;
+														break;
+													}
+												}
+												if(!$found_gateway) {
 													continue 2;
+												}
+											}
+											if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+												continue 2;
 											}
 											break;
 										case "allgraphs":
@@ -517,7 +538,7 @@ function get_dates($curperiod, $graph) {
 											break;
 										default:
 											/* just use the name here */
-											if(! stristr($curdatabase, $curoption)) {
+											if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 												continue 2;
 											}
 									}

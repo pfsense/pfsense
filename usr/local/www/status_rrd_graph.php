@@ -175,6 +175,9 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-packets.rrd",
 		"outbound-traffic.rrd");
 
+/* additional menu choices for the custom tab */
+$dbheader_custom = array("system-throughput.rrd");
+
 foreach($databases as $database) {
 	if(stristr($database, "-wireless")) {
 		$wireless = true;
@@ -191,6 +194,7 @@ foreach($databases as $database) {
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
+$custom_databases = array_merge($dbheader_custom, $databases);
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
@@ -336,7 +340,7 @@ function get_dates($curperiod, $graph) {
 					<?php
 
 					if($curcat == "custom") {
-						foreach ($databases as $db => $database) {
+						foreach ($custom_databases as $db => $database) {
 							$optionc = split("-", $database);
 							$search = array("-", ".rrd", $optionc);
 							$replace = array(" :: ", "", $friendly);
@@ -420,7 +424,7 @@ function get_dates($curperiod, $graph) {
 						<?php
 						$curdatabase = $curoption;
 						$graph = "custom-$curdatabase";
-						if(in_array($curdatabase, $databases)) {
+						if(in_array($curdatabase, $custom_databases)) {
 							echo "<tr><td colspan=2 class=\"list\">\n";
 							echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
 							echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
@@ -463,7 +467,7 @@ function get_dates($curperiod, $graph) {
 											continue 2;
 										}
 								}
-								if(in_array($curdatabase, $databases)) {
+								if(in_array($curdatabase, $ui_databases)) {
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
 									$end = $dates['end'];
@@ -489,7 +493,7 @@ function get_dates($curperiod, $graph) {
 							<?php
 							foreach($graphs as $graph) {
 								/* check which databases are valid for our category */
-								foreach($databases as $curdatabase) {
+								foreach($ui_databases as $curdatabase) {
 									if(! stristr($curdatabase, $curcat)) {
 										continue;
 									}

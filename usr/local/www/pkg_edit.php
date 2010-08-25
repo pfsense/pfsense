@@ -332,39 +332,45 @@ foreach ($pkg['fields']['field'] as $field) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {
-    echo '<tr><td>';
     $tab_array = array();
     foreach($pkg['tabs']['tab'] as $tab) {
-	if(isset($tab['active'])) {
-		$active = true;
-	} else {
-		$active = false;
-	}
-	$urltmp = "";
-	if($tab['url'] <> "") $urltmp = $tab['url'];
-	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
+		if($tab['tab_level'])
+			$tab_level = $tab['tab_level'];
+		else
+			$tab_level = 1;
+		if(isset($tab['active'])) {
+			$active = true;
+		} else {
+			$active = false;
+		}
+		$urltmp = "";
+		if($tab['url'] <> "") $urltmp = $tab['url'];
+		if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
- 	$addresswithport = getenv("HTTP_HOST");
-	$colonpos = strpos($addresswithport, ":");
-	if ($colonpos !== False){
-		//my url is actually just the IP address of the pfsense box
-		$myurl = substr($addresswithport, 0, $colonpos);
-	}
-	else
-	{
-		$myurl = $addresswithport;
-	}
-	// eval url so that above $myurl item can be processed if need be.
-	$url = str_replace('$myurl', $myurl, $urltmp);
+ 		$addresswithport = getenv("HTTP_HOST");
+		$colonpos = strpos($addresswithport, ":");
+		if ($colonpos !== False) {
+			//my url is actually just the IP address of the pfsense box
+			$myurl = substr($addresswithport, 0, $colonpos);
+		} else {
+			$myurl = $addresswithport;
+		}
+		// eval url so that above $myurl item can be processed if need be.
+		$url = str_replace('$myurl', $myurl, $urltmp);
 
-	$tab_array[] = array(
-				$tab['text'],
-				$active,
-				$url
-			);
+		$tab_array[$tab_level][] = array(
+						$tab['text'],
+						$active,
+						$url
+					);
     }
-    display_top_tabs($tab_array);
-    echo '</td></tr>';
+
+	ksort($tab_array);
+	foreach($tab_array as $tab) {
+   		echo '<tr><td>';
+    	display_top_tabs($tab);
+   		echo '</td></tr>';
+	}
 }
 ?>
 <tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">

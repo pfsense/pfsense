@@ -1,6 +1,6 @@
 <?php
 /*
-	diag_overload_tables.php
+	diag_tables.php
 	Copyright (C) 2010 Jim Pingle
 
 	Portions borrowed from diag_dump_states.php:
@@ -35,13 +35,13 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-overload-tables
-##|*NAME=Diagnostics: PF Overload table IP addresses
-##|*DESCR=Allow access to the 'Diagnostics: Overload tables' page.
-##|*MATCH=diag_overload_tables.php*
+##|*IDENT=page-diagnostics-tables
+##|*NAME=Diagnostics: PF Table IP addresses
+##|*DESCR=Allow access to the 'Diagnostics: Tables' page.
+##|*MATCH=diag_tables.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Overload tables"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Tables"));
 
 require_once("guiconfig.inc");
 
@@ -82,10 +82,10 @@ include("fbegin.inc");
 
 <script language="javascript">
 	function method_change(entrytype) {
-		window.location='diag_overload_tables.php?type=' + entrytype;
+		window.location='diag_tables.php?type=' + entrytype;
 	}
 	function del_entry(entry) {
-		new Ajax.Request("diag_overload_tables.php?type=<?php echo $tablename;?>&delete=" + entry, {
+		new Ajax.Request("diag_tables.php?type=<?php echo $tablename;?>&delete=" + entry, {
 		onComplete: function(response) {
 			if (200 == response.status) 
 				new Effect.Fade($(response.responseText), { duration: 1.0 } ); 
@@ -133,7 +133,7 @@ include("fbegin.inc");
 
 <?php
 	if($count > 0)
-		echo "<p/>" . gettext("Delete") . " <a href='diag_overload_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
+		echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
 
 ?>
 

@@ -1455,7 +1455,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
+		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', substr($rule['descr'], 0, 63)) . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
 

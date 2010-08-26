@@ -177,14 +177,14 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p><form method="post" action="status_graph.php">
 </form>
 <p>
-<div>
-    <div class="widgetdiv" style="padding: 5px; float:left; width:46%">
+<div id="niftyOutter">
+    <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
         <object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
             <param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
             <?=gettext("Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin"); ?>.
         </object>
     </div>
-    <div class="widgetdiv" style="padding: 5px; float:right; width:48%">
+    <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td class="listtopic" valign="top"><?=gettext("Host IP"); ?></td>
@@ -272,7 +272,8 @@ foreach ($ifdescrs as $ifn => $ifd) {
                 </td>
            </tr>
         </table>
-	 </div>
+	</div>
+	<div style="clear: both;"></div>
 </div>
 
 <?php include("fend.inc"); ?>

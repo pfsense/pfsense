@@ -362,17 +362,14 @@ if ($_POST) {
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
 				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
-				if ($filterentid == false) {
-					pconfig_to_address($filterent['source'], $_POST['src'],
-						$_POST['srcmask'], $_POST['srcnot'],
-						$_POST['srcbeginport'], $_POST['srcendport']);
+				if ($filterentid == false)
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
-				} else
+				else
 					$filterent =& $config['filter']['rule'][$filterentid];
-			} else
-				pconfig_to_address($filterent['source'], $_POST['src'],
-					$_POST['srcmask'], $_POST['srcnot'],
-					$_POST['srcbeginport'], $_POST['srcendport']);
+			}
+			pconfig_to_address($filterent['source'], $_POST['src'],
+				$_POST['srcmask'], $_POST['srcnot'],
+				$_POST['srcbeginport'], $_POST['srcendport']);
 
 			// Update interface, protocol and destination
 			$filterent['interface'] = $_POST['interface'];

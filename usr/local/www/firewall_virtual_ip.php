@@ -108,6 +108,15 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
+		if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {
+			$vipiface = $a_vip[$_GET['id']]['interface'];
+			foreach ($a_vip as $vip) {
+				if ($vip['interface'] == $vipiface && $vip['mode'] == "carp")
+					if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits']))
+						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by CARP") . " {$vip['descr']}.";
+			}
+		}
+
 		if (!$input_errors) {
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {

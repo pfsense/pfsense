@@ -1689,7 +1689,7 @@ function interface_carp_configure(&$vip) {
 	/* Ensure CARP IP really exists prior to loading up. */
 	$ww_subnet_ip = find_interface_ip($realif);
 	$ww_subnet_bits = find_interface_subnet($realif);
-	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits)) {
+	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
 		file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 		return;
 	}
@@ -3098,6 +3098,25 @@ function find_interface_subnet($interface, $flush = false)
         }
 
 	return $interface_sn_arr_cache[$interface];
+}
+
+function ip_in_interface_alias_subnet($interface, $ipalias) {
+	global $config;
+
+	if (empty($interface) || !is_ipaddr($ipalias))
+		return 0;
+	if (is_array($config['virtualip']['vip'])) {
+                foreach ($config['virtualip']['vip'] as $vip) {
+                        switch ($vip['mode']) {
+                        case "ipalias":
+                                if ($vip['interface'] <> $interface)
+                                        continue;
+				if (ip_in_subnet($ipalias, gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits']))
+					return 1;
+                                break;
+                        }
+                }
+	}
 }
 
 function get_interface_ip($interface = "wan")

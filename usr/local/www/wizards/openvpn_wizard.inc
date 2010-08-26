@@ -512,6 +512,9 @@ function step12_submitphpaction() {
 	$server['interface'] = $pconfig['step10']['interface'];
 	if (isset($pconfig['step10']['localport']))
 		$server['local_port'] = $pconfig['step10']['localport'];
+
+	if (strlen($pconfig['step10']['descr']) > 30)
+		$pconfig['step10']['descr'] = substr($pconfig['step10']['descr'], 0, 30);
 	$server['description'] = $pconfig['step10']['descr'];
 	$server['custom_options'] = $pconfig['step10']['advanced'];
 	if (isset($pconfig['step10']['tlsauth'])) {
@@ -567,7 +570,10 @@ function step12_submitphpaction() {
 
 	if (isset($pconfig['step11']['ovpnrule'])) {
 		$rule = array();
-		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard rules.");
+		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard");
+		/* Ensure the rule descr is not too long for pf to handle */
+		if (strlen($rule['descr']) > 52)
+			$rule['descr'] = substr($rule['descr'], 0, 52);
 		$rule['direction'] = "in";
 		$rule['source']['any'] = TRUE;
 		$rule['destination']['network'] = $server['interface'] . "ip";
@@ -580,7 +586,10 @@ function step12_submitphpaction() {
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {
 		$rule = array();
-		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard rules.");
+		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard");
+		/* Ensure the rule descr is not too long for pf to handle */
+		if (strlen($rule['descr']) > 52)
+			$rule['descr'] = substr($rule['descr'], 0, 52);
 		$rule['source']['any'] = TRUE;
 		$rule['destination']['any'] = TRUE;
 		$rule['interface'] = "openvpn";

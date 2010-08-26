@@ -2489,6 +2489,10 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 		link_interface_to_vips($interface, "update");
 
+		$grouptmp = link_interface_to_group($interface);
+		if (!empty($grouptmp))
+			interface_group_add_member($realif, $grouptmp);
+
 		if ($interface == "lan")
 			/* make new hosts file */
 			system_hosts_generate();
@@ -2626,6 +2630,10 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 	}
 
 	return;
+}
+
+function interface_group_add_member($interface, $groupname) {
+	mwexec("/sbin/ifconfig {$interface} group {$groupname}", true);
 }
  
 /* COMPAT Function */
@@ -3022,6 +3030,17 @@ function link_interface_to_bridge($int) {
                 foreach ($config['bridges']['bridged'] as $bridge) {
 			if (in_array($int, explode(',', $bridge['members'])))
                                 return "{$bridge['bridgeif']}";
+		}
+	}
+}
+
+function link_interface_to_group($int) {
+        global $config;
+
+        if (is_array($config['ifgroups']['ifgroupentry'])) {
+                foreach ($config['ifgroups']['ifgroupentry'] as $group) {
+			if (in_array($int, explode(" ", $groupname['members'])))
+                                return "{$group['ifname']}";
 		}
 	}
 }

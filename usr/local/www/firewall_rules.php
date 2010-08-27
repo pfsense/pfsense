@@ -455,7 +455,7 @@ if($_REQUEST['undodrag']) {
 						continue;
 					if (isset($filterent['floating']) && "FloatingRules" != $if)
 						continue;
-					$isadvset = heck_for_advanced_options($filterent);
+					$isadvset = check_for_advanced_options($filterent);
 					if($isadvset)
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 

@@ -185,7 +185,7 @@ foreach($databases as $database) {
 	if(stristr($database, "-queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "-cellular")) {
+	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
 	if(stristr($database, "-vpnusers")) {

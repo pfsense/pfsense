@@ -86,7 +86,7 @@ function check_for_advanced_options(&$item) {
 	if(isset($item['allowopts']))
 		$item_set .= "allowopts ";
 	if(isset($item['disablereplyto']))
-		$item_set .= "disable reply-to";
+		$item_set .= "disable reply-to ";
 	if($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2'])
 		$item_set .= "tcpflags set";
 	

@@ -231,7 +231,7 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime((8 + $houroffset), 0, 0, $curmonth, $curday, $curyear);
-			if(($offset != 0) || (($start + ($end - (12 * 3600)) ) > 0) ) {
+			if(($offset != 0) || (($end - ($start + (12 * 3600)) ) > 0) ) {
 				$end = mktime((8 + $houroffset) + 12, 0, 0, $curmonth, $curday, $curyear);
 			}
 			break;

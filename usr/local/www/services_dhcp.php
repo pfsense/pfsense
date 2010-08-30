@@ -253,9 +253,10 @@ if ($_POST) {
 		}
 
 		$noip = false;
-		foreach ($a_maps as $map)
-			if (empty($map['ipaddr']))
-				$noip = true;
+		if(is_array($a_maps))
+			foreach ($a_maps as $map)
+				if (empty($map['ipaddr']))
+					$noip = true;
 		if ($_POST['staticarp'] && $noip)
 			$input_errors[] = "Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.";
 

@@ -2313,7 +2313,7 @@ function find_dhclient_process($interface) {
 	return $pid;
 }
 
-function interface_configure($interface = "wan", $reloadall = false) {
+function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 
@@ -2482,10 +2482,12 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		if (!empty($gif))
                        	interface_gif_configure($gif);
 
-		unset($bridgetmp);
-		$bridgetmp = link_interface_to_bridge($interface);
-		if (!empty($bridgetmp))
-			interface_bridge_add_member($bridgetmp, $realif);
+		if ($linkupevent == true) {
+			unset($bridgetmp);
+			$bridgetmp = link_interface_to_bridge($interface);
+			if (!empty($bridgetmp))
+				interface_bridge_add_member($bridgetmp, $realif);
+		}
 
 		link_interface_to_vips($interface, "update");
 

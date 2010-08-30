@@ -56,7 +56,8 @@ function handle_argument_group($iface, $argument2) {
 			$riface = get_real_interface($iface);
 			exec("/usr/sbin/arp -d -i {$riface} -a");
 			log_error("HOTPLUG: Configuring interface {$iface}");
-			interface_configure($iface);
+			// Do not try to readd to bridge otherwise em(4) has problems
+			interface_configure($iface, false, true); 
 			break;
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");

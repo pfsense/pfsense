@@ -189,6 +189,8 @@ if ($_POST) {
 
 		conf_mount_rw();
 		setup_serial_port();
+		// Restart dnsmasq in case dns rebinding toggled
+		services_dnsmasq_configure();
 		conf_mount_ro();
 	}
 }

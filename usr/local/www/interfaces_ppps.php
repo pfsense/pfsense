@@ -52,7 +52,7 @@ function ppp_inuse($num) {
 	global $config, $g, $a_ppps;
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if (isset($config['interfaces'][$if]['ptpid']) && $config['interfaces'][$if]['ptpid'] == $a_ppps[$num]['ptpid'])
+		if ($config['interfaces'][$if]['if'] == $a_ppps[$num]['if'])
 			return true;
 	}
 	return false;

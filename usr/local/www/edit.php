@@ -138,7 +138,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
 				method:     "post",
 				postBody:   "action=save&file=" + $("fbTarget").value +
-							"&data=" + fileContent,
+							"&data=" + escape(fileContent),
 				onComplete: function(req) {
 					var values = req.responseText.split("|");
 					$("fileStatus").innerHTML = values[1];

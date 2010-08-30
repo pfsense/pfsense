@@ -854,7 +854,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b>")."<br />".<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("\"to\""); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;</b>).<br />.<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("\"to\""); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>

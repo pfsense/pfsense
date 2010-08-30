@@ -50,50 +50,81 @@ require_once("filter.inc");
 require_once("radius.inc");
 require_once("voucher.inc");
 
-function captiveportal_configure() {
+function get_default_captive_portal_html() {
 	global $config, $g;
-
-	$captiveportallck = lock('captiveportal');
-	
-	if (isset($config['captiveportal']['enable'])) {
-
-		if ($g['booting'])
-			echo "Starting captive portal... ";
-
-		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
-
-		/* remove old information */
-		unlink_if_exists("{$g['vardb_path']}/captiveportal.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
-
-		/* setup new database in case someone tries to access the status -> captive portal page */
-		touch("{$g['vardb_path']}/captiveportal.db");
-
-		/* kill any running minicron */
-		killbypid("{$g['varrun_path']}/minicron.pid");
-
-		/* init ipfw rules */
-		captiveportal_init_rules(true);
-
-		/* stop accounting on all clients */
-		captiveportal_radius_stop_all(true);
-
-		/* initialize minicron interval value */
-		$croninterval = $config['captiveportal']['croninterval'] ? $config['captiveportal']['croninterval'] : 60;
-
-		/* double check if the $croninterval is numeric and at least 10 seconds. If not we set it to 60 to avoid problems */
-		if ((!is_numeric($croninterval)) || ($croninterval < 10)) { $croninterval = 60; }
-
-		/* write portal page */
-		if ($config['captiveportal']['page']['htmltext'])
-			$htmltext = base64_decode($config['captiveportal']['page']['htmltext']);
-		else {
-			/* example/template page */
+	// Detect if vouchers are being used and default to the voucher page
+	if($config['voucher']) {
 			$htmltext = <<<EOD
+<html> 
+	<body> 
+		<form method="post" action="\$PORTAL_ACTION\$"> 
+			<center>
+				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
+					<tr height="10" bgcolor="#990000">
+						<td style="border-bottom:1px solid #000000">
+							<font color='white'>
+								<b>
+									Guest Voucher code required to continue
+								</b>
+							</font>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div id="mainlevel">
+								<center>
+									<table width="100%" border="0" cellpadding="5" cellspacing="0">
+								 		<tr>
+								    		<td>
+												<center>
+													<div id="mainarea">
+														<center>
+															<table width="100%" border="0" cellpadding="5" cellspacing="5">
+																<tr>
+																	<td>
+																		<div id="maindivarea">
+																			<center>
+																				<div id='statusbox'>
+																					<font color='red' face='arial' size='+1'>
+																						<b>
+																							\$PORTAL_MESSAGE\$
+																						</b>
+																					</font>
+																				</div>
+																				<p/>
+																				<div id='loginbox'>
+																					Enter Voucher Code: 
+																					<input name="auth_voucher" type="text" style="border:1px dashed;" size="22"> 
+																					<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$"> 
+																					<input name="accept" type="submit" value="Continue"> 
+																				</div>
+																			</center>
+																		</div>
+										     						</td>
+																</tr>
+															</table>
+														</center>
+													</div>
+												</center>
+											</td>
+										</tr>
+									</table>
+								</center>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</center>
+		</form>
+	</body> 
+</html>
+
+EOD;
+	return $htmltext;
+}
+
+	// Vouchers are not found, return the normal user/pass auth page
+	$htmltext = <<<EOD
 <html> 
 	<body> 
 		<form method="post" action="\$PORTAL_ACTION\$"> 
@@ -167,9 +198,55 @@ function captiveportal_configure() {
 	</body> 
 </html>
 
-
-
 EOD;
+
+	return $htmltext;
+}
+
+function captiveportal_configure() {
+	global $config, $g;
+
+	$captiveportallck = lock('captiveportal');
+	
+	if (isset($config['captiveportal']['enable'])) {
+
+		if ($g['booting'])
+			echo "Starting captive portal... ";
+
+		/* kill any running mini_httpd */
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
+
+		/* remove old information */
+		unlink_if_exists("{$g['vardb_path']}/captiveportal.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
+
+		/* setup new database in case someone tries to access the status -> captive portal page */
+		touch("{$g['vardb_path']}/captiveportal.db");
+
+		/* kill any running minicron */
+		killbypid("{$g['varrun_path']}/minicron.pid");
+
+		/* init ipfw rules */
+		captiveportal_init_rules(true);
+
+		/* stop accounting on all clients */
+		captiveportal_radius_stop_all(true);
+
+		/* initialize minicron interval value */
+		$croninterval = $config['captiveportal']['croninterval'] ? $config['captiveportal']['croninterval'] : 60;
+
+		/* double check if the $croninterval is numeric and at least 10 seconds. If not we set it to 60 to avoid problems */
+		if ((!is_numeric($croninterval)) || ($croninterval < 10)) { $croninterval = 60; }
+
+		/* write portal page */
+		if ($config['captiveportal']['page']['htmltext'])
+			$htmltext = base64_decode($config['captiveportal']['page']['htmltext']);
+		else {
+			/* example/template page */
+			$htmltext = get_default_captive_portal_html();
 		}
 
 		$fd = @fopen("{$g['varetc_path']}/captiveportal.html", "w");

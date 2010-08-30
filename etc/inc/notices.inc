@@ -326,8 +326,8 @@ function notify_via_smtp($message) {
 		log_error(sprintf(gettext("Message sent to %s OK"), $to));
 		return;
 	} else {
-		log_error(sprintf(gettext("Could not send the message to %s -- Error: %s"), $to, $smtp->error));
-		return(sprintf(gettext("Could not send the message to %s -- Error: %s"), $to, $smtp->error));
+		log_error(sprintf(gettext("Could not send the message to %1$s -- Error: %2$s"), $to, $smtp->error));
+		return(sprintf(gettext("Could not send the message to %1$s -- Error: %2$s"), $to, $smtp->error));
 	}
 
 }

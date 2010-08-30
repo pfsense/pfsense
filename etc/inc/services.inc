@@ -94,7 +94,7 @@ function services_dhcpd_configure() {
 				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
 				$dhcprestore = implode(" ", $dhcprestore);
 				if($dhcpreturn <> 0) {
-					log_error(sprintf(gettext("DHCP leases restore failed exited with %s, the error is: %s%s"), $dhcpreturn, $dhcprestore, "\n"));
+					log_error(sprintf(gettext("DHCP leases restore failed exited with %1$s, the error is: %2$s%3$s"), $dhcpreturn, $dhcprestore, "\n"));
 				}
 			}
 		}

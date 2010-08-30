@@ -129,7 +129,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 		$tagend = substr($fdata, $tagend_off + 4, $tagend_len - 4);
 
 		if ($tagbeg != $tagend) {
-			printf(gettext("error: tag mismatch ( %s != %s ) in '%s'%s"), $tagbeg, $tagend, $fpath, "\n");
+			printf(gettext("error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"), $tagbeg, $tagend, $fpath, "\n");
 			break;
 		}
 
@@ -140,7 +140,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 		$mdata = substr($fdata, $mdata_off, $mdata_len);
 
 		if (!strlen($mdata)) {
-			printf(gettext("warning: tag %s has no data in '%s'%s"), $tagbeg, $fpath, "\n");
+			printf(gettext("warning: tag %1$s has no data in '%2$s'%3$s"), $tagbeg, $fpath, "\n");
 			break;
 		}
 
@@ -160,7 +160,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 
 			$valtag = stripos($line, "##|*");
 			if ($valtag === false || $valtag) {
-				printf(gettext("warning: tag %s has malformed data in '%s'%s"), $tagbeg, $fpath, "\n");
+				printf(gettext("warning: tag %1$s has malformed data in '%2$s'%3$s"), $tagbeg, $fpath, "\n");
 				continue;
 			}
 
@@ -182,7 +182,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 			}
 
 			if (!isset($vname) || !isset($vdata)) {
-				printf(gettext("warning: tag %s has invalid data in '%s'%s"), $tagbeg, $fpath, "\n");
+				printf(gettext("warning: tag %1$s has invalid data in '%2$s'%3$s"), $tagbeg, $fpath, "\n");
 				continue;
 			}
 

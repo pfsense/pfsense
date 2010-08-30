@@ -319,9 +319,9 @@ function filter_configure_sync() {
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
-			$line_error = sprintf(gettext("The line in question reads [%d]: %s"), $line_number, $line_split[$line_number-1]);
+			$line_error = sprintf(gettext("The line in question reads [%1$d]: %2$s"), $line_number, $line_split[$line_number-1]);
 		if($line_error and $line_number) {
-			$error_msg = sprintf(gettext("There were error(s) loading the rules: %s - %s"), $rules_error, $line_error);
+			$error_msg = sprintf(gettext("There were error(s) loading the rules: %1$s - %2$s"), $rules_error, $line_error);
 			file_notice("filter_load", $error_msg, "Filter Reload", "");
 			log_error($error_msg);
 			update_filter_reload_status($error_msg);
@@ -608,7 +608,7 @@ function filter_generate_gateways() {
 					$gatewayip = $member['gwip'];
 					if (($int <> "") && is_ipaddr($gatewayip)) {
 						if ($g['debug'])
-							log_error(sprintf(gettext("Setting up route with %s on %s"), $gatewayip, $int));
+							log_error(sprintf(gettext("Setting up route with %1$s on %2$s"), $gatewayip, $int));
 						if ($member['weight'] > 1) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
 						} else
@@ -1254,7 +1254,7 @@ function filter_nat_rules_generate() {
 		}
 		if($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
-				update_filter_reload_status(sprintf(gettext("Creating outbound rules %s - (%s)"), $if, $ifcfg['descr']));
+				update_filter_reload_status(sprintf(gettext("Creating outbound rules %1$s - (%2$s)"), $if, $ifcfg['descr']));
 				if(interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
 					/* create outbound nat entries for all local networks */
@@ -2653,12 +2653,12 @@ function discover_pkg_rules($ruletype) {
 	foreach($files as $pkg_inc) {
 		if($pkg_inc == "ls: No match.")
 			continue;
-		update_filter_reload_status(sprintf(gettext("Checking for %s PF hooks in package %s"), $ruletype, $pkg_inc));
+		update_filter_reload_status(sprintf(gettext("Checking for %1$s PF hooks in package %2$s"), $ruletype, $pkg_inc));
 		require_once($pkg_inc);
 		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
-			update_filter_reload_status(sprintf(gettext("Processing early %s rules for package %s"), $ruletype, $pkg_inc));
+			update_filter_reload_status(sprintf(gettext("Processing early %1$s rules for package %2$s"), $ruletype, $pkg_inc));
 			$tmprules = $pkg_generate_rules("$ruletype");
 			file_put_contents("{$g['tmp_path']}/rules.test.packages", $tmprules);
 			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");

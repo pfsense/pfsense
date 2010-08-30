@@ -1109,7 +1109,7 @@ function interface_ppps_configure($interface) {
 					*/
 				}
 				if(!is_ipaddr($gateways[$pid])){
-					log_error(sprintf(gettext("Could not get a PPTP/L2TP Remote IP address from %s for %s in interfaces_ppps_configure."), $dhcp_gateway, $gway));
+					log_error(sprintf(gettext("Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interfaces_ppps_configure."), $dhcp_gateway, $gway));
 					return 0;
 				}
 				break;
@@ -1725,7 +1725,7 @@ function interface_carpdev_configure(&$vip) {
 	if($vip['password'] != "")
 		$password = " pass \"" . $vip_password . "\"";
 
-	log_error(sprintf(gettext("Found carpdev interface %s on top of interface %s"), $vip['interface'], $interface));
+	log_error(sprintf(gettext("Found carpdev interface %1$s on top of interface %2$s"), $vip['interface'], $interface));
 	if (empty($vip['interface']))
 		return;
 
@@ -1841,7 +1841,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 		// example:  wlan2
 		exec("/sbin/ifconfig wlan create wlandev {$baseif} {$mode} bssid 2>&1", $out, $ret);
 		if($ret <> 0) {
-			log_error(sprintf(gettext("Failed to clone interface %s with error code %s, output %s"), $baseif, $ret, $out[0]));
+			log_error(sprintf(gettext("Failed to clone interface %1$s with error code %2$s, output %3$s"), $baseif, $ret, $out[0]));
 			return false;
 		}
 		$newif = trim($out[0]);
@@ -2358,7 +2358,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
-			file_notice("MAC Address altered", sprintf(gettext("The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %s has been automatically replaced with %s"), $realif, $random_mac), "Interfaces");
+			file_notice("MAC Address altered", sprintf(gettext("The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s"), $realif, $random_mac), "Interfaces");
 		}
 	}
 

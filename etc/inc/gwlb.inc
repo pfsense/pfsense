@@ -230,7 +230,7 @@ EOD;
 					mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 						" " . escapeshellarg($gateway['gateway']));
-					log_error(sprintf(gettext("Removing static route for monitor %s and adding a new route through %s"), $gateway['monitor'], $gateway['gateway']));
+					log_error(sprintf(gettext("Removing static route for monitor %1$s and adding a new route through %2$s"), $gateway['monitor'], $gateway['gateway']));
 				}
 			}
 		}
@@ -469,7 +469,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 		}
 	}
 	if($changed && $current_gw)
-		write_config(sprintf(gettext("Updating gateway group gateway for %s - new gateway is %s"), $interfac, $current_gw));
+		write_config(sprintf(gettext("Updating gateway group gateway for %1$s - new gateway is %2$s"), $interfac, $current_gw));
 }
 
 function lookup_gateway_ip_by_name($name) {

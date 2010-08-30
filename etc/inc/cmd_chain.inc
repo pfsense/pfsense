@@ -98,7 +98,7 @@ Class CmdCHAIN {
 				$ignore_return_text = $cmd['ignore_return_text'];
 				// Should we perform verbose debugging?
 				if($this->is_debugging == true) {
-					log_error(sprintf(gettext("CmdCHAIN is executing -> %s - %s"), $cmd_title, $command));
+					log_error(sprintf(gettext("CmdCHAIN is executing -> %1$s - %2$s"), $cmd_title, $command));
 					usleep(100);	// give network stack time to deliver network syslog message
 				}
 				// Execute command
@@ -106,9 +106,9 @@ Class CmdCHAIN {
 				if($this->ignore_return_text == true) 
 					continue;
 				if(intval($status) <> 0) {
-					log_error(sprintf(gettext("%s failed with return code -> %s.  The command was %s"), $cmd_title, $status, $command));
+					log_error(sprintf(gettext("%s failed with return code -> %1$s.  The command was %2$s"), $cmd_title, $status, $command));
 					if($this->halt_on_errors == true) 
-						return(sprintf(gettext("%s failed with return code -> %s.  The command was %s"), $cmd_title, $status, $command));
+						return(sprintf(gettext("%s failed with return code -> %1$s.  The command was %2$s"), $cmd_title, $status, $command));
 				}
 			}
 			return;

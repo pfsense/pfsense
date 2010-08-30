@@ -483,7 +483,7 @@ function WakeOnLan($addr, $mac)
 	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 	if ($s == false) {
 		log_error(gettext("Error creating socket!"));
-		log_error(sprintf(gettext("Error code is '%s' - %s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
+		log_error(sprintf(gettext("Error code is '%1$s' - %2$s"), socket_last_error($s), socket_strerror(socket_last_error($s))));
 	} else {
 		// setting a broadcast option to socket:
 		$opt_ret =  socket_set_option($s, 1, 6, TRUE);
@@ -491,7 +491,7 @@ function WakeOnLan($addr, $mac)
 			log_error(sprintf(gettext("setsockopt() failed, error: %s"), strerror($opt_ret)));
 		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
 		socket_close($s);
-		log_error(sprintf(gettext("Magic Packet sent (%s) to {%s} MAC=%s"), $e, $addr, $mac));
+		log_error(sprintf(gettext("Magic Packet sent (%1$s) to {%2$s} MAC=%3$s"), $e, $addr, $mac));
 		return true;
 	}
 
@@ -737,7 +737,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 		log_error(sprintf(gettext("XMLRPC communication error: %s"), $cli->errstr));
 		return false;
 	} elseif($resp->faultCode()) {
-		log_error(sprintf(gettext("XMLRPC request failed with error %s: %s"), $resp->faultCode(), $resp->faultString()));
+		log_error(sprintf(gettext("XMLRPC request failed with error %1$s: %2$s"), $resp->faultCode(), $resp->faultString()));
 		return false;
 	} else {
 		return XML_RPC_Decode($resp->value());
@@ -1402,7 +1402,7 @@ function compare_hostname_to_dnscache($hostname) {
 
 	if(trim($oldcontents) != trim($contents)) {
 		if($g['debug']) {
-			log_error(sprintf(gettext("DNSCACHE: Found old IP %s and new IP %s"), $oldcontents, $contents));
+			log_error(sprintf(gettext("DNSCACHE: Found old IP %1$s and new IP %2$s"), $oldcontents, $contents));
 		}
 		return ($oldcontents);
 	} else {
@@ -1573,7 +1573,7 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
 			if($debug) fwrite($fd, "$i\n");
 			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
-				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %s to %s%s"), $origname, $new_alias_name, "\n"));
+				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %1$s to %2$s%3$s"), $origname, $new_alias_name, "\n"));
 				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
 			}
 		}	
@@ -1582,7 +1582,7 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
 			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
 				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
-				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %s to %s%s"), $origname, $new_alias_name, "\n"));
+				if($debug) fwrite($fd, sprintf(gettext("Setting old alias value %1$s to %2$s%3$s"), $origname, $new_alias_name, "\n"));
 			}
 		}
 	}

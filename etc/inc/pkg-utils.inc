@@ -224,7 +224,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error(sprintf(gettext("The %s package is missing required dependencies and must be reinstalled. %s"), $package['name'], $package['configurationfile']));
+		log_error(sprintf(gettext("The %1$s package is missing required dependencies and must be reinstalled. %2$s"), $package['name'], $package['configurationfile']));
 		install_package($package['name']);
 		uninstall_package_from_name($package['name']);
 		install_package($package['name']);
@@ -641,7 +641,7 @@ function install_package_xml($pkg) {
 					fwrite($fd_log, print_r($tarout, true) . "\n");
 				}
 				if($pkg_chmod <> "") {
-					fwrite($fd_log, sprintf(gettext("Changing file mode to %s for %s%s%s"), $pkg_chmod, $prefix, $filename, "\n"));
+					fwrite($fd_log, sprintf(gettext("Changing file mode to %1$s for %2$s%3$s%4$s"), $pkg_chmod, $prefix, $filename, "\n"));
 					@chmod($prefix . $filename, $pkg_chmod);
 					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
 				}

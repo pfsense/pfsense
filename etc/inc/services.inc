@@ -670,7 +670,6 @@ function services_dnsmasq_configure() {
 		}
 
 		/* Allow DNS Rebind for forwarded domains */
-		if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
 				foreach($config['dnsmasq']['domainoverrides'] as $override) {

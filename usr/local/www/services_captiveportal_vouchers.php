@@ -52,7 +52,7 @@ if($_REQUEST['generatekey']) {
 	$privatekey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.private"));
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");
-	$alertmessage = gettext("You will need to recreate any existing Voucher Rolls due to the public and private key changes.");
+	$alertmessage = gettext("You will need to recreate any existing Voucher Rolls due to the public and private key changes. Click cancel if you do not wish to recreate the vouchers.");
 	echo <<<EOF
 		\$('publickey').value = '{$publickey}';
 		\$('privatekey').value = '{$privatekey}';

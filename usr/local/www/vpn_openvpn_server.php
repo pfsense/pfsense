@@ -179,6 +179,9 @@ if ($_POST) {
 		}
 	}
 
+	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
+		$input_errors[] = gettext("You must select a Backend for Authentication if the server mode requires User Auth.");
+
 	/* input validation */
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 		$input_errors[] = $result;

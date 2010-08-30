@@ -14,5 +14,5 @@
 
 </div> <!-- Wrapper Div -->
 
-<?php outputJavaScriptFileInline("themes/{$g['theme']}/bottom-loader.js"); ?>
+<?php outputJavaScriptFileInline("/usr/local/www/themes/{$g['theme']}/bottom-loader.js"); ?>
 

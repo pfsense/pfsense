@@ -2482,7 +2482,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if (!empty($gif))
                        	interface_gif_configure($gif);
 
-		if ($linkupevent == true) {
+		if ($linkupevent == false) {
 			unset($bridgetmp);
 			$bridgetmp = link_interface_to_bridge($interface);
 			if (!empty($bridgetmp))

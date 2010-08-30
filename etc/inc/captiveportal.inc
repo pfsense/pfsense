@@ -120,8 +120,8 @@ function get_default_captive_portal_html() {
 </html>
 
 EOD;
-	return $htmltext;
-}
+		return $htmltext;
+	}
 
 	// Vouchers are not found, return the normal user/pass auth page
 	$htmltext = <<<EOD

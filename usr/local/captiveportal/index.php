@@ -486,12 +486,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		include("{$g['varetc_path']}/captiveportal-logout.html");
 
 	} else {
-		if($_POST['ORIGINAL_PORTAL_IP'] && $_SERVER['SERVER_NAME'] != $_POST['ORIGINAL_PORTAL_IP']) {
- 			header ('HTTP/1.1 301 Moved Permanently');
-			header("Location: " . $_POST['ORIGINAL_PORTAL_IP']);
-		} else {
-			header("Location: " . $my_redirurl);
-		}
+		header("Location: " . $my_redirurl);
 	}
 
 	return $sessionid;

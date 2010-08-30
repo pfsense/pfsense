@@ -228,7 +228,7 @@ if [  $RAM -gt 96 ]; then
 
 ; APC Settings
 apc.enabled="1"
-apc.enable_cli="1"
+apc.enable_cli="0"
 apc.shm_size="${APCSHMEMSIZE}"
 
 [suhosin]

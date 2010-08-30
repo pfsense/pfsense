@@ -241,7 +241,9 @@ if ($_POST['apply']) {
 if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
-	if (link_interface_to_bridge($id))
+	if (link_interface_to_group($id))
+		$input_errors[] = gettext("The interface is part of a group. Please remove it from the group to continue");
+	else if (link_interface_to_bridge($id))
 		$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
 	else if (link_interface_to_gre($id))
 		$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");

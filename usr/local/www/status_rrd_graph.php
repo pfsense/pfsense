@@ -175,6 +175,9 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-packets.rrd",
 		"outbound-traffic.rrd");
 
+/* additional menu choices for the custom tab */
+$dbheader_custom = array("system-throughput.rrd");
+
 foreach($databases as $database) {
 	if(stristr($database, "-wireless")) {
 		$wireless = true;
@@ -182,7 +185,7 @@ foreach($databases as $database) {
 	if(stristr($database, "-queues")) {
 		$queues = true;
 	}
-	if(stristr($database, "-cellular")) {
+	if(stristr($database, "-cellular") && !empty($config['ppps'])) {
 		$cellular = true;
 	}
 	if(stristr($database, "-vpnusers")) {
@@ -191,6 +194,7 @@ foreach($databases as $database) {
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
+$custom_databases = array_merge($dbheader_custom, $databases);
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
@@ -227,12 +231,13 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime((8 + $houroffset), 0, 0, $curmonth, $curday, $curyear);
-			if($offset == 0)
+			if(($offset != 0) || (($end - ($start + (12 * 3600)) ) > 0) ) {
 				$end = mktime((8 + $houroffset) + 12, 0, 0, $curmonth, $curday, $curyear);
+			}
 			break;
 		case "day":
 			$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 			break;
 		case "week":
@@ -245,27 +250,27 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
 			break;
 		case "month":
 			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "quarter":
 			$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 			break;
 		case "year":
 			$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 			break;
 		case "4year": 
 			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
-			if($offset == 0)
+			if($offset != 0)
 				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 			break;
 	}
@@ -335,7 +340,7 @@ function get_dates($curperiod, $graph) {
 					<?php
 
 					if($curcat == "custom") {
-						foreach ($databases as $db => $database) {
+						foreach ($custom_databases as $db => $database) {
 							$optionc = split("-", $database);
 							$search = array("-", ".rrd", $optionc);
 							$replace = array(" :: ", "", $friendly);
@@ -357,9 +362,9 @@ function get_dates($curperiod, $graph) {
 
 						switch($curcat) {
 							case "system":
-								$optioncf = str_replace($search, $replace, $optionc[1]);
-								echo "<option value=\"$optioncf\"";
-								$prettyprint = ucwords(str_replace($search, $replace, $optioncf));
+								$optionc = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optionc\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 								break;
 							default:
 								/* Deduce a interface if possible and use the description */
@@ -419,7 +424,7 @@ function get_dates($curperiod, $graph) {
 						<?php
 						$curdatabase = $curoption;
 						$graph = "custom-$curdatabase";
-						if(in_array($curdatabase, $databases)) {
+						if(in_array($curdatabase, $custom_databases)) {
 							echo "<tr><td colspan=2 class=\"list\">\n";
 							echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
 							echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
@@ -439,14 +444,31 @@ function get_dates($curperiod, $graph) {
 								$replace = array(" :: ", "", $friendly);
 								switch($curoption) {
 									case "outbound":
+										/* make sure we do not show the placeholder databases in the outbound view */
+										if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+											continue 2;
+										}
 										/* only show interfaces with a gateway */
 										$optionc = "$optionc[0]";
 										if(!interface_has_gateway($optionc)) {
-											if(!preg_match("/($optionc)-(quality)/", $curdatabase)) {
+											if(!isset($gateways_arr)) {
+												if(preg_match("/quality/i", $curdatabase))
+													$gateways_arr = return_gateways_array();
+												else
+													$gateways_arr = array();
+											}
+											$found_gateway = false;
+											foreach ($gateways_arr as $gw) {
+												if ($gw['name'] == $optionc) {
+													$found_gateway = true;
+													break;
+												}
+											}
+											if(!$found_gateway) {
 												continue 2;
 											}
 										}
-										if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
+										if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 											continue 2;
 										}
 										break;
@@ -458,11 +480,11 @@ function get_dates($curperiod, $graph) {
 										break;
 									default:
 										/* just use the name here */
-										if(! preg_match("/($curoption)[-.]/i", $curdatabase)) {
+										if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 											continue 2;
 										}
 								}
-								if(in_array($curdatabase, $databases)) {
+								if(in_array($curdatabase, $ui_databases)) {
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
 									$end = $dates['end'];
@@ -488,7 +510,7 @@ function get_dates($curperiod, $graph) {
 							<?php
 							foreach($graphs as $graph) {
 								/* check which databases are valid for our category */
-								foreach($databases as $curdatabase) {
+								foreach($ui_databases as $curdatabase) {
 									if(! stristr($curdatabase, $curcat)) {
 										continue;
 									}
@@ -497,11 +519,31 @@ function get_dates($curperiod, $graph) {
 									$replace = array(" :: ", "", $friendly);
 									switch($curoption) {
 										case "outbound":
-											if(!interface_has_gateway($optionc)) {
-												continue 2; 
+											/* make sure we do not show the placeholder databases in the outbound view */
+											if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+												continue 2;
 											}
-											if(! stristr($curdatabase, $optionc)) {
+											/* only show interfaces with a gateway */
+											$optionc = "$optionc[0]";
+											if(!interface_has_gateway($optionc)) {
+												if(!isset($gateways_arr))
+													if(preg_match("/quality/i", $curdatabase))
+														$gateways_arr = return_gateways_array();
+													else
+														$gateways_arr = array();
+												$found_gateway = false;
+												foreach ($gateways_arr as $gw) {
+													if ($gw['name'] == $optionc) {
+														$found_gateway = true;
+														break;
+													}
+												}
+												if(!$found_gateway) {
 													continue 2;
+												}
+											}
+											if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+												continue 2;
 											}
 											break;
 										case "allgraphs":
@@ -512,7 +554,7 @@ function get_dates($curperiod, $graph) {
 											break;
 										default:
 											/* just use the name here */
-											if(! stristr($curdatabase, $curoption)) {
+											if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 												continue 2;
 											}
 									}

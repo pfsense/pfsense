@@ -32,7 +32,8 @@
 	pfSense_MODULE:	system
 */
 
-require("guiconfig.inc");
+require_once("globals.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
@@ -185,7 +186,7 @@ if ($altq_list_queues[$curif]) {
 $speedlimit = ($upstream + $downstream);
 
 /* select theme colors if the inclusion file exists */
-$rrdcolors = "./themes/{$g['theme']}/rrdcolors.inc.php";
+$rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
 if(file_exists($rrdcolors)) {
 	include($rrdcolors);
 } else {

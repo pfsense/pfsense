@@ -160,7 +160,7 @@ function filter_delete_states_for_down_gateways() {
                         	if (!is_ipaddr($gwip))
                                 	$gwip = get_interface_gateway($gateway['friendlyiface']);
                         	if (is_ipaddr($gwstatus['srcip'])) {
-					$cmd = "/sbin/pfctl -b {$gateway['srcip']} ";
+					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']} ";
 					if (is_ipaddr($gwip))
 						$cmd .= "-b {$gwip}";
 					mwexec($cmd);
@@ -1457,7 +1457,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
+		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', substr($rule['descr'], 0, 63)) . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
 

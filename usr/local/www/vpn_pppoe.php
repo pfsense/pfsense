@@ -344,7 +344,7 @@ function enable_change(enable_over) {
 		     }
 		    ?>
 		    </select>
-		    <br><?=gettext("Hint: 10 is TEN pppoe clients"); ?>
+		    <br><?=gettext("Hint: 10 is ten PPPoE clients"); ?>
                   </td>
 		</tr>
                 <tr> 
@@ -387,21 +387,21 @@ function enable_change(enable_over) {
 			 <br>
                       </strong><?=gettext("Sends accounting packets to the RADIUS server"); ?>.<br>
                       <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
-                      <strong><?=gettext("Use Backup Radius Server"); ?></strong><br>
+                      <strong><?=gettext("Use Backup RADIUS Server"); ?></strong><br>
                       <?=gettext("When set, if primary server fails all requests will be sent via backup server"); ?></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("NAS IP Address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
-                    <br><?=gettext("radius server NAS ip Address"); ?><br>
+                    <br><?=gettext("RADIUS server NAS IP Address"); ?><br>
                     </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("RADIUS Accounting Update"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
-                    <br><?=gettext("Radius accounting update period in seconds"); ?>
+                    <br><?=gettext("RADIUS accounting update period in seconds"); ?>
                     </td>
                 </tr>
                 <tr> 
@@ -416,7 +416,7 @@ function enable_change(enable_over) {
                       <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
 			 <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
 			 <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
-                      <br><?=gettext("Enter the IP address and port of the RADIUS server. Format ip auth_port acct_port"); ?><br>
+                      <br><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the RADIUS server."); ?><br>
 			 <br> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
                 </tr>
                 <tr> 
@@ -432,7 +432,7 @@ function enable_change(enable_over) {
                       <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
 			 <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
 			 <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
-                      <br><?=gettext("Enter the IP address and port of the BACKUP RADIUS server. Format ip auth_port acct_port"); ?><br>
+                      <br><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the backup RADIUS server."); ?><br>
 			 <br> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
                 </tr>
                 <tr> 

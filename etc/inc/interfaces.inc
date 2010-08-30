@@ -1059,7 +1059,7 @@ function interface_ppps_configure($interface) {
 	
 	if($g['booting']) {
 		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
-		echo " configuring {$upper_type} on {$descr} interface...\n";
+		echo "starting {$pppif} link...";
 		// Do not re-configure the interface if we are booting and it's already been started
 		if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;
@@ -1689,7 +1689,7 @@ function interface_carp_configure(&$vip) {
 	/* Ensure CARP IP really exists prior to loading up. */
 	$ww_subnet_ip = find_interface_ip($realif);
 	$ww_subnet_bits = find_interface_subnet($realif);
-	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits)) {
+	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
 		file_notice("CARP", sprintf(gettext("Sorry but we could not find a matching real interface subnet for the virtual IP address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
 		return;
 	}
@@ -2489,6 +2489,10 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 		link_interface_to_vips($interface, "update");
 
+		$grouptmp = link_interface_to_group($interface);
+		if (!empty($grouptmp))
+			interface_group_add_member($realif, $grouptmp);
+
 		if ($interface == "lan")
 			/* make new hosts file */
 			system_hosts_generate();
@@ -2627,6 +2631,10 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 
 	return;
 }
+
+function interface_group_add_member($interface, $groupname) {
+	mwexec("/sbin/ifconfig {$interface} group {$groupname}", true);
+}
  
 /* COMPAT Function */
 function convert_friendly_interface_to_real_interface_name($interface) {
@@ -2667,7 +2675,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if ($config['interfaces'][$if]['if'] == $interface)
                         return $if;
 
-                if (get_real_interface($if) == $interface)
+                if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
                         return $if;
 
                 $int = interface_translate_type_to_real($if);
@@ -3026,6 +3034,17 @@ function link_interface_to_bridge($int) {
 	}
 }
 
+function link_interface_to_group($int) {
+        global $config;
+
+        if (is_array($config['ifgroups']['ifgroupentry'])) {
+                foreach ($config['ifgroups']['ifgroupentry'] as $group) {
+			if (in_array($int, explode(" ", $groupname['members'])))
+                                return "{$group['ifname']}";
+		}
+	}
+}
+
 function link_interface_to_gre($interface) {
         global $config;
 
@@ -3079,6 +3098,25 @@ function find_interface_subnet($interface, $flush = false)
         }
 
 	return $interface_sn_arr_cache[$interface];
+}
+
+function ip_in_interface_alias_subnet($interface, $ipalias) {
+	global $config;
+
+	if (empty($interface) || !is_ipaddr($ipalias))
+		return 0;
+	if (is_array($config['virtualip']['vip'])) {
+                foreach ($config['virtualip']['vip'] as $vip) {
+                        switch ($vip['mode']) {
+                        case "ipalias":
+                                if ($vip['interface'] <> $interface)
+                                        continue;
+				if (ip_in_subnet($ipalias, gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits']))
+					return 1;
+                                break;
+                        }
+                }
+	}
 }
 
 function get_interface_ip($interface = "wan")

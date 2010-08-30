@@ -161,6 +161,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize Captive Portal</fielddescr>
+			<fieldname>synchronizecaptiveportal</fieldname>
+			<description>When this option is enabled, this system will automatically sync the Captive Portal configuration to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Synchronize to IP</fielddescr>
 			<fieldname>synchronizetoip</fieldname>
 			<description>Enter the IP address of the firewall you are synchronizing with.</description>

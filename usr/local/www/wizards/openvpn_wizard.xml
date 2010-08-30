@@ -121,6 +121,7 @@
 			<displayname>Name</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<size>30</size>
 			<description>Descriptive server name, for your own reference.</description>
 		</field>
 		<field>
@@ -283,6 +284,7 @@
 			<displayname>Name</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<size>20</size>
 			<description>Descriptive name for the RADIUS server, for your reference.</description>
 		</field>
 		<field>
@@ -360,6 +362,7 @@
 			<displayname>Descriptive name</displayname>
 			<description>A name for your reference, to identify this certificate. This is the same as common-name field for other Certificates.</description>
 			<type>input</type>
+			<size>20</size>
 			<bindstofield>ovpnserver->step6->certca</bindstofield>
 		</field>
 		<field>
@@ -490,6 +493,7 @@
 			<displayname>Descriptive name</displayname>
 			<description>A name for your reference, to identify this certificate. This is also known as the certificate's "Common Name."</description>
 			<type>input</type>
+			<size>20</size>
 			<bindstofield>ovpnserver->step9->certname</bindstofield>
 		</field>
 		<field>
@@ -939,3 +943,4 @@
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>
 </pfsensewizard>
+ 

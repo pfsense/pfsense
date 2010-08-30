@@ -73,7 +73,7 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 }
 
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
-
+$netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
@@ -87,10 +87,12 @@ if (isset($id) && $a_maps[$id]) {
         $pconfig['mac'] = $a_maps[$id]['mac'];
 		$pconfig['hostname'] = $a_maps[$id]['hostname'];
         $pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
+	$pconfig['netbootfile'] = $a_maps[$id]['netbootfile'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
         $pconfig['mac'] = $_GET['mac'];
 		$pconfig['hostname'] = $_GET['hostname'];
+	$pconfig['netbootfile'] = $_GET['netbootfile'];
         $pconfig['descr'] = $_GET['descr'];
 }
 
@@ -156,6 +158,7 @@ if ($_POST) {
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
+		$mapent['netbootfile'] = $_POST['netbootfile'];
 
 		if (isset($id) && $a_maps[$id])
 			$a_maps[$id] = $mapent;
@@ -219,6 +222,14 @@ include("head.inc");
                     <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
                     <br> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
                 </tr>				
+                <?php if($netboot_enabled) { ?>
+		<tr>
+		  <td width="22%" valign="top" class="vncell">Netboot filename</td>
+		  <td width="78%" class="vtable">
+		    <input name="netbootfile" type="text" class="formfld unknown" id="netbootfile" size="20" value="<?=htmlspecialchars($pconfig['netbootfile']);?>">
+		    <br> <span class="vexpl">Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.</span></td>
+		</tr>
+		<?php } ?>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 

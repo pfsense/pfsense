@@ -143,7 +143,7 @@ if ($_POST) {
 
 		$parent_ip = get_interface_ip($_POST['interface']);
 		$parent_sn = get_interface_subnet($_POST['interface']);
-		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
+		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		} else if ($parent_sn != $_POST['subnet_bits'])
@@ -154,8 +154,22 @@ if ($_POST) {
 	}
 
 	if (isset($id) && ($a_vip[$id])) {
-		if ($a_vip[$id]['mode'] != $_POST['mode'])
-			interface_vip_bring_down($a_vip[$id]);
+		if ($a_vip[$id]['mode'] != $_POST['mode']) {
+			$bringdown = false;
+			if ($a_vip[$id]['mode'] == "proxyarp") {
+				$vipiface = $a_vip[$id]['interface'];
+				foreach ($a_vip as $vip) {
+					if ($vip['interface'] == $vipiface && $vip['mode'] == "carp") {
+						if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits'])) {
+							$input_errors[] = gettext("This entry cannot be modified because it is still referenced by CARP") . " {$vip['descr']}.";
+							$bringdown = false;
+						}
+					}
+				}
+			}
+			if (bringdown == false)
+				interface_vip_bring_down($a_vip[$id]);
+		}
 		if ($a_vip[$id]['interface'] != $_POST['interface'])
 			interface_vip_bring_down($a_vip[$id]);
 	}

@@ -1415,6 +1415,34 @@ function upgrade_051_to_052() {
 			/* allocate vpnid */
 			$server['vpnid'] = $vpnid++;
 
+			if (!empty($server['custom_options'])) {
+				$cstmopts = array();
+				$tmpcstmopts = explode(";", $server['custom_options']);
+				$assigned = false;
+				$tmpstr = "";
+				foreach ($tmpcstmopts as $tmpcstmopt) {
+					$tmpstr = str_replace(" ", "", $tmpcstmopt);
+					if (substr($tmpstr,0 ,6) == "devtun") {
+						$assigned = true;
+						continue;
+					} else if (substr($tmpstr, 0, 5) == "local") {
+						$localip = substr($tmpstr, 6);
+						$server['ipaddr'] = str_replace("\n", "", $localip);
+					} else
+						$cstmopts[] = $tmpcstmopt;
+				}
+				$server['custom_options'] = implode(";", $cstmopts);
+				if ($assigned == true) {
+					$realif = substr($tmpstr, 3);
+					foreach ($config['interfaces'] as $iface => $cfgif) {
+						if ($cfgif['if'] == $realif) {
+							$config['interfaces'][$iface]['if'] = "ovpns{$server['vpnid']}";
+							break;
+						}
+					}
+				}
+			}
+
 			$config['openvpn']['openvpn-server'][] = $server;
 		}
 		unset($config['installedpackages']['openvpnserver']);
@@ -1488,6 +1516,34 @@ function upgrade_051_to_052() {
 
 			/* allocate vpnid */
 			$client['vpnid'] = $vpnid++;
+
+			if (!empty($client['custom_options'])) {
+				$cstmopts = array();
+				$tmpcstmopts = explode(";", $client['custom_options']);
+				$assigned = false;
+				$tmpstr = "";
+				foreach ($tmpcstmopts as $tmpcstmopt) {
+					$tmpstr = str_replace(" ", "", $tmpcstmopt);
+					if (substr($tmpstr,0 ,6) == "devtun") {
+						$assigned = true;
+						continue;
+					} else if (substr($tmpstr, 0, 5) == "local") {
+                                                $localip = substr($tmpstr, 6);
+                                                $client['ipaddr'] = str_replace("\n", "", $localip);
+					} else
+						$cstmopts[] = $tmpcstmopt;
+				}
+				$client['custom_options'] = implode(";", $cstmopts);
+				if ($assigned == true) {
+					$realif = substr($tmpstr, 3);
+					foreach ($config['interfaces'] as $iface => $cfgif) {
+						if ($cfgif['if'] == $realif) {
+							$config['interfaces'][$iface]['if'] = "ovpnc{$client['vpnid']}";
+							break;
+						}
+					}
+				}
+			}
 
 			if (!empty($client['disable']))
 				$client['disable'] = true;

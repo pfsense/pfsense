@@ -145,9 +145,16 @@ function voucher_auth($voucher_received, $test = 0) {
     // All given vouchers were valid and this isn't simply a test.
     // Write back the used DB's
 
-    if (is_array($bitstring))
-        foreach ($bitstring as $roll => $used)
-            voucher_write_used_db($roll, base64_encode($used));
+	if (is_array($bitstring)) {
+		foreach ($bitstring as $roll => $used) {
+			if(is_array($used)) {
+				foreach($used as $u)
+					voucher_write_used_db($roll, base64_encode($u));
+			} else {
+				voucher_write_used_db($roll, base64_encode($used));
+			}
+		}
+	}
 
     // Active DB: we only add the first voucher if multiple given
     // and give that one all the time credit. This allows the user to logout and

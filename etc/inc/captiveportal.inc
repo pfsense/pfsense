@@ -96,8 +96,8 @@ function captiveportal_configure() {
 			$htmltext = <<<EOD
 <html> 
 	<body> 
-		<form method="post" action="$PORTAL_ACTION$"> 
-		<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+		<form method="post" action="\$PORTAL_ACTION\$"> 
+		<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 			<center>
 				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
 					<tr height="10" bgcolor="#990000">
@@ -127,7 +127,7 @@ function captiveportal_configure() {
 																				<div id='statusbox'>
 																					<font color='red' face='arial' size='+1'>
 																						<b>
-																							$PORTAL_MESSAGE$
+																							\$PORTAL_MESSAGE\$
 																						</b>
 																					</font>
 																				</div>
@@ -194,8 +194,8 @@ EOD;
 			$errtext = <<<EOD
 <html> 
 	<body> 
-		<form method="post" action="$PORTAL_ACTION$"> 
-		<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+		<form method="post" action="\$PORTAL_ACTION\$"> 
+		<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 			<center>
 				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
 					<tr height="10" bgcolor="#990000">
@@ -225,7 +225,7 @@ EOD;
 																				<div id='statusbox'>
 																					<font color='red' face='arial' size='+1'>
 																						<b>
-																							$PORTAL_MESSAGE$
+																							\$PORTAL_MESSAGE\$
 																						</b>
 																					</font>
 																				</div>

@@ -79,8 +79,6 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			upnp_action('restart');	
 			break;
 		case 'racoon':
-			exec("/usr/bin/killall -9 racoon");
-			sleep(1);
 			vpn_ipsec_force_reload();
 			break;
 		case 'openvpn':         
@@ -125,8 +123,6 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 			upnp_action('start');
 			break;
 		case 'racoon':
-			exec("killall -9 racoon");
-			sleep(1);
 			vpn_ipsec_force_reload();
 			break;
 		case 'openvpn':
@@ -248,7 +244,6 @@ if(isset($config['dnsmasq']['enable'])) {
 	$pconfig['name'] = "dnsmasq";
 	$pconfig['description'] = gettext("DNS Forwarder");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 $pconfig = array();

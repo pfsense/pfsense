@@ -739,8 +739,11 @@
 					if (preg_match("/internal server error/i", $data)) {
 						$status = "phpDynDNS: (Error) Server side error.";
 					} else if (preg_match('/success/i', $data)) {
-					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
-					        $successful_update = true;
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;
+					} else if (preg_match('/<Done>true<\/Done>/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");

@@ -85,7 +85,7 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			break;
 		case 'openvpn':         
 			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") or ($vpnmode == "client")) {
+			if ($vpnmode == "server" || $vpnmode == "client") {
 				$id = $_GET['id'];
 				if (is_numeric($id)) {
 					$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
@@ -359,13 +359,13 @@ if (count($services) > 0) {
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else {
 				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			}
 			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else {
 				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'> ";
 			}
@@ -373,7 +373,7 @@ if (count($services) > 0) {
 			echo "</a>";
 		} else {
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else { 
 				echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			}

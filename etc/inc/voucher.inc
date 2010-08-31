@@ -61,7 +61,7 @@ EOF;
 	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
 	$msg = new XML_RPC_Message($method, $params);
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	$cli->setCredentials('admin', $password);
+	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
 	if(!$resp) {
 		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
@@ -107,7 +107,7 @@ function voucher_auth($voucher_received, $test = 0) {
 		$syncip   = $a_voucher['vouchersyncdbip'];
 		$syncport = $a_voucher['vouchersyncport'];
 		$syncpass = $a_voucher['vouchersyncpass'];
-		$syncpass = $a_voucher['vouchersyncusername'];
+		$vouchersyncusername = $a_voucher['vouchersyncusername'];
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
@@ -191,7 +191,7 @@ function voucher_auth($voucher_received, $test = 0) {
         } else {
             $test_result[] = "Access granted for $total_minutes Minutes in total.";
         }
-	unlock($voucherlck);
+		unlock($voucherlck);
         return $test_result;
     }
 
@@ -208,7 +208,7 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	// If we did a XMLRPC sync earlier check the timeleft
 	if($a_voucher['vouchersyncdbip']) 
-		if($remote_time_used['timeleft'] < 1) 
+		if($remote_time_used['timeleft'] < $total_minutes) 
 			$total_minutes = $remote_time_used['timeleft'];
 
     // All given vouchers were valid and this isn't simply a test.

@@ -883,7 +883,7 @@ EOD;
 			/* start dnswatch, if necessary */
 			if (count($dnswatch_list) > 0) {
 				$interval = 60;
-				if (!empy($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
+				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
 					$interval = $ipseccfg['dns-interval'];
 
 				$hostnames = "";

@@ -80,14 +80,18 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
-	$reqdfields = array_merge($reqdfields, explode(" ", "host username password type"));
-	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"),gettext("Username"),gettext("Password"),gettext("Service type")));
+	$reqdfields = array("host", "password", "type");
+	$reqdfieldsn = array(gettext("Hostname"),gettext("Password"),gettext("Service type"));
+	if ($pconfig['type'] != "namecheap") {
+		$reqdfields[] = "username";
+		$reqdfieldsn[] = gettext("Username");
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
 		$input_errors[] = gettext("The MX contains invalid characters.");
-	if (($_POST['username'] && !is_dyndns_username($_POST['username'])) || $_POST['username'] == "") 
+	if (($_POST['username'] && !is_dyndns_username($_POST['username'])) || (($pconfig['type'] != "namecheap") && ($_POST['username'] == ""))) 
 		$input_errors[] = gettext("The username contains invalid characters.");
 
 	if (!$input_errors) {
@@ -153,8 +157,8 @@ include("head.inc");
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type">
                       <?php
-						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns");
+						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap");
+						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap");
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>

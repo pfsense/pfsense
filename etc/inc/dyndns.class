@@ -17,6 +17,7 @@
 	 *    - StaticCling (staticcling.org)
 	 *    - DNSexit (dnsexit.com)
 	 *    - OpenDNS (opendns.com)
+	 *    - Namecheap (namecheap.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -148,6 +149,7 @@
 				case 'staticcling':
 				case 'dnsexit':
 				case 'opendns':
+				case 'namecheap':
 					$this->_update();	
 					break;
 				default:
@@ -416,6 +418,20 @@
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
+				case 'namecheap':
+					/* Example:
+						https://dynamicdns.park-your-domain.com/update?host=[host_name]&domain=[domain.com]&password=[domain_password]&ip=[your_ip]
+					*/
+					$needsIP = FALSE;
+					log_error("Namecheap: DNS update() starting.");
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
+					$server = "https://dynamicdns.park-your-domain.com/update?host={$hostname}&domain={$domain}&password={$this->_dnsPass}&ip={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
+					$data = curl_exec($ch);
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
 				default:
 					break;
 			}
@@ -717,6 +733,18 @@
 					        $status = "phpDynDNS: (Unknown Response)";
 					        log_error("phpDynDNS: PAYLOAD: {$data}");
 					        $this->_debug($data);
+					}
+					break;
+				case 'namecheap':
+					if (preg_match("/internal server error/i", $data)) {
+						$status = "phpDynDNS: (Error) Server side error.";
+					} else if (preg_match('/success/i', $data)) {
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					        $successful_update = true;
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
+						$this->_debug($data);
 					}
 					break;
 			}

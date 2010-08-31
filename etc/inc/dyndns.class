@@ -48,6 +48,7 @@
 	 *  StaticCling    - Last Tested: 27 April 2006
 	 *  DNSexit	   - Last Tested: 20 July 2008
 	 *  OpenDNS	   - Last Tested: 4 August 2008
+	 *  Namecheap	   - Last Tested: 31 August 2010
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -736,13 +737,15 @@
 					}
 					break;
 				case 'namecheap':
+					$tmp = str_replace("^M", "", $data);
+					$ncresponse = @xml2array($tmp);
 					if (preg_match("/internal server error/i", $data)) {
 						$status = "phpDynDNS: (Error) Server side error.";
-					} else if (preg_match('/success/i', $data)) {
+					} else if ($ncresponse['interface-response']['ErrCount'] === "0") {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 						$successful_update = true;
-					} else if (preg_match('/<Done>true<\/Done>/i', $data)) {
-						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					} else if (is_numeric($ncresponse['interface-response']['ErrCount']) && ($ncresponse['interface-response']['ErrCount'] > 0)) {
+						$status = "phpDynDNS: (Error) " . implode(", ", $ncresponse["interface-response"]["errors"]);
 						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";

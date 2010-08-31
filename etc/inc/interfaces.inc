@@ -1535,6 +1535,9 @@ function interface_proxyarp_configure($interface = "") {
 					$proxyif = $vipent['interface'];
 				else
 					$proxyif = "wan";
+				
+				if (!empty($interface) && $interface != $proxyif)
+					continue;
 
 				if (!is_array($paa[$proxyif]))
 					$paa[$proxyif] = array();

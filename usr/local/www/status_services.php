@@ -38,6 +38,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("captiveportal.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
@@ -60,6 +61,10 @@ function get_pkg_descr($package_name) {
 
 if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			captiveportal_init_webgui();
+			break;
 		case 'ntpd':
 			system_ntp_configure();
 			break;
@@ -104,6 +109,9 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 
 if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			captiveportal_init_webgui();
+			break;
 		case 'ntpd':
 			system_ntp_configure();
 			break;		
@@ -146,6 +154,9 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 /* stop service */
 if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			break;
 		case 'ntpd':
 			killbyname("ntpd");
 			break;		
@@ -250,7 +261,7 @@ $services[] = $pconfig;
 
 if(isset($config['captiveportal']['enable'])) {
 	$pconfig = array();
-	$pconfig['name'] = "lighttpd";
+	$pconfig['name'] = "captiveportal";
 	$pconfig['description'] = gettext("Captive Portal");
 	$services[] = $pconfig;
 }
@@ -336,11 +347,12 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listr">' . $service['description'] . '</td>';
-		if ($service['name'] == "openvpn") {
+		if ($service['name'] == "openvpn")
 			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
-		} else {
+		else if ($service['name'] == "captiveportal")
+			$running = is_pid_running("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		else
 			$running = is_service_running($service['name']);
-		}
 		if($running) {
 			echo '<td class="listr"><center>';
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>";
@@ -385,7 +397,8 @@ if (count($services) > 0) {
 </td>
 </tr></table>
 </div>
-
+</p>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

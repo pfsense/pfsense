@@ -53,7 +53,7 @@ require_once("voucher.inc");
 function get_default_captive_portal_html() {
 	global $config, $g;
 	// Detect if vouchers are being used and default to the voucher page
-	if($config['voucher']) {
+	if(isset($config['voucher']['enable'])) {
 			$htmltext = <<<EOD
 <html> 
 	<body> 

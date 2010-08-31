@@ -40,6 +40,8 @@
 
 $rcfileprefix = "/usr/local/etc/rc.d/";
 function write_rcfile($params) {
+	global $g;
+
 	if (!is_writable("{$rcfileprefix}{$params['file']}") || empty($params['start']))
 		return false;
 	$towrite = "#!/bin/sh\n";

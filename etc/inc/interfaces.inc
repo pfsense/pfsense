@@ -1519,9 +1519,14 @@ function interface_proxyarp_configure($interface = "") {
 	/* kill any running choparp */
 	if (empty($interface))
 		killbyname("choparp");
+	else {
+		$vipif = get_real_interface($interface);
+		if (file_exists("{$g['varrun_path']}/choparp_{$vipif}.pid"))
+			killbypid("{$g['varrun_path']}/choparp_{$vipif}.pid");
+	}
 
-	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		$paa = array();
+	$paa = array();
+	if (!empty($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 
 		/* group by interface */
 		foreach ($config['virtualip']['vip'] as $vipent) {
@@ -1531,7 +1536,7 @@ function interface_proxyarp_configure($interface = "") {
 				else
 					$proxyif = "wan";
 
-				if (!is_array($paa[$if]))
+				if (!is_array($paa[$proxyif]))
 					$paa[$proxyif] = array();
 
 				$paa[$proxyif][] = $vipent;
@@ -1553,8 +1558,8 @@ function interface_proxyarp_configure($interface = "") {
                         }
                         mwexec_bg("/usr/local/sbin/choparp " . $args);	
 		}
-	} else if (count($paa)) {
-		foreach ($paa as $paif => $paents) {
+	} else if (count($paa) > 0) {
+		foreach ($paa as $paif => $paents)  {
 			$paaifip = get_interface_ip($paif);
 			if (!(is_ipaddr($paaifip)))
 				continue;

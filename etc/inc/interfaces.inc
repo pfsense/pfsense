@@ -2315,9 +2315,11 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	if($interface) {
+	if ($interface)
 		$pid = `/bin/pgrep -xf "dhclient: {$interface}"`;
-	}
+	else
+		$pid = 0;
+
 	return $pid;
 }
 

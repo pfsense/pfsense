@@ -113,10 +113,10 @@ if ($_POST) {
 	if ($_POST['hostname']) {
 		preg_match("/^[0-9]/", $_POST['hostname'], $matches);
 		if($matches)
-			$input_errors[] = gettext("The hostname cannot start with a numeric character according to RFC1123");
+			$input_errors[] = gettext("The hostname cannot start with a numeric character according to RFC952");
 		preg_match("/.*\-/", $_POST['hostname'], $matches);
 		if($matches)
-			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC1123");		
+			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");		
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {

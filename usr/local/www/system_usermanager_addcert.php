@@ -111,6 +111,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$cert = array();
+		$cert['refid'] = uniqid();
 		if (!is_array($a_user[$userid]['cert']))
 			$a_user[$userid]['cert'] = array();
 

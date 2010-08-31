@@ -298,6 +298,7 @@ if (isAllowedPage("system_usermanager")) {
 			else {
 				if (!empty($_POST['name'])) {
 					$cert = array();
+					$cert['refid'] = uniqid();
                         		$userent['cert'] = array();
 
             				$cert['name'] = $_POST['name'];

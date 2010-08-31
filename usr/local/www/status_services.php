@@ -131,11 +131,11 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 			break;
 		case 'openvpn':
 			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") or ($vpnmode == "client")) {
+			if (($vpnmode == "server") || ($vpnmode == "client")) {
 				$id = $_GET['id'];
 				if (is_numeric($id)) {
-					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
+					$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
 				}
 			}
 			break;
@@ -188,7 +188,7 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 			if (($vpnmode == "server") or ($vpnmode == "client")) {
 				$id = $_GET['id'];
 				if (is_numeric($id)) {
-					$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
+					$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 					killbypid($pidfile);
 				}
 			}
@@ -197,7 +197,7 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 			stop_service($_GET['service']);
 			break;
 	}
-	$savemsg = sprintf(gettext("%s has been stopped."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been stopped."), $_GET['service']);
 	sleep(5);
 }
 

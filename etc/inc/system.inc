@@ -355,12 +355,10 @@ function system_routing_configure($interface = "") {
 		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			if (!empty($interface) && $interface != $rtent['interface'])
-				continue;
 			$gatewayip = "";
 			if (isset($gateways_arr[$rtent['gateway']])) {
 				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
-				$interfacegw = get_real_interface($rtent['interface']);
+				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
 			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
 			} else {

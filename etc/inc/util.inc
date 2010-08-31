@@ -50,27 +50,21 @@ function isvalidpid($pid) {
 }
 
 function is_process_running($process) {
-	$running = shell_exec("/bin/pgrep -x {$process}");
+	system("/bin/pgrep -x {$process}", $retval);
 
-        return !empty($running);
+        return (intval($retval) == 0);
 }
 
 function isvalidproc($proc) {
-	$running = is_process_running($proc);
-	if (intval($running) >= 1)
-		return true;
-	else 
-		return false;
+	return is_process_running($proc);
 }
 
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (is_file($pidfile)) {
-		$pid = trim(file_get_contents($pidfile));
-		if(isvalidpid($pid))
-			return mwexec("/bin/kill -s $sig {$pid}", true);
-	}
+	if (is_file($pidfile))
+		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
+
 	return 0;
 }
 

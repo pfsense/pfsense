@@ -228,13 +228,10 @@ include("fbegin.inc");
 
 <?php
 
-exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-array_shift($psout);
-foreach($psout as $line) {
-	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
-}
-
-$services = $config['installedpackages']['service'];
+if (is_array($config['installedpackages']['service']))
+	$services = $config['installedpackages']['service'];
+else
+	$services = array();
 
 /*    Add services that are in the base.
  *
@@ -342,7 +339,7 @@ if (count($services) > 0) {
 		if ($service['name'] == "openvpn") {
 			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
 		} else {
-			$running = (is_service_running($service['name'], $ps) || is_process_running($service['name']) );
+			$running = is_service_running($service['name']);
 		}
 		if($running) {
 			echo '<td class="listr"><center>';

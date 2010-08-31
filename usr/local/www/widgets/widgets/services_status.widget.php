@@ -175,7 +175,7 @@ if($services) {
 		if(!$service['description']) $service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . "</td>\n";
 		echo '<td class="listr">' . substr($service['description'],0 ,20) . "</td>\n";
-		if(is_service_running($service['name'], $ps) or is_process_running($service['name']) ) {
+		if(is_service_running($service['name'])) {
 			echo '<td class="listr"><center>';
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> Running</td>\n";
 			$running = true;

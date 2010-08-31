@@ -58,7 +58,7 @@ function get_pkg_descr($package_name) {
 	return gettext("Not available.");
 }
 
-if($_GET['mode'] == "restartservice" and $_GET['service']) {
+if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'ntpd':
 			system_ntp_configure();
@@ -104,7 +104,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	sleep(5);
 }
 
-if($_GET['mode'] == "startservice" and $_GET['service']) {
+if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'ntpd':
 			system_ntp_configure();
@@ -148,7 +148,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 }
 
 /* stop service */
-if($_GET['mode'] == "stopservice" && $_GET['service']) {
+if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'ntpd':
 			killbyname("ntpd");
@@ -202,7 +202,8 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 }
 
 /* batch mode, allow other scripts to call this script */
-if($_GET['batch']) exit;
+if($_GET['batch'])
+	exit;
 
 $pgtitle = array(gettext("Status"),gettext("Services"));
 include("head.inc");
@@ -243,23 +244,23 @@ $services = $config['installedpackages']['service'];
  *
  */
 if(isset($config['dnsmasq']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "dnsmasq";
 	$pconfig['description'] = gettext("DNS Forwarder");
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
+$pconfig = array();
 $pconfig['name'] = "ntpd";
 $pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
-unset($pconfig);
 
 if(isset($config['captiveportal']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "lighttpd";
 	$pconfig['description'] = gettext("Captive Portal");
 	$services[] = $pconfig;
-	$pconfig = "";
-	unset($pconfig);
 }
 
 $iflist = array();
@@ -276,74 +277,77 @@ foreach($iflist as $if) {
 }
 
 if($show_dhcprelay == true) {
+	$pconfig = array();
 	$pconfig['name'] = "dhcrelay";
 	$pconfig['description'] = gettext("DHCP Relay");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if(is_dhcp_server_enabled()) {
+	$pconfig = array();
 	$pconfig['name'] = "dhcpd";
 	$pconfig['description'] = gettext("DHCP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "bsnmpd";
 	$pconfig['description'] = gettext("SNMP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if (count($config['igmpproxy']['igmpentry']) > 0) {
+	$pconfig = array();
 	$pconfig['name'] = "igmpproxy";
 	$pconfig['descritption'] = gettext("IGMP proxy");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+	$pconfig = array();
 	$pconfig['name'] = "miniupnpd";
 	$pconfig['description'] = gettext("UPnP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if (isset($config['ipsec']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "racoon";
 	$pconfig['description'] = gettext("IPsec VPN");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 foreach (array('server', 'client') as $mode) {
-	if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
-		foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings) {
-			$setting = $config['installedpackages']["openvpn$mode"]['config'][$id];
-			if (!$setting['disable']) {
+	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $settings) {
+			$setting =& $config['openvpn']["openvpn-{$mode}"][$id];
+			if (!isset($setting['disable'])) {
+				$pconfig = array();
 				$pconfig['name'] = "openvpn";
 				$pconfig['mode'] = $mode;
 				$pconfig['id'] = $id;
+				$pconfig['vpnid'] = $settings['vpnid'];
 				$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
 				$services[] = $pconfig;
-				unset($pconfig);
 			}
 		}
 	}
 }
  
  
-if($services) {
+if (count($services) > 0) {
 	foreach($services as $service) {
-		if(!$service['name']) continue;
-		if(!$service['description']) $service['description'] = get_pkg_descr($service['name']);
+		if (empty($service['name']))
+			continue;
+		if (empty($service['description']))
+			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listr">' . $service['description'] . '</td>';
 		if ($service['name'] == "openvpn") {
-			$running =  (is_pid_running($g['varrun_path'] . "/openvpn_{$service['mode']}{$service['id']}.pid") );
+			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
 		} else {
-			$running = (is_service_running($service['name'], $ps) or is_process_running($service['name']) );
+			$running = (is_service_running($service['name'], $ps) || is_process_running($service['name']) );
 		}
 		if($running) {
 			echo '<td class="listr"><center>';

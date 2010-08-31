@@ -100,7 +100,8 @@ function start_service($name) {
 
 function stop_service($name) {
 	global $config;
-	if($config['installedpackages']['service']) {
+
+	if ($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -109,7 +110,7 @@ function stop_service($name) {
 					} else {
 						$prefix = "/usr/local/etc/rc.d/";
 					}
-					mwexec_bg($prefix . $service['rcfile'] . " stop");
+					mwexec_bg("{$prefix}{$service['rcfile']} stop");
 				}
 				if($service['stopcmd']) {
 					eval($service['stopcmd']);
@@ -124,8 +125,8 @@ function stop_service($name) {
 		}
 	}
 	/* finally if we get here lets simply kill the service name */
-if(is_process_running("{$name}"))
-	mwexec_bg("/usr/bin/killall {$name}");
+	if(is_process_running("{$name}"))
+		mwexec_bg("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {

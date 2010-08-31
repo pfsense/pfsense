@@ -36,7 +36,9 @@
 		<id>1</id>
 		<title>pfSense Traffic Shaper Wizard</title>
 		<disableheader>true</disableheader>
-		<description>This wizard will guide you through setting up the pfSense traffic shaper for the situation where you have 1 WAN connection and multiple LAN connections.</description>
+		<description>This wizard will guide you through setting up the pfSense traffic shaper for the situation where you have 1 WAN connection and multiple LAN connections.
+			Please be aware that Custom Bandwidths should not exceed 30% of the interface/link bandwidth. Keep this in mind during the wizard.
+		</description>
 		<fields>
 			<field>
 				<displayname>Enter number of LAN type connections</displayname>

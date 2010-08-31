@@ -210,6 +210,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                    <br/><?= gettext("Username is required for all types except Namecheap and FreeDNS.");?>
                   </td>
                 </tr>
                 <tr>

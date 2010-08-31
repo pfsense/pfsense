@@ -98,17 +98,17 @@
 			log_error("DynDns: updatedns() starting");
 			
 			if (!$dnsService) $this->_error(2);
-			if (!($dnsService == 'freedns')) {
-
-				/* all services except freedns use these */
-
-				if (!$dnsUser) $this->_error(3);
+			switch ($dnsService) {
+			case 'freedns':
+				if (!$dnsHost) $this->_error(5);
+				break;
+			case 'namecheap':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
-			} else {
-
-				/* freedns needs this */
-
+				break;
+			default:
+				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 			}
 			

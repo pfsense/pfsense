@@ -33,6 +33,54 @@
 
 /* include all configuration functions */
 
+function xmlrpc_sync_rolls() {
+	global $g, $config;
+	if($config['voucher']['vouchersyncpass'] && $config['voucher']['vouchersyncusername'] && 
+	   $config['voucher']['vouchersyncport'] && $config['voucher']['vouchersyncdbip']) {
+		// Synchronize the voucher DB from the master node
+		require_once("xmlrpc.inc");
+		if($config['voucher']['vouchersyncport'] == "443") 
+			$url = "https://{$config['voucher']['vouchersyncdbip']}:{$config['voucher']['vouchersyncport']}";
+		else 
+			$url = "http://{$config['voucher']['vouchersyncdbip']}:{$config['voucher']['vouchersyncport']}";
+		$execcmd  = <<<EOF
+		\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
+		
+EOF;
+		/* assemble xmlrpc payload */
+		$params = array(
+			XML_RPC_encode($config['voucher']['vouchersyncpass']),
+			XML_RPC_encode($execcmd)
+		);
+		$msg = new XML_RPC_Message('pfsense.exec_php', $params);
+		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $config['voucher']['vouchersyncport']);
+		$cli->setCredentials($config['voucher']['vouchersyncusername'], $config['voucher']['vouchersyncpass']);
+		$resp = $cli->send($msg, "250");
+		if(!$resp) {
+			$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+			log_error($error);
+			file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
+			$input_errors[] = $error;
+		} elseif($resp->faultCode()) {
+			$cli->setDebug(1);
+			$resp = $cli->send($msg, "250");
+			$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+			log_error($error);
+			file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
+			$input_errors[] = $error;
+		}
+		$toreturn =  XML_RPC_Decode($resp->value());
+		if(is_array($toreturn) && $toreturn['voucher'] && $config['voucher']['roll']) {
+			// If we received back the voucher roll and the local roll count differs then sync
+			if(count($toreturn['voucher']['roll']) <> count($config['voucher']['roll'])) {
+				$config['voucher']['roll'] = $toreturn['voucher']['roll'];
+				write_config("Captive Portal voucher database synchronized with {$url}");
+				voucher_configure();
+			}
+		}
+	}
+}
+
 /* 
  *Authenticate a voucher and return the remaining time credit in minutes
  * if $test is set, don't mark the voucher as used nor add it to the list
@@ -46,6 +94,9 @@ function voucher_auth($voucher_received, $test = 0) {
     // but return a more verbose error and result message back
 
     $voucherlck = lock('voucher');
+
+	// If defined check to see if the roll count needs to be sycnrhonized
+	xmlrpc_sync_rolls();
 
     // read rolls into assoc array with rollid as key and minutes as value
     $a_roll = &$config['voucher']['roll'];

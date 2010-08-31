@@ -648,7 +648,10 @@ function filter_get_vpns_list() {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
 					require_once("ipsec.inc");
-					$vpns_arr[] = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if ($vpns_subnet == "0.0.0.0/0")
+						continue;
+					$vpns_arr[] = $vpns_subnet;
 				}
 			}
 		}

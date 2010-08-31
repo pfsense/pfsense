@@ -1564,7 +1564,7 @@ function interface_proxyarp_configure($interface = "") {
 	} else if (count($paa) > 0) {
 		foreach ($paa as $paif => $paents)  {
 			$paaifip = get_interface_ip($paif);
-			if (!(is_ipaddr($paaifip)))
+			if (!is_ipaddr($paaifip))
 				continue;
 			$args = get_real_interface($paif) . " auto";
 			foreach ($paents as $paent) {

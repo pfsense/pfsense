@@ -375,9 +375,15 @@ if ($_POST) {
 			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		case "none":
+			if(is_array($config['virtualip']['vip'])) {
+				foreach ($config['virtualip']['vip'] as $vip) {
+					if ($vip['interface'] == $if)
+						$input_errors[] = gettext("This interface is referenced by VIPs please delete those before setting the interface to 'none' configuration.");
+				}
+			}
 		case "dhcp":
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = "You have to reassign the interface to be able to configure as {$_POST['type']}.";
+				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");

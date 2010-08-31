@@ -109,9 +109,12 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid IP address must be specified.");
 
 	$natiflist = get_configured_interface_with_descr();
-	foreach ($natiflist as $natif => $natdescr)
+	foreach ($natiflist as $natif => $natdescr) {
+		if (empty($config['interfaces'][$natif]['ipaddr']))
+			$input_errors[] = gettext("The interface choosen for the VIP has no ip configured so it cannot be used as a parent for the VIP.");
 		if ($_POST['subnet'] == get_interface_ip($natif))
 			$input_errors[] = sprintf(gettext("The %s IP address may not be used in a virtual entry."),$natdescr);
+	}
 
 	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
 	 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");

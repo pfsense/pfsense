@@ -62,32 +62,32 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		$toapplylist = array();
-		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply"))
+		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
                         $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
-		foreach ($toapplylist as $vid => $ovip) {
-			if (!empty($ovip))
-				interface_vip_bring_down($ovip);
-			if ($a_vip[$vid]) {
-                		switch ($a_vip[$vid]['mode']) {
-                		case "ipalias":
-                        		interface_ipalias_configure($a_vip[$vid]);
-                        		break;
-                		case "proxyarp":
-                        		interface_proxyarp_configure($a_vip[$vid]['interface']);
-                        		break;
-                		case "carp":
-                        		interface_carp_configure($a_vip[$vid]);
-					break;
-                		case "carpdev-dhcp":
-                        		interface_carpdev_configure($a_vip[$vid]);
-                        		break;
-                		default:
-                        		break;
-				}
-                	}
-        	}
-		@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
+			foreach ($toapplylist as $vid => $ovip) {
+				if (!empty($ovip))
+					interface_vip_bring_down($ovip);
+				if ($a_vip[$vid]) {
+                			switch ($a_vip[$vid]['mode']) {
+                			case "ipalias":
+                        			interface_ipalias_configure($a_vip[$vid]);
+                        			break;
+                			case "proxyarp":
+                        			interface_proxyarp_configure($a_vip[$vid]['interface']);
+                        			break;
+                			case "carp":
+                        			interface_carp_configure($a_vip[$vid]);
+						break;
+                			case "carpdev-dhcp":
+                        			interface_carpdev_configure($a_vip[$vid]);
+                        			break;
+                			default:
+                        			break;
+					}
+                		}
+        		}
+			@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
+		}
 		$retval = 0;
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);

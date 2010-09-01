@@ -1918,6 +1918,7 @@ function filter_rules_generate() {
 		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
 			$cpinterface = implode(" ", $cpiflist);
 			$cpaddresses = implode(" ", $cpiplist);
+			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { 127.0.0.1 } port { 8000 8001 } keep state(sloppy)\n";
 			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
 			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
 		}

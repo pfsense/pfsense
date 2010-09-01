@@ -1311,10 +1311,10 @@ function upgrade_050_to_051() {
 function upgrade_051_to_052() {
 	global $config;
 	$config['openvpn'] = array();
-	if (!is_array($config['system']['ca']))
-		$config['system']['ca'] = array();
-	if (!is_array($config['system']['cert']))
-		$config['system']['cert'] = array();
+	if (!is_array($config['ca']))
+		$config['ca'] = array();
+	if (!is_array($config['cert']))
+		$config['cert'] = array();
 
 	$vpnid = 1;
 
@@ -1336,7 +1336,7 @@ function upgrade_051_to_052() {
 				$ca['name'] = "OpenVPN Server CA #{$index}";
 				$ca['crt'] = $server['ca_cert'];
 				$ca['crl'] = $server['crl'];
-				$config['system']['ca'][] = $ca;
+				$config['ca'][] = $ca;
 
 				/* create ca reference */
 				unset($server['ca_cert']);
@@ -1349,7 +1349,7 @@ function upgrade_051_to_052() {
 				$cert['name'] = "OpenVPN Server Certificate #{$index}";
 				$cert['crt'] = $server['server_cert'];
 				$cert['prv'] = $server['server_key'];
-				$config['system']['cert'][] = $cert;
+				$config['cert'][] = $cert;
 
 				/* create cert reference */
 				unset($server['server_cert']);
@@ -1466,7 +1466,7 @@ function upgrade_051_to_052() {
 				$ca['name'] = "OpenVPN Client CA #{$index}";
 				$ca['crt'] = $client['ca_cert'];
 				$ca['crl'] = $client['crl'];
-				$config['system']['ca'][] = $ca;
+				$config['ca'][] = $ca;
 
 				/* create ca reference */
 				unset($client['ca_cert']);
@@ -1479,7 +1479,7 @@ function upgrade_051_to_052() {
 				$cert['name'] = "OpenVPN Client Certificate #{$index}";
 				$cert['crt'] = $client['client_cert'];
 				$cert['prv'] = $client['client_key'];
-				$config['system']['cert'][] = $cert;
+				$config['cert'][] = $cert;
 
 				/* create cert reference */
 				unset($client['client_cert']);
@@ -1629,10 +1629,10 @@ function upgrade_051_to_052() {
 
 function upgrade_052_to_053() {
 	global $config;
-	if (!is_array($config['system']['ca']))
-		$config['system']['ca'] = array();
-	if (!is_array($config['system']['cert']))
-		$config['system']['cert'] = array();
+	if (!is_array($config['ca']))
+		$config['ca'] = array();
+	if (!is_array($config['cert']))
+		$config['cert'] = array();
 
 	/* migrate advanced admin page webui ssl to certifcate mngr */
 	if ($config['system']['webgui']['certificate'] &&
@@ -1644,7 +1644,7 @@ function upgrade_052_to_053() {
 		$cert['name'] = "webConfigurator SSL Certificate";
 		$cert['crt'] = $config['system']['webgui']['certificate'];
 		$cert['prv'] = $config['system']['webgui']['private-key'];
-		$config['system']['cert'][] = $cert;
+		$config['cert'][] = $cert;
 
 		/* create cert reference */
 		unset($config['system']['webgui']['certificate']);
@@ -1853,10 +1853,10 @@ function upgrade_054_to_055() {
 function upgrade_055_to_056() {
 	global $config;
 
-	if (!is_array($config['system']['ca']))
-		$config['system']['ca'] = array();
-	if (!is_array($config['system']['cert']))
-		$config['system']['cert'] = array();
+	if (!is_array($config['ca']))
+		$config['ca'] = array();
+	if (!is_array($config['cert']))
+		$config['cert'] = array();
 
 	/* migrate ipsec ca's to cert manager */
 	if (is_array($config['ipsec']['cacert'])) {
@@ -1868,7 +1868,7 @@ function upgrade_055_to_056() {
 			else
 				$ca['crt'] = $cacert['cert'];
 			$ca['name'] = $cacert['ident'];
-			$config['system']['ca'][] = $ca;
+			$config['ca'][] = $ca;
 		}
 		unset($config['ipsec']['cacert']);
 	}
@@ -1884,7 +1884,7 @@ function upgrade_055_to_056() {
 			else
 				$cert['crt'] = $ph1ent['cert'];
 			$cert['prv'] = $ph1ent['private-key'];
-			$config['system']['cert'][] = $cert;
+			$config['cert'][] = $cert;
 			$ph1ent['certref'] = $cert['refid'];
 			if ($ph1ent['cert'])
 				unset($ph1ent['cert']);
@@ -1940,9 +1940,9 @@ function upgrade_058_to_059() {
 function upgrade_059_to_060() {
 	global $config;
 	require_once("/etc/inc/certs.inc");
-	if (is_array($config['system']['ca'])) {
+	if (is_array($config['ca'])) {
 		/* Locate issuer for all CAs */
-		foreach ($config['system']['ca'] as & $ca) {
+		foreach ($config['ca'] as & $ca) {
 			$subject = cert_get_subject($ca['crt']);
 			$issuer = cert_get_issuer($ca['crt']);
 			if($issuer <> $subject) {
@@ -1953,8 +1953,8 @@ function upgrade_059_to_060() {
 		}
 		
 		/* Locate issuer for all certificates */
-		if (is_array($config['system']['cert'])) {
-			foreach ($config['system']['cert'] as & $cert) {
+		if (is_array($config['cert'])) {
+			foreach ($config['cert'] as & $cert) {
 				$subject = cert_get_subject($cert['crt']);
 				$issuer = cert_get_issuer($cert['crt']);
 				if($issuer <> $subject) {
@@ -2144,6 +2144,16 @@ function upgrade_065_to_066() {
 		if ($foundifs == true)
 			$dhcrelaycfg['interface'] = implode(",", $dhcrelayifs);
         }
+}
+
+function upgrade_066_to_067() {
+	global $config;
+	if (isset($config['system']['ca'])) {
+		$config['ca'] = $config['system']['ca'];
+	}
+	if (isset($config['system']['cert'])) {
+		$config['cert'] = $config['system']['cert'];
+	}
 }
 
 ?>

@@ -703,9 +703,10 @@ function internalca_change() {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="20%" class="listhdrr"><?=gettext("Name");?></td>
-						<td width="20%" class="listhdrr"><?=gettext("Issuer");?></td>
+						<td width="15%" class="listhdrr"><?=gettext("Name");?></td>
+						<td width="15%" class="listhdrr"><?=gettext("Issuer");?></td>
 						<td width="40%" class="listhdrr"><?=gettext("Distinguished Name");?></td>
+						<td width="10%" class="listhdrr"><?=gettext("In Use");?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -752,6 +753,23 @@ function internalca_change() {
 						</td>
 						<td class="listr"><?=$caname;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td class="listr">
+							<?php if (is_webgui_cert($cert['refid'])): ?>
+							webConfigurator<br/>
+							<?php endif; ?>
+							<?php if (is_user_cert($cert['refid'])): ?>
+							User Cert<br/>
+							<?php endif; ?>
+							<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							OpenVPN Server<br/>
+							<?php endif; ?>
+							<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							OpenVPN Client<br/>
+							<?php endif; ?>
+							<?php if (is_ipsec_cert($cert['refid'])): ?>
+							IPsec Tunnel<br/>
+							<?php endif; ?>
+						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />

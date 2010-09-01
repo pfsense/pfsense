@@ -371,8 +371,10 @@ function vpn_ipsec_configure($ipchg = false)
 				if ($a_client['wins_server2'])
 					$racoonconf .= "\twins4 {$a_client['wins_server2']};\n";
 
-				if ($a_client['dns_domain'])
+				if ($a_client['dns_domain']) {
 					$racoonconf .= "\tdefault_domain \"{$a_client['dns_domain']}\";\n";
+					$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+				}
 
 				if ($a_client['pfs_group'])
 					$racoonconf .= "\tpfs_group {$a_client['pfs_group']};\n";

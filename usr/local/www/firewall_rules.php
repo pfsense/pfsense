@@ -51,48 +51,6 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"));
 
-function check_for_advanced_options(&$item) {
-	$item_set = "";
-	if($item['max'])
-		$item_set .= "max {$item['max']} ";
-	if($item['max-src-nodes'])
-		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
-	if($item['max-src-conn'])
-		$item_set .= "max-src-conn {$item['max-src-conn']} ";
-	if($item['max-src-states'])
-		$item_set .= "max-src-states {$item['max-src-states']} ";
-	if($item['statetype'] != "keep state" && $item['statetype'] != "")
-		$item_set .= "statetype {$item['statetype']} ";
-	if($item['statetimeout'])
-		$item_set .= "statetimeout {$item['statetimeout']} ";
-	if($item['nosync'])
-		$item_set .= "nosync ";
-	if($item['max-src-conn-rate'])
-		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
-	if($item['max-src-conn-rates'])
-		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
-	if($item['gateway'])
-		$item_set .= "gateway {$item['gateway']} ";
-	if($item['dnpipe'])
-		$item_set .= "limiter {$item['dnpipe']} ";
-	if($item['pdnpipe'])
-		$item_set .= "limiter {$item['pdnpipe']} ";
-	if($item['l7container'])
-		$item_set .= "layer7 {$item['l7container']} ";
-	if($item['tag'])
-		$item_set .= "tag {$item['tag']} ";
-	if($item['tagged'])
-		$item_set .= "tagged {$item['tagged']} ";
-	if(isset($item['allowopts']))
-		$item_set .= "allowopts ";
-	if(isset($item['disablereplyto']))
-		$item_set .= "disable reply-to ";
-	if($item['tcpflags_any'] || $item['tcpflags1'] || $item['tcpflags2'])
-		$item_set .= "tcpflags set";
-	
-	return $item_set;
-}
-
 function delete_nat_association($id) {
 	global $config;
 
@@ -455,7 +413,7 @@ if($_REQUEST['undodrag']) {
 						continue;
 					if (isset($filterent['floating']) && "FloatingRules" != $if)
 						continue;
-					$isadvset = check_for_advanced_options($filterent);
+					$isadvset = firewall_check_for_advanced_options($filterent);
 					if($isadvset)
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 

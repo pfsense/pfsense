@@ -969,6 +969,7 @@ include("head.inc");
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference.");?></span>
 			</td>
 		</tr>
+<?php		if (!isset($id) || !($a_filter[$id] && firewall_check_for_advanced_options($a_filter[$id]) <> "")): ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -980,6 +981,7 @@ include("head.inc");
 				<input name="after" type="hidden" value="<?=$after;?>">
 			</td>
 		</tr>
+<?php		endif; ?>
 		<tr>
 			<td>&nbsp;</td>
 		</tr>

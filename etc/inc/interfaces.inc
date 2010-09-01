@@ -3120,19 +3120,21 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 	global $config;
 
 	if (empty($interface) || !is_ipaddr($ipalias))
-		return 0;
+		return false;
 	if (is_array($config['virtualip']['vip'])) {
                 foreach ($config['virtualip']['vip'] as $vip) {
                         switch ($vip['mode']) {
                         case "ipalias":
                                 if ($vip['interface'] <> $interface)
-                                        continue;
+                                        break;
 				if (ip_in_subnet($ipalias, gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits']))
-					return 1;
+					return true;
                                 break;
                         }
                 }
 	}
+
+	return false;
 }
 
 function get_interface_ip($interface = "wan")

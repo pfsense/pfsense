@@ -149,11 +149,7 @@ if ($_POST) {
 		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
-		} else if ($parent_sn != $_POST['subnet_bits'])
-			$input_errors[] = gettext("Subnet bits needs to be the same as the parent interface.");
-
-		if (isset($id) && ($a_vip[$id]) && $a_vip[$id]['vhid'] != $_POST['vhid'])
-			interface_vip_bring_down($a_vip[$id]);
+		}
 	}
 
 	if (isset($id) && ($a_vip[$id])) {
@@ -163,18 +159,12 @@ if ($_POST) {
 				$vipiface = $a_vip[$id]['interface'];
 				foreach ($a_vip as $vip) {
 					if ($vip['interface'] == $vipiface && $vip['mode'] == "carp") {
-						if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits'])) {
+						if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits']))
 							$input_errors[] = gettext("This entry cannot be modified because it is still referenced by CARP") . " {$vip['descr']}.";
-							$bringdown = false;
-						}
 					}
 				}
 			}
-			if (bringdown == false)
-				interface_vip_bring_down($a_vip[$id]);
 		}
-		if ($a_vip[$id]['interface'] != $_POST['interface'])
-			interface_vip_bring_down($a_vip[$id]);
 	}
 
 	if (!$input_errors) {
@@ -220,27 +210,27 @@ if ($_POST) {
 			unset($vipent['alias-subnet']);		
 		}
 
-		if (isset($id) && $a_vip[$id]) {
+		if (!isset($id))
+			$id = count($a_vip);
+		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply"))
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		else
+			$toapplylist = array();
+
+		$toapplylist[$id] = $a_vip[$id];
+		if (!empty($a_vip[$id])) {
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
 				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet'])
 					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
 			}
-			$a_vip[$id] = $vipent;
-		} else
-			$a_vip[] = $vipent;
+		}
+		$a_vip[$id] = $vipent;
 
 		mark_subsystem_dirty('vip');
 		
 		write_config();
-		if (!isset($id))
-			$id = count($a_vip) - 1;
-		if (file_exists("{$g['tmp_path']}/firewall_virtual_ip.apply"))
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/firewall_virtual_ip.apply"));
-		else
-			$toapplylist = array();
-		$toapplylist[] = $id;
-		file_put_contents("{$g['tmp_path']}/firewall_virtual_ip.apply", serialize($toapplylist));
+		file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
 		header("Location: firewall_virtual_ip.php");
 		exit;
 	}

@@ -1,5 +1,4 @@
 <?php 
-/* $Id$ */
 /*
 	system_routes_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
@@ -122,10 +121,23 @@ if ($_POST) {
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_routes[$id])
-			$a_routes[$id] = $route;
-		else
-			$a_routes[] = $route;
+		if (!isset($id))
+                        $id = count($a_routes);
+                if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
+                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+                else
+                        $toapplylist = array();
+                $oroute = $a_routes[$id];
+
+		$a_routes[$id] = $route;
+
+		if (!empty($oroute)) {
+			$osn = explode('/', $oroute['network']);
+			$sn = explode('/', $route['network']);
+			if ($oroute['network'] <> $route['network'])
+				$toapplylist[] = "/sbin/route delete {$oroute['network']}"; 
+		}
+		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 		staticroutes_sort();
 		
 		mark_subsystem_dirty('staticroutes');

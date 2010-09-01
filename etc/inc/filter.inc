@@ -969,7 +969,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			$rflctnorange = true;
 			if(is_alias($loc_pt)) {
 				$loc_pt_translated = filter_expand_alias($loc_pt);
-				if(!$loc_pt_translated) {
+				if(empty($loc_pt_translated)) {
 					log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
 					continue;
 				}
@@ -1003,7 +1003,9 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$starting_localhost_port++;
 			}
 
-			foreach($toadd_array as $tda){
+			foreach($toadd_array as $tda) {
+				if (empty($tda))
+					continue;
 				foreach($reflect_protos as $reflect_proto) {
 					if($reflect_proto == "udp") {
 						$socktype = "dgram";

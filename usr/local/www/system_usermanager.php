@@ -674,8 +674,8 @@ function sshkeyClicked(obj) {
 						</tr>
 
 						<?php else : ?>
-						<?php 	if (is_array($config['system']['ca']) && count($config['system']['ca']) > 0): ?>
-						<?php		$i = 0; foreach( $config['system']['ca'] as $ca) {
+						<?php 	if (is_array($config['ca']) && count($config['ca']) > 0): ?>
+						<?php		$i = 0; foreach( $config['ca'] as $ca) {
                                                                         	if (!$ca['prv'])
                                                                                 	continue;
 										$i++;
@@ -706,7 +706,7 @@ function sshkeyClicked(obj) {
                                                         	<td width="78%" class="vtable">
                                                                 	<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
                                                                 <?php
-                                                                        foreach( $config['system']['ca'] as $ca):
+                                                                        foreach( $config['ca'] as $ca):
                                                                         if (!$ca['prv'])
                                                                                 continue;
                                                                 ?>

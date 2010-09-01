@@ -610,7 +610,7 @@ function autotls_change() {
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
-								foreach ($config['system']['ca'] as $ca):
+								foreach ($config['ca'] as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
@@ -625,7 +625,7 @@ function autotls_change() {
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
-								foreach ($config['system']['cert'] as $cert):
+								foreach ($config['cert'] as $cert):
 									$selected = "";
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected";

@@ -62,7 +62,7 @@ $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
 
-$a_cert =& $config['system']['cert'];
+$a_cert =& $config['cert'];
 
 $certs_available = false;
 if (is_array($a_cert) && count($a_cert))

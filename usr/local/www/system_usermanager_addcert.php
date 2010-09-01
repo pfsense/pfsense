@@ -53,10 +53,10 @@ if (!is_array($config['system']['user']))
 
 $a_user =& $config['system']['user'];
 
-if (!is_array($config['system']['ca']))
-	$config['system']['ca'] = array();
+if (!is_array($config['ca']))
+	$config['ca'] = array();
 
-$a_ca =& $config['system']['ca'];
+$a_ca =& $config['ca'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca)

@@ -53,15 +53,15 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (!is_array($config['system']['ca']))
-	$config['system']['ca'] = array();
+if (!is_array($config['ca']))
+	$config['ca'] = array();
 
-$a_ca =& $config['system']['ca'];
+$a_ca =& $config['ca'];
 
-if (!is_array($config['system']['cert']))
-	$config['system']['cert'] = array();
+if (!is_array($config['cert']))
+	$config['cert'] = array();
 
-$a_cert =& $config['system']['cert'];
+$a_cert =& $config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca)

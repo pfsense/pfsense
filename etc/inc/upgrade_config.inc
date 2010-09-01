@@ -2167,4 +2167,29 @@ function upgrade_067_to_068() {
 	}
 }
 
+function upgrade_067_to_068() {
+	global $config;
+	if (!is_array($config['system']['user']))
+		return;
+	foreach ($config['system']['user'] as & $user) {
+		if (!is_array($user['cert']))
+			continue;
+		$rids = array();
+		foreach ($user['cert'] as $id => $cert) {
+			if (!isset($cert['name']))
+				continue;
+			$tcert = $cert;
+			// Make sure each cert gets a refid
+			if (!isset($tcert['refid']))
+				$tcert['refid'] = uniqid();
+			// Keep the cert references for this user
+			$rids[] = $tcert['refid'];
+			$config['cert'][] = $tcert;
+		}
+		// Replace user certs with cert references instead.
+		if (count($rids) > 0)
+			$user['cert'] = $rids;
+	}
+}
+
 ?>

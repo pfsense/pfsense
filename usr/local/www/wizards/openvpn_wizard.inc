@@ -163,7 +163,7 @@ function step5_submitphpaction() {
 function step6_stepbeforeformdisplay() {
 	global $stepid, $config;
 
-	if (count($config['system']['ca']) < 1) {
+	if (count($config['ca']) < 1) {
 		$stepid++;
 	}
 }
@@ -185,8 +185,8 @@ function step7_submitphpaction() {
 
 	$canames = array();
 	$cacns = array();
-	if (is_array($config['system']['ca'])) {
-		foreach($config['system']['ca'] as $ca) {
+	if (is_array($config['ca'])) {
+		foreach($config['ca'] as $ca) {
 			$canames[] = $ca['name'];
 			$cainfo = cert_get_subject_hash($ca['crt']);
 			$cacns[] = $cainfo["CN"];
@@ -213,8 +213,8 @@ function step7_submitphpaction() {
 function step8_stepbeforeformdisplay() {
 	global $stepid, $config;
 
-	if (count($config['system']['cert']) < 1 ||
-		(count($config['system']['cert']) == 1 && stristr($config['system']['cert'][0]['name'], "webconf"))) {
+	if (count($config['cert']) < 1 ||
+		(count($config['cert']) == 1 && stristr($config['cert'][0]['name'], "webconf"))) {
 		$stepid++;
 	}
 }
@@ -271,8 +271,8 @@ function step9_submitphpaction() {
 
 	$certnames = array();
 	$certcns = array();
-	if (is_array($config['system']['cert'])) {
-		foreach($config['system']['cert'] as $cert) {
+	if (is_array($config['cert'])) {
+		foreach($config['cert'] as $cert) {
 			$certnames[] = $cert['name'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
@@ -450,10 +450,10 @@ function step12_submitphpaction() {
 			'commonName' => $pconfig['step6']['certca']);
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn);
-		if (!is_array($config['system']['ca']))
-			$config['system']['ca'] = array();
+		if (!is_array($config['ca']))
+			$config['ca'] = array();
 
-		$config['system']['ca'][] = $ca;
+		$config['ca'][] = $ca;
 	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step6']['authcertca'])) {
 		$message = "Please choose a Certificate Authority.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
@@ -477,10 +477,10 @@ function step12_submitphpaction() {
 			'commonName' => $pconfig['step9']['certname']);
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn);
-		if (!is_array($config['system']['cert']))
-			$config['system']['cert'] = array();
+		if (!is_array($config['cert']))
+			$config['cert'] = array();
 
-		$config['system']['cert'][] = $cert;
+		$config['cert'][] = $cert;
 	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step9']['authcertname'])) {
 		$message = "Please choose a Certificate.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");

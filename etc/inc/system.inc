@@ -666,12 +666,12 @@ function system_webgui_start() {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
 		if(!is_array($cert) && !$cert['crt'] && !$cert['prv']) {
-			if (!is_array($config['system']['ca']))
-				$config['system']['ca'] = array();
-			$a_ca =& $config['system']['ca'];
-			if (!is_array($config['system']['cert']))
-				$config['system']['cert'] = array();
-			$a_cert =& $config['system']['cert'];
+			if (!is_array($config['ca']))
+				$config['ca'] = array();
+			$a_ca =& $config['ca'];
+			if (!is_array($config['cert']))
+				$config['cert'] = array();
+			$a_cert =& $config['cert'];
 			echo "Creating SSL Certificate... ";
 			$cert = array();
 			$cert['refid'] = uniqid();

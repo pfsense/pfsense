@@ -34,8 +34,8 @@ require_once("functions.inc");
 function & lookup_ca($refid) {
 	global $config;
 
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $ca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $ca)
 			if ($ca['refid'] == $refid)
 				return $ca;
 
@@ -45,8 +45,8 @@ function & lookup_ca($refid) {
 function & lookup_ca_by_subject($subject) {
 	global $config;
 
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $ca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $ca)
 		{
 			$ca_subject = cert_get_subject($ca['crt']);
 			if ($ca_subject == $subject)
@@ -59,8 +59,8 @@ function & lookup_ca_by_subject($subject) {
 function & lookup_cert($refid) {
 	global $config;
 
-	if (is_array($config['system']['cert']))
-		foreach ($config['system']['cert'] as & $cert)
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
 			if ($cert['refid'] == $refid)
 				return $cert;
 
@@ -119,15 +119,15 @@ function ca_import(& $ca, $str, $key="") {
 	}
 
 	/* Correct if child certificate was loaded first */
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $oca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $oca)
 		{
 			$issuer = cert_get_issuer($oca['crt']);
 			if($ca['refid']<>$oca['refid'] && $issuer==$subject)
 				$oca['caref'] = $ca['refid'];
 		}
-	if (is_array($config['system']['cert']))
-		foreach ($config['system']['cert'] as & $cert)
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
 		{
 			$issuer = cert_get_issuer($cert['crt']);
 			if($issuer==$subject)
@@ -353,7 +353,7 @@ function get_all_user_certs($certsonly=false) {
 function get_all_certs_tree() {
 	global $config;
 	$cert_tree = array();
-	foreach ($config['system']['ca'] as $ca)
+	foreach ($config['ca'] as $ca)
 		$cert_tree[$ca['refid']] = $ca;
 	$usercerts = get_all_user_certs();
 	foreach ($usercerts as $cert)

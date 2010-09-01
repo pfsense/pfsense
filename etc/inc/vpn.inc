@@ -206,8 +206,8 @@ function vpn_ipsec_configure($ipchg = false)
 		}
 
 		/* generate CA certificates files */
-		if (is_array($config['system']['ca']) && count($config['system']['ca'])) {
-			foreach ($config['system']['ca'] as $ca) {
+		if (is_array($config['ca']) && count($config['ca'])) {
+			foreach ($config['ca'] as $ca) {
 				if (!isset($ca['crt'])) {
 					log_error("Error: Invalid certificate info for {$ca['name']}");
 					continue;

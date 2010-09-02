@@ -80,7 +80,7 @@ function add_base_packages_menu_items() {
 		}
 	}
 	if($modified_config) {
-		write_confg(gettext("Restored base_package menus after configuration restore."));
+		write_config(gettext("Restored base_package menus after configuration restore."));
 		$config = parse_config(true);
 	}
 }

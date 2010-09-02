@@ -374,6 +374,7 @@ if ($_POST) {
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vip) {

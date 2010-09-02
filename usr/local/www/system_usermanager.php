@@ -656,7 +656,7 @@ function sshkeyClicked(obj) {
 											<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
 											</a>
-											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
+											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
 											</a>
 										</td>
@@ -669,7 +669,7 @@ function sshkeyClicked(obj) {
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
-											<a href="system_certmanager?act=new&userid=<?=$id?>">
+											<a href="system_certmanager.php?act=new&userid=<?=$id?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>

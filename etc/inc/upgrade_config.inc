@@ -2156,4 +2156,15 @@ function upgrade_066_to_067() {
 	}
 }
 
+function upgrade_067_to_068() {
+	global $config;
+
+	if (!empty($config['pppoe'])) {
+		$config['pppoes'] = array();
+		$config['pppoes']['pppoe'] = array();
+		$config['pppoes']['pppoe'][] = $config['pppoe'][0];
+		unset($config['pppoe']);
+	}
+}
+
 ?>

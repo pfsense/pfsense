@@ -115,7 +115,7 @@ if ($_POST) {
 		if (!is_array($a_user[$userid]['cert']))
 			$a_user[$userid]['cert'] = array();
 
-	    $cert['name'] = $pconfig['name'];
+		$cert['name'] = $pconfig['name'];
 
 		$subject = cert_get_subject_array($ca['crt']);
 
@@ -130,7 +130,10 @@ if ($_POST) {
 		cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
 			$pconfig['lifetime'], $dn);
 
-		$a_user[$userid]['cert'][] = $cert;
+		if (!is_array($config['cert']))
+			$config['cert'] = array();
+		$config['cert'][] = $cert;
+		$a_user[$userid]['cert'][] = $cert['refid'];
 
 		write_config();
 

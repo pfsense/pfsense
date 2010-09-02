@@ -188,6 +188,7 @@ function filter_configure_sync() {
     if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
+		$rules .= "set limit src-nodes {$config['system']['maximumstates']}\n";
     }
 
 	$rules .= "\n";

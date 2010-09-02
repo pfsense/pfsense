@@ -69,6 +69,23 @@ if($_REQUEST['deleteall']) {
 	}
 }
 
+if(($tablename == "bogons") && ($_POST['Download'])) {
+	mwexec_bg("/etc/rc.update_bogons.sh now");
+	$maxtimetowait = 0;
+	$loading = true;
+	while($loading == true) {
+		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
+		if($isrunning == "")
+			$loading = false;
+		$maxtimetowait++;
+		if($maxtimetowait > 89)
+			$loading = false;
+		sleep(1);
+	}
+	if($maxtimetowait < 90)
+		$savemsg = gettext("The bogons database has been updated.");
+}
+
 exec("/sbin/pfctl -t $tablename -T show", $entries);
 exec("/sbin/pfctl -sT", $tables);
 
@@ -118,8 +135,10 @@ include("fbegin.inc");
 			<?php echo $entry; ?>
 		</td>
 		<td>
+			<?php if ($tablename != "bogons") { ?>
 			<a onClick='del_entry("<?=$entry?>");'>
 				<img img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif">
+			<?php } ?>
 			</a>
 		</td>
 	</tr>
@@ -133,8 +152,10 @@ include("fbegin.inc");
 
 <?php
 	if($count > 0)
-		echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
-
+  		if($tablename == "bogons")
+			echo "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
+		else
+			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
 ?>
 
 <?php include("fend.inc"); ?>

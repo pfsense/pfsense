@@ -100,7 +100,7 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
 		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.crt");
 		$exp_data = base64_decode($cert['crt']);
@@ -120,7 +120,7 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
 		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.key");
 		$exp_data = base64_decode($cert['prv']);
@@ -140,12 +140,13 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$certdeleted = $a_user[$id]['cert'][$_GET['certid']]['name'];
+		$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+		$certdeleted = $certdeleted['name'];
 		unset($a_user[$id]['cert'][$_GET['certid']]);
 		write_config();
 		$_GET['act'] = "edit";
 		$savemsg = gettext("Certificate")." {$certdeleted} ".
-					gettext("successfully deleted")."<br/>";
+					gettext("association removed.")."<br/>";
 	}
 
 	if ($_GET['act'] == "edit") {
@@ -316,7 +317,10 @@ if (isAllowedPage("system_usermanager")) {
 					cert_create($cert, $_POST['caref'], $_POST['keylen'],
 						(int)$_POST['lifetime'], $dn);
 
-					$userent['cert'][] = $cert;
+					if (!is_array($config['cert']))
+						$config['cert'] = array();
+					$config['cert'][] = $cert;
+					$userent['cert'][] = $cert['refid'];
 				}
 				$userent['uid'] = $config['system']['nextuid']++;
 				/* Add the user to All Users group. */
@@ -634,8 +638,9 @@ function sshkeyClicked(obj) {
 										$a_cert = $a_user[$id]['cert'];
 										if(is_array($a_cert)):
 											$i = 0;
-											foreach ($a_cert as $cert):
-						                        $ca = lookup_ca($cert['caref']);
+											foreach ($a_cert as $certref):
+												$cert = lookup_cert($certref);
+												$ca = lookup_ca($cert['caref']);
 									?>
 									<tr>
 										<td class="listlr">

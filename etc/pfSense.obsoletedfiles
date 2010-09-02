@@ -25,6 +25,8 @@
 /usr/local/www/services_captiveportal_users_edit.php
 /usr/local/www/system_advanced.php
 /usr/local/www/system_advanced_create_certs.php
+/usr/local/www/vpn_pppoe_users.php
+/usr/local/www/vpn_pppoe_users_edit.php
 /usr/local/www/vpn_ipsec_ca.php
 /usr/local/www/vpn_ipsec_ca_edit.php
 /usr/local/www/vpn_ipsec_ca_edit_create_cert.php

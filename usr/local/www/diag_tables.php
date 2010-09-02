@@ -94,6 +94,7 @@ include("fbegin.inc");
 
 ?>
 
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <form method='post'>
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 

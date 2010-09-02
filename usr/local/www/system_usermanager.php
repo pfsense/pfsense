@@ -669,7 +669,7 @@ function sshkeyClicked(obj) {
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
-											<a href="system_usermanager_addcert.php?userid=<?=$id?>">
+											<a href="system_certmanager?act=new&userid=<?=$id?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>

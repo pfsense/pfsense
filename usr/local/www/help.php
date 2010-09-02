@@ -146,7 +146,6 @@ $helppages = array(
 	'system_groupmanager.php' => 'http://doc.pfsense.org/index.php/Group_Manager',
 	'system_groupmanager_addprivs.php' => 'http://doc.pfsense.org/index.php/Group_Manager',
 	'system_usermanager.php' => 'http://doc.pfsense.org/index.php/User_Manager',
-	'system_usermanager_addcert.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_usermanager_addprivs.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_usermanager_settings.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_usermanager_settings_ldapacpicker.php' => 'http://doc.pfsense.org/index.php/User_Manager',

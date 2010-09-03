@@ -2167,7 +2167,7 @@ function upgrade_067_to_068() {
 		if (is_array($config['pppoe']['user'])) {
 			$username = array(); 
 			foreach ($config['pppoe']['user'] as $user) {
-				$usr = "{$user['name']}:{$user['password']}";
+				$usr = $user['name'] . ":" . base64_encode($user['password']);
 				if ($user['ip'])
 					$usr .= ":{$user['ip']}";
 				$username[] = $usr;

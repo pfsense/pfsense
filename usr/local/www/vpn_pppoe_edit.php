@@ -203,7 +203,7 @@ if ($_POST) {
 		$users = array();
 		for($x=0; $x<4999; $x++) {
 			if ($_POST["username{$x}"]) {
-				$usernam = $_POST["username{$x}"] . ":" . $_POST["password{$x}"];
+				$usernam = $_POST["username{$x}"] . ":" . base64_encode($_POST["password{$x}"]);
 				if ($_POST["ip{$x}"])
 					$usernam .= ":" . $_POST["ip{$x}"];
 				$users[] = $usernam;
@@ -539,7 +539,7 @@ function enable_change(enable_over) {
 				foreach($item as $ww) {
 					$wws = explode(":", $ww);
 					$user = $wws[0];
-					$passwd = $wws[1];
+					$passwd = base64_decode($wws[1]);
 					$ip = $wws[2];
                         		$tracker = $counter;
 		?>

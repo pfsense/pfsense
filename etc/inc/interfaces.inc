@@ -1945,9 +1945,6 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	// Remove script file
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
-	// Clone wireless nic if needed.
-	interface_wireless_clone($if, $wl);
-
 	// Reject inadvertent changes to shared settings in case the interface hasn't been configured.
 	interface_sync_wireless_clones($wl, false);
 
@@ -2338,9 +2335,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 	}
 
-	/* wireless configuration? */
+	/* Clone wireless nic if needed. */
 	if (is_array($wancfg['wireless']))
-		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
+		interface_wireless_clone($realif, $wancfg);
 
 	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
@@ -2481,6 +2478,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				file_put_contents("{$g['tmp_path']}/{$realif}_router", $wancfg['gateway']);
 			break;
 	}
+
+	/* wireless configuration? */
+	if (is_array($wancfg['wireless']))
+		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);

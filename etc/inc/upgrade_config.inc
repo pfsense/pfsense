@@ -2163,6 +2163,17 @@ function upgrade_067_to_068() {
 		$config['pppoes'] = array();
 		$config['pppoes']['pppoe'] = array();
 		$config['pppoes']['pppoe'][] = $config['pppoe'][0];
+
+		if (is_array($config['pppoe']['user'])) {
+			$username = array(); 
+			foreach ($config['pppoe']['user'] as $user) {
+				$usr = "{$user['name']}:{$user['password']}";
+				if ($user['ip'])
+					$usr .= ":{$user['ip']}";
+				$username[] = $usr;
+			}
+			$config['pppoes']['pppoe'][0]['username'] = implode(" ", $username);
+		}
 		unset($config['pppoe']);
 	}
 }

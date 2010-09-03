@@ -181,8 +181,7 @@ switch($_GET['mode']) {
 			$static_output = "";
 			if($pkgtodo['name']) {
 				update_output_window($static_output);
-				delete_package($pkgtodo['name'] . '-' . $pkgtodo['version'], $pkg_id);
-				delete_package_xml($pkgtodo['name']);
+				uninstall_package_from_name($pkgtodo['name']);
 				install_package($pkgtodo['name']);
 				$pkg_id++;
 			}

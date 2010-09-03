@@ -1335,7 +1335,7 @@ EOD;
 					$item = explode(" ", $pppoecfg['username']);
 					foreach($item as $userdata) {
 						$data = explode(":", $userdata);
-						$mpdsecret .= "{$data[0]} \"{$user[1]}\" {$user[2]}\n";
+						$mpdsecret .= "{$data[0]} \"" . base64_decode($data[1]) . "\" {$data[2]}\n";
 					}
 				}
 

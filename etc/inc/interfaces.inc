@@ -2285,6 +2285,20 @@ EOD;
 		/* bring the clones back up that were previously up */
 		foreach ($clones_up as $clone_if) {
 			mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " up");
+
+			/*
+			 * Rerun the setup script for the interface if it isn't this interface, the interface
+			 * is in infrastructure mode, and WPA is enabled.
+			 * This can be removed if wpa_supplicant stops dying when you bring the interface down.
+			 */
+			if ($clone_if != $if) {
+				$friendly_if = convert_real_interface_to_friendly_interface_name($clone_if);
+				if ( !empty($friendly_if)
+				    && $config['interfaces'][$friendly_if]['wireless']['mode'] == "bss"
+				    && isset($config['interfaces'][$friendly_if]['wireless']['wpa']['enable']) ) {
+					mwexec("/bin/sh {$g['tmp_path']}/{$clone_if}_setup.sh");
+				}
+			}
 		}
 	}
 

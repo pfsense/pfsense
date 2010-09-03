@@ -2167,7 +2167,7 @@ function upgrade_067_to_068() {
 	}
 }
 
-function upgrade_067_to_068() {
+function upgrade_068_to_069() {
 	global $config;
 	if (!is_array($config['system']['user']))
 		return;

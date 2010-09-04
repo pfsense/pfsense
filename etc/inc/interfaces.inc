@@ -2350,7 +2350,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface, true);
+
+		switch ($wancfg['ipaddr']) {
+			case 'pppoe':
+			case 'l2tp':
+			case 'pptp':
+			case 'ppp':
+				interface_bring_down($interface, true);
+				break;
+			default:
+				interface_bring_down($interface);
+				break;
+		}
 	}
 
 	/* wireless configuration? */

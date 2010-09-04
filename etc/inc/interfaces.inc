@@ -2347,6 +2347,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
+			interface_bring_down($interface, true);
 	}
 
 	/* Clone wireless nic if needed. */
@@ -2453,23 +2454,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	switch ($wancfg['ipaddr']) {
 		case 'carpdev-dhcp':
-			interface_bring_down($interface);
 			interface_carpdev_dhcp_configure($interface);
 			break;
 		case 'dhcp':
-			interface_bring_down($interface);
 			interface_dhcp_configure($interface);
 			break;
 		case 'pppoe':
 		case 'l2tp':
 		case 'pptp':
 		case 'ppp':
-			interface_bring_down($interface, true);
 			interface_ppps_configure($interface);
 			break;
 		default:
-			interface_bring_down($interface);
-
 			if ($wancfg['ipaddr'] <> "" && $wancfg['subnet'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
 			} else if (substr($realif, 0, 3) == "gre") {

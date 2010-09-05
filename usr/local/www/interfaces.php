@@ -382,6 +382,7 @@ if ($_POST) {
 						$input_errors[] = gettext("This interface is referenced by VIPs please delete those before setting the interface to 'none' configuration.");
 				}
 			}
+			break;
 		case "dhcp":
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
 				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");

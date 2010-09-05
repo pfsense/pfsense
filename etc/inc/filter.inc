@@ -1109,6 +1109,7 @@ function filter_nat_rules_generate() {
 				continue;
 
 			$sn = "";
+			$sn1 = "";
 			$target = alias_expand($rule['external']);
                         if (!$target) {
                                 $natrules .= "# Unresolvable alias {$rule['target']}\n";
@@ -1127,7 +1128,11 @@ function filter_nat_rules_generate() {
 			if(!$dstaddr)
                                 $dstaddr = $FilterIflist[$natif]['ip'];
 
+			$srcaddr = trim($srcaddr);
+			$dstaddr = trim($dstaddr);
+
 			$tmp = explode('/', $srcaddr);
+			$srcip = $tmp[0];
 			if (!empty($tmp[1]) && is_numeric($tmp[1])) {
 				$sn = $tmp[1];
 				$sn1 = "/{$sn}";
@@ -1137,9 +1142,9 @@ function filter_nat_rules_generate() {
 
 			/*
 			 * If reflection is enabled, turn on extra redirections
-			 * for this rule by adding other interfaces to binat rule.
+			 * for this rule by adding other interfaces to an rdr rule.
 			 */
-			if ((isset($rule['system']['enablebinatreflection']) || $rule['natreflection'] == "enable")
+			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable")
 			   && $rule['natreflection'] != "disable")
 				$nat_if_list = filter_get_reflection_interfaces($natif);
 			else
@@ -1149,11 +1154,11 @@ function filter_nat_rules_generate() {
 			if (!empty($nat_if_list)) {
 				$binat_if_list = implode(" ", $nat_if_list);
 				$binat_if_list = "{ {$binat_if_list} }";
-				$reflection_txt .= "rdr on {$binat_if_list} from {$srcaddr} to {$target}{$sn1} -> {$dstaddr} bitmask\n";
+				$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
-			$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", $srcaddr, $traget, $sn);
+			$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";

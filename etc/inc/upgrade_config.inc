@@ -2203,4 +2203,27 @@ function upgrade_068_to_069() {
 	}
 }
 
+function upgrade_069_to_070() {
+	global $config;
+
+	/* Convert NAT 1:1 rules */
+	if (is_array($config['nat']['onetoone'])) {
+		$a_nat = &$config['nat']['onetoone'];
+
+		foreach ($a_nat as &$natent) {
+			if ($natent['subnet'] == 32)
+				$natent['source'] = array("address" => $natent['internal']);
+			else
+				$natent['source'] = array("address" => $natent['internal'] . "/" . $natent['subnet']);
+
+			$natent['destination'] = array("any" => true);
+
+			unset($natent['internal']);
+			unset($natent['subnet']);
+		}
+
+		unset($natent);
+	}
+}
+
 ?>

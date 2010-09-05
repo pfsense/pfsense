@@ -172,7 +172,6 @@ if ($_POST) {
 
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['external'] = $_POST['external'];
-		$natent['externalmask'] = $_POST['externalmask'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
 
@@ -184,6 +183,8 @@ if ($_POST) {
 
 		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
 			$natent['natreflection'] = $_POST['natreflection'];
+		else
+			unset($natent['natreflection']);
 
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;

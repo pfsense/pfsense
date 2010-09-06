@@ -66,6 +66,7 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			captiveportal_init_webgui();
 			break;
 		case 'ntpd':
+		case 'openntpd':
 			system_ntp_configure();
 			break;
 		case 'bsnmpd':
@@ -113,6 +114,7 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 			captiveportal_init_webgui();
 			break;
 		case 'ntpd':
+		case 'openntpd':
 			system_ntp_configure();
 			break;		
 		case 'bsnmpd':
@@ -160,6 +162,9 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 		case 'ntpd':
 			killbyname("ntpd");
 			break;		
+		case 'openntpd':
+			killbyname("openntpd");
+			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
 			break;
@@ -180,9 +185,6 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 			break;
 		case 'miniupnpd':
 			upnp_action('stop');
-			break;
-		case 'openntpd':
-			killbyname("openntpd");
 			break;
 		case 'sshd':
 			killbyname("sshd");
@@ -323,8 +325,7 @@ if (isset($config['ipsec']['enable'])) {
 
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $settings) {
-			$setting =& $config['openvpn']["openvpn-{$mode}"][$id];
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
 				$pconfig = array();
 				$pconfig['name'] = "openvpn";

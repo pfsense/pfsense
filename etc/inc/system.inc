@@ -1112,7 +1112,7 @@ function system_timezone_configure() {
 function system_ntp_configure() {
 	global $config, $g;
 
-	$syscfg = $config['system'];
+	$syscfg =& $config['system'];
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
@@ -1152,16 +1152,13 @@ function system_ntp_configure() {
 
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
-		mwexec("/usr/bin/killall ntpd", true);
+		killbyname("ntpd");
 	}
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
-	if($g['booting'])
-		return;
-	
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
 	

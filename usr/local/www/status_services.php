@@ -91,12 +91,12 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			$vpnmode = $_GET['vpnmode'];
 			if ($vpnmode == "server" || $vpnmode == "client") {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
+				if (file_exists($configfile)) {
 					killbypid($pidfile);
 					sleep(1);
-					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
+					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
 				}
 			}
 			break;
@@ -139,10 +139,9 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 			$vpnmode = $_GET['vpnmode'];
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				if (file_exists($configfile))
 					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
-				}
 			}
 			break;
 		default:
@@ -196,10 +195,8 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 			$vpnmode = $_GET['vpnmode'];
 			if (($vpnmode == "server") or ($vpnmode == "client")) {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
-					killbypid($pidfile);
-				}
+				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
+				killbypid($pidfile);
 			}
 			break;
 		default:

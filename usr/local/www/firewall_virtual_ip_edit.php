@@ -110,7 +110,7 @@ if ($_POST) {
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr) {
-		if (empty($config['interfaces'][$natif]['ipaddr']))
+		if ($_POST['interface'] == $natif && empty($config['interfaces'][$natif]['ipaddr']))
 			$input_errors[] = gettext("The interface choosen for the VIP has no ip configured so it cannot be used as a parent for the VIP.");
 		if ($_POST['subnet'] == get_interface_ip($natif))
 			$input_errors[] = sprintf(gettext("The %s IP address may not be used in a virtual entry."),$natdescr);

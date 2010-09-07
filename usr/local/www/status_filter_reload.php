@@ -50,6 +50,11 @@ if($_GET['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
+if($_GET['reloadfilter']) {
+	send_event("filter reload");
+	header("Location: status_filter_reload.php");
+	exit;
+}
 
 include("head.inc");
 ?>
@@ -57,7 +62,9 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-
+<br/>
+<a href="/status_filter_reload.php?reloadfilter=true"><input type="button" value="Reload Filter" id="reloadfilter"></a>
+<br/><br/><br/>
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>
 </div>

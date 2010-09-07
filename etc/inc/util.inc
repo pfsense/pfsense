@@ -137,6 +137,36 @@ function unlock($cfglckkey = 0) {
 	return;
 }
 
+function send_event($cmd) {
+	global $g;
+
+	$fd = fsockopen($g['event_address']);
+	if ($fd) {
+		fwrite($fd, $cmd);
+		$resp = fread($fd, 4096);
+		if ($resp != "OK\n")
+			log_error("send_event: sent {$cmd} got {$resp}");
+		fclose($fd);
+	}
+}
+
+function send_multiple_events($cmds) {
+        global $g;
+
+	if (!is_array($cmds))
+		return;
+        $fd = fsockopen($g['event_address']);
+        if ($fd) {
+		foreach ($cmds as $cmd) {
+                	fwrite($fd, $cmd);
+                	$resp = fread($fd, 4096);
+                	if ($resp != "OK\n")
+                        	log_error("send_event: sent {$cmd} got {$resp}");
+		}
+                fclose($fd);
+        }
+}
+
 function refcount_init($reference) {
 	$shmid = shmop_open($reference, "c", 0644, 10);
 	shmop_write($shmid, 0, 0);
@@ -1176,8 +1206,6 @@ function start_devd() {
 
         exec("/sbin/devd");
         sleep(1);
-        if(file_exists("{$g['tmp_path']}/rc.linkup"))
-                unlink("{$g['tmp_path']}/rc.linkup");
 }
 
 function is_interface_mismatch() {
@@ -1207,7 +1235,7 @@ function is_interface_mismatch() {
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
 	global $g;
-	touch($g['tmp_path'] . "/filter_sync"); 
+	send_event("filter sync");
 }
 
 /****f* util/isAjax

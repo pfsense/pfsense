@@ -4,4 +4,4 @@
 /bin/rm -f /var/etc/nameserver_$1
 /bin/rm -f /tmp/$1_router
 /bin/rm -f /tmp/$1up
-/usr/bin/touch /tmp/filter_dirty
+/usr/local/sbin/pfSctl -c 'filter reload'

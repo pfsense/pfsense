@@ -82,8 +82,8 @@ rrd interval 60s;
 
 ## These parameters can be overriden in a specific alarm configuration
 alarm default { 
-	command on "/usr/bin/touch /tmp/filter_dirty"
-	command off "/usr/bin/touch /tmp/filter_dirty"
+	command on "/usr/local/sbin/pfSctl -c 'filter reload'"
+	command off "/usr/local/sbin/pfSctl -c 'filter reload'"
 	combine 10s
 }
 

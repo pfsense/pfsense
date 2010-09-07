@@ -136,8 +136,7 @@ function filter_configure() {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
-	global $g;
-	touch($g['tmp_path'] . "/filter_dirty");
+	send_event("filter reload");
 }
 
 function filter_delete_states_for_down_gateways() {

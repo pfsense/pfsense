@@ -305,7 +305,7 @@ services_dnsmasq_configure();
 system_dhcpleases_configure();
 
 /* start dyndns service */
-@touch("{$g['tmp_path']}/update_dyndns");
+send_event("service reload dyndnsall");
 
 /* start DHCP relay */
 services_dhcrelay_configure();

@@ -573,7 +573,7 @@ function openvpn_restart($mode, & $settings) {
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	mwexec_bg("nohup openvpn --config {$fpath}");
-	touch("{$g['tmp_path']}/filter_dirty");
+	send_event("filter reload");
 }
 
 function openvpn_delete($mode, & $settings) {

@@ -85,7 +85,7 @@ if (is_ipaddr($oldip) && $curwanip == $oldip)
 services_dnsupdate_process($interface);
 
 /* signal dyndns update */
-file_put_contents("{$g['tmp_path']}/update_dyndns", $interface);
+send_event("service reload dyndns {$interface}");
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();

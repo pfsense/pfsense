@@ -14,7 +14,7 @@ if [ $8 = "dns2" ]; then
 fi
 
 # let the configuration system know that the ip has changed.
-/bin/echo $1 > /tmp/rc.newwanip
+/usr/local/sbin/pfSctl -c "'interface reload $1'"
 /bin/echo $4 > /tmp/$1_router
 /usr/bin/touch /tmp/$1up
 exit 0

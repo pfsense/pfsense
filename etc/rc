@@ -360,8 +360,6 @@ rm -rf /usr/local/pkg/pf/CVS
 
 # Remove stale files that have already been processed by bootup
 # scripts
-rm -f /tmp/filter_dirty
-rm -f /tmp/rc.linkup
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null &
 
 # Start ping handler every 240 seconds

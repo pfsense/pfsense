@@ -461,7 +461,7 @@ if ($restart_sshd) {
 
 	if ($config['system']['enablesshd']) {
 		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
-		touch("{$g['tmp_path']}/start_sshd");
+		send_event("service restart sshd");
 	}
 }
 if ($restart_webgui) {

@@ -852,7 +852,7 @@ function reload_interfaces_sync() {
  ******/
 function reload_all() {
 	global $g;
-	touch("{$g['tmp_path']}/reload_all");
+	send_event("service reload all");
 }
 
 /****f* pfsense-utils/reload_interfaces
@@ -925,10 +925,10 @@ function reload_all_sync() {
 	conf_mount_ro();
 
 	/* restart sshd */
-	@touch("{$g['tmp_path']}/start_sshd");
+	send_event("service restart sshd");
 
 	/* restart webConfigurator if needed */
-	touch("{$g['tmp_path']}/restart_webgui");
+	send_event("service restart webgui");
 
 	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }

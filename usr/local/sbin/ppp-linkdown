@@ -10,4 +10,4 @@ fi
 # Do not remove gateway used during filter reload.
 # /bin/rm -f /tmp/$1_router
 /bin/rm -f /tmp/$1up
-/usr/bin/touch /tmp/resolv_conf_generate
+/usr/local/sbin/pfSctl -c 'service reload dns'

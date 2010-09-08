@@ -3,6 +3,7 @@
 /etc/phpshellsessions/cvssync
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/usr/local/www/diag_showbogons.php
 /usr/local/www/interfaces_wan.php
 /usr/local/www/interfaces_lan.php
 /usr/local/www/interfaces_opt.php
@@ -25,6 +26,8 @@
 /usr/local/www/services_captiveportal_users_edit.php
 /usr/local/www/system_advanced.php
 /usr/local/www/system_advanced_create_certs.php
+/usr/local/www/vpn_pppoe_users.php
+/usr/local/www/vpn_pppoe_users_edit.php
 /usr/local/www/vpn_ipsec_ca.php
 /usr/local/www/vpn_ipsec_ca_edit.php
 /usr/local/www/vpn_ipsec_ca_edit_create_cert.php
@@ -42,3 +45,4 @@
 /usr/local/www/dfuife.cgi
 /usr/local/www/fred.png
 /usr/local/www/index.html
+/usr/local/www/system_usermanager_addcert.php

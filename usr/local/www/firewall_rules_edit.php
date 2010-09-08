@@ -854,7 +854,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;</b>).<br />.<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("\"to\""); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b><br /><?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>
@@ -969,6 +969,7 @@ include("head.inc");
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference.");?></span>
 			</td>
 		</tr>
+<?php		if (!isset($id) || !($a_filter[$id] && firewall_check_for_advanced_options($a_filter[$id]) <> "")): ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -980,6 +981,7 @@ include("head.inc");
 				<input name="after" type="hidden" value="<?=$after;?>">
 			</td>
 		</tr>
+<?php		endif; ?>
 		<tr>
 			<td>&nbsp;</td>
 		</tr>

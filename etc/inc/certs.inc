@@ -34,8 +34,8 @@ require_once("functions.inc");
 function & lookup_ca($refid) {
 	global $config;
 
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $ca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $ca)
 			if ($ca['refid'] == $refid)
 				return $ca;
 
@@ -45,8 +45,8 @@ function & lookup_ca($refid) {
 function & lookup_ca_by_subject($subject) {
 	global $config;
 
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $ca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $ca)
 		{
 			$ca_subject = cert_get_subject($ca['crt']);
 			if ($ca_subject == $subject)
@@ -59,8 +59,8 @@ function & lookup_ca_by_subject($subject) {
 function & lookup_cert($refid) {
 	global $config;
 
-	if (is_array($config['system']['cert']))
-		foreach ($config['system']['cert'] as & $cert)
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
 			if ($cert['refid'] == $refid)
 				return $cert;
 
@@ -119,15 +119,15 @@ function ca_import(& $ca, $str, $key="") {
 	}
 
 	/* Correct if child certificate was loaded first */
-	if (is_array($config['system']['ca']))
-		foreach ($config['system']['ca'] as & $oca)
+	if (is_array($config['ca']))
+		foreach ($config['ca'] as & $oca)
 		{
 			$issuer = cert_get_issuer($oca['crt']);
 			if($ca['refid']<>$oca['refid'] && $issuer==$subject)
 				$oca['caref'] = $ca['refid'];
 		}
-	if (is_array($config['system']['cert']))
-		foreach ($config['system']['cert'] as & $cert)
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
 		{
 			$issuer = cert_get_issuer($cert['crt']);
 			if($issuer==$subject)
@@ -335,30 +335,66 @@ function cert_get_issuer($str_crt, $decode = true) {
 	return $issuer;
 }
 
-function get_all_user_certs($certsonly=false) {
+function is_user_cert($certref) {
 	global $config;
-	$usercerts = array();
 	if (!is_array($config['system']['user']))
 		return;
 	foreach ($config['system']['user'] as $user) {
 		if (!is_array($user['cert']))
 			continue;
 		foreach ($user['cert'] as $cert) {
-			$usercerts[] = $certsonly ? $cert['crt'] : $cert;
+			if ($certref == $cert)
+				return true;
 		}
 	}
-	return $usercerts;
+	return false;
 }
 
-function get_all_certs_tree() {
+function is_openvpn_server_cert($certref) {
 	global $config;
-	$cert_tree = array();
-	foreach ($config['system']['ca'] as $ca)
-		$cert_tree[$ca['refid']] = $ca;
-	$usercerts = get_all_user_certs();
-	foreach ($usercerts as $cert)
-		$cert_tree[$cert['caref']]['certs'][] = $cert;
-	return $cert_tree;
+	if (!is_array($config['openvpn']['openvpn-server']))
+		return;
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if ($ovpns['certref'] == $certref)
+			return true;
+	}
+	return false;
+}
+
+function is_openvpn_client_cert($certref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-client']))
+		return;
+	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+		if ($ovpnc['certref'] == $certref)
+			return true;
+	}
+	return false;
+}
+
+function is_ipsec_cert($certref) {
+	global $config;
+	if (!is_array($config['ipsec']['phase1']))
+		return;
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if ($ipsec['certref'] == $certref)
+			return true;
+	}
+	return false;
+}
+
+function is_webgui_cert($certref) {
+	global $config;
+	if ($config['system']['webgui']['ssl-certref'] == $certref)
+		return true;
+}
+
+function cert_in_use($certref) {
+	return (is_webgui_cert($certref) ||
+		is_user_cert($certref) ||
+		is_openvpn_server_cert($certref) ||
+		is_openvpn_client_cert($certref) ||
+		is_ipsec_cert($certref));
 }
 
 ?>

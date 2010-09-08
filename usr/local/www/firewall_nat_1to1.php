@@ -102,8 +102,9 @@ include("head.inc");
                 <tr>
 		  <td width="10%" class="listhdrr"><?=gettext("Interface"); ?></td>
                   <td width="20%" class="listhdrr"><?=gettext("External IP"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Internal IP"); ?></td>
-                  <td width="40%" class="listhdr"><?=gettext("Description"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Source IP"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Destination IP"); ?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -124,12 +125,13 @@ include("head.inc");
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php echo $natent['external'];
-					if ($natent['subnet']) echo "/" . $natent['subnet']; ?>
+                    <?php 		echo $natent['external']; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php echo $natent['internal'];
-					if ($natent['subnet']) echo "/" . $natent['subnet']; ?>
+                    <?php 		echo pprint_address($natent['source']); ?>
+                  </td>
+                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+                    <?php 		echo pprint_address($natent['destination']); ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
@@ -145,7 +147,7 @@ include("head.inc");
                 </tr>
 		<?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="4"></td>
+                  <td class="list" colspan="5"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

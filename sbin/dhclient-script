@@ -81,10 +81,7 @@ add_new_address() {
 
         echo $new_routers > /tmp/${interface}_router
 	cp /var/db/${interface}_ip /tmp/rc.newwanip_oldip 2>/dev/null
-#	echo $new_ip_address > /var/db/${interface}_ip
-
-	echo $interface > /tmp/rc.newwanip
-#	echo $new_ip_address >>  /tmp/rc.newwanip
+	/usr/local/sbin/pfSctl -c "'interface reload $interface'"
 				
 }
 
@@ -186,7 +183,7 @@ add_new_resolv_conf() {
 		echo $new_domain_name >/var/etc/defaultdomain.conf
 	fi
 
-	echo $interface > /tmp/rc.newwanip
+	/usr/local/sbin/pfSctl -c "'interface reload $interface'"
 
 	return 0
 }

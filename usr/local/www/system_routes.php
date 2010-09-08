@@ -59,6 +59,14 @@ if ($_POST) {
 
 		$retval = 0;
 
+		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
+                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+			foreach ($toapplylist as $toapply)
+				mwexec("{$toapply}");
+			
+			@unlink("{$g['tmp_path']}/.system_routes.apply");
+		}
+
 		$retval = system_routing_configure();
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
@@ -92,7 +100,6 @@ if ($_GET['act'] == "del") {
 		mwexec("/sbin/route delete " . escapeshellarg($a_routes[$_GET['id']]['network']));
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
-		mark_subsystem_dirty('staticroutes');
 		header("Location: system_routes.php");
 		exit;
 	}

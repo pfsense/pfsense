@@ -37,7 +37,8 @@
 ##|*MATCH=status_services.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+require_once("captiveportal.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
@@ -58,9 +59,14 @@ function get_pkg_descr($package_name) {
 	return gettext("Not available.");
 }
 
-if($_GET['mode'] == "restartservice" and $_GET['service']) {
+if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			captiveportal_init_webgui();
+			break;
 		case 'ntpd':
+		case 'openntpd':
 			system_ntp_configure();
 			break;
 		case 'bsnmpd':
@@ -79,20 +85,18 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			upnp_action('restart');	
 			break;
 		case 'racoon':
-			exec("/usr/bin/killall -9 racoon");
-			sleep(1);
 			vpn_ipsec_force_reload();
 			break;
 		case 'openvpn':         
 			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") or ($vpnmode == "client")) {
+			if ($vpnmode == "server" || $vpnmode == "client") {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
+				if (file_exists($configfile)) {
 					killbypid($pidfile);
 					sleep(1);
-					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
+					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
 				}
 			}
 			break;
@@ -104,9 +108,13 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	sleep(5);
 }
 
-if($_GET['mode'] == "startservice" and $_GET['service']) {
+if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			captiveportal_init_webgui();
+			break;
 		case 'ntpd':
+		case 'openntpd':
 			system_ntp_configure();
 			break;		
 		case 'bsnmpd':
@@ -125,18 +133,15 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			upnp_action('start');
 			break;
 		case 'racoon':
-			exec("killall -9 racoon");
-			sleep(1);
 			vpn_ipsec_force_reload();
 			break;
 		case 'openvpn':
 			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") or ($vpnmode == "client")) {
+			if (($vpnmode == "server") || ($vpnmode == "client")) {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
-				}
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				if (file_exists($configfile))
+					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
 			}
 			break;
 		default:
@@ -148,11 +153,17 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 }
 
 /* stop service */
-if($_GET['mode'] == "stopservice" && $_GET['service']) {
+if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'captiveportal':
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			break;
 		case 'ntpd':
 			killbyname("ntpd");
 			break;		
+		case 'openntpd':
+			killbyname("openntpd");
+			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
 			break;
@@ -174,9 +185,6 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 		case 'miniupnpd':
 			upnp_action('stop');
 			break;
-		case 'openntpd':
-			killbyname("openntpd");
-			break;
 		case 'sshd':
 			killbyname("sshd");
 			break;
@@ -187,22 +195,21 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 			$vpnmode = $_GET['vpnmode'];
 			if (($vpnmode == "server") or ($vpnmode == "client")) {
 				$id = $_GET['id'];
-				if (is_numeric($id)) {
-					$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
-					killbypid($pidfile);
-				}
+				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
+				killbypid($pidfile);
 			}
 			break;
 		default:
 			stop_service($_GET['service']);
 			break;
 	}
-	$savemsg = sprintf(gettext("%s has been stopped."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been stopped."), $_GET['service']);
 	sleep(5);
 }
 
 /* batch mode, allow other scripts to call this script */
-if($_GET['batch']) exit;
+if($_GET['batch'])
+	exit;
 
 $pgtitle = array(gettext("Status"),gettext("Services"));
 include("head.inc");
@@ -231,35 +238,31 @@ include("fbegin.inc");
 
 <?php
 
-exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-array_shift($psout);
-foreach($psout as $line) {
-	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
-}
-
-$services = $config['installedpackages']['service'];
+if (is_array($config['installedpackages']['service']))
+	$services = $config['installedpackages']['service'];
+else
+	$services = array();
 
 /*    Add services that are in the base.
  *
  */
 if(isset($config['dnsmasq']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "dnsmasq";
 	$pconfig['description'] = gettext("DNS Forwarder");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
+$pconfig = array();
 $pconfig['name'] = "ntpd";
 $pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
-unset($pconfig);
 
 if(isset($config['captiveportal']['enable'])) {
-	$pconfig['name'] = "lighttpd";
+	$pconfig = array();
+	$pconfig['name'] = "captiveportal";
 	$pconfig['description'] = gettext("Captive Portal");
 	$services[] = $pconfig;
-	$pconfig = "";
-	unset($pconfig);
 }
 
 $iflist = array();
@@ -276,75 +279,78 @@ foreach($iflist as $if) {
 }
 
 if($show_dhcprelay == true) {
+	$pconfig = array();
 	$pconfig['name'] = "dhcrelay";
 	$pconfig['description'] = gettext("DHCP Relay");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if(is_dhcp_server_enabled()) {
+	$pconfig = array();
 	$pconfig['name'] = "dhcpd";
 	$pconfig['description'] = gettext("DHCP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "bsnmpd";
 	$pconfig['description'] = gettext("SNMP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if (count($config['igmpproxy']['igmpentry']) > 0) {
+	$pconfig = array();
 	$pconfig['name'] = "igmpproxy";
 	$pconfig['descritption'] = gettext("IGMP proxy");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+	$pconfig = array();
 	$pconfig['name'] = "miniupnpd";
 	$pconfig['description'] = gettext("UPnP Service");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 if (isset($config['ipsec']['enable'])) {
+	$pconfig = array();
 	$pconfig['name'] = "racoon";
 	$pconfig['description'] = gettext("IPsec VPN");
 	$services[] = $pconfig;
-	unset($pconfig);
 }
 
 foreach (array('server', 'client') as $mode) {
-	if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
-		foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings) {
-			$setting = $config['installedpackages']["openvpn$mode"]['config'][$id];
-			if (!$setting['disable']) {
+	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+			if (!isset($setting['disable'])) {
+				$pconfig = array();
 				$pconfig['name'] = "openvpn";
 				$pconfig['mode'] = $mode;
 				$pconfig['id'] = $id;
+				$pconfig['vpnid'] = $setting['vpnid'];
 				$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
 				$services[] = $pconfig;
-				unset($pconfig);
 			}
 		}
 	}
 }
  
  
-if($services) {
+if (count($services) > 0) {
 	foreach($services as $service) {
-		if(!$service['name']) continue;
-		if(!$service['description']) $service['description'] = get_pkg_descr($service['name']);
+		if (empty($service['name']))
+			continue;
+		if (empty($service['description']))
+			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listr">' . $service['description'] . '</td>';
-		if ($service['name'] == "openvpn") {
-			$running =  (is_pid_running($g['varrun_path'] . "/openvpn_{$service['mode']}{$service['id']}.pid") );
-		} else {
-			$running = (is_service_running($service['name'], $ps) or is_process_running($service['name']) );
-		}
+		if ($service['name'] == "openvpn")
+			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
+		else if ($service['name'] == "captiveportal")
+			$running = is_pid_running("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		else
+			$running = is_service_running($service['name']);
 		if($running) {
 			echo '<td class="listr"><center>';
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>";
@@ -355,13 +361,13 @@ if($services) {
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else {
 				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			}
 			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else {
 				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'> ";
 			}
@@ -369,7 +375,7 @@ if($services) {
 			echo "</a>";
 		} else {
 			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['id']}'>";
+				echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else { 
 				echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			}
@@ -389,7 +395,8 @@ if($services) {
 </td>
 </tr></table>
 </div>
-
+</p>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

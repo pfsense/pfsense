@@ -33,6 +33,60 @@
 
 /* include all configuration functions */
 
+function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
+	global $g, $config;
+	require_once("xmlrpc.inc");
+	if($port == "443") 
+		$url = "https://{$syncip}:{$port}";
+	else 
+		$url = "http://{$syncip}:{$port}";
+
+	/* Construct code that is run on remote machine */
+	$method = 'pfsense.exec_php';
+	$execcmd  = <<<EOF
+	require_once('/etc/inc/voucher.inc');
+	\$timeleft = voucher_auth($voucher_received);
+	\$toreturn = array();
+	\$toreturn['timeleft'] = \$timeleft;
+	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
+
+EOF;
+
+	/* assemble xmlrpc payload */
+	$params = array(
+		XML_RPC_encode($password),
+		XML_RPC_encode($execcmd)
+	);
+
+	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	$msg = new XML_RPC_Message($method, $params);
+	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+	$cli->setCredentials($username, $password);
+	$resp = $cli->send($msg, "250");
+	if(!$resp) {
+		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
+		return array("timeleft" => "0");
+	} elseif($resp->faultCode()) {
+		$cli->setDebug(1);
+		$resp = $cli->send($msg, "250");
+		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
+		return array("timeleft" => "0");
+	} else {
+		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+	}
+	$toreturn =  XML_RPC_Decode($resp->value());
+	if(count($toreturn['voucher']['roll']) <> count($config['voucher']['roll'])) {
+		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
+		write_config("Captive Portal Voucher database synchronized with {$url}");
+		voucher_configure();
+	}
+    return $toreturn['timeleft'];
+}
+
 /* 
  *Authenticate a voucher and return the remaining time credit in minutes
  * if $test is set, don't mark the voucher as used nor add it to the list
@@ -46,6 +100,16 @@ function voucher_auth($voucher_received, $test = 0) {
     // but return a more verbose error and result message back
 
     $voucherlck = lock('voucher');
+
+	// XMLRPC Call over to the master Voucher node
+    $a_voucher = &$config['voucher'];
+	if($a_voucher['vouchersyncdbip']) {
+		$syncip   = $a_voucher['vouchersyncdbip'];
+		$syncport = $a_voucher['vouchersyncport'];
+		$syncpass = $a_voucher['vouchersyncpass'];
+		$vouchersyncusername = $a_voucher['vouchersyncusername'];
+		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
+	}
 
     // read rolls into assoc array with rollid as key and minutes as value
     $a_roll = &$config['voucher']['roll'];
@@ -127,7 +191,7 @@ function voucher_auth($voucher_received, $test = 0) {
         } else {
             $test_result[] = sprintf(gettext("Access granted for %d Minutes in total."), $total_minutes);
         }
-	unlock($voucherlck);
+		unlock($voucherlck);
         return $test_result;
     }
 
@@ -142,17 +206,10 @@ function voucher_auth($voucher_received, $test = 0) {
         return $total_minutes;       // well, at least one voucher had errors. Say NO ACCESS
     }
 
-	// XMLRPC Call over to the master Voucher node
-    $a_voucher = &$config['voucher'];
-	if($a_voucher['vouchersyncdbip']) {
-		$syncip   = $a_voucher['vouchersyncdbip'];
-		$syncport = $a_voucher['vouchersyncport'];
-		$syncpass = $a_voucher['vouchersyncpass'];
-		$syncpass = $a_voucher['vouchersyncusername'];
-		$remote_time_used = sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
-		if($remote_time_used['timeleft'] < 1) 
+	// If we did a XMLRPC sync earlier check the timeleft
+	if($a_voucher['vouchersyncdbip']) 
+		if($remote_time_used['timeleft'] < $total_minutes) 
 			$total_minutes = $remote_time_used['timeleft'];
-	}
 
     // All given vouchers were valid and this isn't simply a test.
     // Write back the used DB's
@@ -189,54 +246,6 @@ function voucher_auth($voucher_received, $test = 0) {
     unlock($voucherlck);
 
     return $total_minutes;
-}
-
-function sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
-	require_once("xmlrpc.inc");
-	if($port == "443") 
-		$url = "https://{$syncip}:{$port}";
-	else 
-		$url = "http://{$syncip}:{$port}";
-
-	/* Construct code that is run on remote machine */
-	$method = 'pfsense.exec_php';
-	$execcmd  = <<<EOF
-	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth($voucher_received);
-	\$toreturn = array();
-	\$toreturn['timeleft'] = \$timeleft;
-
-EOF;
-
-	/* assemble xmlrpc payload */
-	$params = array(
-		XML_RPC_encode($password),
-		XML_RPC_encode($execcmd)
-	);
-
-	log_error("voucher XMLRPC sync data {$url}:{$port}.");
-	$msg = new XML_RPC_Message($method, $params);
-	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	$cli->setCredentials('admin', $password);
-	$resp = $cli->send($msg, "250");
-	if(!$resp) {
-		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return array("timeleft" => "0");
-	} elseif($resp->faultCode()) {
-		$cli->setDebug(1);
-		$resp = $cli->send($msg, "250");
-		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
-		return array("timeleft" => "0");
-	} else {
-		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
-	}
-	$timeleft =  XML_RPC_Decode($resp->value());
-	//print_r($timeleft);
-    return $timeleft;
 }
 
 function voucher_configure() {

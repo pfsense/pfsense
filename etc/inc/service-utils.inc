@@ -34,64 +34,70 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/bin/ps	
+	pfSense_BUILDER_BINARIES:	/bin/pkill /bin/pgrep /bin/sh /usr/bin/killall
 	pfSense_MODULE:	utils
 */
 
+$rcfileprefix = "/usr/local/etc/rc.d/";
 function write_rcfile($params) {
-	$fileprefix = "/usr/local/etc/rc.d/";
-	if(!(is_writable($fileprefix . $params['file']) or $params['start'])) return false;
-	$towrite .= "#!/bin/sh\n# " . gettext("This file was automatically generated") . "\n# " . gettext("by the") . " {$g['product_website']} service handler.\n\n";
+	global $g;
+
+	if (!is_writable("{$rcfileprefix}{$params['file']}") || empty($params['start']))
+		return false;
+	$towrite = "#!/bin/sh\n";
+	$towrite .= "# This file was automatically generated\n# by the {$g['product_website']} service handler.\n\n";
+
 	/* write our rc functions */
-	$towrite .= "rc_start() {\n\t" . $params['start'] . "\n}\n\n";
-	if($params['stop']) {
+	$towrite .= "rc_start() {\n";
+	$towrite .= "\t{$params['start']}\n";
+	$towrite .= "}\n\n";
+	if(!empty($params['stop'])) {
 		$tokill =& $params['stop'];
-	} elseif($params['executable']) {
+	} else if(!empty($params['executable'])) {
 		/* just nuke the executable */
 		$tokill = "/usr/bin/killall {$params['executable']}";
 	} else {
 		/* make an educated guess (bad) */
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
 	}
-	$towrite .= "rc_stop() {\n\t" . $tokill . "\n}\n\n";
+	$towrite .= "rc_stop() {\n";
+	$towrite .= "\t{$tokill}\n";
+	$towrite .= "}\n\n";
 
 	/* begin rcfile logic */
-	$towrite .= "case $1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
-	$fout = fopen($fileprefix . $params['file'], "w");
-	fwrite($fout, $towrite);
-	fclose($fout);
-	chmod($fileprefix . $params['file'], 0755);
+	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
+
+	file_put_contents("{$rcfileprefix}{$params['file']}", $towrite);
+	@chmod("{$rcfileprefix}{$params['file']}", 0755);
+
 	return;
 }
 
 function start_service($name) {
 	global $config;
+
 	/* make sure service is stopped before starting */
 	stop_service($name);
 	sleep(2);
-	if(file_exists("/usr/local/etc/rc.d/{$name}.sh")) {
-		exec("/bin/sh /usr/local/etc/rc.d/{$name}.sh start");
+
+	if(file_exists("{$rcfileprefix}{$name}.sh")) {
+		exec("/bin/sh {$rcfileprefix}{$name}.sh start");
 		return;
 	}
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
-					if($service['prefix']) {
+					$prefix = $rcfileprefix;
+					if (!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
-					} else {
-						$prefix = "/usr/local/etc/rc.d/";
 					}
-					if(file_exists($prefix . $service['rcfile'])) {
-						mwexec_bg($prefix . $service['rcfile'] . " start");
-					} else {
-						if(file_exists("/usr/local/etc/rc.d/{$name}.sh"))
-							mwexec_bg("/usr/local/etc/rc.d/{$name}.sh start");
+					if(file_exists("{$prefix}{$service['rcfile']}")) {
+						mwexec_bg("{$prefix}{$service['rcfile']} start");
 					}
 				}
-				if($service['startcmd']) {
+				if (!empty($service['startcmd']))
 					eval($service['startcmd']);
-				}
 				break;
 			}
 		}
@@ -100,20 +106,20 @@ function start_service($name) {
 
 function stop_service($name) {
 	global $config;
-	if($config['installedpackages']['service']) {
+
+	if ($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
-					if($service['prefix']) {
+					$prefix = $rcfileprefix;
+					if(!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
-					} else {
-						$prefix = "/usr/local/etc/rc.d/";
 					}
-					mwexec_bg($prefix . $service['rcfile'] . " stop");
+					mwexec_bg("{$prefix}{$service['rcfile']} stop");
 				}
-				if($service['stopcmd']) {
+				if (!empty($service['stopcmd']))
 					eval($service['stopcmd']);
-				}
+
 				if(!($service['rcfile'] or $service['stopcmd'])) {
 					if(is_process_running("{$service['executable']}"))
 						mwexec_bg("/usr/bin/killall {$service['executable']}");
@@ -124,14 +130,16 @@ function stop_service($name) {
 		}
 	}
 	/* finally if we get here lets simply kill the service name */
-if(is_process_running("{$name}"))
-	mwexec_bg("/usr/bin/killall {$name}");
+	if(is_process_running("{$name}"))
+		mwexec_bg("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {
 	global $config;
+
 	stop_service($name);
 	start_service($name);
+
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
@@ -145,9 +153,11 @@ function restart_service($name) {
 }
 
 function is_pid_running($pidfile) {
-	$pid = trim(file_get_contents($pidfile));
-	$running = (trim(shell_exec("/usr/bin/procstat {$pid} 2>/dev/null")) != '');
-	return $running;
+	if (!file_exists($pidfile))
+		return false;
+	$running = shell_exec("/bin/pgrep -F {$pidfile} 2>/dev/null");
+
+	return (!empty($running));
 }
 
 function is_dhcp_running($interface) {
@@ -166,33 +176,28 @@ function restart_service_if_running($service) {
 
 function is_service_running($service, $ps = "") {
 	global $config;
-	/*
-	if(!$ps) {
-		exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-	}
-	*/
+
 	if(is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $aservice) {
 			if(strtolower($service) == strtolower($aservice['name'])) {
-				if($aservice['custom_php_service_status_command'] <> "") {
-					$_cmd=explode(';', $aservice['custom_php_service_status_command']);
-					foreach($_cmd as $_acmd) {
-						if($_acmd) eval('$rc='.$_acmd.';');
-					}
+				if ($aservice['custom_php_service_status_command'] <> "") {
+					eval("\$rc={$aservice['custom_php_service_status_command']};");
 					return $rc;
 				}
-				if(!$aservice['executable']) return false;
-				/*
-				if(count(preg_grep("/{$aservice['executable']}/i", $ps))) {
-					return true;
-				} else {
+				if(empty($aservice['executable']))
 					return false;
-				}
-				*/
-				return is_process_running($aservice['executable']) ? true : false;
+				if (is_process_running($aservice['executable']))
+					return true;
+
+				return false;
 			}
 		}
 	}
+
+	if (is_process_running($service))
+		return true;
+
+	return false;
 }
 
 ?>

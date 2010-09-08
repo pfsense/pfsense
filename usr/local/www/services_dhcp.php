@@ -233,7 +233,7 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
-		if (($_POST['tftp'] && (!is_ipaddr($_POST['tftp']) && !is_domain($_POST['tftp']))))
+		if ($_POST['tftp'] && !is_ipaddr($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp']))
 			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");

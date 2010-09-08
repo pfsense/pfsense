@@ -219,17 +219,20 @@ if [ "$RAM" -lt "97" ]; then
 suhosin.get.max_array_depth = 5000
 suhosin.get.max_array_index_length = 256
 suhosin.get.max_vars = 5000
+suhosin.get.max_value_length = 500000
 suhosin.post.max_array_depth = 5000
 suhosin.post.max_array_index_length = 256
 suhosin.post.max_vars = 5000
+suhosin.post.max_value_length = 500000
 suhosin.request.max_array_depth = 5000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
+suhosin.request.max_value_length = 500000
 
 EOF
 
 fi
-if [  $RAM -gt 96 ]; then
+if [  "$RAM" -gt 96 ]; then
 
 	cat >>/usr/local/lib/php.ini <<EOF
 
@@ -242,12 +245,15 @@ apc.shm_size="${APCSHMEMSIZE}"
 suhosin.get.max_array_depth = 5000
 suhosin.get.max_array_index_length = 256
 suhosin.get.max_vars = 5000
+suhosin.get.max_value_length = 500000
 suhosin.post.max_array_depth = 5000
 suhosin.post.max_array_index_length = 256
 suhosin.post.max_vars = 5000
+suhosin.post.max_value_length = 500000
 suhosin.request.max_array_depth = 5000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
+suhosin.request.max_value_length = 500000
 
 EOF
 

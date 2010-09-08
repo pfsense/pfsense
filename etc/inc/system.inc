@@ -355,12 +355,10 @@ function system_routing_configure($interface = "") {
 		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			if (!empty($interface) && $interface != $rtent['interface'])
-				continue;
 			$gatewayip = "";
 			if (isset($gateways_arr[$rtent['gateway']])) {
 				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
-				$interfacegw = get_real_interface($rtent['interface']);
+				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
 			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
 			} else {
@@ -668,12 +666,12 @@ function system_webgui_start() {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
 		if(!is_array($cert) && !$cert['crt'] && !$cert['prv']) {
-			if (!is_array($config['system']['ca']))
-				$config['system']['ca'] = array();
-			$a_ca =& $config['system']['ca'];
-			if (!is_array($config['system']['cert']))
-				$config['system']['cert'] = array();
-			$a_cert =& $config['system']['cert'];
+			if (!is_array($config['ca']))
+				$config['ca'] = array();
+			$a_ca =& $config['ca'];
+			if (!is_array($config['cert']))
+				$config['cert'] = array();
+			$a_cert =& $config['cert'];
 			echo gettext("Creating SSL Certificate... ");
 			$cert = array();
 			$cert['refid'] = uniqid();
@@ -1114,7 +1112,7 @@ function system_timezone_configure() {
 function system_ntp_configure() {
 	global $config, $g;
 
-	$syscfg = $config['system'];
+	$syscfg =& $config['system'];
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
@@ -1154,16 +1152,16 @@ function system_ntp_configure() {
 
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
-		mwexec("/usr/bin/killall ntpd", true);
+		killbyname("ntpd");
 	}
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
-	if($g['booting'])
+	if ($g['booting'])
 		return;
-	
+
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
 	

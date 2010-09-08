@@ -100,7 +100,7 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
 		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.crt");
 		$exp_data = base64_decode($cert['crt']);
@@ -120,7 +120,7 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
 		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.key");
 		$exp_data = base64_decode($cert['prv']);
@@ -140,12 +140,13 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		$certdeleted = $a_user[$id]['cert'][$_GET['certid']]['name'];
+		$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+		$certdeleted = $certdeleted['name'];
 		unset($a_user[$id]['cert'][$_GET['certid']]);
 		write_config();
 		$_GET['act'] = "edit";
 		$savemsg = gettext("Certificate")." {$certdeleted} ".
-					gettext("successfully deleted")."<br/>";
+					gettext("association removed.")."<br/>";
 	}
 
 	if ($_GET['act'] == "edit") {
@@ -298,6 +299,7 @@ if (isAllowedPage("system_usermanager")) {
 			else {
 				if (!empty($_POST['name'])) {
 					$cert = array();
+					$cert['refid'] = uniqid();
                         		$userent['cert'] = array();
 
             				$cert['name'] = $_POST['name'];
@@ -315,7 +317,10 @@ if (isAllowedPage("system_usermanager")) {
 					cert_create($cert, $_POST['caref'], $_POST['keylen'],
 						(int)$_POST['lifetime'], $dn);
 
-					$userent['cert'][] = $cert;
+					if (!is_array($config['cert']))
+						$config['cert'] = array();
+					$config['cert'][] = $cert;
+					$userent['cert'][] = $cert['refid'];
 				}
 				$userent['uid'] = $config['system']['nextuid']++;
 				/* Add the user to All Users group. */
@@ -633,8 +638,9 @@ function sshkeyClicked(obj) {
 										$a_cert = $a_user[$id]['cert'];
 										if(is_array($a_cert)):
 											$i = 0;
-											foreach ($a_cert as $cert):
-						                        $ca = lookup_ca($cert['caref']);
+											foreach ($a_cert as $certref):
+												$cert = lookup_cert($certref);
+												$ca = lookup_ca($cert['caref']);
 									?>
 									<tr>
 										<td class="listlr">
@@ -650,7 +656,7 @@ function sshkeyClicked(obj) {
 											<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
 											</a>
-											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
+											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
 											</a>
 										</td>
@@ -663,7 +669,7 @@ function sshkeyClicked(obj) {
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
-											<a href="system_usermanager_addcert.php?userid=<?=$id?>">
+											<a href="system_certmanager.php?act=new&userid=<?=$id?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
@@ -673,8 +679,8 @@ function sshkeyClicked(obj) {
 						</tr>
 
 						<?php else : ?>
-						<?php 	if (is_array($config['system']['ca']) && count($config['system']['ca']) > 0): ?>
-						<?php		$i = 0; foreach( $config['system']['ca'] as $ca) {
+						<?php 	if (is_array($config['ca']) && count($config['ca']) > 0): ?>
+						<?php		$i = 0; foreach( $config['ca'] as $ca) {
                                                                         	if (!$ca['prv'])
                                                                                 	continue;
 										$i++;
@@ -705,7 +711,7 @@ function sshkeyClicked(obj) {
                                                         	<td width="78%" class="vtable">
                                                                 	<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
                                                                 <?php
-                                                                        foreach( $config['system']['ca'] as $ca):
+                                                                        foreach( $config['ca'] as $ca):
                                                                         if (!$ca['prv'])
                                                                                 continue;
                                                                 ?>

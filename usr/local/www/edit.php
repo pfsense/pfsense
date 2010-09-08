@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	edit.php
 	Copyright (C) 2004, 2005 Scott Ullrich
@@ -56,7 +55,7 @@ if($_REQUEST['action']) {
 				echo "|" . gettext("No file name specified") . ".|";
 			} else {
 				conf_mount_rw();
-				$_REQUEST['data'] = str_replace("\r", "", $_REQUEST['data']);
+				$_REQUEST['data'] = str_replace("\r", "", base64_decode($_REQUEST['data']));
 				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
 				conf_mount_ro();
 				if($_REQUEST['file'] == "config.xml")
@@ -78,6 +77,7 @@ if($_REQUEST['action']) {
 require("head.inc");
 outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
 outputJavaScriptFileInline("filebrowser/browser.js");
+outputJavaScriptFileInline("javascript/base64.js");
 
 ?>
 
@@ -131,7 +131,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 		$("fileStatus").innerHTML = "<?=gettext("Saving file"); ?> ...";
 		Effect.Appear("fileStatusBox", { duration: 0.5 });
 		
-		var fileContent = escape($("fileContent").value);
+		var fileContent = Base64.encode($("fileContent").value);
 		fileContent = fileContent.replace(/\+/g,"%2B");
 		
 		new Ajax.Request(

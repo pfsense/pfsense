@@ -206,8 +206,8 @@ function vpn_ipsec_configure($ipchg = false)
 		}
 
 		/* generate CA certificates files */
-		if (is_array($config['system']['ca']) && count($config['system']['ca'])) {
-			foreach ($config['system']['ca'] as $ca) {
+		if (is_array($config['ca']) && count($config['ca'])) {
+			foreach ($config['ca'] as $ca) {
 				if (!isset($ca['crt'])) {
 					log_error(sprintf(gettext("Error: Invalid certificate info for %s"), $ca['name']));
 					continue;
@@ -371,8 +371,10 @@ function vpn_ipsec_configure($ipchg = false)
 				if ($a_client['wins_server2'])
 					$racoonconf .= "\twins4 {$a_client['wins_server2']};\n";
 
-				if ($a_client['dns_domain'])
+				if ($a_client['dns_domain']) {
 					$racoonconf .= "\tdefault_domain \"{$a_client['dns_domain']}\";\n";
+					$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+				}
 
 				if ($a_client['pfs_group'])
 					$racoonconf .= "\tpfs_group {$a_client['pfs_group']};\n";
@@ -883,7 +885,7 @@ EOD;
 			/* start dnswatch, if necessary */
 			if (count($dnswatch_list) > 0) {
 				$interval = 60;
-				if ($ipseccfg['dns-interval'])
+				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
 					$interval = $ipseccfg['dns-interval'];
 
 				$hostnames = "";
@@ -943,7 +945,7 @@ function vpn_setup() {
 	vpn_pptpd_configure();
 
 	/* start pppoe server */
-	vpn_pppoe_configure();
+	vpn_pppoes_configure();
 
 	/* setup l2tp */
 	vpn_l2tp_configure();
@@ -1154,15 +1156,23 @@ EOD;
 	return 0;
 }
 
-function vpn_pppoe_configure() {
+function vpn_pppoes_configure() {
+	global $config;
+
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach ($config['pppoes']['pppoe'] as $pppoe)
+			vpn_pppoe_configure($pppoe);
+	}
+}
+
+function vpn_pppoe_configure(&$pppoecfg) {
 	global $config, $g;
 
 	$syscfg = $config['system'];
-	$pppoecfg = $config['pppoe'];
 
 	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/pppoe-vpn"))
-		mkdir("{$g['varetc_path']}/pppoe-vpn");
+	if (!is_dir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn"))
+		mkdir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn");
 
 	if ($g['booting']) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
@@ -1171,22 +1181,18 @@ function vpn_pppoe_configure() {
 		echo gettext("Configuring PPPoE VPN service... ");
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/pppoe-vpn.pid");
+		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
 
 		/* wait for process to die */
 		sleep(2);
 
 	}
 
-	/* make sure pppoe-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/pppoe-vpn"))
-		mkdir("{$g['varetc_path']}/pppoe-vpn");
-
 	switch ($pppoecfg['mode']) {
 
 		case 'server' :
 
-			$pppoe_interface = interface_translate_type_to_real($pppoecfg['interface']);
+			$pppoe_interface = get_real_interface($pppoecfg['interface']);
 
 			if ($pppoecfg['paporchap'] == "chap")
 				$paporchap = "set link enable chap";
@@ -1194,19 +1200,16 @@ function vpn_pppoe_configure() {
 				$paporchap = "set link enable pap";
 
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.conf", "w");
+			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
 				return 1;
 			}
 			$mpdconf = "\n\n";
-			$mpdconf .=<<<EOD
-pppoe:
-
-EOD;
+			$mpdconf .= "pppoe:\n";
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
-				$mpdconf .= "	load pppoe{$i}\n";
+				$mpdconf .= "	load poes{$pppoecfg['pppoeid']}{$i}\n";
 			}
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
@@ -1221,8 +1224,8 @@ EOD;
 
 				$mpdconf .=<<<EOD
 
-pppoe{$i}:
-	new -i ppoed{$i} pppoe{$i} pppoe{$i}
+poes{$pppoecfg['pppoeid']}{$i}:
+	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
 	{$isssue_ip_type}
 	load pppoe_standart
 
@@ -1294,7 +1297,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.links", "w");
+			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf(gettext("Error: cannot open mpd.links in vpn_pppoe_configure().") . "\n");
 				return 1;
@@ -1305,7 +1308,7 @@ EOD;
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdlinks .=<<<EOD
 			
-pppoe{$i}:
+poes{$pppoecfg['pppoeid']}{$i}:
 	set phys type pppoe
         set pppoe iface {$pppoe_interface}
         set pppoe service "*"
@@ -1318,30 +1321,32 @@ EOD;
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
 
-			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.secret", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.secret in vpn_pppoe_configure().") . "\n");
-				return 1;
+			if ($pppoecfg['username']) {
+				/* write mpd.secret */
+				$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", "w");
+				if (!$fd) {
+					printf(gettext("Error: cannot open mpd.secret in vpn_pppoe_configure().") . "\n");
+					return 1;
+				}
+
+				$mpdsecret = "\n\n";
+
+				if (!empty($pppoecfg['username'])) {
+					$item = explode(" ", $pppoecfg['username']);
+					foreach($item as $userdata) {
+						$data = explode(":", $userdata);
+						$mpdsecret .= "{$data[0]} \"" . base64_decode($data[1]) . "\" {$data[2]}\n";
+					}
+				}
+
+				fwrite($fd, $mpdsecret);
+				fclose($fd);
+				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
-
-			$mpdsecret = "\n\n";
-
-			if (is_array($pppoecfg['user'])) {
-				foreach ($pppoecfg['user'] as $user)
-					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
-			}
-
-			fwrite($fd, $mpdsecret);
-			fclose($fd);
-			chmod("{$g['varetc_path']}/pppoe-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe-vpn -p {$g['varrun_path']}/pppoe-vpn.pid -s pppoe pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s pppoe pppoe");
 
-			break;
-
-		case 'redir' :
 			break;
 	}
 

@@ -41,27 +41,38 @@ require("guiconfig.inc");
 require_once("certs.inc");
 
 $cert_methods = array(
-	"existing" => gettext("Import an existing Certificate"),
+	"import" => gettext("Import an existing Certificate"),
 	"internal" => gettext("Create an internal Certificate"),
-	"external" => gettext("Create a Certificate Signing Request"));
+	"external" => gettext("Create a Certificate Signing Request"),
+);
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
+$userid = $_GET['userid'];
+if (isset($_POST['userid']))
+	$userid = $_POST['userid'];
+if ($userid) {
+	$cert_methods["existing"] = gettext("Choose an existing certificate");
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
+	$a_user =& $config['system']['user'];
+}
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (!is_array($config['system']['ca']))
-	$config['system']['ca'] = array();
+if (!is_array($config['ca']))
+	$config['ca'] = array();
 
-$a_ca =& $config['system']['ca'];
+$a_ca =& $config['ca'];
 
-if (!is_array($config['system']['cert']))
-	$config['system']['cert'] = array();
+if (!is_array($config['cert']))
+	$config['cert'] = array();
 
-$a_cert =& $config['system']['cert'];
+$a_cert =& $config['cert'];
 
 $internal_ca_count = 0;
 foreach ($a_ca as $ca)
@@ -139,14 +150,12 @@ if ($act == "csr") {
 }
 
 if ($_POST) {
-
 	if ($_POST['save'] == gettext("Save")) {
-
 		unset($input_errors);
 		$pconfig = $_POST;
 
 		/* input validation */
-		if ($pconfig['method'] == "existing") {
+		if ($pconfig['method'] == "import") {
 			$reqdfields = explode(" ",
 					"name cert key");
 			$reqdfieldsn = array(
@@ -187,6 +196,11 @@ if ($_POST) {
 					gettext("Distinguished name Common Name"));
 		}
 
+		if ($pconfig['method'] == "existing") {
+			$reqdfields = array("certref");
+			$reqdfieldsn = array(gettext("Existing Certificate Choice"));
+		}
+
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -198,49 +212,57 @@ if ($_POST) {
 		/* save modifications */
 		if (!$input_errors) {
 
-			$cert = array();
-			$cert['refid'] = uniqid();
-			if (isset($id) && $a_cert[$id])
-				$cert = $a_cert[$id];
+			if ($pconfig['method'] == "existing") {
+				$cert = lookup_cert($pconfig['certref']);
+				if ($cert && $a_user)
+					$a_user[$userid]['cert'][] = $cert['refid'];
+			} else {
+				$cert = array();
+				$cert['refid'] = uniqid();
+				if (isset($id) && $a_cert[$id])
+					$cert = $a_cert[$id];
 
-		    $cert['name'] = $pconfig['name'];
+				$cert['name'] = $pconfig['name'];
 
-			if ($pconfig['method'] == "existing")
-				cert_import($cert, $pconfig['cert'], $pconfig['key']);
+				if ($pconfig['method'] == "import")
+					cert_import($cert, $pconfig['cert'], $pconfig['key']);
 
-			if ($pconfig['method'] == "internal") {
-				$dn = array(
-					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => $pconfig['dn_state'],
-					'localityName' => $pconfig['dn_city'],
-					'organizationName' => $pconfig['dn_organization'],
-					'emailAddress' => $pconfig['dn_email'],
-					'commonName' => $pconfig['dn_commonname']);
+				if ($pconfig['method'] == "internal") {
+					$dn = array(
+						'countryName' => $pconfig['dn_country'],
+						'stateOrProvinceName' => $pconfig['dn_state'],
+						'localityName' => $pconfig['dn_city'],
+						'organizationName' => $pconfig['dn_organization'],
+						'emailAddress' => $pconfig['dn_email'],
+						'commonName' => $pconfig['dn_commonname']);
+	
+					cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
+						$pconfig['lifetime'], $dn);
+				}
 
-				cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-					$pconfig['lifetime'], $dn);
+				if ($pconfig['method'] == "external") {
+					$dn = array(
+						'countryName' => $pconfig['csr_dn_country'],
+						'stateOrProvinceName' => $pconfig['csr_dn_state'],
+						'localityName' => $pconfig['csr_dn_city'],
+						'organizationName' => $pconfig['csr_dn_organization'],
+						'emailAddress' => $pconfig['csr_dn_email'],
+						'commonName' => $pconfig['csr_dn_commonname']);
+
+					csr_generate($cert, $pconfig['csr_keylen'], $dn);
+				}
+				if (isset($id) && $a_cert[$id])
+					$a_cert[$id] = $cert;
+				else
+					$a_cert[] = $cert;
+				if (isset($a_user) && isset($userid))
+					$a_user[$userid]['cert'][] = $cert['refid'];
 			}
-
-			if ($pconfig['method'] == "external") {
-				$dn = array(
-					'countryName' => $pconfig['csr_dn_country'],
-					'stateOrProvinceName' => $pconfig['csr_dn_state'],
-					'localityName' => $pconfig['csr_dn_city'],
-					'organizationName' => $pconfig['csr_dn_organization'],
-					'emailAddress' => $pconfig['csr_dn_email'],
-					'commonName' => $pconfig['csr_dn_commonname']);
-
-				csr_generate($cert, $pconfig['csr_keylen'], $dn);
-			}
-
-			if (isset($id) && $a_cert[$id])
-				$a_cert[$id] = $cert;
-			else
-				$a_cert[] = $cert;
 
 			write_config();
 
-//			pfSenseHeader("system_certmanager.php");
+			if ($userid)
+				pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
 		}
 	}
 
@@ -308,21 +330,35 @@ function method_change() {
 
 	switch (method) {
 		case 0:
-			document.getElementById("existing").style.display="";
+			document.getElementById("import").style.display="";
 			document.getElementById("internal").style.display="none";
 			document.getElementById("external").style.display="none";
+			document.getElementById("existing").style.display="none";
+			document.getElementById("descriptivename").style.display="";
 			document.getElementById("submit").style.display="";
 			break;
 		case 1:
-			document.getElementById("existing").style.display="none";
+			document.getElementById("import").style.display="none";
 			document.getElementById("internal").style.display="";
 			document.getElementById("external").style.display="none";
+			document.getElementById("existing").style.display="none";
+			document.getElementById("descriptivename").style.display="";
 			document.getElementById("submit").style.display="<?=$submit_style;?>";
 			break;
 		case 2:
-			document.getElementById("existing").style.display="none";
+			document.getElementById("import").style.display="none";
 			document.getElementById("internal").style.display="none";
 			document.getElementById("external").style.display="";
+			document.getElementById("existing").style.display="none";
+			document.getElementById("descriptivename").style.display="";
+			document.getElementById("submit").style.display="";
+			break;
+		case 3:
+			document.getElementById("import").style.display="none";
+			document.getElementById("internal").style.display="none";
+			document.getElementById("external").style.display="none";
+			document.getElementById("existing").style.display="";
+			document.getElementById("descriptivename").style.display="none";
 			document.getElementById("submit").style.display="";
 			break;
 	}
@@ -346,6 +382,7 @@ function internalca_change() {
 			document.iform.dn_state.value = "<?=$subject[1]['v'];?>";
 			document.iform.dn_city.value = "<?=$subject[2]['v'];?>";
 			document.iform.dn_organization.value = "<?=$subject[3]['v'];?>";
+			document.iform.dn_email.value = "<?=$subject[4]['v'];?>";
 			break;
 <?php	endforeach; ?>
 	}
@@ -379,12 +416,6 @@ function internalca_change() {
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-							<td width="78%" class="vtable">
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
-							</td>
-						</tr>
 						<?php if (!isset($id)): ?>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
@@ -402,14 +433,24 @@ function internalca_change() {
 							</td>
 						</tr>
 						<?php endif; ?>
+						<tr id="descriptivename">
+							<?php
+							if ($a_user && empty($pconfig['name']))
+								$pconfig['name'] = $a_user[$userid]['name'];
+							?>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+							<td width="78%" class="vtable">
+								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+							</td>
+						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="import">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic"><?=gettext("Existing Certificate");?></td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Import Certificate");?></td>
 						</tr>
 
 						<tr>
@@ -531,6 +572,10 @@ function internalca_change() {
 									<tr>
 										<td align="right"><?=gettext("Common Name");?> : &nbsp;</td>
 										<td align="left">
+											<?php
+											if ($a_user && empty($pconfig['dn_commonname']))
+												$pconfig['dn_commonname'] = $a_user[$userid]['name'];
+											?>
 											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
 											&nbsp;
 											<em>ex:</em>
@@ -640,6 +685,42 @@ function internalca_change() {
 						</tr>
 					</table>
 
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing">
+						<tr>
+							<td colspan="2" class="list" height="12"></td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Choose an Existing Certificate");?></td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Existing Certificates");?></td>
+							<td width="78%" class="vtable">
+								<?php if (isset($userid) && $a_user): ?>
+								<input name="userid" type="hidden" value="<?=$userid;?>" />
+								<?php endif;?>
+								<select name='certref' class="formselect">
+								<?php
+									foreach ($config['cert'] as $cert):
+										$selected = "";
+										$caname = "";
+										$inuse = "";
+										if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
+											continue;
+										$ca = lookup_ca($cert['caref']);
+										if ($ca)
+											$caname = " (CA: {$ca['name']})";
+										if ($pconfig['certref'] == $cert['refid'])
+											$selected = "selected";
+										if (cert_in_use($cert['refid']))
+											$inuse = " *In Use";
+								?>
+									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'] . $caname . $inuse;?></option>
+								<?php endforeach; ?>
+								</select>
+							</td>
+						</tr>
+					</table>
+
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
@@ -703,9 +784,10 @@ function internalca_change() {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="20%" class="listhdrr"><?=gettext("Name");?></td>
-						<td width="20%" class="listhdrr"><?=gettext("Issuer");?></td>
+						<td width="15%" class="listhdrr"><?=gettext("Name");?></td>
+						<td width="15%" class="listhdrr"><?=gettext("Issuer");?></td>
 						<td width="40%" class="listhdrr"><?=gettext("Distinguished Name");?></td>
+						<td width="10%" class="listhdrr"><?=gettext("In Use");?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -752,6 +834,23 @@ function internalca_change() {
 						</td>
 						<td class="listr"><?=$caname;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td class="listr">
+							<?php if (is_webgui_cert($cert['refid'])): ?>
+							webConfigurator<br/>
+							<?php endif; ?>
+							<?php if (is_user_cert($cert['refid'])): ?>
+							User Cert<br/>
+							<?php endif; ?>
+							<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							OpenVPN Server<br/>
+							<?php endif; ?>
+							<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							OpenVPN Client<br/>
+							<?php endif; ?>
+							<?php if (is_ipsec_cert($cert['refid'])): ?>
+							IPsec Tunnel<br/>
+							<?php endif; ?>
+						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
@@ -759,9 +858,11 @@ function internalca_change() {
 							<a href="system_certmanager.php?act=key&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
+							<?php	if (!cert_in_use($cert['refid'])): ?>
 							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete cert");?>" alt="<?=gettext("delete cert");?>" width="17" height="17" border="0" />
 							</a>
+							<?php	endif; ?>
 							<?php	if ($cert['csr']): ?>
 							&nbsp;
 								<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
@@ -775,12 +876,16 @@ function internalca_change() {
 						endforeach;
 					?>
 					<tr>
-						<td class="list" colspan="3"></td>
+						<td class="list" colspan="4"></td>
 						<td class="list">
 							<a href="system_certmanager.php?act=new">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add or import ca");?>" alt="<?=gettext("add ca");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td colspan="3">NOTE: You can only delete a certificate if it is not currently in use.</td>
 					</tr>
 				</table>
 

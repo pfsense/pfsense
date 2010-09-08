@@ -508,7 +508,7 @@ function showchange() {
                                 if($field['add_to_certca_selection'] == $value) $SELECTED = " SELECTED";
                                 echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
                         }
-			foreach($config['system']['ca'] as $ca) {
+			foreach($config['ca'] as $ca) {
 				$name = htmlspecialchars($ca['name']);
                           $SELECTED = "";
                           if ($value == $name) $SELECTED = " SELECTED";
@@ -546,7 +546,7 @@ function showchange() {
                                 if($field['add_to_cert_selection'] == $value) $SELECTED = " SELECTED";
                                 echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
                         }
-                        foreach($config['system']['cert'] as $ca) {
+                        foreach($config['cert'] as $ca) {
 				if (stristr($ca['name'], "webconf"))
 					continue;
                                 $name = htmlspecialchars($ca['name']);

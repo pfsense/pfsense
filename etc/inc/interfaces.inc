@@ -848,7 +848,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 					}
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 					if (isset($ppp['ondemand']) && !$destroy)
-						file_put_contents("{$g['tmp_path']}/interface_configure", $interface);
+						send_event("interface reconfigure {$interface}");
 					break;
 				}
 			}
@@ -867,14 +867,16 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-			pfSense_interface_flags($realif, -IFF_UP);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-			pfSense_interface_flags($realif, -IFF_UP);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
@@ -1519,9 +1521,14 @@ function interface_proxyarp_configure($interface = "") {
 	/* kill any running choparp */
 	if (empty($interface))
 		killbyname("choparp");
+	else {
+		$vipif = get_real_interface($interface);
+		if (file_exists("{$g['varrun_path']}/choparp_{$vipif}.pid"))
+			killbypid("{$g['varrun_path']}/choparp_{$vipif}.pid");
+	}
 
-	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		$paa = array();
+	$paa = array();
+	if (!empty($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 
 		/* group by interface */
 		foreach ($config['virtualip']['vip'] as $vipent) {
@@ -1530,8 +1537,11 @@ function interface_proxyarp_configure($interface = "") {
 					$proxyif = $vipent['interface'];
 				else
 					$proxyif = "wan";
+				
+				if (!empty($interface) && $interface != $proxyif)
+					continue;
 
-				if (!is_array($paa[$if]))
+				if (!is_array($paa[$proxyif]))
 					$paa[$proxyif] = array();
 
 				$paa[$proxyif][] = $vipent;
@@ -1553,10 +1563,10 @@ function interface_proxyarp_configure($interface = "") {
                         }
                         mwexec_bg("/usr/local/sbin/choparp " . $args);	
 		}
-	} else if (count($paa)) {
-		foreach ($paa as $paif => $paents) {
+	} else if (count($paa) > 0) {
+		foreach ($paa as $paif => $paents)  {
 			$paaifip = get_interface_ip($paif);
-			if (!(is_ipaddr($paaifip)))
+			if (!is_ipaddr($paaifip))
 				continue;
 			$args = get_real_interface($paif) . " auto";
 			foreach ($paents as $paent) {
@@ -2278,6 +2288,20 @@ EOD;
 		/* bring the clones back up that were previously up */
 		foreach ($clones_up as $clone_if) {
 			mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " up");
+
+			/*
+			 * Rerun the setup script for the interface if it isn't this interface, the interface
+			 * is in infrastructure mode, and WPA is enabled.
+			 * This can be removed if wpa_supplicant stops dying when you bring the interface down.
+			 */
+			if ($clone_if != $if) {
+				$friendly_if = convert_real_interface_to_friendly_interface_name($clone_if);
+				if ( !empty($friendly_if)
+				    && $config['interfaces'][$friendly_if]['wireless']['mode'] == "bss"
+				    && isset($config['interfaces'][$friendly_if]['wireless']['wpa']['enable']) ) {
+					mwexec("/bin/sh {$g['tmp_path']}/{$clone_if}_setup.sh");
+				}
+			}
 		}
 	}
 
@@ -2307,9 +2331,11 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	if($interface) {
+	if ($interface)
 		$pid = `/bin/pgrep -xf "dhclient: {$interface}"`;
-	}
+	else
+		$pid = 0;
+
 	return $pid;
 }
 
@@ -2324,7 +2350,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-			interface_bring_down($interface, true);
+
+		switch ($wancfg['ipaddr']) {
+			case 'pppoe':
+			case 'l2tp':
+			case 'pptp':
+			case 'ppp':
+				interface_bring_down($interface, true);
+				break;
+			default:
+				interface_bring_down($interface);
+				break;
+		}
 	}
 
 	/* wireless configuration? */
@@ -3106,19 +3143,21 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 	global $config;
 
 	if (empty($interface) || !is_ipaddr($ipalias))
-		return 0;
+		return false;
 	if (is_array($config['virtualip']['vip'])) {
                 foreach ($config['virtualip']['vip'] as $vip) {
                         switch ($vip['mode']) {
                         case "ipalias":
                                 if ($vip['interface'] <> $interface)
-                                        continue;
+                                        break;
 				if (ip_in_subnet($ipalias, gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits']))
-					return 1;
+					return true;
                                 break;
                         }
                 }
 	}
+
+	return false;
 }
 
 function get_interface_ip($interface = "wan")

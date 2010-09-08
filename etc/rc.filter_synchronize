@@ -165,8 +165,6 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			case 'virtualip':
 				$xml[$section] = backup_vip_config_section();
 				break;
-			case 'cert':
-			case 'ca':
 			case 'user':
 			case 'group':
 				$xml['system'][$section] = $config_copy['system'][$section];
@@ -270,8 +268,14 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'ipsec';
 		if ($carp['synchronizeopenvpn'] != "" and is_array($config['openvpn'])) {
 			$sections[] = 'openvpn';
-			$mergesections[] = 'cert';
-			$mergesections[] = 'ca';
+			$sections[] = 'cert';
+			$sections[] = 'ca';
+		}
+		if ($carp['synchronizecerts'] != "") {
+			if (is_array($config['cert']))
+				$sections[] = 'cert';
+			if (is_array($config['ca']))
+				$sections[] = 'ca';
 		}
 		if ($carp['synchronizeusers'] != "") {
 			$mergesections[] = 'user';

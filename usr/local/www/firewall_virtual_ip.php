@@ -62,30 +62,32 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		$toapplylist = array();
-		if (file_exists("{$g['tmp_path']}/firewall_virtual_ip.apply"))
-                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/firewall_virtual_ip.apply"));
-		foreach ($toapplylist as $vid) {
-			if ($a_vip[$vid]) {
-                		switch ($a_vip[$vid]['mode']) {
-                		case "ipalias":
-                        		interface_ipalias_configure($a_vip[$vid]);
-                        		break;
-                		case "proxyarp":
-                        		interface_proxyarp_configure($a_vip[$vid]['interface']);
-                        		break;
-                		case "carp":
-                        		interface_carp_configure($a_vip[$vid]);
-					break;
-                		case "carpdev-dhcp":
-                        		interface_carpdev_configure($a_vip[$vid]);
-                        		break;
-                		default:
-                        		break;
-				}
-                	}
-        	}
-		@unlink("{$g['tmp_path']}/firewall_virtual_ip.apply");
+		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
+                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+			foreach ($toapplylist as $vid => $ovip) {
+				if (!empty($ovip))
+					interface_vip_bring_down($ovip);
+				if ($a_vip[$vid]) {
+                			switch ($a_vip[$vid]['mode']) {
+                			case "ipalias":
+                        			interface_ipalias_configure($a_vip[$vid]);
+                        			break;
+                			case "proxyarp":
+                        			interface_proxyarp_configure($a_vip[$vid]['interface']);
+                        			break;
+                			case "carp":
+                        			interface_carp_configure($a_vip[$vid]);
+						break;
+                			case "carpdev-dhcp":
+                        			interface_carpdev_configure($a_vip[$vid]);
+                        			break;
+                			default:
+                        			break;
+					}
+                		}
+        		}
+			@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
+		}
 		$retval = 0;
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);
@@ -108,7 +110,7 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {
+		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
 			$vipiface = $a_vip[$_GET['id']]['interface'];
 			foreach ($a_vip as $vip) {
 				if ($vip['interface'] == $vipiface && $vip['mode'] == "carp")
@@ -117,11 +119,13 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
+		
 		if (!$input_errors) {
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {
+				$viface = $a_vip[$_GET['id']]['interface'];
 				unset($a_vip[$_GET['id']]);
-				interface_proxyarp_configure();
+				interface_proxyarp_configure($viface);
 			} else {
 				interface_vip_bring_down($a_vip[$_GET['id']]);
 				unset($a_vip[$_GET['id']]);
@@ -129,7 +133,6 @@ if ($_GET['act'] == "del") {
 			if (count($config['virtualip']['vip']) == 0)
 				unset($config['virtualip']['vip']);
 			write_config();
-			mark_subsystem_dirty('vip');
 			header("Location: firewall_virtual_ip.php");
 			exit;
 		}

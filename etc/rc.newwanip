@@ -85,7 +85,7 @@ if (is_ipaddr($oldip) && $curwanip == $oldip)
 services_dnsupdate_process($interface);
 
 /* signal dyndns update */
-file_put_contents("{$g['tmp_path']}/update_dyndns", $interface);
+send_event("service reload dyndns {$interface}");
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();
@@ -93,16 +93,15 @@ vpn_ipsec_force_reload();
 /* start OpenVPN server & clients */
 openvpn_resync_all($interface);
 
+/* reconfigure our gateway monitor */
+setup_gateways_monitor();
+
 /* signal filter reload */
 unlink_if_exists("/tmp/config.cache");
 filter_configure();
 
 /* reload graphing functions */
 enable_rrd_graphing();
-
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
-
 
 /* restart packages */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");

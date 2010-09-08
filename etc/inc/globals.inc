@@ -58,6 +58,7 @@ function get_nics_with_capabilities($CAPABILITIES) {
 
 $g = array(
 	"base_packages" => "siproxd", 
+	"event_address" => "unix:///var/run/check_reload_status",
 	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",
 	"upload_path" => "/root",
@@ -88,7 +89,7 @@ $g = array(
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"debug" => false,
-	"latest_config" => "6.4",
+	"latest_config" => "7.0",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "105",
 	"minimum_ram_warning_text" => "128 MB",

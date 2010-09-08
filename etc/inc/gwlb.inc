@@ -69,7 +69,7 @@ pid_file "{$g['varrun_path']}/apinger.pid"
 
 status {
 	## File where the status information whould be written to
-	file "/tmp/apinger.status"
+	file "{$g['tmp_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
 	interval 10s
@@ -82,8 +82,8 @@ rrd interval 60s;
 
 ## These parameters can be overriden in a specific alarm configuration
 alarm default { 
-	command on "/usr/bin/touch /tmp/filter_dirty"
-	command off "/usr/bin/touch /tmp/filter_dirty"
+	command on "/usr/local/sbin/pfSctl -c 'filter reload'"
+	command off "/usr/local/sbin/pfSctl -c 'filter reload'"
 	combine 10s
 }
 
@@ -249,6 +249,7 @@ EOD;
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
 	/* start a new apinger process */
+	@unlink("{$g['tmp_path']}/apinger.status");
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;

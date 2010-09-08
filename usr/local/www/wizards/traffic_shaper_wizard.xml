@@ -35,7 +35,9 @@
 		<id>1</id>
 		<title>pfSense Traffic Shaper Wizard</title>
 		<disableheader>true</disableheader>
-		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
+		<description>This wizard will guide you through setting up the pfSense traffic shaper. 
+			Please be aware that Custom Bandwidths should not exceed 30% of the interface/link bandwidth. Keep this in mind during the wizard.
+		</description>
 		<fields>
 			<field>
 				<displayname>Enter number of WAN connections</displayname>

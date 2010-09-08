@@ -50,27 +50,22 @@ function isvalidpid($pid) {
 }
 
 function is_process_running($process) {
-	$running = shell_exec("/bin/pgrep -x {$process}");
+	$output = "";
+	exec("/bin/pgrep -x {$process}", $output, $retval);
 
-        return !empty($running);
+        return (intval($retval) == 0);
 }
 
 function isvalidproc($proc) {
-	$running = is_process_running($proc);
-	if (intval($running) >= 1)
-		return true;
-	else 
-		return false;
+	return is_process_running($proc);
 }
 
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (is_file($pidfile)) {
-		$pid = trim(file_get_contents($pidfile));
-		if(isvalidpid($pid))
-			return mwexec("/bin/kill -s $sig {$pid}", true);
-	}
+	if (is_file($pidfile))
+		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
+
 	return 0;
 }
 
@@ -140,6 +135,36 @@ function unlock($cfglckkey = 0) {
 	flock($cfglckkey, LOCK_UN);
 	fclose($cfglckkey);
 	return;
+}
+
+function send_event($cmd) {
+	global $g;
+
+	$fd = fsockopen($g['event_address']);
+	if ($fd) {
+		fwrite($fd, $cmd);
+		$resp = fread($fd, 4096);
+		if ($resp != "OK\n")
+			log_error("send_event: sent {$cmd} got {$resp}");
+		fclose($fd);
+	}
+}
+
+function send_multiple_events($cmds) {
+        global $g;
+
+	if (!is_array($cmds))
+		return;
+        $fd = fsockopen($g['event_address']);
+        if ($fd) {
+		foreach ($cmds as $cmd) {
+                	fwrite($fd, $cmd);
+                	$resp = fread($fd, 4096);
+                	if ($resp != "OK\n")
+                        	log_error("send_event: sent {$cmd} got {$resp}");
+		}
+                fclose($fd);
+        }
 }
 
 function refcount_init($reference) {
@@ -1181,8 +1206,6 @@ function start_devd() {
 
         exec("/sbin/devd");
         sleep(1);
-        if(file_exists("{$g['tmp_path']}/rc.linkup"))
-                unlink("{$g['tmp_path']}/rc.linkup");
 }
 
 function is_interface_mismatch() {
@@ -1212,7 +1235,7 @@ function is_interface_mismatch() {
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
 	global $g;
-	touch($g['tmp_path'] . "/filter_sync"); 
+	send_event("filter sync");
 }
 
 /****f* util/isAjax

@@ -20,10 +20,10 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
 
 # Set our operating platform
-PLATFORM=`cat /etc/platform`
+PLATFORM=`/bin/cat /etc/platform`
 
 # Set our current version
-version=`cat /etc/version`
+version=`/bin/cat /etc/version`
 
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
@@ -51,7 +51,7 @@ if [ "$PLATFORM" = "nanobsd" ]; then
 fi
 
 if [ "$PLATFORM" = "pfSense" ]; then
-	mdmfs -S -M -s 4m md /var/run
+	/sbin/mdmfs -S -M -s 4m md /var/run
 fi
 
 # Mount /. If it fails run a fsck.
@@ -66,8 +66,8 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 		# If item is not a symlink then rm and recreate
 		CONFPOINTSTO=`readlink /conf` 
 		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
-			rm -rf /conf
-			ln -s /cf/conf /conf
+			/bin/rm -rf /conf
+			/bin/ln -s /cf/conf /conf
 		fi
 	fi
 fi
@@ -80,9 +80,9 @@ if grep -q cf /etc/fstab; then
 	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
 
-product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
-hideplatform=`grep hideplatform /etc/inc/globals.inc | wc -l`
-varrunpath=`grep varrun_path /etc/inc/globals.inc | cut -d'"' -f4`
+product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
+hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
+varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 
 if [ "$hideplatform" -gt "0" ]; then
 	platformbanner="" # hide the platform
@@ -107,34 +107,34 @@ elif [ "$PLATFORM" = "embedded" ] ; then
 elif [ "$PLATFORM" = "nanobsd" ] ; then
 	# Ensure that packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
-	rm -rf /var/db/pkg
-	ln -s /root/var/db/pkg/ /var/db/pkg
+	/bin/rm -rf /var/db/pkg
+	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
 else
-    SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
+    SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
-	mkdir /tmp/unionfs
-	mkdir /tmp/unionfs/usr
-	mkdir /tmp/unionfs/root
-	mkdir /tmp/unionfs/sbin
-	mkdir /tmp/unionfs/bin
-	mkdir /tmp/unionfs/boot
-	mkdir /tmp/unionfs/confdefault
+	/bin/mkdir /tmp/unionfs
+	/bin/mkdir /tmp/unionfs/usr
+	/bin/mkdir /tmp/unionfs/root
+	/bin/mkdir /tmp/unionfs/sbin
+	/bin/mkdir /tmp/unionfs/bin
+	/bin/mkdir /tmp/unionfs/boot
+	/bin/mkdir /tmp/unionfs/confdefault
 	echo -n "Mounting unionfs directories:"
 	echo -n " usr"
-	mount_unionfs /tmp/unionfs/usr /usr/
+	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
 	echo -n " root"
-	mount_unionfs /tmp/unionfs/root /root/
+	/sbin/mount_unionfs /tmp/unionfs/root /root/
 	echo -n " bin"
-	mount_unionfs /tmp/unionfs/bin /bin/		
+	/sbin/mount_unionfs /tmp/unionfs/bin /bin/		
 	echo -n " sbin"
-	mount_unionfs /tmp/unionfs/sbin /sbin/	
+	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/	
 	echo -n " boot"
-	mount_unionfs /tmp/unionfs/boot /boot/
+	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
 	echo -n " conf.default"
-	mount_unionfs /tmp/unionfs/confdefault /conf.default/
+	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
 	echo -n " installer"
 	echo "... done."
 fi
@@ -142,31 +142,31 @@ fi
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
-	rm /conf
-	ln -s /cf/conf/ /conf
+	/bin/rm /conf
+	/bin/ln -s /cf/conf/ /conf
 fi
 
 # Make sure symlink is correct on nanobsd
 if [ "$PLATFORM" = "nanobsd" ] ; then
-	rm /conf
-	ln -s /cf/conf/ /conf
+	/bin/rm /conf
+	/bin/ln -s /cf/conf/ /conf
 fi
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/syslog.conf ]; then
-	rm -rf /etc/syslog.conf
-	ln -s /var/etc/syslog.conf /etc/syslog.conf
+	/bin/rm -rf /etc/syslog.conf
+	/bin/ln -s /var/etc/syslog.conf /etc/syslog.conf
 fi
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then
-	rm -rf /etc/hosts
-	ln -s /var/etc/hosts /etc/hosts
+	/bin/rm -rf /etc/hosts
+	/bin/ln -s /var/etc/hosts /etc/hosts
 fi
 
 if [ ! -L /etc/resolv.conf ]; then
-    rm -rf /etc/resolv.conf
-    ln -s /var/etc/resolv.conf /etc/resolv.conf
+    /bin/rm -rf /etc/resolv.conf
+    /bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
 fi
 
 # Setup compatibility link for packages that
@@ -175,85 +175,85 @@ fi
 # seperated PREFIX area
 # Only create if symlink does not exist. 
 if [ ! -h /tmp/tmp ]; then
-    ln -hfs / /tmp/tmp
+    /bin/ln -hfs / /tmp/tmp
 fi
 
 # Make sure our /tmp is 777 + Sticky
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-	rm -rf /tmp/*
+	/bin/rm -rf /tmp/*
 fi
-chmod 1777 /tmp
+/bin/chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# Malloc debugging check
 	if [ -L /etc/malloc.conf ]; then
 	    #ln -s aj /etc/malloc.conf
-		rm /etc/malloc.conf
+		/bin/rm /etc/malloc.conf
 	fi
 fi
 
 if [ ! -L /etc/dhclient.conf ]; then
-    rm -rf /etc/dhclient.conf
+    /bin/rm -rf /etc/dhclient.conf
 fi
 
 if [ ! -L /etc/sasyncd.conf ]; then
-    mkdir -p /var/etc/
-    touch /var/etc/sasyncd.conf
-    rm -rf /etc/sasyncd.conf
-    ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf
-    chown root:wheel /var/etc/sasyncd.conf
-    chmod 0600 /var/etc/sasyncd.conf
+    /bin/mkdir -p /var/etc/
+    /usr/bin/touch /var/etc/sasyncd.conf
+    /bin/rm -rf /etc/sasyncd.conf
+    /bin/ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf
+    /usr/sbin/chown root:wheel /var/etc/sasyncd.conf
+    /bin/chmod 0600 /var/etc/sasyncd.conf
 fi
 
 if [ ! -d /var/tmp ]; then
-	mkdir -p /var/tmp
+	/bin/mkdir -p /var/tmp
 fi
 
 if [ ! -d /cf/conf/backup/ ]; then
-	mkdir -p /cf/conf/backup/ 
+	/bin/mkdir -p /cf/conf/backup/ 
 fi
 
 # OpenVPN storage
 if [ ! -d /var/etc/openvpn ]; then
-	mkdir -p /var/etc/openvpn
+	/bin/mkdir -p /var/etc/openvpn
 fi
 if [ ! -d /var/etc/openvpn-csc ]; then
-	mkdir -p /var/etc/openvpn-csc
+	/bin/mkdir -p /var/etc/openvpn-csc
 fi
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Remove old nameserver resolution files
-rm -f /var/etc/nameserver*
+/bin/rm -f /var/etc/nameserver*
 
 # Create uploadbar tmp directory
-mkdir -p /tmp/uploadbar
-chmod 0777 /tmp/uploadbar
+/bin/mkdir -p /tmp/uploadbar
+/bin/chmod 0777 /tmp/uploadbar
 
 # make some directories in /var
-mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
-rm /var/log/* 2>/dev/null
-rm -rf /var/run/*
+/bin/mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/rm /var/log/* 2>/dev/null
+/bin/rm -rf /var/run/*
 
 echo -n "."
 DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
 if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
-	touch /var/log/system.log
-	touch /var/log/filter.log
-	touch /var/log/dhcpd.log
-	touch /var/log/vpn.log
-	touch /var/log/pptp.log
-	touch /var/log/pppoe.log
-	touch /var/log/l2tp.log
-	touch /var/log/openvpn.log
-	touch /var/log/portalauth.log
-	touch /var/log/ipsec.log
-	touch /var/log/ppp.log
-	touch /var/log/relayd.log
-	touch /var/log/lighttpd.log
-	touch /var/log/ntpd.log
-	touch /var/log/apinger.log
+	/usr/bin/touch /var/log/system.log
+	/usr/bin/touch /var/log/filter.log
+	/usr/bin/touch /var/log/dhcpd.log
+	/usr/bin/touch /var/log/vpn.log
+	/usr/bin/touch /var/log/pptp.log
+	/usr/bin/touch /var/log/pppoe.log
+	/usr/bin/touch /var/log/l2tp.log
+	/usr/bin/touch /var/log/openvpn.log
+	/usr/bin/touch /var/log/portalauth.log
+	/usr/bin/touch /var/log/ipsec.log
+	/usr/bin/touch /var/log/ppp.log
+	/usr/bin/touch /var/log/relayd.log
+	/usr/bin/touch /var/log/lighttpd.log
+	/usr/bin/touch /var/log/ntpd.log
+	/usr/bin/touch /var/log/apinger.log
 else 
 	ENABLEFIFOLOG=`cat /cf/conf/config.xml | grep usefifolog | wc -l | awk '{ print $1 }'`
 	if [ "$ENABLEFIFOLOG" -gt "0" ]; then
@@ -293,29 +293,29 @@ else
 	fi
 fi 
 # change permissions on newly created fifolog files.
-chmod 0600 /var/log/*.log
+/bin/chmod 0600 /var/log/*.log
 
 echo -n "."
-DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`
+DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
 if [ "$DEVFS" = "0" ]; then
     mount_devfs devfs /dev
 fi
 
 # Create an initial utmp file
-cd /var/run && cp /dev/null utmp && chmod 644 utmp
+cd /var/run && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
 
 echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
-    rm -rf /etc/rc.conf
+    /bin/rm -rf /etc/rc.conf
 fi
 
 # Launching kbdmux(4)
 if [ -f "/dev/kbdmux0" ]; then
 	echo -n "."
-	kbdcontrol -k /dev/kbdmux0 < /dev/console
+	/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
 	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
 	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
 fi
@@ -335,11 +335,13 @@ cap_mkdb /etc/login.conf
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 . /etc/rc.php_ini_setup
 
+nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."
-rm -f /cf/conf/backup/backup.cache
-rm -f /root/lighttpd*
-touch $varrunpath/booting
+/bin/rm -f /cf/conf/backup/backup.cache
+/bin/rm -f /root/lighttpd*
+/usr/bin/touch $varrunpath/booting
 /etc/rc.bootup
 
 # If a shell was selected from recovery 
@@ -356,20 +358,16 @@ echo "done."
 # Start packages
 /etc/rc.start_packages
 
-rm -rf /usr/local/pkg/pf/CVS
-
-# Remove stale files that have already been processed by bootup
-# scripts
-nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null &
+/bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
-minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
+/usr/local/bin/minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-minicron 3600 /var/run/expire_accounts.pid /etc/rc.exipireaccounts
+/usr/local/bin/minicron 3600 /var/run/expire_accounts.pid /etc/rc.exipireaccounts
 
 # Start alias url updater every 24 hours
-minicron 86400 /var/run/update_alias_url_data.pid /etc/rc.update_alias_url_data
+/usr/local/bin/minicron 86400 /var/run/update_alias_url_data.pid /etc/rc.update_alias_url_data
 
 /bin/chmod a+rw /tmp/.
 

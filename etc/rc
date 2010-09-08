@@ -364,7 +364,7 @@ echo "done."
 /usr/local/bin/minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 /var/run/expire_accounts.pid /etc/rc.exipireaccounts
+/usr/local/bin/minicron 3600 /var/run/expire_accounts.pid /etc/rc.expireaccounts
 
 # Start alias url updater every 24 hours
 /usr/local/bin/minicron 86400 /var/run/update_alias_url_data.pid /etc/rc.update_alias_url_data

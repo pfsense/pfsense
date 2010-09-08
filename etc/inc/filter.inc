@@ -1352,7 +1352,14 @@ function filter_nat_rules_generate() {
 			$localport = alias_expand($rule['local-port']);
 			if(!$localport || $dstport[0] == $localport) {
 				$localport = "";
-			} else if(is_alias($rule['destination']['port']) || is_alias($rule['local-port'])) {
+			} else if(is_alias($rule['local-port'])) {
+				$localport = filter_expand_alias($rule['local-port']);
+				if($localport) {
+					$localport = explode(" ", trim($localport));
+					$localport = $localport[0];
+					$localport = " port {$localport}";
+				}
+			} else if(is_alias($rule['destination']['port'])) {
 				$localport = " port {$localport}";
 			} else {
 				if(($dstport[1]) && ($dstport[0] != $dstport[1])) {

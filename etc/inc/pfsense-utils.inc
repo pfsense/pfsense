@@ -1593,10 +1593,14 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 
 function update_alias_url_data() {
 	global $config, $g;
+
 	/* item is a url type */
 	$lockkey = lock('config');
-	for($x=0; $x<count($config['aliases']['alias']); $x++) {
-		if($config['aliases']['alias'][$x]['aliasurl']) {
+	if (is_array($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $x => $alias) {
+			if (empty($alias['aliasurl']))
+				continue;
+
 			/* fetch down and add in */
 			$isfirst = 0;
 			$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -1607,9 +1611,9 @@ function update_alias_url_data() {
 			mwexec("/bin/mkdir -p {$temp_filename}");
 			mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
 			/* if the item is tar gzipped then extract */
-			if(stristr($config['aliases']['alias'][$x]['aliasurl'], ".tgz"))
+			if(stristr($alias['aliasurl'], ".tgz"))
 				process_alias_tgz($temp_filename);
-			if(stristr($config['aliases']['alias'][$x]['aliasurl'], ".zip"))
+			else if(stristr($alias['aliasurl'], ".zip"))
 				process_alias_unzip($temp_filename);
 			if(file_exists("{$temp_filename}/aliases")) {
 				$file_contents = file_get_contents("{$temp_filename}/aliases");
@@ -1628,12 +1632,7 @@ function update_alias_url_data() {
 						$isfirst = 1;
 					}
 				}
-				if($isfirst == 0) {
-					/* nothing was found */
-					$dont_update = true;
-					break;
-				}
-				if(!$dont_update) {
+				if($isfirst > 0) {
 					$config['aliases']['alias'][$x]['address'] = $address;
 					$updated = true;
 				}

@@ -157,7 +157,7 @@ function is_pid_running($pidfile) {
 		return false;
 	$running = shell_exec("/bin/pgrep -F {$pidfile} 2>/dev/null");
 
-	return (intval($running) == 0);
+	return (!empty($running));
 }
 
 function is_dhcp_running($interface) {

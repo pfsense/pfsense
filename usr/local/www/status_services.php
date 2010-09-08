@@ -328,7 +328,7 @@ foreach (array('server', 'client') as $mode) {
 				$pconfig['name'] = "openvpn";
 				$pconfig['mode'] = $mode;
 				$pconfig['id'] = $id;
-				$pconfig['vpnid'] = $settings['vpnid'];
+				$pconfig['vpnid'] = $setting['vpnid'];
 				$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
 				$services[] = $pconfig;
 			}

@@ -613,8 +613,8 @@ function filter_generate_gateways() {
 						} else
 							$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb++;
-						} else
-							log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
+					} else
+						log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
 					}
 					$route = "";
 					if ($foundlb > 0) {

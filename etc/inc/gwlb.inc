@@ -150,16 +150,16 @@ EOD;
 			continue; //Skip this target
 
 		$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
-		$apingercfg .= "	description \"{$gateway['name']}\"\n";
+		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
 		$alarms = "";
 		$override = false;
 		if (!empty($gateway['lowloss'])) {
-			$alarmscfg .= "alarm loss \"{$gateway['name']}loss\" {\n";
+			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
 			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
        			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
 			$alarmscfg .= "}\n";
-			$alarms .= "\"{$gateway['name']}loss\"";
+			$alarms .= "\"{$name}loss\"";
 			$override = true;
 		} else {
 			if ($override == true)
@@ -168,13 +168,13 @@ EOD;
 			$override = true;
 		}
 		if (!empty($gateway['latencylow'])) {
-			$alarmscfg .= "alarm delay \"{$gateway['name']}delay\" {\n";
+			$alarmscfg .= "alarm delay \"{$name}delay\" {\n";
 			$alarmscfg .= "\tdelay_low {$gateway['latencylow']}ms\n";
 			$alarmscfg .= "\tdelay_high {$gateway['latencyhigh']}ms\n";
 			$alarmscfg .= "}\n";
 			if ($override == true)
 				$alarms .= ",";
-			$alarms .= "\"{$gateway['name']}delay\"";
+			$alarms .= "\"{$name}delay\"";
 			$override = true;
 		} else {
 			if ($override == true)
@@ -183,12 +183,12 @@ EOD;
 			$override = true;
 		}
 		if (!empty($gateway['down'])) {
-			$alarmscfg .= "alarm down \"{$gateway['name']}down\" {\n";
+			$alarmscfg .= "alarm down \"{$name}down\" {\n";
 			$alarmscfg .= "\ttime {$gateway['down']}s\n";
 			$alarmscfg .= "}\n";
 			if ($override == true)
 				$alarms .= ",";
-			$alarms .= "\"{$gateway['name']}down\"";
+			$alarms .= "\"{$name}down\"";
 			$override = true;
 		} else {
 			if ($override == true)
@@ -260,6 +260,7 @@ function return_gateways_status($byname = false) {
 		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : $info[7] . "";
 		$status[$target]['status'] = trim($info[8]);
 	}
+
 	return($status);
 }
 
@@ -451,8 +452,8 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array();
-        foreach ($gateways_arr as $gw) {
-                if ($gw['name'] == $name)
+        foreach ($gateways_arr as $gname => $gw) {
+                if ($gw['name'] == $name || $gname == $name)
                         return $gw['gateway'];
         }
 
@@ -464,12 +465,8 @@ function lookup_gateway_monitor_ip_by_name($name) {
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
 		$gateway = $gateways_arr[$name];
-		if ($gateway['gateway'] == "dynamic")
-			$gateway['monitor'] = "127.0.0.2";
-
-		$monitorip = $gateway['monitor'];
-		if(!is_ipaddr($monitorip))
-			$monitorip = $gateway['gateway'];
+		if(!is_ipaddr($gateway['monitor']))
+			return $gateway['gateway'];
 
 		return ($monitorip);
         }
@@ -481,7 +478,6 @@ function lookup_gateway_interface_by_name($name) {
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
-		//$gatewayip = $gateway['gateway'];
 		$interfacegw = $gateway['interface'];
 		return ($interfacegw);
         }

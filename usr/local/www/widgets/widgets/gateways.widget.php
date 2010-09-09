@@ -30,8 +30,9 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+$a_gateways = return_gateways_array();
 $gateways_status = array();
-$gateways_status = return_gateways_status();
+$gateways_status = return_gateways_status(true);
 
 $counter = 1;
 
@@ -44,50 +45,59 @@ $counter = 1;
                   <td width="10%" class="listhdrr">Loss</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
-         <?php foreach ($gateways_status as $target => $gateway) { ?>
-             <?php
-                     $monitor = $target;
-			if(empty($monitor)) {
-				$monitor = $gateway['gateway'];
-			}
-	 ?>
+         <?php foreach ($a_gateways as $gname => $gateway) { ?>
                 <tr>
                   <td class="listlr" id="gateway<?= $counter; ?>">
                                 <?=$gateway['name'];?>
 				<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-                              <?php echo lookup_gateway_ip_by_name($gateway['name']);?>
+		<?php 	if (is_ipaddr($gateway['gateway']))
+				echo $gateway['gateway'];
+			else
+				echo get_interface_gateway($gateway['friendlyiface']);
+		?>
 				<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-								<?=$gateway['delay'];?>
-								<?php $counter++; ?>
-				  </td>
+		<?php	if ($gateways_status[$gname])
+				echo $gateways_status[$gname]['delay'];
+			else
+				echo "Unknown";
+		?>
+				<?php $counter++; ?>
+		  </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-								<?=$gateway['loss'];?>
-								<?php $counter++; ?>
-				  </td>
+		<?php	if ($gateways_status[$gname])
+				echo $gateways_status[$gname]['loss'];
+			else
+				echo "Unknown";
+		?>
+				<?php $counter++; ?>
+		  </td>
                   <td class="listr" id="gateway<?=$counter?>" >
                         <table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-				if (stristr($gateway['status'], "down")) {
+		<?php	if ($gateways_status[$gname]) {
+				if (stristr($gateways_status[$gname]['status'], "down")) {
                                         $online = "Offline";
                                         $bgcolor = "lightcoral";
-                                } elseif (stristr($gateway['status'], "loss")) {
+                                } elseif (stristr($gateways_status[$gname]['status'], "loss")) {
                                         $online = "Warning, Packetloss";
                                         $bgcolor = "khaki";
-                                } elseif (stristr($gateway['status'], "delay")) {
+                                } elseif (stristr($gateways_status[$gname]['status'], "delay")) {
                                         $online = "Warning, Latency";
                                         $bgcolor = "khaki";
-                                } elseif ($gateway['status'] == "none") {
+                                } elseif ($gateways_status[$gname]['status'] == "none") {
                                         $online = "Online";
                                         $bgcolor = "lightgreen";
-                                } else
-					$online = "Gathering data";
-				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
-				$counter++;
-                        ?>
+				}
+			} else {
+				$online = "Unknown";
+                                $bgcolor = "lightgray";
+			}
+			echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+			$counter++;
+		?>
                         </table>
                   </td>
                 </tr>

@@ -296,20 +296,20 @@ foreach ($pkg['fields']['field'] as $field) {
 		if (isset($field['enablefields'])) {
 			foreach (explode(',', $field['enablefields']) as $enablefield) {
 				echo "\t\tif(document.iform.elements[\"$enablefield\"]){\n";
-				echo "t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n";
-				echo "t\t}else{\n";
-				echo "t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 0;\n";
-				echo "t\t}\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 0;\n";
+				echo "\t\t}\n";
 			}
 		}
 
 		if (isset($field['checkenablefields'])) {
 			foreach(explode(',', $field['checkenablefields']) as $checkenablefield) {
-				echo "t\tif(document.iform.elements[\"$checkenablefield\"]){\n";
-				echo "t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n";
-				echo "t\t}else{\n";
-				echo "t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 1;\n";
-				echo "t\t}\n";
+				echo "\t\tif(document.iform.elements[\"$checkenablefield\"]){\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 1;\n";
+				echo "\t\t}\n";
 			}
 		}
 
@@ -805,7 +805,7 @@ if($pkg['note'] != "")
 
 <?php
 	/* JavaScript to handle the advanced fields. */
-	if($pkg['advanced_options']) {
+	if ($pkg['advanced_options'] == "enabled") {
 		echo "<script type=\"text/javascript\">\n";
 		foreach($js_array as $advfieldname) {
 			echo "function show_" . $advfieldname . "() {\n";

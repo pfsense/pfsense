@@ -198,7 +198,7 @@ $custom_databases = array_merge($dbheader_custom, $databases);
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
-$graphs = array("12hour", "day", "week", "month", "quarter", "year", "4year");
+$graphs = array("day", "week", "month", "quarter", "year", "4year");
 $periods = array("current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));

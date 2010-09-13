@@ -330,14 +330,14 @@ function return_gateways_array($disabled = false) {
 		}
 
 		/* retrieve a proper monitor IP? */
-		$interface = $config['interfaces'][$ifname];
-		if(is_ipaddr($interface['monitorip'])) {
-			$gateway['monitor'] = $interface['monitorip'];
-		} else {
+		$ifcfg =& $config['interfaces'][$ifname];
+		if (is_ipaddr($ifcfg['monitorip']))
+			$gateway['monitor'] = $ifcfg['monitorip'];
+		else
 			$gateway['monitor'] = $gateway['gateway'];
-		}
-		$gateway['descr'] = "Interface $ifname Dynamic Gateway";
-		$gateways_arr[$ifname] = $gateway;
+
+		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
+		$gateways_arr[$friendly] = $gateway;
 	}
 
 	return($gateways_arr);

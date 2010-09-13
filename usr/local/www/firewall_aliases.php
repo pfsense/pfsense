@@ -150,7 +150,7 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete rule. Currently in use by %s"), $referenced_by);
+			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_aliases[$_GET['id']]);
 			write_config();

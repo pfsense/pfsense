@@ -40,7 +40,7 @@
 	$count = count($config['system']['user']);
 	$index = 0;
 	for(; $index < $count; $index++) {
-		$user = $config['system']['user'][$index];
+		$user =& $config['system']['user'][$index];
 		if($user['scope'] == "system")
 			continue;
 		echo "1\n";
@@ -49,8 +49,9 @@
 			continue;
 		echo "1\n";
 		if(strtotime("-1 day") > strtotime($user['expires'])) {
-			echo "removing user {$user['name']} at index #{$index}\n";
-			unset($config['system']['user'][$index]);
+			echo "Disabling user {$user['name']} at index #{$index}\n";
+			//unset($config['system']['user'][$index]);
+			$user['disabled'] = true;
 			$removed++;
 			$count--;
 			$index--;

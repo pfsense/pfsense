@@ -94,7 +94,7 @@ function index_groups() {
 
 	$groupindex = array();
 
-	if (isset($config['system']['group'])) {
+	if (is_array($config['system']['group'])) {
 		$i = 0;
 		foreach($config['system']['group'] as $groupent) {
 			$groupindex[$groupent['name']] = $i;
@@ -108,7 +108,7 @@ function index_groups() {
 function index_users() {
 	global $g, $debug, $config;
 
-	if (isset($config['system']['user'])) {
+	if (is_array($config['system']['user'])) {
 		$i = 0;
 		foreach($config['system']['user'] as $userent) {
 			$userindex[$userent['name']] = $i;

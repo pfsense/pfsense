@@ -8,6 +8,6 @@ fi
 /usr/sbin/ngctl shutdown $1:
 /bin/rm -f /var/etc/nameserver_$1
 # Do not remove gateway used during filter reload.
-# /bin/rm -f /tmp/$1_router
+/bin/rm -f /tmp/$1_router
 /bin/rm -f /tmp/$1up
 /usr/local/sbin/pfSctl -c 'service reload dns'

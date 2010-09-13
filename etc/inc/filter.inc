@@ -615,8 +615,8 @@ function filter_generate_gateways() {
 						} else
 							$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb++;
-						} else
-							log_error(sprintf(gettext("An error occurred while trying to find the interface got %s .  The rule has not been added."), $gatewayip));
+					} else
+						log_error(sprintf(gettext("An error occurred while trying to find the interface got %s .  The rule has not been added."), $gatewayip));
 					}
 					$route = "";
 					if ($foundlb > 0) {

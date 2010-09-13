@@ -1281,7 +1281,10 @@ function configure_cron() {
 	
 	/* please maintain the newline at the end of file */
 	file_put_contents("/etc/crontab", $crontab_contents);
-	
+
+	/* do a HUP kill to force sync changes */
+	exec('/usr/bin/killall -HUP cron');
+
 	conf_mount_ro();
 }
 

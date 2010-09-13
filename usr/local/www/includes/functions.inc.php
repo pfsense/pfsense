@@ -24,19 +24,22 @@ function get_stats() {
 }
 
 function get_gatewaystats() {
+	$a_gateways = return_gateways_array();
 	$gateways_status = array();
-	$gateways_status = return_gateways_status();
+	$gateways_status = return_gateways_status(true);
 	$data = "";
 	$isfirst = true;
-	foreach($gateways_status as $gw) {
+	foreach($a_gateways as $gname => $gw) {
 		if(!$isfirst) 
 			$data .= ",";
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
-		$data .= lookup_gateway_ip_by_name($gw['name']) . ",";
-		$data .= $gw['delay'] . ",";
-		$data .= $gw['loss'] . ",";
-        switch(strtolower($gw['status'])) {
+		$data .= lookup_gateway_ip_by_name($gname) . ",";
+		if ($gateways_status[$gname]) {
+			$gws = $gateways_status[$gname];
+			$data .= $gws['delay'] . ",";
+			$data .= $gws['loss'] . ",";
+        		switch(strtolower($gws['status'])) {
 			case "none":
 				$online = "Online";
 				$bgcolor = "lightgreen";
@@ -55,6 +58,11 @@ function get_gatewaystats() {
 				break;
 			default:
 				$online = "Gathering data";
+				break;
+			}
+		} else {
+			$online = "Unknown";
+			$bgcolor = "lightgray";
 		}
 		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
 	}

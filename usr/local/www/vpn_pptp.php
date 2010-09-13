@@ -72,7 +72,8 @@ $pconfig['radius_nasip'] = $pptpcfg['radius']['nasip'];
 
 if ($_POST) {
 
-	unset($input_errors);
+	if (isset($input_errors))
+		unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -120,7 +121,7 @@ if ($_POST) {
 		if (($_POST['redir'] && !is_ipaddr($_POST['redir']))) {
 			$input_errors[] = gettext("A valid target address must be specified.");
 		}
-	} else {
+	} else if (isset($config['pptpd']['mode'])) {
 		unset($config['pptpd']['mode']);
 	}
 
@@ -142,39 +143,41 @@ if ($_POST) {
 		$pptpcfg['radius']['nasip'] = $_POST['radius_nasip'];
 		$pptpcfg['radius']['acct_update'] = $_POST['radius_acct_update'];
 
- 		if ($_POST['pptp_dns1'] == "") 
-        		unset($pptpcfg['dns1']);
-		else
+ 		if ($_POST['pptp_dns1'] == "") {
+			if (isset($pptpcfg['dns1']))
+        			unset($pptpcfg['dns1']);
+		} else
 			$pptpcfg['dns1'] = $_POST['pptp_dns1'];
 
- 		if ($_POST['pptp_dns2'] == "") 
-        		unset($pptpcfg['dns2']);
-		else
+ 		if ($_POST['pptp_dns2'] == "") {
+			if (isset($pptpcfg['dns2']))
+        			unset($pptpcfg['dns2']);
+		} else
 			$pptpcfg['dns2'] = $_POST['pptp_dns2'];
 
 		if($_POST['req128'] == "yes") 
 			$pptpcfg['req128'] = true;
-		else
+		else if (isset($pptpcfg['req128']))
 			unset($pptpcfg['req128']);
 
 		if($_POST['radiusenable'] == "yes") 
 			$pptpcfg['radius']['server']['enable'] = true;
-		else 
+		else if (isset($pptpcfg['radius']['server']['enable']))
 			unset($pptpcfg['radius']['server']['enable']);
 			
 		if($_POST['radiussecenable'] == "yes") 
 			$pptpcfg['radius']['server']['enable'] = true;
-		else 
+		else if (isset($pptpcfg['radius']['server2']['enable']))
 			unset($pptpcfg['radius']['server2']['enable']);
 			
 		if($_POST['radacct_enable'] == "yes") 
 			$pptpcfg['radius']['accounting'] = true;
-		else 
+		else if (isset($pptpcfg['radius']['accounting']))
 			unset($pptpcfg['radius']['accounting']);
 		
 		if($_POST['radiusissueips'] == "yes") {
 			$pptpcfg['radius']['radiusissueips'] = true;
-		} else
+		} else if (isset($pptpcfg['radius']['radiusissueips']))
 			unset($pptpcfg['radius']['radiusissueips']);
 		
 		write_config();

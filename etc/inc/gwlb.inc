@@ -30,19 +30,22 @@
 
  */
 
-/* add static routes for monitor IP addresse
- * creates monitoring configuration file
+/*
+ * Creates monitoring configuration file and
+ * adds apropriate static routes.
  */
 function setup_gateways_monitor() {
-	global $config;
-	global $g;
+	global $config, $g;
+
 	$gateways_arr = return_gateways_array();
-	$gateways_status = return_gateways_status();
-	if (!is_array($config['gateways']['gateway_item']))
-		$config['gateways']['gateway_item'] = array();
+	if (!is_array($gateways_arr)) {
+		log_error("No gateways to monitor. Apinger will not be run.");
+		killbypid("{$g['varrun_path']}/apinger.pid");
+		@unlink("{$g['tmp_path']}/apinger.status");
+		return;
+	}
 
-	$a_gateway_item = &$config['gateways']['gateway_item'];
-
+	/* Default settings. Probably should move to globals.inc? */
 	$a_settings = array();
 	$a_settings['latencylow'] = "200";
 	$a_settings['latencyhigh'] = "500";
@@ -131,109 +134,87 @@ target default {
 	#rrd file "{$g['vardb_path']}/rrd/apinger-%t.rrd"
 }
 
-## Targets to probe
-## Each one defined with:
-## target <address> { <parameter>... }
-## The parameters are those described above in the "target default" section
-## plus the "description" parameter.
-## the <address> should be IPv4 or IPv6 address (not hostname!)
-
 EOD;
 
-	/* add static routes for each gateway with their monitor IP */
-	if(is_array($gateways_arr)) {
-		$i = 2;
-		foreach($gateways_arr as $name => $gateway) {
-			$gwref = $a_gateway_item[$gateway['attribute']];
-			/* for dynamic gateways without an IP address we subtitute a local one */
-			if(is_ipaddr($gwref['monitor'])) {
-				$gateway['monitor'] = $gwref['monitor'];
-			} else {
-				if ($gateway['gateway'] == "dynamic") {
-					$gateway['monitor'] = "127.0.0.{$i}";
-					$i++;
-				}
-				if (!is_ipaddr($gateway['monitor']))
-					$gateway['monitor'] = $gateway['gateway'];
-			}
-
-			if (!is_ipaddr($gateway['monitor']))
+	foreach($gateways_arr as $name => $gateway) {
+		if (empty($gateway['monitor']) || !is_ipaddr($gateway['monitor'])) {
+			if (is_ipaddr($gateway['gateway']))
+				$gateway['monitor'] = $gateway['gateway'];
+			else /* No chance to get an ip to monitor skip target. */
 				continue;
-
-			if($gateway['monitor'] == "127.0.0.{$i}") {
-				$gwifip = "127.0.0.1";
-			} else {
-				$gwifip = find_interface_ip($gateway['interface']);
-			}
-			if (!is_ipaddr($gwifip))
-				continue; //Skip this target
-
-			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
-			$apingercfg .= "	description \"{$gateway['name']}\"\n";
-			$apingercfg .= "	srcip \"{$gwifip}\"\n";
-			$alarms = "";
-			$override = false;
-			if (!empty($gwref['lowloss'])) {
-				$alarmscfg .= "alarm loss \"{$gateway['name']}loss\" {\n";
-				$alarmscfg .= "\tpercent_low {$gwref['losslow']}\n";
-        			$alarmscfg .= "\tpercent_high {$gwref['losshigh']}\n";
-				$alarmscfg .= "}\n";
-				$alarms .= "\"{$gateway['name']}loss\"";
-				$override = true;
-			} else {
-                                if ($override == true)
-                                        $alarms .= ",";
-                                $alarms .= "\"loss\"";
-                                $override = true;
-                        }
-			if (!empty($gwref['latencylow'])) {
-				$alarmscfg .= "alarm delay \"{$gateway['name']}delay\" {\n";
-				$alarmscfg .= "\tdelay_low {$gwref['latencylow']}ms\n";
-				$alarmscfg .= "\tdelay_high {$gwref['latencyhigh']}ms\n";
-				$alarmscfg .= "}\n";
-				if ($override == true)
-					$alarms .= ",";
-				$alarms .= "\"{$gateway['name']}delay\"";
-				$override = true;
-			} else {
-				if ($override == true)
-                                        $alarms .= ",";
-				$alarms .= "\"delay\"";
-				$override = true;
-			}
-			if (!empty($gwref['down'])) {
-				$alarmscfg .= "alarm down \"{$gateway['name']}down\" {\n";
-				$alarmscfg .= "\ttime {$gwref['down']}s\n";
-				$alarmscfg .= "}\n";
-				if ($override == true)
-                                        $alarms .= ",";
-				$alarms .= "\"{$gateway['name']}down\"";
-				$override = true;
-			} else {
-                                if ($override == true)
-                                        $alarms .= ",";
-                                $alarms .= "\"down\"";
-                                $override = true;
-                        }
-			if ($override == true)
-				$apingercfg .= "\talarms override {$alarms};\n";
-
-			$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
-			$apingercfg .= "}\n";
-			$apingercfg .= "\n";
-			if($gateway['monitor'] == $gateway['gateway']) {
-				/* if the gateway is the same as the monitor we do not add a
-				 * route as this will break the routing table */
-				continue;
-			} else {
-				if ($gateway['gateway'] != "dynamic" && is_ipaddr($gateway['gateway'])) {
-					mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
-					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
-						" " . escapeshellarg($gateway['gateway']));
-					log_error(sprintf(gettext("Removing static route for monitor %1$s and adding a new route through %2$s"), $gateway['monitor'], $gateway['gateway']));
-				}
-			}
 		}
+
+		/* Interface ip is needed since apinger will bind a socket to it. */
+		$gwifip = find_interface_ip($gateway['interface']);
+		if (!is_ipaddr($gwifip))
+			continue; //Skip this target
+
+		$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+		$apingercfg .= "	description \"{$name}\"\n";
+		$apingercfg .= "	srcip \"{$gwifip}\"\n";
+		$alarms = "";
+		$override = false;
+		if (!empty($gateway['lowloss'])) {
+			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
+			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
+       			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
+			$alarmscfg .= "}\n";
+			$alarms .= "\"{$name}loss\"";
+			$override = true;
+		} else {
+			if ($override == true)
+				$alarms .= ",";
+			$alarms .= "\"loss\"";
+			$override = true;
+		}
+		if (!empty($gateway['latencylow'])) {
+			$alarmscfg .= "alarm delay \"{$name}delay\" {\n";
+			$alarmscfg .= "\tdelay_low {$gateway['latencylow']}ms\n";
+			$alarmscfg .= "\tdelay_high {$gateway['latencyhigh']}ms\n";
+			$alarmscfg .= "}\n";
+			if ($override == true)
+				$alarms .= ",";
+			$alarms .= "\"{$name}delay\"";
+			$override = true;
+		} else {
+			if ($override == true)
+				$alarms .= ",";
+			$alarms .= "\"delay\"";
+			$override = true;
+		}
+		if (!empty($gateway['down'])) {
+			$alarmscfg .= "alarm down \"{$name}down\" {\n";
+			$alarmscfg .= "\ttime {$gateway['down']}s\n";
+			$alarmscfg .= "}\n";
+			if ($override == true)
+				$alarms .= ",";
+			$alarms .= "\"{$name}down\"";
+			$override = true;
+		} else {
+			if ($override == true)
+				$alarms .= ",";
+			$alarms .= "\"down\"";
+			$override = true;
+		}
+		if ($override == true)
+			$apingercfg .= "\talarms override {$alarms};\n";
+
+		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
+		$apingercfg .= "}\n";
+		$apingercfg .= "\n";
+		/*
+		 * If the gateway is the same as the monitor we do not add a
+		 * route as this will break the routing table.
+		 * Add static routes for each gateway with their monitor IP
+		 * not strictly necessary but is a added level of protection.
+		 */
+		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor']. $gateway['gateway']));
+			mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']), true);
+			mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
+				" " . escapeshellarg($gateway['gateway']));
+		}
+
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
 	}
@@ -256,7 +237,7 @@ EOD;
 }
 
 /* return the status of the apinger targets as a array */
-function return_gateways_status() {
+function return_gateways_status($byname = false) {
 	global $config, $g;
 
 	$apingerstatus = array();
@@ -267,7 +248,11 @@ function return_gateways_status() {
 	$status = array();
 	foreach($apingerstatus as $line) {
 		$info = explode("|", $line);
-		$target = $info[0];
+		if ($byname == false)
+			$target = $info[0];
+		else
+			$target = $info[2];
+		$status[$target]['monitorip'] = $info[0];
 		$status[$target]['srcip'] = $info[1];
 		$status[$target]['name'] = $info[2];
 		$status[$target]['lastcheck'] = $info[5] ? date('r', $info[5]) : date('r');
@@ -275,6 +260,7 @@ function return_gateways_status() {
 		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : $info[7] . "";
 		$status[$target]['status'] = trim($info[8]);
 	}
+
 	return($status);
 }
 
@@ -292,34 +278,35 @@ function return_gateways_array($disabled = false) {
 	}
 
 	$i = 0;
-	/* tack on all the hard defined gateways as well */
+	/* Process/add all the configured gateways. */
 	if(is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				/* no IP address found, set to dynamic */
-				if(! is_ipaddr($gateway['gateway'])) {
+				if(! is_ipaddr($gateway['gateway']))
 					$gateway['gateway'] = "dynamic";
-				}
+
 				$gateway['dynamic'] = true;
 			}
-			if($gateway['monitor'] == "") {
+			if(empty($gateway['monitor']))
 				$gateway['monitor'] = $gateway['gateway'];
-			}
-			/* include the gateway index as the attribute */
+
 			$gateway['friendlyiface'] = $gateway['interface'];
-			$gateway['interface'] = convert_friendly_interface_to_real_interface_name($gateway['interface']);
-			$gateway['attribute'] = "$i";
+			$gateway['interface'] = get_real_interface($gateway['interface']);
+			/* include the gateway index as the attribute */
+			$gateway['attribute'] = $i;
 
 			$gateways_arr[$gateway['name']] = $gateway;
 			$i++;
 		}
 	} 
 
+	/* Process/add dynamic gateways. */
 	foreach($iflist as $ifname => $friendly ) {
-		if(! interface_has_gateway($ifname)) {
+		if(! interface_has_gateway($ifname))
 			continue;
-		}
+
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
@@ -329,9 +316,8 @@ function return_gateways_array($disabled = false) {
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */
-		if(!is_ipaddr(trim($gateway['gateway'])) && $gateway['dynamic'] == true) {
+		if(!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
 			 $gateway['gateway'] = "dynamic";
-		}
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -352,21 +338,20 @@ function return_gateways_array($disabled = false) {
 		}
 		$gateway['descr'] = "Interface $ifname Dynamic Gateway";
 		$gateways_arr[$ifname] = $gateway;
-		$i++;
 	}
 
 	return($gateways_arr);
 }
 
-
-/* return a array with all gateway groups with name as key
+/*
+ * Return an array with all gateway groups with name as key
  * All gateway groups will be processed before returning the array.
-*/
+ */
 function return_gateway_groups_array() {
 	global $config, $g;
 
 	/* fetch the current gateways status */
-	$gateways_status = return_gateways_status();
+	$gateways_status = return_gateways_status(true);
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 
@@ -374,59 +359,49 @@ function return_gateway_groups_array() {
 		foreach($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members seperated by tier */
 			$tiers = array();
+			$backupplan = array();
 			foreach($group['item'] as $item) {
 				$itemsplit = explode("|", $item);
 				$tier = $itemsplit[1];
 				$gwname = $itemsplit[0];
+
+				/* Do it here rather than reiterating again the group in case no member is up. */
+				$backupplan[$tier] = $gwname;
+
 				/* check if the gateway is available before adding it to the array */
-				foreach($gateways_status as $status) {
-					if ($status['name'] != $gwname) {
-						continue;
-					}
+				if (!empty($gateway_status[$gwname])) {
+					$gwdown = false;
 					if (stristr($status['status'], "down")) {
 						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
+						$gwdown = true;
+					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
+						/* packet loss */
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
+						$gwdown = true;
+					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
+						/* high latency */
+						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
+						$gwdown = true;
+					}
+					if ($gwdown == true) {
 						log_error($msg);
 						notify_via_growl($msg);
-					} elseif (stristr($status['status'], "loss")) {
-						if (strstr($group['trigger'], "loss")) {
-							/* packet loss */
-							$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
-							log_error($msg);
-							notify_via_growl($msg);
-						} else {
-							$tiers[$tier][] = $gwname;
-						}
-					} elseif (stristr($status['status'], "delay")) {
-						if (strstr($group['trigger'] , "latency")) {
-							/* high latency */
-							$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
-							$msg = "MONITOR: $gwname has high latency, removing from routing group";
-							log_error($msg);
-							notify_via_growl($msg);
-						} else {
-							$tiers[$tier][] = $gwname;
-						}
-					} elseif ($status['status'] == "none") {
+					} else
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
-					}
 				}
 			}
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				$msg = gettext("All gateways are unavailable, proceeding with configured XML settings!");
+				$msg = gettext("Gateways status could not be determined, considering all as up/active.");
 				log_error($msg);
 				notify_via_growl($msg);
-				foreach($group['item'] as $item) {
-					$itemsplit = explode("|", $item);
-					$tier = $itemsplit[1];
-					$gwname = $itemsplit[0];
-					$tiers[$tier][] = $gwname;
-				}
+				$tiers = $backupplan;
 			}
 			/* sort the tiers array by the tier key */
 			ksort($tiers);
+
 			/* we do not really foreach the tiers as we stop after the first tier */
 			foreach($tiers as $tier) {
 				/* process all gateways in this tier */
@@ -440,13 +415,14 @@ function return_gateway_groups_array() {
 							$gatewayip = $gateway['gateway'];
 						else if ($int <> "")
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
-					}
-					if (($int <> "") && is_ipaddr($gatewayip)) {
-						$groupmember = array();
-						$groupmember['int']  = "$int";
-						$groupmember['gwip']  = "$gatewayip";
-						$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-						$gateway_groups_array[$group['name']][] = $groupmember;
+					
+						if (($int <> "") && is_ipaddr($gatewayip)) {
+							$groupmember = array();
+							$groupmember['int']  = $int;
+							$groupmember['gwip']  = $gatewayip;
+							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+							$gateway_groups_array[$group['name']][] = $groupmember;
+						}
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */
@@ -476,8 +452,8 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array();
-        foreach ($gateways_arr as $gw) {
-                if ($gw['name'] == $name)
+        foreach ($gateways_arr as $gname => $gw) {
+                if ($gw['name'] == $name || $gname == $name)
                         return $gw['gateway'];
         }
 
@@ -489,12 +465,8 @@ function lookup_gateway_monitor_ip_by_name($name) {
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
 		$gateway = $gateways_arr[$name];
-		if ($gateway['gateway'] == "dynamic")
-			$gateway['monitor'] = "127.0.0.2";
-
-		$monitorip = $gateway['monitor'];
-		if(!is_ipaddr($monitorip))
-			$monitorip = $gateway['gateway'];
+		if(!is_ipaddr($gateway['monitor']))
+			return $gateway['gateway'];
 
 		return ($monitorip);
         }
@@ -506,7 +478,6 @@ function lookup_gateway_interface_by_name($name) {
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
-		//$gatewayip = $gateway['gateway'];
 		$interfacegw = $gateway['interface'];
 		return ($interfacegw);
         }
@@ -519,7 +490,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 
         $gw = NULL;
 
-        $gwcfg = $config['interfaces'][$interface];
+        $gwcfg =& $config['interfaces'][$interface];
         if (is_ipaddr($gwcfg['gateway']))
                 $gw = $gwcfg['gateway'];
         else if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
@@ -535,8 +506,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
         if (!is_ipaddr($gw) && !is_ipaddr($gwcfg['ipaddr'])) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
-                        $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
-                        $gw = rtrim($gw);
+                        $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
 			$dynamic = true;
                 }
         }

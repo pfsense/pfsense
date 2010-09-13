@@ -241,9 +241,9 @@ if ($_POST) {
 		    pfSenseHeader("pkg.php?xml=" . $xml);
 		}
 		exit;
-	}
-	else
+	} else {
 		$get_from_post = true;
+	}
 }
 
 if($pkg['title'] <> "") {
@@ -269,51 +269,51 @@ function enablechange() {
 <?php
 foreach ($pkg['fields']['field'] as $field) {
 	if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
-		print("\tif (document.iform.elements[\"{$field['fieldname']}\"].checked == false) {\n");
+		echo "\tif (document.iform.elements[\"{$field['fieldname']}\"].checked == false) {\n";
 
 		if (isset($field['enablefields'])) {
 			foreach (explode(',', $field['enablefields']) as $enablefield) {
-				print("\t\tif(document.iform.elements[\"$enablefield\"]){\n");
-				print("\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 1;\n");
-				print("\t\t}else{\n");
-				print("\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 1;\n");
-				print("\t\t}\n");
+				echo "\t\tif(document.iform.elements[\"$enablefield\"]){\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 1;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 1;\n";
+				echo "\t\t}\n";
 			}
 		}
 
 		if (isset($field['checkenablefields'])) {
 			foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
-				print("\t\tif(document.iform.elements[\"$checkenablefield\"]){\n");
-				print("\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 0;\n");
-				print("\t\t}else{\n");
-				print("\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 0;\n");
-				print("\t\t}\n");
+				echo "\t\tif(document.iform.elements[\"$checkenablefield\"]){\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 0;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 0;\n";
+				echo "\t\t}\n";
 			}
 		}
 
-		print("\t}\n\telse {\n");
+		echo "\t}\n\telse {\n";
 
 		if (isset($field['enablefields'])) {
 			foreach (explode(',', $field['enablefields']) as $enablefield) {
-				print("\t\tif(document.iform.elements[\"$enablefield\"]){\n");
-				print("\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n");
-				print("\t\t}else{\n");
-				print("\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 0;\n");
-				print("\t\t}\n");
+				echo "\t\tif(document.iform.elements[\"$enablefield\"]){\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 0;\n";
+				echo "\t\t}\n";
 			}
 		}
 
 		if (isset($field['checkenablefields'])) {
 			foreach(explode(',', $field['checkenablefields']) as $checkenablefield) {
-				print("\t\tif(document.iform.elements[\"$checkenablefield\"]){\n");
-				print("\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n");
-				print("\t\t}else{\n");
-				print("\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 1;\n");
-				print("\t\t}\n");
+				echo "\t\tif(document.iform.elements[\"$checkenablefield\"]){\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n";
+				echo "\t\t}else{\n";
+				echo "\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 1;\n";
+				echo "\t\t}\n";
 			}
 		}
 
-		print("\t}\n");
+		echo "\t}\n";
 	}
 }
 ?>
@@ -332,8 +332,8 @@ foreach ($pkg['fields']['field'] as $field) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {
-    $tab_array = array();
-    foreach($pkg['tabs']['tab'] as $tab) {
+	$tab_array = array();
+	foreach($pkg['tabs']['tab'] as $tab) {
 		if($tab['tab_level'])
 			$tab_level = $tab['tab_level'];
 		else
@@ -363,7 +363,7 @@ if ($pkg['tabs'] <> "") {
 						$active,
 						$url
 					);
-    }
+    	}
 
 	ksort($tab_array);
 	foreach($tab_array as $tab) {
@@ -374,138 +374,231 @@ if ($pkg['tabs'] <> "") {
 }
 ?>
 <tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-  <?php
-  $cols = 0;
-  $savevalue = gettext("Save");
-  if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
-  foreach ($pkg['fields']['field'] as $pkga) { 
+<?php
+	$cols = 0;
+	$savevalue = gettext("Save");
+	if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
+	/* If a package's XML has <advanced_options/> configured, then setup 
+	 * the table rows for the fields that have <advancedfield/> set.
+	 * These fields will be placed below other fields in a seprate area titled 'Advanced Features'.
+	 * These advanced fields are not normally configured and generally left to default to 'default settings'.
+	 */
+	if ($pkg['advanced_options'] == "enabled") {
+		$adv_enabled = true;
+		$advanced .= "<td>&nbsp;</td>";
+		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br/></td></tr>\n";
+	}
+
+	foreach ($pkg['fields']['field'] as $pkga) {
 		if ($pkga['type'] == "sorting") 
 			continue;
 
 		if ($pkga['type'] == "listtopic") {
-			echo "<td>&nbsp;</td>";
-			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $pkga['name'] . "<br></td></tr>\n";
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$advanced .= "<td>&nbsp;</td>";
+				$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">" . $pkga['name'] . "<br></td></tr>\n";
+			} else {
+				echo "<td>&nbsp;</td>";
+				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $pkga['name'] . "<br></td></tr>\n";
+			}
 			continue;
-	    }	
+		}	
 	
-?>
+		if(!$pkga['combinefieldsend']) {
+			if(isset($pkga['advancedfield']) && $adv_enabled)
+				$advanced .= "<tr valign=\"top\">";
+			else
+		  		echo "<tr valign=\"top\">";
+		}
 
-	  <?php if(!$pkga['combinefieldsend']) echo "<tr valign=\"top\">"; ?>
+		$size = "";
 
-	  <?php
+		if(!$pkga['dontdisplayname']) {
+			unset($req);
+			if (isset($pkga['required']))
+				$req = 'req';
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$advanced .= "<td width=\"22%\" class=\"vncell{$req}\">";
+				$advanced .= fixup_string($pkga['fielddescr']);
+				$advanced .= "</td>";
+			} else {
+				echo "<td width=\"22%\" class=\"vncell{$req}\">";
+				echo fixup_string($pkga['fielddescr']);
+				echo "</td>";
+			}
+		}
 
-	  $size = "";
-
-	  if(!$pkga['dontdisplayname']) {
-		unset($req);
-		if (isset($pkga['required']))
-			$req = 'req';
-		echo "<td width=\"22%\" class=\"vncell{$req}\">";
-		echo fixup_string($pkga['fielddescr']);
-		echo "</td>";
-	  }
-
-	  if(!$pkga['dontcombinecells'])
-		echo "<td class=\"vtable\">";
+		if(!$pkga['dontcombinecells'])
+			if(isset($pkga['advancedfield']) && $adv_enabled)
+				$advanced .= "<td class=\"vtable\">";
+			else
+				echo "<td class=\"vtable\">";
 		// if user is editing a record, load in the data.
 		$fieldname = $pkga['fieldname'];
 		if ($get_from_post) {
 			$value = $_POST[$fieldname];
 			if (is_array($value)) $value = implode(',', $value);
-		}
-		else {
+		} else {
 			if (isset($id) && $a_pkg[$id])
 				$value = $a_pkg[$id][$fieldname];
 			else
 				$value = $pkga['default_value'];
 		}
 
-	      if($pkga['type'] == "input") {
+		if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' class='formfld unknown' value='" . $value . "'>\n";
-			echo "<br>" . fixup_string($pkga['description']) . "\n";
-	      } else if($pkga['type'] == "password") {
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' class='formfld unknown' value='" . $value . "'>\n";
+				$advanced .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' class='formfld unknown' value='" . $value . "'>\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "password") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";		
-			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . $value . "'>\n";
-			echo "<br>" . fixup_string($pkga['description']) . "\n";
-	      } else if($pkga['type'] == "select") {
-                  $fieldname = $pkga['fieldname'];
-                  if (isset($pkga['multiple'])) {
-                    $multiple = 'multiple="multiple"';
-                    $items = explode(',', $value);
-                    $fieldname .= "[]";
-                  }
-                  else {
-                    $multiple = '';
-                    $items = array($value);
-                  }
-                  $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
-                  $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . $value . "'>\n";
+				$advanced .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . $value . "'>\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "select") {
+			$fieldname = $pkga['fieldname'];
+			if (isset($pkga['multiple'])) {
+      	$multiple = 'multiple="multiple"';
+				$items = explode(',', $value);
+				$fieldname .= "[]";
+			} else {
+				$multiple = '';
+				$items = array($value);
+			}
+			$size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
 
-                  print("<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
-                  foreach ($pkga['options']['option'] as $opt) {
-                      $selected = '';
-                      if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
-                      print("\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" $selected>{$opt['name']}</option>\n");
-                  }
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n";
+				foreach ($pkga['options']['option'] as $opt) {
+					$selected = '';
+					if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+						$advanced .= "\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" $selected>{$opt['name']}</option>\n";
+				}
+				$advanced .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n";
+				foreach ($pkga['options']['option'] as $opt) {
+					$selected = '';
+					if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+					echo "\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" $selected>{$opt['name']}</option>\n";
+				}
+				echo "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
+			}
 
-                  print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
-		  } else if($pkga['type'] == "select_source") {
-                  $fieldname = $pkga['fieldname'];
-                  if (isset($pkga['multiple'])) {
-                    $multiple = 'multiple="multiple"';
-                    $items = explode(',', $value);
-                    $fieldname .= "[]";
-                  }
-                  else {
-                    $multiple = '';
-                    $items = array($value);
-                  }
-                  $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
-                  $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+		} else if($pkga['type'] == "select_source") {
+			$fieldname = $pkga['fieldname'];
+			if (isset($pkga['multiple'])) {
+				$multiple = 'multiple="multiple"';
+				$items = explode(',', $value);
+				$fieldname .= "[]";
+			} else {
+				$multiple = '';
+				$items = array($value);
+			}
+			$size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
 
-                  print("<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
-				  $source_url = $pkga['source'];
-				  eval("\$pkg_source_txt = &$source_url;");
-                  foreach ($pkg_source_txt as $opt) {
-                      $selected = '';
-					  if($pkga['source_name']) {
-						$source_name = $opt[$pkga['source_name']];
-					  } else {
-						$source_name = $opt[$pkga['name']];
-					  }
-					  if($pkga['source_value']) {
-						$source_value = $opt[$pkga['source_value']];
-					  } else {
-						$source_value = $opt[$pkga['value']];
-					  }
-                      if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
-                      	print("\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n");
-                  }
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"{$fieldname}\" name=\"{$fieldname}\">\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n";
+			}
+			$source_url = $pkga['source'];
+			eval("\$pkg_source_txt = &$source_url;");
+			foreach ($pkg_source_txt as $opt) {
+				$selected = '';
+				if($pkga['source_name']) {
+					$source_name = $opt[$pkga['source_name']];
+				} else {
+					$source_name = $opt[$pkga['name']];
+				}
+				if($pkga['source_value']) {
+					$source_value = $opt[$pkga['source_value']];
+				} else {
+					$source_value = $opt[$pkga['value']];
+				}
+				if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+					if(isset($pkga['advancedfield']) && $adv_enabled)
+						$advanced .= "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
+					else
+						echo "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
+			}
 
-                  print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");		
-	      } else if($pkga['type'] == "vpn_selection") {
-		    echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
-		    foreach ($config['ipsec']['phase1'] as $vpn) {
-			echo "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
-		    }
-		    echo "</select>\n";
-		    echo "<br>" . fixup_string($pkga['description']) . "\n";
-	      } else if($pkga['type'] == "checkbox") {
+			if(isset($pkga['advancedfield']) && $adv_enabled)
+				$advanced .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
+			else
+				echo "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";		
+		} else if($pkga['type'] == "vpn_selection") {
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
+				foreach ($config['ipsec']['phase1'] as $vpn) {
+					$advanced .= "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
+				}
+				$advanced .= "</select>\n";
+				$advanced .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
+				foreach ($config['ipsec']['phase1'] as $vpn) {
+					echo "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
+				}
+				echo "</select>\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "checkbox") {
 			$checkboxchecked = "";
 			if($value == "on") $checkboxchecked = " CHECKED";
 			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 				$onclick = ' onclick="javascript:enablechange();"';
-			echo "<input id='" . $pkga['fieldname'] . "' type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
-			echo "<br>" . fixup_string($pkga['description']) . "\n";
-	      } else if($pkga['type'] == "textarea") {
-		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
-		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
-		  if($pkga['wrap'] == "off") { $wrap = 'wrap="off" style="white-space:nowrap;"'; } else { $wrap = ''; }		  
-		  if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
-			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "' ".$wrap.">" . $value . "</textarea>\n";
-			echo "<br>" . fixup_string($pkga['description']) . "\n";
-		  } else if($pkga['type'] == "interfaces_selection") {
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<input id='" . $pkga['fieldname'] . "' type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
+				$advanced .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<input id='" . $pkga['fieldname'] . "' type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "textarea") {
+			if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
+			if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
+			if($pkga['wrap'] == "off") { $wrap = 'wrap="off" style="white-space:nowrap;"'; } else { $wrap = ''; }		  
+			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "' ".$wrap.">" . $value . "</textarea>\n";
+				$advanced .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "' ".$wrap.">" . $value . "</textarea>\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "interfaces_selection") {
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 			$multiple = '';
 			$fieldname = $pkga['fieldname'];
@@ -513,7 +606,13 @@ if ($pkg['tabs'] <> "") {
 				$fieldname .= '[]';
 				$multiple = 'multiple';
 			}
-			print("<select id='" . $pkga['fieldname'] . "' name=\"$fieldname\" $size $multiple>\n");
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$js_array[] = $pkga['fieldname'];
+				$advanced .= display_advanced_field($pkga['fieldname']);
+				$advanced .= "<select id='" . $pkga['fieldname'] . "' name=\"$fieldname\" $size $multiple>\n";
+			} else {
+				echo "<select id='" . $pkga['fieldname'] . "' name=\"$fieldname\" $size $multiple>\n";
+			}
 			$ifaces = get_configured_interface_with_descr();
 			$additional_ifaces = $pkga['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
@@ -524,12 +623,23 @@ if ($pkg['tabs'] <> "") {
 				$values  =  explode(',',  $value);
 			foreach($ifaces as $ifname => $iface) {
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
-				print("<option value=\"$ifname\" $selected>$iface</option>\n");
+				if(isset($pkga['advancedfield']) && $adv_enabled)
+					$advanced .= "<option value=\"$ifname\" $selected>$iface</option>\n";
+				else
+					echo "<option value=\"$ifname\" $selected>$iface</option>\n";
 			}
-			print("</select>\n<br />" . fixup_string($pkga['description']) . "\n");
-	      } else if($pkga['type'] == "radio") {
-			echo "<input type='radio' id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
-	      } else if($pkga['type'] == "rowhelper") {
+			if(isset($pkga['advancedfield']) && $adv_enabled) {
+				$advanced .= "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
+				$advanced .= "</div>\n";
+			} else {
+				echo "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
+			}
+		} else if($pkga['type'] == "radio") {
+			if(isset($pkga['advancedfield']) && $adv_enabled)
+				$advanced .= "<input type='radio' id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
+			else
+				echo "<input type='radio' id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
+		} else if($pkga['type'] == "rowhelper") {
 		?>
 			<script type="text/javascript" language='javascript'>
 			<!--
@@ -675,9 +785,9 @@ if ($pkg['tabs'] <> "") {
     <td width="78%">
 <?php
 if($pkg['note'] != "")
-	print("<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>");
+	echo "<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>";
 //if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
-      print("<input name=\"id\" type=\"hidden\" value=\"$id\">");
+      echo "<input name=\"id\" type=\"hidden\" value=\"$id\">";
 ?>
       <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
 <?php if (!$only_edit): ?>
@@ -685,11 +795,28 @@ if($pkg['note'] != "")
 <?php endif; ?>
     </td>
   </tr>
+<?php if (isset($advanced)) echo $advanced; ?>
 </table>
-</div></tr></td></table>
+</div></tr></td>
+</table>
 </form>
 
 <?php if ($pkg['custom_php_after_form_command']) eval($pkg['custom_php_after_form_command']); ?>
+
+<?php
+	/* JavaScript to handle the advanced fields. */
+	if ($pkg['advanced_options'] == "enabled") {
+		echo "<script type=\"text/javascript\">\n";
+		foreach($js_array as $advfieldname) {
+			echo "function show_" . $advfieldname . "() {\n";
+			echo "document.getElementById('showadv_{$advfieldname}').innerHTML='';\n";
+			echo "aodiv = document.getElementById('show_{$advfieldname}');\n";
+			echo "aodiv.style.display = 'block';\n";
+			echo "}\n\n";
+		}
+		echo "</script>\n";
+	}
+?>
 
 <?php include("fend.inc"); ?>
 </body>
@@ -724,15 +851,15 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		echo "</select>\n";
 	} else if($type == "select_source") {
 		echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>\n";
-	    $source_url = $rowhelper['source'];
-	    eval("\$pkg_source_txt = &$source_url;");
+		$source_url = $rowhelper['source'];
+		eval("\$pkg_source_txt = &$source_url;");
 		foreach($pkg_source_txt as $opt) {
 			$selected = "";
-		    if($rowhelper['source_name']) {
+			if($rowhelper['source_name']) {
 				$source_name = $opt[$rowhelper['source_name']];
-		    } else {
+		    	} else {
 				$source_name = $opt[$rowhelper['name']];
-		    }
+		    	}
 		  	if($rowhelper['source_value']) {
 				$source_value = $opt[$rowhelper['source_value']];
 		  	} else {
@@ -859,6 +986,14 @@ function parse_package_templates() {
 		fwrite($fout, $template_text);
 		fclose($fout);
 	    }
+}
+
+/* Return html div fields */
+function display_advanced_field($fieldname) {
+	$div = "<div id='showadv_" . $fieldname . "'>\n";
+	$div .= "<input type='button' onClick='show_" . $fieldname . "()' value='" . gettext("Advanced") . "'></input> - " . gettext("Show advanced option") ."</div>\n";
+	$div .= "<div id='show_" . $fieldname . "' style='display:none'>\n";
+	return $div;
 }
 
 ?>

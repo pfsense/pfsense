@@ -145,7 +145,7 @@ EOD;
 		}
 
 		/* Interface ip is needed since apinger will bind a socket to it. */
-		$gwifip = find_interface_ip($gateway['interface']);
+		$gwifip = find_interface_ip($gateway['interface'], true);
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 

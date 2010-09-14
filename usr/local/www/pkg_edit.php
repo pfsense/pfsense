@@ -795,7 +795,21 @@ if($pkg['note'] != "")
 <?php endif; ?>
     </td>
   </tr>
-<?php if (isset($advanced)) echo $advanced; ?>
+<?php if (isset($advanced)) { 
+				echo $advanced;
+?>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
+			<?php if (!$only_edit): ?>
+				<input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+			<?php endif; ?>
+		</td>
+	</tr>
+<?php
+		}
+?>
 </table>
 </div></tr></td>
 </table>

@@ -675,6 +675,7 @@ if ($pkg['tabs'] <> "") {
 					 * loop through saved data for record if it exists, populating rowhelper
 					 */
 						foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+							unset($value);
 							if($rowhelper['value'] <> "") $value = $rowhelper['value'];
 							$fieldname = $rowhelper['fieldname'];
 							// if user is editing a record, load in the data.

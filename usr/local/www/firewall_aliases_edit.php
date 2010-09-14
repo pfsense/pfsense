@@ -641,7 +641,7 @@ EOD;
               <input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
             </td>
             <td>
-    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete"); ?>" />
+    		<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
 	      </td>
           </tr>
 <?php
@@ -656,8 +656,7 @@ EOD;
         </tfoot>
 		  </table>
 			<div id="addrowbutton"><a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></div>
-      </a>
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></a></div>
 		</td>
   </tr>
   <tr>
@@ -702,7 +701,7 @@ function createAutoSuggest() {
 ?>
 }
 
-setTimeOut("createAutoSuggest();", 500);
+setTimeout("createAutoSuggest();", 500);
 
 </script>
 

@@ -439,7 +439,7 @@ function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
 
-	if (preg_match("/^([_a-z0-9\-]+\.?)+$/i", $hostname))
+	if (preg_match('/^(?:(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])\.)*(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])$/i', $hostname))
 		return true;
 	else
 		return false;
@@ -450,7 +450,7 @@ function is_domain($domain) {
 	if (!is_string($domain))
 		return false;
 
-	if (preg_match("/^([a-z0-9\-]+\.?)+$/i", $domain))
+	if (preg_match('/^(?:(?:[a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*(?:[a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$/i', $domain))
 		return true;
 	else
 		return false;

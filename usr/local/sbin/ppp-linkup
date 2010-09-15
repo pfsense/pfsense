@@ -18,5 +18,5 @@ fi
 /bin/echo $3 > /tmp/$1_ip
 /usr/bin/touch /tmp/$1up
 /usr/local/sbin/pfSctl -c 'service reload dns'
-/usr/local/sbin/pfSctl -c "interface reload $1"
+/usr/local/sbin/pfSctl -c "interface newip $1"
 exit 0

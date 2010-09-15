@@ -365,7 +365,7 @@ function return_gateway_groups_array() {
 				$gwname = $itemsplit[0];
 
 				/* Do it here rather than reiterating again the group in case no member is up. */
-				$backupplan[$tier] = $gwname;
+				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
 				if (!empty($gateway_status[$gwname])) {

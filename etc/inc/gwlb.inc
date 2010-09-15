@@ -286,7 +286,6 @@ function return_gateways_array($disabled = false) {
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway']))
 					$gateway['gateway'] = "dynamic";
-
 				$gateway['dynamic'] = true;
 			}
 			if(empty($gateway['monitor']))

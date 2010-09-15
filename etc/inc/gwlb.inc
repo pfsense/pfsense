@@ -75,7 +75,7 @@ status {
 	file "{$g['tmp_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
-	interval 10s
+	interval 5s
 }
 
 ########################################

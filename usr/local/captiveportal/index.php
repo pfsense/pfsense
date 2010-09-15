@@ -49,10 +49,11 @@ $orig_request = $_REQUEST['redirurl'];
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
-    /* not good - bail out */
-    echo "An error occurred.  Please check the system logs for more information.";
-    log_error("Captive portal could not determine client's IP address.");
-    exit;
+	/* not good - bail out */
+	log_error("Captive portal could not determine client's IP address.");
+	$error_message = "An error occurred.  Please check the system logs for more information.";
+	portal_reply_page($redirurl, "error", $errormsg);
+	exit;
 }
 
 if (isset($config['captiveportal']['httpslogin']))
@@ -78,8 +79,6 @@ if ($orig_host != $ourhostname) {
 }
 if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
     $redirurl = urldecode($matches[1]);
-if ($_POST['redirurl'])
-    $redirurl = $_POST['redirurl'];
 if (!empty($config['captiveportal']['redirurl']))
 	$redirurl = $config['captiveportal']['redirurl'];
 

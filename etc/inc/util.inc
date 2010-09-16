@@ -566,18 +566,20 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 	global $config;
 
 	$iflist = array();
+
+	if (!$only_opt) {
+		if (isset($config['interfaces']['wan']))
+			$iflist['wan'] = "wan";
+		if (isset($config['interfaces']['lan']))
+			$iflist['lan'] = "lan";
+	}
+
 	/* if list */
-	foreach($config['interfaces'] as $if => $ifdetail) {
+        foreach($config['interfaces'] as $if => $ifdetail) {
 		if ($if == "wan" || $if == "lan")
 			continue;
 		if (isset($ifdetail['enable']) || $withdisabled == true)
 			$iflist[$if] = $if;
-	}
-	if (!$only_opt) {
-		if (isset($config['interfaces']['lan']))
-			$iflist['lan'] = "lan";
-		if (isset($config['interfaces']['wan']))
-			$iflist['wan'] = "wan";
 	}
 
 	return $iflist;

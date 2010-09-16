@@ -166,7 +166,7 @@ add_new_resolv_conf() {
 			$ROUTE delete $nameserver
 		done
 	fi
-	if [ -n "$new_domain_name_server" ]; then 
+	if [ -n "$new_domain_name_servers" ]; then 
 		rm -f /var/etc/nameserver_$interface
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface

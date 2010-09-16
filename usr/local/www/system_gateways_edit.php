@@ -91,8 +91,8 @@ if ($_POST) {
 	unset($input_errors);
 
 	/* input validation */
-	$reqdfields = explode(" ", "name interface");
-	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
+	$reqdfields = explode(" ", "name");
+	$reqdfieldsn = array(gettext("Name"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -197,7 +197,10 @@ if ($_POST) {
 		/* if we are processing a system gateway only save the monitorip */
 		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
 			if (is_ipaddr($_POST['monitor'])) {
-				$interface = $_POST['interface'];
+				if (empty($_POST['interface']))
+					$interface = $pconfig['friendlyiface'];
+				else
+					$interface = $_POST['interface'];
 				$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
 			}
 			/* when dynamic gateway is not anymore a default the entry is no more needed. */

@@ -61,7 +61,7 @@ function get_gatewaystats() {
 				break;
 			}
 		} else {
-			$online = "Unknown";
+			$online = "Gathering data";
 			$bgcolor = "lightgray";
 		}
 		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";

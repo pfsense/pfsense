@@ -110,7 +110,7 @@ include("head.inc");
 						$bgcolor = "lightgreen";
 					}
 				} else {
-					$online = gettext("Unknown");
+					$online = gettext("Gathering data");
 					$bgcolor = "lightgray";
 				}
 				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";

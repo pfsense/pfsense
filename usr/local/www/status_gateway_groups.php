@@ -132,7 +132,7 @@ include("head.inc");
                                         			$online = gettext("Online");
                                         			$bgcolor = "lightgreen";
                                 			} else {
-								$online = gettext("Unknown");
+								$online = gettext("Gathering data");
 								$bgcolor = "lightblue";
 							}
 							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) .", $online</td>";

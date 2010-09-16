@@ -75,7 +75,7 @@ status {
 	file "{$g['tmp_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
-	interval 10s
+	interval 5s
 }
 
 ########################################
@@ -286,7 +286,6 @@ function return_gateways_array($disabled = false) {
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway']))
 					$gateway['gateway'] = "dynamic";
-
 				$gateway['dynamic'] = true;
 			}
 			if(empty($gateway['monitor']))
@@ -366,7 +365,7 @@ function return_gateway_groups_array() {
 				$gwname = $itemsplit[0];
 
 				/* Do it here rather than reiterating again the group in case no member is up. */
-				$backupplan[$tier] = $gwname;
+				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
 				if (!empty($gateway_status[$gwname])) {

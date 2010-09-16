@@ -261,10 +261,28 @@ if ($pkg['custom_php_after_head_command'])
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if($pkg['fields']['field'] <> "") { ?>
 <script language="JavaScript">
 <!--
+
+	window.onDomReady = DomReady;
+	function DomReady(fn) {
+		if(document.addEventListener) { //W3C
+			document.addEventListener("DOMContentLoaded", fn, false);
+		} else { // IE
+			document.onreadystatechange = function(){readyState(fn)}
+		}
+	}
+	function readyState(fn) {
+		//dom is ready for interaction
+		if(document.readyState == "complete") {
+			fn();
+		}
+	}
+								        
+	window.onDomReady(enablechange);
+
 function enablechange() {
 <?php
 foreach ($pkg['fields']['field'] as $field) {

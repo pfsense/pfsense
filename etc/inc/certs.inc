@@ -509,13 +509,13 @@ function cert_unrevoke($cert, & $crl) {
 
 function is_cert_revoked($cert) {
 	global $config;
-	if (!is_array($config['crl']) || is_array($config['crl']['cert']))
+	if (!is_array($config['crl']))
 		return false;
 
 	foreach ($config['crl'] as $crl) {
-		if (!is_array($config['crl']['cert']))
+		if (!is_array($crl['cert']))
 			continue;
-		foreach ($config['crl']['cert'] as $rcert) {
+		foreach ($crl['cert'] as $rcert) {
 			if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
 				return true;
 		}

@@ -262,8 +262,11 @@ if ($_POST) {
 		
 		header("Location: system_gateways.php");
 		exit;
-	}  else
+	} else {
 		$pconfig = $_POST;
+		if (empty($_POST['friendlyiface']))
+			$pconfig['friendlyiface'] = $_POST['interface'];
+	}
 }
 
 

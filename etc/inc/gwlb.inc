@@ -313,9 +313,13 @@ function return_gateways_array($disabled = false) {
 		$gateway['name'] = $friendly;
 		$gateway['attribute'] = "system";
 	
+		if ($gateway['dynamic'] == "default") {
+			$gateway['defaultgw'] = true;
+			$gateway['dynamic'] = true;
+		}
 		/* Loopback dummy for dynamic interfaces without a IP */
-		if(!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
-			 $gateway['gateway'] = "dynamic";
+		if (!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
+			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -505,7 +509,10 @@ function get_interface_gateway($interface, &$dynamic = false) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
-			$dynamic = true;
+			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
+				$dynamic = "default";
+			else
+				$dynamic = true;
                 }
         }
 

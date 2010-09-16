@@ -115,9 +115,8 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext('A gateway group cannot have the same name with a gateway "%s" please choose another name.'), $_POST['name']);
 
 	}
-	if(count($pconfig['item']) == 0) {
+	if(count($pconfig['item']) == 0)
 		$input_errors[] = gettext("No gateway(s) have been selected to be used in this group");
-	}
 
 	if (!$input_errors) {
 		$gateway_group = array();
@@ -152,9 +151,9 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway entry"); ?></td>
-				</tr>	
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway entry"); ?></td>
+		</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 

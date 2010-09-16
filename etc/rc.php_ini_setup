@@ -25,13 +25,6 @@
 #	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 #	POSSIBILITY OF SUCH DAMAGE.
 
-if [ -f /usr/local/etc/php.ini ]; then
-	rm /usr/local/etc/php.ini
-fi
-if [ -f /usr/local/lib/php.ini ]; then
-	rm /usr/local/lib/php.ini
-fi
-
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 EXTENSIONSDIR="/usr/local/lib/php/20060613/"
@@ -84,48 +77,43 @@ fi
 
 # Define php modules.  Do not add .so, it will  
 # be done automatically by the script below.
-PHPMODULES="apc \
+PHPMODULES="apc"
+PHPMODULES="$PHPMODULES standard"
 # Downloading via HTTP/FTP (pkg mgr, etc)
-	curl \
-	date \
+PHPMODULES="$PHPMODULES curl date"
 # Internationalization 
-	gettext \
+PHPMODULES="$PHPMODULES gettext"
 # User manager
-	ldap \
-	openssl \
-	pcntl \
+PHPMODULES="$PHPMODULES ldap openssl pcntl"
+PHPMODULES="$PHPMODULES mhash"
 # Regexs, PERL style!
-	pcre \
+PHPMODULES="$PHPMODULES pcre"
 # The mighty posix!
-	posix \
-	readline \
+PHPMODULES="$PHPMODULES posix"
+PHPMODULES="$PHPMODULES readline"
 # Login sessions
-	session \
-	standard \
+PHPMODULES="$PHPMODULES session"
 # Extra sanity seatbelts
-	suhosin \
-	pfSense \
+PHPMODULES="$PHPMODULES suhosin"
 # Firewall rules edit
-	ctype \
+PHPMODULES="$PHPMODULES ctype"
 # Config read/write
-	xml \
-	xmlreader \
-	xmlwriter \
-	libxml \
-# user manager
-	mhash \
+PHPMODULES="$PHPMODULES xml xmlreader xmlwriter libxml"
+PHPMODULES="$PHPMODULES simplexml"
 # firewall_rules_edit.php
-	mbstring \
-	shmop \
+PHPMODULES="$PHPMODULES mbstring"
+# Synchronization primitives
+PHPMODULES="$PHPMODULES shmop"
 # Page compression
-	zlib \
-# SQLlite
-	simplexml \
-	spl \
-	pdo \
-	sqlite \
+PHPMODULES="$PHPMODULES zlib"
+# SQLlite & Database
+PHPMODULES="$PHPMODULES spl"
+PHPMODULES="$PHPMODULES pdo"
+PHPMODULES="$PHPMODULES sqlite"
 # ZeroMQ
-	zmq"
+PHPMODULES="$PHPMODULES zmq"
+# pfSense extensions
+PHPMODULES="$PHPMODULES pfSense"
 
 # Modules previously included.
 # can be turned on by touching
@@ -142,15 +130,16 @@ PHPMODULES="apc \
 #	bz2	\
 #	json \
 
-# Get a loaded module list in the stock php
+# Clear the .ini file to make sure we are clean
 if [ -f /usr/local/etc/php.ini ]; then
 	rm /usr/local/etc/php.ini
 fi
 if [ -f /usr/local/lib/php.ini ]; then
 	rm /usr/local/lib/php.ini
 fi
-LOADED_MODULES=`php -m | grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php -m | grep -v "\["`
 
+# Get a loaded module list in the stock php
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
 # not being able to boot back up.
@@ -177,6 +166,9 @@ extension_dir=${EXTENSIONSDIR}
 ; Extensions
 
 EOF
+
+# Copy php.ini file to etc/ too (cli)
+cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 # Ensure directory exists
 if [ ! -d /etc/php_dynamodules ]; then
@@ -211,27 +203,6 @@ done
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
 export LOWMEM
-if [ "$RAM" -lt "97" ]; then
-	LOWMEM="TRUE"
-	cat >>/usr/local/lib/php.ini <<EOF
-
-[suhosin]
-suhosin.get.max_array_depth = 5000
-suhosin.get.max_array_index_length = 256
-suhosin.get.max_vars = 5000
-suhosin.get.max_value_length = 500000
-suhosin.post.max_array_depth = 5000
-suhosin.post.max_array_index_length = 256
-suhosin.post.max_vars = 5000
-suhosin.post.max_value_length = 500000
-suhosin.request.max_array_depth = 5000
-suhosin.request.max_array_index_length = 256
-suhosin.request.max_vars = 5000
-suhosin.request.max_value_length = 500000
-
-EOF
-
-fi
 if [  "$RAM" -gt 96 ]; then
 
 	cat >>/usr/local/lib/php.ini <<EOF
@@ -241,6 +212,16 @@ apc.enabled="1"
 apc.enable_cli="0"
 apc.shm_size="${APCSHMEMSIZE}"
 
+EOF
+
+else
+	LOWMEM="TRUE"
+	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC."
+	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC." | logger -p daemon.info -i -t rc.php_ini_setup
+fi
+
+	cat >>/usr/local/lib/php.ini <<EOF
+
 [suhosin]
 suhosin.get.max_array_depth = 5000
 suhosin.get.max_array_index_length = 256
@@ -257,12 +238,6 @@ suhosin.request.max_value_length = 500000
 
 EOF
 
-else 
-
-	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC."
-	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC." | logger -p daemon.info -i -t rc.php_ini_setup
-
-fi
 
 # Copy php.ini file to etc/ too (cli)
 cp /usr/local/lib/php.ini /usr/local/etc/php.ini
@@ -277,7 +252,7 @@ for EXT in $PHPMODULES; do
 done
 
 # Check loaded modules and remove anything that did not load correctly
-LOADED_MODULES=`php -m | tr '[:upper:]' '[:lower:]' 2>/dev/null | grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php -m | tr '[:upper:]' '[:lower:]' 2>/dev/null | grep -v "\["`
 for EXT in $PHPMODULESLC; do
 	SHOULDREMOVE="true"
 	for LM in $LOADED_MODULES; do
@@ -298,6 +273,7 @@ for EXT in $PHPMODULESLC; do
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
 			cat /usr/local/lib/php.ini | grep -v $EXT > /tmp/php.ini
+			rm -f /usr/local/lib/php.ini
 			mv /tmp/php.ini /usr/local/lib/php.ini
 		fi
 	fi
@@ -305,7 +281,3 @@ done
 
 # Copy php.ini file to etc/ too (cli)
 cp /usr/local/lib/php.ini /usr/local/etc/php.ini
-
-
-
-

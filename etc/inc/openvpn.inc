@@ -688,10 +688,14 @@ function openvpn_resync_all($interface = "") {
 		file_put_contents($path_ovdh, $dh_parameters);
 	}
 */
+	if ($interface <> "")
+		log_error("Resyncing openvpn instances configurations for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
+	else
+		log_error("Resyncing openvpn instances configurations."); 
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
-			if (!empty($interface) && $interface != $settings['interface'])
+			if ($interface <> "" && $interface != $settings['interface'])
 				continue;
 			openvpn_resync('server', $settings);
 		}
@@ -699,7 +703,7 @@ function openvpn_resync_all($interface = "") {
 
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
-			if (!empty($interface) && $interface != $settings['interface'])
+			if ($interface <> "" && $interface != $settings['interface'])
 				continue;
 			openvpn_resync('client', $settings);
 		}

@@ -54,7 +54,7 @@ if(empty($argument)) {
 } else {
         $interface = convert_real_interface_to_friendly_interface_name($argument);
         $interface_real = $argument;
-        $curwanip = find_interface_ip($interface_real);
+        $curwanip = find_interface_ip($interface_real, true);
         if($curwanip == "")
                 $curwanip = get_interface_ip($interface);
 }
@@ -81,6 +81,9 @@ file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 if (is_ipaddr($oldip) && $curwanip == $oldip)
 	exit;
 
+/* reconfigure our gateway monitor */
+setup_gateways_monitor();
+
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);
 
@@ -92,9 +95,6 @@ vpn_ipsec_force_reload();
 
 /* start OpenVPN server & clients */
 openvpn_resync_all($interface);
-
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
 
 /* signal filter reload */
 unlink_if_exists("/tmp/config.cache");

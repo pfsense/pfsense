@@ -1,0 +1,3 @@
+# Sample automatic merge list for gitsync
+# gitsync will automatically merge anything listed in /root/.gitsync_merge
+http://repositorysite/my_repository.git my_branch

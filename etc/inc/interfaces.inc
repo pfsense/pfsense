@@ -3108,6 +3108,7 @@ function link_interface_to_gif($interface) {
 function find_interface_ip($interface, $flush = false)
 {
 	global $interface_ip_arr_cache;
+	global $interface_sn_arr_cache;
 
 	$interface = str_replace("\n", "", $interface);
 	
@@ -3118,6 +3119,7 @@ function find_interface_ip($interface, $flush = false)
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
 		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
+		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
 	}
 
 	return $interface_ip_arr_cache[$interface];
@@ -3126,6 +3128,7 @@ function find_interface_ip($interface, $flush = false)
 function find_interface_subnet($interface, $flush = false)
 {
 	global $interface_sn_arr_cache;
+	global $interface_ip_arr_cache;
 
 	$interface = str_replace("\n", "", $interface);
 	if (does_interface_exist($interface) == false)
@@ -3133,6 +3136,7 @@ function find_interface_subnet($interface, $flush = false)
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
+		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
 		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
         }
 

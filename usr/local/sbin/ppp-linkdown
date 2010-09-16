@@ -3,6 +3,9 @@ if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
         seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
         /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
 fi
+if [ -f "/tmp/${interface}_defaultgw" ]; then
+	route delete default $4
+fi
 /sbin/pfctl -b $3 -b $4
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:
@@ -10,4 +13,5 @@ fi
 # Do not remove gateway used during filter reload.
 /bin/rm -f /tmp/$1_router
 /bin/rm -f /tmp/$1up
+/bin/rm -f /tmp/$1_ip
 /usr/local/sbin/pfSctl -c 'service reload dns'

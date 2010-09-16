@@ -176,29 +176,17 @@ include("head.inc");
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-				echo htmlspecialchars(convert_real_interface_to_friendly_descr($gateway['interface']));
+				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
 			?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 				  <?php
-					if(isset($gateway['interfacegateway'])) {
-						echo strtoupper($gateway['interface']) . " ";
-					} else {
-						if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == "dynamic")) {
-							echo "dynamic";
-						} else {
-							echo $gateway['gateway'] . " ";
-						}
-					}
+					echo $gateway['gateway'] . " ";
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-			if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['monitor'] == "dynamic")) {
-				echo "dynamic";
-			} else {
 				echo htmlspecialchars($gateway['monitor']) . " ";
-			}
 		    ?>
                   </td>
 		<?php if($gateway['attribute'] == "system") : ?>

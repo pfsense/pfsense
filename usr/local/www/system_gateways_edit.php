@@ -194,8 +194,9 @@ if ($_POST) {
 	if (!$input_errors) {
 		$reloadif = false;
 		$save = false;
-		if ($_POST['weight'] > 1 || $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'])
+		if (($_POST['weight'] && $_POST['weight'] > 1) ||
+		    $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
+		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic"))
 			$save = true;
 		/* if we are processing a system gateway only save the monitorip */
 		if (!$save && empty($_POST['interface']) && empty($_POST['gateway'])) {
@@ -216,13 +217,8 @@ if ($_POST) {
 			/* rebuild the array with the manual entries only */
 
 			$gateway = array();
-			if ($_POST['attribute'] == "system") {
-				$gateway['interface'] = $pconfig['friendlyiface'];
-				$gateway['gateway'] = "dynamic";
-			} else {
-				$gateway['interface'] = $_POST['interface'];
-				$gateway['gateway'] = $_POST['gateway'];
-			}
+			$gateway['interface'] = $_POST['interface'];
+			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['name'] = $_POST['name'];
 			$gateway['weight'] = $_POST['weight'];
 			$gateway['descr'] = $_POST['descr'];

@@ -261,10 +261,28 @@ if ($pkg['custom_php_after_head_command'])
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if($pkg['fields']['field'] <> "") { ?>
 <script language="JavaScript">
 <!--
+
+	window.onDomReady = DomReady;
+	function DomReady(fn) {
+		if(document.addEventListener) { //W3C
+			document.addEventListener("DOMContentLoaded", fn, false);
+		} else { // IE
+			document.onreadystatechange = function(){readyState(fn)}
+		}
+	}
+	function readyState(fn) {
+		//dom is ready for interaction
+		if(document.readyState == "complete") {
+			fn();
+		}
+	}
+								        
+	window.onDomReady(enablechange);
+
 function enablechange() {
 <?php
 foreach ($pkg['fields']['field'] as $field) {
@@ -675,6 +693,7 @@ if ($pkg['tabs'] <> "") {
 					 * loop through saved data for record if it exists, populating rowhelper
 					 */
 						foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+							unset($value);
 							if($rowhelper['value'] <> "") $value = $rowhelper['value'];
 							$fieldname = $rowhelper['fieldname'];
 							// if user is editing a record, load in the data.
@@ -795,7 +814,21 @@ if($pkg['note'] != "")
 <?php endif; ?>
     </td>
   </tr>
-<?php if (isset($advanced)) echo $advanced; ?>
+<?php if (isset($advanced)) { 
+				echo $advanced;
+?>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
+			<?php if (!$only_edit): ?>
+				<input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+			<?php endif; ?>
+		</td>
+	</tr>
+<?php
+		}
+?>
 </table>
 </div></tr></td>
 </table>

@@ -617,14 +617,15 @@ function filter_generate_gateways() {
 						$foundlb++;
 					} else
 						log_error(sprintf(gettext("An error occurred while trying to find the interface got %s .  The rule has not been added."), $gatewayip));
-					}
-					$route = "";
-					if ($foundlb > 0) {
-						$route = " route-to { {$routeto} } ";
-					if($foundlb > 1)
+				}
+				$route = "";
+				if ($foundlb > 0) {
+					$route = " route-to { {$routeto} } ";
+					if($foundlb > 1) {
 						$route .= " round-robin ";
-					if ($foundlb > 1 && isset($config['system']['lb_use_sticky']))
-						$route .= " sticky-address ";
+						if (isset($config['system']['lb_use_sticky']))
+							$route .= " sticky-address ";
+					}
 				}
 			}
 			$rules .= "GW{$gateway} = \" {$route} \"\n";

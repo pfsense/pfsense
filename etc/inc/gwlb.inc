@@ -75,7 +75,7 @@ status {
 	file "{$g['tmp_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
-	interval 10s
+	interval 5s
 }
 
 ########################################
@@ -145,7 +145,7 @@ EOD;
 		}
 
 		/* Interface ip is needed since apinger will bind a socket to it. */
-		$gwifip = find_interface_ip($gateway['interface']);
+		$gwifip = find_interface_ip($gateway['interface'], true);
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
@@ -286,7 +286,6 @@ function return_gateways_array($disabled = false) {
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway']))
 					$gateway['gateway'] = "dynamic";
-
 				$gateway['dynamic'] = true;
 			}
 			if(empty($gateway['monitor']))
@@ -330,14 +329,14 @@ function return_gateways_array($disabled = false) {
 		}
 
 		/* retrieve a proper monitor IP? */
-		$interface = $config['interfaces'][$ifname];
-		if(is_ipaddr($interface['monitorip'])) {
-			$gateway['monitor'] = $interface['monitorip'];
-		} else {
+		$ifcfg =& $config['interfaces'][$ifname];
+		if (is_ipaddr($ifcfg['monitorip']))
+			$gateway['monitor'] = $ifcfg['monitorip'];
+		else
 			$gateway['monitor'] = $gateway['gateway'];
-		}
-		$gateway['descr'] = "Interface $ifname Dynamic Gateway";
-		$gateways_arr[$ifname] = $gateway;
+
+		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
+		$gateways_arr[$friendly] = $gateway;
 	}
 
 	return($gateways_arr);
@@ -366,7 +365,7 @@ function return_gateway_groups_array() {
 				$gwname = $itemsplit[0];
 
 				/* Do it here rather than reiterating again the group in case no member is up. */
-				$backupplan[$tier] = $gwname;
+				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
 				if (!empty($gateway_status[$gwname])) {

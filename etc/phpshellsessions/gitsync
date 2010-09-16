@@ -1,6 +1,7 @@
 /*   cvs_sync
  *   Written by Scott Ullrich
  *   (C)2005-2007 Scott Ullrich
+ *   (C)2010 Erik Fonnesbeck
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
@@ -119,9 +120,31 @@ if(!$found) {
 }
 
 $merge_repos = array();
+if(file_exists("/root/.gitsync_merge")) {
+	$gitsync_merges = file("/root/.gitsync_merge", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	if(!empty($gitsync_merges) && is_array($gitsync_merges)) {
+		echo "\n===> Automatic merge list read from /root/.gitsync_merge\n";
+		foreach($gitsync_merges as $merge_line_num => $merge_line) {
+			$merge_comments = explode("#", trim($merge_line));
+			if(empty($merge_comments[0]))
+				continue;
+
+			$merge_line = explode(" ", trim($merge_comments[0]));
+			if(count($merge_line) != 2 || empty($merge_line[0]) || empty($merge_line[1])) {
+				echo "\nLine " . ($merge_line_num + 1) . " does not have the correct parameter count or has improper spacing.\n";
+				echo "Expected parameters:  repository_url branch\n";
+				echo "Line read:  " . implode(" ", $merge_line) . "\n\n";
+				echo "Aborting automatic merge.\n\n";
+				$merge_repos = array();
+				break;
+			}
+			$merge_repos[] = array('repo' => $merge_line[0], 'branch' => $merge_line[1]);
+		}
+	}
+}
 if(!$command_split[2] && !$argv[3]) {
 	do {
-		echo "\nAdd a custom RCS branch URL (HTTP) to merge in or press enter for none.\n\n";
+		echo "\nAdd a custom RCS branch URL (HTTP) to merge in or press enter if done.\n\n";
 		$merge_repo = readline("> ");
 		if(!empty($merge_repo)) {
 			$merge_branch = readline("Merge which branch [master]? ");
@@ -162,29 +185,29 @@ echo "===> Checking out $branch\n";
 // Git commands for resetting to the specified branch
 if($branch == "build_commit") {
 	$git_cmd = array(
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch " . escapeshellarg($branch) . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
 		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard `cat /etc/version.lastcommit`"
 	);
 } else {
 	$git_cmd = array(
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch origin/$branch 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard origin/$branch"
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch " . escapeshellarg($branch) . " " . escapeshellarg("origin/{$branch}") . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard " . escapeshellarg("origin/{$branch}")
 	);
 }
 
 // Git 'er done!
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url $GIT_REPO");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url " . escapeshellarg($GIT_REPO));
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
 	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
     echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
-	exec("cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO");
+	exec("cd $CODIR/pfSenseGITREPO && git clone " . escapeshellarg($GIT_REPO) . " pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
@@ -194,7 +217,7 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 
 foreach($merge_repos as $merge_repo) {
 	echo "===> Merging branch {$merge_repo['branch']} from {$merge_repo['repo']}\n";
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git pull {$merge_repo['repo']} {$merge_repo['branch']}", $output_str, $ret);
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git pull " . escapeshellarg($merge_repo['repo']) . " " . escapeshellarg($merge_repo['branch']), $output_str, $ret);
 	unset($output_str);
 	if($ret <> 0) {
 		echo "\nMerge failed.  Aborting sync.\n\n";
@@ -231,15 +254,21 @@ exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null")
 
 echo "===> Installing new files...\n";
 
+// Don't include the .git directory in the copy
+exec("mv $CODIR/pfSenseGITREPO/pfSenseGITREPO/.git $CODIR/pfSenseGITREPO/gitsync_temp.git");
+
 if($g['platform'] == "pfSense") 
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
 
-post_cvssync_commands();
+exec("mv $CODIR/pfSenseGITREPO/gitsync_temp.git $CODIR/pfSenseGITREPO/pfSenseGITREPO/.git");
 
-run_cmds($git_cmd);
+// Reset the repository to restore the deleted files
+exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");
+
+post_cvssync_commands();
 
 echo "===> Checkout complete.\n";
 echo "\n";

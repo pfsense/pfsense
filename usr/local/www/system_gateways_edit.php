@@ -92,7 +92,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name interface");
-	$reqdfieldsn = array(gettext("Name", "Interface"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

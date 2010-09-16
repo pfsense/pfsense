@@ -99,6 +99,13 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
+		$ns = array_unique(get_searchdomains());
+		foreach($ns as $searchserver) {
+			if($searchserver) {
+				$resolvconf .= "search {$searchserver}\n";
+				$havedns = true;
+			}
+		}
 		$ns = array_unique(get_nameservers());
 		foreach($ns as $nameserver) {
 			if($nameserver) {
@@ -144,6 +151,23 @@ function system_resolvconf_generate($dynupdate = false) {
 	}
 	
 	return 0;
+}
+
+function get_searchdomains() {
+	global $config, $g;
+
+	$master_list = array();
+	
+	// Read in dhclient nameservers
+	$search_list = split("\n", `/bin/cat /var/etc/searchdomain_* 2>/dev/null`);
+	if (is_array($search_lists)) {
+		foreach($search_lists as $dns) {
+			if(is_hostname($dns)) 
+				$master_list[] = $dns;
+		}
+	}
+
+	return $master_list;
 }
 
 function get_nameservers() {

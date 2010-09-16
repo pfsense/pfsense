@@ -175,7 +175,7 @@ add_new_resolv_conf() {
 			echo $nameserver >>/var/etc/nameserver_$interface
 			$ROUTE add $nameserver -iface $interface
 		done
-		#echo $new_domain_name >/var/etc/defaultdomain.conf
+		echo $new_domain_name >/var/etc/searchdomain_$interface
 		/usr/local/sbin/pfSctl -c 'service reload dns'
 	fi
 

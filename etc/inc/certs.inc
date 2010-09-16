@@ -1,8 +1,9 @@
 <?php
 /* $Id$ */
 /*
-		Copyright (C) 2008 Shrew Soft Inc
-		All rights reserved.
+	Copyright (C) 2008 Shrew Soft Inc
+	Copyright (C) 2010 Jim Pingle <jimp@pfsense.org>
+	All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -63,6 +64,25 @@ function & lookup_cert($refid) {
 		foreach ($config['cert'] as & $cert)
 			if ($cert['refid'] == $refid)
 				return $cert;
+
+	return false;
+}
+
+function & lookup_cert_by_name($name) {
+	global $config;
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
+			if ($cert['name'] == $name)
+				return $cert;
+}
+
+function & lookup_crl($refid) {
+	global $config;
+
+	if (is_array($config['crl']))
+		foreach ($config['crl'] as & $crl)
+			if ($crl['refid'] == $refid)
+				return $crl;
 
 	return false;
 }
@@ -395,6 +415,103 @@ function cert_in_use($certref) {
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref));
+}
+
+/*
+CRL code is a *WORK IN PROGRESS* do not try to use these functions yet.
+
+OpenSSL CRL status code constants.
+OCSP_REVOKED_STATUS_NOSTATUS
+OCSP_REVOKED_STATUS_UNSPECIFIED
+OCSP_REVOKED_STATUS_KEYCOMPROMISE
+OCSP_REVOKED_STATUS_CACOMPROMISE
+OCSP_REVOKED_STATUS_AFFILIATIONCHANGED
+OCSP_REVOKED_STATUS_SUPERSEDED
+OCSP_REVOKED_STATUS_CESSATIONOFOPERATION
+OCSP_REVOKED_STATUS_CERTIFICATEHOLD
+OCSP_REVOKED_STATUS_REMOVEFROMCRL
+*/
+
+$openssl_crl_status = array(
+	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
+	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
+	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
+	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
+	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
+	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
+	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
+	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold",
+	OCSP_REVOKED_STATUS_REMOVEFROMCRL         => "Remove from CRL"
+);
+
+function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
+	global $config;
+	$ca =& lookup_ca($caref);
+	if (!$ca)
+		return false;
+	$crl['name'] = $name;
+	$crl['caref'] = $caref;
+	$crl['serial'] = $serial;
+	$crl['lifetime'] = $lifetime;
+	$crl['cert'] = array();
+	$crl_res = crl_update($crl);
+	$config['crl'][] = $crl;
+	return $crl_res;
+}
+
+function crl_update(& $crl) {
+	global $config;
+	$ca =& lookup_ca($crl['caref']);
+	if (!$ca)
+		return false;
+	$crl['serial']++;
+	$ca_str_crt = base64_decode($ca['crt']);
+	$ca_str_key = base64_decode($ca['prv']);
+	$crl_res = openssl_crl_new($ca_str_crt, $crl['serial'], $crl['lifetime']);
+	foreach ($crl['cert'] as $cert) {
+		openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+	}
+	openssl_crl_export($crl_res, $crl_text, $ca_str_key);
+	$crl['text'] = base64_encode($crl_text);
+	return $crl_res;
+}
+
+function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
+	global $config;
+	if (is_cert_revoked($cert))
+		return true;
+	$cert["reason"] = $reason;
+	$cert["revoke_time"] = time();
+	$crl["cert"][] = $cert;
+	crl_update($crl);
+}
+
+function cert_unrevoke($cert, & $crl) {
+	global $config;
+	foreach ($crl['cert'] as $id => $rcert) {
+		if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name'])) {
+			unset($crl['cert'][$id]);
+			crl_update($crl);
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_cert_revoked($cert) {
+	global $config;
+	if (!is_array($config['crl']) || is_array($config['crl']['cert']))
+		return false;
+
+	foreach ($config['crl'] as $crl) {
+		if (!is_array($config['crl']['cert']))
+			continue;
+		foreach ($config['crl']['cert'] as $rcert) {
+			if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+				return true;
+		}
+	}
+	return false;
 }
 
 ?>

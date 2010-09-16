@@ -333,7 +333,7 @@ cap_mkdb /etc/login.conf
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
-. /etc/rc.php_ini_setup
+/etc/rc.php_ini_setup
 
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 

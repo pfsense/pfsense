@@ -567,16 +567,9 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 
 	$iflist = array();
 
-	if (!$only_opt) {
-		if (isset($config['interfaces']['wan']))
-			$iflist['wan'] = "wan";
-		if (isset($config['interfaces']['lan']))
-			$iflist['lan'] = "lan";
-	}
-
 	/* if list */
-        foreach($config['interfaces'] as $if => $ifdetail) {
-		if ($if == "wan" || $if == "lan")
+	foreach($config['interfaces'] as $if => $ifdetail) {
+		if ($only_opt && ($if == "wan" || $if == "lan"))
 			continue;
 		if (isset($ifdetail['enable']) || $withdisabled == true)
 			$iflist[$if] = $if;
@@ -587,35 +580,22 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 
 /* return the configured interfaces list. */
 function get_configured_interface_list_by_realif($only_opt = false, $withdisabled = false) {
-        global $config;
+	global $config;
 
-        $iflist = array();
+	$iflist = array();
 
-        if (!$only_opt) {
-                if (isset($config['interfaces']['wan'])) {
-			$tmpif = get_real_interface("wan");
-			if (!empty($tmpif))
-				$iflist[$tmpif] = "wan";
-		}
-                if (isset($config['interfaces']['lan'])) {
-			$tmpif = get_real_interface("lan");
-			if (!empty($tmpif))
-				$iflist[$tmpif] = "lan";
-		}
-        }
-
-        /* if list */
-        foreach($config['interfaces'] as $if => $ifdetail) {
-                if ($if == "wan" || $if == "lan")
-                        continue;
-                if (isset($ifdetail['enable']) || $withdisabled == true) {
+	/* if list */
+	foreach($config['interfaces'] as $if => $ifdetail) {
+		if ($only_opt && ($if == "wan" || $if == "lan"))
+			continue;
+		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$tmpif = get_real_interface($if);
 			if (!empty($tmpif))
 				$iflist[$tmpif] = $if;
 		}
-        }
+	}
 
-        return $iflist;
+	return $iflist;
 }
 
 /* return the configured interfaces list with their description. */
@@ -624,25 +604,12 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 
 	$iflist = array();
 
-	if (!$only_opt) {
-		if (isset($config['interfaces']['wan'])) {
-			if (empty($config['interfaces']['wan']['descr']))
-				$iflist['wan'] = "WAN";
-			else
-				$iflist['wan'] = strtoupper($config['interfaces']['wan']['descr']);
-		}
-		if (isset($config['interfaces']['lan'])) {
-			if (empty($config['interfaces']['lan']['descr']))
-				$iflist['lan'] = "LAN";
-			else
-				$iflist['lan'] = strtoupper($config['interfaces']['lan']['descr']);
-		}
-	}
-
 	/* if list */
 	foreach($config['interfaces'] as $if => $ifdetail) {
+		if ($only_opt && ($if == "wan" || $if == "lan"))
+			continue;
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
-			if($ifdetail['descr'] == "")
+			if(empty($ifdetail['descr']))
 				$iflist[$if] = strtoupper($if);
 			else
 				$iflist[$if] = strtoupper($ifdetail['descr']);

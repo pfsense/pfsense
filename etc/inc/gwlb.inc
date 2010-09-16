@@ -270,16 +270,9 @@ function return_gateways_array($disabled = false) {
 
 	$gateways_arr = array();
 
-	/* Loop through all interfaces with a gateway and add it to a array */
-	if ($disabled == false) {
-		$iflist = get_configured_interface_with_descr();
-	} else {
-		$iflist = get_configured_interface_with_descr(false, true);
-	}
-
 	$i = 0;
 	/* Process/add all the configured gateways. */
-	if(is_array($config['gateways']['gateway_item'])) {
+	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
@@ -301,6 +294,12 @@ function return_gateways_array($disabled = false) {
 		}
 	} 
 
+	/* Loop through all interfaces with a gateway and add it to a array */
+	if ($disabled == false)
+		$iflist = get_configured_interface_with_descr();
+	else
+		$iflist = get_configured_interface_with_descr(false, true);
+
 	/* Process/add dynamic gateways. */
 	foreach($iflist as $ifname => $friendly ) {
 		if(! interface_has_gateway($ifname))
@@ -311,7 +310,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$friendly}";
+		$gateway['name'] = $friendly;
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */

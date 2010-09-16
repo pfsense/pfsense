@@ -166,33 +166,31 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gateways as $gateway): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-                    <?php
+		<?php
 			echo $gateway['name'];
-			if(isset($gateway['defaultgw'])) {
+			if(isset($gateway['defaultgw']))
 				echo " <strong>(default)<strong>";
-			}
-			?>
-			
+		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-                    <?php
-				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
-			?>
+		<?php
+			echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
+		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-				  <?php
-					echo $gateway['gateway'] . " ";
-				  ?>
+		<?php
+			echo $gateway['gateway'] . " ";
+		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-                    <?php
-				echo htmlspecialchars($gateway['monitor']) . " ";
-		    ?>
+		<?php
+			echo htmlspecialchars($gateway['monitor']) . " ";
+		?>
                   </td>
-		<?php if($gateway['attribute'] == "system") : ?>
-                  <td class="listbgns" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-		<?php else : ?>
+		<?php if (is_numeric($gateway['attribute'])) : ?>
                   <td class="listbg" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
+		<?php else : ?>
+                  <td class="listbgns" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 		<?php endif; ?>
                     <?=htmlspecialchars($gateway['descr']);?>&nbsp;
                   </td>
@@ -219,7 +217,7 @@ include("head.inc");
 			</table>
 
 		</tr>
-			  <?php $i++; endforeach; ?>
+		  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="5"></td>
                   <td class="list">

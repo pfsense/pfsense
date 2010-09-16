@@ -98,8 +98,8 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['type'] = $a_aliases[$id]['type'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
 
-	/* optional if list */
-	$iflist = get_configured_interface_with_descr(true, true);
+	/* interface list */
+	$iflist = get_configured_interface_with_descr(false, true);
 	foreach ($iflist as $if => $ifdesc)
 		if($ifdesc == $pconfig['descr']) 
 			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);

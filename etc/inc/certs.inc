@@ -464,6 +464,9 @@ function crl_update(& $crl) {
 	$ca =& lookup_ca($crl['caref']);
 	if (!$ca)
 		return false;
+	// If we have text but no certs, it was imported and cannot be updated.
+	if (!empty($crl['text']) && empty($crl['cert']))
+		return false;
 	$crl['serial']++;
 	$ca_str_crt = base64_decode($ca['crt']);
 	$ca_str_key = base64_decode($ca['prv']);
@@ -480,6 +483,9 @@ function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
 	global $config;
 	if (is_cert_revoked($cert))
 		return true;
+	// If we have text but no certs, it was imported and cannot be updated.
+	if (!empty($crl['text']) && empty($crl['cert']))
+		return false;
 	$cert["reason"] = $reason;
 	$cert["revoke_time"] = time();
 	$crl["cert"][] = $cert;
@@ -488,6 +494,9 @@ function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
 
 function cert_unrevoke($cert, & $crl) {
 	global $config;
+	// If we have text but no certs, it was imported and cannot be updated.
+	if (!empty($crl['text']) && empty($crl['cert']))
+		return false;
 	foreach ($crl['cert'] as $id => $rcert) {
 		if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name'])) {
 			unset($crl['cert'][$id]);

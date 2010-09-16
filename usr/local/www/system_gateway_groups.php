@@ -134,8 +134,7 @@ include("head.inc");
                   <td class="listlr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <?php
 			echo $gateway_group['name'];
-			?>
-			
+		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <?php
@@ -154,7 +153,7 @@ include("head.inc");
 		    ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+				<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">

@@ -63,7 +63,7 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (
 
 if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
         log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
-	send_event("interface reconfigure {$inerface}");
+	send_event("interface reconfigure {$interface}");
         exit;
 }
 

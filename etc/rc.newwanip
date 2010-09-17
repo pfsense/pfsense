@@ -63,7 +63,7 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (
 
 if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
         log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
-	interface_configure($interface);
+	send_event("interface reconfigure {$inerface}");
         exit;
 }
 
@@ -80,6 +80,9 @@ file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 
 if (is_ipaddr($oldip) && $curwanip == $oldip)
 	exit;
+
+/* reconfigure static routes (kernel may have deleted them) */
+system_routing_configure($interface);
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();

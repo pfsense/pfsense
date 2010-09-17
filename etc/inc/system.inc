@@ -383,6 +383,8 @@ function system_routing_configure($interface = "") {
 			if (isset($gateways_arr[$rtent['gateway']])) {
 				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
 				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
+				if ($interface == $gateways_arr[$rtent['gateway']]['friendlyiface'])
+					continue;
 			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
 			} else {

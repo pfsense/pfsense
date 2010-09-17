@@ -213,9 +213,8 @@ if ($_POST) {
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
 
-		/* XXX: ermal -- What is this supposed to do?! */
 		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
-			$retval |= interface_configure();
+			$retval |= send_event("service reload dns");
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();

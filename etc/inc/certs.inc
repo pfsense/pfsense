@@ -321,6 +321,10 @@ function cert_get_subject_array($crt) {
 	$str_crt = base64_decode($crt);
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
+
+	if (!is_array($components))
+		return;
+
 	$subject_array = array();
 
 	foreach($components as $a => $v)

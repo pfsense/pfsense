@@ -328,6 +328,13 @@ fi
 
 echo "done."
 
+# Ensure gettytab is of a sane size
+if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
+	echo ">>> Restoring /etc/gettytab due to unusal size"
+	echo ">>> Restoring /etc/gettytab due to unusal size" | /usr/bin/logger
+	cp /etc/gettytab.bak /etc/gettytab
+fi
+
 # Recreate capabilities DB
 cap_mkdb /etc/login.conf
 

@@ -49,11 +49,11 @@ function get_gatewaystats() {
 				$bgcolor = "lightcoral";
 				break;
 			case "delay":
-				$online = "Warning, Latency";
+				$online = "Warning: Latency";
 				$bgcolor = "khaki";
 				break;
 			case "loss":
-				$online = "Warning, Packetloss";
+				$online = "Warning: Packetloss";
 				$bgcolor = "khaki";
 				break;
 			default:

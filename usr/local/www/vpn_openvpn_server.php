@@ -1215,6 +1215,7 @@ function netbios_change() {
 			<?php else: ?>
 
 			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<thead>
 				<tr>
 					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>
 					<td width="10%" class="listhdrr"><?=gettext("Protocol / Port"); ?></td>
@@ -1222,6 +1223,8 @@ function netbios_change() {
 					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
+				</thead>
+				<tbody>
 				<?php
 					$i = 0;
 					foreach($a_server as $server):
@@ -1256,6 +1259,8 @@ function netbios_change() {
 					$i++;
 					endforeach;
 				?>
+				</tbody>
+				<tfoot>
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
@@ -1263,6 +1268,7 @@ function netbios_change() {
 						</a>
 					</td>
 				</tr>
+				</tfoot>
 			</table>
 
 			<?=gettext("Additional OpenVPN servers can be added here.");?>

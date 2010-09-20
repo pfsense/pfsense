@@ -162,14 +162,13 @@
 		if(document.forms[0].ipaddress.value == 'dhcp') {
 			selectedItem = 1;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'PPPoE') {
+		} else if(document.forms[0].ipaddress.value == 'pppoe') {
 			selectedItem = 2;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'PPTP') {
+		} else if(document.forms[0].ipaddress.value == 'pptp') {
 			selectedItem = 3;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'BigPond') {
-			selectedItem = 4;
+		} else if(document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
 			document.forms[0].ipaddress.value = '';
 		} else {
 			selectedItem = 0;
@@ -209,6 +208,13 @@
 		<field>
 			<name>General configuration</name>
 			<type>listtopic</type>
+		</field>
+		<field>
+			<name>interface</name>
+			<type>interface_select</type>
+			<donotdisable>true</donotdisable>
+			<displayname>Interface</displayname>
+			<bindstofield>interfaces->wan->if</bindstofield>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
@@ -271,28 +277,31 @@
 		<field>
 			<name>PPPoE Username</name>
 			<type>input</type>
-			<bindstofield>interfaces->wan->pppoe_username</bindstofield>
+			<bindstofield>interfaces->tmp->username</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Password</name>
 			<type>input</type>
-			<bindstofield>interfaces->wan->pppoe_password</bindstofield>
+			<bindstofield>interfaces->tmp->password</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
 			<type>input</type>
 			<description>Hint: this field can usually be left empty</description>
+			<bindstofield>interfaces->tmp->provider</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
+			<bindstofield>interfaces->tmp->ondemand</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Idle timeout</name>
 			<type>input</type>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
+			<bindstofield>interfaces->tmp->idletimeout</bindstofield>
 		</field>
 		<field>
 			<name>PPTP configuration</name>
@@ -301,19 +310,19 @@
 		<field>
 			<name>PPTP Username</name>
 			<type>input</type>
-			<bindstofield>interfaces->wan->pptp_username</bindstofield>
+			<bindstofield>interfaces->tmp->pptpusername</bindstofield>
 		</field>
 		<field>
 			<name>PPTP Password</name>
 			<type>input</type>
-			<bindstofield>interfaces->wan->pptp_password</bindstofield>
+			<bindstofield>interfaces->tmp->pptppassword</bindstofield>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>
 			<name>PPTP Local IP Address</name>
 			<type>input</type>
 			<typehint> / </typehint>
-			<bindstofield>pptp->local</bindstofield>
+			<bindstofield>interfaces->tmp->localip</bindstofield>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
 			<message>PPTP Local IP Address field is invalid</message>
 		</field>
@@ -322,12 +331,12 @@
 			<dontdisplayname>true</dontdisplayname>
 			<dontcombinecells>true</dontcombinecells>
 			<name>pptplocalsubnet</name>
-			<bindstofield>pptp->subnet</bindstofield>
+			<bindstofield>interfaces->tmp->subnet</bindstofield>
 			<type>subnet_select</type>
 		</field>
 		<field>
 			<name>PPTP Remote IP Address</name>
-			<bindstofield>pptp->remote</bindstofield>
+			<bindstofield>interfaces->tmp->gateway</bindstofield>
 			<type>input</type>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
 			<message>PPTP Remote IP Address field is invalid</message>
@@ -336,13 +345,13 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<bindstofield>pptp->ondemand</bindstofield>			
+			<bindstofield>interfaces->tmp->pptpondemand</bindstofield>			
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
 			<type>input</type>			
-			<bindstofield>pptp->timeout</bindstofield>
+			<bindstofield>interfaces->tmp->pptpidletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
 		<field>
@@ -374,6 +383,11 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepbeforeformdisplay>
+		<![CDATA[
+		$config['interfaces']['tmp'] = array();
+		]]>
+	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
 		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
@@ -400,6 +414,40 @@
 			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
 			die;
 		}
+		$type = $_POST['selectedtype'];
+		if ($type == "pppoe" || $type == "pptp") {
+			if (!is_array($config['ppps']['ppp']))
+				$config['ppps']['ppp'] = array();
+			if (count($config['ppps']['ppp'])) {
+				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+					if ($ppp['ptpid'] == "0") {
+						unset($config['ppps']['ppp'][$pppid]);
+						// break;
+					}
+					
+				}
+			}
+			if ($type == "pptp") {
+				$config['interfaces']['tmp']['username'] = $config['interfaces']['tmp']['pptpusername'];
+				$config['interfaces']['tmp']['password'] = $config['interfaces']['tmp']['pptppassword'];
+				$config['interfaces']['tmp']['ondemand'] = $config['interfaces']['tmp']['pptpondemand'];
+				$config['interfaces']['tmp']['idletimeout'] = $config['interfaces']['tmp']['pptpidletimeout'];
+				unset($config['interfaces']['tmp']['pptpusername']);
+				unset($config['interfaces']['tmp']['pptppassword']);
+				unset($config['interfaces']['tmp']['pptpondemand']);
+				unset($config['interfaces']['tmp']['pptpidletimeout']);
+			}
+			$config['interfaces']['tmp']['password'] = base64_encode($config['interfaces']['tmp']['password']);
+			$tmp = array();
+			$tmp['ptpid'] = "0";
+			$tmp['type'] = $type;
+			$tmp['if'] = $type . "0";
+			$tmp['ports'] = $config['interfaces']['wan']['if'];
+			$config['ppps']['ppp'][] = array_merge($tmp, $config['interfaces']['tmp']);
+			unset($tmp);
+			$config['interfaces']['wan']['if'] = $type."0";
+		}
+		unset($config['interfaces']['tmp']);
 		]]>
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>

@@ -145,7 +145,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if($field_type == "interfaces_selection") {
 		$var = "\$config{$field_conv}";
 		$text = "if (isset({$var})) unset({$var});";
-		$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		$text .= "\$config" . $field_conv . " = \"" . $updatetext . "\";";
 		eval($text);
 		return;
 	}
@@ -430,6 +430,7 @@ function showchange() {
 		    	}
 			break;
 		    case "interfaces_selection":
+		    case "interface_select":
 			$size = "";
 			$multiple = "";
 			$name = strtolower($name);
@@ -448,8 +449,16 @@ function showchange() {
 				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
 				echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
 			}
-			$interfaces = get_configured_interface_with_descr();
+			if($field['type'] == "interface_select")
+				$interfaces = get_interface_list();
+			else
+				$interfaces = get_configured_interface_with_descr();
 			foreach ($interfaces as $ifname => $iface) {
+				if (is_array($iface)) {
+						if ($iface['mac'])
+							$iface = $ifname. " ({$iface['mac']})";	
+					} else
+						$iface = $ifname;
 			  $SELECTED = "";
 			  if ($value == $ifname) $SELECTED = " SELECTED";
 			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";

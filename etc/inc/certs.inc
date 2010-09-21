@@ -485,21 +485,21 @@ function crl_update(& $crl) {
 
 function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
 	global $config;
-	if (is_cert_revoked($cert))
+	if (is_cert_revoked($cert, $crl['refid']))
 		return true;
 	// If we have text but no certs, it was imported and cannot be updated.
-	if (!empty($crl['text']) && empty($crl['cert']))
+	if (!is_crl_internal($crl))
 		return false;
 	$cert["reason"] = $reason;
 	$cert["revoke_time"] = time();
 	$crl["cert"][] = $cert;
 	crl_update($crl);
+	return true;
 }
 
 function cert_unrevoke($cert, & $crl) {
 	global $config;
-	// If we have text but no certs, it was imported and cannot be updated.
-	if (!empty($crl['text']) && empty($crl['cert']))
+	if (!is_crl_internal($crl))
 		return false;
 	foreach ($crl['cert'] as $id => $rcert) {
 		if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name'])) {
@@ -511,20 +511,50 @@ function cert_unrevoke($cert, & $crl) {
 	return false;
 }
 
-function is_cert_revoked($cert) {
+function is_cert_revoked($cert, $crlref = "") {
 	global $config;
 	if (!is_array($config['crl']))
 		return false;
 
-	foreach ($config['crl'] as $crl) {
+	if (!empty($crlref)) {
+		$crl = crl_lookup($crlref);
 		if (!is_array($crl['cert']))
-			continue;
+			return false;
 		foreach ($crl['cert'] as $rcert) {
 			if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
 				return true;
 		}
+	} else {
+		foreach ($config['crl'] as $crl) {
+			if (!is_array($crl['cert']))
+				continue;
+			foreach ($crl['cert'] as $rcert) {
+				if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+					return true;
+			}
+		}
 	}
 	return false;
+}
+
+function is_openvpn_server_crl($crlref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-server']))
+		return;
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if ($ovpns['crlref'] == $crlref)
+			return true;
+	}
+	return false;
+}
+
+// Keep this general to allow for future expansion. See cert_in_use() above.
+function crl_in_use($crlref) {
+	return (is_openvpn_server_crl($crlref));
+}
+
+function is_crl_internal($crl) {
+	return !(!empty($crl['text']) && empty($crl['cert']));
 }
 
 ?>

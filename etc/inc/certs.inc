@@ -542,7 +542,7 @@ function is_openvpn_server_crl($crlref) {
 	if (!is_array($config['openvpn']['openvpn-server']))
 		return;
 	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-		if ($ovpns['crlref'] == $crlref)
+		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref))
 			return true;
 	}
 	return false;

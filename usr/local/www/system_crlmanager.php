@@ -75,7 +75,7 @@ if ($act == "del") {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
-	if (crl_in_use($a_crl[$id]['crlref'])) {
+	if (crl_in_use($a_crl[$id]['refid'])) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
 	} else {
 		$name = $a_crl[$id]['name'];

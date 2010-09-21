@@ -379,7 +379,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 					<tr>
 						<td class="listlr"><?php echo $tmpcrl['name']; ?></td>
 						<td class="listr"><?php echo (is_crl_internal($tmpcrl)) ? "YES" : "NO"; ?></td>
-						<td class="listr"><?php echo count($tmpcrl['cert']); ?></td>
+						<td class="listr"><?php echo (is_crl_internal($tmpcrl)) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo (crl_in_use($tmpcrl['refid'])) ? "YES" : "NO"; ?></td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_crlmanager.php?act=exp&id=<?=$i;?>")">

@@ -326,7 +326,7 @@ if ($pkg['tabs'] <> "") {
 ?>
 						<td class="<?=$class;?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
 							<?php
-									$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
+								$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 							    if($column['type'] == "checkbox") {
 									if($fieldname == "") {
 								    	echo gettext("No");

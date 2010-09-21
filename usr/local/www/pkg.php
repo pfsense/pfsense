@@ -319,10 +319,14 @@ if ($pkg['tabs'] <> "") {
 				echo "<tr valign=\"top\">\n";
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "")
 					foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+						if ($column['fieldname'] == "description")
+							$class = "listbg";
+						else
+							$class = "listlr";
 ?>
-						<td class="listlr" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
+						<td class="<?=$class;?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
 							<?php
-							    $fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
+									$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 							    if($column['type'] == "checkbox") {
 									if($fieldname == "") {
 								    	echo gettext("No");

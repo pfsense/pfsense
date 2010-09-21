@@ -239,6 +239,7 @@ function method_change() {
 			$tab_array = array();
 			$tab_array[] = array(gettext("CAs"), true, "system_camanager.php");
 			$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
+			$tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 			display_top_tabs($tab_array);
 		?>
 		</td>

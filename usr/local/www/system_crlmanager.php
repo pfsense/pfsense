@@ -71,20 +71,18 @@ if ($_POST['act'])
 
 if ($act == "del") {
 
-	if (!$a_ca[$id]) {
+	if (!$a_crl[$id]) {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
-
-	$index = count($a_cert) - 1;
-	for (;$index >=0; $index--)
-		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid'])
-			unset($a_cert[$index]);
-
-	$name = $a_ca[$id]['name'];
-	unset($a_ca[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s successfully deleted"), $name) . "<br/>";
+	if (crl_in_use($a_crl[$id]['crlref'])) {
+		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
+	} else {
+		$name = $a_crl[$id]['name'];
+		unset($a_crl[$id]);
+		write_config();
+		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
+	}
 }
 
 if ($act == "new") {
@@ -375,19 +373,23 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 						if (is_array($ca_crl_map[$ca['refid']])):
 							foreach($ca_crl_map[$ca['refid']] as $crl):
 								$tmpcrl = lookup_crl($crl);
+								$internal = is_crl_internal($tmpcrl);
+								$inuse = crl_in_use($tmpcrl['refid']);
 						?>
 					<tr>
 						<td class="listlr"><?php echo $tmpcrl['name']; ?></td>
-						<td class="listr"><?php echo (is_crl_internal($tmpcrl)) ? "YES" : "NO"; ?></td>
-						<td class="listr"><?php echo (is_crl_internal($tmpcrl)) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td class="listr"><?php echo (crl_in_use($tmpcrl['refid'])) ? "YES" : "NO"; ?></td>
+						<td class="listr"><?php echo ($internal) ? "YES" : "NO"; ?></td>
+						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
+						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_crlmanager.php?act=exp&id=<?=$i;?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" width="17" height="17" border="0" />
 							</a>
+							<?php if (!$inuse): ?>
 							<a href="system_crlmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['name']) . ')';?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['name']); ?>" width="17" height="17" border="0" />
 							</a>
+							<?php endif; ?>
 						</td>
 					</tr>
 						<?php

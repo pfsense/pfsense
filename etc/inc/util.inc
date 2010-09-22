@@ -140,13 +140,19 @@ function unlock($cfglckkey = 0) {
 function send_event($cmd) {
 	global $g;
 
-	$fd = fsockopen($g['event_address']);
-	if ($fd) {
-		fwrite($fd, $cmd);
-		$resp = fread($fd, 4096);
-		if ($resp != "OK\n")
-			log_error("send_event: sent {$cmd} got {$resp}");
-		fclose($fd);
+	$try = 0;
+	while ($try < 3) {
+		$fd = @fsockopen($g['event_address']);
+		if ($fd) {
+			fwrite($fd, $cmd);
+			$resp = fread($fd, 4096);
+			if ($resp != "OK\n")
+				log_error("send_event: sent {$cmd} got {$resp}");
+			fclose($fd);
+			$try = 3;
+		} else
+			mwexec_bg("/usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+		$try++;
 	}
 }
 

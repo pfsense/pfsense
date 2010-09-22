@@ -1283,7 +1283,7 @@ function configure_cron() {
 	file_put_contents("/etc/crontab", $crontab_contents);
 
 	/* do a HUP kill to force sync changes */
-	exec('/usr/bin/killall -HUP cron');
+	exec('/bin/pkill -HUP cron');
 
 	conf_mount_ro();
 }

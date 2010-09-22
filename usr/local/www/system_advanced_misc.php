@@ -47,6 +47,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("vpn.inc");
 
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
@@ -79,9 +80,9 @@ if ($_POST) {
 			unset($config['system']['lb_use_sticky']);
 
 		if($_POST['preferoldsa_enable'] == "yes")
-                        $config['system']['preferoldsa'] = true;
-                else
-                        unset($config['system']['preferoldsa']);
+			$config['ipsec']['preferoldsa'] = true;
+		else
+			unset($config['ipsec']['preferoldsa']);
 
 		if($_POST['maxmss_enable'] == "yes") {
                         $config['system']['maxmss_enable'] = true;
@@ -117,6 +118,7 @@ if ($_POST) {
 		
 		activate_powerd();
 		load_glxsb();
+		vpn_ipsec_configure_preferoldsa();
 	}
 }
 
@@ -242,7 +244,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Security Assocications"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if (isset($pconfig['preferoldsa_enable'])) echo "checked"; ?> />
+									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
 									<br />
 									<?=gettext("By default, if several SAs match, the newest one is " .

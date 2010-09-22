@@ -1914,6 +1914,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 
+	$ipfrules = "";
 	//$ipfrules .= discover_pkg_rules("filter");
 
 	/* if captive portal is enabled, ensure that access to this port

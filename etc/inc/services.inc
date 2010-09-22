@@ -621,9 +621,6 @@ function services_dyndns_configure($int = "") {
 			services_dyndns_configure_client($dyndns);
 
 			sleep(1);
-
-			if (!empty($int))
-				break;
 		}
 
 		if ($g['booting'])

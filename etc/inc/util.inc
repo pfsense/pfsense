@@ -1049,7 +1049,7 @@ function safe_mkdir($path, $mode=0755) {
         global $g;
 
         if (!is_file($path) && !is_dir($path)) {
-                return @mkdir($path, $mode);
+                return @mkdir($path, $mode, true);
         } else {
                 return false;
         }

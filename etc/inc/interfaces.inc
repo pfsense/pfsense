@@ -2546,14 +2546,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			vpn_ipsec_configure();
 
+			/* restart dnsmasq */
+			services_dnsmasq_configure();
+
 			/* update dyndns */
 			services_dyndns_configure($interface);
 
 			/* force DNS update */
 			services_dnsupdate_process($interface);
-
-			/* restart dnsmasq */
-			services_dnsmasq_configure();
 
 			/* reload captive portal */
 			captiveportal_init_rules();

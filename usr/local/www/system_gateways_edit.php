@@ -192,7 +192,7 @@ if ($_POST) {
 		$save = false;
 		if (($_POST['weight'] && $_POST['weight'] > 1) ||
 		    $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic"))
+		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic") || $_POST['monitor'])
 			$save = true;
 		/* if we are processing a system gateway only save the monitorip */
 		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
@@ -213,7 +213,10 @@ if ($_POST) {
 
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
-			$gateway['gateway'] = $_POST['gateway'];
+			if (is_ipaddr($_POST['gateway']))
+				$gateway['gateway'] = $_POST['gateway'];
+			else
+				$gateway['gateway'] = "dynamic";
 			$gateway['name'] = $_POST['name'];
 			$gateway['weight'] = $_POST['weight'];
 			$gateway['descr'] = $_POST['descr'];

@@ -44,7 +44,7 @@
 			<type>select</type>
 			<displayname>Type of Server</displayname>
 			<name>authtype</name>
-			<description>&lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If you are unsure, leave this set to "Local User Aceess."</description>
+			<description>&lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If you are unsure, leave this set to "Local User Access."</description>
 			<bindstofield>ovpnserver->step1->type</bindstofield>
 			<options>
 				<option>

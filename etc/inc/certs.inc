@@ -165,7 +165,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
@@ -221,7 +221,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
@@ -251,7 +251,7 @@ function csr_generate(& $cert, $keylen, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);

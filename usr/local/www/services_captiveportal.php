@@ -716,8 +716,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		  <br>
 		  <br>
 		<?php endif; ?>
-<?=gettext("The contents of the HTML/PHP file that you upload here are displayed when logout event occurs. " .
-"You may include"); ?> &quot;$PORTAL_MESSAGE$&quot;, <?=gettext("which will be replaced by the error or reply messages from the RADIUS server, if any."); ?></td>
+<?=gettext("The contents of the HTML/PHP file that you upload here are displayed on authentication success when the logout popup is enabled."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>

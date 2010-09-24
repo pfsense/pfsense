@@ -79,6 +79,8 @@ if ($orig_host != $ourhostname) {
 }
 if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
     $redirurl = urldecode($matches[1]);
+if ($_POST['redirurl'])
+    $redirurl = $_POST['redirurl'];
 if (!empty($config['captiveportal']['redirurl']))
 	$redirurl = $config['captiveportal']['redirurl'];
 

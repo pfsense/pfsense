@@ -188,7 +188,7 @@ exit;
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
         portal_reply_page($redirurl, "error", $errormsg);
     }
-} else if ($_POST['accept'] && $clientip) {
+} else if ( ($_POST['accept'] && $clientip) || portal_consume_free_login($clientmac) ) {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {
@@ -523,6 +523,98 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
     captiveportal_write_db($cpdb);
 
     unlock($cplock);
+}
+
+/*
+ * Used when a limited number of free logins are allowed.
+ * Returns true when there was at least one free login to deduct for the MAC.
+ * Expired entries are removed as they are seen.
+ * Active entries are updated according to the configuration.
+ */
+function portal_consume_free_login($clientmac) {
+	global $config;
+
+	if (!empty($config['captiveportal']['freelogins_count']) && is_numeric($config['captiveportal']['freelogins_count']))
+		$freeloginscount = $config['captiveportal']['freelogins_count'];
+	else
+		return false;
+
+	if (!empty($config['captiveportal']['freelogins_resettimeout']) && is_numeric($config['captiveportal']['freelogins_resettimeout']))
+		$resettimeout = $config['captiveportal']['freelogins_resettimeout'];
+	else
+		return false;
+
+	if ($freeloginscount < 1 || $resettimeout <= 0 || !clientmac)
+		return false;
+
+	$updatetimeouts = isset($config['captiveportal']['freelogins_updatetimeouts']);
+
+	$cplock = lock('captiveportal');
+
+	/*
+	 * Read database of used MACs.  Lines are a comma-separated list
+	 * of the time, MAC, then the count of free logins remaining.
+	 */
+	$usedmacs = captiveportal_read_usedmacs_db();
+
+	$currenttime = time();
+	$found = false;
+	foreach ($usedmacs as $key => $usedmac) {
+		$usedmac = explode(",", $usedmac);
+
+		if ($usedmac[1] == $clientmac) {
+			if ($usedmac[0] + ($resettimeout * 3600) > $currenttime) {
+				if ($usedmac[2] < 1) {
+					if ($updatetimeouts) {
+						$usedmac[0] = $currenttime;
+						unset($usedmacs[$key]);
+						$usedmacs[] = implode(",", $usedmac);
+						captiveportal_write_usedmacs_db($usedmacs);
+					}
+
+					unlock($cplock);
+					return false;
+				} else {
+					$usedmac[2] -= 1;
+					$usedmacs[$key] = implode(",", $usedmac);
+				}
+
+				$found = true;
+			} else
+				unset($usedmacs[$key]);
+
+			break;
+		} else if ($usedmac[0] + ($resettimeout * 3600) <= $currenttime)
+				unset($usedmacs[$key]);
+	}
+
+	if (!$found) {
+		$usedmac = array($currenttime, $clientmac, $freeloginscount - 1);
+		$usedmacs[] = implode(",", $usedmac);
+	}
+
+	captiveportal_write_usedmacs_db($usedmacs);
+	unlock($cplock);
+	return true;
+}
+
+function captiveportal_read_usedmacs_db() {
+	global $g;
+
+	if (file_exists("{$g['vardb_path']}/captiveportal_usedmacs.db")) {
+		$usedmacs = file("{$g['vardb_path']}/captiveportal_usedmacs.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if (!usedmacs)
+			$usedmacs = array();
+	} else
+		$usedmacs = array();
+
+	return $usedmacs;
+}
+
+function captiveportal_write_usedmacs_db($usedmacs) {
+	global $g;
+
+	file_put_contents("{$g['vardb_path']}/captiveportal_usedmacs.db", implode("\n", $usedmacs));
 }
 
 ?>

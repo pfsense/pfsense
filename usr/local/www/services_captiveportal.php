@@ -150,10 +150,11 @@ if ($_POST) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
-		$input_errors[] = gettext("The free pass-throughs count must be a number or left blank.");
-	}
-	if ($_POST['freelogins_resettimeout'] && (!is_numeric($_POST['freelogins_resettimeout']) || ($_POST['freelogins_resettimeout'] <= 0))) {
-		$input_errors[] = gettext("The waiting period until free pass-throughs restored cannot be 0 hours.");
+		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
+	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
+		if (empty($_POST['freelogins_resettimeout']) || !is_numeric($_POST['freelogins_resettimeout']) || ($_POST['freelogins_resettimeout'] <= 0)) {
+			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
+		}
 	}
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
@@ -366,25 +367,25 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 	  <?=gettext("Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set)."); ?></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Free pass-throughs allowed per MAC address"); ?></td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Pass-through credits allowed per MAC address"); ?></td>
 	  <td width="78%" class="vtable">
 		<input name="freelogins_count" type="text" class="formfld unknown" id="freelogins_count" size="6" value="<?=htmlspecialchars($pconfig['freelogins_count']);?>">
 		<?=gettext("per client MAC address (0 or blank = none)"); ?><br>
 		<?=gettext("This setting allows passing through the captive portal without authentication a limited number of times per MAC address. Once used up, the client can only log in with valid credentials until the waiting period specified below has expired. Recommended to set a hard timeout and/or idle timeout when using this for it to be effective."); ?></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Waiting period until free pass-throughs restored"); ?></td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Waiting period to restore pass-through credits"); ?></td>
 	  <td width="78%" class="vtable">
 		<input name="freelogins_resettimeout" type="text" class="formfld unknown" id="freelogins_resettimeout" size="6" value="<?=htmlspecialchars($pconfig['freelogins_resettimeout']);?>">
 		<?=gettext("hours"); ?><br>
-		<?=gettext("Clients will have their available free pass-throughs restored to the original count after this waiting period since using up their first pass-through. This must be greater than zero if free pass-throughs are enabled."); ?></td>
+		<?=gettext("Clients will have their available pass-through credits restored to the original count after this amount of time since using the first one. This must be above 0 hours if pass-through credits are enabled."); ?></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Reset free pass-throughs waiting period on attempted access"); ?></td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Reset waiting period on attempted access"); ?></td>
 	  <td width="78%" class="vtable">
 		<input name="freelogins_updatetimeouts" type="checkbox" class="formfld" id="freelogins_updatetimeouts" value="yes" <?php if($pconfig['freelogins_updatetimeouts']) echo "checked"; ?>>
 		<strong><?=gettext("Enable waiting period reset on attempted access"); ?></strong><br>
-		<?=gettext("If enabled, the waiting period is reset to the original duration if access is attempted when all free pass-throughs have already been exhausted."); ?></td>
+		<?=gettext("If enabled, the waiting period is reset to the original duration if access is attempted when all pass-through credits have already been exhausted."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Logout popup window"); ?></td>

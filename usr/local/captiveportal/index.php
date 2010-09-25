@@ -127,6 +127,11 @@ exit;
     /* radius functions handle everything so we exit here since we're done */
     exit;
 
+} else if (portal_consume_passthrough_credit($clientmac)) {
+    /* allow the client through if it had a pass-through credit for its MAC */
+    captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
+    portal_allow($clientip, $clientmac, "unauthenticated");
+
 } else if ($_POST['accept'] && $_POST['auth_voucher']) {
 
     $voucher = trim($_POST['auth_voucher']);
@@ -188,7 +193,7 @@ exit;
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
         portal_reply_page($redirurl, "error", $errormsg);
     }
-} else if ( ($_POST['accept'] && $clientip) || portal_consume_free_login($clientmac) ) {
+} else if ($_POST['accept'] && $clientip) {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {
@@ -526,12 +531,12 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
 }
 
 /*
- * Used when a limited number of free logins are allowed.
+ * Used for when pass-through credits are enabled.
  * Returns true when there was at least one free login to deduct for the MAC.
  * Expired entries are removed as they are seen.
  * Active entries are updated according to the configuration.
  */
-function portal_consume_free_login($clientmac) {
+function portal_consume_passthrough_credit($clientmac) {
 	global $config;
 
 	if (!empty($config['captiveportal']['freelogins_count']) && is_numeric($config['captiveportal']['freelogins_count']))
@@ -553,7 +558,7 @@ function portal_consume_free_login($clientmac) {
 
 	/*
 	 * Read database of used MACs.  Lines are a comma-separated list
-	 * of the time, MAC, then the count of free logins remaining.
+	 * of the time, MAC, then the count of pass-through credits remaining.
 	 */
 	$usedmacs = captiveportal_read_usedmacs_db();
 

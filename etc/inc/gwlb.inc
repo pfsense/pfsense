@@ -149,10 +149,11 @@ EOD;
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
-		$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
 		$alarms = "";
+		$alarmscfg = "";
 		$override = false;
 		if (!empty($gateway['lowloss'])) {
 			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";

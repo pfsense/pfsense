@@ -57,6 +57,9 @@ $GatewaysList = array();
 /* Used for the hostname dns resolver */
 $filterdns = "";
 
+/* Used for aliases and interface macros */
+$aliases = "";
+
 function flowtable_configure() {
 	global $config, $g;
 	return;

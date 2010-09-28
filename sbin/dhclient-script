@@ -166,7 +166,7 @@ add_new_resolv_conf() {
 			$ROUTE delete $nameserver
 		done
 	fi
-	if [ -n "$new_domain_name_server" ]; then 
+	if [ -n "$new_domain_name_servers" ]; then 
 		rm -f /var/etc/nameserver_$interface
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface
@@ -175,7 +175,7 @@ add_new_resolv_conf() {
 			echo $nameserver >>/var/etc/nameserver_$interface
 			$ROUTE add $nameserver -iface $interface
 		done
-		#echo $new_domain_name >/var/etc/defaultdomain.conf
+		echo $new_domain_name >/var/etc/searchdomain_$interface
 		/usr/local/sbin/pfSctl -c 'service reload dns'
 	fi
 

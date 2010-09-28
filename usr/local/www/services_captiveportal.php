@@ -71,6 +71,9 @@ $pconfig['maxproc'] = $config['captiveportal']['maxproc'];
 $pconfig['maxprocperip'] = $config['captiveportal']['maxprocperip'];
 $pconfig['timeout'] = $config['captiveportal']['timeout'];
 $pconfig['idletimeout'] = $config['captiveportal']['idletimeout'];
+$pconfig['freelogins_count'] = $config['captiveportal']['freelogins_count'];
+$pconfig['freelogins_resettimeout'] = $config['captiveportal']['freelogins_resettimeout'];
+$pconfig['freelogins_updatetimeouts'] = isset($config['captiveportal']['freelogins_updatetimeouts']);
 $pconfig['enable'] = isset($config['captiveportal']['enable']);
 $pconfig['auth_method'] = $config['captiveportal']['auth_method'];
 $pconfig['radacct_enable'] = isset($config['captiveportal']['radacct_enable']);
@@ -146,6 +149,13 @@ if ($_POST) {
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
+	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
+		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
+	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
+		if (empty($_POST['freelogins_resettimeout']) || !is_numeric($_POST['freelogins_resettimeout']) || ($_POST['freelogins_resettimeout'] <= 0)) {
+			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
+		}
+	}
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
@@ -176,6 +186,9 @@ if ($_POST) {
 		$config['captiveportal']['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
 		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
+		$config['captiveportal']['freelogins_count'] = $_POST['freelogins_count'];
+		$config['captiveportal']['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
+		$config['captiveportal']['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
 		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
 		$config['captiveportal']['auth_method'] = $_POST['auth_method'];
 		$config['captiveportal']['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
@@ -242,6 +255,9 @@ function enable_change(enable_change) {
 	//document.iform.maxproc.disabled = endis;
 	document.iform.maxprocperip.disabled = endis;
 	document.iform.idletimeout.disabled = endis;
+	document.iform.freelogins_count.disabled = endis;
+	document.iform.freelogins_resettimeout.disabled = endis;
+	document.iform.freelogins_updatetimeouts.disabled = endis;
 	document.iform.timeout.disabled = endis;
 	document.iform.redirurl.disabled = endis;
 	document.iform.radiusip.disabled = radius_endis;
@@ -349,6 +365,27 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 		<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
 		<?=gettext("minutes"); ?><br>
 	  <?=gettext("Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set)."); ?></td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Pass-through credits allowed per MAC address"); ?></td>
+	  <td width="78%" class="vtable">
+		<input name="freelogins_count" type="text" class="formfld unknown" id="freelogins_count" size="6" value="<?=htmlspecialchars($pconfig['freelogins_count']);?>">
+		<?=gettext("per client MAC address (0 or blank = none)"); ?><br>
+		<?=gettext("This setting allows passing through the captive portal without authentication a limited number of times per MAC address. Once used up, the client can only log in with valid credentials until the waiting period specified below has expired. Recommended to set a hard timeout and/or idle timeout when using this for it to be effective."); ?></td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Waiting period to restore pass-through credits"); ?></td>
+	  <td width="78%" class="vtable">
+		<input name="freelogins_resettimeout" type="text" class="formfld unknown" id="freelogins_resettimeout" size="6" value="<?=htmlspecialchars($pconfig['freelogins_resettimeout']);?>">
+		<?=gettext("hours"); ?><br>
+		<?=gettext("Clients will have their available pass-through credits restored to the original count after this amount of time since using the first one. This must be above 0 hours if pass-through credits are enabled."); ?></td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Reset waiting period on attempted access"); ?></td>
+	  <td width="78%" class="vtable">
+		<input name="freelogins_updatetimeouts" type="checkbox" class="formfld" id="freelogins_updatetimeouts" value="yes" <?php if($pconfig['freelogins_updatetimeouts']) echo "checked"; ?>>
+		<strong><?=gettext("Enable waiting period reset on attempted access"); ?></strong><br>
+		<?=gettext("If enabled, the waiting period is reset to the original duration if access is attempted when all pass-through credits have already been exhausted."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Logout popup window"); ?></td>
@@ -716,8 +753,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		  <br>
 		  <br>
 		<?php endif; ?>
-<?=gettext("The contents of the HTML/PHP file that you upload here are displayed when logout event occurs. " .
-"You may include"); ?> &quot;$PORTAL_MESSAGE$&quot;, <?=gettext("which will be replaced by the error or reply messages from the RADIUS server, if any."); ?></td>
+<?=gettext("The contents of the HTML/PHP file that you upload here are displayed on authentication success when the logout popup is enabled."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>

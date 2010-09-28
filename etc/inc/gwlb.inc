@@ -149,10 +149,11 @@ EOD;
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
-		$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
 		$alarms = "";
+		$alarmscfg = "";
 		$override = false;
 		if (!empty($gateway['lowloss'])) {
 			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
@@ -270,16 +271,9 @@ function return_gateways_array($disabled = false) {
 
 	$gateways_arr = array();
 
-	/* Loop through all interfaces with a gateway and add it to a array */
-	if ($disabled == false) {
-		$iflist = get_configured_interface_with_descr();
-	} else {
-		$iflist = get_configured_interface_with_descr(false, true);
-	}
-
 	$i = 0;
 	/* Process/add all the configured gateways. */
-	if(is_array($config['gateways']['gateway_item'])) {
+	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
@@ -293,6 +287,13 @@ function return_gateways_array($disabled = false) {
 
 			$gateway['friendlyiface'] = $gateway['interface'];
 			$gateway['interface'] = get_real_interface($gateway['interface']);
+			/* Some interface like wan might be default but have no info recorded 
+			 * the config.
+			 */
+			if ($gateway['friendlyiface'] == "wan" && !isset($gateway['defaultgw'])) {
+				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw"))
+					$gateway['defaultgw'] = true;
+			}
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
@@ -300,6 +301,12 @@ function return_gateways_array($disabled = false) {
 			$i++;
 		}
 	} 
+
+	/* Loop through all interfaces with a gateway and add it to a array */
+	if ($disabled == false)
+		$iflist = get_configured_interface_with_descr();
+	else
+		$iflist = get_configured_interface_with_descr(false, true);
 
 	/* Process/add dynamic gateways. */
 	foreach($iflist as $ifname => $friendly ) {
@@ -311,12 +318,16 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$friendly}";
+		$gateway['name'] = $friendly;
 		$gateway['attribute'] = "system";
 	
+		if ($gateway['dynamic'] == "default") {
+			$gateway['defaultgw'] = true;
+			$gateway['dynamic'] = true;
+		}
 		/* Loopback dummy for dynamic interfaces without a IP */
-		if(!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
-			 $gateway['gateway'] = "dynamic";
+		if (!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
+			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -506,7 +517,10 @@ function get_interface_gateway($interface, &$dynamic = false) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
-			$dynamic = true;
+			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
+				$dynamic = "default";
+			else
+				$dynamic = true;
                 }
         }
 

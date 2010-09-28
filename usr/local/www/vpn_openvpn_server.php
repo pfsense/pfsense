@@ -99,6 +99,7 @@ if($_GET['act']=="edit"){
 				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
 			}
 			$pconfig['caref'] = $a_server[$id]['caref'];
+			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
 		} else
@@ -291,6 +292,7 @@ if ($_POST) {
 				$server['tls'] = base64_encode($pconfig['tls']);
 			}
 			$server['caref'] = $pconfig['caref'];
+			$server['crlref'] = $pconfig['crlref'];
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
 		} else {
@@ -374,6 +376,7 @@ function mode_change() {
 		case "server_tls_user":
 			document.getElementById("tls").style.display="";
 			document.getElementById("tls_ca").style.display="";
+			document.getElementById("tls_crl").style.display="";
 			document.getElementById("tls_cert").style.display="";
 			document.getElementById("tls_dh").style.display="";
 			document.getElementById("psk").style.display="none";
@@ -381,6 +384,7 @@ function mode_change() {
 		case "p2p_shared_key":
 			document.getElementById("tls").style.display="none";
 			document.getElementById("tls_ca").style.display="none";
+			document.getElementById("tls_crl").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
 			document.getElementById("tls_dh").style.display="none";
 			document.getElementById("psk").style.display="";
@@ -704,6 +708,24 @@ function netbios_change() {
 										$selected = "selected";
 							?>
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['name'];?></option>
+							<?php endforeach; ?>
+							</select>
+							</td>
+					</tr>
+					<tr id="tls_crl">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Revocation List"); ?></td>
+							<td width="78%" class="vtable">
+							<select name='crlref' class="formselect">
+								<option value="">None</option>
+							<?php
+								foreach ($config['crl'] as $crl):
+									if (is_crl_internal($crl) && (count($crl['cert']) <= 0))
+										continue;
+									$selected = "";
+									if ($pconfig['crlref'] == $crl['refid'])
+										$selected = "selected";
+							?>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['name'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -1215,6 +1237,7 @@ function netbios_change() {
 			<?php else: ?>
 
 			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<thead>
 				<tr>
 					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>
 					<td width="10%" class="listhdrr"><?=gettext("Protocol / Port"); ?></td>
@@ -1222,6 +1245,8 @@ function netbios_change() {
 					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
+				</thead>
+				<tbody>
 				<?php
 					$i = 0;
 					foreach($a_server as $server):
@@ -1256,6 +1281,8 @@ function netbios_change() {
 					$i++;
 					endforeach;
 				?>
+				</tbody>
+				<tfoot>
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
@@ -1263,6 +1290,7 @@ function netbios_change() {
 						</a>
 					</td>
 				</tr>
+				</tfoot>
 			</table>
 
 			<?=gettext("Additional OpenVPN servers can be added here.");?>

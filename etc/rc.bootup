@@ -263,7 +263,7 @@ echo "done.\n";
 if($avail > 0 and $avail < 65) {
 	echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
 	/* start webConfigurator up on final pass */
-	touch("/tmp/restart_webgui");
+	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
 } else {
 	/* start web server */
 	system_webgui_start();

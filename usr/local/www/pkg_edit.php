@@ -556,7 +556,7 @@ if ($pkg['tabs'] <> "") {
 				} else {
 					$source_value = $opt[$pkga['value']];
 				}
-				if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+				if (in_array($source_value, $items)) $selected = 'selected="selected"';
 					if(isset($pkga['advancedfield']) && $adv_enabled)
 						$advanced .= "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
 					else

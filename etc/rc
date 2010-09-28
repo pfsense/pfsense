@@ -4,7 +4,7 @@
 
 # /etc/rc - master bootup script, invokes php setup
 # part of pfSense by Scott Ullrich
-# Copyright (C) 2004 Scott Ullrich, All rights reserved.
+# Copyright (C) 2004-2010 Scott Ullrich, All rights reserved.
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
@@ -328,12 +328,19 @@ fi
 
 echo "done."
 
+# Ensure gettytab is of a sane size
+if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
+	echo ">>> Restoring /etc/gettytab due to unusal size"
+	echo ">>> Restoring /etc/gettytab due to unusal size" | /usr/bin/logger
+	cp /etc/gettytab.bak /etc/gettytab
+fi
+
 # Recreate capabilities DB
 cap_mkdb /etc/login.conf
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
-. /etc/rc.php_ini_setup
+/etc/rc.php_ini_setup
 
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 

@@ -1700,8 +1700,10 @@ function version_get_string_value($a) {
 		2 => "ALPHA",
 		3 => "BETA",
 		4 => "B",
-		5 => "RC",
-		6 => "RELEASE"
+		5 => "C",
+		6 => "D",
+		7 => "RC",
+		8 => "RELEASE"
 	);
 	$major = 0;
 	$minor = 0;

@@ -74,9 +74,8 @@ include("head.inc");
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
-							<td width="15%" class="listhdrr"><?=gettext("Category"); ?></td>
+							<td width="20%" class="listhdrr"><?=gettext("Category"); ?></td>
 							<td width="10%" class="listhdrr"><?=gettext("Package Info"); ?></td>
-							<td width="5%" class="listhdrr"><?=gettext("Supported by BSD Perimter"); ?></td>
 							<td width="15%" class="listhdrr"><?=gettext("Package Version"); ?></td>
 							<td width="45%" class="listhdr"><?=gettext("Description"); ?></td>
 						</tr>
@@ -139,14 +138,6 @@ include("head.inc");
 							}
 							?>
 							</td>
-							<td class="listr">
-								<?php
-									if($pkg['supportedbybsdperimeter'])  
-										echo $pkg['supportedbybsdperimeter'];
-									else 
-										echo "NO";
-								?>
-							</td>							
 							<td class="<?=$tdclass;?>">
 									<?=$pkgver;?>
 							</td>

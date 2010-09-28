@@ -1,8 +1,9 @@
 <?php
 /* $Id$ */
 /*
-		Copyright (C) 2008 Shrew Soft Inc
-		All rights reserved.
+	Copyright (C) 2008 Shrew Soft Inc
+	Copyright (C) 2010 Jim Pingle <jimp@pfsense.org>
+	All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -63,6 +64,25 @@ function & lookup_cert($refid) {
 		foreach ($config['cert'] as & $cert)
 			if ($cert['refid'] == $refid)
 				return $cert;
+
+	return false;
+}
+
+function & lookup_cert_by_name($name) {
+	global $config;
+	if (is_array($config['cert']))
+		foreach ($config['cert'] as & $cert)
+			if ($cert['name'] == $name)
+				return $cert;
+}
+
+function & lookup_crl($refid) {
+	global $config;
+
+	if (is_array($config['crl']))
+		foreach ($config['crl'] as & $crl)
+			if ($crl['refid'] == $refid)
+				return $crl;
 
 	return false;
 }
@@ -145,7 +165,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
@@ -201,7 +221,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
@@ -231,7 +251,7 @@ function csr_generate(& $cert, $keylen, $dn) {
 		"encrypt_key" => false);
 
 	// generate a new key pair
-	$res_key = openssl_pkey_new();
+	$res_key = openssl_pkey_new($args);
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
@@ -301,6 +321,10 @@ function cert_get_subject_array($crt) {
 	$str_crt = base64_decode($crt);
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
+
+	if (!is_array($components))
+		return;
+
 	$subject_array = array();
 
 	foreach($components as $a => $v)
@@ -395,6 +419,142 @@ function cert_in_use($certref) {
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref));
+}
+
+/*
+CRL code is a *WORK IN PROGRESS* do not try to use these functions yet.
+
+OpenSSL CRL status code constants.
+OCSP_REVOKED_STATUS_NOSTATUS
+OCSP_REVOKED_STATUS_UNSPECIFIED
+OCSP_REVOKED_STATUS_KEYCOMPROMISE
+OCSP_REVOKED_STATUS_CACOMPROMISE
+OCSP_REVOKED_STATUS_AFFILIATIONCHANGED
+OCSP_REVOKED_STATUS_SUPERSEDED
+OCSP_REVOKED_STATUS_CESSATIONOFOPERATION
+OCSP_REVOKED_STATUS_CERTIFICATEHOLD
+OCSP_REVOKED_STATUS_REMOVEFROMCRL
+*/
+
+$openssl_crl_status = array(
+	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
+	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
+	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
+	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
+	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
+	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
+	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
+	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold",
+	OCSP_REVOKED_STATUS_REMOVEFROMCRL         => "Remove from CRL"
+);
+
+function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
+	global $config;
+	$ca =& lookup_ca($caref);
+	if (!$ca)
+		return false;
+	$crl['name'] = $name;
+	$crl['caref'] = $caref;
+	$crl['serial'] = $serial;
+	$crl['lifetime'] = $lifetime;
+	$crl['cert'] = array();
+	$crl_res = crl_update($crl);
+	$config['crl'][] = $crl;
+	return $crl_res;
+}
+
+function crl_update(& $crl) {
+	global $config;
+	$ca =& lookup_ca($crl['caref']);
+	if (!$ca)
+		return false;
+	// If we have text but no certs, it was imported and cannot be updated.
+	if (!empty($crl['text']) && empty($crl['cert']))
+		return false;
+	$crl['serial']++;
+	$ca_str_crt = base64_decode($ca['crt']);
+	$ca_str_key = base64_decode($ca['prv']);
+	$crl_res = openssl_crl_new($ca_str_crt, $crl['serial'], $crl['lifetime']);
+	foreach ($crl['cert'] as $cert) {
+		openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+	}
+	openssl_crl_export($crl_res, $crl_text, $ca_str_key);
+	$crl['text'] = base64_encode($crl_text);
+	return $crl_res;
+}
+
+function cert_revoke($cert, & $crl, $reason=OCSP_REVOKED_STATUS_UNSPECIFIED) {
+	global $config;
+	if (is_cert_revoked($cert, $crl['refid']))
+		return true;
+	// If we have text but no certs, it was imported and cannot be updated.
+	if (!is_crl_internal($crl))
+		return false;
+	$cert["reason"] = $reason;
+	$cert["revoke_time"] = time();
+	$crl["cert"][] = $cert;
+	crl_update($crl);
+	return true;
+}
+
+function cert_unrevoke($cert, & $crl) {
+	global $config;
+	if (!is_crl_internal($crl))
+		return false;
+	foreach ($crl['cert'] as $id => $rcert) {
+		if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name'])) {
+			unset($crl['cert'][$id]);
+			crl_update($crl);
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_cert_revoked($cert, $crlref = "") {
+	global $config;
+	if (!is_array($config['crl']))
+		return false;
+
+	if (!empty($crlref)) {
+		$crl = crl_lookup($crlref);
+		if (!is_array($crl['cert']))
+			return false;
+		foreach ($crl['cert'] as $rcert) {
+			if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+				return true;
+		}
+	} else {
+		foreach ($config['crl'] as $crl) {
+			if (!is_array($crl['cert']))
+				continue;
+			foreach ($crl['cert'] as $rcert) {
+				if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+function is_openvpn_server_crl($crlref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-server']))
+		return;
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if (!empty($ovpns['crlref']) && ($ovpns['crlref'] == $crlref))
+			return true;
+	}
+	return false;
+}
+
+// Keep this general to allow for future expansion. See cert_in_use() above.
+function crl_in_use($crlref) {
+	return (is_openvpn_server_crl($crlref));
+}
+
+function is_crl_internal($crl) {
+	return !(!empty($crl['text']) && empty($crl['cert']));
 }
 
 ?>

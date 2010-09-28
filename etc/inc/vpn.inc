@@ -86,10 +86,7 @@ function vpn_ipsec_configure($ipchg = false)
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
 
-	if(isset($config['ipsec']['preferoldsa']))
-		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
-	else
-		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
+	vpn_ipsec_configure_preferoldsa();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -159,7 +156,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rg = $ph1ent['remote-gateway'];
 
 				if (!is_ipaddr($rg)) {
-					$dnswatch_list[] = "{$rg} = value";
+					$dnswatch_list[] = "{$rg}=value";
 					add_hostname_to_watch($rg);
 					$rg = resolve_retry($rg);
 					if (!$rg)
@@ -1711,4 +1708,11 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	return true;
 }
 
+function vpn_ipsec_configure_preferoldsa() {
+	global $config;
+	if(isset($config['ipsec']['preferoldsa']))
+		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
+	else
+		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
+}
 ?>

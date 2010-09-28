@@ -115,6 +115,7 @@ include("head.inc");
    <td>
 	<div id="mainarea">
              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<thead>
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Group Name");?></td>
                   <td width="15%" class="listhdrr"><?=gettext("Gateways");?></td>
@@ -129,13 +130,14 @@ include("head.inc");
 			</table>
 		  </td>
 		</tr>
+		</thead>
+		<tbody>
 			  <?php $i = 0; foreach ($a_gateway_groups as $gateway_group): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <?php
 			echo $gateway_group['name'];
-			?>
-			
+		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <?php
@@ -154,7 +156,7 @@ include("head.inc");
 		    ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-						<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+				<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
@@ -171,6 +173,8 @@ include("head.inc");
 		</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
+		</tbody>
+		<tfoot>
                   <td class="list" colspan="4"></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
@@ -185,8 +189,10 @@ include("head.inc");
 			</div>
 			</td>
 		  </tr>
+		</tfoot>
 		</table>
             </form>
+	<p><b><?=gettext("Note:");?></b>  <?=gettext("Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, or policy-based routing. Without rules directing traffic into the Gateway Groups, they will not be used.");?></p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

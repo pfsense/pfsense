@@ -798,7 +798,8 @@ function autotls_change() {
 
 			<?php else: ?>
 
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<thead>
 				<tr>
 					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>
 					<td width="10%" class="listhdrr"><?=gettext("Protocol"); ?></td>
@@ -806,6 +807,8 @@ function autotls_change() {
 					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
+				</thead>
+				<tbody>
 				<?php
 					$i = 0;
 					foreach($a_client as $client):
@@ -841,6 +844,8 @@ function autotls_change() {
 					$i++;
 					endforeach;
 				?>
+				</tbody>
+				<tfoot>
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
@@ -855,6 +860,7 @@ function autotls_change() {
 						</p>
 					</td>
 				</tr>
+				</tfoot>
 			</table>
 
 			<?php endif; ?>

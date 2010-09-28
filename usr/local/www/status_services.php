@@ -227,15 +227,14 @@ include("fbegin.inc");
 
 <div id="boxarea">
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>
-    <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<thead>
 	<tr>
-	  <td class="listhdrr"><b><center><?=gettext("Service");?></center></b></td>
-	  <td class="listhdrr"><b><center><?=gettext("Description");?></center></b></td>
-	  <td class="listhdrr"><b><center><?=gettext("Status");?></center></b></td>
+		<td class="listhdrr" align="center"><?=gettext("Service");?></td>
+		<td class="listhdrr" align="center"><?=gettext("Description");?></td>
+		<td class="listhdrr" align="center"><?=gettext("Status");?></td>
 	</tr>
-
+	</thead>
+	<tbody>
 <?php
 
 if (is_array($config['installedpackages']['service']))
@@ -343,8 +342,8 @@ if (count($services) > 0) {
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
-		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
-		echo '<td class="listr">' . $service['description'] . '</td>';
+		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
+		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
 		if ($service['name'] == "openvpn")
 			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
 		else if ($service['name'] == "captiveportal")
@@ -352,11 +351,11 @@ if (count($services) > 0) {
 		else
 			$running = is_service_running($service['name']);
 		if($running) {
-			echo '<td class="listr"><center>';
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>";
+			echo '<td class="listr"><center>' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>\n";
 		} else {
-			echo '<td class="listbg"><center>';
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Stopped") . "</td>";
+			echo '<td class="listbg"><center>' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Stopped") . "</td>\n";
 		}
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
@@ -365,13 +364,13 @@ if (count($services) > 0) {
 			} else {
 				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			}
-			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
+			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
 			if ($service['name'] == "openvpn") {
 				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
 			} else {
-				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'> ";
+				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
 			}
-			echo "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'> ";
+			echo "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
 			echo "</a>";
 		} else {
 			if ($service['name'] == "openvpn") {
@@ -380,20 +379,17 @@ if (count($services) > 0) {
 				echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			}
 			
-			echo "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a> ";
+			echo "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
 		}
-		echo '</td>';
-		echo '</tr>';
+		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\"><center>" . gettext("No services found") . ".</td></tr>";
+	echo "<tr><td colspan=\"3\"><center>" . gettext("No services found") . ".</td></tr>\n";
 }
 
 ?>
+</tbody>
 </table>
-
-</td>
-</tr></table>
 </div>
 </p>
 </form>

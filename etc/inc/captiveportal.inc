@@ -369,7 +369,7 @@ EOD;
 <HEAD><TITLE>Redirecting...</TITLE></HEAD>
 <BODY>
 <SPAN STYLE="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>Redirecting to <A HREF="{$my_redirurl}">{$my_redirurl}</A>...</B>
+<B>Redirecting to <A HREF="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></A>...</B>
 </SPAN>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
@@ -380,8 +380,8 @@ if (LogoutWin) {
     LogoutWin.document.write('<BODY BGCOLOR="#435370">');
     LogoutWin.document.write('<DIV ALIGN="center" STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
     LogoutWin.document.write('<B>Click the button below to disconnect</B><P>');
-    LogoutWin.document.write('<FORM METHOD="POST" ACTION="{$logouturl}">');
-    LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="{$sessionid}">');
+    LogoutWin.document.write('<FORM METHOD="POST" ACTION="<?=\$logouturl;?>">');
+    LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="<?=\$sessionid;?>">');
     LogoutWin.document.write('<INPUT NAME="logout" TYPE="submit" VALUE="Logout">');
     LogoutWin.document.write('</FORM>');
     LogoutWin.document.write('</DIV></BODY>');
@@ -389,7 +389,7 @@ if (LogoutWin) {
     LogoutWin.document.close();
 }
 
-document.location.href="{$my_redirurl}";
+document.location.href="<?=\$my_redirurl;?>";
 -->
 </SCRIPT>
 </BODY>

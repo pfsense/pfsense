@@ -42,7 +42,7 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-$a_gateways = return_gateways_array();
+$a_gateways = return_gateways_array(true);
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
@@ -76,11 +76,7 @@ if (isset($id) && $a_gateways[$id]) {
         $pconfig['down'] = $a_gateway_item[$id]['down'];
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
-	if(($a_gateways[$id]['monitor'] <> "") && ($a_gateways[$id]['attribute'] != "system") && ($a_gateways[$id]['gateway'] != "dynamic")) {
-		$pconfig['monitor'] = $a_gateways[$id]['monitor'];
-	} else {
-		$pconfig['monitor'] == "";
-	}
+	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
@@ -196,10 +192,10 @@ if ($_POST) {
 		$save = false;
 		if (($_POST['weight'] && $_POST['weight'] > 1) ||
 		    $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic"))
+		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic") || $_POST['monitor'])
 			$save = true;
 		/* if we are processing a system gateway only save the monitorip */
-		if (!$save && empty($_POST['interface']) && empty($_POST['gateway'])) {
+		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
 			if (is_ipaddr($_POST['monitor'])) {
 				if (empty($_POST['interface']))
 					$interface = $pconfig['friendlyiface'];
@@ -208,9 +204,8 @@ if ($_POST) {
 				$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
 			}
 			/* when dynamic gateway is not anymore a default the entry is no more needed. */
-                        if (isset($id) && $a_gateway_item[$id]) {
+                        if (isset($id) && $a_gateway_item[$id])
                                 unset($a_gateway_item[$id]);
-                        }
 		} else {
 
 			/* Manual gateways are handled differently */
@@ -218,16 +213,19 @@ if ($_POST) {
 
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
-			$gateway['gateway'] = $_POST['gateway'];
+			if (is_ipaddr($_POST['gateway']))
+				$gateway['gateway'] = $_POST['gateway'];
+			else
+				$gateway['gateway'] = "dynamic";
 			$gateway['name'] = $_POST['name'];
 			$gateway['weight'] = $_POST['weight'];
 			$gateway['descr'] = $_POST['descr'];
-			if(is_ipaddr($_POST['monitor'])) {
+			if (is_ipaddr($_POST['monitor']))
 				$gateway['monitor'] = $_POST['monitor'];
-			} else {
+			else
 				unset($gateway['monitor']);
-			}			
-			if ($_POST['defaultgw'] == "yes" or $_POST['defaultgw'] == "on") {
+
+			if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 				$i = 0;
 				foreach($a_gateway_item as $gw) {
 					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
@@ -235,9 +233,8 @@ if ($_POST) {
 				}
 				$gateway['defaultgw'] = true;
 				$reloadif = true;
-			} else {
+			} else
 				unset($gateway['defaultgw']);
-			}
 
 			if ($_POST['latencylow'])
 				$gateway['latencylow'] = $_POST['latencylow'];
@@ -251,13 +248,11 @@ if ($_POST) {
                 		$gateway['down'] = $_POST['down'];
 
 			/* when saving the manual gateway we use the attribute which has the corresponding id */
-			if (isset($id) && $a_gateway_item[$id]) {
+			if (isset($id) && $a_gateway_item[$id])
 				$a_gateway_item[$id] = $gateway;
-			} else {
+			else
 				$a_gateway_item[] = $gateway;
-			}
 		}
-		system_resolvconf_generate();
 		mark_subsystem_dirty('staticroutes');
 		
 		write_config();
@@ -266,11 +261,11 @@ if ($_POST) {
 			echo $_POST['name'];
 			exit;
 		} else if ($reloadif == true)
-			interface_configure($_POST['interface']);
+			send_event("interface reconfigure {$_POST['interface']}");
 		
 		header("Location: system_gateways.php");
 		exit;
-	}  else {
+	} else {
 		$pconfig = $_POST;
 		if (empty($_POST['friendlyiface']))
 			$pconfig['friendlyiface'] = $_POST['interface'];

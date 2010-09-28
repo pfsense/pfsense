@@ -454,6 +454,8 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 	foreach ($cur_groups as $groupname) {
 		if (in_array($groupname,$new_groups))
 			continue;
+		if (!isset($config['system']['group'][$groupindex[$groupname]]))
+			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
 		if (is_array($group['member'])) {
 			$index = array_search($user['uid'], $group['member']);

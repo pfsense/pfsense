@@ -2694,10 +2694,8 @@ function discover_pkg_rules($ruletype) {
 		return "";
 
 	$rules = "";
-	$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
+	$files = glob("/usr/local/pkg/*.inc");
 	foreach($files as $pkg_inc) {
-		if($pkg_inc == "ls: No match.")
-			continue;
 		update_filter_reload_status("Checking for {$ruletype} PF hooks in package {$pkg_inc}");
 		require_once($pkg_inc);
 		$pkg = basename($pkg_inc, ".inc");

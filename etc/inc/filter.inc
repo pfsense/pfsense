@@ -172,7 +172,7 @@ function filter_delete_states_for_down_gateways() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
-	global $time_based_rules, $filterdns;
+	global $time_based_rules, $filterdns, $aliases;
 
 	/* Use config lock to not allow recursion and config changes during this run. */
 	$filterlck = lock('config');
@@ -1093,7 +1093,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 }
 
 function filter_nat_rules_generate() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList;
+	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
 	$natrules = "nat-anchor \"natearly/*\"\n";
 
@@ -2687,7 +2687,7 @@ EOD;
 }
 
 function discover_pkg_rules($ruletype) {
-	global $config, $g;
+	global $config, $g, $aliases;
 
 	/* Bail if there is no pkg directory, or if the package files might be out of sync. */
 	if(!is_dir("/usr/local/pkg") || file_exists('/conf/needs_package_sync'))
@@ -2705,7 +2705,7 @@ function discover_pkg_rules($ruletype) {
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
 			$tmprules = $pkg_generate_rules("$ruletype");
-			file_put_contents("{$g['tmp_path']}/rules.test.packages", $tmprules);
+			file_put_contents("{$g['tmp_path']}/rules.test.packages", $aliases . $tmprules);
 			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
 			if ($status <> 0) {
 				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";

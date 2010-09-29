@@ -304,7 +304,16 @@ function typesel_change() {
 			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br>
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
-		<tr id="srctable" name="srctable">
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet"); ?></td>
+                  <td width="78%" class="vtable"> 
+                    <input name="external" type="text" class="formfldalias" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
+                    <br/>
+                    <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping."); ?><br>
+                    <?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?></span>
+			</td>
+                </tr>
+		<tr>
                         <td width="22%" valign="top" class="vncellreq"><?=gettext("Source"); ?></td>
                         <td width="78%" class="vtable">
                                 <input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
@@ -346,7 +355,7 @@ function typesel_change() {
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="src" type="text" class="formfld unknown" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 31; $i > 0; $i--): ?>
                                                         <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
@@ -356,7 +365,7 @@ function typesel_change() {
                                         </tr>
                                 </table>
 			<br/>
-                     <span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same)."); ?></span>
+                     <span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet also applies to the external subnet (they  have to be the same)."); ?></span>
 			</td>
                 </tr>
 		<tr>
@@ -375,9 +384,9 @@ function typesel_change() {
                                                         <select name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
                                                                 $sel = is_specialnet($pconfig['dst']); ?>
-                                                                <option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>><?=gettext("any"); ?></option>
+                                                                <option value="any" <?php if (empty($pconfig['dst']) || $pconfig['dst'] == "any") { echo "selected"; } ?>><?=gettext("any"); ?></option>
                                                                 <option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
-                                                                <option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
+                                                                <option value="network" <?php if (!$sel && !empty($pconfig['dst'])) echo "selected"; ?>><?=gettext("Network"); ?></option>
                                                                 <?php if(have_ruleint_access("pptp")): ?>
                                                                 <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>
                                                                 <?php endif; ?>
@@ -394,25 +403,7 @@ function typesel_change() {
                                                                         <option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected"; } ?>>
                                                                                 <?=$ifdesc;?> <?=gettext("address");?>
                                                                         </option>
-<?php							endif; endforeach; 
-							if (is_array($config['virtualip']['vip'])):
-                                                        	foreach ($config['virtualip']['vip'] as $sn):
-                                                                	if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
-                                                                        	$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-                                                                                $end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-                                                                                $len = $end - $start;
-                                                                                for ($i = 0; $i <= $len; $i++):
-                                                                                $snip = long2ip32($start+$i);
-?>
-                                                                          <option value="<?=$snip;?>" <?php if ($snip == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
-<?php                                                          endfor;
-                                                        else:
-?>
-                                                                          <option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
-<?php                                                   endif;
-						endforeach;
-						endif;
-?>
+<?php							endif; endforeach; ?>
                                                 	</select>
                                                 </td>
                                         </tr>
@@ -431,13 +422,8 @@ function typesel_change() {
                                         </tr>
                                 </table>
 			<br/>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet"); ?></td>
-                  <td width="78%" class="vtable"> 
-                    <input name="external" type="text" class="formfldalias" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
-                    <br/>
-			</td>
+                     <span class="vexpl"><?=gettext("The 1:1 mapping will only be used for connections to or from the specified destination."); ?><br>
+                     <?=gettext("Hint: this is usually 'any'."); ?></span>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
@@ -496,6 +482,7 @@ if($config['aliases']['alias'] <> "")
         var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 
         var oTextbox1 = new AutoSuggestControl(document.getElementById("external"), new StateSuggestions(addressarray));
+        var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
         var oTextbox3 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
 //-->
 </script>

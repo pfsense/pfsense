@@ -1383,6 +1383,9 @@ include("head.inc");
 	ext_change();
 	typesel_change();
 	proto_change();
+	<?php if ( (!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any") ): ?>
+	show_source_port_range();
+	<?php endif; ?>
 
 <?php
 	$isfirst = 0;

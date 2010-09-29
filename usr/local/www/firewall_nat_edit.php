@@ -178,11 +178,11 @@ if ($_POST) {
 
 	/* input validation */
 	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
-		$reqdfields = explode(" ", "interface proto dstbeginport dstendport localip");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Destination port from"),gettext("Destination port to"),gettext("NAT IP"));
+		$reqdfields = explode(" ", "interface proto dstbeginport dstendport");
+		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Destination port from"),gettext("Destination port to"));
 	} else {
-		$reqdfields = explode(" ", "interface proto localip");
-		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("NAT IP"));
+		$reqdfields = explode(" ", "interface proto");
+		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"));
 	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
@@ -192,6 +192,10 @@ if ($_POST) {
 	if ($_POST['dsttype'] == "single" || $_POST['dsttype'] == "network") {
 		$reqdfields[] = "dst";
 		$reqdfieldsn[] = gettext("Destination address");
+	}
+	if (!isset($_POST['nordr'])) {
+		$reqdfields[] = "localip";
+		$reqdfieldsn[] = gettext("Redirect target IP");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -205,8 +209,8 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if (($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
-		$input_errors[] = sprintf(gettext("\"%s\" is not valid NAT IP address or host alias."), $_POST['localip']);
+	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
+		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
 
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport']))
@@ -218,7 +222,7 @@ if ($_POST) {
 	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 
-	if ($_POST['localbeginport'] && !is_portoralias($_POST['localbeginport'])) {
+	if (!isset($_POST['nordr']) && $_POST['localbeginport'] && !is_portoralias($_POST['localbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid local port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
@@ -259,7 +263,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if (($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535)
+		if (!isset($_POST['nordr']) && ($_POST['dstendport'] - $_POST['dstbeginport'] + $_POST['localbeginport']) > 65535)
 			$input_errors[] = gettext("The target port range must be an integer between 1 and 65535.");
 	}
 
@@ -292,6 +296,11 @@ if ($_POST) {
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['nordr'] = isset($_POST['nordr']) ? true:false;
 
+		if ($natent['nordr']) {
+			$_POST['associated-rule-id'] = '';
+			$_POST['filter-rule-association'] = '';
+		}
+
 		pconfig_to_address($natent['source'], $_POST['src'],
 			$_POST['srcmask'], $_POST['srcnot'],
 			$_POST['srcbeginport'], $_POST['srcendport']);
@@ -302,8 +311,10 @@ if ($_POST) {
 
 		$natent['protocol'] = $_POST['proto'];
 
-		$natent['target'] = $_POST['localip'];
-		$natent['local-port'] = $_POST['localbeginport'];
+		if (!$natent['nordr']) {
+			$natent['target'] = $_POST['localip'];
+			$natent['local-port'] = $_POST['localbeginport'];
+		}
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['associated-rule-id'] = $_POST['associated-rule-id'];

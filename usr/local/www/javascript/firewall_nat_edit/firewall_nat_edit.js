@@ -1,6 +1,7 @@
 <!--
 var portsenabled = 1;
 var dstenabled = 1;
+var showsource = 0;
 
 function ext_change() {
 	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
@@ -58,6 +59,7 @@ function show_source() {
 
 	document.getElementById("srctable").style.display = '';
 	document.getElementById("showadvancedboxsrc").style.display = 'none';
+	showsource = 1;
 }
 
 function check_for_aliases() {
@@ -117,7 +119,7 @@ function proto_change() {
 	}
 
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
-		document.getElementById("sprtable").style.display = portsenabled == 1 ? '':'none';
+		document.getElementById("sprtable").style.display = showsource == 1 ? '':'none';
 		document.getElementById("dprtr").style.display = '';
 		document.getElementById("lprtr").style.display = '';
 	} else {

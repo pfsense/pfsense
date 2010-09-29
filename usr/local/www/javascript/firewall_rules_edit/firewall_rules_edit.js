@@ -44,10 +44,8 @@ function ext_change() {
 }
 
 function show_source_port_range() {
-	if(portsenabled) {
-		document.getElementById("sprtable").style.display = '';
-		document.getElementById("showadvancedboxspr").style.display = 'none';
-	}
+	document.getElementById("sprtable").style.display = '';
+	document.getElementById("showadvancedboxspr").style.display = 'none';
 }
 
 function typesel_change() {

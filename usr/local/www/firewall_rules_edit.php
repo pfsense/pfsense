@@ -1383,7 +1383,6 @@ include("head.inc");
 	ext_change();
 	typesel_change();
 	proto_change();
-	show_source_port_range();
 
 <?php
 	$isfirst = 0;

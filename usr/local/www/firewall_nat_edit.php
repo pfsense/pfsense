@@ -443,7 +443,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("No RDR (NOT)"); ?></td>
                   <td width="78%" class="vtable">
-                    <input type="checkbox" name="nordr"<?php if($pconfig['nordr']) echo " CHECKED"; ?>>
+                    <input type="checkbox" name="nordr" id="nordr" onClick="nordr_change();" <?php if($pconfig['nordr']) echo "CHECKED"; ?>>
                     <span class="vexpl"><?=gettext("Enabling this option will disable redirection for traffic matching this rule."); ?>
                     <br><?=gettext("Hint: this option is rarely needed, don't use this unless you know what you're doing."); ?></span>
                   </td>
@@ -709,7 +709,7 @@ include("fbegin.inc"); ?>
 				</span>
 			</td>
 		</tr>
-                <tr>
+                <tr name="localiptable" id="localiptable">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Redirect target IP"); ?></td>
                   <td width="78%" class="vtable">
                     <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
@@ -763,7 +763,7 @@ include("fbegin.inc"); ?>
 					</td>
 				</tr>
 				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>
-				<tr>
+				<tr name="assoctable" id="assoctable">
 					<td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="associated-rule-id">
@@ -794,7 +794,7 @@ include("fbegin.inc"); ?>
 				</tr>
 				<?php endif; ?>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
-                <tr>
+                <tr name="assoctable" id="assoctable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
                   <td width="78%" class="vtable">
                     <select name="filter-rule-association" id="filter-rule-association">
@@ -830,6 +830,7 @@ include("fbegin.inc"); ?>
 	<?php if ($pconfig['srcnot'] || $pconfig['src'] != "any" || $pconfig['srcbeginport'] != "any" || $pconfig['srcendport'] != "any"): ?>
 	show_source();
 	<?php endif; ?>
+	nordr_change();
 //-->
 </script>
 <?php

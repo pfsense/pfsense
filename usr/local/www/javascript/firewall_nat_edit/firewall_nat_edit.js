@@ -53,6 +53,18 @@ function ext_change() {
 	}
 }
 
+function nordr_change() {
+	if (document.iform.nordr.checked) {
+		document.getElementById("localiptable").style.display = 'none';
+		document.getElementById("lprtr").style.display = 'none';
+		document.getElementById("assoctable").style.display = 'none';
+	} else {
+		document.getElementById("localiptable").style.display = '';
+		document.getElementById("lprtr").style.display = portsenabled ? '' : 'none';
+		document.getElementById("assoctable").style.display = '';
+	}
+}
+
 function show_source() {
 	if(portsenabled)
 		document.getElementById("sprtable").style.display = '';
@@ -121,7 +133,7 @@ function proto_change() {
 	if (portsenabled) {
 		document.getElementById("sprtable").style.display = showsource == 1 ? '':'none';
 		document.getElementById("dprtr").style.display = '';
-		document.getElementById("lprtr").style.display = '';
+		document.getElementById("lprtr").style.display = document.iform.nordr.checked ? 'none' : '';
 	} else {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';

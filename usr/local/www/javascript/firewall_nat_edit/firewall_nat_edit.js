@@ -112,13 +112,13 @@ function check_for_aliases() {
 }
 
 function proto_change() {
-	if (document.iform.proto.selectedIndex < 3) {
+	if (document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
 		portsenabled = 1;
 	} else {
 		portsenabled = 0;
 	}
 
-	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
+	if (portsenabled) {
 		document.getElementById("sprtable").style.display = showsource == 1 ? '':'none';
 		document.getElementById("dprtr").style.display = '';
 		document.getElementById("lprtr").style.display = '';

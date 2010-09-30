@@ -364,14 +364,6 @@ function system_routing_configure($interface = "") {
 			}
 			log_error("ROUTING: $action default route to $gatewayip");
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
-		} else if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
-			/* Adding gateway for 1.2-style configs without the new
-		  	 * gateway setup configured.
-		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
-			 */
-			log_error("WARNING: There is no default gateway in the configuration.");
-			$gatewayip = $config['interfaces']['wan']['gateway'];
-			mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		}
 	}
 

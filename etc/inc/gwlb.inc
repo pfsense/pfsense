@@ -501,9 +501,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
         $gw = NULL;
 
         $gwcfg =& $config['interfaces'][$interface];
-        if (is_ipaddr($gwcfg['gateway']))
-                $gw = $gwcfg['gateway'];
-        else if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
+        if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
                	foreach($config['gateways']['gateway_item'] as $gateway) {
                         if ($gateway['name'] == $gwcfg['gateway']) {
                                 $gw = $gateway['gateway'];

@@ -314,8 +314,6 @@ function show_advanced_gateway() {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
 		<?php 
-			if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system")
-
 			if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") {
 				echo "<input name='interface' type='hidden' value='{$pconfig['friendlyiface']}' />";
 		  		echo "<select name='interface' class='formselect' disabled >\n";

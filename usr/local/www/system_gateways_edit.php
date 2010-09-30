@@ -193,7 +193,7 @@ if ($_POST) {
 		$save = false;
 		if (($_POST['weight'] && $_POST['weight'] > 1) ||
 		    $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic") || $_POST['monitor'])
+		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic"))
 			$save = true;
 		/* if we are processing a system gateway only save the monitorip */
 		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
@@ -202,7 +202,8 @@ if ($_POST) {
 					$interface = $pconfig['friendlyiface'];
 				else
 					$interface = $_POST['interface'];
-				$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
+				if (!empty($interface))
+					$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
 			}
 			/* when dynamic gateway is not anymore a default the entry is no more needed. */
                         if (isset($id) && $a_gateway_item[$id])
@@ -313,13 +314,9 @@ function show_advanced_gateway() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
-		<?php 
-			if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") {
-				echo "<input name='interface' type='hidden' value='{$pconfig['friendlyiface']}' />";
-		  		echo "<select name='interface' class='formselect' disabled >\n";
-			} else
-		  		echo "<select name='interface' class='formselect'>\n";
+		 	<select name='interface' class='formselect' <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
 
+		<?php 
                       	$interfaces = get_configured_interface_with_descr(false, true);
 			foreach ($interfaces as $iface => $ifacename) {
 				echo "<option value=\"{$iface}\"";
@@ -361,7 +358,7 @@ function show_advanced_gateway() {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
-				if(($pconfig['attribute'] == "system") && ($pconfig['gateway'] == "dynamic") && ($pconfig['monitor'] == "")) {
+				if(($pconfig['attribute'] == "system") && $pconfig['dynamic'] && ($pconfig['monitor'] == "")) {
 					$monitor = "";
 				} else {
 					$monitor = htmlspecialchars($pconfig['monitor']);

@@ -478,7 +478,7 @@ function lookup_gateway_monitor_ip_by_name($name) {
 		if(!is_ipaddr($gateway['monitor']))
 			return $gateway['gateway'];
 
-		return ($monitorip);
+		return $gateway['monitor'];
         }
 
         return (false);

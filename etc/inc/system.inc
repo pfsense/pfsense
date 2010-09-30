@@ -372,16 +372,15 @@ function system_routing_configure($interface = "") {
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			$gatewayip = "";
-			if (isset($gateways_arr[$rtent['gateway']])) {
-				if ($interface == $gateways_arr[$rtent['gateway']]['friendlyiface'])
-					continue;
-				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
-				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
-			} else {
+			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
 				continue;
 			}
-
+			$gateway = $gateways_arr[$rtent['gateway']];
+			if ($interface == $gateway['friendlyiface'])
+				continue;
+			$gatewayip = $gateway['gateway'];
+			$interfacegw = $gateway['interface'];
 			$action = "add";
 			if (isset($route_arr[$rtent['network']]))
 				$action = "change";

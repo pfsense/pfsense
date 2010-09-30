@@ -63,6 +63,7 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_gateways[$id]) {
+	$pconfig = array();
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
@@ -222,8 +223,6 @@ if ($_POST) {
 			$gateway['descr'] = $_POST['descr'];
 			if (is_ipaddr($_POST['monitor']))
 				$gateway['monitor'] = $_POST['monitor'];
-			else
-				unset($gateway['monitor']);
 
 			if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 				$i = 0;
@@ -233,8 +232,7 @@ if ($_POST) {
 				}
 				$gateway['defaultgw'] = true;
 				$reloadif = true;
-			} else
-				unset($gateway['defaultgw']);
+			}
 
 			if ($_POST['latencylow'])
 				$gateway['latencylow'] = $_POST['latencylow'];
@@ -315,8 +313,15 @@ function show_advanced_gateway() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
-				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
 		<?php 
+			if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system")
+
+			if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") {
+				echo "<input name='interface' type='hidden' value='{$pconfig['friendlyiface']}' />";
+		  		echo "<select name='interface' class='formselect' disabled >\n";
+			} else
+		  		echo "<select name='interface' class='formselect'>\n";
+
                       	$interfaces = get_configured_interface_with_descr(false, true);
 			foreach ($interfaces as $iface => $ifacename) {
 				echo "<option value=\"{$iface}\"";

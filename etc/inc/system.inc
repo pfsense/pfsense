@@ -373,12 +373,10 @@ function system_routing_configure($interface = "") {
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			$gatewayip = "";
 			if (isset($gateways_arr[$rtent['gateway']])) {
-				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
-				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
 				if ($interface == $gateways_arr[$rtent['gateway']]['friendlyiface'])
 					continue;
-			} else if (is_ipaddr($rtent['gateway'])) {
-				$gatewayip = $rtent['gateway'];
+				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
+				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
 			} else {
 				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
 				continue;

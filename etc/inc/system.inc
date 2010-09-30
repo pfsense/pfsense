@@ -355,7 +355,7 @@ function system_routing_configure($interface = "") {
 	}
 
 	if ($dont_add_route == false ) {
-		if (!empty($interface) && $inteface != $interafegw)
+		if (!empty($interface) && $interface != $interfacegw)
 			;
 		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 			$action = "add";

@@ -275,7 +275,7 @@ function return_gateways_array($disabled = false) {
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['gateway'] == "dynamic") {
+			if(empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway']))
@@ -331,12 +331,8 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if ($ifname == $gateway_item['friendlyiface'] || $friendly == $gateway_item['name']) {
-				if ($gateway_item['gateway'] == $gateway['gateway'])
+			if ($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])
 					continue 2;
-				if ($gateway_item['gateway'] == "dynamic")
-					continue 2;
-			}
 		}
 
 		if (is_ipaddr($gateway['gateway']))

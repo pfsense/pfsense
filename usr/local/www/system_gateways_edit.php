@@ -110,7 +110,7 @@ if ($_POST) {
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && !$_REQUEST['isAjax']) {
 		if (!empty($config['interfaces'][$_POST['interface']]['ipaddr'])) {
-			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && $_POST['gateway'] == "dynamic")
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
 				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static ip configuration.");
 		}
 		$parent_ip = get_interface_ip($_POST['interface']);
@@ -195,8 +195,8 @@ if ($_POST) {
 	if (!$input_errors) {
 		if (!(($_POST['weight'] && $_POST['weight'] > 1) || $_POST['latencylow'] || $_POST['latencyhigh'] ||
 		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] || $_POST['defaultgw'] ||
-		    ($_POST['gateway'] && $_POST['gateway'] != "dynamic") ||
-		    ($_POST['monitorip'] && $_POST['monitor'] != "dynamic"))) {
+		    (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic") ||
+		    (empty($_POST['monitor']) || $_POST['monitor'] == "dynamic"))) {
 			header("Location: system_gateways.php");
 			exit;
 		}
@@ -223,10 +223,11 @@ if ($_POST) {
 			$i = 0;
 			foreach($a_gateway_item as $gw) {
 				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+				if ($gw['interface'] != $_POST['interface'])
+					$reloadif = true;
 				$i++;
 			}
 			$gateway['defaultgw'] = true;
-			$reloadif = true;
 		}
 
 		if ($_POST['latencylow'])

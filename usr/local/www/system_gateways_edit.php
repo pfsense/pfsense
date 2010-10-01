@@ -68,7 +68,10 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
-	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
+	if ($a_gateways[$id]['gateway'] == "dynamic" || $a_gateway_item[$id]['gateway'] == "dynamic")
+		$pconfig['gateway'] = gettext("dynamic");
+	else
+		$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
         $pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];

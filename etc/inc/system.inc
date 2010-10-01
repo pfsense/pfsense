@@ -1142,7 +1142,7 @@ function system_ntp_configure() {
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $syscfg['timeservers']) as $ts)
-		fwrite($fd, sprintf(gettext("servers %s%s"), $ts, "\n"));
+		fwrite($fd, sprintf(gettext("servers %s\n"), $ts));
 
 	/* Setup listener(s) if the user has configured one */
         if ($config['installedpackages']['openntpd']) {

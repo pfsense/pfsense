@@ -999,7 +999,7 @@ function radius_backed($username, $passwd, $authcfg){
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug)
-			printf(gettext("Radius start: %s%s"), $retvalue['error'], "<br>\n");
+			printf(gettext("Radius start: %s<br>\n"), $retvalue['error']);
 	}
 
 	// XXX - billm - somewhere in here we need to handle securid challenge/response
@@ -1010,7 +1010,7 @@ function radius_backed($username, $passwd, $authcfg){
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $result->getMessage();
 		if ($debug)
-			printf(gettext("Radius send failed: %s%s"), $retvalue['error'], "<br>\n");
+			printf(gettext("Radius send failed: %s<br>\n"), $retvalue['error']);
 	} else if ($result === true) {
 		$retvalue['auth_val'] = 2;
 		if ($debug)

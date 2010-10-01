@@ -301,7 +301,7 @@ EOD;
 			}
 		}
 	
-		printf(gettext("%sThe interfaces will be assigned as follows: %s%s"), "\n", "\n", "\n");
+		echo "\n" . gettext("The interfaces will be assigned as follows:") . "\n\n";
 	
 		if ($lanif != "")
 			echo "LAN  -> " . $lanif . "\n";

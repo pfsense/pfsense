@@ -158,7 +158,7 @@ class PEAR
     {
         $classname = strtolower(get_class($this));
         if ($this->_debug) {
-            printf(gettext("PEAR constructor called, class=%s%s"), $classname, "\n");
+            printf(gettext("PEAR constructor called, class=%s\n"), $classname);
         }
         if ($error_class !== null) {
             $this->_error_class = $error_class;
@@ -195,7 +195,7 @@ class PEAR
      */
     function _PEAR() {
         if ($this->_debug) {
-            printf(gettext("PEAR destructor called, class=%s%s"), strtolower(get_class($this)), "\n");
+            printf(gettext("PEAR destructor called, class=%s\n"), strtolower(get_class($this)));
         }
     }
 

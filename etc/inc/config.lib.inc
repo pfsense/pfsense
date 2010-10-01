@@ -201,8 +201,8 @@ function restore_backup($file) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file","/cf/conf/config.xml");
-		log_error(sprintf(gettext("%1$s is restoring the configuration %2$s"), $g['product_name'], $file));
-		file_notice("config.xml", sprintf(gettext("%1$s is restoring the configuration %2$s"), $g['product_name'], $file), "pfSenseConfigurator", "");
+		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
+		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
 		conf_mount_ro();
 	}
 }
@@ -404,7 +404,7 @@ function convert_config() {
 	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 
 	if ($prev_version != $config['version'])
-		write_config(sprintf(gettext("Upgraded config version level from %1$s to %2$s"), $prev_version, $config['version']));
+		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
 
 	if($g['booting'])
 		echo gettext("Loading new configuration...");
@@ -640,7 +640,7 @@ function config_validate($conffile) {
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			$xmlerr = sprintf(gettext("%1$s at line %2$d"),
+			$xmlerr = sprintf(gettext('%1$s at line %2$d'),
 						xml_error_string(xml_get_error_code($xml_parser)),
 						xml_get_current_line_number($xml_parser));
 			return false;

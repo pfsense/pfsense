@@ -839,7 +839,7 @@ EOD;
 							if(is_ipaddr($gatewayip)) {
 								/* FIXME: does adding route-to and reply-to on the in/outbound
 								 * rules fix this? smos@ 13-01-2009 */
-								log_error(sprintf(gettext("IPSEC interface is not WAN but %1$s, adding static route for VPN endpoint %2$s via %3$s"), $parentinterface, $rgip, $gatewayip));
+								log_error(sprintf(gettext('IPSEC interface is not WAN but %1$s, adding static route for VPN endpoint %2$s via %3$s'), $parentinterface, $rgip, $gatewayip));
 								mwexec("/sbin/route delete -host {$rgip}");
 								mwexec("/sbin/route add -host {$rgip} {$gatewayip}");
 							}
@@ -1650,10 +1650,10 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	}
 
 	if((!is_ipaddr($old_ep)) || (! is_ipaddr($ep))) {
-		log_error(sprintf(gettext("IPSEC: ERROR: One of the endpoints is not a IP address. Old EP '%1$s' new EP '%2$s'"), $old_ep, $ep));
+		log_error(sprintf(gettext("IPSEC: ERROR: One of the endpoints is not a IP address. Old EP '%1\$s' new EP '%2\$s'"), $old_ep, $ep));
 	}
 	if((! is_ipaddr($rgip)) || (! is_ipaddr($old_gw))) {
-		log_error(sprintf(gettext("IPSEC: ERROR: One of the remote endpoints is not a IP address. Old RG '%1$s' new RG '%2$s'"), $old_gw, $rgip));
+		log_error(sprintf(gettext("IPSEC: ERROR: One of the remote endpoints is not a IP address. Old RG '%1\$s' new RG '%2\$s'"), $old_gw, $rgip));
 	}
 
 	$spdconf = "";
@@ -1699,7 +1699,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error(sprintf(gettext("Reloading IPsec tunnel '%1$s'. Previous IP '%2$s', current IP '%3$s'. Reloading policy"), $phase1['descr'], $old_gw, $rgip));
+	log_error(sprintf(gettext("Reloading IPsec tunnel '%1\$s'. Previous IP '%2\$s', current IP '%3\$s'. Reloading policy"), $phase1['descr'], $old_gw, $rgip));
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");

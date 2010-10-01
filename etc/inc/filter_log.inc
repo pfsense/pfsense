@@ -203,7 +203,7 @@ function get_port_with_service($port, $proto) {
 	$service = getservbyport($port, $proto);
 	$portstr = "";
 	if ($service) {
-		$portstr = sprintf(gettext("<span title=\"Service %1$s/%2$s: %3$s\">%4$s</span>"), $port, $proto, $service, htmlspecialchars($port));
+		$portstr = sprintf('<span title="' . gettext('Service %1$s/%2$s: %3$s') . '">' . htmlspecialchars($port) . '</span>', $port, $proto, $service);
 	} else {
 		$portstr = htmlspecialchars($port);
 	}

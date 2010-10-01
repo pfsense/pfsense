@@ -303,7 +303,7 @@ function XML_RPC_se($parser_resource, $name, $attrs)
         if (!in_array($XML_RPC_xh[$parser]['stack'][0], $XML_RPC_valid_parents[$name])) {
             $name = $GLOBALS['XML_RPC_func_ereg_replace']('[^a-zA-Z0-9._-]', '', $name);
             $XML_RPC_xh[$parser]['isf'] = 2;
-            $XML_RPC_xh[$parser]['isf_reason'] = sprintf(gettext("xmlrpc element %1$s cannot be child of %2$s"), $name, $XML_RPC_xh[$parser]['stack'][0]);
+            $XML_RPC_xh[$parser]['isf_reason'] = sprintf(gettext('xmlrpc element %1$s cannot be child of %2$s'), $name, $XML_RPC_xh[$parser]['stack'][0]);
             return;
         }
     }

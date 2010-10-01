@@ -362,7 +362,7 @@ function system_routing_configure($interface = "") {
 			if(isset($route_arr['default'])) {
 				$action = "change";
 			}
-			log_error(sprintf(gettext("ROUTING: %1$s default route to %2$s"), $action, $gatewayip));
+			log_error(sprintf(gettext('ROUTING: %1$s default route to %2$s'), $action, $gatewayip));
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
 		}
 	}

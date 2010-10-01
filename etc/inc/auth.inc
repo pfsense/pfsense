@@ -930,7 +930,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
 		/* Make sure we just use the first user we find */
-		log_error(sprintf(gettext("Now Searching in server %1$s, container %2$s with filter %3$s."), $ldapname, $ldac_split, $ldapfilter));
+		log_error(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
 		if ($ldapscope == "one")
 			$ldapfunc = "ldap_list";
 		else
@@ -963,12 +963,12 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		log_error(sprintf(gettext("ERROR! Could not login to server %1$s as user %2$s."), $ldapname, $username));
+		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s.'), $ldapname, $username));
 		@ldap_unbind($ldap);
 		return false;
 	}
 
-	log_error(sprintf(gettext("Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."), $username, $ldapname, $userdn));
+	log_error(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);
@@ -1147,7 +1147,7 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
-			log_error(sprintf(gettext("Successful login for user '%1$s' from: %2$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
@@ -1160,7 +1160,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			log_error(sprintf(gettext("Login attempt with user: '%1$s' from: '%2$s' failed."), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("Login attempt with user: '%1\$s' from: '%2\$s' failed."), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			if(isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;
@@ -1200,9 +1200,9 @@ function session_auth() {
 	if (isset($_GET['logout'])) {
 
 		if ($_SESSION['Logout'])
-			log_error(sprintf(gettext("Session timed out for user '%1$s' from: %2$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
 		else
-			log_error(sprintf(gettext("User logged out for user '%1$s' from: %2$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
+			log_error(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
 
 		/* wipe out $_SESSION */
 		$_SESSION = array();

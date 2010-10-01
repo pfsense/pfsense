@@ -88,7 +88,7 @@ function display_error_form($http_code, $desc) {
 	global $config, $g;
 	$g['theme'] = $config['theme'];
 	if(isAjax()) {
-		printf(gettext("Error: %1$s Description: %2$s"), $http_code, $desc);
+		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
 	}
 

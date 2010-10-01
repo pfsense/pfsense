@@ -75,7 +75,7 @@ function startElement_attr($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext("XML error: %1$s at line %2$d cannot occur more than once") . "\n",
+		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 				$name,
 				xml_get_current_line_number($parser)));
 	} else if (isset($writeattrs)) {
@@ -194,7 +194,7 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isst
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf(gettext("XML error: %1$s at line %2$d") . "\n",
+			log_error(sprintf(gettext('XML error: %1$s at line %2$d') . "\n",
 						xml_error_string(xml_get_error_code($xml_parser)),
 						xml_get_current_line_number($xml_parser)));
 			if (isset($parsed_attributes)) {

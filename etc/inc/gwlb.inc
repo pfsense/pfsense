@@ -339,11 +339,7 @@ function return_gateways_array($disabled = false) {
 			}
 		}
 
-		/* retrieve a proper monitor IP? */
-		$ifcfg =& $config['interfaces'][$ifname];
-		if (is_ipaddr($ifcfg['monitorip']))
-			$gateway['monitor'] = $ifcfg['monitorip'];
-		else
+		if (is_ipaddr($gateway['gateway']))
 			$gateway['monitor'] = $gateway['gateway'];
 
 		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";

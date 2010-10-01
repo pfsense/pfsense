@@ -200,14 +200,6 @@ if ($_POST) {
 			$save = true;
 		/* if we are processing a system gateway only save the monitorip */
 		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
-			if (is_ipaddr($_POST['monitor'])) {
-				if (empty($_POST['interface']))
-					$interface = $pconfig['friendlyiface'];
-				else
-					$interface = $_POST['interface'];
-				if (!empty($interface))
-					$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
-			}
 			/* when dynamic gateway is not anymore a default the entry is no more needed. */
                         if (isset($id) && $a_gateway_item[$id])
                                 unset($a_gateway_item[$id]);

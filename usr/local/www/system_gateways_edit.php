@@ -194,9 +194,13 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		if (!(($_POST['weight'] && $_POST['weight'] > 1) || $_POST['latencylow'] || $_POST['latencyhigh'] ||
-		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] || $_POST['defaultgw'] ||
-		    (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic") ||
-		    (empty($_POST['monitor']) || $_POST['monitor'] == "dynamic"))) {
+		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
+		    ($_POST['defaultgw'] && !$pconfig['defaultgw']) || (!$_POST['defaultgw'] && $pconfig['defaultgw']) ||
+		    (empty($_POST['monitor']) || (!empty($_POST['gateway']) && $_POST['gateway'] != "dynamic")) ||
+		    (empty($_POST['monitor']) || (!empty($_POST['monitor']) && $_POST['monitor'] != "dynamic")))) {
+			if (isset($id) && $a_gateway_item[$id])
+				unset($a_gateway_item[$id]);
+			write_config();
 			header("Location: system_gateways.php");
 			exit;
 		}

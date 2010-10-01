@@ -313,6 +313,10 @@ function return_gateways_array($disabled = false) {
 		if(! interface_has_gateway($ifname))
 			continue;
 
+		$ifcfg =& $config['interfaces'][$ifname]['ipaddr'];
+		if (!empty($ifcfg['ipaddr']) && is_ipaddr($ifcfg['ipaddr']))
+			continue;
+
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);

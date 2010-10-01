@@ -126,7 +126,7 @@ include("head.inc");
 	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 ?>
 
-<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
@@ -145,13 +145,16 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td>
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<thead>
 				<tr>
-					<td class="listhdrr" width="10%"><?=gettext("Proto");?></td>
-					<td class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></td>
-					<td class="listhdr" width="24%"><?=gettext("State");?></td>
-					<td class="list sort_ignore" width="1%"></td>
+					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
+					<th class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></th>
+					<th class="listhdr" width="24%"><?=gettext("State");?></th>
+					<th class="list sort_ignore" width="1%"></th>
 				</tr>
+				</thead>
+				<tbody>
 <?php
 $row = 0;
 if(count($states) > 0) {
@@ -194,6 +197,7 @@ else {
 		  </tr>";
 }
 ?>
+			</tbody>
 			</table>
 		</td>
 	</tr>

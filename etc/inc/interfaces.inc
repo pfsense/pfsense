@@ -2499,9 +2499,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			} else if (substr($realif, 0, 4) == "ovpn") {
 				/* XXX: Should be done anything?! */
 			}
-
-			if (is_ipaddr($wancfg['gateway']))
-				file_put_contents("{$g['tmp_path']}/{$realif}_router", $wancfg['gateway']);
 			break;
 	}
 

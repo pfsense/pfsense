@@ -182,15 +182,9 @@ include("head.inc");
 			<select name="gateway" id="gateway" class="formselect">
 			<?php
 				foreach ($a_gateways as $gateway) {
-					if ($gateway['attribute'] == "system") {
-	                      			echo "<option value='{$gateway['friendlyiface']}' ";
-						if ($gateway['friendlyiface'] == $pconfig['gateway'])
-							echo "selected";
-					} else {
-	                      			echo "<option value='{$gateway['name']}' ";
-						if ($gateway['name'] == $pconfig['gateway'])
-							echo "selected";
-					}
+	                      		echo "<option value='{$gateway['name']}' ";
+					if ($gateway['name'] == $pconfig['gateway'])
+						echo "selected";
 	                      		echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
 				}
 			?>

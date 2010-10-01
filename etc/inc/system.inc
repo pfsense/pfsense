@@ -355,7 +355,7 @@ function system_routing_configure($interface = "") {
 	}
 
 	if ($dont_add_route == false ) {
-		if (!empty($interface) && $inteface != $interafegw)
+		if (!empty($interface) && $interface != $interfacegw)
 			;
 		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 			$action = "add";
@@ -364,14 +364,6 @@ function system_routing_configure($interface = "") {
 			}
 			log_error(sprintf(gettext("ROUTING: %1$s default route to %2$s"), $action, $gatewayip));
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
-		} else if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
-			/* Adding gateway for 1.2-style configs without the new
-		  	 * gateway setup configured.
-		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
-			 */
-			log_error(gettext("WARNING: There is no default gateway in the configuration."));
-			$gatewayip = $config['interfaces']['wan']['gateway'];
-			mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		}
 	}
 
@@ -380,18 +372,15 @@ function system_routing_configure($interface = "") {
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			$gatewayip = "";
-			if (isset($gateways_arr[$rtent['gateway']])) {
-				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
-				$interfacegw = $gateways_arr[$rtent['gateway']]['interface'];
-				if ($interface == $gateways_arr[$rtent['gateway']]['friendlyiface'])
-					continue;
-			} else if (is_ipaddr($rtent['gateway'])) {
-				$gatewayip = $rtent['gateway'];
-			} else {
+			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;
 			}
-
+			$gateway = $gateways_arr[$rtent['gateway']];
+			if ($interface == $gateway['friendlyiface'])
+				continue;
+			$gatewayip = $gateway['gateway'];
+			$interfacegw = $gateway['interface'];
 			$action = "add";
 			if (isset($route_arr[$rtent['network']]))
 				$action = "change";

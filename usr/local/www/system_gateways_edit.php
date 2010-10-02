@@ -197,6 +197,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		if (!(($_POST['weight'] && $_POST['weight'] > 1) || $_POST['latencylow'] || $_POST['latencyhigh'] ||
 		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
+		    ($_POST['defaultgw'] && !$pconfig['defaultgw']) || (!$_POST['defaultgw'] && $pconfig['defaultgw']) ||
 		    (empty($_POST['monitor']) || (!empty($_POST['gateway']) && $_POST['gateway'] != "dynamic")) ||
 		    (empty($_POST['monitor']) || (!empty($_POST['monitor']) && $_POST['monitor'] != "dynamic")))) {
 			if (isset($id) && $a_gateway_item[$id])
@@ -225,15 +226,11 @@ if ($_POST) {
 			$gateway['monitor'] = $_POST['monitor'];
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
-			$reloadif = true;
 			$i = 0;
-			foreach($a_gateway_item as $gw_item_id => $gw) {
+			foreach($a_gateway_item as $gw) {
 				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-				/* if true $gw is the *saved* gateway config data and 
-				* we don't need to reload if this GW interface didn't change AND this GW was already default */
-				if (isset($id) && $gw_item_id == $id) 
-					if ($gw['interface'] == $_POST['interface'] && isset($gw['defaultgw']) )
-						$reloadif = false;
+				if ($gw['interface'] != $_POST['interface'])
+					$reloadif = true;
 				$i++;
 			}
 			$gateway['defaultgw'] = true;

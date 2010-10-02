@@ -208,7 +208,7 @@ if ($_POST) {
 		}
 
 
-		$reloadif = false;
+		$reloadif = "";
 		$gateway = array();
 
 		if (empty($_POST['interface']))
@@ -229,8 +229,8 @@ if ($_POST) {
 			$i = 0;
 			foreach($a_gateway_item as $gw) {
 				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-				if ($gw['interface'] != $_POST['interface'])
-					$reloadif = true;
+				if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+					$reloadif = $gw['interface'];
 				$i++;
 			}
 			$gateway['defaultgw'] = true;
@@ -260,8 +260,8 @@ if ($_POST) {
 		if($_REQUEST['isAjax']) {
 			echo $_POST['name'];
 			exit;
-		} else if ($reloadif == true)
-			send_event("interface reconfigure {$_POST['interface']}");
+		} else if (!empty($reloadif))
+			send_event("interface reconfigure {$reloadif}");
 		
 		header("Location: system_gateways.php");
 		exit;

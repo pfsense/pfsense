@@ -375,7 +375,8 @@ function return_gateway_groups_array() {
 				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
-				if (!empty($gateway_status[$gwname])) {
+				if (!empty($gateways_status[$gwname])) {
+					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
 						$msg = "MONITOR: {$gwname} has high latency, removing from routing group";

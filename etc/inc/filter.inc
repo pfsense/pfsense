@@ -1328,9 +1328,9 @@ function filter_nat_rules_generate() {
 		/* XXX: FIX ME!	 IPV6 */
 		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
+
 	if(file_exists("/var/etc/inetd.conf"))
-		mwexec("rm /var/etc/inetd.conf");
-	touch("/var/etc/inetd.conf");
+		@unlink("/var/etc/inetd.conf");
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */

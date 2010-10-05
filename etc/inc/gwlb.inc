@@ -267,7 +267,7 @@ function return_gateways_status($byname = false) {
 
 /* Return all configured gateways on the system */
 function return_gateways_array($disabled = false) {
-	global $config;
+	global $config, $g;
 
 	$gateways_arr = array();
 

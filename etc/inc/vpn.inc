@@ -390,6 +390,9 @@ function vpn_ipsec_configure($ipchg = false)
 					$racoonconf .= "\tbanner \"{$fn}\";\n";
 				}
 
+				if (isset($a_client['save_passwd']))
+					$racoonconf .= "\tsave_passwd on;\n";
+
 				$racoonconf .= "}\n\n";
 			}
 			/* end mode_cfg section */

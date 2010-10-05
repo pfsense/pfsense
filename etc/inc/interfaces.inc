@@ -3238,7 +3238,7 @@ function interface_has_gateway($friendly) {
 	if (!empty($config['interfaces'][$friendly])) {
 		if (substr($friendly, 0, 5) ==  "ovpnc")
 			return true;
-		$ifname = $config['interfaces'][$friendly];
+		$ifname = &$config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "carpdev-dhcp":

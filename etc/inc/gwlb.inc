@@ -512,11 +512,12 @@ function get_interface_gateway($interface, &$dynamic = false) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
-			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
-				$dynamic = "default";
-			else
-				$dynamic = true;
+					$dynamic = true;
                 }
+                if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
+					$dynamic = "default";
+			
+				
         }
 
         /* return gateway */

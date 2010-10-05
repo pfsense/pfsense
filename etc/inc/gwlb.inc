@@ -267,7 +267,7 @@ function return_gateways_status($byname = false) {
 
 /* Return all configured gateways on the system */
 function return_gateways_array($disabled = false) {
-	global $config;
+	global $config, $g;
 
 	$gateways_arr = array();
 
@@ -275,7 +275,7 @@ function return_gateways_array($disabled = false) {
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['gateway'] == "dynamic") {
+			if(empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway']))
@@ -313,6 +313,10 @@ function return_gateways_array($disabled = false) {
 		if(! interface_has_gateway($ifname))
 			continue;
 
+		$ifcfg =& $config['interfaces'][$ifname];
+		if (!empty($ifcfg['ipaddr']) && is_ipaddr($ifcfg['ipaddr']))
+			continue;
+
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
@@ -331,12 +335,8 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if ($ifname == $gateway_item['friendlyiface'] || $friendly == $gateway_item['name']) {
-				if ($gateway_item['gateway'] == $gateway['gateway'])
+			if ($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])
 					continue 2;
-				if ($gateway_item['gateway'] == "dynamic")
-					continue 2;
-			}
 		}
 
 		if (is_ipaddr($gateway['gateway']))
@@ -375,7 +375,8 @@ function return_gateway_groups_array() {
 				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
-				if (!empty($gateway_status[$gwname])) {
+				if (!empty($gateways_status[$gwname])) {
+					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
 						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
@@ -511,11 +512,12 @@ function get_interface_gateway($interface, &$dynamic = false) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
-			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
-				$dynamic = "default";
-			else
-				$dynamic = true;
+					$dynamic = true;
                 }
+                if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
+					$dynamic = "default";
+			
+				
         }
 
         /* return gateway */

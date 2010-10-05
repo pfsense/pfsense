@@ -56,8 +56,8 @@ if ($_POST) {
 		}
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
-			if (file_exists($d_l2tpuserdirty_path))
-				unlink($d_l2tpuserdirty_path);
+			if (is_subsystem_dirty('l2tpusers'))
+				clear_subsystem_dirty('l2tpusers');
 		}
 	}
 }
@@ -66,7 +66,7 @@ if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {
 		unset($a_secret[$_GET['id']]);
 		write_config();
-		touch($d_l2tpuserdirty_path);
+		mark_subsystem_dirty('l2tpusers');
 		pfSenseHeader("vpn_l2tp_users.php");
 		exit;
 	}
@@ -82,7 +82,7 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['l2tp']['radius']['enable']))
 	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used.")); ?>
-<?php if (file_exists($d_l2tpuserdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('l2tpusers')): ?><p>
 <?php print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>");?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

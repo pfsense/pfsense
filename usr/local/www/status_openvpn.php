@@ -85,9 +85,9 @@ function kill_client($port, $remipp) {
 				break;
 
 			/* parse header list line */
-			if (strpos($line, "INFO:"))
+			if (strpos($line, "INFO:") !== false)
 				continue;
-			if (strpos($line, "SUCCESS")) {
+			if (strpos($line, "SUCCESS") !== false) {
 				$killed = 0;
 			}
 			break;
@@ -160,7 +160,7 @@ include("head.inc"); ?>
 			</tr>
 
 			<?php foreach ($server['conns'] as $conn): ?>
-			<tr name='<?php echo "r:{$server['port']}:{$conn['remote_host']}"; ?>'>
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
 				<td class="listlr">
 					<?=$conn['common_name'];?>
 				</td>
@@ -182,8 +182,8 @@ include("head.inc"); ?>
 				<td class='list'>
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
 					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
-					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
-					   title='<?=gettext("Kill client connection from"); ?> <?php echo $conn['remote_host']; ?>' alt='' />
+					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
+					   title='<?php echo gettext("Kill client connection from") . ' ' . $conn['remote_host']; ?>' alt='' />
 				</td>
 			</tr>
 

@@ -107,6 +107,7 @@ if ($_POST) {
 
 		write_config();
 
+		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
 		exit;		
 	}

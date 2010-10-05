@@ -564,6 +564,8 @@ auth.info;authpriv.info;daemon.info				 @{$syslogcfg['remoteserver']}
 
 EOD;
 
+}
+
 		if (isset($syslogcfg['system'])) {
 			if($syslogcfg['remoteserver2'])
 				$syslogconf .= <<<EOD
@@ -574,6 +576,8 @@ auth.info;authpriv.info;daemon.info				 @{$syslogcfg['remoteserver2']}
 *.emerg											 @{$syslogcfg['remoteserver2']}
 
 EOD;
+
+}
 
 		if (isset($syslogcfg['system'])) {
 			if($syslogcfg['remoteserver3'])
@@ -594,14 +598,12 @@ EOD;
 
 EOD;
 
-}
 			if($syslogcfg['remoteserver2'])
 				$syslogconf .= <<<EOD
 *.*								@{$syslogcfg['remoteserver2']}
 
 EOD;
 
-}
 			if($syslogcfg['remoteserver3'])
 				$syslogconf .= <<<EOD
 *.*								@{$syslogcfg['remoteserver3']}

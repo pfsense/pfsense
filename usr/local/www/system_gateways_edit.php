@@ -68,18 +68,15 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
-	if ($a_gateways[$id]['gateway'] == "dynamic" || $a_gateway_item[$id]['gateway'] == "dynamic")
-		$pconfig['gateway'] = gettext("dynamic");
-	else
-		$pconfig['gateway'] = $a_gateways[$id]['gateway'];
+	if (isset($a_gateways[$id]['dynamic']))
+		$pconfig['dynamic'] = true;
+	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
         $pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
         $pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
         $pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
         $pconfig['down'] = $a_gateway_item[$id]['down'];
-	if (isset($a_gateways[$id]['dynamic']))
-		$pconfig['dynamic'] = true;
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
@@ -95,8 +92,8 @@ if ($_POST) {
 	unset($input_errors);
 
 	/* input validation */
-	$reqdfields = explode(" ", "name");
-	$reqdfieldsn = array(gettext("Name"));
+	$reqdfields = explode(" ", "name interface");
+	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -111,7 +108,11 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
-	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system") && !$_REQUEST['isAjax']) {
+	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && !$_REQUEST['isAjax']) {
+		if (!empty($config['interfaces'][$_POST['interface']]['ipaddr'])) {
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
+				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static ip configuration.");
+		}
 		$parent_ip = get_interface_ip($_POST['interface']);
 		if (is_ipaddr($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
@@ -128,6 +129,8 @@ if ($_POST) {
 		/* check for overlaps */
 		foreach ($a_gateways as $gateway) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
+				if ($gateway['name'] != $_POST['name'])
+					$input_errors[] = gettext("Changing name on a gateway is not allowed because it can leave stale gateways around.");
 				continue;
 			}
 			if($_POST['name'] <> "") {
@@ -192,70 +195,73 @@ if ($_POST) {
         }
 
 	if (!$input_errors) {
-		$reloadif = false;
-		$save = false;
-		if (($_POST['weight'] && $_POST['weight'] > 1) ||
-		    $_POST['latencylow'] || $_POST['latencyhigh'] || $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'] || ($_POST['gateway'] && $_POST['gateway'] != "dynamic"))
-			$save = true;
-		/* if we are processing a system gateway only save the monitorip */
-		if (!$save && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic")) {
-			/* when dynamic gateway is not anymore a default the entry is no more needed. */
-                        if (isset($id) && $a_gateway_item[$id])
-                                unset($a_gateway_item[$id]);
-		} else {
-
-			/* Manual gateways are handled differently */
-			/* rebuild the array with the manual entries only */
-
-			$gateway = array();
-			$gateway['interface'] = $_POST['interface'];
-			if (is_ipaddr($_POST['gateway']))
-				$gateway['gateway'] = $_POST['gateway'];
-			else
-				$gateway['gateway'] = "dynamic";
-			$gateway['name'] = $_POST['name'];
-			$gateway['weight'] = $_POST['weight'];
-			$gateway['descr'] = $_POST['descr'];
-			if (is_ipaddr($_POST['monitor']))
-				$gateway['monitor'] = $_POST['monitor'];
-
-			if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
-				$i = 0;
-				foreach($a_gateway_item as $gw) {
-					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-					$i++;
-				}
-				$gateway['defaultgw'] = true;
-				$reloadif = true;
-			}
-
-			if ($_POST['latencylow'])
-				$gateway['latencylow'] = $_POST['latencylow'];
-			if ($_POST['latencyhigh'])
-                		$gateway['latencyhigh'] = $_POST['latencyhigh'];
-			if ($_POST['losslow'])
-               			$gateway['losslow'] = $_POST['losslow'];
-			if ($_POST['losshigh'])
-                		$gateway['losshigh'] = $_POST['losshigh'];
-			if ($_POST['down'])
-                		$gateway['down'] = $_POST['down'];
-
-			/* when saving the manual gateway we use the attribute which has the corresponding id */
+		if (!(($_POST['weight'] && $_POST['weight'] > 1) || $_POST['latencylow'] || $_POST['latencyhigh'] ||
+		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
+		    ($_POST['defaultgw'] && !$pconfig['defaultgw']) || (!$_POST['defaultgw'] && $pconfig['defaultgw']) ||
+		    (empty($_POST['monitor']) || (!empty($_POST['gateway']) && $_POST['gateway'] != "dynamic")) ||
+		    (empty($_POST['monitor']) || (!empty($_POST['monitor']) && $_POST['monitor'] != "dynamic")))) {
 			if (isset($id) && $a_gateway_item[$id])
-				$a_gateway_item[$id] = $gateway;
-			else
-				$a_gateway_item[] = $gateway;
+				unset($a_gateway_item[$id]);
+			write_config();
+			header("Location: system_gateways.php");
+			exit;
 		}
+
+
+		$reloadif = "";
+		$gateway = array();
+
+		if (empty($_POST['interface']))
+			$gateway['interface'] = $pconfig['friendlyiface'];
+		else
+			$gateway['interface'] = $_POST['interface'];
+		if (is_ipaddr($_POST['gateway']))
+			$gateway['gateway'] = $_POST['gateway'];
+		else
+			$gateway['gateway'] = "dynamic";
+		$gateway['name'] = $_POST['name'];
+		$gateway['weight'] = $_POST['weight'];
+		$gateway['descr'] = $_POST['descr'];
+		if (is_ipaddr($_POST['monitor']))
+			$gateway['monitor'] = $_POST['monitor'];
+
+		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
+			$i = 0;
+			foreach($a_gateway_item as $gw) {
+				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+				if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+					$reloadif = $gw['interface'];
+				$i++;
+			}
+			$gateway['defaultgw'] = true;
+		}
+
+		if ($_POST['latencylow'])
+			$gateway['latencylow'] = $_POST['latencylow'];
+		if ($_POST['latencyhigh'])
+               		$gateway['latencyhigh'] = $_POST['latencyhigh'];
+		if ($_POST['losslow'])
+              			$gateway['losslow'] = $_POST['losslow'];
+		if ($_POST['losshigh'])
+               		$gateway['losshigh'] = $_POST['losshigh'];
+		if ($_POST['down'])
+               		$gateway['down'] = $_POST['down'];
+
+		/* when saving the manual gateway we use the attribute which has the corresponding id */
+		if (isset($id) && $a_gateway_item[$id])
+			$a_gateway_item[$id] = $gateway;
+		else
+			$a_gateway_item[] = $gateway;
+
 		mark_subsystem_dirty('staticroutes');
-		
+	
 		write_config();
-		
+
 		if($_REQUEST['isAjax']) {
 			echo $_POST['name'];
 			exit;
-		} else if ($reloadif == true)
-			send_event("interface reconfigure {$_POST['interface']}");
+		} else if (!empty($reloadif))
+			send_event("interface reconfigure {$reloadif}");
 		
 		header("Location: system_gateways.php");
 		exit;
@@ -277,15 +283,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
-function enable_change(obj) {
-	if (document.iform.gateway.disabled) {
-		if (obj.checked)
-			document.iform.interface.disabled=false;
-		else
-			document.iform.interface.disabled=true;
-	}	
-	
-}
 function show_advanced_gateway() {
         document.getElementById("showadvgatewaybox").innerHTML='';
         aodiv = document.getElementById('showgatewayadv');
@@ -309,7 +306,7 @@ function show_advanced_gateway() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
-		 	<select name='interface' class='formselect' <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
+		 	<select name='interface' class='formselect' >
 
 		<?php 
                       	$interfaces = get_configured_interface_with_descr(false, true);
@@ -338,13 +335,13 @@ function show_advanced_gateway() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] && $pconfig['attribute'] == "system") echo "disabled"; ?>>
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
                     <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Default Gateway"); ?></td>
 		  <td width="78%" class="vtable">
-			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> onclick="enable_change(this)" />
+			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> />
 			<strong><?=gettext("Default Gateway"); ?></strong><br />
 			<?=gettext("This will select the above gateway as the default gateway"); ?>
 		  </td>
@@ -353,11 +350,10 @@ function show_advanced_gateway() {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
-				if(($pconfig['attribute'] == "system") && $pconfig['dynamic'] && ($pconfig['monitor'] == "")) {
+				if ($pconfig['gateway'] == $pconfig['monitor'])
 					$monitor = "";
-				} else {
+				else
 					$monitor = htmlspecialchars($pconfig['monitor']);
-				}
 			?>
 			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />

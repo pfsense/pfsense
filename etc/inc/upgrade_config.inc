@@ -767,6 +767,7 @@ function upgrade_042_to_043() {
 		if(! interface_has_gateway($ifname)) {
 			continue;
 		}
+		$config['gateways']['gateway_item'][$i] = array();
 		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
 			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
 			$config['gateways']['gateway_item'][$i]['descr'] = sprintf(gettext("Interface %s Static Gateway"), $ifname);

@@ -2706,7 +2706,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
         }
 
         /* XXX: For speed reasons reference directly the interface array */
-	$ifdescrs = $config['interfaces'];
+	$ifdescrs = &$config['interfaces'];
         //$ifdescrs = get_configured_interface_list(false, true);
 
         foreach ($ifdescrs as $if => $ifname) {

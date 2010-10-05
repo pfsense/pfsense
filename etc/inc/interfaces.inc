@@ -2706,7 +2706,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
         }
 
         /* XXX: For speed reasons reference directly the interface array */
-	$ifdescrs =& $config['interfaces'];
+	$ifdescrs = $config['interfaces'];
         //$ifdescrs = get_configured_interface_list(false, true);
 
         foreach ($ifdescrs as $if => $ifname) {
@@ -2851,7 +2851,7 @@ function get_real_interface($interface = "wan") {
 		if (empty($config['interfaces'][$interface]))
 			break;
 
-		$cfg =& $config['interfaces'][$interface];
+		$cfg = $config['interfaces'][$interface];
 
 		// Wireless cloned NIC support (FreeBSD 8+)
 		// interface name format: $parentnic_wlanparentnic#
@@ -3238,7 +3238,7 @@ function interface_has_gateway($friendly) {
 	if (!empty($config['interfaces'][$friendly])) {
 		if (substr($friendly, 0, 5) ==  "ovpnc")
 			return true;
-		$ifname =& $config['interfaces'][$friendly];
+		$ifname = $config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "carpdev-dhcp":

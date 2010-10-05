@@ -313,7 +313,7 @@ function return_gateways_array($disabled = false) {
 		if(! interface_has_gateway($ifname))
 			continue;
 
-		$ifcfg =& $config['interfaces'][$ifname];
+		$ifcfg = $config['interfaces'][$ifname];
 		if (!empty($ifcfg['ipaddr']) && is_ipaddr($ifcfg['ipaddr']))
 			continue;
 
@@ -497,7 +497,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 
         $gw = NULL;
 
-        $gwcfg =& $config['interfaces'][$interface];
+        $gwcfg = $config['interfaces'][$interface];
         if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
                	foreach($config['gateways']['gateway_item'] as $gateway) {
                         if ($gateway['name'] == $gwcfg['gateway']) {

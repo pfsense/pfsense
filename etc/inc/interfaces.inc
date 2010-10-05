@@ -2851,7 +2851,7 @@ function get_real_interface($interface = "wan") {
 		if (empty($config['interfaces'][$interface]))
 			break;
 
-		$cfg = $config['interfaces'][$interface];
+		$cfg = &$config['interfaces'][$interface];
 
 		// Wireless cloned NIC support (FreeBSD 8+)
 		// interface name format: $parentnic_wlanparentnic#

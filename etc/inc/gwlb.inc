@@ -338,7 +338,8 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if ($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])
+			if (($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) ||
+				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true))
 					continue 2;
 		}
 

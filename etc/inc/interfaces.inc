@@ -1041,7 +1041,7 @@ function interface_ppps_configure($interface) {
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
 		mwexec("/bin/ln -s /usr/local/sbin/mpd.script {$g['varetc_path']}/.");
 		
-	$ifcfg = &$config['interfaces'][$interface];
+	$ifcfg = $config['interfaces'][$interface];
 	if (!isset($ifcfg['enable']))
 		return 0;
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {

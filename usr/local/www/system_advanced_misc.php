@@ -210,7 +210,7 @@ function maxmss_checked(obj) {
 								     "Adaptive mode attempts to strike a balance by degrading performance when " .
 								     "the system appears idle and increasing it when the system is busy.  It " .
 								     "offers a good balance between a small performance loss for greatly " .
-								     "increased power savings.  The default mode for pfSense is adaptive."); ?>
+								     "increased power savings.  The default mode for {$g['product_name']} is adaptive."); ?>
 								</td>
 							</tr>
 							<tr>

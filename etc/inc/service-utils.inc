@@ -87,7 +87,7 @@ function start_service($name) {
 	sleep(2);
 
 	if(file_exists("{$rcfileprefix}{$name}.sh")) {
-		exec("/bin/sh {$rcfileprefix}{$name}.sh start");
+		mwexec_bg("/bin/sh {$rcfileprefix}{$name}.sh start");
 		return;
 	}
 	if($config['installedpackages']['service']) {

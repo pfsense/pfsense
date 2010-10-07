@@ -37,9 +37,7 @@ function get_gatewaystats() {
 		$data .= lookup_gateway_ip_by_name($gname) . ",";
 		if ($gateways_status[$gname]) {
 			$gws = $gateways_status[$gname];
-			$data .= $gws['delay'] . ",";
-			$data .= $gws['loss'] . ",";
-        		switch(strtolower($gws['status'])) {
+			switch(strtolower($gws['status'])) {
 			case "none":
 				$online = "Online";
 				$bgcolor = "lightgreen";
@@ -64,6 +62,7 @@ function get_gatewaystats() {
 			$online = "Gathering data";
 			$bgcolor = "lightgray";
 		}
+		$data .= ($online == "Gathering data") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
 		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
 	}
 	return $data;

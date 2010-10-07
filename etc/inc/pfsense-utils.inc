@@ -1940,6 +1940,11 @@ function nanobsd_detect_slice_info() {
 	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
 }
 
+function nanobsd_friendly_slice_name($slicename) {
+	global $g;
+	return strtolower(str_ireplace('pfsense', $g['product_name'], $slicename));
+}
+
 function get_include_contents($filename) {
     if (is_file($filename)) {
         ob_start();

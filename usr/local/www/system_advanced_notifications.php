@@ -49,7 +49,7 @@ if($config['notifications']['growl']['ipaddress'])
 if($config['notifications']['growl']['notification_name']) 
 	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
 else
-  $pconfig['notification_name'] = 'pfSense growl alert';
+  $pconfig['notification_name'] = "{$g['product_name']} growl alert";
   
 if($config['notifications']['growl']['name']) 
 	$pconfig['name'] = $config['notifications']['growl']['name'];
@@ -111,13 +111,13 @@ if ($_POST) {
 		if($config['notifications']['growl']['ipaddress'] && 
 		   $config['notifications']['growl']['password'] = $_POST['password']) {
 			register_via_growl();
-			notify_via_growl(gettext("This is a test message from pfSense.  It is safe to ignore this message."));
+			notify_via_growl(gettext("This is a test message from {$g['product_name']}.  It is safe to ignore this message."));
 		}
 
 		// Send test message via smtp
 		if(file_exists("/var/db/notices_lastmsg.txt"))
 			unlink("/var/db/notices_lastmsg.txt");
-		$savemsg = notify_via_smtp(gettext("This is a test message from pfSense.  It is safe to ignore this message."));
+		$savemsg = notify_via_smtp(gettext("This is a test message from {$g['product_name']}.  It is safe to ignore this message."));
 
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;
@@ -174,7 +174,7 @@ include("head.inc");
 							<td width="22%" valign="top" class="vncell"><?=gettext("Notification Name"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='notification_name' value='<?php echo $pconfig['notification_name']; ?>'><br/>
-								<?=gettext("Enter a name for the Growl notifications (default: pfSense growl alert)."); ?>
+								<?=gettext("Enter a name for the Growl notifications (default: {$g['product_name']} growl alert)."); ?>
 							</td>
 						</tr>
 						<tr>

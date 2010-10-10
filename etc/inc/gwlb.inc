@@ -328,7 +328,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['name'] = $friendly;
 		$gateway['attribute'] = "system";
 	
-		if ($gateway['dynamic'] == "default") {
+		if ($gateway['dynamic'] === "default") {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
 		}

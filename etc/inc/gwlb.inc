@@ -41,6 +41,8 @@ function setup_gateways_monitor() {
 	if (!is_array($gateways_arr)) {
 		log_error("No gateways to monitor. Apinger will not be run.");
 		killbypid("{$g['varrun_path']}/apinger.pid");
+		// TEMPORARY XXX
+		exec("/usr/bin/killall -9 apinger");
 		@unlink("{$g['tmp_path']}/apinger.status");
 		return;
 	}
@@ -223,6 +225,8 @@ EOD;
 	fclose($fd);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");
+	// TEMPORARY XXX
+	exec("/usr/bin/killall -9 apinger");
 	if (is_dir("{$g['tmp_path']}"))
 		chmod("{$g['tmp_path']}", 01777);
 	if (!is_dir("{$g['vardb_path']}/rrd"))

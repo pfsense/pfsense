@@ -1289,7 +1289,7 @@ function upnp_action ($action) {
 	switch($action) {
 		case "start":
 			if(file_exists('/var/etc/miniupnpd.conf'))
-				mwexec_bg('/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf');
+				mwexec_bg('/usr/local/sbin/miniupnpd -d -f /var/etc/miniupnpd.conf');
 			break;
 		case "stop":
 			while((int)exec("pgrep miniupnpd | wc -l") > 0)

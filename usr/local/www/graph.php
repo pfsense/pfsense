@@ -61,6 +61,11 @@ if ($_GET["timeint"])
 else
 	$time_interval = 3;
 
+if ($_GET["initdelay"])
+	$init_delay = $_GET["initdelay"];		//Initial Delay
+else
+	$init_delay = 3;
+
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
 $attribs['in']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
@@ -229,13 +234,13 @@ function plot_data(obj) {
   last_ugmt = ugmt;
   last_ifin = ifin;
   last_ifout = ifout;
-  
+  var graphTimerId = 0;
   switch (plot_in.length) {
   	case 0:
   		SVGDoc.getElementById("collect_initial").setAttributeNS(null, 'visibility', 'visible');
 		plot_in[0] = diff_ifin / diff_ugmt;
 		plot_out[0] = diff_ifout / diff_ugmt;
-		setTimeout('fetch_data()',<?=1000*$time_interval?>);
+		setTimeout('fetch_data()',<?=1000*($time_interval + $init_delay)?>);
 		return;
 	case 1:
     	SVGDoc.getElementById("collect_initial").setAttributeNS(null, 'visibility', 'hidden');

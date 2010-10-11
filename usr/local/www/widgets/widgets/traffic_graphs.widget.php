@@ -80,7 +80,6 @@ Refresh Interval:
 </script>
 
 <?php
-
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$ifinfo = get_interface_info($ifdescr);
 		$currentgraph = $showngraphlist[$graphcounter];
@@ -112,7 +111,6 @@ Refresh Interval:
 			}
 		}
 
-
 	 if ($ifinfo['status'] != "down") {
 	?>
 	<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
@@ -128,8 +126,7 @@ Refresh Interval:
 			<div style="clear:both;"></div>
 		</div>
 		<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-		<?php $refreshInterval = $refreshInterval + 3 ?>
-			<embed id="graph" src="graph.php?ifnum=<?=$ifdescr;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+			<embed id="graph" src="graph.php?ifnum=<?=$ifdescr;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 		</div>
 <? $firstgraphshown = true; $graphcounter++; ?>
 	</div>

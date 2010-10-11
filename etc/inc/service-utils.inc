@@ -50,7 +50,7 @@ function write_rcfile($params) {
 		return false;
 
 	$towrite = "#!/bin/sh\n";
-	$towrite .= "# This file was automatically generated\n# by the {$g['product_website']} service handler.\n\n";
+	$towrite .= "# This file was automatically generated\n# by the {$g['product_name']} service handler.\n\n";
 
 	/* write our rc functions */
 	$towrite .= "rc_start() {\n";
@@ -87,7 +87,7 @@ function start_service($name) {
 	sleep(2);
 
 	if(file_exists("{$rcfileprefix}{$name}.sh")) {
-		exec("/bin/sh {$rcfileprefix}{$name}.sh start");
+		mwexec_bg("/bin/sh {$rcfileprefix}{$name}.sh start");
 		return;
 	}
 	if($config['installedpackages']['service']) {

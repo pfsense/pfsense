@@ -126,7 +126,7 @@ if (!is_array($config['widgets'])) {
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>pfSense.local - pfSense first time setup</title>
+	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 	<script type="text/javascript">var theme = "nervecenter"</script>

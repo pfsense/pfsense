@@ -50,7 +50,7 @@
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach($iflist as $ifname => $friendly) {
 		/* point to this interface's config */
-		$ifconf =& $config['interfaces'][$ifname];
+		$ifconf = $config['interfaces'][$ifname];
 		/* look for 'special cases' */
 		switch($ifconf['ipaddr']) {
 		case "carpdev-dhcp":

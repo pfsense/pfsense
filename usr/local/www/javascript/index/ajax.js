@@ -88,11 +88,9 @@ function updateState(x) {
 function updateGatewayStats(x){
 	if (widgetActive("gateways")){
 		gateways_split = x.split(",");
-		var counter = 1;
-		for (var y=0; y<gateways_split.length-1; y++){
-			if($('gateway' + counter)) {
-				$('gateway' + counter).update(gateways_split[y]);
-				counter++;	
+		for (var y=0; y<gateways_split.length; y++){
+			if($('gateway' + (y + 1))) {
+				$('gateway' + (y + 1)).update(gateways_split[y]);
 			}
 		}
 	}

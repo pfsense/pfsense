@@ -390,6 +390,9 @@ function vpn_ipsec_configure($ipchg = false)
 					$racoonconf .= "\tbanner \"{$fn}\";\n";
 				}
 
+				if (isset($a_client['save_passwd']))
+					$racoonconf .= "\tsave_passwd on;\n";
+
 				$racoonconf .= "}\n\n";
 			}
 			/* end mode_cfg section */
@@ -635,10 +638,12 @@ EOD;
 						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
 						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
 							$localid_spec = " ";
-						else if ($localid_type != "address") {
-							$localid_type = "subnet";
-							$localid_spec = $localid_type." ".$localid_data." any";
-						}
+						else {
+                                                        if ($localid_type != "address") {
+                                                                $localid_type = "subnet";
+                                                        }
+                                                        $localid_spec = $localid_type." ".$localid_data." any";
+                                                }
 
 						if (!isset($ph2ent['mobile'])) {
 							$remoteid_type = $ph2ent['remoteid']['type'];

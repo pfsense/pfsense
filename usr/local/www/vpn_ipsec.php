@@ -52,8 +52,6 @@ if (!is_array($config['ipsec']['phase2']))
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$wancfg = &$config['interfaces']['wan'];
-
 $pconfig['enable'] = isset($config['ipsec']['enable']);
 
 if ($_POST) {

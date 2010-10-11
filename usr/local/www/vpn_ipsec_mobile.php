@@ -59,6 +59,7 @@ if (count($a_client)) {
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
 	$pconfig['net_list'] = $a_client['net_list'];
+	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
 	$pconfig['dns_server1'] = $a_client['dns_server1'];
 	$pconfig['dns_server2'] = $a_client['dns_server2'];
@@ -79,6 +80,9 @@ if (count($a_client)) {
 
 	if (isset($pconfig['net_list']))
 		$pconfig['net_list_enable'] = true;
+
+	if (isset($pconfig['save_passwd']))
+		$pconfig['save_passwd_enable'] = true;
 
 	if ($pconfig['dns_domain'])
 		$pconfig['dns_domain_enable'] = true;
@@ -176,6 +180,9 @@ if ($_POST['submit']) {
 
 		if ($pconfig['net_list_enable'])
 			$client['net_list'] = true;
+
+		if ($pconfig['save_passwd_enable'])
+			$client['save_passwd'] = true;
 
 		if ($pconfig['dns_domain_enable'])
 			$client['dns_domain'] = $pconfig['dns_domain'];
@@ -412,6 +419,23 @@ function login_banner_change() {
 									</td>
 									<td>
 										<?=gettext("Provide a list of accessible networks to clients"); ?><br>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Save Xauth Password"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['save_passwd_enable'],$chk); ?>
+										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?>>
+									</td>
+									<td>
+										<?=gettext("Allow clients to save Xauth passwords (Cisco VPN client only)."); ?><br>
+										<?=gettext("NOTE: With iPhone clients, this does not work when deployed via the iPhone configuration utility, only by manual entry."); ?><br>
 									</td>
 								</tr>
 							</table>

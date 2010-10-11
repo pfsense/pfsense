@@ -157,7 +157,7 @@ function display_login_form() {
 			if (file_exists("{$g['tmp_path']}/webconfigurator.lock")) {
 				// TODO: add the IP from the user who did lock the device
 				$whom = file_get_contents("{$g['tmp_path']}/webconfigurator.lock");
-				printf(gettext("showajaxmessage('This device is currently beeing maintained by: %s.');"), $whom);
+				printf(gettext("showajaxmessage('This device is currently being maintained by: %s.');"), $whom);
 			}
 		}
 		exit;

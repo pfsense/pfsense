@@ -41,6 +41,8 @@ function setup_gateways_monitor() {
 	if (!is_array($gateways_arr)) {
 		log_error("No gateways to monitor. Apinger will not be run.");
 		killbypid("{$g['varrun_path']}/apinger.pid");
+		// TEMPORARY XXX
+		exec("/usr/bin/killall -9 apinger");
 		@unlink("{$g['tmp_path']}/apinger.status");
 		return;
 	}
@@ -223,6 +225,8 @@ EOD;
 	fclose($fd);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");
+	// TEMPORARY XXX
+	exec("/usr/bin/killall -9 apinger");
 	if (is_dir("{$g['tmp_path']}"))
 		chmod("{$g['tmp_path']}", 01777);
 	if (!is_dir("{$g['vardb_path']}/rrd"))
@@ -313,7 +317,10 @@ function return_gateways_array($disabled = false) {
 		if(! interface_has_gateway($ifname))
 			continue;
 
-		$ifcfg =& $config['interfaces'][$ifname];
+		if (empty($config['interfaces'][$ifname]))
+			continue;
+
+		$ifcfg = &$config['interfaces'][$ifname];
 		if (!empty($ifcfg['ipaddr']) && is_ipaddr($ifcfg['ipaddr']))
 			continue;
 
@@ -325,7 +332,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['name'] = $friendly;
 		$gateway['attribute'] = "system";
 	
-		if ($gateway['dynamic'] == "default") {
+		if ($gateway['dynamic'] === "default") {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
 		}
@@ -335,7 +342,8 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if ($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])
+			if (($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) ||
+				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true))
 					continue 2;
 		}
 
@@ -497,7 +505,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 
         $gw = NULL;
 
-        $gwcfg =& $config['interfaces'][$interface];
+        $gwcfg = $config['interfaces'][$interface];
         if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
                	foreach($config['gateways']['gateway_item'] as $gateway) {
                         if ($gateway['name'] == $gwcfg['gateway']) {

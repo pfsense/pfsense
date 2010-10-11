@@ -120,10 +120,10 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
 			<td width="75%" class="listr">
-				<?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($BOOTFLASH);?>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
 				<br/><br/>Next Boot:<br/>
-				<?=htmlspecialchars($GLABEL_SLICE);?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
 				<?php endif; ?>
 			</td>
 		</tr>

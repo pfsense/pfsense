@@ -560,7 +560,9 @@ function get_dates($curperiod, $graph) {
 									}
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
-									$end = $dates['end'];
+									if($curperiod == "current") {
+										$end = $dates['end'];
+									}
 									/* generate update events utilizing prototype $('') feature */
 									echo "\n";
 									echo "\t\t\$('{$graph}-{$curoption}-{$curdatabase}').src='status_rrd_graph_img.php?start={$start}&end={$end}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";

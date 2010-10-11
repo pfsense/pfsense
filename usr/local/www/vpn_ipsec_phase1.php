@@ -140,8 +140,11 @@ if ($_POST) {
 	$method = $pconfig['authentication_method'];
 
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
+	// For RSA methods, require the CA/Cert.
 	switch ($method) {
 		case "pre_shared_key":
+			// If this is a mobile PSK tunnel the user PSKs go on 
+			//    the PSK tab, not here, so skip the check.
 			if ($pconfig['mobile'])
 				break;
 		case "xauth_psk_server":

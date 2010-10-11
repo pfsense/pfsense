@@ -138,13 +138,22 @@ if ($_POST) {
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
+
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
-	if ((($method == "pre_shared_key") && (!$pconfig['mobile']))||($method == "xauth_psk_server")) {
-		$reqdfields = explode(" ", "pskey");
-		$reqdfieldsn = array(gettext("Pre-Shared Key"));
-	} else {
-		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
+	switch ($method) {
+		case "pre_shared_key":
+			if ($pconfig['mobile'])
+				break;
+		case "xauth_psk_server":
+			$reqdfields = explode(" ", "pskey");
+			$reqdfieldsn = array(gettext("Pre-Shared Key"));
+			break;
+		case "hybrid_rsa_server":
+		case "xauth_rsa_server":
+		case "rsasig":
+			$reqdfields = explode(" ", "caref certref");
+			$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
+			break;
 	}
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";

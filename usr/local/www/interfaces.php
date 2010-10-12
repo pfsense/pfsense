@@ -1099,8 +1099,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable">
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
-								<?=gettext("If you leave this field blank, " .
-								"an MTU of 1500 bytes will be assumed."); ?>
+								<?=gettext("If you leave this field blank, the adapter's default MTU will " .
+								"be used. This is typically 1500 bytes but can vary on some hardware."); ?>
 							</td>
 						</tr>
 						<tr>

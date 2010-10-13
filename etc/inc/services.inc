@@ -572,7 +572,7 @@ function services_dhcrelay_configure() {
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs)) {
-		log_error("No suitable interface found for running dhclreay!");
+		log_error("No suitable interface found for running dhcrelay!");
 		return; /* XXX */
 	}
 

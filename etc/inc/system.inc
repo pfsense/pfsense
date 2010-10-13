@@ -241,7 +241,7 @@ function system_hosts_generate() {
 		else
 			$hosts .= "{$host['ip']}	{$host['domain']}\n";
 	}
-	if (isset($dnsmasqcfg['regdhcpstatic'])) {
+	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
 			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
 					foreach ($dhcpifconf['staticmap'] as $host)

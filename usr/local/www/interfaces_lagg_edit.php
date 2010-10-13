@@ -50,7 +50,7 @@ $portlist = get_interface_list();
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
         foreach ($config['laggs']['lagg'] as $lagg)
-                $portlist[$lagg['laggif']] = $lagg;
+                unset($portlist[$lagg['laggif']]);
 }
 
 $checklist = get_configured_interface_list(false, true);

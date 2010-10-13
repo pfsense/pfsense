@@ -565,12 +565,18 @@ function services_dhcrelay_configure() {
 				$destif = get_real_interface("wan");
 		}
 
-		$dhcrelayifs[] = $destif;
+		if (!empty($destif))
+			$dhcrelayifs[] = $destif;
 	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/* fire up dhcrelay */
-	$cmd = "/usr/local/sbin/dhcrelay -i " .  join(" -i ", $dhcrelayifs);
+	if (empty($dhcrelayifs)) {
+		log_error("No suitable interface found for running dhcrelay!");
+		return; /* XXX */
+	}
+
+	$cmd = "/usr/local/sbin/dhcrelay -i " .  implode(" -i ", $dhcrelayifs);
 
 	if (isset($dhcrelaycfg['agentoption']))
 		$cmd .=  " -a -m replace";

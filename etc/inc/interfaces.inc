@@ -133,7 +133,7 @@ function interface_vlan_configure(&$vlan) {
 	pfSense_interface_capabilities($if, IFCAP_VLAN_HWTAGGING|IFCAP_VLAN_MTU|IFCAP_VLAN_HWFILTER);
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		interface_bring_down($vlanif);
+		interface_bring_down($vlanif, true);
 	} else {
 		$tmpvlanif = pfSense_interface_create("vlan");
 		pfSense_interface_rename($tmpvlanif, $vlanif);

@@ -102,6 +102,8 @@ if($_GET['act']=="edit"){
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
+			if ($pconfig['mode'] == "server_tls_user")
+				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 		} else
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
@@ -295,6 +297,8 @@ if ($_POST) {
 			$server['crlref'] = $pconfig['crlref'];
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
+			if ($pconfig['mode'] == "server_tls_user")
+				$server['strictusercn'] = $pconfig['strictusercn'];
 		} else {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
@@ -373,12 +377,21 @@ function mode_change() {
 		case "p2p_tls":
 		case "server_tls":
 		case "server_user":
+			document.getElementById("tls").style.display="";
+			document.getElementById("tls_ca").style.display="";
+			document.getElementById("tls_crl").style.display="";
+			document.getElementById("tls_cert").style.display="";
+			document.getElementById("tls_dh").style.display="";
+			document.getElementById("strictusercn").style.display="none";
+			document.getElementById("psk").style.display="none";
+			break;
 		case "server_tls_user":
 			document.getElementById("tls").style.display="";
 			document.getElementById("tls_ca").style.display="";
 			document.getElementById("tls_crl").style.display="";
 			document.getElementById("tls_cert").style.display="";
 			document.getElementById("tls_dh").style.display="";
+			document.getElementById("strictusercn").style.display="";
 			document.getElementById("psk").style.display="none";
 			break;
 		case "p2p_shared_key":
@@ -387,6 +400,7 @@ function mode_change() {
 			document.getElementById("tls_crl").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
 			document.getElementById("tls_dh").style.display="none";
+			document.getElementById("strictusercn").style.display="none";
 			document.getElementById("psk").style.display="";
 			break;
 	}
@@ -810,6 +824,24 @@ function netbios_change() {
 								</option>
 								<?php endforeach; ?>
 							</select>
+						</td>
+					</tr>
+					<tr id="strictusercn">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Strict User/CN Matching"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['strictusercn'],$chk); ?>
+										<input name="strictusercn" type="checkbox" value="yes" <?=$chk;?>/>
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("When authenticating users, enforce a match between the common name of the client certificate and the username given at login."); ?>
+										</span>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>

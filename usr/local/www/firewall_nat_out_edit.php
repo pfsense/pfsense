@@ -257,6 +257,7 @@ include("head.inc");
 
 <script language="JavaScript">
 <!--
+var portsenabled = 1;
 function staticportchange() {
 	if(document.iform.staticnatport.checked) {
 		document.iform.natport.value = "";
@@ -298,6 +299,27 @@ function nonat_change() {
 		document.getElementById("transtable").style.display = 'none';
 	} else {
 		document.getElementById("transtable").style.display = '';
+	}
+}
+function proto_change() {
+	if (document.iform.protocol.selectedIndex >= 0 && document.iform.protocol.selectedIndex <= 3) {
+		portsenabled = 1;
+	} else {
+		portsenabled = 0;
+	}
+
+	if (portsenabled) {
+		document.getElementById("sport_tr").style.display = '';
+		document.getElementById("dport_tr").style.display = '';
+		document.getElementById("tport_tr").style.display = '';
+		document.getElementById("tporttext_tr").style.display = '';
+		document.getElementById("tportstatic_tr").style.display = '';
+	} else {
+		document.getElementById("sport_tr").style.display = 'none';
+		document.getElementById("dport_tr").style.display = 'none';
+		document.getElementById("tport_tr").style.display = 'none';
+		document.getElementById("tporttext_tr").style.display = 'none';
+		document.getElementById("tportstatic_tr").style.display = 'none';
 	}
 }
 //-->
@@ -362,7 +384,7 @@ function nonat_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">
-				<select name="protocol" class="formselect">
+				<select name="protocol" class="formselect" onChange="proto_change();">
 				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync");
                                 foreach ($protocols as $proto): ?>
                                         <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
@@ -394,7 +416,7 @@ function nonat_change() {
                         <td>&nbsp;</td>
                         <td><span class="vexpl"><?=gettext("Enter the source network for the outbound NAT mapping.");?></span></td>
                       </tr>
-                      <tr>
+                      <tr name="sport_tr" id="sport_tr">
                         <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
                         <td><input name="sourceport" type="text" class="formfld unknown" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
 blank for any)");?></td>
@@ -433,7 +455,7 @@ blank for any)");?></td>
                         <td><span class="vexpl"><?=gettext("Enter the destination network for ".
                           "the outbound NAT mapping.");?></span></td>
                       </tr>
-                      <tr>
+                      <tr name="dport_tr" id="dport_tr">
                         <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
                         <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
 any)");?></td>
@@ -477,14 +499,14 @@ any)");?></td>
 			 <?=gettext("Also note that if you are trying to redirect connections on the LAN select the \"any\" option.");?>
 			</span>
 			</td></tr>
-			<tr>
+			<tr name="tport_tr" id="tport_tr">
                           <td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
-			<tr><td>&nbsp;</td><td>
+			<tr name="tporttext_tr" id="tporttext_tr"><td>&nbsp;</td><td>
                         <span class="vexpl"><?=gettext("Enter the source port for the outbound NAT mapping.");?></span>
 			</td></tr>
-                        <tr>
+                        <tr name="tportstatic_tr" id="tportstatic_tr">
                           <td><?=gettext("Static-port:");?>&nbsp;&nbsp;</td>
                           <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
 			</tr>
@@ -522,6 +544,7 @@ sourcesel_change();
 typesel_change();
 staticportchange();
 nonat_change();
+proto_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>

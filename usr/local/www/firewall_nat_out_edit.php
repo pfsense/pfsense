@@ -293,6 +293,13 @@ function sourcesel_change() {
             break;
     }
 }
+function nonat_change() {
+	if (document.iform.nonat.checked) {
+		document.getElementById("transtable").style.display = 'none';
+	} else {
+		document.getElementById("transtable").style.display = '';
+	}
+}
 //-->
 </script>
 </head>
@@ -308,7 +315,7 @@ function sourcesel_change() {
 	        <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Do not NAT");?></td>
                   <td width="78%" class="vtable">
-			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
+			<input type="checkbox" name="nonat" id="nonat" onClick="nonat_change();" <?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
                      <span class="vexpl"><?=gettext("Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.");?>
 		     <br><?=gettext("Hint: in most cases, you won't use this option.");?></span></td>
                 </tr>
@@ -434,7 +441,7 @@ any)");?></td>
                     </table>
 		  </td>
                 </tr>
-                <tr>
+                <tr name="transtable" id="transtable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Translation");?></td>
                   <td width="78%" class="vtable">
 			<table border="0" cellspacing="1" cellpadding="1">
@@ -514,6 +521,7 @@ any)");?></td>
 sourcesel_change();
 typesel_change();
 staticportchange();
+nonat_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>

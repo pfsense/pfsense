@@ -287,7 +287,6 @@ function sourcesel_change() {
             break;
         default:
 	    document.iform.source.value = "";
-	    document.iform.sourceport.value = "";
             document.iform.source.disabled = 1;
             document.iform.source_subnet.value = "24";
             document.iform.source_subnet.disabled = 1;
@@ -512,6 +511,7 @@ any)");?></td>
 </form>
 <script language="JavaScript">
 <!--
+sourcesel_change();
 typesel_change();
 staticportchange();
 //-->

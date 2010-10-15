@@ -41,9 +41,6 @@
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
-if($_POST['savetest'])
-	$save_and_test = true;
-
 require("guiconfig.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
@@ -53,6 +50,7 @@ $pconfig['backend'] = &$config['system']['webgui']['backend'];
 // Page title for main admin
 $pgtitle = array(gettext("System"),gettext("User manager settings"));
 
+$save_and_test = false;
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -64,6 +62,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		if ($_POST['savetest'] && $_POST['authmode'] == "ldap")
+			$save_and_test = true;
+		else
+			$savemsg = gettext("The test was not performed becuase it is supported only for ldap based backends.");
+
 
 		if(isset($_POST['session_timeout']) && $_POST['session_timeout'] != "")
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);

@@ -128,8 +128,7 @@ conf_mount_rw();
 
 switch($_GET['mode']) {
 	case "delete":
-		$id = get_pkg_id($_GET['pkg']);
-		uninstall_package_from_name($_GET['pkg']);
+		uninstall_package($_GET['pkg']);
 		update_status(gettext("Package deleted."));
 		$static_output .= "\n" . gettext("Package deleted.");
 		update_output_window($static_output);
@@ -141,34 +140,28 @@ switch($_GET['mode']) {
 			exit;
 		update_output_window(file_get_contents("/tmp/pkg_mgr_{$id}.log"));
 		break;
-	case "reinstallpkg":
-		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
-		delete_package_xml(htmlspecialchars($_GET['pkg']));
-		install_package(htmlspecialchars($_GET['pkg']));
-		update_status(gettext("Package reinstalled."));
-		$static_output .= "\n\n" . gettext("Package reinstalled.");
-		start_service(htmlspecialchars($_GET['pkg']));
-		update_output_window($static_output);
-		filter_configure();
-		break;
 	case "reinstallxml":
+	case "reinstallpkg":
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
-		install_package(htmlspecialchars($_GET['pkg']));
-		$static_output .= "\n\n" . gettext("Package reinstalled.");
-		start_service(htmlspecialchars($_GET['pkg']));
-		update_output_window($static_output);
-		filter_configure();
+		if (install_package(htmlspecialchars($_GET['pkg'])) < 0) {
+			update_status(gettext("Package reinstallation failed."));
+			$static_output .= "\n\n" . gettext("Package reinstallation failed.");
+			update_output_window($static_output);
+		} else {
+			update_status(gettext("Package reinstalled."));
+			$static_output .= "\n\n" . gettext("Package reinstalled.");
+			update_output_window($static_output);
+			filter_configure();
+		}
 		break;
 	case "installedinfo":
-		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
 		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
 			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
 			$status = file_get_contents($filename);
 			update_status($_GET['pkg']  . " " . gettext("installation completed."));
 			update_output_window($status);
-		} else {
+		} else
 			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
-		}
 		break;
 	case "reinstallall":
 		if ($config['installedpackages']['package'])
@@ -181,14 +174,13 @@ switch($_GET['mode']) {
 			$static_output = "";
 			if($pkgtodo['name']) {
 				update_output_window($static_output);
-				uninstall_package_from_name($pkgtodo['name']);
+				uninstall_package($pkgtodo['name']);
 				install_package($pkgtodo['name']);
 				$pkg_id++;
 			}
 		}
 		update_status(gettext("All packages reinstalled."));
 		$static_output .= "\n\n" . gettext("All packages reinstalled.");
-		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
 		filter_configure();
 		break;

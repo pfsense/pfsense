@@ -760,7 +760,7 @@ function upgrade_041_to_042() {
 function upgrade_042_to_043() {
 	global $config;
 	/* migrate old interface gateway to the new gateways config */
-	$iflist = get_configured_interface_list();
+	$iflist = get_configured_interface_list(false, true);
 	$gateways = array();
 	$i = 0;
 	foreach($iflist as $ifname => $interface) {

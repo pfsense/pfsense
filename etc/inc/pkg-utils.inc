@@ -237,9 +237,9 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	$package =& $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext('The %1$s package is missing required dependencies and must be reinstalled. %2$s'), $package['name'], $package['configurationfile']));
-		uninstall_package_from_name($package['name']);
-		install_package($package['name']);
-		return;
+		uninstall_package($package['name']);
+		if (install_package($package['name']) < 0)
+			return false;
 	}
 	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 	if (!empty($pkg_xml['additional_files_needed'])) {
@@ -250,11 +250,10 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			$depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
 			if (($filetype != "all") && (!preg_match("/{$filetype}/i", $depend_file)))
 					continue;
-			if ($item['prefix'] != "") {
+			if ($item['prefix'] != "")
 				$prefix = $item['prefix'];
-			} else {
+			else
 				$prefix = "/usr/local/pkg/";
-			}
 			// Ensure that the prefix exists to avoid installation errors.
 			if(!is_dir($prefix)) 
 				exec("/bin/mkdir -p {$prefix}");
@@ -289,7 +288,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 }
 
-function uninstall_package_from_name($pkg_name) {
+function uninstall_package($pkg_name) {
 	global $config;
 
 	$id = get_pkg_id($pkg_name);
@@ -333,53 +332,56 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
 		force_remove_package($package['name']);
-	} else {
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+		return -1;
+	}
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 
-		/* Bring in package include files */
-		if (!empty($pkg_config['include_file'])) {
-			$include_file = $pkg_config['include_file'];
-			if (file_exists($include_file))
-				require_once($include_file);
-			else {
-				/* XXX: What the heck is this?! */
-				log_error(sprintf(gettext("Could not locate %s."), $include_file));
-				uninstall_package_from_name($package['name']);
-				install_package($package['name']);
+	/* Bring in package include files */
+	if (!empty($pkg_config['include_file'])) {
+		$include_file = $pkg_config['include_file'];
+		if (file_exists($include_file))
+			require_once($include_file);
+		else {
+			/* XXX: What the heck is this?! */
+			log_error("Reinstalling package {$package['name']} because its include file({$include_file}) is missing!");
+			uninstall_package($package['name']);
+			if (install_package($package['name']) < 0) {
+				log_error("Reinstalling package {$package['name']} failed. Take appropriate measures!!!");
+				return -1;
 			}
 		}
+	}
 
-		/* XXX: Zend complains about the next line "Wrong break depth"
-		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
-		 */
-		if(isset($pkg_config['nosync']))
-			continue;
-		if(!empty($pkg_config['custom_php_global_functions']))
-			eval($pkg_config['custom_php_global_functions']);
-		if(!empty($pkg_config['custom_php_resync_config_command']))
-			eval($pkg_config['custom_php_resync_config_command']);
-		if($sync_depends == true) {
-			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
-			if(is_array($depends)) {
-				foreach($depends as $item) {
-					if(!file_exists($item)) {
-						file_notice($package['name'], sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']), "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-						log_error(sprintf(gettext("Could not find %s. Reinstalling package."), $item));
-						uninstall_package_from_name($pkg_name);
-						install_package($pkg_name);
-					} else {
-						$item_config = parse_xml_config_pkg($item, "packagegui");
-						if (empty($item_config))
-							continue;
-						if(isset($item_config['nosync']))
-							continue;
-						if($item_config['custom_php_command_before_form'] <> "")
-							eval($item_config['custom_php_command_before_form']);
-						if($item_config['custom_php_resync_config_command'] <> "")
-							eval($item_config['custom_php_resync_config_command']);
-						if($show_message == true)
-							print " " . $item_config['name'];
-					}
+	/* XXX: Zend complains about the next line "Wrong break depth"
+	 * The code is obviously wrong, but I'm not sure what it's supposed to do?
+	 */
+	if(isset($pkg_config['nosync']))
+		continue;
+	if(!empty($pkg_config['custom_php_global_functions']))
+		eval($pkg_config['custom_php_global_functions']);
+	if(!empty($pkg_config['custom_php_resync_config_command']))
+		eval($pkg_config['custom_php_resync_config_command']);
+	if($sync_depends == true) {
+		$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
+		if(is_array($depends)) {
+			foreach($depends as $item) {
+				if(!file_exists($item)) {
+					file_notice($package['name'], sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']), "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
+					log_error("Could not find {$item}. Reinstalling package.");
+					uninstall_package($pkg_name);
+					install_package($pkg_name);
+				} else {
+					$item_config = parse_xml_config_pkg($item, "packagegui");
+					if (empty($item_config))
+						continue;
+					if(isset($item_config['nosync']))
+						continue;
+					if($item_config['custom_php_command_before_form'] <> "")
+						eval($item_config['custom_php_command_before_form']);
+					if($item_config['custom_php_resync_config_command'] <> "")
+						eval($item_config['custom_php_resync_config_command']);
+					if($show_message == true)
+						print " " . $item_config['name'];
 				}
 			}
 		}
@@ -438,10 +440,9 @@ function install_package($package, $pkg_info = "") {
 	if($pkg_interface == "console") 	
 		echo "\n";
 	/* open logfiles and begin installation */
-	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w")) {
+	if (!$fd_log) {
+		if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w"))
 			update_output_window(gettext("Warning, could not open log for writing."));
-		}
 	}
 	/* fetch package information if needed */
 	if(empty($pkg_info) or !is_array($pkg_info[$package])) {
@@ -494,18 +495,25 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= $to_output;
 	update_output_window($static_output);
 	/* install other package components */
-	install_package_xml($package);
-	$static_output .= gettext("Writing configuration...") . " ";
-	update_output_window($static_output);
-	write_config($changedesc);
-	$static_output .= "done.\n";
-	update_output_window($static_output);
-	$static_output .= gettext("Starting service.") . "\n";
-	update_output_window($static_output);
-	if($pkg_info['after_install_info']) 
-		update_output_window($pkg_info['after_install_info']);	
-	start_service($pkg_info['name']);
-	$restart_sync = true;
+	if (!install_package_xml($package)) {
+		uninstall_package($package);
+		write_config($changedesc);
+		$static_output .= gettext("Failed to install package.") . "\n";
+		update_output_window($static_output);
+		return -1;
+	} else {
+		$static_output .= gettext("Writing configuration... ");
+		update_output_window($static_output);
+		write_config($changedesc);
+		$static_output .= gettext("done.") . "\n";
+		update_output_window($static_output);
+		$static_output .= gettext("Starting service.") . "\n";
+		update_output_window($static_output);
+		if($pkg_info['after_install_info']) 
+			update_output_window($pkg_info['after_install_info']);	
+		start_service($pkg_info['name']);
+		$restart_sync = true;
+	}
 }
 
 function get_after_install_info($package) {
@@ -541,7 +549,7 @@ function install_package_xml($pkg) {
 			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 		}
 		sleep(1);
-		return;
+		return false;
 	} else
 		$pkg_info = $config['installedpackages']['package'][$pkgid];
 
@@ -550,16 +558,6 @@ function install_package_xml($pkg) {
 		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
 			update_output_window(gettext("Warning, could not open log for writing."));
 		}
-	}
-
-	/* set up package logging streams */
-	if($pkg_info['logging']) {
-		mwexec("/usr/sbin/fifolog_create -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
-		@chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
-		@fwrite($fd_log, gettext("Adding text to file /etc/syslog.conf\n"));
-		if(is_process_running("syslogd"))
-			mwexec("killall syslogd");
-		system_syslogd_start();
 	}
 
 	/* make 'y' file */
@@ -606,7 +604,7 @@ function install_package_xml($pkg) {
 					echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 				}
 				sleep(1);
-				die;
+				return false;
 			}
 		}
 	}
@@ -755,8 +753,20 @@ function install_package_xml($pkg) {
 			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 		}
 		sleep(1);
-		return;
+		return false;
 	}
+
+	/* set up package logging streams */
+	if($pkg_info['logging']) {
+		mwexec("/usr/sbin/fifolog_create -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
+		@chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
+		@fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
+		if(is_process_running("syslogd"))
+			mwexec("killall syslogd");
+		system_syslogd_start();
+	}
+
+	return true;
 }
 
 function delete_package($pkg, $pkgid) {

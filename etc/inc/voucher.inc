@@ -170,7 +170,7 @@ function voucher_auth($voucher_received, $test = 0) {
                     } else {
                         // mark bit for this voucher as used
                         $bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
-                        $test_result[] = sprintf(gettext('%1$s (%2$s/%3$) good for %4$d Minutes'), $voucher, $roll, $nr, $minutes_per_roll[$roll]);
+                        $test_result[] = sprintf(gettext('%1$s (%2$s/%3$s) good for %4$d Minutes'), $voucher, $roll, $nr, $minutes_per_roll[$roll]);
                         $total_minutes += $minutes_per_roll[$roll];
                     }
                 }

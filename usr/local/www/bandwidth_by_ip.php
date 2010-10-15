@@ -3,10 +3,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  *
- *
- *
- *
- *
  */
 
 /*
@@ -30,7 +26,7 @@ $intip = explode (".", $intip);
 //use class A subnet to make sure we capture all traffic on specified interface
 $intsubnet = $intip[0] . ".0.0.0/8";
 
-exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 -c {$intsubnet} | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $5,  $8,  $11 }'", $listedIPs);
+exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 unset($bandwidthinfo);
 unset($receivebytesarray);
@@ -52,7 +48,6 @@ for ($x=2; $x<12; $x++){
         $someinfo = true;
     }
 }
-
 
 //no bandwidth usage found
 if ($someinfo == false)

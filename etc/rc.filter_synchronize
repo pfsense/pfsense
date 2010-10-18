@@ -51,7 +51,7 @@ function backup_vip_config_section() {
 	global $config;
 	$new_section = &$config['virtualip'];
 	foreach($new_section['vip'] as $section) {
-		if($section['mode'] == "proxyarp") {
+		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") {
 			unset($section);
 		}
 		if($section['advskew'] <> "") {
@@ -128,16 +128,6 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
 			if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync']))
 				unset ($config_copy['dnsmasq']['hosts'][$x]);
-		}
-	}
-	if (is_array($config_copy['virtualip']['vip'])) {
-		$vipcnt = count($config_copy['virtualip']['vip']);
-		for ($x = 0; $x < $vipcnt; $x++) {
-			$config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
-			if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or
-			    $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp" or
-			    $config_copy['virtualip']['vip'][$x]['mode'] == "ipalias")
-				unset ($config_copy['virtualip']['vip'][$x]);
 		}
 	}
 	if (is_array($config_copy['ipsec']['tunnel'])) {

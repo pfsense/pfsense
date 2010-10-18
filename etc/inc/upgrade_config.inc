@@ -2205,7 +2205,7 @@ function upgrade_070_to_071() {
 
 	if (is_array($config['cron']['item'])) {
 		foreach($config['cron']['item'] as $idx => $cronitem) {
-			if($cronitem['command'] == "/usr/local/bin/checkreload.sh") {
+			if(stristr($cronitem['command'], "checkreload.sh")) {
 				unset($config['cron']['item'][$idx]);
 				break;
 			}

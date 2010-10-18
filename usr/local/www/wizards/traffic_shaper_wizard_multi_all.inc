@@ -1088,7 +1088,7 @@ function apply_all_choosen_items() {
 					$voip = true;
 					$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 					$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
-					if ($scehd != HFSC) {
+					if ($sched != HFSC) {
 						if ($penaltybwunit == "%")
 							$factor = $lanbw/100;
  						else

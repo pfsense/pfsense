@@ -486,17 +486,6 @@ function upgrade_025_to_026() {
 	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -t 1800 snort2c";
 
 	$config['cron']['item'][] = $cron_item;
-
-	$cron_item = array();
-	$cron_item['minute'] = "*/5";
-	$cron_item['hour'] = "*";
-	$cron_item['mday'] = "*";
-	$cron_item['month'] = "*";
-	$cron_item['wday'] = "*";
-	$cron_item['who'] = "root";
-	$cron_item['command'] = "/usr/local/bin/checkreload.sh";
-
-	$config['cron']['item'][] = $cron_item;
 }
 
 
@@ -507,22 +496,6 @@ function upgrade_026_to_027() {
 
 function upgrade_027_to_028() {
 	global $config;
-	$founditem = false;
-	foreach($config['cron']['item'] as $cronitem) {
-		if($cronitem['command'] == "/usr/local/bin/checkreload.sh")
-			$founditem = true;
-	}
-	if($founditem == false) {
-		$cron_item = array();
-		$cron_item['minute'] = "*/5";
-		$cron_item['hour'] = "*";
-		$cron_item['mday'] = "*";
-		$cron_item['month'] = "*";
-		$cron_item['wday'] = "*";
-		$cron_item['who'] = "root";
-		$cron_item['command'] = "/usr/local/bin/checkreload.sh";
-		$config['cron']['item'][] = $cron_item;
-	}
 }
 
 
@@ -2227,4 +2200,16 @@ function upgrade_069_to_070() {
 	}
 }
 
+function upgrade_070_to_071() {
+	global $config;
+
+	if (is_array($config['cron']['item'])) {
+		foreach($config['cron']['item'] as $idx => $cronitem) {
+			if(stristr($cronitem['command'], "checkreload.sh")) {
+				unset($config['cron']['item'][$idx]);
+				break;
+			}
+		}
+	}
+}
 ?>

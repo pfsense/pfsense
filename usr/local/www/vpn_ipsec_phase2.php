@@ -217,10 +217,14 @@ function change_mode() {
 	value = document.iform.mode.options[index].value;
 	if (value == 'tunnel') {
 		document.getElementById('opt_localid').style.display = '';
+<?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = '';
+<?php endif; ?>
 	} else {
 		document.getElementById('opt_localid').style.display = 'none';
+<?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = 'none';
+<?php endif; ?>
 	}
 }
 
@@ -253,15 +257,7 @@ function typesel_change_local(bits) {
 	}
 }
 
-<?php if (isset($pconfig['mobile'])): ?>
-
-function typesel_change_remote(bits) {
-
-	document.iform.remoteid_address.disabled = 1;
-	document.iform.remoteid_netbits.disabled = 1;
-}
-
-<?php else: ?>
+<?php if (!isset($pconfig['mobile'])): ?>
 
 function typesel_change_remote(bits) {
 
@@ -591,7 +587,9 @@ function change_protocol() {
 change_mode('<?=$pconfig['mode']?>');
 change_protocol('<?=$pconfig['proto']?>');
 typesel_change_local(<?=$pconfig['localid_netbits']?>);
+<?php if (!isset($pconfig['mobile'])): ?>
 typesel_change_remote(<?=$pconfig['remoteid_netbits']?>);
+<?php endif; ?>
 //-->
 </script>
 <?php include("fend.inc"); ?>

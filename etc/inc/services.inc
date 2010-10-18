@@ -590,7 +590,7 @@ function services_dhcrelay_configure() {
 function services_dyndns_configure_client($conf) {
 
 	if (!isset($conf['enable']))
-		continue;
+		return;
 
 	/* load up the dyndns.class */
 	require_once("dyndns.class");

@@ -736,12 +736,11 @@ function apply_all_choosen_items() {
                                 $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
                         }
                         else if ($sched == "HFSC") {
-                                $tmpcf['linkshare3'] = floatval($config['ezshaper']['step2']["conn{$i}upload"]) . $config['ezshaper']['step2']["conn{$i}uploadspeed"];
                                 $tmpcf['upperlimit'] = "on";
                                 $tmpcf['upperlimit3'] =
                                 floatval($config['ezshaper']['step2']["conn{$i}upload"]) . $config['ezshaper']['step2']["conn{$i}uploadspeed"];
-                                $tmpcf['linkshare2'] = 100;
                                 $tmpcf['linkshare'] = "on";
+                                $tmpcf['linkshare3'] = floatval($config['ezshaper']['step2']["conn{$i}upload"]) . $config['ezshaper']['step2']["conn{$i}uploadspeed"];
                                 $tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}upload"]);
                                 $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
                         }
@@ -1010,7 +1009,7 @@ function apply_all_choosen_items() {
 			array_pop($tmppath);
 
 		$downfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-        $downbw = floatval($config['ezshaper']['step2']["conn{$i}download"]) * $upfactor;
+		$downbw = floatval($config['ezshaper']['step2']["conn{$i}download"]) * $downfactor;
 
 		$tmppath = array();
 		$altq =& new altq_root_queue();
@@ -1045,7 +1044,7 @@ function apply_all_choosen_items() {
 					$voip = true;
 					$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 					$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
-					if ($scehd != HFSC) {
+					if ($sched != HFSC) {
 						if ($penaltybwunit == "%")
 							$factor = $downbw/100;
  						else
@@ -1122,11 +1121,10 @@ function apply_all_choosen_items() {
                                 $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
                         }
                         else if ($sched == "HFSC") {
-                                $tmpcf['linkshare3'] = floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
 				$tmpcf['upperlimit'] = "on";
 				$tmpcf['upperlimit3'] = floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
-                                $tmpcf['linkshare2'] = 100;
                                 $tmpcf['linkshare'] = "on";
+                                $tmpcf['linkshare3'] = floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
                                 $tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}download"]);
                                 $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
                         }

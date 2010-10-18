@@ -84,6 +84,10 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
+		if (strstr($_POST['syslocation'],"#")) $input_errors[] = gettext("Invalid character '#' in system location");
+ 		if (strstr($_POST['syscontact'],"#")) $input_errors[] = gettext("Invalid character '#' in system contact");
+		if (strstr($_POST['rocommunity'],"#")) $input_errors[] = gettext("Invalid character '#' in read community string");
+
 		$reqdfields = explode(" ", "rocommunity");
 		$reqdfieldsn = array(gettext("Community"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -96,6 +100,8 @@ if ($_POST) {
 	}
 
 	if ($_POST['trapenable']) {
+		if (strstr($_POST['trapstring'],"#")) $input_errors[] = gettext("Invalid character '#' in SNMP trap string");
+
 		$reqdfields = explode(" ", "trapserver");
 		$reqdfieldsn = array(gettext("Trap server"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

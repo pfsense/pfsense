@@ -857,7 +857,7 @@ function upgrade_045_to_046() {
 				$pool['type'] = 'server';
 				$pool['behaviour'] = 'balance';
 				$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
-				$pool['desc'] = "Sitedown pool for VS: {$vs_a[$i]['name']}";
+				$pool['descr'] = "Sitedown pool for VS: {$vs_a[$i]['name']}";
 				$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
 				$pool['servers'] = array();
 				$pool['servers'][] = $vs_a[$i]['sitedown'];
@@ -1649,7 +1649,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				$gateway_group['name'] = $lbpool['name'];
-				$gateway_group['descr'] = $lbpool['desc'];
+				$gateway_group['descr'] = $lbpool['descr'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
 				$i = 0;
@@ -2224,5 +2224,25 @@ function upgrade_071_to_072() {
 			}
 		}
 	}
+}
+
+function desc_to_descr(& $section) {
+	if (is_array($section)) {
+		foreach($section as & $item) {
+			if (!empty($item['desc'])) {
+				$item['descr'] = $item['desc'];
+				unset($item['desc']);
+			}
+		}
+	}
+}
+
+function upgrade_072_to_073() {
+	global $config;
+	desc_to_descr($config['load_balancer']['monitor_type']);
+	desc_to_descr($config['load_balancer']['lbpool']);
+	desc_to_descr($config['load_balancer']['lbaction']);
+	desc_to_descr($config['load_balancer']['lbprotocol']);
+	desc_to_descr($config['load_balancer']['virtual_server']);
 }
 ?>

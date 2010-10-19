@@ -221,7 +221,7 @@ if ($_POST) {
 			<?php echo $pool['monitor']; ?>
 		</td>
 		<td class="listbg" >
-			<?=$pool['desc'];?>
+			<?=$pool['descr'];?>
 		</td>
 		</tr>
 		<?php endforeach; ?>

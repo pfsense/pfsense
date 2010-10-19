@@ -130,7 +130,7 @@ require_once("functions.inc");
 			</table>
                   </td>
                   <td class="listbg" >
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
+				<font color="#FFFFFF"><?=$vipent['descr'];?></font>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>

@@ -134,7 +134,7 @@ include("head.inc");
 			$t->add_column(gettext('Name'),'name',20);
 			$t->add_column(gettext('Type'),'type',10);
 			$t->add_column(gettext('Options'),'options',30);
-			$t->add_column(gettext('Description'),'desc',30);
+			$t->add_column(gettext('Description'),'descr',30);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');

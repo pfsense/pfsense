@@ -54,7 +54,7 @@ else
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['mode'] = $a_pool[$id]['mode'];
-	$pconfig['desc'] = $a_pool[$id]['desc'];
+	$pconfig['descr'] = $a_pool[$id]['descr'];
 	$pconfig['port'] = $a_pool[$id]['port'];
 	$pconfig['servers'] = &$a_pool[$id]['servers'];
 	$pconfig['serversdisabled'] = &$a_pool[$id]['serversdisabled'];
@@ -112,7 +112,7 @@ if ($_POST) {
 		
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("mode", $poolent['mode'], $_POST['mode']);
-		update_if_changed("description", $poolent['desc'], $_POST['desc']);
+		update_if_changed("description", $poolent['descr'], $_POST['descr']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
 		update_if_changed("serversdisabled", $poolent['serversdisabled'], $_POST['serversdisabled']);
@@ -184,7 +184,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 

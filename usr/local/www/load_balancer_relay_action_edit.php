@@ -113,7 +113,7 @@ if ($_POST) {
   unset($pconfig["type_{$pconfig['direction']}"]);
 
 	/* input validation */
-	$reqdfields = explode(" ", "name protocol direction action desc");
+	$reqdfields = explode(" ", "name protocol direction action descr");
 	$reqdfieldsn = array(gettext("Name"),gettext("Protocol"),gettext("Direction"),gettext("Action"),gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -135,7 +135,7 @@ if ($_POST) {
 		update_if_changed("protocol", $actent['protocol'], $pconfig['protocol']);
 		update_if_changed("type", $actent['type'], $pconfig['type']);
 		update_if_changed("direction", $actent['direction'], $pconfig['direction']);
-		update_if_changed("description", $actent['desc'], $pconfig['desc']);
+		update_if_changed("description", $actent['descr'], $pconfig['descr']);
     update_if_changed("action", $actent['action'], $pconfig['action']);
     switch ($pconfig['action']) {
       case "append":
@@ -414,7 +414,7 @@ document.observe("dom:loaded", function() {
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 <!-- Protocol -->

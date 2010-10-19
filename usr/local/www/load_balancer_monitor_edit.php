@@ -54,7 +54,7 @@ else
 if (isset($id) && $a_monitor[$id]) {
 	$pconfig['name'] = $a_monitor[$id]['name'];
 	$pconfig['type'] = $a_monitor[$id]['type'];
-	$pconfig['desc'] = $a_monitor[$id]['desc'];
+	$pconfig['descr'] = $a_monitor[$id]['descr'];
 	$pconfig['options'] = array();
 	$pconfig['options'] = $a_monitor[$id]['options'];
 } else {
@@ -84,7 +84,7 @@ if ($_POST) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "name type desc");
+	$reqdfields = explode(" ", "name type descr");
 	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -143,7 +143,7 @@ if ($_POST) {
 		
 		update_if_changed("name", $monent['name'], $pconfig['name']);
 		update_if_changed("type", $monent['type'], $pconfig['type']);
-		update_if_changed("description", $monent['desc'], $pconfig['desc']);
+		update_if_changed("description", $monent['descr'], $pconfig['descr']);
 		if($pconfig['type'] == "http" || $pconfig['type'] == "https" ) {
 			/* log updates, then clear array and reassign - dumb, but easiest way to have a clear array */
 			update_if_changed("path", $monent['options']['path'], $pconfig['options']['path']);
@@ -237,7 +237,7 @@ function updateType(t){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 		<tr align="left">

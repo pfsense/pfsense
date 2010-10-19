@@ -718,21 +718,21 @@
 		<monitor_type>
 			<name>ICMP</name>
 			<type>icmp</type>
-			<desc>ICMP</desc>
+			<descr>ICMP</descr>
 			<options>
 			</options>
 		</monitor_type>
 		<monitor_type>
 			<name>TCP</name>
 			<type>tcp</type>
-			<desc>Generic TCP</desc>
+			<descr>Generic TCP</descr>
 			<options>
 			</options>
 		</monitor_type>
 		<monitor_type>
 			<name>HTTP</name>
 			<type>http</type>
-			<desc>Generic HTTP</desc>
+			<descr>Generic HTTP</descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -742,7 +742,7 @@
 		<monitor_type>
 			<name>HTTPS</name>
 			<type>https</type>
-			<desc>Generic HTTPS</desc>
+			<descr>Generic HTTPS</descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -752,7 +752,7 @@
 		<monitor_type>
 			<name>SMTP</name>
 			<type>send</type>
-			<desc>Generic SMTP</desc>
+			<descr>Generic SMTP</descr>
 			<options>
 				<send>EHLO nosuchhost</send>
 				<expect>250-</expect>

@@ -101,7 +101,7 @@ if ($_POST) {
 			$changedesc .= " " . sprintf(gettext("created '%s' vs:"), $_POST['name']);
 
 		update_if_changed("name", $vsent['name'], $_POST['name']);
-		update_if_changed("desc", $vsent['desc'], $_POST['desc']);
+		update_if_changed("descr", $vsent['descr'], $_POST['descr']);
 		update_if_changed("pool", $vsent['pool'], $_POST['pool']);
 		update_if_changed("port", $vsent['port'], $_POST['port']);
 		update_if_changed("sitedown", $vsent['sitedown'], $_POST['sitedown']);
@@ -185,7 +185,7 @@ document.observe("dom:loaded", function() {
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+                    <input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
                   </td>
 			</tr>
                 <tr align="left">

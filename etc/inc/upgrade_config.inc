@@ -590,7 +590,7 @@ function upgrade_039_to_040() {
 
 		$config['system']['user'] = array();
 		$config['system']['user'][0]['name'] = "{$config['system']['username']}";
-		$config['system']['user'][0]['fullname'] = "System Administrator";
+		$config['system']['user'][0]['descr'] = "System Administrator";
 		$config['system']['user'][0]['scope'] = "system";
 		$config['system']['user'][0]['groupname'] = "admins";
 		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
@@ -2244,5 +2244,18 @@ function upgrade_072_to_073() {
 	desc_to_descr($config['load_balancer']['lbaction']);
 	desc_to_descr($config['load_balancer']['lbprotocol']);
 	desc_to_descr($config['load_balancer']['virtual_server']);
+}
+
+function upgrade_073_to_074() {
+	global $config;
+
+	if (is_array($config['system']['user'])) {
+		foreach($config['system']['user'] as & $userent) {
+			if (!empty($userent['fullname'])) {
+				$userent['descr'] = $userent['fullname'];
+				unset($userent['fullname']);
+			}
+		}
+	}
 }
 ?>

@@ -159,7 +159,7 @@
 		</group>
 		<user>
 			<name>admin</name>
-			<fullname>System Administrator</fullname>
+			<descr>System Administrator</descr>
 			<scope>system</scope>
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>

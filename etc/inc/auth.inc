@@ -333,7 +333,7 @@ function local_user_set(& $user) {
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($user['fullname'])." -H 0 2>&1";
+			" -c ".escapeshellarg($user['descr'])." -H 0 2>&1";
 
 	if($debug)
 		log_error("Running: {$cmd}");

@@ -16,10 +16,10 @@ else
  *  If this device is an apple ipod/iphone
  *  switch the theme to one that works with it.
  */
-$apple_ua = array("iPhone","iPod", "iPad");
-foreach($apple_ua as $useragent)
+$lowres_ua = array("iPhone","iPod", "iPad", "Android");
+foreach($lowres_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
-		$g['theme'] = "pfsense";
+		$g['theme'] = empty($g['theme_lowres']) ? "pfsense" : $g['theme_lowres'];
 
 $pagetitle = gentitle( $pgtitle );
 

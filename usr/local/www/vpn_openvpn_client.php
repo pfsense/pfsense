@@ -615,7 +615,7 @@ function autotls_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['name'];?></option>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -630,7 +630,7 @@ function autotls_change() {
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'];?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>

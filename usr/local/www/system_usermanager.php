@@ -102,7 +102,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.crt");
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.crt");
 		$exp_data = base64_decode($cert['crt']);
 		$exp_size = strlen($exp_data);
 
@@ -122,7 +122,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.key");
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.key");
 		$exp_data = base64_decode($cert['prv']);
 		$exp_size = strlen($exp_data);
 
@@ -141,7 +141,7 @@ if (isAllowedPage("system_usermanager")) {
 		}
 
 		$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
-		$certdeleted = $certdeleted['name'];
+		$certdeleted = $certdeleted['descr'];
 		unset($a_user[$id]['cert'][$_GET['certid']]);
 		write_config();
 		$_GET['act'] = "edit";
@@ -302,7 +302,7 @@ if (isAllowedPage("system_usermanager")) {
 					$cert['refid'] = uniqid();
                         		$userent['cert'] = array();
 
-            				$cert['name'] = $_POST['name'];
+					$cert['descr'] = $_POST['name'];
 
                 			$subject = cert_get_subject_array($ca['crt']);
 
@@ -644,10 +644,10 @@ function sshkeyClicked(obj) {
 									?>
 									<tr>
 										<td class="listlr">
-											<?=htmlspecialchars($cert['name']);?>
+											<?=htmlspecialchars($cert['descr']);?>
 										</td>
 										<td class="listr">
-											<?=htmlspecialchars($ca['name']);?>
+											<?=htmlspecialchars($ca['descr']);?>
 										</td>
 										<td valign="middle" nowrap class="list">
 											<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
@@ -703,7 +703,7 @@ function sshkeyClicked(obj) {
 							<tr>
                                                         	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
                                                         	<td width="78%" class="vtable">
-                                                                	<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+									<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
                                                         	</td>
                                                 	</tr>
                                                 	<tr>
@@ -715,7 +715,7 @@ function sshkeyClicked(obj) {
                                                                         if (!$ca['prv'])
                                                                                 continue;
                                                                 ?>
-                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['name'];?></option>
+                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
                                                                 <?php endforeach; ?>
                                                                 	</select>
                                                         	</td>

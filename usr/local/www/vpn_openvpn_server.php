@@ -721,7 +721,7 @@ function netbios_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['name'];?></option>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -739,7 +739,7 @@ function netbios_change() {
 									if ($pconfig['crlref'] == $crl['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['name'];?></option>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -751,12 +751,12 @@ function netbios_change() {
 							<?php
 								foreach ($config['cert'] as $cert):
 									$selected = "";
-									if (strstr($cert['name'], "webConfigurator"))
+									if (strstr($cert['descr'], "webConfigurator"))
 										continue;
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'];?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>

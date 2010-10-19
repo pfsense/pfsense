@@ -518,7 +518,7 @@ function showchange() {
                                 echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
                         }
 			foreach($config['ca'] as $ca) {
-				$name = htmlspecialchars($ca['name']);
+				$name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
                           if ($value == $name) $SELECTED = " SELECTED";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
@@ -556,9 +556,9 @@ function showchange() {
                                 echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
                         }
                         foreach($config['cert'] as $ca) {
-				if (stristr($ca['name'], "webconf"))
+				if (stristr($ca['descr'], "webconf"))
 					continue;
-                                $name = htmlspecialchars($ca['name']);
+                                $name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
                           if ($value == $name) $SELECTED = " SELECTED";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";

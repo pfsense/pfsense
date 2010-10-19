@@ -78,7 +78,7 @@ if ($act == "del") {
 		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid'])
 			unset($a_cert[$index]);
 
-	$name = $a_ca[$id]['name'];
+	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
 	$savemsg = sprintf(gettext("Certificate Authority %s successfully deleted"), $name) . "<br/>";
@@ -98,7 +98,7 @@ if ($act == "exp") {
 		exit;
 	}
 
-	$exp_name = urlencode("{$a_ca[$id]['name']}.crt");
+	$exp_name = urlencode("{$a_ca[$id]['descr']}.crt");
 	$exp_data = base64_decode($a_ca[$id]['crt']);
 	$exp_size = strlen($exp_data);
 
@@ -116,7 +116,7 @@ if ($act == "expkey") {
 		exit;
 	}
 
-	$exp_name = urlencode("{$a_ca[$id]['name']}.key");
+	$exp_name = urlencode("{$a_ca[$id]['descr']}.key");
 	$exp_data = base64_decode($a_ca[$id]['prv']);
 	$exp_size = strlen($exp_data);
 
@@ -171,7 +171,7 @@ if ($_POST) {
 		if (isset($id) && $a_ca[$id])
 			$ca = $a_ca[$id];
 
-	    $ca['name'] = $pconfig['name'];
+	    $ca['descr'] = $pconfig['descr'];
 
 		if ($pconfig['method'] == "existing")
 			ca_import($ca, $pconfig['cert'], $pconfig['key']);
@@ -255,7 +255,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 						<?php if (!isset($id)): ?>
@@ -430,7 +430,7 @@ function method_change() {
 					<?php
 						$i = 0;
 						foreach($a_ca as $ca):
-							$name = htmlspecialchars($ca['name']);
+							$name = htmlspecialchars($ca['descr']);
 							$subj = cert_get_subject($ca['crt']);
 							$issuer = cert_get_issuer($ca['crt']);
 							if($subj == $issuer)
@@ -443,7 +443,7 @@ function method_change() {
 
 							$issuer_ca = lookup_ca($ca['caref']);
 							if ($issuer_ca)
-								$issuer_name = $issuer_ca['name'];
+								$issuer_name = $issuer_ca['descr'];
 
 							// TODO : Need gray certificate icon
 

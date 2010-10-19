@@ -90,7 +90,7 @@ if ($act == "del") {
 		exit;
 	}
 
-	$name = $a_cert[$id]['name'];
+	$name = $a_cert[$id]['descr'];
 	unset($a_cert[$id]);
 	write_config();
 	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br/>";
@@ -109,7 +109,7 @@ if ($act == "exp") {
 		exit;
 	}
 
-	$exp_name = urlencode("{$a_cert[$id]['name']}.crt");
+	$exp_name = urlencode("{$a_cert[$id]['descr']}.crt");
 	$exp_data = base64_decode($a_cert[$id]['crt']);
 	$exp_size = strlen($exp_data);
 
@@ -127,7 +127,7 @@ if ($act == "key") {
 		exit;
 	}
 
-	$exp_name = urlencode("{$a_cert[$id]['name']}.key");
+	$exp_name = urlencode("{$a_cert[$id]['descr']}.key");
 	$exp_data = base64_decode($a_cert[$id]['prv']);
 	$exp_size = strlen($exp_data);
 
@@ -145,7 +145,7 @@ if ($act == "csr") {
 		exit;
 	}
 
-	$pconfig['name'] = $a_cert[$id]['name'];
+	$pconfig['descr'] = $a_cert[$id]['descr'];
 	$pconfig['csr'] = base64_decode($a_cert[$id]['csr']);
 }
 
@@ -222,7 +222,7 @@ if ($_POST) {
 				if (isset($id) && $a_cert[$id])
 					$cert = $a_cert[$id];
 
-				$cert['name'] = $pconfig['name'];
+				$cert['descr'] = $pconfig['descr'];
 
 				if ($pconfig['method'] == "import")
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
@@ -296,7 +296,7 @@ if ($_POST) {
 
 			$cert = $a_cert[$id];
 
-			$cert['name'] = $pconfig['name'];
+			$cert['descr'] = $pconfig['descr'];
 
 			csr_complete($cert, $pconfig['cert']);
 
@@ -436,12 +436,12 @@ function internalca_change() {
 						<?php endif; ?>
 						<tr id="descriptivename">
 							<?php
-							if ($a_user && empty($pconfig['name']))
-								$pconfig['name'] = $a_user[$userid]['name'];
+							if ($a_user && empty($pconfig['descr']))
+								$pconfig['descr'] = $a_user[$userid]['name'];
 							?>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 					</table>
@@ -504,7 +504,7 @@ function internalca_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -709,13 +709,13 @@ function internalca_change() {
 											continue;
 										$ca = lookup_ca($cert['caref']);
 										if ($ca)
-											$caname = " (CA: {$ca['name']})";
+											$caname = " (CA: {$ca['descr']})";
 										if ($pconfig['certref'] == $cert['refid'])
 											$selected = "selected";
 										if (cert_in_use($cert['refid']))
 											$inuse = " *In Use";
 								?>
-									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'] . $caname . $inuse;?></option>
+									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -742,7 +742,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -794,7 +794,7 @@ function internalca_change() {
 					<?php
 						$i = 0;
 						foreach($a_cert as $cert):
-							$name = htmlspecialchars($cert['name']);
+							$name = htmlspecialchars($cert['descr']);
 
 							if ($cert['crt']) {
 								$subj = cert_get_subject($cert['crt']);
@@ -813,7 +813,7 @@ function internalca_change() {
 
 							$ca = lookup_ca($cert['caref']);
 							if ($ca)
-								$caname = $ca['name'];
+								$caname = $ca['descr'];
 
 							if($cert['prv'])
 								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";

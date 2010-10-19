@@ -206,18 +206,18 @@ function vpn_ipsec_configure($ipchg = false)
 		if (is_array($config['ca']) && count($config['ca'])) {
 			foreach ($config['ca'] as $ca) {
 				if (!isset($ca['crt'])) {
-					log_error("Error: Invalid certificate info for {$ca['name']}");
+					log_error("Error: Invalid certificate info for {$ca['descr']}");
 					continue;
 				}
 				$cert = base64_decode($ca['crt']);
 				$x509cert = openssl_x509_parse(openssl_x509_read($cert));
 				if (!is_array($x509cert) || !isset($x509cert['hash'])) {
-					log_error("Error: Invalid certificate hash info for {$ca['name']}");
+					log_error("Error: Invalid certificate hash info for {$ca['descr']}");
 					continue;
 				}
 				$fname = $g['varetc_path']."/".$x509cert['hash'].".0";
 				if (!file_put_contents($fname, $cert)) {
-					log_error("Error: Cannot write IPsec CA file for {$ca['name']}");
+					log_error("Error: Cannot write IPsec CA file for {$ca['descr']}");
 					continue;
 				}
 			}

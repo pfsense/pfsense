@@ -692,7 +692,7 @@ function system_webgui_start() {
 			echo "Creating SSL Certificate... ";
 			$cert = array();
 			$cert['refid'] = uniqid();
-			$cert['name'] = "webConfigurator default";
+			$cert['descr'] = "webConfigurator default";
 			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
 			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
 			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");

@@ -78,7 +78,7 @@ if ($act == "del") {
 	if (crl_in_use($a_crl[$id]['refid'])) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
 	} else {
-		$name = $a_crl[$id]['name'];
+		$name = $a_crl[$id]['descr'];
 		unset($a_crl[$id]);
 		write_config();
 		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
@@ -99,7 +99,7 @@ if ($act == "exp") {
 		exit;
 	}
 
-	$exp_name = urlencode("{$a_crl[$id]['name']}.crl");
+	$exp_name = urlencode("{$a_crl[$id]['descr']}.crl");
 	$exp_data = base64_decode($a_crl[$id]['text']);
 	$exp_size = strlen($exp_data);
 
@@ -147,7 +147,7 @@ if ($_POST) {
 		if (isset($id) && $a_crl[$id])
 			$crl = $a_crl[$id];
 
-		$crl['name'] = $pconfig['name'];
+		$crl['descr'] = $pconfig['descr'];
 		$crl['caref'] = $pconfig['caref'];
 
 		if ($pconfig['method'] == "existing") {
@@ -244,7 +244,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -257,7 +257,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -341,7 +341,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 
 						$i = 0;
 						foreach($a_ca as $ca):
-							$name = htmlspecialchars($ca['name']);
+							$name = htmlspecialchars($ca['descr']);
 
 							if($ca['prv']) {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
@@ -364,7 +364,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 						</td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=new&caref=<?php echo $ca['refid']; ?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add or Import CRL for ") . $ca['name'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add or Import CRL for ") . $ca['descr'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>
@@ -377,17 +377,17 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 								$inuse = crl_in_use($tmpcrl['refid']);
 						?>
 					<tr>
-						<td class="listlr"><?php echo $tmpcrl['name']; ?></td>
+						<td class="listlr"><?php echo $tmpcrl['descr']; ?></td>
 						<td class="listr"><?php echo ($internal) ? "YES" : "NO"; ?></td>
 						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_crlmanager.php?act=exp&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php if (!$inuse): ?>
-							<a href="system_crlmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['name']) . ')';?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['name']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['name']); ?>" width="17" height="17" border="0" />
+							<a href="system_crlmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['descr']) . ')';?>')">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']); ?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 						</td>

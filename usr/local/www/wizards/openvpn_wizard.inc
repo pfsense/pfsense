@@ -187,7 +187,7 @@ function step7_submitphpaction() {
 	$cacns = array();
 	if (is_array($config['ca'])) {
 		foreach($config['ca'] as $ca) {
-			$canames[] = $ca['name'];
+			$canames[] = $ca['descr'];
 			$cainfo = cert_get_subject_hash($ca['crt']);
 			$cacns[] = $cainfo["CN"];
 		}
@@ -214,7 +214,7 @@ function step8_stepbeforeformdisplay() {
 	global $stepid, $config;
 
 	if (count($config['cert']) < 1 ||
-		(count($config['cert']) == 1 && stristr($config['cert'][0]['name'], "webconf"))) {
+		(count($config['cert']) == 1 && stristr($config['cert'][0]['descr'], "webconf"))) {
 		$stepid++;
 	}
 }
@@ -273,7 +273,7 @@ function step9_submitphpaction() {
 	$certcns = array();
 	if (is_array($config['cert'])) {
 		foreach($config['cert'] as $cert) {
-			$certnames[] = $cert['name'];
+			$certnames[] = $cert['descr'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
 		}	
@@ -440,7 +440,7 @@ function step12_submitphpaction() {
 	if (isset($pconfig['step6']['uselist']) && !empty($pconfig['step6']['certca'])) {
 		$ca = array();
 		$ca['refid'] = uniqid();
-		$ca['name'] = $pconfig['step6']['certca'];
+		$ca['descr'] = $pconfig['step6']['certca'];
 		$dn = array(
 			'countryName' => $pconfig['step6']['country'],
 			'stateOrProvinceName' => $pconfig['step6']['state'],
@@ -467,7 +467,7 @@ function step12_submitphpaction() {
 	if (isset($pconfig['step9']['uselist'])) {
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['name'] = $pconfig['step9']['certname'];
+		$cert['descr'] = $pconfig['step9']['certname'];
 		$dn = array(
 			'countryName' => $pconfig['step9']['country'],
 			'stateOrProvinceName' => $pconfig['step9']['state'],

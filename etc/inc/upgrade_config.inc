@@ -1307,7 +1307,7 @@ function upgrade_051_to_052() {
 				/* create ca entry */
 				$ca = array();
 				$ca['refid'] = uniqid();
-				$ca['name'] = "OpenVPN Server CA #{$index}";
+				$ca['descr'] = "OpenVPN Server CA #{$index}";
 				$ca['crt'] = $server['ca_cert'];
 				$ca['crl'] = $server['crl'];
 				$config['ca'][] = $ca;
@@ -1320,7 +1320,7 @@ function upgrade_051_to_052() {
 				/* create cert entry */
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['name'] = "OpenVPN Server Certificate #{$index}";
+				$cert['descr'] = "OpenVPN Server Certificate #{$index}";
 				$cert['crt'] = $server['server_cert'];
 				$cert['prv'] = $server['server_key'];
 				$config['cert'][] = $cert;
@@ -1437,7 +1437,7 @@ function upgrade_051_to_052() {
 				/* create ca entry */
 				$ca = array();
 				$ca['refid'] = uniqid();
-				$ca['name'] = "OpenVPN Client CA #{$index}";
+				$ca['descr'] = "OpenVPN Client CA #{$index}";
 				$ca['crt'] = $client['ca_cert'];
 				$ca['crl'] = $client['crl'];
 				$config['ca'][] = $ca;
@@ -1450,7 +1450,7 @@ function upgrade_051_to_052() {
 				/* create cert entry */
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['name'] = "OpenVPN Client Certificate #{$index}";
+				$cert['descr'] = "OpenVPN Client Certificate #{$index}";
 				$cert['crt'] = $client['client_cert'];
 				$cert['prv'] = $client['client_key'];
 				$config['cert'][] = $cert;
@@ -1615,7 +1615,7 @@ function upgrade_052_to_053() {
 		/* create cert entry */
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['name'] = "webConfigurator SSL Certificate";
+		$cert['descr'] = "webConfigurator SSL Certificate";
 		$cert['crt'] = $config['system']['webgui']['certificate'];
 		$cert['prv'] = $config['system']['webgui']['private-key'];
 		$config['cert'][] = $cert;
@@ -1841,7 +1841,7 @@ function upgrade_055_to_056() {
 				$ca['crt'] = $cacert['cert'][0];
 			else
 				$ca['crt'] = $cacert['cert'];
-			$ca['name'] = $cacert['ident'];
+			$ca['descr'] = $cacert['ident'];
 			$config['ca'][] = $ca;
 		}
 		unset($config['ipsec']['cacert']);
@@ -1852,7 +1852,7 @@ function upgrade_055_to_056() {
 		foreach($config['ipsec']['phase1'] as & $ph1ent) {
 			$cert = array();
 			$cert['refid'] = uniqid();
-			$cert['name'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
+			$cert['descr'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
 			if (is_array($ph1ent['cert']))
 				$cert['crt'] = $ph1ent['cert'][0];
 			else
@@ -2161,7 +2161,7 @@ function upgrade_068_to_069() {
 			continue;
 		$rids = array();
 		foreach ($user['cert'] as $id => $cert) {
-			if (!isset($cert['name']))
+			if (!isset($cert['descr']))
 				continue;
 			$tcert = $cert;
 			// Make sure each cert gets a refid
@@ -2241,5 +2241,12 @@ function upgrade_072_to_073() {
 function upgrade_073_to_074() {
 	global $config;
 	rename_field($config['system']['user'], 'fullname', 'descr');
+}
+
+function upgrade_074_to_075() {
+	global $config;
+	rename_field($config['ca'], 'name', 'descr');
+	rename_field($config['cert'], 'name', 'descr');
+	rename_field($config['crl'], 'name', 'descr');
 }
 ?>

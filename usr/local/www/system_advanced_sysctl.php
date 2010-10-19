@@ -62,7 +62,7 @@ if ($act == "edit") {
 	if ($a_tunable[$id]) {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
 		$pconfig['value'] = $a_tunable[$id]['value'];
-		$pconfig['desc'] = $a_tunable[$id]['desc'];
+		$pconfig['descr'] = $a_tunable[$id]['descr'];
 	}
 }
 
@@ -106,7 +106,7 @@ if ($_POST) {
 
 		$tunableent['tunable'] = $_POST['tunable'];
 		$tunableent['value'] = $_POST['value'];
-		$tunableent['desc'] = $_POST['desc'];
+		$tunableent['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_tunable[$id])
 			$a_tunable[$id] = $tunableent;
@@ -180,7 +180,7 @@ include("head.inc");
 								<?php echo $tunable['tunable']; ?>
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
-								<?php echo $tunable['desc']; ?>
+								<?php echo $tunable['descr']; ?>
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
@@ -244,7 +244,7 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 								<td width="78%" class="vtable">
-									<textarea rows="7" cols="50" name="desc"><?php echo $pconfig['desc']; ?></textarea>
+									<textarea rows="7" cols="50" name="descr"><?php echo $pconfig['descr']; ?></textarea>
 								</td>
 							</tr>
 							<tr>

@@ -2213,49 +2213,33 @@ function upgrade_070_to_071() {
 	}
 }
 
-function upgrade_071_to_072() {
-	global $config;
-
-	if (is_array($config['sysctl']['item'])) {
-		foreach($config['sysctl']['item'] as & $sysctl) {
-			if (!empty($sysctl['desc'])) {
-				$sysctl['descr'] = $sysctl['desc'];
-				unset($sysctl['desc']);
+function rename_field(& $section, $oldname, $newname) {
+	if (is_array($section)) {
+		foreach($section as & $item) {
+			if (!empty($item[$oldname])) {
+				$item[$newname] = $item[$oldname];
+				unset($item[$oldname]);
 			}
 		}
 	}
 }
 
-function desc_to_descr(& $section) {
-	if (is_array($section)) {
-		foreach($section as & $item) {
-			if (!empty($item['desc'])) {
-				$item['descr'] = $item['desc'];
-				unset($item['desc']);
-			}
-		}
-	}
+function upgrade_071_to_072() {
+	global $config;
+	rename_field($config['sysctl']['item'], 'desc', 'descr');
 }
 
 function upgrade_072_to_073() {
 	global $config;
-	desc_to_descr($config['load_balancer']['monitor_type']);
-	desc_to_descr($config['load_balancer']['lbpool']);
-	desc_to_descr($config['load_balancer']['lbaction']);
-	desc_to_descr($config['load_balancer']['lbprotocol']);
-	desc_to_descr($config['load_balancer']['virtual_server']);
+	rename_field($config['load_balancer']['monitor_type'], 'desc', 'descr');
+	rename_field($config['load_balancer']['lbpool'], 'desc', 'descr');
+	rename_field($config['load_balancer']['lbaction'], 'desc', 'descr');
+	rename_field($config['load_balancer']['lbprotocol'], 'desc', 'descr');
+	rename_field($config['load_balancer']['virtual_server'], 'desc', 'descr');
 }
 
 function upgrade_073_to_074() {
 	global $config;
-
-	if (is_array($config['system']['user'])) {
-		foreach($config['system']['user'] as & $userent) {
-			if (!empty($userent['fullname'])) {
-				$userent['descr'] = $userent['fullname'];
-				unset($userent['fullname']);
-			}
-		}
-	}
+	rename_field($config['system']['user'], 'fullname', 'descr');
 }
 ?>

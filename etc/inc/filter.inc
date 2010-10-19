@@ -2410,8 +2410,8 @@ function filter_get_time_based_rule_status($schedule) {
 			$position = $timeday['position'];
 		else
 			$position = "";
-		if($timeday['desc'])
-			$desc = $timeday['desc'];
+		if($timeday['descr'])
+			$desc = $timeday['descr'];
 		else
 			$desc = "";
 		if($month) {

@@ -124,8 +124,11 @@ function parse_config($parse = false) {
 				$last_backup = discover_last_backup();
 				if ($last_backup)
 					restore_backup("/cf/conf/backup/{$last_backup}");
-				else
+				else {
 					log_error("Could not restore config.xml.");
+					unlock($lockkey);
+					die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+				}
 			}
 			unlock($lockkey);
 			$config = parse_config(true);
@@ -139,16 +142,22 @@ function parse_config($parse = false) {
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
-			else
+			else {
 				log_error("Could not restore config.xml.");
+				unlock($lockkey);
+				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+			}
 		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		if($config == "-1") {
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
-			else
+			else {
 				log_error(gettext("Could not restore config.xml."));
+				unlock($lockkey);
+				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+			}
 		}
 		generate_config_cache($config);
 	}
@@ -214,47 +223,44 @@ function restore_backup($file) {
  *   null
  ******/
 function parse_config_bootup() {
-	global $config, $g, $noparseconfig;
+	global $config, $g;
 
 	if($g['booting']) echo ".";
 
 	$lockkey = lock('config');
-	if (!$noparseconfig) {
-		if (!file_exists("{$g['conf_path']}/config.xml")) {
-			if ($g['booting']) {
-				if (strstr($g['platform'], "cdrom")) {
-					/* try copying the default config. to the floppy */
-					echo "Resetting factory defaults...\n";
-					reset_factory_defaults(true);
-					if (file_exists("{$g['conf_path']}/config.xml")) {
-						/* do nothing, we have a file. */
-					} else {
-						echo "No XML configuration file found - using factory defaults.\n";
-						echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
-						echo "file is inserted. If it isn't, your configuration changes will be lost\n";
-						echo "on reboot.\n";
-					}
-				} else {
-					$last_backup = discover_last_backup();
-					if($last_backup) {
-						log_error("No config.xml found, attempting last known config restore.");
-						file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
-						restore_backup("/cf/conf/backup/{$last_backup}");
-					}
-					if(!file_exists("{$g['conf_path']}/config.xml")) {
-						echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
-						mwexec("/sbin/halt");
-						exit;
-					}
-					log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
-					file_notice("config.xml", "Last known config found and restored.  Please double check your configuration file for accuracy.", "pfSenseConfigurator", "");
+	if (!file_exists("{$g['conf_path']}/config.xml")) {
+		if ($g['booting']) {
+			if (strstr($g['platform'], "cdrom")) {
+				/* try copying the default config. to the floppy */
+				echo "Resetting factory defaults...\n";
+				reset_factory_defaults(true);
+				if (!file_exists("{$g['conf_path']}/config.xml")) {
+					echo "No XML configuration file found - using factory defaults.\n";
+					echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
+					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
+					echo "on reboot.\n";
 				}
 			} else {
-				unlock($lockkey);
-				exit(0);
+				$last_backup = discover_last_backup();
+				if($last_backup) {
+					log_error("No config.xml found, attempting last known config restore.");
+					file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
+					restore_backup("/cf/conf/backup/{$last_backup}");
+				}
+				if(!file_exists("{$g['conf_path']}/config.xml")) {
+					echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
+					mwexec("/sbin/halt");
+					exit;
+				}
+				log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
+				file_notice("config.xml", "Last known config found and restored.  Please double check your configuration file for accuracy.", "pfSenseConfigurator", "");
 			}
+		} else {
+			unlock($lockkey);
+			exit(0);
 		}
 	}
+
 	if (filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {

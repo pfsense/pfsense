@@ -262,12 +262,15 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'openvpn';
 			$sections[] = 'cert';
 			$sections[] = 'ca';
+			$sections[] = 'crl';
 		}
 		if ($carp['synchronizecerts'] != "") {
 			if (is_array($config['cert']))
 				$sections[] = 'cert';
 			if (is_array($config['ca']))
 				$sections[] = 'ca';
+			if (is_array($config['crl']))
+				$sections[] = 'crl';
 		}
 		if ($carp['synchronizeusers'] != "") {
 			$mergesections[] = 'user';

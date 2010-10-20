@@ -134,14 +134,14 @@ if ($_POST) {
 
 	/* input validation */
 	if ($pconfig['method'] == "existing") {
-		$reqdfields = explode(" ", "name cert");
+		$reqdfields = explode(" ", "descr cert");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate data"));
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-				"name keylen lifetime dn_country dn_state dn_city ".
+				"descr keylen lifetime dn_country dn_state dn_city ".
 				"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),

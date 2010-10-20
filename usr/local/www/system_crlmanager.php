@@ -117,14 +117,14 @@ if ($_POST) {
 
 	/* input validation */
 	if ($pconfig['method'] == "existing") {
-		$reqdfields = explode(" ", "name crltext");
+		$reqdfields = explode(" ", "descr crltext");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate Revocation List data"));
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
-				"name caref");
+				"descr caref");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate Authority"));

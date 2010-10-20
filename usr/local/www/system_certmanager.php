@@ -157,7 +157,7 @@ if ($_POST) {
 		/* input validation */
 		if ($pconfig['method'] == "import") {
 			$reqdfields = explode(" ",
-					"name cert key");
+					"descr cert key");
 			$reqdfieldsn = array(
 					gettext("Descriptive name"),
 					gettext("Certificate data"),
@@ -166,7 +166,7 @@ if ($_POST) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-					"name caref keylen lifetime dn_country dn_state dn_city ".
+					"descr caref keylen lifetime dn_country dn_state dn_city ".
 					"dn_organization dn_email dn_commonname");
 			$reqdfieldsn = array(
 					gettext("Descriptive name"),
@@ -183,7 +183,7 @@ if ($_POST) {
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
-					"name csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
+					"descr csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
 					"csr_dn_organization csr_dn_email csr_dn_commonname");
 			$reqdfieldsn = array(
 					gettext("Descriptive name"),
@@ -271,7 +271,7 @@ if ($_POST) {
 		$pconfig = $_POST;
 
 		/* input validation */
-		$reqdfields = explode(" ", "name cert");
+		$reqdfields = explode(" ", "descr cert");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Final Certificate data"));

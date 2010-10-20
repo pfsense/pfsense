@@ -517,7 +517,7 @@ function is_cert_revoked($cert, $crlref = "") {
 		return false;
 
 	if (!empty($crlref)) {
-		$crl = crl_lookup($crlref);
+		$crl = lookup_crl($crlref);
 		if (!is_array($crl['cert']))
 			return false;
 		foreach ($crl['cert'] as $rcert) {

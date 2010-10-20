@@ -1309,13 +1309,23 @@ function upgrade_051_to_052() {
 				$ca['refid'] = uniqid();
 				$ca['descr'] = "OpenVPN Server CA #{$index}";
 				$ca['crt'] = $server['ca_cert'];
-				$ca['crl'] = $server['crl'];
 				$config['ca'][] = $ca;
 
 				/* create ca reference */
 				unset($server['ca_cert']);
-				unset($server['crl']);
 				$server['caref'] = $ca['refid'];
+
+				/* create a crl entry if needed */
+				if (!empty($server['crl'])) {
+					$crl = array();
+					$crl['refid'] = uniqid();
+					$crl['descr'] = "Imported OpenVPN CRL #{$index}";
+					$crl['caref'] = $ca['refid'];
+					$crl['text'] = $server['crl'];
+					$config['crl'][];
+					$server['crlref'] = $crl['refid'];
+				}
+				unset($server['crl']);
 
 				/* create cert entry */
 				$cert = array();

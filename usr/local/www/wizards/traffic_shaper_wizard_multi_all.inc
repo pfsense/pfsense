@@ -598,27 +598,25 @@ function step5_stepsubmitphpaction() {
 }
 
 function step8_stepsubmitphpaction() {
-		global $g, $config;
+	global $g, $config;
 
-		/* save the new configuration */
-		apply_all_choosen_items();
+	/* save the new configuration */
+	apply_all_choosen_items();
 
-		/* reset rrd queues */
-		system("rm -f /var/db/rrd/*queuedrops.rrd");
-		system("rm -f /var/db/rrd/*queues.rrd");
-		enable_rrd_graphing();
+	/* reset rrd queues */
+	system("rm -f /var/db/rrd/*queuedrops.rrd");
+	system("rm -f /var/db/rrd/*queues.rrd");
+	enable_rrd_graphing();
 
-		/* apply the new configuration to the system */
-		filter_configure();
+	/* apply the new configuration to the system */
+	filter_configure();
 
-		/* And we're no longer dirty! */
-		clear_subsystem_dirty('shaper');
+	/* And we're no longer dirty! */
+	clear_subsystem_dirty('shaper');
 
-		update_filter_reload_status("Initializing");
-
-		/* Head over and check out the groovy queue stats */
-		header("Location: status_filter_reload.php");
+	update_filter_reload_status("Initializing");
 }
+
 function step9_stepsubmitphpaction() {
 	global $g, $config;
 	header("status_filter_reload.php");

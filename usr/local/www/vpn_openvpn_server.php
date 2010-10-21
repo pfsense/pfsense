@@ -751,12 +751,22 @@ function netbios_change() {
 							<?php
 								foreach ($config['cert'] as $cert):
 									$selected = "";
-									if (strstr($cert['descr'], "webConfigurator"))
+									$caname = "";
+									$inuse = "";
+									$revoked = "";
+									if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
 										continue;
+									$ca = lookup_ca($cert['caref']);
+									if ($ca)
+										$caname = " (CA: {$ca['descr']})";
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected";
+									if (cert_in_use($cert['refid']))
+										$inuse = " *In Use";
+										if (is_cert_revoked($cert))
+										$revoked = " *Revoked";
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>

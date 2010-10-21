@@ -705,6 +705,7 @@ function internalca_change() {
 										$selected = "";
 										$caname = "";
 										$inuse = "";
+										$revoked = "";
 										if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
 											continue;
 										$ca = lookup_ca($cert['caref']);
@@ -714,8 +715,10 @@ function internalca_change() {
 											$selected = "selected";
 										if (cert_in_use($cert['refid']))
 											$inuse = " *In Use";
+											if (is_cert_revoked($cert))
+											$revoked = " *Revoked";
 								?>
-									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse;?></option>
+									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>

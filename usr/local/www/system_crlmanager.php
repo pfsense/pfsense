@@ -265,7 +265,6 @@ function method_change() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-NOTE: This page is still a work in progress and is not yet fully functional.
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>

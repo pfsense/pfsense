@@ -357,7 +357,7 @@
 			<type>listtopic</type>
 		</field>
 		<field>
-			<name>name</name>
+			<name>descr</name>
 			<displayname>Descriptive name</displayname>
 			<description>A name for your reference, to identify this certificate. This is the same as common-name field for other Certificates.</description>
 			<type>input</type>
@@ -488,7 +488,7 @@
 			<type>listtopic</type>
 		</field>
 		<field>
-			<name>name</name>
+			<name>descr</name>
 			<displayname>Descriptive name</displayname>
 			<description>A name for your reference, to identify this certificate. This is also known as the certificate's "Common Name."</description>
 			<type>input</type>

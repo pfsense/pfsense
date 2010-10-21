@@ -145,13 +145,14 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			cert_revoke($cert, $crl, OCSP_REVOKED_STATUS_UNSPECIFIED);
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
+			require_once('openvpn.inc');
+			openvpn_refresh_crls();
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		}
 	}
 }
 
-// Not Finished Yet!
 if ($act == "delcert") {
 	$crl =& lookup_crl($_GET['crlref']);
 	if (!$crl['cert'][$id]) {
@@ -162,6 +163,8 @@ if ($act == "delcert") {
 	cert_unrevoke($crl['cert'][$id], $crl);
 	write_config("Deleted Cert {$name} from CRL {$crl['descr']}.");
 	$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $crl['descr']) . "<br/>";
+	require_once('openvpn.inc');
+	openvpn_refresh_crls();
 	pfSenseHeader("system_crlmanager.php");
 	exit;
 }

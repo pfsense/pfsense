@@ -276,6 +276,17 @@ if ($_POST) {
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
+
+			$dynsubnet_start = ip2ulong($_POST['range_from']);
+			$dynsubnet_end = ip2ulong($_POST['range_to']);
+			foreach ($a_maps as $map) {
+				if (empty($map['ipaddr']))
+					continue;
+				if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
+					(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+				}
+			}
 		}
 	}
 

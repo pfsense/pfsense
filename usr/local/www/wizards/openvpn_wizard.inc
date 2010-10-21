@@ -185,7 +185,7 @@ function step6_submitphpaction() {
 }
 
 function step7_submitphpaction() {
-	global $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config;
 
 	$canames = array();
 	$cacns = array();
@@ -205,7 +205,7 @@ function step7_submitphpaction() {
 	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
-		$savemsg = "Please do not use special characters in Certificate Authority field names.";
+		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $canames) || in_array($_POST['descr'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
@@ -275,7 +275,7 @@ function step9_stepbeforeformdisplay() {
 }
 
 function step9_submitphpaction() {
-	global $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config;
 
 	$certnames = array();
 	$certcns = array();
@@ -295,7 +295,7 @@ function step9_submitphpaction() {
 	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
-		$savemsg = "Please do not use special characters in Certificate field names.";
+		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	

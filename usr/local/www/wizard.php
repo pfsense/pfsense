@@ -92,7 +92,7 @@ if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 	eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
 }
 
-if ($_POST) {
+if ($_POST && !$input_errors) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
         if(!empty($field['bindstofield']) and $field['type'] <> "submit") {
 		$fieldname = $field['name'];
@@ -116,7 +116,8 @@ if ($_POST) {
     if($pkg['step'][$stepid]['stepsubmitphpaction'] <> "") {
 		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
     }
-	write_config();
+	if (!$input_errors)
+		write_config();
     $stepid++;
     if($stepid > $totalsteps)
 	$stepid = $totalsteps;
@@ -322,6 +323,8 @@ function showchange() {
 <p>
 <div style="width:800px;background-color:#ffffff" id="roundme">
 <?php
+	if ($input_errors)
+		print_input_errors($input_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
 	if ($_GET['message'] != "")
@@ -942,4 +945,3 @@ function is_timezone($elt) {
 
 </body>
 </html>
-

@@ -836,6 +836,9 @@ function internalca_change() {
 						<td class="listr"><?=$caname;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td class="listr">
+							<?php if (is_cert_revoked($cert)): ?>
+							<b>Revoked</b><br/>
+							<?php endif; ?>
 							<?php if (is_webgui_cert($cert['refid'])): ?>
 							webConfigurator<br/>
 							<?php endif; ?>

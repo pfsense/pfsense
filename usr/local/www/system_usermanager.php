@@ -645,6 +645,9 @@ function sshkeyClicked(obj) {
 									<tr>
 										<td class="listlr">
 											<?=htmlspecialchars($cert['descr']);?>
+											<?php if (is_cert_revoked($cert)): ?>
+											(<b>Revoked</b>)
+											<?php endif; ?>
 										</td>
 										<td class="listr">
 											<?=htmlspecialchars($ca['descr']);?>

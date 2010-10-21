@@ -150,6 +150,11 @@ if ($_POST) {
 	if ($_POST['ipaddr']) {
 		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
 		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
+		if ((ip2ulong($_POST['ipaddr']) > $dynsubnet_start) &&
+			(ip2ulong($_POST['ipaddr']) < $dynsubnet_end)) {
+			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
+		}
+
 		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||

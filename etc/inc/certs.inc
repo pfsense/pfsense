@@ -444,8 +444,7 @@ $openssl_crl_status = array(
 	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
 	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
 	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
-	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold",
-	OCSP_REVOKED_STATUS_REMOVEFROMCRL         => "Remove from CRL"
+	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
 );
 
 function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {

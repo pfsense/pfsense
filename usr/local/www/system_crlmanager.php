@@ -40,6 +40,8 @@
 require("guiconfig.inc");
 require_once("certs.inc");
 
+global $openssl_crl_status;
+
 $pgtitle = array(gettext("System"), gettext("Certificate Revocation List Manager"));
 
 $crl_methods = array(
@@ -143,7 +145,8 @@ if ($act == "addcert") {
 		}
 
 		if (!$input_errors) {
-			cert_revoke($cert, $crl, OCSP_REVOKED_STATUS_UNSPECIFIED);
+			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
+			cert_revoke($cert, $crl, $reason);
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			require_once('openvpn.inc');
 			openvpn_refresh_crls();
@@ -384,21 +387,21 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<thead>
 					<tr>
-						<td width="90%" class="listhdrr"><?=gettext("Edit CRL");?> <?php echo $crl['descr']; ?></td>
-						<td width="10%" class="list"></td>
+						<th width="90%" class="listhdrr" colspan="3"><b><?php echo gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']; ?></b></th>
+						<th width="10%" class="list"></th>
+					</tr>
+					<tr>
+						<th width="30%" class="listhdrr"><b><?php echo gettext("Certificate Name")?></b></th>
+						<th width="30%" class="listhdrr"><b><?php echo gettext("Revocation Reason")?></b></th>
+						<th width="30%" class="listhdrr"><b><?php echo gettext("Revoked At")?></b></th>
+						<th width="10%" class="list"></th>
 					</tr>
 					</thead>
 					<tbody>
-					<tr>
-						<td class="listlr">
-							<b><?php echo gettext("Currently Revoked Certificates"); ?></b><br/><br/>
-						</td>
-						<td class="list">&nbsp;</td>
-					</td>
 				<?php /* List Certs on CRL */
 					if (!is_array($crl['cert']) || (count($crl['cert']) == 0)): ?>
 					<tr>
-						<td class="listlr">
+						<td class="listlr" colspan="3">
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CRL."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
@@ -410,6 +413,12 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 					<tr>
 						<td class="listlr">
 							<?php echo $name; ?>
+						</td>
+						<td class="listlr">
+							<?php echo $openssl_crl_status[$cert["reason"]]; ?>
+						</td>
+						<td class="listlr">
+							<?php echo date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=delcert&crlref=<?php echo $crl['refid']; ?>&id=<?php echo $i; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?");?>')">
@@ -429,22 +438,28 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 							$ca_certs[] = $cert;
 					if (count($ca_certs) == 0): ?>
 					<tr>
-						<td class="listlr">
+						<td class="listlr" colspan="3">
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CA."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
 					</td>
 				<?php	else: ?>
 					<tr>
-						<td class="listlr">
+						<td class="listlr" colspan="3" align="center">
 							<b><?php echo gettext("Choose a Certificate to Revoke"); ?></b>: <select name='certref' id='certref' class="formselect">
 				<?php	foreach($ca_certs as $cert): ?>
-						<option value="<?=$cert['refid'];?>"><?=htmlspecialchars($cert['descr'])?></option>
+							<option value="<?=$cert['refid'];?>"><?=htmlspecialchars($cert['descr'])?></option>
 				<?php	endforeach; ?>
+							</select>
+							<b><?php echo gettext("Reason");?></b>:
+							<select name='crlreason' id='crlreason' class="formselect">
+				<?php	foreach($openssl_crl_status as $code => $reason): ?>
+							<option value="<?= $code ?>"><?= htmlspecialchars($reason) ?></option>
+				<?php	endforeach; ?>
+							</select>
 							<input name="act" type="hidden" value="addcert" />
 							<input name="crlref" type="hidden" value="<?=$crl['refid'];?>" />
 							<input id="submit" name="add" type="submit" class="formbtn" value="<?=gettext("Add"); ?>" />
-							</select>
 						</td>
 						<td class="list">&nbsp;</td>
 					</tr>

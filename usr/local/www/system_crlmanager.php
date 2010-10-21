@@ -80,7 +80,7 @@ if ($act == "del") {
 	} else {
 		$name = $a_crl[$id]['descr'];
 		unset($a_crl[$id]);
-		write_config();
+		write_config("Deleted CRL {$name}.");
 		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
 	}
 }
@@ -146,16 +146,24 @@ if ($act == "addcert") {
 			cert_revoke($cert, $crl, OCSP_REVOKED_STATUS_UNSPECIFIED);
 			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
+			exit;
 		}
 	}
 }
 
 // Not Finished Yet!
 if ($act == "delcert") {
-	if (!$a_crl[$id]) {
+	$crl =& lookup_crl($_GET['crlref']);
+	if (!$crl['cert'][$id]) {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
+	$name = $crl['cert'][$id]['descr'];
+	cert_unrevoke($crl['cert'][$id], $crl);
+	write_config("Deleted Cert {$name} from CRL {$crl['descr']}.");
+	$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $crl['descr']) . "<br/>";
+	pfSenseHeader("system_crlmanager.php");
+	exit;
 }
 
 if ($_POST) {
@@ -213,7 +221,7 @@ if ($_POST) {
 		else
 			$a_crl[] = $crl;
 
-		write_config();
+		write_config("Saved CRL {$crl['caref']}");
 
 		pfSenseHeader("system_crlmanager.php");
 	}
@@ -401,7 +409,7 @@ NOTE: This page is still a work in progress and is not yet fully functional.
 							<?php echo $name; ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&crlref=<?php echo $crl['refid']; ?>&id=<?php echo $i; ?>">
+							<a href="system_crlmanager.php?act=delcert&crlref=<?php echo $crl['refid']; ?>&id=<?php echo $i; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete this certificate from the CRL ");?>" alt="<?=gettext("Delete this certificate from the CRL ");?>" width="17" height="17" border="0" />
 							</a>
 						</td>

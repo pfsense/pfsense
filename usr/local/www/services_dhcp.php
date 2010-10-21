@@ -285,6 +285,7 @@ if ($_POST) {
 				if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
 					(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
 					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+					break;
 				}
 			}
 		}

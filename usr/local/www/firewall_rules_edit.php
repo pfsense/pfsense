@@ -1137,10 +1137,10 @@ include("head.inc");
 					</select><br><?=gettext("HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
 					<p>
 					<table width="90%">
-						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></td><td><?=gettext("Works with all IP protocols.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("sloppy state");?></li></td><td><?=gettext("Works with all IP protocols.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("synproxy state");?></li></td><td><?=gettext("Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("none");?></li></td><td><?=gettext("Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.");?></ul></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("sloppy state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("synproxy state");?></li></ul></td><td><?=gettext("Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("none");?></li></ul></td><td><?=gettext("Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.");?></td></tr>
 					</table>
 					</p>
 			  </div>

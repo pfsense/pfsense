@@ -2467,6 +2467,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	get_interface_arr(true);
 	unset($interface_ip_arr_cache[$realif]);
 	unset($interface_sn_arr_cache[$realif]);
+	unset($interface_ipv6_arr_cache[$realif]);
+	unset($interface_snv6_arr_cache[$realif]);
 
 	switch ($wancfg['ipaddr']) {
 		case 'carpdev-dhcp':
@@ -2498,6 +2500,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				}
 			} else if (substr($realif, 0, 4) == "ovpn") {
 				/* XXX: Should be done anything?! */
+			}
+			break;
+	}
+
+	switch ($wancfg['ipaddrv6']) {
+		case 'dhcpv6':
+			interface_dhcpv6_configure($interface);
+			break;
+		default:
+			if ($wancfg['ipaddrv6'] <> "" && $wancfg['subnetv6'] <> "") {
+				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
+				mwexec("/sbin/ifconfig {$realif} inet6 {$wancfg['ipaddrv6']} prefixlen {$wancfg['subnetv6']} ");
 			}
 			break;
 	}

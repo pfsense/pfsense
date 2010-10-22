@@ -307,11 +307,14 @@ function system_routing_configure($interface = "") {
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;
+	$gatewayipv6 = "";
+	$interfacegwv6 = "";
+	$foundgwv6 = false;
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw'])) {
+			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']))) {
 				if ($gateway['gateway'] == "dynamic")
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				$gatewayip = $gateway['gateway'];
@@ -325,12 +328,33 @@ function system_routing_configure($interface = "") {
 				break;
 			}
 		}
+		foreach	($config['gateways']['gateway_item'] as $gateway) {
+			if (isset($gateway['defaultgw']) && (is_ipaddrv6($gateway['gateway']))) {
+				if ($gateway['gateway'] == "dynamic")
+					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+				$gatewayipv6 = $gateway['gateway'];
+				$interfacegwv6 = $gateway['interface'];
+				if (!empty($interfacegwv6)) {
+					$defaultif = get_real_interface($gateway['interface']);
+					if ($defaultif)
+						@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgwv6", $gatewayipv6);
+				}
+				$foundgwv6 = true;
+				break;
+			}
+		}
 	}
 	if ($foundgw == false) {
 		$defaultif = get_real_interface("wan");
 		$interfacegw = "wan";
 		$gatewayip = get_interface_gateway("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
+	}	
+	if ($foundgwv6 == false) {
+		$defaultif = get_real_interface("wan");
+		$interfacegw = "wan";
+		$gatewayip = get_interface_gateway_v6("wan");
+		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");
 	}	
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
@@ -342,7 +366,7 @@ function system_routing_configure($interface = "") {
 			}
 		}
 	}
-	/* Create a array from the existing route table */
+	/* Create a array from the existing inet route table */
 	exec("/usr/bin/netstat -rnf inet", $route_str);
 	array_shift($route_str);
 	array_shift($route_str);
@@ -357,13 +381,39 @@ function system_routing_configure($interface = "") {
 	if ($dont_add_route == false ) {
 		if (!empty($interface) && $interface != $interfacegw)
 			;
-		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+		else if (($interfacegw <> "bgpd") && (is_ipaddrv4($gatewayip))) {
 			$action = "add";
 			if(isset($route_arr['default'])) {
 				$action = "change";
 			}
-			log_error("ROUTING: $action default route to $gatewayip");
+			log_error("ROUTING: $action IPv4 default route to $gatewayip");
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+		}
+	}
+
+	/* Create a array from the existing inet6 route table */
+	exec("/usr/bin/netstat -rnf inet6", $routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	$routev6_arr = array();
+	foreach($routev6_str as $routeline) {
+		$items = preg_split("/[ ]+/i", $routeline);
+		$route_arr[$items[0]] = array($items[0], $items[1], $items[5]);
+	}
+
+	if ($dont_add_route == false ) {
+		if (!empty($interface) && $interface != $interfacegw)
+			;
+		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
+			$action = "add";
+			if(isset($routev6_arr['default'])) {
+				$action = "change";
+			}
+			log_error("ROUTING: $action IPv6 default route to $gatewayipv6");
+			mwexec("/sbin/route {$action} -inet6 default " . escapeshellarg($gatewayipv6));
 		}
 	}
 
@@ -385,11 +435,16 @@ function system_routing_configure($interface = "") {
 			if (isset($route_arr[$rtent['network']]))
 				$action = "change";
 
+			if(is_ipaddrv6($gatewayip)) {
+				$inet6 = "-inet6";
+			} else {
+				$inet6 = "";
+			}
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} {$inet6} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} {$inet6} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}

@@ -723,17 +723,21 @@ function filter_generate_optcfg_array() {
 		if (!does_interface_exist($oic['if']))
 			continue;
 		$oic['ip'] = get_interface_ip($if);
+		$oic['ipv6'] = get_interface_ipv6($if);
 		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
+		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
 		$oic['mss'] = empty($oc['mss']) ? '' : $oc['mss'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+		$oic['sav6'] = gen_subnet($oic['ipv6'], $oic['snv6']);
 		$oic['nonat'] = $oc['nonat'];
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
+		$oic['gatewayv6'] = $oc['gatewayv6'];
 		$oic['spoofcheck'] = "yes";
 		$oic['bridge'] = link_interface_to_bridge($if);
 		$FilterIflist[$if] = $oic;
@@ -1981,8 +1985,8 @@ EOD;
 
 	if(!isset($config['system']['ipv6allow'])) {
 		$ipfrules .= "# Block all IPv6\n";
-		$ipfrules .= "block in quick inet6 all\n";
-		$ipfrules .= "block out quick inet6 all\n";
+		$ipfrules .= "block in inet6 all label \"Default Deny ipv6 rule\"\n";
+		$ipfrules .= "block out inet6 all label \"Default Deny ipv6 rule\"\n";
 	}
 
 	$ipfrules .= <<<EOD
@@ -2131,13 +2135,20 @@ pass out all keep state allow-opts label "let out anything from firewall host it
 
 EOD;
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-                if(isset($ifcfg['virtual']))
-                        continue;
+		if(isset($ifcfg['virtual']))
+			continue;
+
 		$gw = get_interface_gateway($ifdescr);
+		echo "gw $gw, ip {$ifcfg['ip']} \n";
 		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
-        }
 
+		$gwv6 = get_interface_gateway_v6($ifdescr);
+		echo "gwv6 $gwv6, ip {$ifcfg['ipv6']}\n";
+		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+	}
+	
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))

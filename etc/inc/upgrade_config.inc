@@ -1322,7 +1322,7 @@ function upgrade_051_to_052() {
 					$crl['descr'] = "Imported OpenVPN CRL #{$index}";
 					$crl['caref'] = $ca['refid'];
 					$crl['text'] = $server['crl'];
-					$config['crl'][];
+					$config['crl'][] = $crl;
 					$server['crlref'] = $crl['refid'];
 				}
 				unset($server['crl']);

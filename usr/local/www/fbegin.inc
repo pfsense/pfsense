@@ -229,9 +229,8 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 ?>
 
 <div id="wrapper">
-
 	<div id="header">
-		<div id="header-left"><a href="index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></img></a></div>
+		<div id="header-left"><a href="index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
 		<div id="header-right">
 			<div class="container">
 				<div class="left">webConfigurator</div>
@@ -407,7 +406,7 @@ function add_to_menu($url, $name) {
 ?>
 
 <div>
-<span class="pgtitle"><?=genhtmltitle($pgtitle);?></font></span>
+<span class="pgtitle"><?=genhtmltitle($pgtitle);?></span>
 <span style="float:right; margin: 0 0 20px 20px;">
 <?php if(! empty($statusurl)): ?>
 <a href="<?php echo $statusurl; ?>" target="_new" title="Status of items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>

@@ -382,8 +382,53 @@ function is_numericint($arg) {
 	return (preg_match("/[^0-9]/", $arg) ? false : true);
 }
 
-/* returns true if $ipaddr is a valid dotted IPv4 address */
+
+/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
 function is_ipaddr($ipaddr) {
+	if(is_ipaddrv4($ipaddr)) {
+		return true;
+	}
+	if(is_ipaddrv6($ipaddr)) {
+		return true;
+	}
+	return false;
+}
+
+function is_ipaddrv6($ipaddr) {
+	/* Not using filter_var here. It misses some test cases */
+	/* http://crisp.tweakblogs.net/blog/2031 */
+	// fast exit for localhost
+	if (strlen($ipaddr) < 3)
+		return $ipaddr == '::';
+
+	// Check if part is in IPv4 format
+	if (strpos($ipaddr, '.')) {
+		$lastcolon = strrpos($ipaddr, ':');
+		if (!($lastcolon && validateIPv4(substr(ipaddr, $lastcolon + 1))))
+		return false;
+
+		// replace IPv4 part with dummy
+		$ipaddr = substr($ipaddr, 0, $lastcolon) . ':0:0';
+	}
+
+	// check uncompressed
+	if (strpos($ipaddr, '::') === false) {
+		return preg_match('/^(?:[a-f0-9]{1,4}:){7}[a-f0-9]{1,4}$/i', $ipaddr);
+	}
+
+	// check colon-count for compressed format
+	if (substr_count($ipaddr, ':') < 8) {
+		return preg_match('/^(?::|(?:[a-f0-9]{1,4}:)+):(?:(?:[a-f0-9]{1,4}:)*[a-f0-9]{1,4})?$/i', $ipaddr);
+	}
+	return false; 
+}
+
+function validateIPv4($ipaddr) {
+	return $ipaddr == long2ip(ip2long($ipaddr));
+}
+
+/* returns true if $ipaddr is a valid dotted IPv4 address */
+function is_ipaddrv4($ipaddr) {
 	if (!is_string($ipaddr))
 		return false;
 

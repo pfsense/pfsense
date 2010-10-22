@@ -113,7 +113,11 @@ if ($_POST) {
 			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
 				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static ip configuration.");
 		}
-		$parent_ip = get_interface_ip($_POST['interface']);
+		if(is_ipaddrv6($_POST['gateway'])) {
+			$parent_ip = get_interface_ipv6($_POST['interface']);
+		} else {		
+			$parent_ip = get_interface_ip($_POST['interface']);
+		}
 		if (is_ipaddr($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {

@@ -3124,6 +3124,29 @@ function find_interface_ip($interface, $flush = false)
 	return $interface_ip_arr_cache[$interface];
 }
 
+/*
+ * find_interface_ipv6($interface): return the interface ip (first found)
+ */
+function find_interface_ipv6($interface, $flush = false)
+{
+	global $interface_ipv6_arr_cache;
+	global $interface_snv6_arr_cache;
+
+	$interface = str_replace("\n", "", $interface);
+	
+	if (!does_interface_exist($interface))
+		return;
+
+	/* Setup IP cache */
+	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
+		$ifinfo = pfSense_get_interface_addresses($interface);
+		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
+		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+	}
+
+	return $interface_ipv6_arr_cache[$interface];
+}
+
 function find_interface_subnet($interface, $flush = false)
 {
 	global $interface_sn_arr_cache;
@@ -3140,6 +3163,24 @@ function find_interface_subnet($interface, $flush = false)
         }
 
 	return $interface_sn_arr_cache[$interface];
+}
+
+function find_interface_subnetv6($interface, $flush = false)
+{
+	global $interface_snv6_arr_cache;
+	global $interface_ipv6_arr_cache;
+
+	$interface = str_replace("\n", "", $interface);
+	if (does_interface_exist($interface) == false)
+		return;
+
+	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
+		$ifinfo = pfSense_get_interface_addresses($interface);
+		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
+		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+        }
+
+	return $interface_snv6_arr_cache[$interface];
 }
 
 function ip_in_interface_alias_subnet($interface, $ipalias) {
@@ -3182,6 +3223,25 @@ function get_interface_ip($interface = "wan")
 		return null;
 }
 
+function get_interface_ipv6($interface = "wan")
+{
+	$realif = get_real_interface($interface);
+	if (!$realif) {
+		if (preg_match("/^carp/i", $interface))
+			$realif = $interface;
+		else if (preg_match("/^vip/i", $interface))
+			$realif = $interface;
+		else
+			return null;
+	}
+
+	$curip = find_interface_ipv6($realif);
+	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
+		return $curip;
+	else
+		return null;
+}
+
 function get_interface_subnet($interface = "wan")
 {
 	$realif = get_real_interface($interface);
@@ -3195,6 +3255,25 @@ function get_interface_subnet($interface = "wan")
         }
 
 	$cursn = find_interface_subnet($realif);
+	if (!empty($cursn))
+		return $cursn;
+
+	return null;
+}
+
+function get_interface_subnetv6($interface = "wan")
+{
+	$realif = get_real_interface($interface);
+	if (!$realif) {
+                if (preg_match("/^carp/i", $interface))
+                        $realif = $interface;
+                else if (preg_match("/^vip/i", $interface))
+                        $realif = $interface;
+                else
+                        return null;
+        }
+
+	$cursn = find_interface_subnetv6($realif);
 	if (!empty($cursn))
 		return $cursn;
 

@@ -118,6 +118,26 @@ if($_REQUEST['dragdroporder']) {
 	exit;
 }
 
+$icmptypes = array(
+	"" => gettext("any"),
+	"echorep" => gettext("Echo reply"),
+	"unreach" => gettext("Destination unreachable"),
+	"squench" => gettext("Source quench"),
+	"redir" => gettext("Redirect"),
+	"althost" => gettext("Alternate Host"),
+	"echoreq" => gettext("Echo"),
+	"routeradv" => gettext("Router advertisement"),
+	"routersol" => gettext("Router solicitation"),
+	"timex" => gettext("Time exceeded"),
+	"paramprob" => gettext("Invalid IP header"),
+	"timereq" => gettext("Timestamp"),
+	"timerep" => gettext("Timestamp reply"),
+	"inforeq" => gettext("Information request"),
+	"inforep" => gettext("Information reply"),
+	"maskreq" => gettext("Address mask request"),
+	"maskrep" => gettext("Address mask reply")
+);
+
 /* add group interfaces */
 if (is_array($config['ifgroups']['ifgroupentry']))
 	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
@@ -611,7 +631,16 @@ if($_REQUEST['undodrag']) {
                     <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']; else echo ""; ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-                    <?=$textss;?><?php if (isset($filterent['protocol'])) echo strtoupper($filterent['protocol']); else echo "*"; ?><?=$textse;?>
+                    <?=$textss;?><?php
+			if (isset($filterent['protocol'])) {
+				echo strtoupper($filterent['protocol']);
+				if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
+					echo ' <span style="cursor: help;" title="ICMP type: ' . $icmptypes[$filterent['icmptype']] . '"><u>';
+					echo $filterent['icmptype'];
+					echo '</u></span>';
+				}
+			} else echo "*";
+                    ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>

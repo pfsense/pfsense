@@ -1124,6 +1124,8 @@ function get_interface_info($ifdescr) {
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
+	$ifinfo['ipaddrv6'] = get_interface_ipv6($ifdescr);;
+	$ifinfo['subnetv6'] = get_interface_subnetv6($ifdescr);;
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
 	$ifinfotmp = pfSense_get_interface_stats($chkif);
@@ -1276,8 +1278,10 @@ function get_interface_info($ifdescr) {
 
 		}
 		/* lookup the gateway */
-		if (interface_has_gateway($ifdescr)) 
+		if (interface_has_gateway($ifdescr)) {
 			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
+			$ifinfo['gatewayv6'] = get_interface_gateway_v6($ifdescr);
+		}
 	}
 
 	$bridge = "";

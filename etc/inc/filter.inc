@@ -2139,12 +2139,10 @@ EOD;
 			continue;
 
 		$gw = get_interface_gateway($ifdescr);
-		echo "gw $gw, ip {$ifcfg['ip']} \n";
 		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
-		echo "gwv6 $gwv6, ip {$ifcfg['ipv6']}\n";
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}

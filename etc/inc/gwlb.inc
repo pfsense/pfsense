@@ -147,7 +147,12 @@ EOD;
 		}
 
 		/* Interface ip is needed since apinger will bind a socket to it. */
-		$gwifip = find_interface_ip($gateway['interface'], true);
+		if (is_ipaddrv4($gateway['gateway'])) {
+			$gwifip = find_interface_ip($gateway['interface'], true);
+		}
+		if (is_ipaddrv6($gateway['gateway'])) {
+			$gwifip = find_interface_ipv6($gateway['interface'], true);
+		}
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
@@ -535,11 +540,10 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 
 	$gw = NULL;
-
 	$gwcfg = $config['interfaces'][$interface];
 	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if(($gateway['name'] == $gwcfg['gateway']) && (is_ipaddrv6($gateway['gateway']))) {
+			if(($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {
 				$gw = $gateway['gateway'];
 				break;
 			}

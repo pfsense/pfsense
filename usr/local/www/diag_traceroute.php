@@ -125,6 +125,7 @@ if (!isset($do_traceroute)) {
 					else
 						$useicmp = "";
 					system("/usr/sbin/traceroute $useicmp -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host));
+					system("/usr/sbin/traceroute6 $useicmp -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host));
 					echo('</pre>');
 				}
 				?>

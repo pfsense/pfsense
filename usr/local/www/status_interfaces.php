@@ -167,7 +167,7 @@ include("head.inc");
 	<?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"): ?>
 	<?php if ($ifinfo['ipaddr']): ?>
 	<tr>
-		<td width="22%" class="vncellt"><?=gettext("IP address");?></td>
+		<td width="22%" class="vncellt"><?=gettext("IPv4 address");?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['ipaddr']);?>
 			&nbsp; 
@@ -175,17 +175,41 @@ include("head.inc");
 	</tr>
 	<?php endif; ?><?php if ($ifinfo['subnet']): ?>
 	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Subnet mask");?></td>
+		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv4");?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['subnet']);?>
 		</td>
 	</tr>
 	<?php endif; ?><?php if ($ifinfo['gateway']): ?>
 	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Gateway");?></td>
+		<td width="22%" class="vncellt"><?=gettext("Gateway IPv4");?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gateway']);?>
 			<?=htmlspecialchars($ifinfo['gateway']);?>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php if ($ifinfo['ipaddrv6']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("IPv6 address");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['ipaddrv6']);?>
+			&nbsp; 
+		</td>
+	</tr>
+	<?php endif; ?><?php if ($ifinfo['subnetv6']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv6");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['subnetv6']);?>
+		</td>
+	</tr>
+	<?php endif; ?><?php if ($ifinfo['gatewayv6']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Gateway IPv6");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gatewayv6']);?>
+			<?=htmlspecialchars($ifinfo['gatewayv6']);?>
 		</td>
 	</tr>
 	<?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")): ?>

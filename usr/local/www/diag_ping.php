@@ -61,7 +61,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$host = $_REQUEST['host'];
+		$host = gethostbyname($_REQUEST['host']);
 		$interface = $_REQUEST['interface'];
 		$count = $_POST['count'];
 		if (preg_match('/[^0-9]/', $count) )
@@ -125,11 +125,21 @@ include("head.inc"); ?>
 					echo "<font face='terminal' size='2'>";
 					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 					echo('<pre>');
-					$ifaddr = get_interface_ip($interface);
-					if ($ifaddr)
-						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
-					else
-						system("/sbin/ping -c$count " . escapeshellarg($host));
+					if(is_ipaddrv4($host)) {
+						$ifaddr = get_interface_ip($interface);
+						if ($ifaddr)
+							system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
+						else
+							system("/sbin/ping -c$count " . escapeshellarg($host));
+					}
+					if(is_ipaddrv6($host)) {
+						$ifaddr = get_interface_ipv6($interface);
+						if ($ifaddr)
+							system("/sbin/ping6 -S$ifaddr -c$count " . escapeshellarg($host));
+						else
+							system("/sbin/ping6 -c$count " . escapeshellarg($host));
+					}
+					
 					echo('</pre>');
 				}
 				?>

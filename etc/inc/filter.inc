@@ -1975,10 +1975,12 @@ function filter_rules_generate() {
 #---------------------------------------------------------------------------
 block in $log all label "Default deny rule"
 block out $log all label "Default deny rule"
+block in $log inet6 all label "Default deny rule IPv6"
+block out $log inet6 all label "Default deny rule IPv6"
 
 # We use the mighty pf, we cannot be fooled.
-block quick proto { tcp, udp } from any port = 0 to any
-block quick proto { tcp, udp } from any to any port = 0
+#block quick inet proto { tcp, udp } from any port = 0 to any
+#block quick inet proto { tcp, udp } from any to any port = 0
 
 
 EOD;
@@ -2124,6 +2126,8 @@ anchor "spoofing"
 anchor "loopback"
 pass in on \$loopback all label "pass loopback"
 pass out on \$loopback all label "pass loopback"
+pass in on \$loopback inet6 all label "pass loopback"
+pass out on \$loopback inet6 all label "pass loopback"
 
 anchor "firewallout"
 
@@ -2131,7 +2135,13 @@ EOD;
 
 	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out all keep state allow-opts label "let out anything from firewall host itself"
+pass out all keep state allow-opts label "let out anything IPv4 from firewall host itself"
+pass out inet6 all keep state allow-opts label "let out anything IPv6 from firewall host itself"
+
+# IPv6 ICMP is not auxilary, it is required for operation
+#pass out quick proto ipv6-icmp from any to any keep state
+# Allow only bare essential icmpv6 packets (NS, NA, and RA)
+pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
 
 EOD;
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
@@ -2144,7 +2154,7 @@ EOD;
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}
 	
 

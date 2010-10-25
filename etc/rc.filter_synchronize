@@ -248,6 +248,8 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'wol';
 		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper']))
 			$sections[] = 'shaper';
+		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['l7shaper']))
+			$sections[] = 'l7shaper';		
 		if ($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
 			$sections[] = 'staticroutes';
 			$sections[] = 'gateways';

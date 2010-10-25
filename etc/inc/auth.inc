@@ -81,7 +81,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$found_host = true;
 
 	if($found_host == false) {
-		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
 		exit;
 	}
 }

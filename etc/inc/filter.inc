@@ -1680,12 +1680,12 @@ function filter_generate_user_rule($rule) {
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
 
-	if(isset($rule['iprotocol']) && $rule['ipprotocol'] <> "") {
+	if(isset($rule['ipprotocol'])) {
 		switch($rule['ipprotocol']) {
 			case "inet":
 				$aline['ipprotocol'] = "inet";
 				break;
-			case "inet":
+			case "inet6":
 				$aline['ipprotocol'] = "inet6";
 				break;
 		}
@@ -1760,7 +1760,7 @@ function filter_generate_user_rule($rule) {
 		if($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
 		elseif(($rule['protocol'] == "icmp") && ($rule['ipprotocol'] == "inet6"))
-			$aline['prot'] = " inet6 proto ipv6-icmp ";
+			$aline['prot'] = " proto ipv6-icmp ";
 		elseif($rule['protocol'] == "icmp")
 			$aline['prot'] = " inet proto icmp ";
 		else
@@ -1967,7 +1967,7 @@ function filter_generate_user_rule($rule) {
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
-		$aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
+		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
 		$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 

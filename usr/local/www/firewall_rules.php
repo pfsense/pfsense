@@ -632,6 +632,18 @@ if($_REQUEST['undodrag']) {
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php
+			if (isset($filterent['ipprotocol'])) {
+				switch($filterent['ipprotocol']) {
+					case "inet":
+						echo "IPv4 ";
+						break;
+					case "inet6":
+						echo "IPv6 ";
+						break;
+				}
+			} else {
+				echo "IPv4 ";
+			}
 			if (isset($filterent['protocol'])) {
 				echo strtoupper($filterent['protocol']);
 				if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {

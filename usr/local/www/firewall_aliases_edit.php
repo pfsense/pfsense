@@ -632,7 +632,7 @@ EOD;
             <td>
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
 				<option></option>
-			          <?php for ($i = 32; $i >= 1; $i--): ?>
+			          <?php for ($i = 128; $i >= 1; $i--): ?>
 			          <option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected"; ?>><?=$i;?></option>
 			          <?php endfor; ?>
 			        </select>

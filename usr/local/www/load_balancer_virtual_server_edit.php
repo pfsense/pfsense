@@ -85,6 +85,9 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This virtual server name has already been used.  Virtual server names must be unique.");
 
+	if (strpos($_POST['name'], " ") !== false)
+		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
 	if (!is_port($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
 

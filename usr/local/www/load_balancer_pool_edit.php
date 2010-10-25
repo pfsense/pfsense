@@ -80,6 +80,10 @@ if ($_POST) {
 	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
+
+	if (strpos($_POST['name'], " ") !== false)
+		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
 	if (!is_port($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
 	if (is_array($_POST['servers'])) {

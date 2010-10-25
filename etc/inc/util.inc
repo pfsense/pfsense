@@ -218,10 +218,13 @@ function is_module_loaded($module_name) {
 
 /* return the subnet address given a host address and a subnet bit count */
 function gen_subnet($ipaddr, $bits) {
-	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-		return "";
-
-	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+	if(is_ipaddrv6($ipaddr)) {
+		return "{$ipaddr}/{$bits}";
+	} else {
+		if (!is_ipaddr($ipaddr) || !is_numeric($bits))
+			return "";
+		return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+	}
 }
 
 /* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */

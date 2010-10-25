@@ -95,6 +95,9 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['direction']))
                 $pconfig['direction'] = $a_filter[$id]['direction'];
 
+	if (isset($a_filter[$id]['ipprotocol']))
+                $pconfig['ipprotocol'] = $a_filter[$id]['ipprotocol'];
+
 	if (isset($a_filter[$id]['protocol']))
 		$pconfig['proto'] = $a_filter[$id]['protocol'];
 	else
@@ -401,6 +404,9 @@ if ($_POST) {
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
 
+		if (isset($_POST['ipprotocol'] ))
+			$filterent['ipprotocol'] = $_POST['ipprotocol'];
+
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;
 		} else {
@@ -532,6 +538,7 @@ if ($_POST) {
 				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
 			else if (isset($filterent['icmptype']))
 				unset($filterent['icmptype']);
+
 			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
@@ -717,6 +724,22 @@ include("head.inc");
 			</td>
 		<tr>
 <?php endif; ?>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
+			<td width="78%" class="vtable">
+				<select name="ipprotocol" class="formselect">
+					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6');
+				foreach ($ipproto as $proto => $name): ?>
+				<option value="<?=$proto;?>"
+					<?php if ($proto == $pconfig['ipprotocol']): ?>
+						selected="selected" 
+					<?php endif; ?>
+					><?=$name;?></option>
+				<?php endforeach; ?>      
+				</select>
+				<strong><?=gettext("Select the Internet Protocol version this rule applies to");?></strong><br />
+			</td>
+		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">

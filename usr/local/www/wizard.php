@@ -457,11 +457,11 @@ function showchange() {
 			else
 				$interfaces = get_configured_interface_with_descr();
 			foreach ($interfaces as $ifname => $iface) {
-				if (is_array($iface)) {
-						if ($iface['mac'])
-							$iface = $ifname. " ({$iface['mac']})";	
-					} else
-						$iface = $ifname;
+				if ($field['type'] == "interface_select") {
+					$iface = $ifname;
+					if ($iface['mac'])
+						$iface .= " ({$iface['mac']})";	
+				}
 			  $SELECTED = "";
 			  if ($value == $ifname) $SELECTED = " SELECTED";
 			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";
@@ -470,13 +470,12 @@ function showchange() {
 			  if($field['interface_filter'] <> "") {
 				if(stristr($ifname, $field['interface_filter']) == true)
 					$canecho = 1;
-			  } else {
+			  } else
 				$canecho = 1;
-			  }
 			  if($canecho == 1)
 				echo $to_echo;
 			}
-				echo "</select>\n";
+			echo "</select>\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];

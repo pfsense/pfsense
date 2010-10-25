@@ -48,7 +48,6 @@ $clients = openvpn_get_active_clients();
 
 <script src="/javascript/sorttable.js" type="text/javascript"></script>
 <br/>
-<form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 	function killClient(mport, remipp) {
 		var busy = function(icon) {

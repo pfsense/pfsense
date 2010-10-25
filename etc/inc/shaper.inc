@@ -380,6 +380,9 @@ class altq_root_queue {
 	function &get_queue_list($q = null) {
 		$qlist = array();
 
+		if ($this->GetEnabled() <> "")
+			return array(); /* Queue is disabled */
+
 		$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->queues)) {
 			foreach ($this->queues as $queue)
@@ -902,6 +905,10 @@ class priq_queue {
 	}
 
         function &get_queue_list(&$qlist) {
+		
+		if ($this->GetEnabled() <> "")
+			return array(); /* Queue is disabled */
+
 		$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
@@ -2822,6 +2829,9 @@ class dnpipe_class extends dummynet_class {
 	function &get_queue_list($q = null) {
 		$qlist = array();
 
+		if ($this->GetEnabled() <> "")
+			return $qlist; /* Queue is disabled */
+
 		$qlist[$this->GetQname()] = $this->GetNumber();
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
@@ -3126,6 +3136,9 @@ class dnqueue_class extends dummynet_class {
         }
 
         function &get_queue_list(&$qlist) {
+		if ($this->GetEnabled() <> "")
+			return array();
+
         	$qlist[$this->GetQname()] = "?" .$this->GetNumber();
         }		
 
@@ -3835,11 +3848,11 @@ function read_altq_config() {
 		return;
 
 	foreach ($a_int as $key => $conf) {
-				$int = $conf['interface'];
-				$root =& new altq_root_queue();
-				$root->SetInterface($int);
-				$altq_list_queues[$root->GetInterface()] = &$root;
-				$root->ReadConfig($conf);
+		$int = $conf['interface'];
+		$root =& new altq_root_queue();
+		$root->SetInterface($int);
+		$altq_list_queues[$root->GetInterface()] = &$root;
+		$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {
@@ -3852,7 +3865,7 @@ function read_altq_config() {
 				$root->add_queue($root->GetInterface(), $q, &$path, $input_errors);
 				array_pop($path);
 			} 	
-				}
+		}
 		array_pop($path);
 	}
 }

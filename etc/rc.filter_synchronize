@@ -240,8 +240,11 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'filter';
 		if ($carp['synchronizenat'] != "" and is_array($config['nat']))
 			$sections[] = 'nat';
-		if ($carp['synchronizealiases'] != "" and is_array($config['aliases']))
+		if ($carp['synchronizealiases'] != "") {
+			if (!is_array($config['aliases']))
+				$config['aliases'] = array();
 			$sections[] = 'aliases';
+		}
 		if ($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
 			$sections[] = 'dhcpd';
 		if ($carp['synchronizewol'] != "" and is_array($config['wol']))

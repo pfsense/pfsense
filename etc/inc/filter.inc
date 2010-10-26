@@ -732,7 +732,7 @@ function filter_generate_optcfg_array() {
 		$oic['mss'] = empty($oc['mss']) ? '' : $oc['mss'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
-		$oic['sav6'] = "{$oic['ipv6']}";
+		$oic['sav6'] = gen_subnetv6($oic['ipv6'], $oic['snv6']);
 		$oic['nonat'] = $oc['nonat'];
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];

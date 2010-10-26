@@ -218,13 +218,16 @@ function is_module_loaded($module_name) {
 
 /* return the subnet address given a host address and a subnet bit count */
 function gen_subnet($ipaddr, $bits) {
-	if(is_ipaddrv6($ipaddr)) {
-		return "{$ipaddr}/{$bits}";
-	} else {
-		if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-			return "";
-		return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
-	}
+	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
+		return "";
+	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+}
+
+/* return the subnet address given a host address and a subnet bit count */
+function gen_subnetv6($ipaddr, $bits) {
+	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
+		return "";
+	return Net_IPv6::getNetmask($ipaddr, $bits);
 }
 
 /* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */
@@ -397,37 +400,10 @@ function is_ipaddr($ipaddr) {
 	return false;
 }
 
+/* returns true if $ipaddr is a valid IPv6 address */
 function is_ipaddrv6($ipaddr) {
-	/* Not using filter_var here. It misses some test cases */
-	/* http://crisp.tweakblogs.net/blog/2031 */
-	// fast exit for localhost
-	if (strlen($ipaddr) < 3)
-		return $ipaddr == '::';
-
-	// Check if part is in IPv4 format
-	if (strpos($ipaddr, '.')) {
-		$lastcolon = strrpos($ipaddr, ':');
-		if (!($lastcolon && validateIPv4(substr(ipaddr, $lastcolon + 1))))
-		return false;
-
-		// replace IPv4 part with dummy
-		$ipaddr = substr($ipaddr, 0, $lastcolon) . ':0:0';
-	}
-
-	// check uncompressed
-	if (strpos($ipaddr, '::') === false) {
-		return preg_match('/^(?:[a-f0-9]{1,4}:){7}[a-f0-9]{1,4}$/i', $ipaddr);
-	}
-
-	// check colon-count for compressed format
-	if (substr_count($ipaddr, ':') < 8) {
-		return preg_match('/^(?::|(?:[a-f0-9]{1,4}:)+):(?:(?:[a-f0-9]{1,4}:)*[a-f0-9]{1,4})?$/i', $ipaddr);
-	}
-	return false; 
-}
-
-function validateIPv4($ipaddr) {
-	return $ipaddr == long2ip(ip2long($ipaddr));
+	$result = Net_IPv6::checkIPv6($ipaddr);
+	return $result;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */

@@ -3149,7 +3149,8 @@ function find_interface_ipv6($interface, $flush = false)
 {
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
-
+	global $config;
+	
 	$interface = str_replace("\n", "", $interface);
 	
 	if (!does_interface_exist($interface))
@@ -3158,6 +3159,16 @@ function find_interface_ipv6($interface, $flush = false)
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
+		exec("/sbin/ifconfig {$interface} inet6", $output);
+		foreach($output as $line) {
+			if(preg_match("/inet6/", $line)) {
+				$parts = explode(" ", $line);
+				if(! stristr("fe80::", $parts[1])) {
+					$ifinfo['ipaddrv6'] = $parts[1];
+					$ifinfo['subnetbitsv6'] = $parts[3];
+				}
+			}
+		}
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
 	}

@@ -406,7 +406,7 @@ function add_to_menu($url, $name) {
 ?>
 
 <div>
-<span class="pgtitle"><?=genhtmltitle($pgtitle);?></span>
+<span class="pgtitle"><a href="<?= $_SERVER['SCRIPT_NAME'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
 <span style="float:right; margin: 0 0 20px 20px;">
 <?php if(! empty($statusurl)): ?>
 <a href="<?php echo $statusurl; ?>" target="_new" title="Status of items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>

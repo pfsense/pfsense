@@ -63,6 +63,7 @@ ini_set("memory_limit","128M");
 require_once('config.lib.inc');
 require_once("notices.inc");
 require_once("util.inc");
+require_once("IPv6.inc");
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else

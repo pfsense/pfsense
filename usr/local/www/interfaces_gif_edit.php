@@ -167,7 +167,7 @@ include("head.inc");
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
-                                        for ($i = 32; $i > 0; $i--) {
+                                        for ($i = 128; $i > 0; $i--) {
                                                 if($i <> 31) {
                                                         echo "<option value=\"{$i}\" ";
                                                         if ($i == $pconfig['tunnel-remote-net']) echo "selected";

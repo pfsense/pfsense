@@ -50,7 +50,7 @@ require_once("interfaces.inc");
 function backup_vip_config_section() {
 	global $config;
 
-	if (is_array($config['virtualip']['vip']))
+	if (!is_array($config['virtualip']['vip']))
 		return;
 	$temp = array();
 	$temp['vip'] = array();

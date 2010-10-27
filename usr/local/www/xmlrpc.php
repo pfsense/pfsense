@@ -157,19 +157,21 @@ function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
+	$vipbackup = array();
 	if (isset($params[0]['virtualip'])) {
 		if(is_array($config['virtualip']['vip'])) {
 			foreach ($config['virtualip']['vip'] as $vip)
 				interface_vip_bring_down($vip);
 		}
+        	$vipbackup = $config['virtualip']['vip'];
 	}
-        $vipbackup=$config['virtualip']['vip'];
         // For vip section, first keep items sent from the master
 	$config = array_merge($config, $params[0]);
         // Then add ipalias and proxyarp types already defined on the backup
-        foreach ($vipbackup as $vip)
+        foreach ($vipbackup as $vip) {
                 if (($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp'))
                         $config['virtualip']['vip'][]=$vip ;
+	}
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	interfaces_vips_configure();

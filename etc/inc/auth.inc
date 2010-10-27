@@ -936,7 +936,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		else
 			$ldapfunc = "ldap_search";
 		/* Support legacy auth container specification. */
-		if (stristr($ldac_split, "DC="))
+		if (stristr($ldac_split, "DC=") || empty($ldapbasedn))
 			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		else
 			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);

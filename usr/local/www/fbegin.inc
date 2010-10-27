@@ -119,6 +119,7 @@ $services_menu[] = array("DNS Forwarder", "/services_dnsmasq.php");
 $services_menu[] = array("DHCP Relay", "/services_dhcp_relay.php");
 if($g['services_dhcp_server_enable'])
 	$services_menu[] = array("DHCP Server", "/services_dhcp.php");
+	$services_menu[] = array("DHCPv6 Server", "/services_dhcpv6.php");
 $services_menu[] = array("Dynamic DNS", "/services_dyndns.php");
 $services_menu[] = array("IGMP proxy", "/services_igmpproxy.php");
 $services_menu[] = array("Load Balancer", "/load_balancer_pool.php");

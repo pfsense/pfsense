@@ -49,11 +49,14 @@ require_once("interfaces.inc");
  */
 function backup_vip_config_section() {
 	global $config;
-	$new_section = &$config['virtualip'];
-	foreach($new_section['vip'] as $section) {
-		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") {
-			unset($section);
-		}
+
+	if (is_array($config['virtualip']['vip']))
+		return;
+	$temp = array();
+	$temp['vip'] = array();
+	foreach($config['virtualip']['vip'] as $section) {
+		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias")
+			continue;
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;

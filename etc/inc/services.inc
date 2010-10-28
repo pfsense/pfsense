@@ -485,7 +485,7 @@ EOD;
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {
-			$dnscfgv6 .= "	dhcp6.option domain-name \"{$dhcpv6ifconf['domain']}\";\n";
+			$dnscfgv6 .= "	option dhcp6.domain-name \"{$dhcpv6ifconf['domain']}\";\n";
 		}
 		
     		if($dhcpv6ifconf['domainsearchlist'] <> "") {
@@ -512,7 +512,7 @@ EOD;
 
 		/* is failover dns setup? */
 		if (is_array($dhcpv6ifconf['dnsserver']) && $dhcpv6ifconf['dnsserver'][0] <> "") {
-			$dhcpdv6conf .= "		option domain-name-servers {$dhcpv6ifconf['dnsserver'][0]}";
+			$dhcpdv6conf .= "		option dhcp6.name-servers {$dhcpv6ifconf['dnsserver'][0]}";
 			if($dhcpv6ifconf['dnsserver'][1] <> "")
 				$dhcpdv6conf .= ",{$dhcpv6ifconf['dnsserver'][1]}";
 			$dhcpdv6conf .= ";\n";

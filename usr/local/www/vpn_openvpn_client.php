@@ -630,7 +630,7 @@ function autotls_change() {
 									$caname = "";
 									$inuse = "";
 									$revoked = "";
-									if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
+									if (is_user_cert($cert['refid']))
 										continue;
 									$ca = lookup_ca($cert['caref']);
 									if ($ca)

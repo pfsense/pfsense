@@ -285,7 +285,7 @@ if ($_POST) {
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
-		$server['custom_options'] = $pconfig['custom_options'];
+		$server['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
 		if ($tls_mode) {
 			if ($pconfig['tlsauth_enable']) {

@@ -225,7 +225,7 @@ if ($_POST) {
 		$client['proxy_passwd'] = $pconfig['proxy_passwd'];
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
-		$client['custom_options'] = $pconfig['custom_options'];
+		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
         if ($tls_mode) {
             $client['caref'] = $pconfig['caref'];

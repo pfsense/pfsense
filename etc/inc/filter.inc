@@ -1762,7 +1762,7 @@ function filter_generate_user_rule($rule) {
 		elseif(($rule['protocol'] == "icmp") && ($rule['ipprotocol'] == "inet6"))
 			$aline['prot'] = " proto ipv6-icmp ";
 		elseif($rule['protocol'] == "icmp")
-			$aline['prot'] = " inet proto icmp ";
+			$aline['prot'] = " proto icmp ";
 		else
 			$aline['prot'] = " proto {$rule['protocol']} ";
 	} else {
@@ -2044,8 +2044,8 @@ block in $log inet6 all label "Default deny rule IPv6"
 block out $log inet6 all label "Default deny rule IPv6"
 
 # We use the mighty pf, we cannot be fooled.
-#block quick inet proto { tcp, udp } from any port = 0 to any
-#block quick inet proto { tcp, udp } from any to any port = 0
+block quick inet proto { tcp, udp } from any port = 0 to any
+block quick inet proto { tcp, udp } from any to any port = 0
 
 
 EOD;
@@ -2173,6 +2173,18 @@ anchor "dhcpserver{$oc['descr']}"
 pass in on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
+
+
+EOD;
+			}
+			if(isset($config['dhcpdv6'][$on]['enable'])) {
+				$ipfrules .= <<<EOD
+
+# We need inet6 icmp for stateless autoconfig and dhcpv6
+#pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
+pass in on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/64 to ff02::/64 label "allow access to DHCPv6 server"
+pass out on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/64 to ff02::/64 label "allow access to DHCPv6 server"
+
 
 EOD;
 			}

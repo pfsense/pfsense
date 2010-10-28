@@ -51,8 +51,10 @@ function services_dhcpd_configure() {
 	}
 	
 	/* kill any running dhcpd */
-	if(is_process_running("dhcpd"))
+	if(is_process_running("dhcpd")) {
 		mwexec("killall dhcpd", true);
+		mwexec("killall -9 rtadvd", true);
+	}
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcp_server_enabled())
@@ -630,11 +632,16 @@ EOD;
 	
 
 	/* fire up dhcpd in a chroot */
-	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
-		join(" ", $dhcpdifs));
-	mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf " .
-		join(" ", $dhcpdv6ifs));
+	if(count($dhcpdifs) > 0) {
+		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
+			join(" ", $dhcpdifs));
+	}
 
+	if(count($dhcpdv6ifs) > 0) {
+		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf " .
+			join(" ", $dhcpdv6ifs));
+		mwexec("/usr/sbin/rtadvd " . join(" ", $dhcpdv6ifs));
+	}
 	if ($g['booting']) {
 		print "done.\n";
 	}

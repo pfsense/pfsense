@@ -238,6 +238,49 @@ function gen_subnet_max($ipaddr, $bits) {
 	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
 }
 
+/* Generate end number for a given ipv6 subnet mask
+ * no, it does not perform math */
+function gen_subnetv6_max($ipaddr, $bits) {
+	if(!is_ipaddrv6($ipaddr))
+		return false;
+	
+	$subnetstart = gen_subnetv6($ipaddr, $bits);
+	/* we should have a expanded full ipv6 subnet starting at 0.
+	 * Now split those by the semicolon so we can do 16 bit math */
+	$parts = explode(":", $subnetstart);
+	if(count($parts) <> 8)
+		return false;
+
+	/* reverse the array, we start with the lsb */
+	$parts = array_reverse($parts);
+	/* set the itteration count properly */
+	$bitsleft = 128 - $bits;
+	$i = 0;
+	foreach($parts as $part) {
+		/* foreach 16 bits we go to the next part */
+		/* no this isn't proper hex math, neither does it overflow properly */
+		while($bitsleft > 0) {
+			if($part == "0") {
+				$part = "f";
+			} else {
+				$part = $part . "f";
+			}
+			$bitsleft = $bitsleft - 4;
+			$j++;
+			if($j == 4) {
+				$parts[$i] = $part;
+				$j = 0;
+				$i++;
+				continue 2;
+			}
+		}
+		$i++;
+	}
+	$parts = array_reverse($parts);
+	$subnet_end = implode(":", $parts);
+	return $subnet_end;
+}
+
 /* returns a subnet mask (long given a bit count) */
 function gen_subnet_mask_long($bits) {
 	$sm = 0;
@@ -920,6 +963,13 @@ function ipcmp($a, $b) {
 
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
+	if(is_ipaddrv6($addr)) {
+		$result = Net_IPv6::IsInNetmask($addr, $subnet);
+		if($result)
+			return true;
+		else
+			return false;
+	}
 	list($ip, $mask) = explode('/', $subnet);
 	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
 	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));

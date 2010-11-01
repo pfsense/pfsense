@@ -123,6 +123,8 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['lbactions'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This action name has already been used.  Action names must be unique.");
 
+	if (strpos($_POST['name'], " ") !== false)
+		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
 
 	if (!$input_errors) {
 		$actent = array();

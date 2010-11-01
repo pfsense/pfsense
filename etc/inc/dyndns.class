@@ -124,7 +124,7 @@
 			$this->_ifIP = get_interface_ip($dnsIf);
 
 			// Ensure that we where able to lookup the IP
-			if(!$this->_ifIP) {
+			if(!is_ipaddr($this->_ifIP)) {
 				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
 				return;
 			}

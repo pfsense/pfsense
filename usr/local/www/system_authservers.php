@@ -147,7 +147,7 @@ if ($_POST) {
 
 	if ($pconfig['type'] == "ldap") {
 		$reqdfields = explode(" ", "name type ldap_host ldap_port ".
-						"ldap_urltype ldap_protver ldap_scope ldap_basedn ".
+						"ldap_urltype ldap_protver ldap_scope ".
 						"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
@@ -157,7 +157,6 @@ if ($_POST) {
 			gettext("Transport"),
 			gettext("Protocol version"),
 			gettext("Search level"),
-			gettext("Search Base DN"),
 			gettext("User naming Attribute"),
 			gettext("Group naming Attribute"),
 			gettext("Group member attribute"),
@@ -507,7 +506,7 @@ function select_clicked() {
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Search scope");?></td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Search scope");?></td>
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
 									<tr>

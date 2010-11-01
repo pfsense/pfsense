@@ -902,6 +902,7 @@ class priq_queue {
 	}
 
         function &get_queue_list(&$qlist) {
+		
 		$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
@@ -3126,6 +3127,8 @@ class dnqueue_class extends dummynet_class {
         }
 
         function &get_queue_list(&$qlist) {
+		if ($this->GetEnabled() == "")
+			return;
         	$qlist[$this->GetQname()] = "?" .$this->GetNumber();
         }		
 
@@ -3782,9 +3785,13 @@ function &get_unique_queue_list() {
 	$qlist = array();
 	if (is_array($altq_list_queues)) {
 		foreach ($altq_list_queues as $altq) {
+			if ($altq->GetEnabled())
+				continue;
 			$tmplist =& $altq->get_queue_list();
-			foreach ($tmplist as $qname => $link)
-				$qlist[$qname] = $link;	
+			foreach ($tmplist as $qname => $link) {
+				if ($link->GetEnabled() <> "")
+					$qlist[$qname] = $link;	
+			}
 		}
 	}
 	return $qlist;
@@ -3796,9 +3803,12 @@ function &get_unique_dnqueue_list() {
 	$qlist = array();
 	if (is_array($dummynet_pipe_list)) {
 		foreach ($dummynet_pipe_list as $dn) {
+			if ($dn->GetEnabled() == "")
+				continue;
 			$tmplist =& $dn->get_queue_list();
-			foreach ($tmplist as $qname => $link)
+			foreach ($tmplist as $qname => $link) {
 				$qlist[$qname] = $link;	
+			}
 		}
 	}
 	return $qlist;
@@ -3835,11 +3845,11 @@ function read_altq_config() {
 		return;
 
 	foreach ($a_int as $key => $conf) {
-				$int = $conf['interface'];
-				$root =& new altq_root_queue();
-				$root->SetInterface($int);
-				$altq_list_queues[$root->GetInterface()] = &$root;
-				$root->ReadConfig($conf);
+		$int = $conf['interface'];
+		$root =& new altq_root_queue();
+		$root->SetInterface($int);
+		$altq_list_queues[$root->GetInterface()] = &$root;
+		$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {
@@ -3852,7 +3862,7 @@ function read_altq_config() {
 				$root->add_queue($root->GetInterface(), $q, &$path, $input_errors);
 				array_pop($path);
 			} 	
-				}
+		}
 		array_pop($path);
 	}
 }

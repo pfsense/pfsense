@@ -81,7 +81,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$found_host = true;
 
 	if($found_host == false) {
-		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
 		exit;
 	}
 }
@@ -936,7 +936,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		else
 			$ldapfunc = "ldap_search";
 		/* Support legacy auth container specification. */
-		if (stristr($ldac_split, "DC="))
+		if (stristr($ldac_split, "DC=") || empty($ldapbasedn))
 			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		else
 			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);

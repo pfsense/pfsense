@@ -1514,34 +1514,35 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
+
 			if($rule['ipprotocol'] == "inet6") {
-				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if(!is_ipaddr($opt_ip))
-						return "";
-					$src = $opt_ip . "/" .
-					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
-				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+				if (preg_match("/opt([0-9]*)ip/", $rule[$target]['networkv6'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
-					if(!is_ipaddr($src))
+					if(!is_ipaddrv6($src))
 						return "";
-				}
+				} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['networkv6'], $optmatch)) {
+					$opt_ipv6 = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
+					if(!is_ipaddr($opt_ipv6))
+						return "";
+					$src = $opt_ipv6 . "/" .
+					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
+
 				if(isset($rule[$target]['not']))
 					$src = " !{$src}";
 			} else {
-				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+				/* check for opt$NUMip here */
+				if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
+					if(!is_ipaddr($src))
+						return "";
+				} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 					if(!is_ipaddr($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['sn'];
-				/* check for opt$NUMip here */
-				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
-					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-					if(!is_ipaddr($src))
-						return "";
-				}
+
 				if(isset($rule[$target]['not']))
 					$src = " !{$src}";
 			}
@@ -1595,7 +1596,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
 				}
-				if(isset($rule[$target]['not'])) $src = "!{$src}";
+				if(isset($rule[$target]['not']))
+					$src = "!{$src}";
 			}
 		}
 	} else if($rule[$target]['address']) {

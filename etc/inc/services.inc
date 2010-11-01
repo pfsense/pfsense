@@ -869,7 +869,6 @@ function services_dyndns_configure_client($conf) {
 		$dnsWilcard = $conf['wildcard'],
 		$dnsMX = $conf['mx'], 
 		$dnsIf = "{$conf['interface']}");
-
 }
 
 function services_dyndns_configure($int = "") {

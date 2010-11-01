@@ -1322,6 +1322,8 @@ function upgrade_051_to_052() {
 					$crl['descr'] = "Imported OpenVPN CRL #{$index}";
 					$crl['caref'] = $ca['refid'];
 					$crl['text'] = $server['crl'];
+					if(!is_array($config['crl']))
+						$config['crl'] = array();
 					$config['crl'][] = $crl;
 					$server['crlref'] = $crl['refid'];
 				}
@@ -2236,16 +2238,24 @@ function rename_field(& $section, $oldname, $newname) {
 
 function upgrade_071_to_072() {
 	global $config;
-	rename_field($config['sysctl']['item'], 'desc', 'descr');
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item']))
+		rename_field($config['sysctl']['item'], 'desc', 'descr');
 }
 
 function upgrade_072_to_073() {
 	global $config;
-	rename_field($config['load_balancer']['monitor_type'], 'desc', 'descr');
-	rename_field($config['load_balancer']['lbpool'], 'desc', 'descr');
-	rename_field($config['load_balancer']['lbaction'], 'desc', 'descr');
-	rename_field($config['load_balancer']['lbprotocol'], 'desc', 'descr');
-	rename_field($config['load_balancer']['virtual_server'], 'desc', 'descr');
+	if (!is_array($config['load_balancer']))
+		return;
+	if (is_array($config['load_balancer']['monitor_type']))
+		rename_field($config['load_balancer']['monitor_type'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbpool']))
+		rename_field($config['load_balancer']['lbpool'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbaction']))
+		rename_field($config['load_balancer']['lbaction'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbprotocol']))
+		rename_field($config['load_balancer']['lbprotocol'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['virtual_server']))
+		rename_field($config['load_balancer']['virtual_server'], 'desc', 'descr');
 }
 
 function upgrade_073_to_074() {
@@ -2255,8 +2265,11 @@ function upgrade_073_to_074() {
 
 function upgrade_074_to_075() {
 	global $config;
-	rename_field($config['ca'], 'name', 'descr');
-	rename_field($config['cert'], 'name', 'descr');
-	rename_field($config['crl'], 'name', 'descr');
+	if (is_array($config['ca']))
+		rename_field($config['ca'], 'name', 'descr');
+	if (is_array($config['cert']))
+		rename_field($config['cert'], 'name', 'descr');
+	if (is_array($config['crl']))
+		rename_field($config['crl'], 'name', 'descr');
 }
 ?>

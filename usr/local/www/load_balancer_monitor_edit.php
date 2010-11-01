@@ -94,6 +94,9 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This monitor name has already been used.  Monitor names must be unique.");
 
+	if (strpos($_POST['name'], " ") !== false)
+		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
 	switch($_POST['type']) {
 		case 'icmp': {
 			break;

@@ -49,11 +49,14 @@ require_once("interfaces.inc");
  */
 function backup_vip_config_section() {
 	global $config;
-	$new_section = &$config['virtualip'];
-	foreach($new_section['vip'] as $section) {
-		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") {
-			unset($section);
-		}
+
+	if (!is_array($config['virtualip']['vip']))
+		return;
+	$temp = array();
+	$temp['vip'] = array();
+	foreach($config['virtualip']['vip'] as $section) {
+		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias")
+			continue;
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
@@ -240,14 +243,19 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'filter';
 		if ($carp['synchronizenat'] != "" and is_array($config['nat']))
 			$sections[] = 'nat';
-		if ($carp['synchronizealiases'] != "" and is_array($config['aliases']))
+		if ($carp['synchronizealiases'] != "") {
+			if (!is_array($config['aliases']))
+				$config['aliases'] = array();
 			$sections[] = 'aliases';
+		}
 		if ($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
 			$sections[] = 'dhcpd';
 		if ($carp['synchronizewol'] != "" and is_array($config['wol']))
 			$sections[] = 'wol';
 		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper']))
 			$sections[] = 'shaper';
+		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['l7shaper']))
+			$sections[] = 'l7shaper';		
 		if ($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
 			$sections[] = 'staticroutes';
 			$sections[] = 'gateways';

@@ -42,11 +42,10 @@ function killbypid($pidfile) {
 }
 
 function isvalidpid($pid) {
-	$running = `ps -p $pid | wc -l`;
-	if(intval($running) > 1)
-		return true;
-	else 
-		return false;
+	$output = "";
+	exec("/bin/pgrep -F {$pid}", $output, $retval);
+
+        return (intval($retval) == 0);
 }
 
 function is_process_running($process) {

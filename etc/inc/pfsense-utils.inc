@@ -1059,17 +1059,21 @@ function is_dhcp_server_enabled()
 
 	$Iflist = get_configured_interface_list();
 
-	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-		if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
-			$dhcpdenable = true;
-			break;
+	if(is_array($config['dhcpd'])) {
+		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+			if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
+				$dhcpdenable = true;
+				break;
+			}
 		}
 	}
 
-	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-		if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if])) {
-			$dhcpdenable = true;
-			break;
+	if(is_array($config['dhcpdv6'])) {
+		foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+			if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if])) {
+				$dhcpdenable = true;
+				break;
+			}
 		}
 	}
 

@@ -112,8 +112,10 @@ function services_dhcpd_configure() {
 	}
 
 	$syscfg = $config['system'];
-	$dhcpdcfg = $config['dhcpd'];
-	$dhcpdv6cfg = $config['dhcpdv6'];
+	if (!is_array($config['dhcpd']))
+		$config['dhcpd'] = array();
+	if (!is_array($config['dhcpdv6']))
+		$config['dhcpdv6'] = array();
 	$Iflist = get_configured_interface_list();
 		
 	if ($g['booting'])

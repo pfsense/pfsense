@@ -57,10 +57,10 @@ if ($_POST['vpntype'])
 	$vpntype = $_POST['vpntype'];
 
 if ($_POST['clear']) 
-	clear_log_file("/var/log/{$vpntype}.log");
+	clear_log_file("/var/log/vpn.log");
 
 function dump_clog_vpn($logfile, $tail) {
-	global $g, $config;
+	global $g, $config, $vpntype;
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
@@ -74,17 +74,18 @@ function dump_clog_vpn($logfile, $tail) {
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
-
+		if ($llent[0] != $vpntype)
+			continue;
 		echo "<tr>\n";
 		echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
-		if ($llent[0] == "login")
+		if ($llent[1] == "login")
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\"></td>\n";
 		else
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\"></td>\n";
 
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
+		echo "<td class=\"listr\">" . htmlspecialchars($llent[4]) . "</td>\n";
+		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "&nbsp;</td>\n";
 		echo "</tr>\n";
 	}
 }
@@ -139,7 +140,7 @@ include("head.inc");
 			  <td class="listhdrr"><?=gettext("User");?></td>
 			  <td class="listhdrr"><?=gettext("IP address");?></td>
 			</tr>
-			<?php dump_clog_vpn("/var/log/{$vpntype}.log", $nentries); ?>
+			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
           </table>
 <br />
 <input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">

@@ -524,7 +524,7 @@ function sshkeyClicked(obj) {
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
-														if (in_array($group['name'],$pconfig['groups']))
+														if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
 															continue;
 												?>
 												<option value="<?=$group['name'];?>" <?=$selected;?>>
@@ -549,6 +549,7 @@ function sshkeyClicked(obj) {
 											<br/>
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
 												<?php
+												if (is_array($pconfig['groups'])) {
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
@@ -558,7 +559,8 @@ function sshkeyClicked(obj) {
 												<option value="<?=$group['name'];?>">
 													<?=htmlspecialchars($group['name']);?>
 												</option>
-												<?php endforeach; ?>
+												<?php endforeach;
+												} ?>
 											</select>
 											<br/>
 										</td>

@@ -1026,7 +1026,7 @@ pts:
 	set iface enable tcpmssfix
 	set iface idle 1800
 	set iface up-script /usr/local/sbin/pptp-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface down-script /usr/local/sbin/pptp-linkdown
 	set bundle enable multilink
 	set bundle enable crypt-reqd
 	set link yes acfcomp protocomp
@@ -1241,7 +1241,7 @@ pppoe_standart:
 	set bundle enable compression
 	set auth max-logins 1
 	set iface up-script /usr/local/sbin/pppoe-linkup
-        set iface down-script /usr/local/sbin/vpn-linkdown
+        set iface down-script /usr/local/sbin/pppoe-linkdown
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1442,7 +1442,7 @@ l2tp_standard:
         set iface disable on-demand
         set iface enable proxy-arp
 	set iface up-script /usr/local/sbin/l2tp-linkup
-        set iface down-script /usr/local/sbin/vpn-linkdown
+        set iface down-script /usr/local/sbin/l2tp-linkdown
         set link yes acfcomp protocomp
         set link no pap chap
         set link enable chap

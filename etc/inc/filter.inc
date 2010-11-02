@@ -1514,35 +1514,34 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
-
 			if($rule['ipprotocol'] == "inet6") {
-				/* check for opt$NUMip here */
-				if (preg_match("/opt([0-9]*)ip/", $rule[$target]['networkv6'], $matches)) {
-					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
-					if(!is_ipaddrv6($src))
+				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
+					if(!is_ipaddr($opt_ip))
 						return "";
-				} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['networkv6'], $optmatch)) {
-					$opt_ipv6 = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if(!is_ipaddr($opt_ipv6))
-						return "";
-					$src = $opt_ipv6 . "/" .
+					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
-
+				/* check for opt$NUMip here */
+				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
+					if(!is_ipaddr($src))
+						return "";
+				}
 				if(isset($rule[$target]['not']))
 					$src = " !{$src}";
 			} else {
-				/* check for opt$NUMip here */
-				if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
-					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-					if(!is_ipaddr($src))
-						return "";
-				} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 					if(!is_ipaddr($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['sn'];
-
+				/* check for opt$NUMip here */
+				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
+					if(!is_ipaddr($src))
+						return "";
+				}
 				if(isset($rule[$target]['not']))
 					$src = " !{$src}";
 			}
@@ -1596,8 +1595,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
 				}
-				if(isset($rule[$target]['not']))
-					$src = "!{$src}";
+				if(isset($rule[$target]['not'])) $src = "!{$src}";
 			}
 		}
 	} else if($rule[$target]['address']) {
@@ -2170,23 +2168,26 @@ EOD;
 			/* allow access to DHCP server on interfaces */
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
+
 # allow access to DHCP server on {$oc['descr']}
 anchor "dhcpserver{$oc['descr']}"
 pass in on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
-
 EOD;
 			}
 			if(isset($config['dhcpdv6'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
 
+# allow access to DHCPv6 server on {$oc['descr']}
+anchor "dhcpv6server{$oc['descr']}"
 # We need inet6 icmp for stateless autoconfig and dhcpv6
-#pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
-pass in on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/64 to ff02::/64 label "allow access to DHCPv6 server"
-pass out on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/64 to ff02::/64 label "allow access to DHCPv6 server"
-
+pass in on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/10 to ff02::/10 label "allow access to DHCPv6 server"
+pass out on \${$oc['descr']} inet6 proto ipv6-icmp from fe80::/10 to ff02::/10 label "allow access to DHCPv6 server"
+#pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/10 port = 546 label "allow access to DHCPv6 server"
+#pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
+#pass out on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 546 to any label "allow access to DHCPv6 server"
 
 EOD;
 			}

@@ -35,9 +35,73 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/rtadvd
 	pfSense_MODULE:	utils
 */
+
+/* implement ipv6 route advertising deamon */
+function services_rtadvd_configure() {
+	global $config, $g;
+	
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "services_rtadvd_configure() being called $mt\n";
+	}
+
+	if($g['services_dhcp_server_enable'] == false) 
+		return;
+
+	if(is_process_running("rtadvd")) {
+		mwexec("killall -9 rtadvd", true);
+	}
+
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcp_server_enabled())
+		return 0;
+
+	if (!is_array($config['dhcpdv6']))
+		$config['dhcpdv6'] = array();
+
+	$dhcpdv6cfg = $config['dhcpdv6'];
+	$Iflist = get_configured_interface_list();
+
+	/* write rtadvd.conf */
+	$fd = fopen("{$g['varetc_path']}/rtadvd.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open rtadvd.conf in services_rtadvd_configure().\n");
+		return 1;
+	}
+
+	/* raflags, managed=64, stateful=128, both=192 */
+
+	$rtadvdconf = "# Automatically Generated, do not edit\n";
+	$rtadvdnum = 0;
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		$rtadvdnum++;
+		$realif = get_real_interface($dhcpv6if);
+		$rtadvdifs[] = $realif;
+
+		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
+		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
+
+		$rtadvdconf .= "{$realif}:\\\n";
+		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
+		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
+		$rtadvdconf .= "\t:raflags#192:\n";
+		$rtadvdconf .= "\n";
+
+	}
+
+	fwrite($fd, $rtadvdconf);
+	fclose($fd);
+
+	if(count($rtadvdifs) > 0) {
+		mwexec("/usr/sbin/rtadvd -d -c {$g['varetc_path']}/rtadvd.conf " . join(" ", $rtadvdifs));
+	}
+	return 0;
+}
 
 function services_dhcpd_configure() {
 	global $config, $g;
@@ -53,7 +117,6 @@ function services_dhcpd_configure() {
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
 		mwexec("killall dhcpd", true);
-		mwexec("killall -9 rtadvd", true);
 	}
 
 	/* DHCP enabled on any interfaces? */
@@ -116,6 +179,8 @@ function services_dhcpd_configure() {
 		$config['dhcpd'] = array();
 	if (!is_array($config['dhcpdv6']))
 		$config['dhcpdv6'] = array();
+	$dhcpdcfg = $config['dhcpd'];
+	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 		
 	if ($g['booting'])
@@ -477,8 +542,8 @@ EOD;
 			continue;
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
-		$subnetv6 = gen_subnetv6($ifcfgip, $ifcfgsn);
-		$subnetmaskv6 = gen_subnet_mask($ifcfgsn);
+		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
 		if($is_olsr_enabled == true)
 			if($dhcpv6ifconf['netmask'])
@@ -644,6 +709,10 @@ EOD;
 			join(" ", $dhcpdv6ifs));
 		mwexec("/usr/sbin/rtadvd " . join(" ", $dhcpdv6ifs));
 	}
+
+	/* start ipv6 route advertising if required */
+	services_rtadvd_configure();
+
 	if ($g['booting']) {
 		print "done.\n";
 	}
@@ -869,6 +938,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsWilcard = $conf['wildcard'],
 		$dnsMX = $conf['mx'], 
 		$dnsIf = "{$conf['interface']}");
+
 }
 
 function services_dyndns_configure($int = "") {

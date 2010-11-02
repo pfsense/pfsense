@@ -98,7 +98,7 @@ function services_rtadvd_configure() {
 	fclose($fd);
 
 	if(count($rtadvdifs) > 0) {
-		mwexec("/usr/sbin/rtadvd -d -c {$g['varetc_path']}/rtadvd.conf " . join(" ", $rtadvdifs));
+		mwexec("/usr/sbin/rtadvd -c {$g['varetc_path']}/rtadvd.conf " . join(" ", $rtadvdifs));
 	}
 	return 0;
 }

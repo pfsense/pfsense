@@ -49,12 +49,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_GET['vpntype'])
-	$vpntype = $_GET['vpntype'];
-else
-	$vpntype = "pptp";
-if ($_POST['vpntype'])
-	$vpntype = $_POST['vpntype'];
+$vpntype = ($_GET['vpntype']) ? $_GET['vpntype'] : "pptp";
+$mode = ($_GET['mode']) ? $_GET['mode'] : "login";
 
 if ($_POST['clear']) 
 	clear_log_file("/var/log/vpn.log");
@@ -69,7 +65,7 @@ function dump_clog_vpn($logfile, $tail) {
 	if(isset($config['system']['usefifolog'])) 
 		exec("/usr/sbin/fifolog_reader " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 	else 
-		exec("/usr/sbin/clog " . $logfile . " | grep -v \"CLOG\" | grep -v \"\033\" | tail {$sor} -n " . $tail, $logarr);
+		exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -114,39 +110,54 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
+  <tr><td class="tabnavtbl">
+<?php
+	$tab_array = array();
+	$tab_array[] = array(gettext("PPTP Logins"),
+				(($vpntype == "pptp") && ($mode != "raw")),
+				"/diag_logs_vpn.php?vpntype=pptp");
+	$tab_array[] = array(gettext("PPTP Raw"),
+				(($vpntype == "pptp") && ($mode == "raw")),
+				"/diag_logs_vpn.php?vpntype=pptp&mode=raw");
+	$tab_array[] = array(gettext("PPPoE Logins"),
+				(($vpntype == "poes") && ($mode != "raw")),
+				"/diag_logs_vpn.php?vpntype=poes");
+	$tab_array[] = array(gettext("PPPoE Raw"),
+				(($vpntype == "poes") && ($mode == "raw")),
+				"/diag_logs_vpn.php?vpntype=poes&mode=raw");
+	$tab_array[] = array(gettext("L2TP Logins"),
+				(($vpntype == "l2tp") && ($mode != "raw")),
+				"/diag_logs_vpn.php?vpntype=l2tp");
+	$tab_array[] = array(gettext("L2TP Raw"),
+				(($vpntype == "l2tp") && ($mode == "raw")),
+				"/diag_logs_vpn.php?vpntype=l2tp&mode=raw");
+	display_top_tabs($tab_array);
+?>
+  </td></tr>
   <tr>
     <td class="tabcont">
-<form action="diag_logs_vpn.php" method="post">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
-		  <td colspan="4" class="listtopic">
-			<?=gettext("Choose which type of VPN you want to view.");?>
-		  </td></tr><tr>
-		  <td colspan="4">
-			<?php $vpns = array("pptp" => gettext("PPTP"), "poes" => gettext("PPPoE"), "l2tp" => gettext("L2TP"));
-				foreach ($vpns as $kvpn => $dvpn):
-			?>
-				<a href="/diag_logs_vpn.php?vpntype=<?=$kvpn;?>" >
-				<input type="button" name="<?=$dvpn;?>" value="<?=$dvpn;?>"> 
-				</a>
-			<?php endforeach; ?>
-			
-		  </td></tr>
-		  <tr>
-		  <td colspan="4" class="listtopic">
-				<?php printf(gettext('Last %1$s %2$s VPN log entries'),$nentries,$vpns[$vpntype]);?></td>
-			</tr>
-			<tr>
-			  <td class="listhdrr"><?=gettext("Time");?></td>
-			  <td class="listhdrr"><?=gettext("Action");?></td>
-			  <td class="listhdrr"><?=gettext("User");?></td>
-			  <td class="listhdrr"><?=gettext("IP address");?></td>
-			</tr>
+	<form action="diag_logs_vpn.php" method="post">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+		<tr>
+		<td colspan="4" class="listtopic">
+			<?php printf(gettext('Last %1$s %2$s VPN log entries'),$nentries,$vpns[$vpntype]);?></td>
+		</tr>
+		<?php if ($mode != "raw"): ?>
+		<tr>
+			<td class="listhdrr"><?=gettext("Time");?></td>
+			<td class="listhdrr"><?=gettext("Action");?></td>
+			<td class="listhdrr"><?=gettext("User");?></td>
+			<td class="listhdrr"><?=gettext("IP address");?></td>
+		</tr>
 			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
-          </table>
-<br />
-<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
-</form>
+		<?php else: ?>
+			<?php dump_clog("/var/log/{$vpntype}.log", $nentries); ?>
+		<?php endif; ?>
+	</table>
+	<br />
+	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">
+	<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
+	</form>
 	</td>
   </tr>
 </table>

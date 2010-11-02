@@ -1423,7 +1423,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 l2tp{$i}:
-	new l2tp{$i} l2tp{$i}
+	new -i l2tp{$i} l2tp{$i} l2tp{$i}
 	{$isssue_ip_type}
 	load l2tp_standard
 

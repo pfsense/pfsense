@@ -118,9 +118,15 @@ if ($_POST) {
 		} else {		
 			$parent_ip = get_interface_ip($_POST['interface']);
 		}
-		if (is_ipaddr($parent_ip)) {
+		if (is_ipaddrv4($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
+				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
+			}
+		}
+		if (is_ipaddrv6($parent_ip)) {
+			$parent_sn = get_interface_subnetv6($_POST['interface']);
+			if(!ip_in_subnet($_POST['gateway'], gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn)) {
 				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 			}
 		}

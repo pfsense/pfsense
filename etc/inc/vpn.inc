@@ -1229,14 +1229,14 @@ function vpn_pppoe_configure(&$pppoecfg) {
 poes{$pppoecfg['pppoeid']}{$i}:
 	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
 	{$isssue_ip_type}
-	load pppoe_standart
+	load pppoe_standard
 
 EOD;
 			}
 
 			$mpdconf .=<<<EOD
 
-pppoe_standart:
+pppoe_standard:
 	set bundle no multilink
 	set bundle enable compression
 	set auth max-logins 1

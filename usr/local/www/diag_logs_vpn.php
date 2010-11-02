@@ -74,18 +74,19 @@ function dump_clog_vpn($logfile, $tail) {
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
-		if ($llent[0] != $vpntype)
+		$iftype = substr($llent[1], 0, 4);
+		if ($iftype != $vpntype)
 			continue;
 		echo "<tr>\n";
 		echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
-		if ($llent[1] == "login")
+		if ($llent[0] == "login")
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\"></td>\n";
 		else
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\"></td>\n";
 
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[4]) . "</td>\n";
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "&nbsp;</td>\n";
+		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
+		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
 		echo "</tr>\n";
 	}
 }
@@ -121,7 +122,7 @@ include("head.inc");
 			<?=gettext("Choose which type of VPN you want to view.");?>
 		  </td></tr><tr>
 		  <td colspan="4">
-			<?php $vpns = array("pptp" => gettext("PPTP"), "pppoe" => gettext("PPPoE"), "l2tp" => gettext("L2TP"));
+			<?php $vpns = array("pptp" => gettext("PPTP"), "poes" => gettext("PPPoE"), "l2tp" => gettext("L2TP"));
 				foreach ($vpns as $kvpn => $dvpn):
 			?>
 				<a href="/diag_logs_vpn.php?vpntype=<?=$kvpn;?>" >

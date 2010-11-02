@@ -61,22 +61,22 @@ else
  *
  */
 if(isset($config['dnsmasq']['enable'])) {
-	$pconfig = array();
-	$pconfig['name'] = "dnsmasq";
-	$pconfig['description'] = gettext("DNS Forwarder");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "dnsmasq";
+	$svcconfig['description'] = gettext("DNS Forwarder");
+	$services[] = $svcconfig;
 }
 
-$pconfig = array();
-$pconfig['name'] = "ntpd";
-$pconfig['description'] = gettext("NTP clock sync");
-$services[] = $pconfig;
+$svcconfig = array();
+$svcconfig['name'] = "ntpd";
+$svcconfig['description'] = gettext("NTP clock sync");
+$services[] = $svcconfig;
 
 if(isset($config['captiveportal']['enable'])) {
-	$pconfig = array();
-	$pconfig['name'] = "captiveportal";
-	$pconfig['description'] = gettext("Captive Portal");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "captiveportal";
+	$svcconfig['description'] = gettext("Captive Portal");
+	$services[] = $svcconfig;
 }
 
 $iflist = array();
@@ -93,58 +93,58 @@ foreach($iflist as $if) {
 }
 
 if($show_dhcprelay == true) {
-	$pconfig = array();
-	$pconfig['name'] = "dhcrelay";
-	$pconfig['description'] = gettext("DHCP Relay");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "dhcrelay";
+	$svcconfig['description'] = gettext("DHCP Relay");
+	$services[] = $svcconfig;
 }
 
 if(is_dhcp_server_enabled()) {
-	$pconfig = array();
-	$pconfig['name'] = "dhcpd";
-	$pconfig['description'] = gettext("DHCP Service");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "dhcpd";
+	$svcconfig['description'] = gettext("DHCP Service");
+	$services[] = $svcconfig;
 }
 
 if(isset($config['snmpd']['enable'])) {
-	$pconfig = array();
-	$pconfig['name'] = "bsnmpd";
-	$pconfig['description'] = gettext("SNMP Service");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "bsnmpd";
+	$svcconfig['description'] = gettext("SNMP Service");
+	$services[] = $svcconfig;
 }
 
 if (count($config['igmpproxy']['igmpentry']) > 0) {
-	$pconfig = array();
-	$pconfig['name'] = "igmpproxy";
-	$pconfig['descritption'] = gettext("IGMP proxy");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "igmpproxy";
+	$svcconfig['descritption'] = gettext("IGMP proxy");
+	$services[] = $svcconfig;
 }
 
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-	$pconfig = array();
-	$pconfig['name'] = "miniupnpd";
-	$pconfig['description'] = gettext("UPnP Service");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "miniupnpd";
+	$svcconfig['description'] = gettext("UPnP Service");
+	$services[] = $svcconfig;
 }
 
 if (isset($config['ipsec']['enable'])) {
-	$pconfig = array();
-	$pconfig['name'] = "racoon";
-	$pconfig['description'] = gettext("IPsec VPN");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "racoon";
+	$svcconfig['description'] = gettext("IPsec VPN");
+	$services[] = $svcconfig;
 }
 
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$pconfig = array();
-				$pconfig['name'] = "openvpn";
-				$pconfig['mode'] = $mode;
-				$pconfig['id'] = $id;
-				$pconfig['vpnid'] = $setting['vpnid'];
-				$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
-				$services[] = $pconfig;
+				$svcconfig = array();
+				$svcconfig['name'] = "openvpn";
+				$svcconfig['mode'] = $mode;
+				$svcconfig['id'] = $id;
+				$svcconfig['vpnid'] = $setting['vpnid'];
+				$svcconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$services[] = $svcconfig;
 			}
 		}
 	}

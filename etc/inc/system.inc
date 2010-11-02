@@ -443,7 +443,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn');
+		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -468,15 +468,15 @@ function system_syslogd_start() {
 		$syslogconf .= "!ppp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ppp.log\n";
-		$syslogconf .= "!pptp\n";
+		$syslogconf .= "!pptps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pptp.log\n";
-		$syslogconf .= "!pppoe\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pptps.log\n";
+		$syslogconf .= "!poes\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pppoe.log\n";
-		$syslogconf .= "!l2tp\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/poes.log\n";
+		$syslogconf .= "!l2tps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2tp.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2tps.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";

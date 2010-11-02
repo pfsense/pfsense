@@ -150,9 +150,20 @@ include("head.inc");
 			<td class="listhdrr"><?=gettext("IP address");?></td>
 		</tr>
 			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
-		<?php else: ?>
-			<?php dump_clog("/var/log/{$vpntype}.log", $nentries); ?>
-		<?php endif; ?>
+		<?php else: 
+			switch ($vpntype) {
+				case 'pptp':
+					$logname = "pptps";
+					break;
+				case 'poes':
+					$logname = "poes";
+					break;
+				case 'l2tp':
+					$logname = "l2tps";
+					break;
+			}
+			dump_clog("/var/log/{$logname}.log", $nentries);
+		      endif; ?>
 	</table>
 	<br />
 	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">

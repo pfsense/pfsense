@@ -996,7 +996,7 @@ function vpn_pptpd_configure() {
 			}
 
 			$mpdconf = <<<EOD
-pptpd:
+pptps:
 
 EOD;
 
@@ -1144,7 +1144,7 @@ EOD;
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptp -f mpd.conf pptpd");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptps pptps");
 
 			break;
 
@@ -1208,7 +1208,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 				return 1;
 			}
 			$mpdconf = "\n\n";
-			$mpdconf .= "pppoe:\n";
+			$mpdconf .= "poes:\n";
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdconf .= "	load poes{$pppoecfg['pppoeid']}{$i}\n";
@@ -1347,7 +1347,7 @@ EOD;
 			}
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s pppoe pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
 			break;
 	}
@@ -1402,7 +1402,7 @@ function vpn_l2tp_configure() {
 			}
 			$mpdconf = "\n\n";
 			$mpdconf .=<<<EOD
-l2tp:
+l2tps:
 
 EOD;
 
@@ -1528,7 +1528,7 @@ EOD;
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tp l2tp");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
 			break;
 

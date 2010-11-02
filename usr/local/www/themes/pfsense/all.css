@@ -919,9 +919,10 @@ div#log span.log-protocol-mini-header {
 	top: -300px; */
 }
 
-#login #username, #password {
-	font-size: 1em;
+#login #username, #password, #password2 {
+	font-size: small;
 	width: 60%;
+	padding-left:19px
 	padding: 3px;
 	margin: 0em;
 

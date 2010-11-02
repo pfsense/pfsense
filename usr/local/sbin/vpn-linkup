@@ -3,3 +3,14 @@
 # record login
 /usr/bin/logger -p local3.info "login,$1,$4,$5"
 
+case `/bin/echo $1 | /usr/bin/cut -c1-4` in
+	pptp)
+		/sbin/ifconfig $1 group pptp
+		;;
+	poes)
+		/sbin/ifconfig $1 group pppoe
+		;;
+	l2tp)
+		/sbin/ifconfig $1 group l2tp
+		;;
+esac

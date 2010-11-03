@@ -72,7 +72,7 @@ function & lookup_cert_by_name($name) {
 	global $config;
 	if (is_array($config['cert']))
 		foreach ($config['cert'] as & $cert)
-			if ($cert['name'] == $name)
+			if ($cert['descr'] == $name)
 				return $cert;
 }
 
@@ -444,8 +444,7 @@ $openssl_crl_status = array(
 	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
 	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
 	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
-	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold",
-	OCSP_REVOKED_STATUS_REMOVEFROMCRL         => "Remove from CRL"
+	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
 );
 
 function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
@@ -453,7 +452,7 @@ function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
 	$ca =& lookup_ca($caref);
 	if (!$ca)
 		return false;
-	$crl['name'] = $name;
+	$crl['descr'] = $name;
 	$crl['caref'] = $caref;
 	$crl['serial'] = $serial;
 	$crl['lifetime'] = $lifetime;
@@ -502,7 +501,7 @@ function cert_unrevoke($cert, & $crl) {
 	if (!is_crl_internal($crl))
 		return false;
 	foreach ($crl['cert'] as $id => $rcert) {
-		if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name'])) {
+		if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr'])) {
 			unset($crl['cert'][$id]);
 			crl_update($crl);
 			return true;
@@ -517,11 +516,11 @@ function is_cert_revoked($cert, $crlref = "") {
 		return false;
 
 	if (!empty($crlref)) {
-		$crl = crl_lookup($crlref);
+		$crl = lookup_crl($crlref);
 		if (!is_array($crl['cert']))
 			return false;
 		foreach ($crl['cert'] as $rcert) {
-			if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+			if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
 				return true;
 		}
 	} else {
@@ -529,7 +528,7 @@ function is_cert_revoked($cert, $crlref = "") {
 			if (!is_array($crl['cert']))
 				continue;
 			foreach ($crl['cert'] as $rcert) {
-				if (($rcert['refid'] == $cert['refid']) || ($rcert['name'] == $cert['name']))
+				if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
 					return true;
 			}
 		}

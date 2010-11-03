@@ -121,7 +121,7 @@ include("head.inc");
 			$t->my_uri('load_balancer_monitor.php');
 			$t->add_column(gettext('Name'),'name',20);
 			$t->add_column(gettext('Type'),'type',10);
-			$t->add_column(gettext('Description'),'desc',30);
+			$t->add_column(gettext('Description'),'descr',30);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');

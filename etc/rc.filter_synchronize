@@ -49,11 +49,14 @@ require_once("interfaces.inc");
  */
 function backup_vip_config_section() {
 	global $config;
-	$new_section = &$config['virtualip'];
-	foreach($new_section['vip'] as $section) {
-		if($section['mode'] == "proxyarp") {
-			unset($section);
-		}
+
+	if (!is_array($config['virtualip']['vip']))
+		return;
+	$temp = array();
+	$temp['vip'] = array();
+	foreach($config['virtualip']['vip'] as $section) {
+		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias")
+			continue;
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
@@ -128,16 +131,6 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
 			if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync']))
 				unset ($config_copy['dnsmasq']['hosts'][$x]);
-		}
-	}
-	if (is_array($config_copy['virtualip']['vip'])) {
-		$vipcnt = count($config_copy['virtualip']['vip']);
-		for ($x = 0; $x < $vipcnt; $x++) {
-			$config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
-			if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or
-			    $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp" or
-			    $config_copy['virtualip']['vip'][$x]['mode'] == "ipalias")
-				unset ($config_copy['virtualip']['vip'][$x]);
 		}
 	}
 	if (is_array($config_copy['ipsec']['tunnel'])) {
@@ -246,38 +239,76 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 		}
 
 		$synchronizetoip .= $carp['synchronizetoip'];
-		if ($carp['synchronizerules'] != "" and is_array($config['filter']))
+		if ($carp['synchronizerules'] != "") {
+			if (!is_array($config['filter']))
+				$config['filter'] = array();
 			$sections[] = 'filter';
-		if ($carp['synchronizenat'] != "" and is_array($config['nat']))
+		}
+		if ($carp['synchronizenat'] != "") {
+			if (!is_array($config['nat']))
+				$config['nat'] = array();
 			$sections[] = 'nat';
-		if ($carp['synchronizealiases'] != "" and is_array($config['aliases']))
+		}
+		if ($carp['synchronizealiases'] != "") {
+			if (!is_array($config['aliases']))
+				$config['aliases'] = array();
 			$sections[] = 'aliases';
+		}
 		if ($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
 			$sections[] = 'dhcpd';
-		if ($carp['synchronizewol'] != "" and is_array($config['wol']))
+		if ($carp['synchronizewol'] != "") {
+			if (!is_array($config['wol']))
+				$config['wol'] = array();
 			$sections[] = 'wol';
-		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper']))
+		}
+		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
 			$sections[] = 'shaper';
-		if ($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
+		}
+		if ($carp['synchronizetrafficshaper'] != "") {
+			if (!is_array($config['l7shaper']))
+				$config['l7shaper'] = array();
+			$sections[] = 'l7shaper';
+		}
+		if ($carp['synchronizestaticroutes'] != "") {
+			if (!is_array($config['staticroutes']))
+				$config['staticroutes'] = array();
 			$sections[] = 'staticroutes';
+			if (!is_array($config['gateways']))
+				$config['gateways'] = array();
 			$sections[] = 'gateways';
 		}
-		if ($carp['synchronizevirtualip'] != "" and is_array($config['virtualip']))
+		if ($carp['synchronizevirtualip'] != "") {
+			if (!is_array($config['virtualip']))
+				$config['virtualip'] = array();
 			$sections[] = 'virtualip';
-		if ($carp['synchronizelb'] != "" and is_array($config['load_balancer']))
-			$sections[] = 'load_balancer';
-		if ($carp['synchronizeipsec'] != "" and is_array($config['ipsec']))
-			$sections[] = 'ipsec';
-		if ($carp['synchronizeopenvpn'] != "" and is_array($config['openvpn'])) {
-			$sections[] = 'openvpn';
-			$sections[] = 'cert';
-			$sections[] = 'ca';
 		}
-		if ($carp['synchronizecerts'] != "") {
-			if (is_array($config['cert']))
-				$sections[] = 'cert';
-			if (is_array($config['ca']))
-				$sections[] = 'ca';
+		if ($carp['synchronizelb'] != "") {
+			if (!is_array($config['load_balancer']))
+				$config['load_balancer'] = array();
+			$sections[] = 'load_balancer';
+		}
+		if ($carp['synchronizeipsec'] != "") {
+			if (!is_array($config['ipsec']))
+				$config['ipsec'] = array();
+			$sections[] = 'ipsec';
+		}
+		if ($carp['synchronizeopenvpn'] != "") {
+			if (!is_array($config['openvpn']))
+				$config['openvpn'] = array();
+			$sections[] = 'openvpn';
+		}
+		if ($carp['synchronizecerts'] != "" || $carp['synchronizeopenvpn'] != "") {
+			if (!is_array($config['cert']))
+				$config['cert'] = array();
+			$sections[] = 'cert';
+
+			if (!is_array($config['ca']))
+				$config['ca'] = array();
+			$sections[] = 'ca';
+
+			if (!is_array($config['crl']))
+				$config['crl'] = array();
+			$sections[] = 'crl';
 		}
 		if ($carp['synchronizeusers'] != "") {
 			$mergesections[] = 'user';
@@ -285,8 +316,11 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 		} 
 		if ($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
 			$sections[] = 'dnsmasq';
-		if ($carp['synchronizeschedules'] != "" and is_array($config['schedules']))
+		if ($carp['synchronizeschedules'] != "") {
+			if (!is_array($config['schedules']))
+				$config['schedules'] = array();
 			$sections[] = 'schedules';
+		}
 		if ($carp['synchronizecaptiveportal'] != "" and is_array($config['captiveportal']))
 			$sections[] = 'captiveportal';
 		if ($carp['synchronizecaptiveportal'] != "" and is_array($config['vouchers']))

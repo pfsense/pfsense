@@ -28,6 +28,10 @@
 */
 require_once("openvpn.inc");
 
+function has_special_chars($text) {
+	return ereg('[^A-Za-z0-9 _-]', $text);
+}
+
 function step1_submitphpaction() {
 	global $stepid, $config;
 	if ($_POST['authtype'] == "local") {
@@ -181,24 +185,28 @@ function step6_submitphpaction() {
 }
 
 function step7_submitphpaction() {
-	global $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config;
 
 	$canames = array();
 	$cacns = array();
 	if (is_array($config['ca'])) {
 		foreach($config['ca'] as $ca) {
-			$canames[] = $ca['name'];
+			$canames[] = $ca['descr'];
 			$cainfo = cert_get_subject_hash($ca['crt']);
 			$cacns[] = $cainfo["CN"];
 		}
 	}
 
-	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
+	if (empty($_POST['descr']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
-	} elseif (in_array($_POST['name'], $canames) || in_array($_POST['name'], $cacns)) {
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
+		$stepid--;
+		$input_errors[] = "Please do not use special characters in Certificate field names.";
+	} elseif (in_array($_POST['descr'], $canames) || in_array($_POST['descr'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
 	} elseif (strlen($_POST['country']) != 2) {
@@ -214,7 +222,7 @@ function step8_stepbeforeformdisplay() {
 	global $stepid, $config;
 
 	if (count($config['cert']) < 1 ||
-		(count($config['cert']) == 1 && stristr($config['cert'][0]['name'], "webconf"))) {
+		(count($config['cert']) == 1 && stristr($config['cert'][0]['descr'], "webconf"))) {
 		$stepid++;
 	}
 }
@@ -267,24 +275,28 @@ function step9_stepbeforeformdisplay() {
 }
 
 function step9_submitphpaction() {
-	global $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config;
 
 	$certnames = array();
 	$certcns = array();
 	if (is_array($config['cert'])) {
 		foreach($config['cert'] as $cert) {
-			$certnames[] = $cert['name'];
+			$certnames[] = $cert['descr'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
 		}	
 	}
 
-	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
+	if (empty($_POST['descr']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
-	} elseif (in_array($_POST['name'], $certnames) || in_array($_POST['name'], $certcns)) {
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
+		$stepid--;
+		$input_errors[] = "Please do not use special characters in Certificate field names.";
+	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	
 	} elseif (strlen($_POST['country']) != 2) {
@@ -440,7 +452,7 @@ function step12_submitphpaction() {
 	if (isset($pconfig['step6']['uselist']) && !empty($pconfig['step6']['certca'])) {
 		$ca = array();
 		$ca['refid'] = uniqid();
-		$ca['name'] = $pconfig['step6']['certca'];
+		$ca['descr'] = $pconfig['step6']['certca'];
 		$dn = array(
 			'countryName' => $pconfig['step6']['country'],
 			'stateOrProvinceName' => $pconfig['step6']['state'],
@@ -467,7 +479,7 @@ function step12_submitphpaction() {
 	if (isset($pconfig['step9']['uselist'])) {
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['name'] = $pconfig['step9']['certname'];
+		$cert['descr'] = $pconfig['step9']['certname'];
 		$dn = array(
 			'countryName' => $pconfig['step9']['country'],
 			'stateOrProvinceName' => $pconfig['step9']['state'],

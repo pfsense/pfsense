@@ -131,7 +131,7 @@ include("head.inc");
 			$t->add_column(gettext('Port'),'port',10);
 			$t->add_column(gettext('Pool'),'pool',15);
 			$t->add_column(gettext('Fall Back Pool'),'sitedown',15);
-			$t->add_column(gettext('Description'),'desc',30);
+			$t->add_column(gettext('Description'),'descr',30);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');

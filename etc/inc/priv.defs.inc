@@ -361,8 +361,8 @@ $priv_list['page-xmlrpcinterfacestats']['match'] = array();
 $priv_list['page-xmlrpcinterfacestats']['match'][] = "ifstats.php*";
 
 $priv_list['page-system-login/logout'] = array();
-$priv_list['page-system-login/logout']['name'] = gettext("WebCfg - System: Login / Logout page");
-$priv_list['page-system-login/logout']['descr'] = gettext("Allow access to the 'System: Login / Logout' page.");
+$priv_list['page-system-login/logout']['name'] = gettext(""WebCfg - System: Login / Logout page / Dashboard");
+$priv_list['page-system-login/logout']['descr'] = gettext(""Allow access to the 'System: Login / Logout' page and Dashboard.");
 $priv_list['page-system-login/logout']['match'] = array();
 $priv_list['page-system-login/logout']['match'][] = "index.php*";
 

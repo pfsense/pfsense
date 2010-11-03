@@ -1512,17 +1512,17 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
-			if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+			/* check for opt$NUMip here */
+			if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+				$src = $FilterIflist["opt{$matches[1]}"]['ip'];
+				if(!is_ipaddr($src))
+					return "";
+			} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 				if(!is_ipaddr($opt_ip))
 					return "";
 				$src = $opt_ip . "/" .
 				$FilterIflist["opt{$optmatch[1]}"]['sn'];
-			/* check for opt$NUMip here */
-			} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
-				$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-				if(!is_ipaddr($src))
-					return "";
 			}
 			if(isset($rule[$target]['not']))
 				$src = " !{$src}";
@@ -1555,7 +1555,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = "{$pppoesa}/{$pppoesn}";
 					break;
 			}
-			if(isset($rule[$target]['not'])) $src = "!{$src}";
+			if(isset($rule[$target]['not']))
+				$src = "!{$src}";
 		}
 	} else if($rule[$target]['address']) {
 		$expsrc = alias_expand($rule[$target]['address']);
@@ -2412,8 +2413,8 @@ function filter_get_time_based_rule_status($schedule) {
 			$position = $timeday['position'];
 		else
 			$position = "";
-		if($timeday['desc'])
-			$desc = $timeday['desc'];
+		if($timeday['descr'])
+			$desc = $timeday['descr'];
 		else
 			$desc = "";
 		if($month) {

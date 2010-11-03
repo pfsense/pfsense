@@ -1057,10 +1057,10 @@ include("head.inc");
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span> <p>
-				<input name="max" id="max" value="<?php echo $pconfig['max'] ?>"><br><?=gettext(" Maximum state entries this rule can create");?><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br><?=gettext(" Maximum number of unique source hosts");?><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br><?=gettext(" Maximum number of established connections per host");?><p>	 
-				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br><?=gettext(" Maximum state entries per host");?><p>
+				<input name="max" id="max" value="<?php echo $pconfig['max'] ?>"><br><?=gettext(" Maximum state entries this rule can create");?></p><p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br><?=gettext(" Maximum number of unique source hosts");?></p><p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br><?=gettext(" Maximum number of established connections per host");?></p><p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br><?=gettext(" Maximum state entries per host");?></p><p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
 					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected"; ?>></option>
@@ -1070,13 +1070,13 @@ include("head.inc");
 					} ?>
 				</select><br />
 				<?=gettext("Maximum new connections / per second(s)");?>
-				<p>
+				</p><p>
 
 				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>"><br>
 				<?=gettext("State Timeout in seconds");?>
-				<p />
+				</p>
 
-				<p><strong><?=gettext("NOTE: Leave fields blank to disable that feature.");?></strong>
+				<p><strong><?=gettext("NOTE: Leave fields blank to disable that feature.");?></strong></p>
 			  </div>
 			</td>
 		</tr>
@@ -1137,10 +1137,10 @@ include("head.inc");
 					</select><br><?=gettext("HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
 					<p>
 					<table width="90%">
-						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></td><td><?=gettext("Works with all IP protocols.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("sloppy state");?></li></td><td><?=gettext("Works with all IP protocols.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("synproxy state");?></li></td><td><?=gettext("Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.");?></ul></td></tr>
-						<tr><td width="25%"><ul><li><?=gettext("none");?></li></td><td><?=gettext("Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.");?></ul></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("sloppy state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("synproxy state");?></li></ul></td><td><?=gettext("Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.");?></td></tr>
+						<tr><td width="25%"><ul><li><?=gettext("none");?></li></ul></td><td><?=gettext("Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.");?></td></tr>
 					</table>
 					</p>
 			  </div>

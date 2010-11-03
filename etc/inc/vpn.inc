@@ -206,18 +206,18 @@ function vpn_ipsec_configure($ipchg = false)
 		if (is_array($config['ca']) && count($config['ca'])) {
 			foreach ($config['ca'] as $ca) {
 				if (!isset($ca['crt'])) {
-					log_error(sprintf(gettext("Error: Invalid certificate info for %s"), $ca['name']));
+					log_error(sprintf(gettext("Error: Invalid certificate info for %s"), $ca['descr']));
 					continue;
 				}
 				$cert = base64_decode($ca['crt']);
 				$x509cert = openssl_x509_parse(openssl_x509_read($cert));
 				if (!is_array($x509cert) || !isset($x509cert['hash'])) {
-					log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['name']));
+					log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['descr']));
 					continue;
 				}
 				$fname = $g['varetc_path']."/".$x509cert['hash'].".0";
 				if (!file_put_contents($fname, $cert)) {
-					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['name']));
+					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
 					continue;
 				}
 			}
@@ -996,7 +996,7 @@ function vpn_pptpd_configure() {
 			}
 
 			$mpdconf = <<<EOD
-pptpd:
+pptps:
 
 EOD;
 
@@ -1025,7 +1025,7 @@ pts:
 	set iface enable proxy-arp
 	set iface enable tcpmssfix
 	set iface idle 1800
-	set iface up-script /usr/local/sbin/pptp-linkup
+	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set bundle enable multilink
 	set bundle enable crypt-reqd
@@ -1144,7 +1144,7 @@ EOD;
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptp -f mpd.conf pptpd");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptps pptps");
 
 			break;
 
@@ -1208,7 +1208,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 				return 1;
 			}
 			$mpdconf = "\n\n";
-			$mpdconf .= "pppoe:\n";
+			$mpdconf .= "poes:\n";
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdconf .= "	load poes{$pppoecfg['pppoeid']}{$i}\n";
@@ -1229,19 +1229,19 @@ function vpn_pppoe_configure(&$pppoecfg) {
 poes{$pppoecfg['pppoeid']}{$i}:
 	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
 	{$isssue_ip_type}
-	load pppoe_standart
+	load pppoe_standard
 
 EOD;
 			}
 
 			$mpdconf .=<<<EOD
 
-pppoe_standart:
+pppoe_standard:
 	set bundle no multilink
 	set bundle enable compression
 	set auth max-logins 1
-	set iface up-script /usr/local/sbin/pppoe-linkup
-        set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup
+	set iface down-script /usr/local/sbin/vpn-linkdown
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1347,7 +1347,7 @@ EOD;
 			}
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s pppoe pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
 			break;
 	}
@@ -1402,7 +1402,7 @@ function vpn_l2tp_configure() {
 			}
 			$mpdconf = "\n\n";
 			$mpdconf .=<<<EOD
-l2tp:
+l2tps:
 
 EOD;
 
@@ -1423,7 +1423,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 l2tp{$i}:
-	new l2tp{$i} l2tp{$i}
+	new -i l2tp{$i} l2tp{$i} l2tp{$i}
 	{$isssue_ip_type}
 	load l2tp_standard
 
@@ -1441,8 +1441,8 @@ l2tp_standard:
         set ccp yes mppc
         set iface disable on-demand
         set iface enable proxy-arp
-	set iface up-script /usr/local/sbin/l2tp-linkup
-        set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup
+	set iface down-script /usr/local/sbin/vpn-linkdown
         set link yes acfcomp protocomp
         set link no pap chap
         set link enable chap
@@ -1528,7 +1528,7 @@ EOD;
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tp l2tp");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
 			break;
 

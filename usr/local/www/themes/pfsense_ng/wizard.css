@@ -1056,3 +1056,60 @@ div#log span.log-protocol {
 	margin: 0em;
 	text-indent: 10px;
 }
+
+.infobox {
+	width:100%;
+}
+
+.infoboxsave {
+	padding-right: 10px;
+}
+
+.infoboxnptd2 {
+	width:100%;
+	color:white;
+	background-color:#990000;
+	padding-right: 10px;
+}
+
+.infoboxnptd {
+	width:8%;
+	background-color:#990000;	
+}
+
+.infoboxnptable {
+ 	height:32px;
+	width:100%;
+	background-color:#990000;	
+}
+
+.infoboxnptable2 {
+ 	height:32px;
+	width:100%;
+	background-color:#990000;	
+}
+
+.infoboxnp {
+	background-color:#990000;
+	width:100%;
+}
+
+.infoboxnpimg {
+	vertical-align:middle;
+	width:28px;
+	height:32px;
+	background-color:#990000;	
+}
+
+.inputerrorsleft {
+	background-color: #990000;
+	width: 36px;
+}
+
+.inputerrorsright {
+	background-color: #FFD9D1;	
+	color: #000000;
+	font-size: 11px;
+	padding-left: 8px; 
+	padding-top: 6px;
+}

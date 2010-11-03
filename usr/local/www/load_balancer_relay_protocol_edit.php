@@ -54,7 +54,7 @@ else
 if (isset($id) && $a_protocol[$id]) {
 	$pconfig = $a_protocol[$id];
 	$pconfig['type'] = $a_protocol[$id]['type'];
-	$pconfig['desc'] = $a_protocol[$id]['desc'];
+	$pconfig['descr'] = $a_protocol[$id]['descr'];
 	$pconfig['lbaction'] = array();
 	$pconfig['options'] = $a_protocol[$id]['options'];
 } else {
@@ -75,7 +75,7 @@ if ($_POST) {
 
 
 	/* input validation */
-	$reqdfields = explode(" ", "name type desc");
+	$reqdfields = explode(" ", "name type descr");
 	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -84,6 +84,9 @@ if ($_POST) {
 	for ($i=0; isset($config['load_balancer']['lbprotocol'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbprotocol'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This protocol name has already been used.  Protocol names must be unique.");
+
+	if (strpos($_POST['name'], " ") !== false)
+		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
 
 	switch($_POST['type']) {
 		case 'tcp':
@@ -103,7 +106,7 @@ if ($_POST) {
 		
 		update_if_changed(gettext("name"), $protent['name'], $pconfig['name']);
 		update_if_changed(gettext("type"), $protent['type'], $pconfig['type']);
-		update_if_changed(gettext("description"), $protent['desc'], $pconfig['desc']);
+		update_if_changed(gettext("description"), $protent['descr'], $pconfig['descr']);
 		update_if_changed(gettext("type"), $protent['type'], $pconfig['type']);
 		update_if_changed(gettext("action"), $protent['lbaction'], $pconfig['lbaction']);
 
@@ -214,7 +217,7 @@ document.observe('dom:loaded', function(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
 			</td>
 		</tr>
 		<tr>

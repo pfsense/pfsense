@@ -102,7 +102,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.crt");
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.crt");
 		$exp_data = base64_decode($cert['crt']);
 		$exp_size = strlen($exp_data);
 
@@ -122,7 +122,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
 
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.key");
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.key");
 		$exp_data = base64_decode($cert['prv']);
 		$exp_size = strlen($exp_data);
 
@@ -141,7 +141,7 @@ if (isAllowedPage("system_usermanager")) {
 		}
 
 		$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
-		$certdeleted = $certdeleted['name'];
+		$certdeleted = $certdeleted['descr'];
 		unset($a_user[$id]['cert'][$_GET['certid']]);
 		write_config();
 		$_GET['act'] = "edit";
@@ -152,7 +152,7 @@ if (isAllowedPage("system_usermanager")) {
 	if ($_GET['act'] == "edit") {
 		if (isset($id) && $a_user[$id]) {
 			$pconfig['usernamefld'] = $a_user[$id]['name'];
-			$pconfig['fullname'] = $a_user[$id]['fullname'];
+			$pconfig['descr'] = $a_user[$id]['descr'];
 			$pconfig['expires'] = $a_user[$id]['expires'];
 			$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 			$pconfig['utype'] = $a_user[$id]['scope'];
@@ -284,7 +284,7 @@ if (isAllowedPage("system_usermanager")) {
 				local_user_set_password($userent, $_POST['passwordfld1']);
 
 			$userent['name'] = $_POST['usernamefld'];
-			$userent['fullname'] = $_POST['fullname'];
+			$userent['descr'] = $_POST['descr'];
 			$userent['expires'] = $_POST['expires'];
 			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 			$userent['ipsecpsk'] = $_POST['ipsecpsk'];
@@ -302,7 +302,7 @@ if (isAllowedPage("system_usermanager")) {
 					$cert['refid'] = uniqid();
                         		$userent['cert'] = array();
 
-            				$cert['name'] = $_POST['name'];
+					$cert['descr'] = $_POST['name'];
 
                 			$subject = cert_get_subject_array($ca['crt']);
 
@@ -496,7 +496,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Full name");?></td>
 							<td width="78%" class="vtable">
-								<input name="fullname" type="text" class="formfld unknown" id="fullname" size="20" value="<?=htmlspecialchars($pconfig['fullname']);?>" <?=$ro;?>/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>" <?=$ro;?>/>
 								<br/>
 								<?=gettext("User's full name, for your own information only");?>
 							</td>
@@ -524,7 +524,7 @@ function sshkeyClicked(obj) {
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
-														if (in_array($group['name'],$pconfig['groups']))
+														if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
 															continue;
 												?>
 												<option value="<?=$group['name'];?>" <?=$selected;?>>
@@ -549,6 +549,7 @@ function sshkeyClicked(obj) {
 											<br/>
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
 												<?php
+												if (is_array($pconfig['groups'])) {
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
@@ -558,7 +559,8 @@ function sshkeyClicked(obj) {
 												<option value="<?=$group['name'];?>">
 													<?=htmlspecialchars($group['name']);?>
 												</option>
-												<?php endforeach; ?>
+												<?php endforeach;
+												} ?>
 											</select>
 											<br/>
 										</td>
@@ -644,10 +646,13 @@ function sshkeyClicked(obj) {
 									?>
 									<tr>
 										<td class="listlr">
-											<?=htmlspecialchars($cert['name']);?>
+											<?=htmlspecialchars($cert['descr']);?>
+											<?php if (is_cert_revoked($cert)): ?>
+											(<b>Revoked</b>)
+											<?php endif; ?>
 										</td>
 										<td class="listr">
-											<?=htmlspecialchars($ca['name']);?>
+											<?=htmlspecialchars($ca['descr']);?>
 										</td>
 										<td valign="middle" nowrap class="list">
 											<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
@@ -703,7 +708,7 @@ function sshkeyClicked(obj) {
 							<tr>
                                                         	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
                                                         	<td width="78%" class="vtable">
-                                                                	<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+									<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
                                                         	</td>
                                                 	</tr>
                                                 	<tr>
@@ -715,7 +720,7 @@ function sshkeyClicked(obj) {
                                                                         if (!$ca['prv'])
                                                                                 continue;
                                                                 ?>
-                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['name'];?></option>
+                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
                                                                 <?php endforeach; ?>
                                                                 	</select>
                                                         	</td>
@@ -812,7 +817,7 @@ function sshkeyClicked(obj) {
 								</tr>
 							</table>
 						</td>
-						<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
+						<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
 						<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
 						<td class="listbg">
 								<?=implode(",",local_user_get_groups($userent));?>

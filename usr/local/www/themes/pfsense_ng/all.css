@@ -1218,8 +1218,9 @@ div#log span.log-protocol {
 }
 
 #login #username, #password, #password2 {
-	font-size: 1em;
+	font-size: small;
 	width: 60%;
+	padding-left:19px
 	padding: 3px;
 	margin: 0em;
 }

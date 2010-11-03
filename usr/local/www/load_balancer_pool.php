@@ -133,7 +133,7 @@ include("head.inc");
 			$t->add_column(gettext('Servers'),'servers',15);
 			$t->add_column(gettext('Port'),'port',10);
 			$t->add_column(gettext('Monitor'),'monitor',10);
-			$t->add_column(gettext('Description'),'desc',25);
+			$t->add_column(gettext('Description'),'descr',25);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');

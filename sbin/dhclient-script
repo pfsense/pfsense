@@ -101,8 +101,44 @@ add_new_alias() {
 	fi
 }
 
+fill_classless_routes() {
+	set $1
+	while [ $# -ge 5 ]; do
+		if [ $1 -eq 0 ]; then
+			route="default"
+		elif [ $1 -le 8 ]; then
+			route="$2.0.0.0/$1"
+			shift
+		elif [ $1 -le 16 ]; then
+			route="$2.$3.0.0/$1"
+			shift; shift
+		elif [ $1 -le 24 ]; then
+			route="$2.$3.$4.0/$1"
+			shift; shift; shift
+		else
+			route="$2.$3.$4.$5/$1"
+			shift; shift; shift; shift
+		fi
+		shift
+		router="$1.$2.$3.$4"
+		classless_routes="$classless_routes $route $router"
+		shift; shift; shift; shift
+	done
+}
+
 delete_old_routes() {
 	$LOGGER "Deleting old routes"
+
+	if [ -n "$old_classless_routes" ]; then
+		fill_classless_routes "$old_classless_routes"
+		set $classless_routes
+		while [ $# -gt 1 ]; do
+			route delete "$1" "$2"
+			shift; shift
+		done
+		return 0;
+	fi
+
 	# Only allow the default route to be overridden if it's on our own interface
 	if [ -f "/tmp/${interface}_defaultgw" ]; then
 		for router in $old_routers; do
@@ -125,6 +161,29 @@ delete_old_routes() {
 
 add_new_routes() {
 	$LOGGER "Adding new routes to interface: $interface"
+
+	# RFC 3442: If the DHCP server returns both a Classless Static
+	# Routes option and a Router option, the DHCP client MUST ignore
+	# the Router option.
+	#
+	# DHCP clients that support this option (Classless Static Routes)
+	# MUST NOT install the routes specified in the Static Routes
+	# option (option code 33) if both a Static Routes option and the
+	# Classless Static Routes option are provided.
+	if [ -n "$new_classless_routes" ]; then
+		fill_classless_routes "$new_classless_routes"
+		$LOGGER "New Classless Static Routes ($interface): $classless_routes"
+		set $classless_routes
+		while [ $# -gt 1 ]; do
+			if [ "0.0.0.0" = "$2" ]; then
+				route add "$1" -iface "$interface"
+			else
+				route add "$1" "$2"
+			fi
+			shift; shift
+		done
+		return
+	fi
 
 	# Only allow the default route to be overridden if it's on our own interface
 	if [ -f "/tmp/${interface}_defaultgw" ]; then

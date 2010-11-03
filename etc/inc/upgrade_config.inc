@@ -590,7 +590,7 @@ function upgrade_039_to_040() {
 
 		$config['system']['user'] = array();
 		$config['system']['user'][0]['name'] = "{$config['system']['username']}";
-		$config['system']['user'][0]['fullname'] = "System Administrator";
+		$config['system']['user'][0]['descr'] = "System Administrator";
 		$config['system']['user'][0]['scope'] = "system";
 		$config['system']['user'][0]['groupname'] = "admins";
 		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
@@ -630,91 +630,91 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'] = array();
 
 		$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
-		$config['sysctl']['item'][0]['desc'] =    gettext("Drop packets to closed TCP ports without returning a RST");
+		$config['sysctl']['item'][0]['descr'] =    gettext("Drop packets to closed TCP ports without returning a RST");
 		$config['sysctl']['item'][0]['value'] =   "default";
 
 		$config['sysctl']['item'][1]['tunable'] = "net.inet.udp.blackhole";
-		$config['sysctl']['item'][1]['desc'] =    gettext("Do not send ICMP port unreachable messages for closed UDP ports");
+		$config['sysctl']['item'][1]['descr'] =    gettext("Do not send ICMP port unreachable messages for closed UDP ports");
 		$config['sysctl']['item'][1]['value'] =   "default";
 
 		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
-		$config['sysctl']['item'][2]['desc'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
+		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
 		$config['sysctl']['item'][2]['value'] =   "default";
 
 		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
-		$config['sysctl']['item'][3]['desc'] =    gettext("Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)");
+		$config['sysctl']['item'][3]['descr'] =    gettext("Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)");
 		$config['sysctl']['item'][3]['value'] =   "default";
 
 		$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
-		$config['sysctl']['item'][4]['desc'] =    gettext("Sending of IPv4 ICMP redirects");
+		$config['sysctl']['item'][4]['descr'] =    gettext("Sending of IPv4 ICMP redirects");
 		$config['sysctl']['item'][4]['value'] =   "default";
 
 		$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
-		$config['sysctl']['item'][5]['desc'] =    gettext("Sending of IPv6 ICMP redirects");
+		$config['sysctl']['item'][5]['descr'] =    gettext("Sending of IPv6 ICMP redirects");
 		$config['sysctl']['item'][5]['value'] =   "default";
 
 		$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
-		$config['sysctl']['item'][6]['desc'] =    gettext("Generate SYN cookies for outbound SYN-ACK packets");
+		$config['sysctl']['item'][6]['descr'] =    gettext("Generate SYN cookies for outbound SYN-ACK packets");
 		$config['sysctl']['item'][6]['value'] =   "default";
 
 		$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
-		$config['sysctl']['item'][7]['desc'] =    gettext("Maximum incoming TCP datagram size");
+		$config['sysctl']['item'][7]['descr'] =    gettext("Maximum incoming TCP datagram size");
 		$config['sysctl']['item'][7]['value'] =   "default";
 
 		$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
-		$config['sysctl']['item'][8]['desc'] =    gettext("Maximum outgoing TCP datagram size");
+		$config['sysctl']['item'][8]['descr'] =    gettext("Maximum outgoing TCP datagram size");
 		$config['sysctl']['item'][8]['value'] =   "default";
 
 		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['desc'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
+		$config['sysctl']['item'][9]['descr'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
 		$config['sysctl']['item'][9]['value'] =   "default";
 
 		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['desc'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
+		$config['sysctl']['item'][10]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
 		$config['sysctl']['item'][10]['value'] =   "default";
 
 		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['desc'] =    gettext("Maximum outgoing UDP datagram size");
+		$config['sysctl']['item'][11]['descr'] =    gettext("Maximum outgoing UDP datagram size");
 		$config['sysctl']['item'][11]['value'] =   "default";
 
 		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['desc'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
+		$config['sysctl']['item'][12]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
 		$config['sysctl']['item'][12]['value'] =   "default";
 
 		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['desc'] =    gettext("Allow unprivileged access to tap(4) device nodes");
+		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
 		$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
-		$config['sysctl']['item'][14]['desc'] =    gettext("Verbosity of the rndtest driver (0: do not display results on console)");
+		$config['sysctl']['item'][14]['descr'] =    gettext("Verbosity of the rndtest driver (0: do not display results on console)");
 		$config['sysctl']['item'][14]['value'] =   "default";
 
 		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['desc'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
+		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][15]['value'] =   "default";
 
 		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['desc'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][16]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
 		$config['sysctl']['item'][16]['value'] =   "default";
 
 		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['desc'] =    gettext("Set ICMP Limits");
+		$config['sysctl']['item'][17]['descr'] =    gettext("Set ICMP Limits");
 		$config['sysctl']['item'][17]['value'] =   "default";
 
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['desc'] =    gettext("TCP Offload engine");
+		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][18]['value'] =   "default";
 
 		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
-		$config['sysctl']['item'][19]['desc'] =    gettext("TCP Offload engine - BCE");
+		$config['sysctl']['item'][19]['descr'] =    gettext("TCP Offload engine - BCE");
 		$config['sysctl']['item'][19]['value'] =   "default";
 		
 		$config['sysctl']['item'][20]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][20]['desc'] =    gettext("Set the ephemeral port range starting port");
+		$config['sysctl']['item'][20]['descr'] =    gettext("Set the ephemeral port range starting port");
 		$config['sysctl']['item'][20]['value'] =   "default";
 
 		$config['sysctl']['item'][21]['tunable'] = "hw.syscons.kbd_reboot ";
-		$config['sysctl']['item'][21]['desc'] =    gettext("Enables ctrl+alt+delete");
+		$config['sysctl']['item'][21]['descr'] =    gettext("Enables ctrl+alt+delete");
 		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
@@ -857,7 +857,7 @@ function upgrade_045_to_046() {
 				$pool['type'] = 'server';
 				$pool['behaviour'] = 'balance';
 				$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
-				$pool['desc'] = sprintf(gettext("Sitedown pool for VS: %s"), $vs_a[$i]['name']);
+				$pool['descr'] = sprintf(gettext("Sitedown pool for VS: %s"), $vs_a[$i]['name']);
 				$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
 				$pool['servers'] = array();
 				$pool['servers'][] = $vs_a[$i]['sitedown'];
@@ -1244,12 +1244,12 @@ function upgrade_049_to_050() {
 function upgrade_050_to_051() {
 	global $config;
 	$pconfig = array();
-	$pconfig['desc'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
+	$pconfig['descr'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
 	$pconfig['tunable'] = "net.link.bridge.pfil_member";
 	$pconfig['value'] = "1";
 	$config['sysctl']['item'][] = $pconfig;
 	$pconfig = array();
-	$pconfig['desc'] = "Set to 1 to enable filtering on the bridge interface";
+	$pconfig['descr'] = "Set to 1 to enable filtering on the bridge interface";
 	$pconfig['tunable'] = "net.link.bridge.pfil_bridge";
 	$pconfig['value'] = "0";
 	$config['sysctl']['item'][] = $pconfig;
@@ -1307,20 +1307,32 @@ function upgrade_051_to_052() {
 				/* create ca entry */
 				$ca = array();
 				$ca['refid'] = uniqid();
-				$ca['name'] = "OpenVPN Server CA #{$index}";
+				$ca['descr'] = "OpenVPN Server CA #{$index}";
 				$ca['crt'] = $server['ca_cert'];
-				$ca['crl'] = $server['crl'];
 				$config['ca'][] = $ca;
 
 				/* create ca reference */
 				unset($server['ca_cert']);
-				unset($server['crl']);
 				$server['caref'] = $ca['refid'];
+
+				/* create a crl entry if needed */
+				if (!empty($server['crl'])) {
+					$crl = array();
+					$crl['refid'] = uniqid();
+					$crl['descr'] = "Imported OpenVPN CRL #{$index}";
+					$crl['caref'] = $ca['refid'];
+					$crl['text'] = $server['crl'];
+					if(!is_array($config['crl']))
+						$config['crl'] = array();
+					$config['crl'][] = $crl;
+					$server['crlref'] = $crl['refid'];
+				}
+				unset($server['crl']);
 
 				/* create cert entry */
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['name'] = "OpenVPN Server Certificate #{$index}";
+				$cert['descr'] = "OpenVPN Server Certificate #{$index}";
 				$cert['crt'] = $server['server_cert'];
 				$cert['prv'] = $server['server_key'];
 				$config['cert'][] = $cert;
@@ -1437,7 +1449,7 @@ function upgrade_051_to_052() {
 				/* create ca entry */
 				$ca = array();
 				$ca['refid'] = uniqid();
-				$ca['name'] = "OpenVPN Client CA #{$index}";
+				$ca['descr'] = "OpenVPN Client CA #{$index}";
 				$ca['crt'] = $client['ca_cert'];
 				$ca['crl'] = $client['crl'];
 				$config['ca'][] = $ca;
@@ -1450,7 +1462,7 @@ function upgrade_051_to_052() {
 				/* create cert entry */
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['name'] = "OpenVPN Client Certificate #{$index}";
+				$cert['descr'] = "OpenVPN Client Certificate #{$index}";
 				$cert['crt'] = $client['client_cert'];
 				$cert['prv'] = $client['client_key'];
 				$config['cert'][] = $cert;
@@ -1615,7 +1627,7 @@ function upgrade_052_to_053() {
 		/* create cert entry */
 		$cert = array();
 		$cert['refid'] = uniqid();
-		$cert['name'] = "webConfigurator SSL Certificate";
+		$cert['descr'] = "webConfigurator SSL Certificate";
 		$cert['crt'] = $config['system']['webgui']['certificate'];
 		$cert['prv'] = $config['system']['webgui']['private-key'];
 		$config['cert'][] = $cert;
@@ -1649,7 +1661,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				$gateway_group['name'] = $lbpool['name'];
-				$gateway_group['descr'] = $lbpool['desc'];
+				$gateway_group['descr'] = $lbpool['descr'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
 				$i = 0;
@@ -1841,7 +1853,7 @@ function upgrade_055_to_056() {
 				$ca['crt'] = $cacert['cert'][0];
 			else
 				$ca['crt'] = $cacert['cert'];
-			$ca['name'] = $cacert['ident'];
+			$ca['descr'] = $cacert['ident'];
 			$config['ca'][] = $ca;
 		}
 		unset($config['ipsec']['cacert']);
@@ -1852,7 +1864,7 @@ function upgrade_055_to_056() {
 		foreach($config['ipsec']['phase1'] as & $ph1ent) {
 			$cert = array();
 			$cert['refid'] = uniqid();
-			$cert['name'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
+			$cert['descr'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
 			if (is_array($ph1ent['cert']))
 				$cert['crt'] = $ph1ent['cert'][0];
 			else
@@ -2161,7 +2173,7 @@ function upgrade_068_to_069() {
 			continue;
 		$rids = array();
 		foreach ($user['cert'] as $id => $cert) {
-			if (!isset($cert['name']))
+			if (!isset($cert['descr']))
 				continue;
 			$tcert = $cert;
 			// Make sure each cert gets a refid
@@ -2211,5 +2223,53 @@ function upgrade_070_to_071() {
 			}
 		}
 	}
+}
+
+function rename_field(& $section, $oldname, $newname) {
+	if (is_array($section)) {
+		foreach($section as & $item) {
+			if (!empty($item[$oldname])) {
+				$item[$newname] = $item[$oldname];
+				unset($item[$oldname]);
+			}
+		}
+	}
+}
+
+function upgrade_071_to_072() {
+	global $config;
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item']))
+		rename_field($config['sysctl']['item'], 'desc', 'descr');
+}
+
+function upgrade_072_to_073() {
+	global $config;
+	if (!is_array($config['load_balancer']))
+		return;
+	if (is_array($config['load_balancer']['monitor_type']))
+		rename_field($config['load_balancer']['monitor_type'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbpool']))
+		rename_field($config['load_balancer']['lbpool'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbaction']))
+		rename_field($config['load_balancer']['lbaction'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['lbprotocol']))
+		rename_field($config['load_balancer']['lbprotocol'], 'desc', 'descr');
+	if (is_array($config['load_balancer']['virtual_server']))
+		rename_field($config['load_balancer']['virtual_server'], 'desc', 'descr');
+}
+
+function upgrade_073_to_074() {
+	global $config;
+	rename_field($config['system']['user'], 'fullname', 'descr');
+}
+
+function upgrade_074_to_075() {
+	global $config;
+	if (is_array($config['ca']))
+		rename_field($config['ca'], 'name', 'descr');
+	if (is_array($config['cert']))
+		rename_field($config['cert'], 'name', 'descr');
+	if (is_array($config['crl']))
+		rename_field($config['crl'], 'name', 'descr');
 }
 ?>

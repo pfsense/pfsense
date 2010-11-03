@@ -285,7 +285,7 @@ if ($_POST) {
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
-		$server['custom_options'] = $pconfig['custom_options'];
+		$server['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
 		if ($tls_mode) {
 			if ($pconfig['tlsauth_enable']) {
@@ -721,7 +721,7 @@ function netbios_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['name'];?></option>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -739,7 +739,7 @@ function netbios_change() {
 									if ($pconfig['crlref'] == $crl['refid'])
 										$selected = "selected";
 							?>
-								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['name'];?></option>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>
@@ -749,14 +749,24 @@ function netbios_change() {
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
-								foreach ($config['cert'] as $cert):
-									$selected = "";
-									if (strstr($cert['name'], "webConfigurator"))
-										continue;
-									if ($pconfig['certref'] == $cert['refid'])
-										$selected = "selected";
+							foreach ($config['cert'] as $cert):
+								$selected = "";
+								$caname = "";
+								$inuse = "";
+								$revoked = "";
+								if (is_user_cert($cert['refid']))
+									continue;
+								$ca = lookup_ca($cert['caref']);
+								if ($ca)
+									$caname = " (CA: {$ca['descr']})";
+								if ($pconfig['certref'] == $cert['refid'])
+									$selected = "selected";
+								if (cert_in_use($cert['refid']))
+									$inuse = " *In Use";
+								if (is_cert_revoked($cert))
+								$revoked = " *Revoked";
 							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'];?></option>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>

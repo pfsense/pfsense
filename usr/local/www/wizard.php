@@ -92,7 +92,7 @@ if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 	eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
 }
 
-if ($_POST) {
+if ($_POST && !$input_errors) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
         if(!empty($field['bindstofield']) and $field['type'] <> "submit") {
 		$fieldname = $field['name'];
@@ -116,7 +116,8 @@ if ($_POST) {
     if($pkg['step'][$stepid]['stepsubmitphpaction'] <> "") {
 		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
     }
-	write_config();
+	if (!$input_errors)
+		write_config();
     $stepid++;
     if($stepid > $totalsteps)
 	$stepid = $totalsteps;
@@ -322,6 +323,8 @@ function showchange() {
 <p>
 <div style="width:800px;background-color:#ffffff" id="roundme">
 <?php
+	if ($input_errors)
+		print_input_errors($input_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
 	if ($_GET['message'] != "")
@@ -454,11 +457,11 @@ function showchange() {
 			else
 				$interfaces = get_configured_interface_with_descr();
 			foreach ($interfaces as $ifname => $iface) {
-				if (is_array($iface)) {
-						if ($iface['mac'])
-							$iface = $ifname. " ({$iface['mac']})";	
-					} else
-						$iface = $ifname;
+				if ($field['type'] == "interface_select") {
+					$iface = $ifname;
+					if ($iface['mac'])
+						$iface .= " ({$iface['mac']})";	
+				}
 			  $SELECTED = "";
 			  if ($value == $ifname) $SELECTED = " SELECTED";
 			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";
@@ -467,13 +470,12 @@ function showchange() {
 			  if($field['interface_filter'] <> "") {
 				if(stristr($ifname, $field['interface_filter']) == true)
 					$canecho = 1;
-			  } else {
+			  } else
 				$canecho = 1;
-			  }
 			  if($canecho == 1)
 				echo $to_echo;
 			}
-				echo "</select>\n";
+			echo "</select>\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
@@ -518,7 +520,7 @@ function showchange() {
                                 echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
                         }
 			foreach($config['ca'] as $ca) {
-				$name = htmlspecialchars($ca['name']);
+				$name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
                           if ($value == $name) $SELECTED = " SELECTED";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
@@ -556,9 +558,9 @@ function showchange() {
                                 echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
                         }
                         foreach($config['cert'] as $ca) {
-				if (stristr($ca['name'], "webconf"))
+				if (stristr($ca['descr'], "webconf"))
 					continue;
-                                $name = htmlspecialchars($ca['name']);
+                                $name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
                           if ($value == $name) $SELECTED = " SELECTED";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
@@ -942,4 +944,3 @@ function is_timezone($elt) {
 
 </body>
 </html>
-

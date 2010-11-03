@@ -6,132 +6,132 @@
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
-			<desc>Set the ephemeral port range to be lower.</desc>
+			<descr>Set the ephemeral port range to be lower.</descr>
 			<tunable>net.inet.ip.portrange.first</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Drop packets to closed TCP ports without returning a RST</desc>
+			<descr>Drop packets to closed TCP ports without returning a RST</descr>
 			<tunable>net.inet.tcp.blackhole</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Do not send ICMP port unreachable messages for closed UDP ports</desc>
+			<descr>Do not send ICMP port unreachable messages for closed UDP ports</descr>
 			<tunable>net.inet.udp.blackhole</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Randomize the ID field in IP packets (default is 0: sequential IP IDs)</desc>
+			<descr>Randomize the ID field in IP packets (default is 0: sequential IP IDs)</descr>
 			<tunable>net.inet.ip.random_id</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)</desc>
+			<descr>Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)</descr>
 			<tunable>net.inet.tcp.drop_synfin</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Enable sending IPv4 redirects</desc>
+			<descr>Enable sending IPv4 redirects</descr>
 			<tunable>net.inet.ip.redirect</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Enable sending IPv6 redirects</desc>
+			<descr>Enable sending IPv6 redirects</descr>
 			<tunable>net.inet6.ip6.redirect</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Generate SYN cookies for outbound SYN-ACK packets</desc>
+			<descr>Generate SYN cookies for outbound SYN-ACK packets</descr>
 			<tunable>net.inet.tcp.syncookies</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Maximum incoming/outgoing TCP datagram size (receive)</desc>
+			<descr>Maximum incoming/outgoing TCP datagram size (receive)</descr>
 			<tunable>net.inet.tcp.recvspace</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Maximum incoming/outgoing TCP datagram size (send)</desc>
+			<descr>Maximum incoming/outgoing TCP datagram size (send)</descr>
 			<tunable>net.inet.tcp.sendspace</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>IP Fastforwarding</desc>
+			<descr>IP Fastforwarding</descr>
 			<tunable>net.inet.ip.fastforwarding</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Do not delay ACK to try and piggyback it onto a data packet</desc>
+			<descr>Do not delay ACK to try and piggyback it onto a data packet</descr>
 			<tunable>net.inet.tcp.delayed_ack</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Maximum outgoing UDP datagram size</desc>
+			<descr>Maximum outgoing UDP datagram size</descr>
 			<tunable>net.inet.udp.maxdgram</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Handling of non-IP packets which are not passed to pfil (see if_bridge(4))</desc>
+			<descr>Handling of non-IP packets which are not passed to pfil (see if_bridge(4))</descr>
 			<tunable>net.link.bridge.pfil_onlyip</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</desc>
+			<descr>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</descr>
 			<tunable>net.link.bridge.pfil_member</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Set to 1 to enable filtering on the bridge interface</desc>
+			<descr>Set to 1 to enable filtering on the bridge interface</descr>
 			<tunable>net.link.bridge.pfil_bridge</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Allow unprivileged access to tap(4) device nodes</desc>
+			<descr>Allow unprivileged access to tap(4) device nodes</descr>
 			<tunable>net.link.tap.user_open</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Verbosity of the rndtest driver (0: do not display results on console)</desc>
+			<descr>Verbosity of the rndtest driver (0: do not display results on console)</descr>
 			<tunable>kern.rndtest.verbose</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())</desc>
+			<descr>Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())</descr>
 			<tunable>kern.randompid</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Maximum size of the IP input queue</desc>
+			<descr>Maximum size of the IP input queue</descr>
 			<tunable>net.inet.ip.intr_queue_maxlen</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Disable CTRL+ALT+Delete reboot from keyboard.</desc>
+			<descr>Disable CTRL+ALT+Delete reboot from keyboard.</descr>
 			<tunable>hw.syscons.kbd_reboot</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Enable TCP Inflight mode</desc>
+			<descr>Enable TCP Inflight mode</descr>
 			<tunable>net.inet.tcp.inflight.enable</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Enable TCP extended debugging</desc>
+			<descr>Enable TCP extended debugging</descr>
 			<tunable>net.inet.tcp.log_debug</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>Set ICMP Limits</desc>
+			<descr>Set ICMP Limits</descr>
 			<tunable>net.inet.icmp.icmplim</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>TCP Offload Engine</desc>
+			<descr>TCP Offload Engine</descr>
 			<tunable>net.inet.tcp.tso</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<desc>TCP Offload Engine - BCE</desc>
+			<descr>TCP Offload Engine - BCE</descr>
 			<tunable>hw.bce.tso_enable</tunable>
 			<value>default</value>
 		</item>
@@ -159,7 +159,7 @@
 		</group>
 		<user>
 			<name>admin</name>
-			<fullname>System Administrator</fullname>
+			<descr>System Administrator</descr>
 			<scope>system</scope>
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
@@ -718,21 +718,21 @@
 		<monitor_type>
 			<name>ICMP</name>
 			<type>icmp</type>
-			<desc>ICMP</desc>
+			<descr>ICMP</descr>
 			<options>
 			</options>
 		</monitor_type>
 		<monitor_type>
 			<name>TCP</name>
 			<type>tcp</type>
-			<desc>Generic TCP</desc>
+			<descr>Generic TCP</descr>
 			<options>
 			</options>
 		</monitor_type>
 		<monitor_type>
 			<name>HTTP</name>
 			<type>http</type>
-			<desc>Generic HTTP</desc>
+			<descr>Generic HTTP</descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -742,7 +742,7 @@
 		<monitor_type>
 			<name>HTTPS</name>
 			<type>https</type>
-			<desc>Generic HTTPS</desc>
+			<descr>Generic HTTPS</descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -752,7 +752,7 @@
 		<monitor_type>
 			<name>SMTP</name>
 			<type>send</type>
-			<desc>Generic SMTP</desc>
+			<descr>Generic SMTP</descr>
 			<options>
 				<send>EHLO nosuchhost</send>
 				<expect>250-</expect>

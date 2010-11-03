@@ -176,7 +176,7 @@ include("head.inc");
                   <table border="0" cellpadding="3" cellspacing="2"><tr><td bgcolor="<?=$bgcolor?>"> <?=$rdr_a[$vsent['name']]['status']?> </td></tr></table>
                   </td>
                   <td class="listbg" >
-						<?=$vsent['desc'];?>
+						<?=$vsent['descr'];?>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>

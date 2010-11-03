@@ -75,9 +75,9 @@ function does_interface_exist($interface) {
 	global $config;
 	
 	if(!$interface)
-			return false;
+		return false;
 
-	$ints = get_interface_arr();
+	$ints = get_interface_arr(true);
 	if (in_array($interface, $ints))
 		return true;
 	else
@@ -89,7 +89,6 @@ function interfaces_loopback_configure() {
 		echo gettext("Configuring loopback interface...");
 	pfSense_interface_setaddress("lo0", "127.0.0.1");
 	interfaces_bring_up("lo0");
-	exec("/sbin/route add 127.0.0.2 127.0.0.1");
 	if($g['booting'])
 		echo gettext("done.") . "\n";
 	return 0;

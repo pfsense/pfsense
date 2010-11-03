@@ -443,7 +443,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn');
+		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -468,15 +468,15 @@ function system_syslogd_start() {
 		$syslogconf .= "!ppp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ppp.log\n";
-		$syslogconf .= "!pptp\n";
+		$syslogconf .= "!pptps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pptp.log\n";
-		$syslogconf .= "!pppoe\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pptps.log\n";
+		$syslogconf .= "!poes\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pppoe.log\n";
-		$syslogconf .= "!l2tp\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/poes.log\n";
+		$syslogconf .= "!l2tps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2tp.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2tps.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";
@@ -692,7 +692,7 @@ function system_webgui_start() {
 			echo gettext("Creating SSL Certificate... ");
 			$cert = array();
 			$cert['refid'] = uniqid();
-			$cert['name'] = gettext("webConfigurator default");
+			$cert['descr'] = gettext("webConfigurator default");
 			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
 			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
 			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
@@ -997,6 +997,14 @@ url.access-deny             = ( "~", ".inc" )
 ######### Options that are good to be but not neccesary to be changed #######
 
 ## bind to port (default: 80)
+
+EOD;
+
+	if($captive_portal == true)
+		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
+
+	$lighty_config .= <<<EOD
+
 server.port                = {$lighty_port}
 
 ## error-handler for status 404

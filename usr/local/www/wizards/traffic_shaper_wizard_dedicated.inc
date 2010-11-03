@@ -582,9 +582,6 @@ function step8_stepsubmitphpaction() {
 	clear_subsystem_dirty('shaper');
 
 	update_filter_reload_status("Initializing");
-
-	/* Head over and check out the groovy queue stats */
-	header("Location: status_filter_reload.php");
 }
 
 function step9_stepsubmitphpaction() {

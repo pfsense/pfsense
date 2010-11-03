@@ -141,6 +141,9 @@ ping-check true;
 
 EOD;
 
+	if(!isset($dhcpifconf['disableauthoritative']))
+		$dhcpdconf .= "authoritative;\n";
+
 	if(isset($dhcpifconf['alwaysbroadcast'])) 
 		$dhcpdconf .= "always-broadcast on\n";
 
@@ -156,9 +159,6 @@ EOD;
 
 		if (!isset($dhcpifconf['enable']))
 			continue;
-
-		if(!isset($dhcpifconf['disableauthoritative']))
-			$dhcpdconf .= "authoritative;\n";
 
 		if($dhcpifconf['failover_peerip'] <> "") {
 			$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
@@ -604,7 +604,6 @@ function services_dyndns_configure_client($conf) {
 		$dnsWilcard = $conf['wildcard'],
 		$dnsMX = $conf['mx'], 
 		$dnsIf = "{$conf['interface']}");
-
 }
 
 function services_dyndns_configure($int = "") {

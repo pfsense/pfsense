@@ -745,6 +745,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
                 	if(stristr($status, "active")) $upints[] = $int;
 		}
 		break;
+	default:
+		$upints = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
+		break;
 	}
         /* build interface list with netstat */
         $linkinfo = "";
@@ -771,8 +774,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 					$toput['ipaddr'] = $aip[1];
 				}
 			}
-			foreach($config['interfaces'] as $name => $int) {
-				if($int['if'] == $ifname) $friendly = $name;
+			if (is_array($config['interfaces'])) {
+				foreach($config['interfaces'] as $name => $int)
+					if($int['if'] == $ifname) $friendly = $name;
 			}
 			switch($keyby) {
 			case "physical":
@@ -1260,15 +1264,17 @@ function is_interface_mismatch() {
         /* XXX: Should we process only enabled interfaces?! */
         $do_assign = false;
         $i = 0;
-        foreach ($config['interfaces'] as $ifname => $ifcfg) {
-                if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
-                        $i++;
-                }
-                else if (does_interface_exist($ifcfg['if']) == false) {
-                        $do_assign = true;
-                } else
-                        $i++;
-        }
+	if (is_array($config['interfaces'])) {
+        	foreach ($config['interfaces'] as $ifname => $ifcfg) {
+                	if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+                        	$i++;
+                	}
+                	else if (does_interface_exist($ifcfg['if']) == false) {
+				$do_assign = true;
+                	} else
+                        	$i++;
+        	}
+	}
 
         if ($g['minimum_nic_count'] > $i) {
                 $do_assign = true;

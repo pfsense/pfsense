@@ -243,9 +243,9 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	/usr/bin/touch /var/log/filter.log
 	/usr/bin/touch /var/log/dhcpd.log
 	/usr/bin/touch /var/log/vpn.log
-	/usr/bin/touch /var/log/pptp.log
-	/usr/bin/touch /var/log/pppoe.log
-	/usr/bin/touch /var/log/l2tp.log
+	/usr/bin/touch /var/log/pptps.log
+	/usr/bin/touch /var/log/poes.log
+	/usr/bin/touch /var/log/l2tps.log
 	/usr/bin/touch /var/log/openvpn.log
 	/usr/bin/touch /var/log/portalauth.log
 	/usr/bin/touch /var/log/ipsec.log
@@ -262,9 +262,9 @@ else
 		/usr/sbin/fifolog_create -s 511488 /var/log/filter.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/dhcpd.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/pptp.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/pppoe.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/l2tp.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/pptps.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/poes.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/l2tps.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
@@ -278,9 +278,9 @@ else
 		/usr/sbin/clog -i -s 512144 /var/log/filter.log
 		/usr/sbin/clog -i -s 65535 /var/log/dhcpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/vpn.log
-		/usr/sbin/clog -i -s 50688 /var/log/pptp.log
-		/usr/sbin/clog -i -s 50688 /var/log/pppoe.log
-		/usr/sbin/clog -i -s 50688 /var/log/l2tp.log
+		/usr/sbin/clog -i -s 50688 /var/log/pptps.log
+		/usr/sbin/clog -i -s 50688 /var/log/poes.log
+		/usr/sbin/clog -i -s 50688 /var/log/l2tps.log
 		/usr/sbin/clog -i -s 65535 /var/log/openvpn.log
 		/usr/sbin/clog -i -s 65535 /var/log/portalauth.log
 		/usr/sbin/clog -i -s 65535 /var/log/ipsec.log
@@ -349,6 +349,9 @@ echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
+for iface in `/sbin/ifconfig -l`; do
+	/sbin/ifconfig $iface up
+done
 /etc/rc.bootup
 
 # If a shell was selected from recovery 

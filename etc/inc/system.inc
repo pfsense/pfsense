@@ -460,8 +460,9 @@ function system_routing_enable() {
 		echo "system_routing_enable() being called $mt\n";
 	}
 
-	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
-	return mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
+	mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
+	mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
+	return;
 }
 
 function system_syslogd_start() {

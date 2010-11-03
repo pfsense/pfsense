@@ -376,7 +376,7 @@ EOD;
 	
 
 	/* fire up dhcpd in a chroot */
-	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf {$g['dhcpd_chroot_path']}/etc/dhcpd.conf " .
+	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
 		join(" ", $dhcpdifs));
 
 	if ($g['booting']) {

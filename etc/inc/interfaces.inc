@@ -2992,8 +2992,22 @@ function find_carp_interface($ip) {
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
-				$carp_ip = get_interface_ip($vip['interface']);
-				$if = `ifconfig | grep '$ip ' -B1 | head -n1 | cut -d: -f1`;
+				if(is_ipaddrv4($ip)) {
+					$carp_ip = get_interface_ip($vip['interface']);
+				}
+				if(is_ipaddrv6($ip)) {
+					$carp_ip = get_interface_ipv6($vip['interface']);
+				}
+				exec("/sbin/ifconfig", $output, $return);
+				foreach($output as $line) {
+					$elements = preg_split("/[ ]+/i", $line);
+					if(strstr($elements[0], "vip"))
+						$curif = str_replace(":", "", $elements[0]);
+					if(stristr($line, $ip)) {
+						$if = $curif;
+						continue;
+					}
+				}
 				if ($if)
 					return $if;
 			}

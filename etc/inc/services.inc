@@ -78,7 +78,14 @@ function services_rtadvd_configure() {
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		$rtadvdnum++;
+		/* It appears we can not advertise the gateway IP (carp)
+		 * 	rtadvd[44205]: <sock_open> IPV6_JOIN_GROUP(link) on vip1: Can't assign requested address
+		if($dhcpv6ifconf['gateway'] <> "") {
+			$dhcpv6if = find_carp_interface($dhcpv6ifconf['gateway']);
+		}
+		*/
 		$realif = get_real_interface($dhcpv6if);
+
 		$rtadvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);

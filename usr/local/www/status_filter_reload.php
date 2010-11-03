@@ -69,7 +69,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <br/>
 <a href="/status_filter_reload.php?reloadfilter=true"><input type="button" value="Reload Filter" id="reloadfilter"></a>
-<?php if (!empty($config["installedpackages"]["carpsettings"]["config"][0]["pfsyncpeerip"])): ?>
+<?php if ($config["installedpackages"]["carpsettings"]["config"][0]["pfsyncpeerip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/status_filter_reload.php?syncfilter=true"><input type="button" value="Force Config Sync" id="syncfilter"></a>
 <? endif; ?>

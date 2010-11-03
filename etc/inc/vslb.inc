@@ -275,7 +275,7 @@ function relayd_configure() {
 		mwexec('pkill relayd');
 	}
   } else {
-	if (! empty($vs_a)) {
+	if (count($vs_a) > 0) {
 		// not running and there is a config, start it
 		mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
 	}	

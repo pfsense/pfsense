@@ -116,9 +116,14 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("The %s IP address may not be used in a virtual entry."),$natdescr);
 	}
 
-	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
-	 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");
-
+	if(is_ipaddrv4($_POST['subnet'])) {
+		if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
+		 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");
+	}
+	if(is_ipaddrv6($_POST['subnet'])) {
+		if($_POST['subnet_bits'] == "128" and $_POST['type'] == "carp")
+		 	$input_errors[] = gettext("The /128 subnet mask is invalid for CARP IPs.");
+	}
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {
 		if (isset($id) && ($a_vip[$id]) && ($a_vip[$id] === $vipent))
@@ -144,11 +149,22 @@ if ($_POST) {
 		if($_POST['password'] == "")
 			$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
 
-		$parent_ip = get_interface_ip($_POST['interface']);
-		$parent_sn = get_interface_subnet($_POST['interface']);
-		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
-			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+		if(is_ipaddrv4($_POST['subnet'])) {
+			$parent_ip = get_interface_ip($_POST['interface']);
+			$parent_sn = get_interface_subnet($_POST['interface']);
+			if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
+				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
+				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+			}
+		}
+		if(is_ipaddrv6($_POST['subnet'])) {
+			$parent_ip = get_interface_ipv6($_POST['interface']);
+			$parent_sn = get_interface_subnetv6($_POST['interface']);
+			$subnet = gen_subnetv6($parent_ip, $parent_sn);
+			if (!ip_in_subnet($_POST['subnet'], gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
+				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
+				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+			}
 		}
 	}
 
@@ -400,7 +416,7 @@ function typesel_change() {
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
                         <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
-                            <?php for ($i = 32; $i >= 1; $i--): ?>
+                            <?php for ($i = 128; $i >= 1; $i--): ?>
                             <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['subnet']) && $i == 32)) echo "selected"; ?>>
                             <?=$i;?>
                       </option>

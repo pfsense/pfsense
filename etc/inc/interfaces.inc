@@ -1701,12 +1701,23 @@ function interface_carp_configure(&$vip) {
 		return;
 	}
 
-	/* Ensure CARP IP really exists prior to loading up. */
-	$ww_subnet_ip = find_interface_ip($realif);
-	$ww_subnet_bits = find_interface_subnet($realif);
-	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
-		file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
-		return;
+	if(is_ipaddrv4($vip['subnet'])) {
+		/* Ensure CARP IP really exists prior to loading up. */
+		$ww_subnet_ip = find_interface_ip($realif);
+		$ww_subnet_bits = find_interface_subnet($realif);
+		if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
+			file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
+			return;
+		}
+	}
+	if(is_ipaddrv6($vip['subnet'])) {
+		/* Ensure CARP IP really exists prior to loading up. */
+		$ww_subnet_ip = find_interface_ipv6($realif);
+		$ww_subnet_bits = find_interface_subnetv6($realif);
+		if (!ip_in_subnet($vip['subnet'], gen_subnetv6($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
+			file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IPv6 address {$vip['subnet']}.", "Firewall: Virtual IP", "");
+			return;
+		}
 	}
 
 	/* create the carp interface and setup */
@@ -1721,8 +1732,14 @@ function interface_carp_configure(&$vip) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-	mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	if(is_ipaddrv4($vip['subnet'])) {
+		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	}
+	if(is_ipaddrv6($vip['subnet'])) {
+		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	}
 
 	interfaces_bring_up($vipif);
 	
@@ -2347,6 +2364,7 @@ function find_dhclient_process($interface) {
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
+	global $interface_snv6_arr_cache, $interface_ipv6_arr_cache;
 
 	$wancfg = $config['interfaces'][$interface];
 
@@ -2355,6 +2373,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
+		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
 
 		switch ($wancfg['ipaddr']) {
 			case 'pppoe':

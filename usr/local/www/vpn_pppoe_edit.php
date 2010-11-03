@@ -108,39 +108,41 @@ if ($_POST) {
 	//$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "localip remoteip");
-	$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
+	if ($_POST['mode'] == "server") {
+		$reqdfields = explode(" ", "localip remoteip");
+		$reqdfieldsn = array(gettext("Server address"),gettext("Remote start address"));
 
-	if ($_POST['radiusenable']) {
-		$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
-		$reqdfieldsn = array_merge($reqdfieldsn, 
-			array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
-	}
+		if ($_POST['radiusenable']) {
+			$reqdfields = array_merge($reqdfields, explode(" ", "radiusserver radiussecret"));
+			$reqdfieldsn = array_merge($reqdfieldsn,
+				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
+		}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['localip'] && !is_ipaddr($_POST['localip'])))
-		$input_errors[] = gettext("A valid server address must be specified.");
-	if (($_POST['pppoe_subnet'] && !is_ipaddr($_POST['remoteip'])))
-		$input_errors[] = gettext("A valid remote start address must be specified.");
-	if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver'])))
-		$input_errors[] = gettext("A valid RADIUS server address must be specified.");
+		if (($_POST['localip'] && !is_ipaddr($_POST['localip'])))
+			$input_errors[] = gettext("A valid server address must be specified.");
+		if (($_POST['pppoe_subnet'] && !is_ipaddr($_POST['remoteip'])))
+			$input_errors[] = gettext("A valid remote start address must be specified.");
+		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver'])))
+			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 
-	$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
-	$subnet_start = ip2ulong($_POST['remoteip']);
-	$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
-	if ((ip2ulong($_POST['localip']) >= $subnet_start) && 
-	    (ip2ulong($_POST['localip']) <= $subnet_end))
-		$input_errors[] = gettext("The specified server address lies in the remote subnet.");	
-	if ($_POST['localip'] == get_interface_ip($_POST['interface']))
-		$input_errors[] = gettext("The specified server address is equal to an interface ip address.");	
+		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
+		$subnet_start = ip2ulong($_POST['remoteip']);
+		$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
+		if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
+		    (ip2ulong($_POST['localip']) <= $subnet_end))
+			$input_errors[] = gettext("The specified server address lies in the remote subnet.");	
+		if ($_POST['localip'] == get_interface_ip($_POST['interface']))
+			$input_errors[] = gettext("The specified server address is equal to an interface ip address.");	
 
-	for($x=0; $x<4999; $x++) {
-		if ($_POST["username{$x}"]) {
-			if (empty($_POST["password{$x}"]))
-				$input_errors[] = gettext("No password specified for username ") . $_POST["username{$x}"];
-			if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"]))
-				$input_errors[] = gettext("Incorrect ip address  specified for username ") . $_POST["username{$x}"];
+		for($x=0; $x<4999; $x++) {
+			if ($_POST["username{$x}"]) {
+				if (empty($_POST["password{$x}"]))
+					$input_errors[] = gettext("No password specified for username ") . $_POST["username{$x}"];
+				if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"]))
+					$input_errors[] = gettext("Incorrect ip address  specified for username ") . $_POST["username{$x}"];
+			}
 		}
 	}
 
@@ -581,7 +583,7 @@ function enable_change(enable_over) {
 		<?php if (isset($pconfig['pppoeid']))
 			echo "<input type='hidden' name='pppoeid' id='pppoeid' value='{$pppoeid}' >";
 		?>
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"  onclick="enable_change(true)"/> 
                     <a href="vpn_pppoe.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>"></a> 
                   </td>
                 </tr>

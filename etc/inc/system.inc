@@ -461,6 +461,7 @@ function system_routing_enable() {
 	}
 
 	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
+	return mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
 }
 
 function system_syslogd_start() {

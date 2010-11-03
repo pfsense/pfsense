@@ -74,9 +74,8 @@ if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
 	$captiveportallck = lock('captiveportal');
 	$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	unlock($captiveportallck);	
-} else {
+} else
 	$cpcontents = array();
-}
 
 $concurrent = count($cpcontents);
 
@@ -84,7 +83,7 @@ foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);
 	if ($_GET['showact'])
 		$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-		$cpdb[] = $cpent;
+	$cpdb[] = $cpent;
 }
 if ($_GET['order']) {
 	if ($_GET['order'] == "ip")
@@ -99,6 +98,7 @@ if ($_GET['order']) {
 		$order = 0;
 	usort($cpdb, "clientcmp");
 }
+
 ?>
 
 <?php if (isset($config['voucher']['enable'])): ?>

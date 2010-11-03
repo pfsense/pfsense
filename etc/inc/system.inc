@@ -997,6 +997,14 @@ url.access-deny             = ( "~", ".inc" )
 ######### Options that are good to be but not neccesary to be changed #######
 
 ## bind to port (default: 80)
+
+EOD;
+
+	if($captive_portal == true)
+		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
+
+	$lighty_config .= <<<EOD
+
 server.port                = {$lighty_port}
 
 ## error-handler for status 404

@@ -57,8 +57,8 @@ if (isset($id) && $a_secret[$id]) {
 
 if ($_POST) {
 	$userids = array();
-	foreach ($config['system']['user'] as $id => $user) {
-		$userids[$user['name']] = $id;
+	foreach ($config['system']['user'] as $uid => $user) {
+		$userids[$user['name']] = $uid;
 	}
 	
 	unset($input_errors);

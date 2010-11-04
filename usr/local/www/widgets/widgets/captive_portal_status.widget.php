@@ -32,6 +32,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
@@ -53,49 +54,53 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-if (file_exists("{$g['vardb_path']}/captiveportal.db"))
+if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
+	$captiveportallck = lock('captiveportal');
         $cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-else
+	unlock($captiveportallck);
+} else
         $cpcontents = array();
 
 $concurrent = count($cpcontents);
 
-if ($fp) {
+foreach ($cpcontents as $cpcontent) {
+	$cpent = explode(",", $cpcontent);
+	if ($_GET['showact'])
+		$cpent[5] = captiveportal_get_last_activity($cpent[2]);
+	$cpdb[] = $cpent;
+}
 
-	foreach ($cpcontents as $cpcontent) {
-        	$cpent = explode(",", $cpcontent);
-        	if ($_GET['showact'])
-                	$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-                	$cpdb[] = $cpent;
-	}
-
-	if ($_GET['order']) {
-		if ($_GET['order'] == "ip")
-			$order = 2;
-		else if ($_GET['order'] == "mac")
-			$order = 3;
-		else if ($_GET['order'] == "user")
-                	$order = 4;
-		else if ($_GET['order'] == "lastact")
-			$order = 5;
-		else
-			$order = 0;
-		usort($cpdb, "clientcmp");
-	}
+if ($_GET['order']) {
+	if ($_GET['order'] == "ip")
+		$order = 2;
+	else if ($_GET['order'] == "mac")
+		$order = 3;
+	else if ($_GET['order'] == "user")
+               	$order = 4;
+	else if ($_GET['order'] == "lastact")
+		$order = 5;
+	else
+		$order = 0;
+	usort($cpdb, "clientcmp");
 }
 ?>
 <table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?order=ip&showact=<?=$_GET['showact'];?>">IP address</a></td>
     <td class="listhdrr"><a href="?order=mac&showact=<?=$_GET['showact'];?>">MAC address</a></td>
-    <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>">Session start</a></td>
+    <td class="listhdrr"><a href="?order=user&showact=<?=$_GET['showact'];?>"><?=gettext("Username");?></a></td>
+	<?php if ($_GET['showact']): ?>
+    <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>"><?=gettext("Session start");?></a></td>
+    <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>"><?=gettext("Last activity");?></a></td>
+	<?php endif; ?>
   </tr>
 <?php foreach ($cpdb as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
+    <td class="listr"><?=$cpent[4];?>&nbsp;</td>
 	<?php if ($_GET['showact']): ?>
+    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
     <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
@@ -103,4 +108,3 @@ if ($fp) {
   </tr>
 <?php endforeach; ?>
 </table>
-

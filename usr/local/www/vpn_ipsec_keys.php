@@ -48,7 +48,7 @@ $a_secret = &$config['ipsec']['mobilekey'];
 
 $userkeys = array();
 foreach ($config['system']['user'] as $id => $user) {
-	if (isset($user['ipsecpsk'])) {
+	if (!empty($user['ipsecpsk'])) {
 		$k = array();
 		$k["ident"] = $user['name'];
 		$k["pre-shared-key"] = $user['ipsecpsk'];

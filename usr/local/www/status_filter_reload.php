@@ -55,6 +55,11 @@ if($_GET['reloadfilter']) {
 	header("Location: status_filter_reload.php");
 	exit;
 }
+if($_GET['syncfilter']) {
+	send_event("filter sync");
+	header("Location: status_filter_reload.php");
+	exit;
+}
 
 include("head.inc");
 ?>
@@ -64,6 +69,10 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <br/>
 <a href="/status_filter_reload.php?reloadfilter=true"><input type="button" value="Reload Filter" id="reloadfilter"></a>
+<?php if ($config["installedpackages"]["carpsettings"]["config"][0]["pfsyncpeerip"] != ""): ?>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/status_filter_reload.php?syncfilter=true"><input type="button" value="Force Config Sync" id="syncfilter"></a>
+<? endif; ?>
 <br/><br/><br/>
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>

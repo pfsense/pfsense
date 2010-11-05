@@ -370,6 +370,38 @@ if($_REQUEST['undodrag']) {
 			</table>
 		  </td>
 		</tr>
+<?php   // Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
+	if (!isset($config['system']['webgui']['noantilockout']) &&
+		(((count($config['interfaces']) > 1) && ($if == 'lan'))
+		|| ((count($config['interfaces']) == 1) && ($if == 'wan')))): ?>
+		<tr valign="top" id="antilockout">
+			<td class="list">&nbsp;</td>
+			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0"></td>
+			<td class="listlr" style="background-color: #E0E0E0"></td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0"><?=$iflist[$if];?> Address</td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0"></td>
+			<td class="listbg"><?=gettext("Anti-Lockout Rule");?></td>
+			<td valign="middle" nowrap class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+				<tr>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
+					<td><a href="system_advanced_admin.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+				</tr>
+				<tr>
+					<td align="center" valign="middle"></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0"></td>
+				</tr>
+				</table>
+			</td>
+			</tr>
+<?php endif; ?>
+
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
                 <tr valign="top" id="frrfc1918">
                   <td class="list">&nbsp;</td>

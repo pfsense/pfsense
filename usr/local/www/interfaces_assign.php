@@ -416,7 +416,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   </tr>
   <?php foreach ($config['interfaces'] as $ifname => $iface):
   	if ($iface['descr'])
-		$ifdescr = $iface['descr'];
+		$ifdescr = strtoupper($iface['descr']);
 	else
 		$ifdescr = strtoupper($ifname);
 	?>

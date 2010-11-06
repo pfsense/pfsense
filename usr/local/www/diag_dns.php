@@ -131,7 +131,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if($resolved) {
-				$dig=`dig "$host_esc" A | grep "$host_esc" | grep -v ";" | awk '{ print $5 }'`;
+				$dig=`dig $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
 				$resolved = split("\n", $dig);
 			}
 			$hostname = $host;

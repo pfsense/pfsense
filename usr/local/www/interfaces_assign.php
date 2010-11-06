@@ -429,7 +429,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				<?php if ($portinfo['isvlan']) {
 					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
-					$descr .= " (" . $portinfo['descr'] . ")";
+					$descr .= " (" . strtoupper($portinfo['descr']) . ")";
 					echo htmlspecialchars($descr);
 				} elseif ($portinfo['iswlclone']) {
 					$descr = $portinfo['cloneif'];

@@ -54,8 +54,22 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+$ifdescrs = array('wan' => gettext('WAN'), 'lan' => gettext('LAN'));
+for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	if(isset($config['interfaces']['opt' . $j]['enable']))
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+}
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
+	$found = false;
+	foreach($ifdescrs as $descr => $ifdescr) 
+		if($descr == $if) 
+			$found = true;
+	if(!$found) {
+		Header("Location: interfaces.php");
+		exit;
+	}
 } else {
 	$if = "wan";
 }

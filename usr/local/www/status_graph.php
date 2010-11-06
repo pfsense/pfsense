@@ -178,7 +178,6 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 </form>
-<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.
 <p><form method="post" action="status_graph.php">
 </form>
 <p>
@@ -280,6 +279,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 	</div>
 	<div style="clear: both;"></div>
 </div>
+<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.
 
 <?php include("fend.inc"); ?>
 

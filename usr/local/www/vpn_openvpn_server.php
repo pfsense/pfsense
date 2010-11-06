@@ -61,6 +61,10 @@ if (!is_array($config['crl']))
 
 $a_crl =& $config['crl'];
 
+foreach ($a_crl as $cid => $acrl)
+	if (!isset($acrl['refid']))
+		unset ($a_crl[$cid]);
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];

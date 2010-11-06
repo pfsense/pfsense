@@ -54,16 +54,10 @@ if ($_POST['height'])
 else
 	$height = "200";
 
-$ifdescrs = array('wan' => gettext('WAN'), 'lan' => gettext('LAN'));
-
-for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	if(isset($config['interfaces']['opt' . $j]['enable']))
-		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-}
-
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$found = false;
+	$ifdescrs = get_configured_interface_list();
 	foreach($ifdescrs as $descr => $ifdescr) 
 		if($descr == $curif) $found = true;
 	if(!$found) {

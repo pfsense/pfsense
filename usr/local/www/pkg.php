@@ -45,7 +45,7 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-$xml = htmlspecialchars($_REQUEST['xml']);
+$xml = $_REQUEST['xml'];
 
 if($xml == "") {
 	print_info_box_np(gettext("ERROR: No package defined."));
@@ -53,6 +53,10 @@ if($xml == "") {
 } else {
 	if(file_exists("/usr/local/pkg/" . $xml))
 		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+	else {
+		echo "File not found " . htmlspecialchars($xml);
+		exit;
+	}
 }
 
 if($pkg['donotsave'] <> "") {

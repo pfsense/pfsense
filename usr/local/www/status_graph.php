@@ -55,7 +55,7 @@ else
 	$height = "200";
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_list();
+$ifdescrs = get_configured_interface_with_descr();
 	
 if ($_GET['if']) {
 	$curif = $_GET['if'];
@@ -173,7 +173,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
 	if ($ifn == $curif) echo " selected";
-	echo ">" . strtoupper(htmlspecialchars($ifd)) . "</option>\n";
+	echo ">" . strtoupper(htmlspecialchars($ifd)) . " (" . strtoupper($ifn) . ")</option>\n";
 }
 ?>
 </select>

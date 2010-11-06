@@ -54,10 +54,25 @@ if ($_POST['height'])
 else
 	$height = "200";
 
-if ($_GET['if'])
+$ifdescrs = array('wan' => gettext('WAN'), 'lan' => gettext('LAN'));
+
+for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	if(isset($config['interfaces']['opt' . $j]['enable']))
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+}
+
+if ($_GET['if']) {
 	$curif = $_GET['if'];
-else
+	$found = false;
+	foreach($ifdescrs as $descr => $ifdescr) 
+		if($descr == $curif) $found = true;
+	if(!$found) {
+		Header("Location: status_graph.php");
+		exit;
+	}
+} else {
 	$curif = "wan";
+}
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
@@ -72,7 +87,7 @@ include("head.inc");
 <script language="javascript" type="text/javascript">
 
 function updateBandwidth(){
-    var hostinterface = "<?php echo $curif; ?>";
+    var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
     bandwidthAjax(hostinterface);
 }
 
@@ -149,12 +164,6 @@ function updateBandwidthHosts(data){
 
 <?php include("fbegin.inc"); ?>
 <?php
-$ifdescrs = array('wan' => gettext('WAN'), 'lan' => gettext('LAN'));
-
-for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	if(isset($config['interfaces']['opt' . $j]['enable']))
-		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-}
 
 /* link the ipsec interface magically */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) 
@@ -179,8 +188,8 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p>
 <div id="niftyOutter">
     <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
-            <param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
+        <object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
+            <param name="src" value="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" />
             <?=gettext("Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin"); ?>.
         </object>
     </div>

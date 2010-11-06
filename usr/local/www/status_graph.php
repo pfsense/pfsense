@@ -54,10 +54,12 @@ if ($_POST['height'])
 else
 	$height = "200";
 
+// Get configured interface list
+$ifdescrs = get_configured_interface_list();
+	
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$found = false;
-	$ifdescrs = get_configured_interface_list();
 	foreach($ifdescrs as $descr => $ifdescr) 
 		if($descr == $curif) $found = true;
 	if(!$found) {

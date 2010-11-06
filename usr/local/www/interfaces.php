@@ -54,10 +54,12 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+// Get configured interface list
+$ifdescrs = get_configured_interface_list();
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
 	$found = false;
-	$ifdescrs = get_configured_interface_list();
 	foreach($ifdescrs as $descr => $ifdescr) 
 		if($descr == $if) 
 			$found = true;

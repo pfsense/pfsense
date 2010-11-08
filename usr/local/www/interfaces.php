@@ -55,7 +55,7 @@ require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_list();
+$ifdescrs = get_configured_interface_list(false, true);
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];

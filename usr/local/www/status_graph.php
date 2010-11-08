@@ -55,7 +55,7 @@ else
 	$height = "200";
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_with_descr();
+$ifdescrs = get_configured_interface_with_descr(false, true);
 $ifdescrs["enc0"] = "IPSEC";
 
 if ($_GET['if']) {

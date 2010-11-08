@@ -51,6 +51,12 @@ require("guiconfig.inc");
 include("head.inc");
 require("ipsec.inc");
 
+if ($_GET['act'] == "connect") {
+	if (is_ipaddr($_GET['remoteid']) && is_ipaddr($_GET['source'])) {
+		exec("/sbin/ping -S " . escapeshellarg($_GET['source']) . " -c 1 " . escapeshellarg($_GET['remoteid']));
+	}
+}
+
 if (!is_array($config['ipsec']['phase2']))
     $config['ipsec']['phase2'] = array();
 
@@ -118,6 +124,26 @@ $sad = ipsec_dump_sad();
 							<center>
 								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif">
 							</center>
+						</td>
+						<td class="list">
+							<?php
+							$source = "";
+							if ($ph2ent['localid']['type'] == 'lan') {
+								$source = get_interface_ip('lan');
+							} else {
+								$source = get_interface_ip(find_ip_interface($ph2ent['localid']['address']));
+							}
+
+							?>
+							<?php if (($ph2ent['remoteid']['type'] != "mobile") && ($icon != "pass") && ($source != "")): ?>
+							<center>
+								<a href="diag_ipsec.php?act=connect&remoteid=<?= $ph2ent['remoteid']['address'] ?>&source=<?= $source ?>">
+								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0">
+								</a>
+							</center>
+							<?php else: ?>
+								&nbsp;
+							<?php endif; ?>
 						</td>
 					</tr>
 					<?php

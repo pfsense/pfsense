@@ -200,7 +200,7 @@ function resync_all_package_configs($show_message = false) {
 		}
 	}
 	if($show_message == true)
-		echo "done.\n";
+		echo " done.\n";
 	@unlink("/conf/needs_package_sync");
 }
 

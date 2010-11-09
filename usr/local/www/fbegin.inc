@@ -221,7 +221,7 @@ if(! $g['disablehelpmenu']) {
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
-	$notice_id = $_REQUEST['noticeid'];
+	$notice_id = htmlspecialchars($_REQUEST['noticeid']);
 	close_notice($notice_id);
 }
 /**********************************************/

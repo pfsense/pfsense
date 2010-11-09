@@ -84,8 +84,8 @@ if ($_POST) {
 		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre))
 			continue;
 
-		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = sprintf(gettext("A gre with the network %s is already defined."),$gre['remote-network']);
+		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."),$gre['remote-network']);
 			break;
 		}
 	}

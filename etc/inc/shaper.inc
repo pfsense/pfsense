@@ -3785,7 +3785,7 @@ function &get_unique_queue_list() {
 	$qlist = array();
 	if (is_array($altq_list_queues)) {
 		foreach ($altq_list_queues as $altq) {
-			if ($altq->GetEnabled())
+			if ($altq->GetEnabled() == "")
 				continue;
 			$tmplist =& $altq->get_queue_list();
 			foreach ($tmplist as $qname => $link) {

@@ -3438,7 +3438,13 @@ function setup_pppoe_reset_file($pppif, $iface="") {
 	$cron_file = "{$g['varetc_path']}/pppoe_restart_{$pppif}";
 
 	if(!empty($iface) && !empty($pppif)){
-		$cron_cmd = "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$iface}); log_error(\"PPPoE periodic reset executed on {$iface}\"); ?>' | /usr/local/bin/php -q";
+		$cron_cmd = <<<EOD
+#!/bin/sh
+/usr/local/sbin/pfSctl -c 'interface reload {$iface}'
+/usr/bin/logger -t pppoe{$iface} "PPPoE periodic reset executed on {$iface}"
+
+EOD;
+
 		file_put_contents($cron_file, $cron_cmd);
 		chmod($cron_file, 0700);
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");

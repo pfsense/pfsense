@@ -198,7 +198,8 @@ if ($_POST) {
 		if(isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
-			$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
+			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
+			$numbervalue['value'] = str_replace('&quot;', '"', htmlspecialchars($_POST["value{$x}"]));
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
@@ -259,6 +260,31 @@ if ($_POST) {
 					$noip = true;
 		if ($_POST['staticarp'] && $noip)
 			$input_errors[] = "Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.";
+
+		if(is_array($pconfig['numberoptions']['item'])) {
+			foreach ($pconfig['numberoptions']['item'] as $numberoption) {
+				if ( $numberoption['type'] == 'text' && strstr($numberoption['value'], '"') )
+					$input_errors[] = gettext("Text type cannot include quotation marks.");
+				else if ( $numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption['value']) && !preg_match('/^[0-9a-z]{2}(?:\:[0-9a-z]{2})*$/i', $numberoption['value']) )
+					$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
+				else if ( $numberoption['type'] == 'flag' && $numberoption['value'] != 'true' && $numberoption['value'] != 'false' && $numberoption['value'] != 'on' && $numberoption['value'] != 'off' )
+					$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
+				else if ( $numberoption['type'] == 'uint8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 255) )
+					$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
+				else if ( $numberoption['type'] == 'uint16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 65535) )
+					$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
+				else if ( $numberoption['type'] == 'uint32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 4294967295) )
+					$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
+				else if ( $numberoption['type'] == 'int8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -128 || $numberoption['value'] > 127) )
+					$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
+				else if ( $numberoption['type'] == 'int16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -32768 || $numberoption['value'] > 32767) )
+					$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
+				else if ( $numberoption['type'] == 'int32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -2147483648 || $numberoption['value'] > 2147483647) )
+					$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
+				else if ( $numberoption['type'] == 'ip-address' && !is_ipaddr($numberoption['value']) && !is_hostname($numberoption['value']) )
+					$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
+			}
+		}
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
@@ -401,12 +427,25 @@ include("head.inc");
 </script>
 
 <script type="text/javascript">
+	function itemtype_field(fieldname, fieldsize, n) {
+		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
+			$customitemtypes = array('text' => gettext('Text'), 'string' => gettext('String'), 'flag' => gettext('Boolean'),
+				'uint8' => gettext('Unsigned 8-bit integer'), 'uint16' => gettext('Unsigned 16-bit integer'), 'uint32' => gettext('Unsigned 32-bit integer'),
+				'int8' => gettext('Signed 8-bit integer'), 'int16' => gettext('Signed 16-bit integer'), 'int32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host'));
+			foreach ($customitemtypes as $typename => $typedescr) {
+				echo "<option value=\"{$typename}\">{$typedescr}</option>";
+			}
+		?></select>';
+	}
+
 	rowname[0] = "number";
 	rowtype[0] = "textbox";
 	rowsize[0] = "10";
-	rowname[1] = "value";
-	rowtype[1] = "textbox";
-	rowsize[1] = "55";
+	rowname[1] = "itemtype";
+	rowtype[1] = itemtype_field;
+	rowname[2] = "value";
+	rowtype[2] = "textbox";
+	rowsize[2] = "40";
 </script>
 
 <script type="text/javascript" language="JavaScript">
@@ -768,7 +807,8 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td><div id="onecolumn"><?=gettext("Number");?></div></td>
-				<td><div id="twocolumn"><?=gettext("Value");?></div></td>
+				<td><div id="twocolumn"><?=gettext("Type");?></div></td>
+				<td><div id="threecolumn"><?=gettext("Value");?></div></td>
 				</tr>
 				<?php $counter = 0; ?>
 				<?php
@@ -777,6 +817,7 @@ include("head.inc");
 				?>
 					<?php
 						$number = $item['number'];
+						$itemtype = $item['type'];
 						$value = $item['value'];
 					?>
 				<tr>
@@ -784,7 +825,18 @@ include("head.inc");
 					<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld" id="number<?php echo $counter; ?>" size="10" value="<?=htmlspecialchars($number);?>" />
 				</td>
 				<td>
-					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="55" value="<?=htmlspecialchars($value);?>" />
+					<select name="itemtype<?php echo $counter; ?>" class="formselect" id="itemtype<?php echo $counter; ?>">
+					<?php
+					foreach ($customitemtypes as $typename => $typedescr) {
+						echo "<option value=\"{$typename}\" ";
+						if ($itemtype == $typename) echo "selected";
+						echo ">" . $typedescr . "</option>";
+					}
+					?>
+					</select>
+				</td>
+				<td>
+					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="40" value="<?=htmlspecialchars($value);?>" />
 				</td>
 				<td>
 					<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
@@ -800,7 +852,7 @@ include("head.inc");
 					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 				</a>
 				<script type="text/javascript">
-					field_counter_js = 2;
+					field_counter_js = 3;
 					rows = 1;
 					totalrows = <?php echo $counter; ?>;
 					loaded = <?php echo $counter; ?>;

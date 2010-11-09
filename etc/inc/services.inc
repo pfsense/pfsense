@@ -120,7 +120,11 @@ function services_dhcpd_configure() {
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
 		if(is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
-				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = text;\n";
+				if(!empty($item['type']))
+					$itemtype = $item['type'];
+				else
+					$itemtype = "text";
+				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
 			}
 		}
 	}
@@ -314,7 +318,10 @@ EOD;
 		$dhcpdconf .= "\n";
 		if($dhcpifconf['numberoptions']['item']) {
 			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
-				$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
+				if(empty($item['type']) || $item['type'] == "text")
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
+				else
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item['value']};\n";
 			}
 		}
 

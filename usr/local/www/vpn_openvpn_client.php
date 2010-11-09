@@ -46,6 +46,21 @@ if (!is_array($config['openvpn']['openvpn-client']))
 
 $a_client = &$config['openvpn']['openvpn-client'];
 
+if (!is_array($config['ca']))
+	$config['ca'] = array();
+
+$a_ca =& $config['ca'];
+
+if (!is_array($config['cert']))
+	$config['cert'] = array();
+
+$a_cert =& $config['cert'];
+
+if (!is_array($config['crl']))
+	$config['crl'] = array();
+
+$a_crl =& $config['crl'];
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -331,10 +346,17 @@ function autotls_change() {
 //-->
 </script>
 <?php
-	if ($input_errors)
-		print_input_errors($input_errors);
-	if ($savemsg)
-		print_info_box($savemsg);
+if (!$savemsg)
+	$savemsg = "";
+if (count($a_ca) == 0)
+	$savemsg .= "You have no Certificate Authorities defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
+if (count($a_cert) == 0)
+	$savemsg .= "<br/>You have no Certificates defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
+
+if ($input_errors)
+	print_input_errors($input_errors);
+if ($savemsg)
+	print_info_box($savemsg);
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
@@ -610,7 +632,7 @@ function autotls_change() {
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
-								foreach ($config['ca'] as $ca):
+								foreach ($a_ca as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
@@ -625,7 +647,7 @@ function autotls_change() {
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
-							foreach ($config['cert'] as $cert):
+							foreach ($a_cert as $cert):
 								$selected = "";
 								$caname = "";
 								$inuse = "";

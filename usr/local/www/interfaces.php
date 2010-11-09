@@ -54,8 +54,19 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
+// Get configured interface list
+$ifdescrs = get_configured_interface_list(false, true);
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
+	$found = false;
+	foreach($ifdescrs as $descr => $ifdescr) 
+		if($descr == $if) 
+			$found = true;
+	if(!$found) {
+		Header("Location: interfaces.php");
+		exit;
+	}
 } else {
 	$if = "wan";
 }
@@ -860,7 +871,7 @@ function check_wireless_mode() {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
+$pgtitle = array(gettext("Interfaces"), strtoupper($pconfig['descr']));
 $statusurl = "status_interfaces.php";
 
 $closehead = false;

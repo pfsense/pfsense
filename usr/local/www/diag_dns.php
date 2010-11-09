@@ -131,7 +131,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if($resolved) {
-				$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+				$dig=`dig $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
 				$resolved = split("\n", $dig);
 			}
 			$hostname = $host;
@@ -182,12 +182,12 @@ include("head.inc"); ?>
 				} 
 				if($found > 0) {
 					if($alias_exists) {
-						echo "<br/><font size='-2'>An alias already exists for the hostname {$host}.  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true&override=true'>here</a>.";
+						echo "<br/><font size='-2'>An alias already exists for the hostname " . htmlspecialchars($host) . ".  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true&override=true'>here</a>.";
 					} else { 
 						if(!$createdalias) {
-							echo "<br/><font size='-2'><a href='diag_dns.php?host=" . trim(urlencode($host)) . "&createalias=true'>Create alias</a> out of these entries.";
+							echo "<br/><font size='-2'><a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true'>Create alias</a> out of these entries.";
 						} else {
-							echo "<br/><font size='-2'>Alias created with name {$newalias['name']}";
+							echo "<br/><font size='-2'>Alias created with name " . htmlspecialchars($newalias['name']);
 						}
 					}
 				}
@@ -234,8 +234,8 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top"  class="vncell"><?=gettext("More Information:");?></td>
 			<td width="78%" class="vtable">
-				<a target="_new" href ="/diag_ping.php?host=<?=$host?>&interface=wan&count=3"><?=gettext("Ping");?></a> <br/>
-				<a target="_new" href ="/diag_traceroute.php?host=<?=$host?>&ttl=18"><?=gettext("Traceroute");?></a>
+				<a target="_new" href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&interface=wan&count=3"><?=gettext("Ping");?></a> <br/>
+				<a target="_new" href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&ttl=18"><?=gettext("Traceroute");?></a>
 				<p/>
 				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?><br/><br/>
 				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />

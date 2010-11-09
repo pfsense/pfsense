@@ -113,7 +113,7 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/usr/local/sbin/setkey -FP");
 
 		/* disallow IPSEC, it is off */
-//		exec("/sbin/sysctl net.inet.ip.ipsec_in_use=0");
+		exec("/sbin/sysctl net.inet.ip.ipsec_in_use=0");
 
 		return true;
 	} else {
@@ -877,7 +877,7 @@ EOD;
  			sleep("0.1");
 			mwexec("/usr/local/sbin/setkey -F", false);
  			sleep("0.1");
-//			exec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
+			exec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
  			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf", false);
  			sleep("0.1");

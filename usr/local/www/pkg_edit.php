@@ -83,6 +83,12 @@ $pgtitle      = $title;
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = htmlspecialchars($_POST['id']);
+
+if(!is_numeric($id)) {
+	Header("Location: /");
+	exit;
+}
+	
 	
 // Not posting?  Then user is editing a record. There must be a valid id
 // when editing a record.

@@ -210,13 +210,7 @@ function system_hosts_generate() {
 	}
 	$hostscfg = $dnsmasqcfg['hosts'];
 
-	$fd = fopen("{$g['varetc_path']}/hosts", "w");
-	if (!$fd) {
-		log_error(sprintf(gettext("Error: cannot open hosts file in system_hosts_generate().%s"), "\n"));
-		return 1;
-	}
-
-	$hosts .= "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 
 	if ($config['interfaces']['lan']) {
 		$cfgip = get_interface_ip("lan");
@@ -247,6 +241,20 @@ function system_hosts_generate() {
 					foreach ($dhcpifconf['staticmap'] as $host)
 						if ($host['ipaddr'] && $host['hostname'])
 							$hosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+	}
+
+	/*
+	 * Do not remove this because dhcpleases monitors with kqueue it needs to be 
+	 * killed before writing to hosts files.
+	 */
+	if (file_exists("{$g['varrun_path']}/dhcpleases.pid")) {
+		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
+                @unlink("{$g['varrun_path']}/dhcpleases.pid");
+	}
+	$fd = fopen("{$g['varetc_path']}/hosts", "w");
+	if (!$fd) {
+		log_error("Error: cannot open hosts file in system_hosts_generate().\n");
+		return 1;
 	}
 	fwrite($fd, $hosts);
 	fclose($fd);

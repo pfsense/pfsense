@@ -344,7 +344,7 @@ enable_rrd_graphing();
 setup_wireless_olsr();
 
 /* startup routed if needed */
-include_once("/usr/local/pkg/routed/routed.inc");
+include_once("/usr/local/pkg/routed.inc");
 setup_routed();
 
 /* enable watchdog if supported */

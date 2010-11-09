@@ -10,6 +10,7 @@ tar czPf /root/$FILENAME \
 	--exclude root/* \
 	--exclude var/empty/* \
 	--exclude var/empty \
+	--exclude var/etc \
 	/
 
 echo ">>> Backup completed.  Note: this backup includes config.xml!"

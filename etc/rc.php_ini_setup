@@ -162,6 +162,7 @@ zlib.output_compression = Off
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
 extension_dir=${EXTENSIONSDIR}
+session.use_trans_sid = true
 
 ; Extensions
 

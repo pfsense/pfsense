@@ -24,7 +24,9 @@ var addRowTo = (function() {
 	tr = d.createElement("tr");
 	for (i = 0; i < field_counter_js; i++) {
 		td = d.createElement("td");
-		if(rowtype[i] == 'textbox') {
+		if(typeof(rowtype[i]) == 'function') {
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], rowsize[i], totalrows) + " ";
+		} else if(rowtype[i] == 'textbox') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' class='formfld unknown' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' size='" + rowsize[i] + "' class='formfld pwd' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";

@@ -73,6 +73,7 @@ if(!function_exists("pfSenseHeader")) {
 /* END compatibility goo with HEAD */
 
 /* include all configuration functions */
+require_once("csrf/csrf-magic.php");
 require_once("interfaces.inc");
 require_once("gwlb.inc");
 require_once("services.inc");

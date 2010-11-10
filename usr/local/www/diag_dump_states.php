@@ -44,11 +44,9 @@ require_once("guiconfig.inc");
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
-		$srcip  = escapeshellarg($_GET['srcip']);
-		$dstip  = escapeshellarg($_GET['dstip']);
-		if (is_ipaddr($srcip) and is_ipaddr($dstip)) {
-			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
-			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
+		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
+			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
+			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}

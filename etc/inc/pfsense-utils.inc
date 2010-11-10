@@ -149,22 +149,13 @@ function get_tmp_file() {
  ******/
 function get_dns_servers() {
 	$dns_servers = array();
-	$dns = `cat /etc/resolv.conf`;
-	$dns_s = split("\n", $dns);
+	$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	foreach($dns_s as $dns) {
 		$matches = "";
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
 			$dns_servers[] = $matches[1];
 	}
-	$dns_server_master = array();
-	$lastseen = "";
-	foreach($dns_servers as $t) {
-		if($t <> $lastseen)
-			if($t <> "")
-				$dns_server_master[] = $t;
-		$lastseen = $t;
-	}
-	return $dns_server_master;
+	return array_unique($dns_servers);
 }
 
 /****f* pfsense-utils/enable_hardware_offloading

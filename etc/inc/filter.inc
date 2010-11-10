@@ -126,9 +126,9 @@ function filter_pflog_start() {
 		echo "filter_pflog_start() being called $mt\n";
 	}
 	mute_kernel_msgs();
-	$pid = 0;
-	$pid = `/bin/pgrep -f "tcpdump -s 256 -v -l -n -e -ttt -i pflog0"`;
-	if(!$pid)
+	$output = 0;
+	exec("/bin/pgrep -f 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	if($retval != 0)
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();
 }

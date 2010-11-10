@@ -104,7 +104,7 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			restart_service($_GET['service']);
 			break;
 	}
-	$savemsg = sprintf(gettext("%s has been restarted."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been restarted."),htmlspecialchars($_GET['service']));
 	sleep(5);
 }
 
@@ -148,7 +148,7 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 			start_service($_GET['service']);
 			break;
 	}
-	$savemsg = sprintf(gettext("%s has been started."),$_GET['service']);
+	$savemsg = sprintf(gettext("%s has been started."),htmlspecialchars($_GET['service']));
 	sleep(5);
 }
 
@@ -203,7 +203,7 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 			stop_service($_GET['service']);
 			break;
 	}
-	$savemsg = sprintf(gettext("%s has been stopped."), $_GET['service']);
+	$savemsg = sprintf(gettext("%s has been stopped."), htmlspecialchars($_GET['service']));
 	sleep(5);
 }
 

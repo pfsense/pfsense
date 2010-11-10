@@ -393,7 +393,7 @@ foreach ($leases as $data) {
 </table>
 <p>
 <form action="status_dhcp_leases.php" method="GET">
-<input type="hidden" name="order" value="<?=$_GET['order'];?>">
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0">
 <input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>">

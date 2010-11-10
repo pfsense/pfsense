@@ -49,8 +49,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-$vpntype = ($_GET['vpntype']) ? $_GET['vpntype'] : "pptp";
-$mode = ($_GET['mode']) ? $_GET['mode'] : "login";
+$vpntype = (htmlspecialchars($_GET['vpntype'])) ? htmlspecialchars($_GET['vpntype']) : "pptp";
+$mode = (htmlspecialchars($_GET['mode'])) ? htmlspecialchars($_GET['mode']) : "login";
 
 if ($_POST['clear']) 
 	clear_log_file("/var/log/vpn.log");

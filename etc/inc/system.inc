@@ -397,11 +397,10 @@ function system_routing_configure($interface = "") {
 	array_shift($routev6_str);
 	array_shift($routev6_str);
 	array_shift($routev6_str);
-	array_shift($routev6_str);
 	$routev6_arr = array();
 	foreach($routev6_str as $routeline) {
 		$items = preg_split("/[ ]+/i", $routeline);
-		$route_arr[$items[0]] = array($items[0], $items[1], $items[5]);
+		$routev6_arr[$items[0]] = array($items[0], $items[1], $items[5]);
 	}
 
 	if ($dont_add_route == false ) {

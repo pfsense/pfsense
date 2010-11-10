@@ -102,7 +102,7 @@ if(!$config['system']['nohttpreferercheck']) {
 		$interface_list_ips = get_configured_ip_addresses();
 		foreach($interface_list_ips as $ilips) {
 			$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
-			if(stristr($hostname_me_ip, $ilips)) 
+			if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) 
 				$found_host = true;
 		}
 		if($found_host == false) {

@@ -5,7 +5,7 @@
 	Copyright (C) 2004-2006 Scott Ullrich
 	Copyright (C) 2005		Bill Marquette
 	Copyright (C) 2006		Peter Allgeyer
-	Copyright (C) 2008		Ermal Luci
+	Copyright (C) 2008-2010		Ermal Luci
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -2148,6 +2148,15 @@ pass out on \$IPsec all keep state label "IPsec internal host to host"
 EOD;
 
 	if(!isset($config['system']['webgui']['noantilockout'])) {
+		$portarg = 80;
+		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
+			$portarg = "{$config['system']['webgui']['port']}";
+		$sshport = "";
+		if (isset($config['system']['enablesshd'])) {
+			$sshport = 22;
+			if($config['system']['ssh']['port'] <> "")
+				$sshport = $config['system']['ssh']['port'];
+		}
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned
@@ -2156,7 +2165,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
-pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout rule"
+pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -2165,7 +2174,7 @@ EOD;
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
-pass in quick on {$wanif} from any to ({$wanif}) keep state label "anti-lockout rule"
+pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
 		}

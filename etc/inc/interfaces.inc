@@ -3208,9 +3208,6 @@ function get_interfaces_with_gateway() {
 
 	/* loop interfaces, check config for outbound */
 	foreach($config['interfaces'] as $ifdescr => $ifname) {
-		if (substr($ifdescr, 0, 5) ==  "ovpnc")
-			return true;
-
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "carpdev-dhcp":
@@ -3222,7 +3219,8 @@ function get_interfaces_with_gateway() {
 				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:
-				if (!empty($ifname['gateway']))
+				if (substr($ifname['if'], 0, 5) ==  "ovpnc" ||
+				    !empty($ifname['gateway']))
 					$ints[$ifdescr] = $ifdescr;
 			break;
 		}

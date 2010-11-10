@@ -1251,19 +1251,19 @@ EODAD;
 /* configure cron service */
 function configure_cron() {
 	global $g, $config;
+
 	conf_mount_rw();
 	/* preserve existing crontab entries */
-	$crontab_contents = file_get_contents("/etc/crontab");
-	$crontab_contents_a = split("\n", $crontab_contents);
+	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	
-	for ($i = 0; $i < count($crontab_contents_a); $i++) {
-		$item =& $crontab_contents_a[$i];
-		if (strpos($item, "# pfSense specific crontab entries") !== false) {
-			array_splice($crontab_contents_a, $i - 1);
+	for ($i = 0; $i < count($crontab_contents); $i++) {
+		$cron_item =& $crontab_contents[$i];
+		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
+			array_splice($crontab_contents, $i - 1);
 			break;
 		}
 	}
-	$crontab_contents = implode("\n", $crontab_contents_a) . "\n";
+	$crontab_contents = implode("\n", $crontab_contents) . "\n";
 	
 	
 	if (is_array($config['cron']['item'])) {

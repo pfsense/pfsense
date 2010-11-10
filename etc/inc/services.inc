@@ -714,6 +714,7 @@ function services_snmpd_configure() {
 
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
+	sleep(2);
 	if(is_process_running("bsnmpd")) 
 		mwexec("/usr/bin/killall bsnmpd", true);
 

@@ -2722,4 +2722,5 @@ function discover_pkg_rules($ruletype) {
 }
 
 // vim: ts=4 sw=4 noexpandtab
+
 ?>

@@ -2151,6 +2151,8 @@ EOD;
 		$portarg = 80;
 		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
 			$portarg = "{$config['system']['webgui']['port']}";
+		if ($config['system']['webgui']['protocol'] == "https")
+			$portarg .= " 443 ";
 		$sshport = "";
 		if (isset($config['system']['enablesshd'])) {
 			$sshport = 22;

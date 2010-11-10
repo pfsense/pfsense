@@ -359,7 +359,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
 									<br/>
-									<strong><?=gettext("Alternate Hostnames for DNS Rebinding Checks"); ?></strong>
+									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
 									<br/>
 									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
 									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>

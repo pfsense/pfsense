@@ -86,6 +86,32 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 	}
 }
 
+// If the HTTP_REFERER is something other than ourselves then disallow.
+if(!$config['system']['nohttpreferercheck']) {
+	if($_SERVER['HTTP_REFERER']) {
+		$found_host = false;
+		$hostname_me = $config['system']['hostname'] . "." . $config['system']['domain'];
+		if(stristr($_SERVER['HTTP_REFERER'], $hostname_me))
+			$found_host = true;
+		if(!empty($config['system']['webgui']['althostnames'])) {
+			$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+			foreach ($althosts as $ah)
+				if(stristr($ah, $hostname_me))
+					$found_host = true;
+		}
+		$interface_list_ips = get_configured_ip_addresses();
+		foreach($interface_list_ips as $ilips) {
+			$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
+			if(stristr($hostname_me_ip, $ilips)) 
+				$found_host = true;
+		}
+		if($found_host == false) {
+			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . $_SERVER['HTTP_REFERER'] . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+			exit;
+		}
+	}
+}
+
 $groupindex = index_groups();
 $userindex = index_users();
 

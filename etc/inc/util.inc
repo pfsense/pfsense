@@ -624,6 +624,21 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 	return $iflist;
 }
 
+/*
+ *   get_configured_ip_addresses() - Return a list of all configured
+ *   interfaces IP Addresses
+ *
+ */
+function get_configured_ip_addresses() {
+	require_once("interfaces.inc");
+	$ip_array = array();
+	$interfaces = get_configured_interface_list();
+	foreach($interfaces as $int) {
+		$ipaddr = get_interface_ip($int);
+		$ip_array[$int] = $ipaddr;
+	}
+	return $ip_array;
+}
 
 /*
  *   get_interface_list() - Return a list of all physical interfaces

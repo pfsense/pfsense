@@ -464,18 +464,21 @@ function filter_rules_sort() {
 	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
 		$config['filter']['rule'][$i]['seq'] = $i;
 
-	function filtercmp($a, $b) {
-		if ($a['interface'] == $b['interface'])
-			return $a['seq'] - $b['seq'];
-		else
-			return -strcmp($a['interface'], $b['interface']);
-	}
-
-	usort($config['filter']['rule'], "filtercmp");
+	usort($config['filter']['rule'], "filter_rules_compare");
 
 	/* strip the sequence numbers again */
 	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
 		unset($config['filter']['rule'][$i]['seq']);
+}
+function filter_rules_compare($a, $b) {
+	if ($a['interface'] == $b['interface'] || ( isset($a['floating']) && isset($b['floating']) ))
+		return $a['seq'] - $b['seq'];
+	else if (isset($a['floating']))
+		return -1;
+	else if (isset($b['floating']))
+		return 1;
+	else
+		return compare_interface_friendly_names($a['interface'], $b['interface']);
 }
 
 function firewall_check_for_advanced_options(&$item) {

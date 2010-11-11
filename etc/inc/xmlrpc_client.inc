@@ -24,7 +24,7 @@
 
 
 if (!function_exists('xml_parser_create')) {
-    include_once 'PEAR.php';
+    include_once 'PEAR.inc';
     PEAR::loadExtension('xml');
 }
 

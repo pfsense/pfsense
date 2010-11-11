@@ -940,6 +940,7 @@ EOD;
 ## FreeBSD!
 server.event-handler	= "freebsd-kqueue"
 server.network-backend 	= "writev"
+server.use-ipv6 = "enable"
 
 ## modules to load
 server.modules              =   (
@@ -1058,6 +1059,7 @@ EOD;
 
 	if($captive_portal == true)
 		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
+		$lighty_config .= "server.bind	= \"::1\"\n";
 
 	$lighty_config .= <<<EOD
 

@@ -708,7 +708,7 @@ function sshkeyClicked(obj) {
 							<tr>
                                                         	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
                                                         	<td width="78%" class="vtable">
-									<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+									<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
                                                         	</td>
                                                 	</tr>
                                                 	<tr>

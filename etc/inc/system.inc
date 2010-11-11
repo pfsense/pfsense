@@ -1060,14 +1060,14 @@ EOD;
 	if($captive_portal == true) {
 		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
 		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "$SERVER["socket"]  == \"127.0.0.1:443\" { }\n":
-		$lighty_config .= "$SERVER["socket"]  == \"[::1]:443\" { }\n":
+		$lighty_config .= "$SERVER["socket"]  == \"127.0.0.1:443\" { }\n";
+		$lighty_config .= "$SERVER["socket"]  == \"[::1]:443\" { }\n";
 
 	} else {
 		$lighty_config .= "server.bind  = \"0.0.0.0\"\n;
 		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "$SERVER["socket"]  == \"0.0.0.0:443\" { }\n":
-		$lighty_config .= "$SERVER["socket"]  == \"[::]:443\" { }\n":
+		$lighty_config .= "$SERVER["socket"]  == \"0.0.0.0:443\" { }\n";
+		$lighty_config .= "$SERVER["socket"]  == \"[::]:443\" { }\n";
 	}
 
 

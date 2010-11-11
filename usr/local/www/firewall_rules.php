@@ -87,10 +87,17 @@ if($_REQUEST['dragdroporder']) {
 	$drag_order = $_REQUEST['dragtable'];
 	// Next traverse through rules building a new order for interface
 	for ($i = 0; isset($a_filter[$i]); $i++) {
-		if($a_filter[$i]['interface'] <> $_REQUEST['if']) 
-			$a_filter_unorder[] = $a_filter[$i];
-		else 
-			$a_filter_order_tmp[] = $a_filter[$i];
+		if($_REQUEST['if'] == "FloatingRules") {
+			if(!isset($a_filter[$i]['floating']))
+				$a_filter_unorder[] = $a_filter[$i];
+			else
+				$a_filter_order_tmp[] = $a_filter[$i];
+		} else {
+			if($a_filter[$i]['interface'] <> $_REQUEST['if'] || isset($a_filter[$i]['floating']))
+				$a_filter_unorder[] = $a_filter[$i];
+			else
+				$a_filter_order_tmp[] = $a_filter[$i];
+		}
 	}
 	// Reorder rules with the posted order
 	for ($i = 0; $i<count($drag_order); $i++) 

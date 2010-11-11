@@ -79,34 +79,33 @@ $ifdescs = get_configured_interface_with_descr();
 // Drag and drop reordering
 if($_REQUEST['dragdroporder']) {
 	// First create a new ruleset array and tmp arrays
-	$a_filter_unorder = array();
+	$a_filter_before = array();
 	$a_filter_order = array();
 	$a_filter_order_tmp = array();
-	// Pointer to id of item being reordered
-	$found = 0;
+	$a_filter_after = array();
+	$found = false;
 	$drag_order = $_REQUEST['dragtable'];
 	// Next traverse through rules building a new order for interface
 	for ($i = 0; isset($a_filter[$i]); $i++) {
-		if($_REQUEST['if'] == "FloatingRules") {
-			if(!isset($a_filter[$i]['floating']))
-				$a_filter_unorder[] = $a_filter[$i];
-			else
-				$a_filter_order_tmp[] = $a_filter[$i];
-		} else {
-			if($a_filter[$i]['interface'] <> $_REQUEST['if'] || isset($a_filter[$i]['floating']))
-				$a_filter_unorder[] = $a_filter[$i];
-			else
-				$a_filter_order_tmp[] = $a_filter[$i];
-		}
+		if(( $_REQUEST['if'] == "FloatingRules" && isset($a_filter[$i]['floating']) ) || ( $a_filter[$i]['interface'] == $_REQUEST['if'] && !isset($a_filter[$i]['floating']) )) {
+			$a_filter_order_tmp[] = $a_filter[$i];
+			$found = true;
+		} else if (!$found)
+			$a_filter_before[] = $a_filter[$i];
+		else
+			$a_filter_after[] = $a_filter[$i];
 	}
 	// Reorder rules with the posted order
-	for ($i = 0; $i<count($drag_order); $i++) 
+	for ($i = 0; $i<count($drag_order); $i++)
 		$a_filter_order[] = $a_filter_order_tmp[$drag_order[$i]];
-	unset($config['filter']['rule']);
+	// In case $drag_order didn't account for some rules, make sure we don't lose them
+	if(count($a_filter_order) < count($a_filter_order_tmp)) {
+		for ($i = 0; $i<count($a_filter_order_tmp); $i++)
+			if(!in_array($i, $drag_order))
+				$a_filter_order[] = $a_filter_order_tmp[$i];
+	}
 	// Overwrite filter rules with newly created items
-	$config['filter']['rule'] = $a_filter_order;
-	foreach($a_filter_unorder as $aa) 
-		$config['filter']['rule'][] = $aa;
+	$config['filter']['rule'] = array_merge($a_filter_before, $a_filter_order, $a_filter_after);
 	// Write configuration
 	$config = write_config("Drag and drop firewall rules ordering update.");
 	// Redirect back to page

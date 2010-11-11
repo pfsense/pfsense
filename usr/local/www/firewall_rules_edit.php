@@ -546,6 +546,7 @@ if ($_POST) {
 				$a_filter[] = $filterent;
 		}
 
+		filter_rules_sort();
 		write_config();
 		mark_subsystem_dirty('filter');
 

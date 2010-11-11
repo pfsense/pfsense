@@ -84,28 +84,6 @@ function is_specialnet($net) {
 		return false;
 }
 
-/* Another one we need from guiconfig.inc but can't include... */
-function filter_rules_sort() {
-	global $config;
-
-	/* mark each rule with the sequence number (to retain the order while sorting) */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
-		$config['filter']['rule'][$i]['seq'] = $i;
-
-	function filtercmp($a, $b) {
-		if ($a['interface'] == $b['interface'])
-			return $a['seq'] - $b['seq'];
-		else
-			return -strcmp($a['interface'], $b['interface']);
-	}
-
-	usort($config['filter']['rule'], "filtercmp");
-
-	/* strip the sequence numbers again */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
-		unset($config['filter']['rule'][$i]['seq']);
-}
-
 
 if (($argc > 1) && !empty($argv[1])) {
 	$message = "";

@@ -2107,4 +2107,30 @@ function get_country_name($country_code) {
 	return "";
 }
 
+/* sort by interface only, retain the original order of rules that apply to
+   the same interface */
+function filter_rules_sort() {
+	global $config;
+
+	/* mark each rule with the sequence number (to retain the order while sorting) */
+	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
+		$config['filter']['rule'][$i]['seq'] = $i;
+
+	usort($config['filter']['rule'], "filter_rules_compare");
+
+	/* strip the sequence numbers again */
+	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
+		unset($config['filter']['rule'][$i]['seq']);
+}
+function filter_rules_compare($a, $b) {
+	if ($a['interface'] == $b['interface'] || ( isset($a['floating']) && isset($b['floating']) ))
+		return $a['seq'] - $b['seq'];
+	else if (isset($a['floating']))
+		return -1;
+	else if (isset($b['floating']))
+		return 1;
+	else
+		return compare_interface_friendly_names($a['interface'], $b['interface']);
+}
+
 ?>

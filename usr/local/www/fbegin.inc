@@ -262,13 +262,13 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							$noticemsg = str_replace("<br>", "", $noticemsg);
 							$extra_args = "";
 							if($_GET['xml']) 
-								$extraargs="&xml=" . $_GET['xml'];
+								$extraargs="&xml=" .  htmlspecialchars($_GET['xml']);
 							if($_POST['xml']) 
-								$extraargs="&xml=" . $_POST['xml'];
+								$extraargs="&xml=" .  htmlspecialchars($_POST['xml']);
 							if($_GET['id']) 
-								$extraargs="&xml=" . $_GET['id'];
+								$extraargs="&xml=" .  htmlspecialchars($_GET['id']);
 							if($_POST['id'])
-								$extraargs="&xml=" . $_POST['id'];
+								$extraargs="&xml=" .  htmlspecialchars($_POST['id']);
 							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all' . $extraargs . '">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 							if ($value['url']) {
 								$notice_msgs .= $date.' - <a href="'.$url.'?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';

@@ -178,14 +178,20 @@ if (empty($FilterIflist)) {
 	require_once('shaper.inc');
 	filter_generate_optcfg_array();
 }
-foreach ($FilterIflist as $iflist)
+foreach ($FilterIflist as $iflist) {
 	if($iflist['ip'] == $http_host)
 		$local_ip = true;
-if($config['virtualip'])
-	if($config['virtualip']['vip'])
-		foreach($config['virtualip']['vip'] as $vip) 
+	if($iflist['ipv6'] == $http_host)
+		$local_ip = true;
+}
+if($config['virtualip']) {
+	if($config['virtualip']['vip']) {
+		foreach($config['virtualip']['vip'] as $vip) {
 			if($vip['subnet'] == $http_host)
 				$local_ip = true;
+		}
+	}
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

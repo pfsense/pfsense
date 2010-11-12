@@ -1622,7 +1622,7 @@ function filter_generate_user_rule($rule) {
 					$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
 			}
 			if($ifliste <> "")
-				$aline['interface'] = " on { {$ifliste} }";
+				$aline['interface'] = " on { {$ifliste} } ";
 			else
 				$aline['interface'] = "";
 		} else

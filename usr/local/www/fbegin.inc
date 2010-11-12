@@ -273,7 +273,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							if ($value['url']) {
 								$notice_msgs .= $date.' - <a href="'.$url.'?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 							} else {
-								$notice_msgs .= $date.' - <a href="?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+								$notice_msgs .= $date.' - <a href="?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.htmlspecialchars($noticemsg).'</a>';
 							}
 							$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 						}

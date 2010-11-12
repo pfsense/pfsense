@@ -41,10 +41,6 @@
 ##|*MATCH=status_queues.php*
 ##|-PRIV
 
-// Handle Javascript/AJAX
-function csrf_startup() {
-	csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-}
 require("guiconfig.inc");
 
 if ($_REQUEST['getactivity']) {

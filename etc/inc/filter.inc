@@ -1614,20 +1614,19 @@ function filter_generate_user_rule($rule) {
 
 	/* Check to see if the interface is in our list */
 	if(isset($rule['floating'])) {
-			if(isset($rule['interface']) && $rule['interface'] <> "") {
-				$interfaces = explode(",", $rule['interface']);
-				$ifliste = "";
-				foreach ($interfaces as $iface) {
-					if(array_key_exists($iface, $FilterIflist))
-						$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
-				}
-				if($ifliste <> "")
-					$aline['interface'] = " on { {$ifliste} }";
-				else
-					$aline['interface'] = "";
+		if(isset($rule['interface']) && $rule['interface'] <> "") {
+			$interfaces = explode(",", $rule['interface']);
+			$ifliste = "";
+			foreach ($interfaces as $iface) {
+				if(array_key_exists($iface, $FilterIflist))
+					$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
 			}
+			if($ifliste <> "")
+				$aline['interface'] = " on { {$ifliste} }";
 			else
 				$aline['interface'] = "";
+		} else
+			$aline['interface'] = "";
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
 			foreach($FilterIflist as $oc) $item .= $oc['descr'];
 				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];

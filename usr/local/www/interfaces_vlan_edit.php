@@ -172,7 +172,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="vlanif" value="<?=$pconfig['vlanif']; ?>">
+		    <input type="hidden" name="vlanif" value="<?=htmlspecialchars($pconfig['vlanif']); ?>">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">

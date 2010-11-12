@@ -394,7 +394,7 @@ function login_banner_change() {
 								<tr>
 									<td>
 										<?=gettext("Network"); ?>:&nbsp;
-										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=$pconfig['pool_address'];?>">
+										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=htmlspecialchars($pconfig['pool_address']);?>">
 										/
 										<select name="pool_netbits" class="formselect" id="pool_netbits">
 											<?php for ($i = 32; $i >= 0; $i--): ?>
@@ -482,25 +482,25 @@ function login_banner_change() {
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=$pconfig['dns_server1'];?>">
+										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=$pconfig['dns_server2'];?>">
+										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #3:&nbsp;
-										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=$pconfig['dns_server3'];?>">
+										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #4:&nbsp;
-										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=$pconfig['dns_server4'];?>">
+										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>">
 									</td>
 								</tr>
 							</table>
@@ -524,13 +524,13 @@ function login_banner_change() {
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
+										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=htmlspecialchars($pconfig['wins_server1']);?>">
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=htmlspecialchars($pconfig['wins_server2']);?>">
 									</td>
 								</tr>
 							</table>
@@ -584,7 +584,7 @@ function login_banner_change() {
 								<tr>
 									<td>
 										<?php $banner = htmlspecialchars($pconfig['login_banner']); ?>
-										<textarea name="login_banner" cols="65" rows="7" id="login_banner" class="formpre"><?=$banner;?></textarea>
+										<textarea name="login_banner" cols="65" rows="7" id="login_banner" class="formpre"><?=htmlspecialchars($banner);?></textarea>
 									</td>
 								</tr>
 							</table>

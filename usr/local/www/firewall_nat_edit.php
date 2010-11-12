@@ -834,7 +834,7 @@ include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
 	ext_change();
-	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
+	dst_change(document.iform.interface.value,'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	var iface_old = document.iform.interface.value;
 	typesel_change();
 	proto_change();

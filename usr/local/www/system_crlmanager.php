@@ -344,7 +344,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_crl"><?=$pconfig['crltext'];?></textarea>
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_crl"><?=htmlspecialchars($pconfig['crltext']);?></textarea>
 								<br>
 								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?></td>
 							</td>

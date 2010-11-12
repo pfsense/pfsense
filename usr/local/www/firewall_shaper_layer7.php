@@ -77,14 +77,14 @@ if($_GET['reset'] <> "") {
 
 if ($_GET) {
 	if ($_GET['container'])
-		$name = trim($_GET['container']);
+		$name = htmlspecialchars(trim($_GET['container']));
         if ($_GET['action'])
-                $action = $_GET['action'];
+                $action = htmlspecialchars($_GET['action']);
 }
 
 if($_POST) {
 	if ($_POST['container']) {
-		$name = trim($_POST['container']);
+		$name = htmlspecialchars(trim($_POST['container']));
 	}
 }
 
@@ -92,7 +92,6 @@ if ($name) {
 	//Get the object from the 7rules list
 	$container = $layer7_rules_list[$name];
 }
-
 
 if ($_GET) {
 	switch ($action) {

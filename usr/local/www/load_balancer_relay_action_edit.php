@@ -392,10 +392,10 @@ function num_options() {
 
 
 document.observe("dom:loaded", function() {
-  updateProtocol('<?=$pconfig['protocol']?>');  
-  updateDirection('<?=$pconfig['direction']?>');  
-  updateType('<?=$pconfig['type']?>');  
-  updateAction('<?=$pconfig['action']?>');  
+  updateProtocol('<?=htmlspecialchars($pconfig['protocol'])?>');  
+  updateDirection('<?=htmlspecialchars($pconfig['direction'])?>');  
+  updateType('<?=htmlspecialchars($pconfig['type'])?>');  
+  updateAction('<?=htmlspecialchars($pconfig['action'])?>');  
 });
 
 </script>

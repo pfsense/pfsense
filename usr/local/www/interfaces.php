@@ -2035,9 +2035,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
-								<input name="ppp_port" type="hidden" value="<?=$pconfig['port'];?>">
+								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port']);?>">
 								<?php endif; ?>
-								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
+								<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 							</td>
 						</tr>
 					</table>

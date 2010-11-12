@@ -205,7 +205,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="laggif" value="<?=$pconfig['laggif']; ?>">
+				    <input type="hidden" name="laggif" value="<?=htmlspecialchars($pconfig['laggif']); ?>">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_laggs[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">

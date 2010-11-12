@@ -569,7 +569,7 @@ EOD;
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed)."); ?>

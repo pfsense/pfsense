@@ -208,7 +208,7 @@ switch($action)
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Email Address"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="text" name="smartmonemail" value="<?=$pconfig['smartmonemail']?>"/>
+						<input type="text" name="smartmonemail" value="<?=htmlspecialchars($pconfig['smartmonemail'])?>"/>
 					</td>
 				</tr>
 				<tr>

@@ -371,7 +371,7 @@ if($_REQUEST['undodrag']) {
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?gettext("delete selected rules"); ?>" border="0"><?php else: ?>
 				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')"><?php endif; ?>
 				</td>
-				<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=$if;?>&after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
+				<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
 			   </tr>
 			</table>
 		  </td>
@@ -426,7 +426,7 @@ if($_REQUEST['undodrag']) {
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
-					  <td><a href="interfaces.php?if=<?=$if?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+					  <td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>
@@ -454,7 +454,7 @@ if($_REQUEST['undodrag']) {
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
-					  <td><a href="interfaces.php?if=<?=$if?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+					  <td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>
@@ -497,7 +497,7 @@ if($_REQUEST['undodrag']) {
 							$textss = $textse = "";
 						}
 				  ?>
-				  <a href="?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>"></a>
+				  <a href="?if=<?=htmlspecialchars($if);?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>"></a>
 				  <?php if (isset($filterent['log'])):
 							$iconfnlog = "log_s";
 						if (isset($filterent['disabled']))
@@ -721,7 +721,7 @@ if($_REQUEST['undodrag']) {
 					  <td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule"); ?>" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
-					  <td align="center" valign="middle"><a href="firewall_rules.php?act=del&if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
+					  <td align="center" valign="middle"><a href="firewall_rules.php?act=del&if=<?=htmlspecialchars($if);?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
 					  <td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new rule based on this one"); ?>" width="17" height="17" border="0"></a></td>
 					</tr>
 					</table>
@@ -736,7 +736,7 @@ if($_REQUEST['undodrag']) {
 			  <span class="gray">
 			  <?=gettext("No rules are currently defined for this interface"); ?><br>
 			  <?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br><br>
-			  <?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
+			  <?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
 			  </td>
 			  <?php endif; ?>
                 <tr id="fr<?=$nrules;?>">
@@ -765,7 +765,7 @@ if($_REQUEST['undodrag']) {
 					  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0"><?php else: ?>
 					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')"><?php endif; ?>
 					  </td>
-			                  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
+			                  <td><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
 					</tr>
 				    </table>
 				  </td>
@@ -822,7 +822,7 @@ if($_REQUEST['undodrag']) {
     </td>
   </tr>
 </table>
-  <input type="hidden" name="if" value="<?=$if;?>">
+  <input type="hidden" name="if" value="<?=htmlspecialchars($if);?>">
   <script type="text/javascript">
 	var number_of_rules = <?=$nrules?>;
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
@@ -844,7 +844,7 @@ if($_REQUEST['undodrag']) {
 			$('redboxtable').hide();
 		$('loading').show();
 		document.body.style.cursor = 'wait';
-		document.location = 'firewall_rules.php?if=<?=$if?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
+		document.location = 'firewall_rules.php?if=<?=htmlspecialchars($if);?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
 		return;
 	}
 	$('loading').hide();

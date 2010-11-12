@@ -457,7 +457,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>
 									<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
 							</td>
@@ -465,7 +465,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Private key data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=$pconfig['key'];?></textarea>
+								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
 								<br>
 								<?=gettext("Paste a private key in X.509 PEM format here.");?></td>
 							</td>
@@ -758,7 +758,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Request data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=$pconfig['csr'];?></textarea>
+								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=htmlspecialchars($pconfig['csr']);?></textarea>
 								<br>
 								<?=gettext("Copy the certificate signing data from here and forward it to your certificate authority for signing.");?></td>
 							</td>
@@ -766,7 +766,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final Certificate data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>
 								<?=gettext("Paste the certificate received from your cerificate authority here.");?></td>
 							</td>

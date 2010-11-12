@@ -305,11 +305,11 @@ function typesel_change() {
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet"); ?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="external" type="text" class="formfldalias" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
                     <br/>
-                    <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping."); ?><br>
+                    <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  The subnet mask from the source address below will be applied to this IP address."); ?><br>
                     <?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?></span>
 			</td>
                 </tr>
@@ -365,7 +365,7 @@ function typesel_change() {
                                         </tr>
                                 </table>
 			<br/>
-                     <span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet also applies to the external subnet (they  have to be the same)."); ?></span>
+                     <span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet will be applied to the external subnet."); ?></span>
 			</td>
                 </tr>
 		<tr>

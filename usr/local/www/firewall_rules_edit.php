@@ -977,9 +977,9 @@ include("head.inc");
 				&nbsp;<br>&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=$id;?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=$after;?>">
+				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
 			</td>
 		</tr>
 <?php		endif; ?>
@@ -1372,9 +1372,9 @@ include("head.inc");
 				&nbsp;<br>&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=$id;?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=$after;?>">
+				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
 			</td>
 		</tr>
 	</table>

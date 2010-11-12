@@ -280,7 +280,7 @@ include("head.inc");
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="services_igmpproxy.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_igmpproxy[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
+      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

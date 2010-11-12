@@ -789,7 +789,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 				<?php if (isset($id) && $a_ppps[$id]): ?>
-					<input name="id" type="hidden" value="<?=$id;?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>

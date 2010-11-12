@@ -382,7 +382,7 @@ foreach ($leases as $data) {
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&all={$_GET['all']}\">";
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&all=" . htmlspecialchars($_GET['all']) . "\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\"></a></td>\n";
 		}
                 echo "</tr>\n";

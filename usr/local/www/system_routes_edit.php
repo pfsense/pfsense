@@ -255,7 +255,7 @@ include("head.inc");
                   <td width="78%"> 
                     <input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_routes[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
                   </td>
                 </tr>

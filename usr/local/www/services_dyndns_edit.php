@@ -231,7 +231,7 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
 					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
 					<?php if (isset($id) && $a_dyndns[$id]): ?>
-						<input name="id" type="hidden" value="<?=$id;?>">
+						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 					<?php endif; ?>
                   </td>
                 </tr>

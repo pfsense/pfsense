@@ -395,7 +395,7 @@ function removeRow(el) {
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_qinqs[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
+      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

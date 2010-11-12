@@ -184,7 +184,7 @@ include("head.inc");
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
                     <?php if (isset($id) && $a_passthrumacs[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
 		    <?php if (isset($pconfig['username']) && $pconfig['username']): ?>
                     <input name="username" type="hidden" value="<?=htmlspecialchars($pconfig['username']);?>">

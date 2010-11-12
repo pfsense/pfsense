@@ -1610,6 +1610,8 @@ function filter_generate_user_rule($rule) {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 	$int = "";
+	$aline = array();
+
 	/* Check to see if the interface is in our list */
 	if(isset($rule['floating'])) {
 			if(isset($rule['interface']) && $rule['interface'] <> "") {

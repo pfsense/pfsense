@@ -289,7 +289,7 @@ function begin_install() {
 		return;
 	unlink_if_exists("/tmp/install_complete");
 	if($_REQUEST['disk'])
-		$disk = $_REQUEST['disk'];
+		$disk = htmlspecialchars($_REQUEST['disk']);
 	else 
 		$disk = installer_find_first_disk();
 	if(!$disk) {
@@ -302,7 +302,7 @@ function begin_install() {
 	}
 	// Handle other type of file systems
 	if($_REQUEST['fstype']) 
-		$fstype = strtoupper($_REQUEST['fstype']);
+		$fstype = htmlspecialchars(strtoupper($_REQUEST['fstype']));
 	else 
 		$fstype = "UFS+S";
 	write_out_pc_sysinstaller_config($disk, $fstype);
@@ -422,15 +422,18 @@ function verify_before_install() {
 	head_html();
 	body_html();
 	page_table_start();
-	$disk = pcsysinstall_get_disk_info($_REQUEST['disk']);
+	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	$swapsize = $_REQUEST['swapsize'];
+	$swapsize = htmlspecialchars($_REQUEST['swapsize']);
+	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
+	$disk_echo = htmlspecialchars($_REQUEST['disk']);
+	$swapsize_echo = htmlspecialchars($_REQUEST['swapsize']);
 	echo <<<EOF
 	<form method="post" action="installer.php">
-	<input type="hidden" name="fstype" value="{$_REQUEST['fstype']}">
-	<input type="hidden" name="disk" value="{$_REQUEST['disk']}">
+	<input type="hidden" name="fstype" value="{$fstype_echo}">
+	<input type="hidden" name="disk" value="{$disk_echo}">
 	<input type="hidden" name="state" value="begin_install">
-	<input type="hidden" name="swapsize" value="{$_REQUEST['swapsize']}">
+	<input type="hidden" name="swapsize" value="{$swapsize_echo}">
 	<div id="mainlevel">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	 		<tr>
@@ -451,11 +454,11 @@ function verify_before_install() {
 												</table>
 												<p/>
 												<table>
-													<tr><td align="right"><b>Disk:</td><td>{$_REQUEST['disk']}</td></tr>
+													<tr><td align="right"><b>Disk:</td><td>{$disk_echo}</td></tr>
 													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
 													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
-													<tr><td align="right"><b>SWAP Size:</td><td>{$_REQUEST['swapsize']}</td></tr>
-													<tr><td align="right"><b>Filesystem:</td><td>{$_REQUEST['fstype']}</td></tr>
+													<tr><td align="right"><b>SWAP Size:</td><td>{$swapsize}</td></tr>
+													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}</td></tr>
 												</table>
 											</div>
 										</center>

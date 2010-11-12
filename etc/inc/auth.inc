@@ -106,7 +106,7 @@ if(!$config['system']['nohttpreferercheck']) {
 				$found_host = true;
 		}
 		if($found_host == false) {
-			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . $_SERVER['HTTP_REFERER'] . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
 			exit;
 		}
 	}

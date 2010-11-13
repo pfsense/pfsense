@@ -869,7 +869,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	global $text, $config;
 	echo "<td>\n";
 	if($type == "input") {
-		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' class='formfld unknown' value='" . $value . "'>\n";
 	} else if($type == "checkbox") {
 		if($value)
 			echo "<input size='" . $size . "' type='checkbox' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' value='ON' CHECKED>\n";

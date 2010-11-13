@@ -731,7 +731,7 @@ if ($pkg['tabs'] <> "") {
 
 						$rowcounter++;
 						echo "<td>";
-						echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
+						echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
 						echo "</td>\n";
 						echo "</tr>\n";
 					}
@@ -768,7 +768,7 @@ if ($pkg['tabs'] <> "") {
 
 					$rowcounter++;
 					echo "<td>";
-					echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
+					echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
 					echo "</td>\n";
 					echo "</tr>\n";
 				}

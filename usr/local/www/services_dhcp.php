@@ -839,7 +839,7 @@ include("head.inc");
 					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="40" value="<?=htmlspecialchars($value);?>" />
 				</td>
 				<td>
-					<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
+					<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
 				</td>
 				</tr>
 				<?php $counter++; ?>

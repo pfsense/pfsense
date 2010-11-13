@@ -622,11 +622,11 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML = "<input type='image' src='/themes/" + theme + "/images/icons/icon_e.gif' onclick='editRow(\"" + tempTime + "\",this); return false;' value='Edit'>";
+		td.innerHTML = "<a onclick='editRow(\"" + tempTime + "\",this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_e.gif' /></a>";
 		tr.appendChild(td);
 			
 		td = d.createElement("td");
-		td.innerHTML = "<input type='image' src='/themes/" + theme + "/images/icons/icon_x.gif' onclick='removeRow(this); return false;' value='Delete'>";
+		td.innerHTML = "<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_x.gif' /></a>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");		
@@ -1131,10 +1131,10 @@ EOD;
 							        	<input type='text' readonly class='vexpl' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>'>
 							        </td>
 							        <td>
-							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' onclick='editRow("<?php echo $tempTime; ?>",this); return false;' value='Edit'>
+							        	<a onclick='editRow("<?php echo $tempTime; ?>",this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' /></a>
 							        </td>
 							        <td>
-							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' onclick='removeRow(this); return false;' value='Delete'>
+							        	<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' /></a>
 							        </td>
 							        <td>
 							        	<input type='hidden' id='schedule<?php echo $counter; ?>' name='schedule<?php echo $counter; ?>' value='<?php echo $tempID; ?>'>

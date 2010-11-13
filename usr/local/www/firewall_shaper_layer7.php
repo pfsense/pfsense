@@ -358,7 +358,7 @@ function addRow(table_id) {
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<input type = "image" src = "/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" value = "Delete" />';
+  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" /></a>';
 
   try {
     var newRow = tbl.insertRow(rows_count);
@@ -539,7 +539,7 @@ include("fbegin.inc");
 							<?php endif; ?>
 						</td>
 						<td>
-							<input type="image" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow('maintable',this.parentNode.parentNode); return false;" value="<?=gettext("Delete"); ?>" />
+							<a onclick="removeRow('maintable',this.parentNode.parentNode); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" /></a>
 						</td>
 						</tr>
 

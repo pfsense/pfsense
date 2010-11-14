@@ -34,10 +34,12 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
-function csrf_startup() {
-	csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
+if(!$nocsrf) {
+	function csrf_startup() {
+		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
+	}
+	require_once("csrf/csrf-magic.php");
 }
-require_once("csrf/csrf-magic.php");
 require_once("authgui.inc");
 
 /* make sure nothing is cached */

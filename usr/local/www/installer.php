@@ -27,6 +27,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$nocsrf = true;
+
 require("globals.inc");
 require("guiconfig.inc");
 

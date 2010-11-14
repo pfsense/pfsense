@@ -132,7 +132,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 								$ossubnet = $config['pptpd']['pptp_subnet'];
 							else
 								$ossubnet = "32";
-							$osn = gen_subnet($config['pptpd']['localip'], $osn);
+							$osn = gen_subnet($config['pptpd']['localip'], $ossubnet);
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";
@@ -148,10 +148,10 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					if($config['pppoe']['mode'] == "server") {
 						if (is_ipaddr($config['pppoe']['localip'])) {
 							if($config['pppoe']['pppoe_subnet'] <> "")
-								$ossubnet = $config['pppoe']['pptp_subnet'];
+								$ossubnet = $config['pppoe']['pppoe_subnet'];
 							else
 								$ossubnet = "32";
-							$osn = gen_subnet($config['pppoe']['localip'], $osn);
+							$osn = gen_subnet($config['pppoe']['localip'], $ossubnet);
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";
@@ -167,10 +167,10 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					if($config['l2tp']['mode'] == "server") {
 						if (is_ipaddr($config['l2tp']['localip'])) {
 							if($config['l2tp']['l2tp_subnet'] <> "")
-								$ossubnet = $config['l2tp']['pptp_subnet'];
+								$ossubnet = $config['l2tp']['l2tp_subnet'];
 							else
 								$ossubnet = "32";
-							$osn = gen_subnet($config['l2tp']['localip'], $osn);
+							$osn = gen_subnet($config['l2tp']['localip'], $ossubnet);
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";

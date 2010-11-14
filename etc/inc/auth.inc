@@ -475,6 +475,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
 	}
+	unset($group);
 
 	/* determine which memberships to remove */
 	foreach ($cur_groups as $groupname) {
@@ -489,6 +490,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 			$mod_groups[] = $group;
 		}
 	}
+	unset($group);
 
 	/* sync all modified groups */
 	foreach ($mod_groups as $group)

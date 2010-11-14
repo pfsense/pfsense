@@ -374,7 +374,7 @@ function prot_change() {
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is protected against HTTP_REFERER redirection attempts. " .
 									"Check this box to disable this protection if you find that it interferes with " .
-									"webConfigurator access in certain corner cases such as using 3rd party scripts to interact with pfSense. More information on HTTP_REFERER is available from <a href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
+									"webConfigurator access in certain corner cases such as using 3rd party scripts to interact with pfSense. More information on HTTP_REFERER is available from <a target='_new' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
 								</td>
 							</tr>
 							<tr>

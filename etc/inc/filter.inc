@@ -1496,20 +1496,6 @@ function filter_nat_rules_generate() {
 	else
 		sigkillbypid("/var/run/inetd.pid", "HUP");
 
-	$pptpdcfg = $config['pptpd'];
-	if($pptpdcfg['mode'] && $pptpdcfg['mode'] == "redir") {
-		$pptpdtarget = $pptpdcfg['redir'];
-		if(is_ipaddr($pptpdtarget) && is_array($FilterIflist['wan'])) {
-			$natrules .= <<<EOD
-
-# PPTP
-rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> $pptpdtarget
-rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> $pptpdtarget
-
-EOD;
-		}
-	}
-
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
@@ -2107,11 +2093,9 @@ EOD;
 		}
 		switch ($oc['type']) {
 		case "pptp":
-				/* XXX: The proto gre rules should really be removed when the pptp patch is guaranted to work */
 				$ipfrules .= <<<EOD
 # allow PPTP client
 anchor "pptpclient"
-pass in on \${$oc['descr']} proto gre from any to any modulate state label "allow PPTP client"
 pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
 
 EOD;
@@ -2229,7 +2213,6 @@ EOD;
 			$ipfrules .= <<<EOD
 # PPTPd rules
 anchor "pptp"
-pass in on \${$FilterIflist['wan']['descr']} proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
 pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;

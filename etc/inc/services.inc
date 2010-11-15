@@ -335,7 +335,7 @@ EOPP;
 			continue;
 
 		if($dhcpv6ifconf['failover_peerip'] <> "") {
-			$intv6 = guess_interface_from_ipv6($dhcpv6ifconf['failover_peerip']);
+			$intv6 = guess_interface_from_ip($dhcpv6ifconf['failover_peerip']);
 			$intipv6 = find_interface_ipv6($intv6);
 			$real_dhcpv6if = convert_friendly_interface_to_real_interface_name($dhcpv6if);
 			/*

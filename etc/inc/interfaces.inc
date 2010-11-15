@@ -1792,7 +1792,7 @@ EOD;
 		fclose($fd);
 
 		/* fire up dhclient */
-		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} > {$g['tmp_path']}/{$vipif}_output > {$g['tmp_path']}/{$vipif}_error_output", false);
+		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >{$g['tmp_path']}/{$vipif}_output 2>{$g['tmp_path']}/{$vipif}_error_output", false);
 	} else {
 		log_error("Error: cannot open dhclient_{$vipif}.conf in interfaces_carpdev_configure() for writing.\n");
 		mwexec("/sbin/dhclient -b {$vipif}");

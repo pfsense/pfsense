@@ -84,8 +84,8 @@ if ($_POST) {
 		if (isset($id) && ($a_gres[$id]) && ($a_gres[$id] === $gre))
 			continue;
 
-		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = sprintf(gettext("A gre with the network %s is already defined."),$gre['remote-network']);
+		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+			$input_errors[] = sprintf(gettext("A GRE tunnel with the network %s is already defined."),$gre['remote-network']);
 			break;
 		}
 	}
@@ -153,21 +153,21 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("GRE remote address");?></td>
                   <td class="vtable">
-                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=$pconfig['remote-addr'];?>">
+                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("GRE tunnel local address ");?></td>
                   <td class="vtable">
-                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=$pconfig['tunnel-local-addr'];?>">
+                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Local GRE tunnel endpoint");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("GRE tunnel remote address ");?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 32; $i > 0; $i--) {
@@ -218,10 +218,10 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="greif" value="<?=$pconfig['greif']; ?>">
+		    <input type="hidden" name="greif" value="<?=htmlspecialchars($pconfig['greif']); ?>">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_gres[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
                   </td>
                 </tr>

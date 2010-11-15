@@ -297,7 +297,7 @@ echo "</select>";
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
 				<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=$id;?>">
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>

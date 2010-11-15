@@ -207,7 +207,11 @@ function services_dhcpd_configure() {
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
 		if(is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
-				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = text;\n";
+				if(!empty($item['type']))
+					$itemtype = $item['type'];
+				else
+					$itemtype = "text";
+				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
 			}
 		}
 	}
@@ -487,7 +491,10 @@ EOD;
 		$dhcpdconf .= "\n";
 		if($dhcpifconf['numberoptions']['item']) {
 			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
-				$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
+				if(empty($item['type']) || $item['type'] == "text")
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
+				else
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item['value']};\n";
 			}
 		}
 
@@ -1049,6 +1056,7 @@ function services_snmpd_configure() {
 
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
+	sleep(2);
 	if(is_process_running("bsnmpd")) 
 		mwexec("/usr/bin/killall bsnmpd", true);
 
@@ -1586,19 +1594,19 @@ EODAD;
 /* configure cron service */
 function configure_cron() {
 	global $g, $config;
+
 	conf_mount_rw();
 	/* preserve existing crontab entries */
-	$crontab_contents = file_get_contents("/etc/crontab");
-	$crontab_contents_a = split("\n", $crontab_contents);
+	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	
-	for ($i = 0; $i < count($crontab_contents_a); $i++) {
-		$item =& $crontab_contents_a[$i];
-		if (strpos($item, "# pfSense specific crontab entries") !== false) {
-			array_splice($crontab_contents_a, $i - 1);
+	for ($i = 0; $i < count($crontab_contents); $i++) {
+		$cron_item =& $crontab_contents[$i];
+		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
+			array_splice($crontab_contents, $i - 1);
 			break;
 		}
 	}
-	$crontab_contents = implode("\n", $crontab_contents_a) . "\n";
+	$crontab_contents = implode("\n", $crontab_contents) . "\n";
 	
 	
 	if (is_array($config['cron']['item'])) {

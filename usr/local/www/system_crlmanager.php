@@ -67,30 +67,34 @@ if (!is_array($config['crl']))
 
 $a_crl =& $config['crl'];
 
+foreach ($a_crl as $cid => $acrl)
+	if (!isset($acrl['refid']))
+		unset ($a_crl[$cid]);
+
 $act = $_GET['act'];
 if ($_POST['act'])
 	$act = $_POST['act'];
 
-if ($act == "del") {
+if (!empty($id))
+	$thiscrl =& lookup_crl($id);
 
-	if (!$a_crl[$id]) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	}
-	if (crl_in_use($a_crl[$id]['refid'])) {
-		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
-	} else {
-		$name = $a_crl[$id]['descr'];
-		unset($a_crl[$id]);
-		write_config("Deleted CRL {$name}.");
-		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
-	}
+// If we were given an invalid crlref in the id, no sense in continuing as it would only cause errors.
+if (!$thiscrl && (($act != "") && ($act != "new"))) {
+	pfSenseHeader("system_crlmanager.php");
+	$act="";
+	$savemsg = gettext("Invalid CRL reference.");
 }
 
-if ($act == "edit") {
-	if (!$a_crl[$id]) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
+if ($act == "del") {
+	$name = $thiscrl['descr'];
+	if (crl_in_use($id)) {
+		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
+	} else {
+		foreach ($a_crl as $cid => $acrl)
+			if ($acrl['refid'] == $thiscrl['refid'])
+				unset($a_crl[$cid]);
+		write_config("Deleted CRL {$name}.");
+		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
 	}
 }
 
@@ -102,14 +106,8 @@ if ($act == "new") {
 }
 
 if ($act == "exp") {
-
-	if (!$a_crl[$id]) {
-		pfSenseHeader("system_crlmanager.php");
-		exit;
-	}
-
-	$exp_name = urlencode("{$a_crl[$id]['descr']}.crl");
-	$exp_data = base64_decode($a_crl[$id]['text']);
+	$exp_name = urlencode("{$thiscrl['descr']}.crl");
+	$exp_data = base64_decode($thiscrl['text']);
 	$exp_size = strlen($exp_data);
 
 	header("Content-Type: application/octet-stream");
@@ -157,19 +155,31 @@ if ($act == "addcert") {
 }
 
 if ($act == "delcert") {
-	$crl =& lookup_crl($_GET['crlref']);
-	if (!$crl['cert'][$id]) {
+	if (!is_array($thiscrl['cert'])) {
 		pfSenseHeader("system_crlmanager.php");
 		exit;
 	}
-	$name = $crl['cert'][$id]['descr'];
-	cert_unrevoke($crl['cert'][$id], $crl);
-	write_config("Deleted Cert {$name} from CRL {$crl['descr']}.");
-	$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $crl['descr']) . "<br/>";
-	require_once('openvpn.inc');
-	openvpn_refresh_crls();
-	pfSenseHeader("system_crlmanager.php");
-	exit;
+	$found = false;
+	foreach ($thiscrl['cert'] as $acert) {
+		if ($acert['refid'] == $_GET['certref']) {
+			$found = true;
+			$thiscert = $acert;
+		}
+	}
+	if (!$found) {
+		pfSenseHeader("system_crlmanager.php");
+		exit;
+	}
+	$name = $thiscert['descr'];
+	if (cert_unrevoke($thiscert, $thiscrl)) {
+		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
+		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
+		require_once('openvpn.inc');
+		openvpn_refresh_crls();
+	} else {
+		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
+	}
+	$act="edit";
 }
 
 if ($_POST) {
@@ -206,8 +216,8 @@ if ($_POST) {
 
 		$crl = array();
 		$crl['refid'] = uniqid();
-		if (isset($id) && $a_crl[$id])
-			$crl = $a_crl[$id];
+		if ($thiscrl)
+			$crl =& $thiscrl;
 
 		$crl['descr'] = $pconfig['descr'];
 		$crl['caref'] = $pconfig['caref'];
@@ -222,9 +232,7 @@ if ($_POST) {
 			$crl['cert'] = array();
 		}
 
-		if (isset($id) && $a_crl[$id])
-			$a_crl[$id] = $crl;
-		else
+		if (!$thiscrl)
 			$a_crl[] = $crl;
 
 		write_config("Saved CRL {$crl['caref']}");
@@ -336,7 +344,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_crl"><?=$pconfig['crltext'];?></textarea>
+								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=$pconfig['crltext'];?></textarea>
 								<br>
 								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?></td>
 							</td>
@@ -373,7 +381,7 @@ function method_change() {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-								<?php if (isset($id) && $a_crl[$id]): ?>
+								<?php if (isset($id) && $thiscrl): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>
 							</td>
@@ -381,7 +389,7 @@ function method_change() {
 					</table>
 				</form>
 				<?php elseif ($act == "edit"): ?>
-				<?php 	$crl = $a_crl[$id]; ?>
+				<?php 	$crl = $thiscrl; ?>
 				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<thead>
@@ -420,7 +428,7 @@ function method_change() {
 							<?php echo date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&crlref=<?php echo $crl['refid']; ?>&id=<?php echo $i; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?");?>')">
+							<a href="system_crlmanager.php?act=delcert&id=<?php echo $crl['refid']; ?>&certref=<?php echo $cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete this certificate from the CRL ");?>" alt="<?=gettext("Delete this certificate from the CRL ");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
@@ -458,6 +466,7 @@ function method_change() {
 							</select>
 							<input name="act" type="hidden" value="addcert" />
 							<input name="crlref" type="hidden" value="<?=$crl['refid'];?>" />
+							<input name="id" type="hidden" value="<?=$crl['refid'];?>" />
 							<input id="submit" name="add" type="submit" class="formbtn" value="<?=gettext("Add"); ?>" />
 						</td>
 						<td class="list">&nbsp;</td>
@@ -528,16 +537,16 @@ function method_change() {
 						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" nowrap class="list">
-							<a href="system_crlmanager.php?act=exp&id=<?=$i;?>")">
+							<a href="system_crlmanager.php?act=exp&id=<?=$tmpcrl['refid'];?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
+							<a href="system_crlmanager.php?act=edit&id=<?=$tmpcrl['refid'];?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 							<?php if (!$inuse): ?>
-							<a href="system_crlmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['descr']) . ')';?>')">
+							<a href="system_crlmanager.php?act=del&id=<?=$tmpcrl['refid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['descr']) . ')';?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']); ?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>

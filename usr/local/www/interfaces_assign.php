@@ -320,7 +320,7 @@ if ($_GET['act'] == "add") {
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	}
 
-	uksort($config['interfaces'], "compare_interface_names");
+	uksort($config['interfaces'], "compare_interface_friendly_names");
 
 	/* Find an unused port for this interface */
 	foreach ($portlist as $portname => $portinfo) {
@@ -348,21 +348,6 @@ if ($_GET['act'] == "add") {
 
 	$savemsg = gettext("Interface has been added.");
 
-}
-
-function compare_interface_names($a, $b) {
-	if ($a == $b)
-		return 0;
-	else if ($a == 'wan')
-		return -1;
-	else if ($b == 'wan')
-		return 1;
-	else if ($a == 'lan')
-		return -1;
-	else if ($b == 'lan')
-		return 1;
-
-	return strnatcmp($a, $b);
 }
 
 include("head.inc");
@@ -416,7 +401,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   </tr>
   <?php foreach ($config['interfaces'] as $ifname => $iface):
   	if ($iface['descr'])
-		$ifdescr = $iface['descr'];
+		$ifdescr = strtoupper($iface['descr']);
 	else
 		$ifdescr = strtoupper($ifname);
 	?>
@@ -429,7 +414,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				<?php if ($portinfo['isvlan']) {
 					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
-					$descr .= " (" . $portinfo['descr'] . ")";
+					$descr .= " (" . strtoupper($portinfo['descr']) . ")";
 					echo htmlspecialchars($descr);
 				} elseif ($portinfo['iswlclone']) {
 					$descr = $portinfo['cloneif'];

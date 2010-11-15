@@ -57,11 +57,19 @@ if ($_POST) {
                 else
                         unset($config['system']['firmware']['allowinvalidsig']);
 
+		if($_POST['synconupgrade'] == "yes")
+			$config['system']['gitsync']['synconupgrade'] = true;
+		else
+			unset($config['system']['gitsync']['synconupgrade']);
+		$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
+		$config['system']['gitsync']['branch'] = $_POST['branch'];
+
 		write_config();
 	}
 }
 
 $curcfg = $config['system']['firmware'];
+$gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 include("head.inc");
@@ -156,6 +164,36 @@ function enable_altfirmwareurl(enable_over) {
 			<?=gettext("Allow updating the system with auto-updater and images with no signature."); ?>
 		</td>
 	</tr>
+<?php if(file_exists("/usr/local/bin/git")): ?>
+	<tr>
+		<td colspan="2" class="list" height="12">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Gitsync"); ?></td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Auto sync on update"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="synconupgrade" type="checkbox" id="synconupgrade" value="yes" <?php if (isset($gitcfg['synconupgrade'])) echo "checked"; ?> />
+			<br />
+			<?=gettext("After updating, sync with the following repository/branch before reboot."); ?>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>">
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>">
+			<br />
+			<?=gettext("Sync will not be performed if a branch is not specified."); ?>
+		</td>
+	</tr>
+<?php endif; ?>
 	<script>enable_altfirmwareurl();</script>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

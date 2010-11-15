@@ -73,9 +73,9 @@ if($_GET['dnsip'] or $_POST['dnsip']) {
 $filtertext = "";
 if($_GET['filtertext'] or $_POST['filtertext']) {
 	if($_GET['filtertext'])
-		$filtertext = $_GET['filtertext'];
+		$filtertext = htmlspecialchars($_GET['filtertext']);
 	if($_POST['filtertext'])
-		$filtertext = $_POST['filtertext'];
+		$filtertext = htmlspecialchars($_POST['filtertext']);
 }
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";

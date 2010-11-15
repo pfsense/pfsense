@@ -253,9 +253,9 @@ include("head.inc");
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_maps[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
-                    <input name="if" type="hidden" value="<?=$if;?>"> 
+                    <input name="if" type="hidden" value="<?=htmlspecialchars($if);?>"> 
                   </td>
                 </tr>
               </table>

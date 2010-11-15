@@ -274,7 +274,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Polling Port ");?></td>
                   <td width="78%" class="vtable">
-                    <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=$pconfig['pollport'] ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
+                    <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=htmlspecialchars($pconfig['pollport']) ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
                     <br><?=gettext("Enter the port to accept polling events on (default 161)");?></br>
 		  </td>
                 </tr>
@@ -343,7 +343,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server port ");?></td>
                   <td width="78%" class="vtable">
-                    <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=$pconfig['trapserverport'] ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
+                    <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=htmlspecialchars($pconfig['trapserverport']) ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
                     <br><?=gettext("Enter the port to send the traps to (default 162)");?></br>
 		  </td>
                 </tr>

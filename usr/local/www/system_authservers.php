@@ -429,7 +429,7 @@ function select_clicked() {
 							<?php if (!isset($id)): ?>
 								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
 							<?php else: ?>
-                                                                <strong><?=$pconfig[name];?></strong>
+                                                                <strong><?=htmlspecialchars($pconfig['name']);?></strong>
                                                                 <input name='name' type='hidden' id='name' value="<?=htmlspecialchars($pconfig['name']);?>"/>
                                                                 <?php endif; ?>
 							</td>
@@ -742,7 +742,7 @@ function select_clicked() {
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
 <!--
-server_typechange('<?=$pconfig['type'];?>');
+server_typechange('<?=htmlspecialchars($pconfig['type']);?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();
 ldap_urlchange();

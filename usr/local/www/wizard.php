@@ -155,7 +155,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
-	$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+	$text = "\$config" . $field_conv . " = \"" . addslashes($updatetext) . "\";";
 	eval($text);
 }
 

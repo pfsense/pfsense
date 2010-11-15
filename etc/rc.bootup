@@ -157,9 +157,6 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
-$lan_if = $config['interfaces']['lan']['if'];
-$wan_if = get_real_interface();
-
 /*
  *  Determine if we need to throw a interface exception
  *  and ask the user to reassign interfaces.  This will
@@ -168,6 +165,11 @@ $wan_if = get_real_interface();
 while(is_interface_mismatch() == true) {
 	led_assigninterfaces();
 	echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+	$ifaces = get_interface_list();
+	if (is_array($ifaces)) {
+		foreach($ifaces as $iface => $ifdata)
+			interfaces_bring_up($iface);
+	}
 	set_networking_interfaces_ports();
 	led_kitt();
 }
@@ -344,7 +346,7 @@ enable_rrd_graphing();
 setup_wireless_olsr();
 
 /* startup routed if needed */
-include_once("/usr/local/pkg/routed/routed.inc");
+include_once("/usr/local/pkg/routed.inc");
 setup_routed();
 
 /* enable watchdog if supported */

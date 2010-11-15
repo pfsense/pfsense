@@ -553,6 +553,7 @@ if ($_POST) {
 				$a_filter[] = $filterent;
 		}
 
+		filter_rules_sort();
 		write_config();
 		mark_subsystem_dirty('filter');
 
@@ -859,7 +860,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>">
 						</td>
 					</tr>
 					<tr>
@@ -872,7 +873,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>">
 						</td>
 					</tr>
 				</table>
@@ -950,7 +951,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>">
 						</td>
 					</tr>
 					<tr>
@@ -963,7 +964,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>">
 						</td>
 					</tr>
 				</table>
@@ -999,9 +1000,9 @@ include("head.inc");
 				&nbsp;<br>&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=$id;?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=$after;?>">
+				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
 			</td>
 		</tr>
 <?php		endif; ?>
@@ -1080,11 +1081,11 @@ include("head.inc");
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span> <p>
-				<input name="max" id="max" value="<?php echo $pconfig['max'] ?>"><br><?=gettext(" Maximum state entries this rule can create");?></p><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br><?=gettext(" Maximum number of unique source hosts");?></p><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br><?=gettext(" Maximum number of established connections per host");?></p><p>
-				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br><?=gettext(" Maximum state entries per host");?></p><p>
-				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
+				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>"><br><?=gettext(" Maximum state entries this rule can create");?></p><p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>"><br><?=gettext(" Maximum number of unique source hosts");?></p><p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>"><br><?=gettext(" Maximum number of established connections per host");?></p><p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>"><br><?=gettext(" Maximum state entries per host");?></p><p>
+				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo htmlspecialchars($pconfig['max-src-conn-rate']) ?>"> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
 					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected"; ?>></option>
 <?php				for($x=1; $x<255; $x++) {
@@ -1095,7 +1096,7 @@ include("head.inc");
 				<?=gettext("Maximum new connections / per second(s)");?>
 				</p><p>
 
-				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>"><br>
+				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>"><br>
 				<?=gettext("State Timeout in seconds");?>
 				</p>
 
@@ -1394,9 +1395,9 @@ include("head.inc");
 				&nbsp;<br>&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=$id;?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=$after;?>">
+				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
 			</td>
 		</tr>
 	</table>

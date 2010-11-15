@@ -556,7 +556,7 @@ function enable_change(enable_over) {
 				<input name="ip<?php echo $tracker; ?>" type="text" class="formfld unknown" id="ip<?php echo $tracker; ?>" size="10" value="<?=htmlspecialchars($ip);?>" />
 			</td>
 			<td>
-				<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
+				<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
 			</td>
 		</tr>
 		<?php

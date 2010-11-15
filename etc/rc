@@ -349,9 +349,6 @@ echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
-for iface in `/sbin/ifconfig -l`; do
-	/sbin/ifconfig $iface up
-done
 /etc/rc.bootup
 
 # If a shell was selected from recovery 

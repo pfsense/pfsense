@@ -167,7 +167,7 @@ document.observe("dom:loaded", function() {
   });
 
   // Go ahead and disable the relay stuff, we'll trigger
-  updateRelay("<?=$pconfig['mode'];?>");
+  updateRelay("<?=htmlspecialchars($pconfig['mode']);?>");
 
 });
 
@@ -231,7 +231,7 @@ document.observe("dom:loaded", function() {
 						<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
 					<?php else: ?>
 						<select id="sitedown" name="sitedown">
-							<option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>><?=gettext("none"); ?></option>
+							<option value=""<?=htmlspecialchars($pconfig['sitedown']) == '' ? ' selected' : ''?>><?=gettext("none"); ?></option>
             			<?php
             				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
             					$selected = "";
@@ -250,8 +250,8 @@ document.observe("dom:loaded", function() {
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq">Mode</td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=$pconfig['mode'] == 'redirect' ? ' checked="checked"': ''?>> Redirect
-                    <input id="relay_mode" type="radio" name="mode" value="relay"<?=$pconfig['mode'] == 'relay' ? ' checked="checked"': ''?>> Relay
+                    <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=htmlspecialchars($pconfig['mode']) == 'redirect' ? ' checked="checked"': ''?>> Redirect
+                    <input id="relay_mode" type="radio" name="mode" value="relay"<?=htmlspecialchars($pconfig['mode']) == 'relay' ? ' checked="checked"': ''?>> Relay
 
                   <br>
                   </td>
@@ -278,7 +278,7 @@ document.observe("dom:loaded", function() {
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
 					<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=$id;?>">
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 			<?php endif; ?>
 		  	</td>
 			</tr>

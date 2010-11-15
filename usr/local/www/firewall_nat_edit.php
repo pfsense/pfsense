@@ -585,7 +585,7 @@ include("fbegin.inc"); ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
+							<input autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>">
 						</td>
 					</tr>
 					<tr>
@@ -598,7 +598,7 @@ include("fbegin.inc"); ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
+							<input autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>">
 						</td>
 					</tr>
 				</table>
@@ -695,7 +695,7 @@ include("fbegin.inc"); ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+							<input autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>">
 						</td>
 					</tr>
 					<tr>
@@ -708,7 +708,7 @@ include("fbegin.inc"); ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+							<input autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>">
 						</td>
 					</tr>
 				</table>
@@ -741,7 +741,7 @@ include("fbegin.inc"); ?>
 					  <?=htmlspecialchars($wkportdesc);?>
 					  </option>
                       <?php endforeach; ?>
-                    </select> <input onChange="check_for_aliases();" autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
+                    </select> <input onChange="check_for_aliases();" autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo htmlspecialchars($pconfig['localbeginport']); ?>">
                     <br>
                     <span class="vexpl"><?=gettext("Specify the port on the machine with the " .
                     "IP address entered above. In case of a port range, specify " .
@@ -825,7 +825,7 @@ include("fbegin.inc"); ?>
                   <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_nat[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
                   </td>
                 </tr>
@@ -834,7 +834,7 @@ include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
 	ext_change();
-	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
+	dst_change(document.iform.interface.value,'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	var iface_old = document.iform.interface.value;
 	typesel_change();
 	proto_change();

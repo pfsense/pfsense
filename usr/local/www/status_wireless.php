@@ -115,7 +115,7 @@ display_top_tabs($tab_array);
 		/* Split by Mac address for the SSID Field */
 		$split = preg_split("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state);
 		preg_match("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state, $bssid);
-		$ssid = $split[0];
+		$ssid = htmlspecialchars($split[0]);
 		$bssid = $bssid[0];
 		/* Split the rest by using spaces for this line using the 2nd part */
 		$split = preg_split("/[ ]+/i", $split[1]);

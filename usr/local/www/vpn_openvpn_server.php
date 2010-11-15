@@ -46,6 +46,25 @@ if (!is_array($config['openvpn']['openvpn-server']))
 
 $a_server = &$config['openvpn']['openvpn-server'];
 
+if (!is_array($config['ca']))
+	$config['ca'] = array();
+
+$a_ca =& $config['ca'];
+
+if (!is_array($config['cert']))
+	$config['cert'] = array();
+
+$a_cert =& $config['cert'];
+
+if (!is_array($config['crl']))
+	$config['crl'] = array();
+
+$a_crl =& $config['crl'];
+
+foreach ($a_crl as $cid => $acrl)
+	if (!isset($acrl['refid']))
+		unset ($a_crl[$cid]);
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -526,10 +545,17 @@ function netbios_change() {
 //-->
 </script>
 <?php
-	if ($input_errors)
-		print_input_errors($input_errors);
-	if ($savemsg)
-		print_info_box($savemsg);
+if (!$savemsg)
+	$savemsg = "";
+if (count($a_ca) == 0)
+	$savemsg .= "You have no Certificate Authorities defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
+if (count($a_cert) == 0)
+	$savemsg .= "<br/>You have no Certificates defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
+
+if ($input_errors)
+	print_input_errors($input_errors);
+if ($savemsg)
+	print_info_box_np($savemsg);
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -716,7 +742,7 @@ function netbios_change() {
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
-								foreach ($config['ca'] as $ca):
+								foreach ($a_ca as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected";
@@ -732,7 +758,7 @@ function netbios_change() {
 							<select name='crlref' class="formselect">
 								<option value="">None</option>
 							<?php
-								foreach ($config['crl'] as $crl):
+								foreach ($a_crl as $crl):
 									if (is_crl_internal($crl) && (count($crl['cert']) <= 0))
 										continue;
 									$selected = "";
@@ -749,7 +775,7 @@ function netbios_change() {
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
-							foreach ($config['cert'] as $cert):
+							foreach ($a_cert as $cert):
 								$selected = "";
 								$caname = "";
 								$inuse = "";
@@ -1073,7 +1099,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=$pconfig['dns_server1'];?>">
+										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>">
 									</td>
 								</tr>
 								<tr>
@@ -1081,7 +1107,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=$pconfig['dns_server2'];?>">
+										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>">
 									</td>
 								</tr>
 								<tr>
@@ -1089,7 +1115,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #3:&nbsp;
 										</span>
-										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=$pconfig['dns_server3'];?>">
+										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>">
 									</td>
 								</tr>
 								<tr>
@@ -1097,7 +1123,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #4:&nbsp;
 										</span>
-										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=$pconfig['dns_server4'];?>">
+										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>">
 									</td>
 								</tr>
 							</table>
@@ -1125,7 +1151,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="ntp_server1" type="text" class="formfld unknown" id="ntp_server1" size="20" value="<?=$pconfig['ntp_server1'];?>">
+										<input name="ntp_server1" type="text" class="formfld unknown" id="ntp_server1" size="20" value="<?=htmlspecialchars($pconfig['ntp_server1']);?>">
 									</td>
 								</tr>
 								<tr>
@@ -1133,7 +1159,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="ntp_server2" type="text" class="formfld unknown" id="ntp_server2" size="20" value="<?=$pconfig['ntp_server2'];?>">
+										<input name="ntp_server2" type="text" class="formfld unknown" id="ntp_server2" size="20" value="<?=htmlspecialchars($pconfig['ntp_server2']);?>">
 									</td>
 								</tr>
 							</table>
@@ -1221,7 +1247,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
+										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=htmlspecialchars($pconfig['wins_server1']);?>">
 									</td>
 								</tr>
 								<tr>
@@ -1229,7 +1255,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=htmlspecialchars($pconfig['wins_server2']);?>">
 									</td>
 								</tr>
 							</table>
@@ -1250,7 +1276,7 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
 										<?=gettext("Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon"); ?><br/>
 										<?=gettext("EXAMPLE: push \"route 10.0.0.0 255.255.255.0\""); ?>;
 									</td>

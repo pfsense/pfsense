@@ -5,7 +5,7 @@
 	Copyright (C) 2004-2006 Scott Ullrich
 	Copyright (C) 2005		Bill Marquette
 	Copyright (C) 2006		Peter Allgeyer
-	Copyright (C) 2008		Ermal Luci
+	Copyright (C) 2008-2010		Ermal Luci
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -126,9 +126,9 @@ function filter_pflog_start() {
 		echo "filter_pflog_start() being called $mt\n";
 	}
 	mute_kernel_msgs();
-	$pid = 0;
-	$pid = `/bin/pgrep -f "tcpdump -s 256 -v -l -n -e -ttt -i pflog0"`;
-	if(!$pid)
+	$output = 0;
+	exec("/bin/pgrep -f 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	if($retval != 0)
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();
 }
@@ -887,7 +887,7 @@ function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $ta
 	return $natrules;
 }
 
-function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -908,16 +908,43 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 
 		$natrules .= "\n# Reflection redirects\n";
 
-		if($dstport[1])
-			$range_end = ($dstport[1]);
-		else
-			$range_end = ($dstport[0]);
+		$localport = $rule['local-port'];
+		if(!empty($localport) && is_alias($localport)) {
+			$localport = filter_expand_alias($localport);
+			$localport = explode(" ", trim($localport));
+			// The translation port for rdr, when specified, does not support more than one port or range.
+			// Emulating for behavior consistent with the original port forward.
+			$localport = $localport[0];
+		}
+
+		if(is_alias($rule['destination']['port'])) {
+			if(empty($localport) || $rule['destination']['port'] == $rule['local-port']) {
+				$dstport = filter_expand_alias($rule['destination']['port']);
+				$dstport = array_filter(explode(" ", trim($dstport)));
+				$localport = "";
+			} else if(!empty($localport)) {
+				$dstport = array($localport);
+			}
+		} else {
+			$dstport = array(str_replace("-", ":", $rule['destination']['port']));
+			$dstport_split = explode(":", $dstport[0]);
+
+			if(!empty($localport) && $dstport_split[0] != $rule['local-port']) {
+				if(!is_alias($rule['local-port']) && $dstport_split[1] && $dstport_split[0] != $dstport_split[1]) {
+					$localendport = $localport + ($dstport_split[1] - $dstport_split[0]);
+					$localport .= ":$localendport";
+				}
+
+				$dstport = array($localport);
+			} else
+				$localport = "";
+		}
 
 		$dstaddr = explode(" ", $dstaddr_port);
 		if($dstaddr[2])
 			$rflctintrange = $dstaddr[2];
 		else
-			$rflctintrange = "";
+			return "";
 		$dstaddr = $dstaddr[0];
 		if(empty($dstaddr) || trim($dstaddr) == "0.0.0.0" || strtolower(trim($dstaddr)) == "port")
 			return "";
@@ -968,67 +995,77 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 		else
 			return "";
 
-		if($rule['local-port'])
-			$lrange_start = $rule['local-port'];
-		if(($range_end + 1) - $dstport[0] > 500) {
-			log_error("Not installing nat reflection rules for a port range > 500");
+		$starting_localhost_port_tmp = $starting_localhost_port;
+		$toomanyports = false;
 		/* only install reflection rules for < 19991 items */
-		} else if($starting_localhost_port < 19991) {
-			$loc_pt = $lrange_start;
-			$rflctnorange = true;
-			if(is_alias($loc_pt)) {
-				$loc_pt_translated = filter_expand_alias($loc_pt);
-				if(empty($loc_pt_translated)) {
-					log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
-					continue;
-				}
-				$toadd_array = split(" ", $loc_pt_translated);
-				$rflctnorange = false;
-			}
-
-			$inetdport = $starting_localhost_port;
-			if($range_end > $dstport[0]) {
-				$rflctrange = "{$starting_localhost_port}";
-				$delta = $range_end - $dstport[0];
-				if(($starting_localhost_port + $delta) > 19990) {
-					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
-					$delta = 19990 - $starting_localhost_port;
-					$range_end = $dstport[0] + $delta;
-					$rflctintrange = "";
-				}
-				$starting_localhost_port = $starting_localhost_port + $delta;
-				$rflctrange .= ":{$starting_localhost_port}";
-				if(empty($rflctintrange))
-					$rflctintrange = "{$dstport[0]}:{$range_end}";
-				if($rflctnorange)
-					$toadd_array = range($loc_pt, $loc_pt + $delta);
-				$starting_localhost_port++;
-			} else {
+		foreach($dstport as $loc_pt) {
+			if($starting_localhost_port < 19991) {
+				$toadd_array = array();
+				$inetdport = $starting_localhost_port;
 				$rflctrange = $starting_localhost_port;
-				if(empty($rflctintrange))
-					$rflctintrange = $dstport[0];
-				if($rflctnorange)
-					$toadd_array = array($loc_pt);
-				$starting_localhost_port++;
+
+				$loc_pt = explode(":", $loc_pt);
+				if($loc_pt[1] && $loc_pt[1] > $loc_pt[0])
+					$delta = $loc_pt[1] - $loc_pt[0];
+				else
+					$delta = 0;
+
+				if(($inetdport + $delta + 1) - $starting_localhost_port_tmp > 500) {
+					log_error("Not installing nat reflection rules for a port range > 500");
+					$inetdport = $starting_localhost_port;
+					$toadd_array = array();
+					$toomanyports = true;
+					break;
+				} else if(($inetdport + $delta) > 19990) {
+					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
+					$delta = 19990 - $inetdport;
+					$loc_pt[1] = $loc_pt[0] + $delta;
+					if($delta == 0)
+						unset($loc_pt[1]);
+					$toomanyports = true;
+
+					if(!empty($localport)) {
+						if(is_alias($rule['destination']['port'])) {
+							$rflctintrange = alias_expand($rule['destination']['port']);
+						} else {
+							if($dstport_split[1])
+								$dstport_split[1] = $dstport_split[0] + $inetdport + $delta - $starting_localhost_port;
+							$rflctintrange = implode(":", $dstport_split);
+						}
+					}
+				}
+
+				if(empty($localport))
+					$rflctintrange = implode(":", $loc_pt);
+				if($inetdport + $delta > $starting_localhost_port)
+					$rflctrange .= ":" . ($inetdport + $delta);
+				$starting_localhost_port = $inetdport + $delta + 1;
+				$toadd_array = array_merge($toadd_array, range($loc_pt[0], $loc_pt[0] + $delta));
+
+				if(!empty($toadd_array)) {
+					foreach($toadd_array as $tda) {
+						if (empty($tda))
+							continue;
+						foreach($reflect_protos as $reflect_proto) {
+							if($reflect_proto == "udp") {
+								$socktype = "dgram";
+								$dash_u = "-u ";
+							} else {
+								$socktype = "stream";
+								$dash_u = "";
+							}
+							$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+						}
+						$inetdport++;
+					}
+					$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				}
 			}
 
-			foreach($toadd_array as $tda) {
-				if (empty($tda))
-					continue;
-				foreach($reflect_protos as $reflect_proto) {
-					if($reflect_proto == "udp") {
-						$socktype = "dgram";
-						$dash_u = "-u ";
-					} else {
-						$socktype = "stream";
-						$dash_u = "";
-					}
-					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
-				}
-				$inetdport++;
-			}
-			$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+			if($toomanyports)
+				break;
 		}
+
 		$reflection_txt = array_unique($reflection_txt);
 	}
 
@@ -1447,7 +1484,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)
@@ -1652,22 +1689,23 @@ function filter_generate_user_rule($rule) {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 	$int = "";
+	$aline = array();
+
 	/* Check to see if the interface is in our list */
 	if(isset($rule['floating'])) {
-			if(isset($rule['interface']) && $rule['interface'] <> "") {
-				$interfaces = explode(",", $rule['interface']);
-				$ifliste = "";
-				foreach ($interfaces as $iface) {
-					if(array_key_exists($iface, $FilterIflist))
-						$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
-				}
-				if($ifliste <> "")
-					$aline['interface'] = " on { {$ifliste} }";
-				else
-					$aline['interface'] = "";
+		if(isset($rule['interface']) && $rule['interface'] <> "") {
+			$interfaces = explode(",", $rule['interface']);
+			$ifliste = "";
+			foreach ($interfaces as $iface) {
+				if(array_key_exists($iface, $FilterIflist))
+					$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
 			}
+			if($ifliste <> "")
+				$aline['interface'] = " on { {$ifliste} } ";
 			else
 				$aline['interface'] = "";
+		} else
+			$aline['interface'] = "";
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
 			foreach($FilterIflist as $oc) $item .= $oc['descr'];
 				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
@@ -1726,7 +1764,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && interface_has_gateway($rule['interface']) && !isset($rule['disablereplyto'])) {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($rule['disablereplyto'])) {
 		if($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if(is_ipaddrv6($rg)) {
@@ -2246,6 +2284,17 @@ pass out on \$IPsec all keep state label "IPsec internal host to host"
 EOD;
 
 	if(!isset($config['system']['webgui']['noantilockout'])) {
+		$portarg = 80;
+		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
+			$portarg = "{$config['system']['webgui']['port']}";
+		if ($config['system']['webgui']['protocol'] == "https")
+			$portarg .= " 443 ";
+		$sshport = "";
+		if (isset($config['system']['enablesshd'])) {
+			$sshport = 22;
+			if($config['system']['ssh']['port'] <> "")
+				$sshport = $config['system']['ssh']['port'];
+		}
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned
@@ -2254,7 +2303,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
-pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout rule"
+pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -2263,7 +2312,7 @@ EOD;
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
-pass in quick on {$wanif} from any to ({$wanif}) keep state label "anti-lockout rule"
+pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
 		}
@@ -2838,4 +2887,5 @@ function discover_pkg_rules($ruletype) {
 }
 
 // vim: ts=4 sw=4 noexpandtab
+
 ?>

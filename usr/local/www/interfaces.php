@@ -4,7 +4,7 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008-2010 Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -54,10 +54,16 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
-if ($_REQUEST['if']) {
+// Get configured interface list
+$ifdescrs = get_configured_interface_with_descr(false, true);
+
+$if = "wan";
+if ($_REQUEST['if'])
 	$if = $_REQUEST['if'];
-} else {
-	$if = "wan";
+
+if (empty($ifdescrs[$if])) {
+	Header("Location: interfaces.php");
+	exit;
 }
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
@@ -76,10 +82,15 @@ function remove_bad_chars($string) {
 
 if (!is_array($config['gateways']['gateway_item']))
 	$config['gateways']['gateway_item'] = array();
-
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
+// Populate page descr if it does not exist.
+if ($if == "wan" && !$wancfg['descr'])
+	$wancfg['descr'] = "WAN";
+else if ($if == "lan" && !$wancfg['descr'])
+	$wancfg['descr'] = "LAN";
+
 
 foreach ($a_ppps as $pppid => $ppp) {
 	if ($wancfg['if'] == $ppp['if'])
@@ -164,13 +175,6 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
-
-// Populate page descr if it does not exist.
-if($if == "wan" && !$wancfg['descr']) {
-	$wancfg['descr'] = "WAN";
-} else if ($if == "lan" && !$wancfg['descr']) {
-	$wancfg['descr'] = "LAN";
-}
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
 
@@ -204,9 +208,8 @@ switch($wancfg['ipaddr']) {
 			if((is_ipaddr($wancfg['ipaddrv6'])) && (is_ipaddr($wancfg['ipaddr']))) {
 				$pconfig['type'] = "staticv4v6";
 			}
-		} else {
+		} else
 			$pconfig['type'] = "none";
-		}
 		break;
 }
 
@@ -323,15 +326,18 @@ if ($_POST['apply']) {
 	else {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
-		if ($pconfig['enable'])
-			interface_configure($if, true);
-		else
-			interface_bring_down($if);
 
+		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
+			foreach ($toapplylist as $ifapply) {
+				if (isset($config['interfaces'][$ifapply]['enable']))
+					interface_configure($ifapply, true);
+				else
+					interface_bring_down($ifapply);
+			}
+		}
 		/* restart snmp so that it binds to correct address */
 		services_snmpd_configure();
-		if ($if == "lan")
-			$savemsg = gettext("The changes have been applied.  You may need to correct your web browser's IP address.");
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
@@ -342,22 +348,25 @@ if ($_POST['apply']) {
 
 		enable_rrd_graphing();
 	}
+	@unlink("{$g['tmp_path']}/.interfaces.apply");
 	header("Location: interfaces.php?if={$if}");
 	exit;
-} else
-
-if ($_POST && $_POST['enable'] != "yes") {
+} else if ($_POST && $_POST['enable'] != "yes") {
 	unset($wancfg['enable']);
-	if (isset($wancfg['wireless'])) {
+	if (isset($wancfg['wireless']))
 		interface_sync_wireless_clones($wancfg, false);
-	}
 	write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
 	mark_subsystem_dirty('interfaces');
+	if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
+	else
+		$toapplylist = array();
+	$toapplylist[$if] = $if; 
+	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 	header("Location: interfaces.php?if={$if}");
 	exit;
-} else
+} else if ($_POST) {
 
-if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	conf_mount_rw();
@@ -378,10 +387,8 @@ if ($_POST) {
 		unset($_POST['pppoe_resetdate']);
 		unset($_POST['pppoe_pr_preset_val']);
 	}
-	/* optional interface if list */
-	$iflist = get_configured_interface_with_descr(false, true);
 	/* description unique? */
-	foreach ($iflist as $ifent => $ifdescr) {
+	foreach ($ifdescrs as $ifent => $ifdescr) {
 		if ($if != $ifent && $ifdescr == $_POST['descr']) {
 			$input_errors[] = gettext("An interface with the specified description already exists.");
 			break;
@@ -762,16 +769,24 @@ if ($_POST) {
 			handle_wireless_post();
 		}
 
+		conf_mount_ro();
 		write_config();
+
+		if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
+		else
+			$toapplylist = array();
+		$toapplylist[$if] = $if; 
+		file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
+
 		mark_subsystem_dirty('interfaces');
+
 		/* regenerate cron settings/crontab file */
 		configure_cron();
-		conf_mount_ro();
+
 		header("Location: interfaces.php?if={$if}");
 		exit;
 	}
-
-
 
 } // end if($_POST)
 
@@ -936,7 +951,7 @@ function check_wireless_mode() {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
+$pgtitle = array(gettext("Interfaces"), strtoupper($pconfig['descr']));
 $statusurl = "status_interfaces.php";
 
 $closehead = false;
@@ -2233,9 +2248,9 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
-								<input name="ppp_port" type="hidden" value="<?=$pconfig['port'];?>">
+								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port']);?>">
 								<?php endif; ?>
-								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
+								<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 							</td>
 						</tr>
 					</table>

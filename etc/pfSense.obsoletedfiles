@@ -46,3 +46,5 @@
 /usr/local/www/fred.png
 /usr/local/www/index.html
 /usr/local/www/system_usermanager_addcert.php
+/usr/local/pkg/routed/routed.inc
+/usr/local/pkg/routed/routed.xml

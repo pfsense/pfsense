@@ -2272,4 +2272,5 @@ function upgrade_074_to_075() {
 	if (is_array($config['crl']))
 		rename_field($config['crl'], 'name', 'descr');
 }
+
 ?>

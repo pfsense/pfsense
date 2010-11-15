@@ -150,21 +150,21 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif remote address"); ?></td>
                   <td class="vtable">
-                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="24" value="<?=$pconfig['remote-addr'];?>">
+                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="24" value="<?=htmlspecialchars($pconfig['remote-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Peer address where encapsulated gif packets will be sent. "); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel local address"); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="24" value="<?=$pconfig['tunnel-local-addr'];?>">
+                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Local gif tunnel endpoint"); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel remote address "); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="24" value="<?=$pconfig['tunnel-remote-addr'];?>">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 128; $i > 0; $i--) {
@@ -206,10 +206,10 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="gifif" value="<?=$pconfig['gifif']; ?>">
+		    <input type="hidden" name="gifif" value="<?=htmlspecialchars($pconfig['gifif']); ?>">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_gifs[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
                   </td>
                 </tr>

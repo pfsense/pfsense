@@ -105,13 +105,13 @@ include("head.inc");
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld unknown" size='20' id='username' name='username' value='<?=$pconfig['username'];?>' />
+			<input class="formfld unknown" size='20' id='username' name='username' value='<?=htmlspecialchars($pconfig['username']);?>' />
 		</td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld pwd" type='password' size='20' id='password' name='password' value='<?=$pconfig['password'];?>' />
+			<input class="formfld pwd" type='password' size='20' id='password' name='password' value='<?=htmlspecialchars($pconfig['password']);?>' />
 		</td>
 	</tr>
 	<tr>

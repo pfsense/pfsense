@@ -200,7 +200,7 @@ function resync_all_package_configs($show_message = false) {
 		}
 	}
 	if($show_message == true)
-		echo "done.\n";
+		echo " done.\n";
 	@unlink("/conf/needs_package_sync");
 }
 
@@ -953,7 +953,7 @@ function delete_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		if($pkg_config['include_file'] <> "") {
-                        $static_output = "\tRemoving pacakge instructions...";
+                        $static_output = "\tRemoving package instructions...";
                         update_output_window($static_output);
                         fwrite($fd_log, "Remove '{$pkg_config['include_file']}'\n");
                         unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);

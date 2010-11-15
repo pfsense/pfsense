@@ -125,7 +125,7 @@ $services_menu[] = array("IGMP proxy", "/services_igmpproxy.php");
 $services_menu[] = array("Load Balancer", "/load_balancer_pool.php");
 $services_menu[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
 $services_menu[] = array("PPPoE Server", "/vpn_pppoe.php");
-$services_menu[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");
+$services_menu[] = array("RIP", "/pkg_edit.php?xml=routed.xml&id=0");
 $services_menu[] = array("SNMP", "/services_snmp.php");
 if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
@@ -222,7 +222,7 @@ if(! $g['disablehelpmenu']) {
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
-	$notice_id = $_REQUEST['noticeid'];
+	$notice_id = htmlspecialchars($_REQUEST['noticeid']);
 	close_notice($notice_id);
 }
 /**********************************************/
@@ -263,18 +263,18 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							$noticemsg = str_replace("<br>", "", $noticemsg);
 							$extra_args = "";
 							if($_GET['xml']) 
-								$extraargs="&xml=" . $_GET['xml'];
+								$extraargs="&xml=" .  htmlspecialchars($_GET['xml']);
 							if($_POST['xml']) 
-								$extraargs="&xml=" . $_POST['xml'];
+								$extraargs="&xml=" .  htmlspecialchars($_POST['xml']);
 							if($_GET['id']) 
-								$extraargs="&xml=" . $_GET['id'];
+								$extraargs="&xml=" .  htmlspecialchars($_GET['id']);
 							if($_POST['id'])
-								$extraargs="&xml=" . $_POST['id'];
+								$extraargs="&xml=" .  htmlspecialchars($_POST['id']);
 							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all' . $extraargs . '">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 							if ($value['url']) {
-								$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
+								$notice_msgs .= $date.' - <a href="'.$url.'?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 							} else {
-								$notice_msgs .= $date.' - <a href="?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+								$notice_msgs .= $date.' - <a href="?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.htmlspecialchars($noticemsg).'</a>';
 							}
 							$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 						}

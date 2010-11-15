@@ -443,7 +443,7 @@ function show_advanced_gateway() {
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_gateways[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
                   </td>
                 </tr>

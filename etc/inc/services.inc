@@ -559,18 +559,18 @@ EOD;
 		$dnscfgv6 = "";
 
 		if ($dhcpv6ifconf['domain']) {
-			$dnscfgv6 .= "	option dhcp6.domain-name \"{$dhcpv6ifconf['domain']}\";\n";
+			$dnscfgv6 .= "	option domain-name \"{$dhcpv6ifconf['domain']}\";\n";
 		}
 		
     		if($dhcpv6ifconf['domainsearchlist'] <> "") {
-			$dnscfgv6 .= "	option dhcp6.domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
+			$dnscfgv6 .= "	option domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
     		}
 
 		if (isset($dhcpv6ifconf['ddnsupdate'])) {
 			if($dhcpv6ifconf['ddnsdomain'] <> "") {
-				$dnscfgv6 .= "	dhcp6.ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
+				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
-			$dnscfgv6 .= "	dhcp6.ddns-update-style interim;\n";
+			$dnscfgv6 .= "	ddns-update-style interim;\n";
 		}
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {

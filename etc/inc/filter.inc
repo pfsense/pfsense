@@ -1984,7 +1984,6 @@ function filter_rules_generate() {
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
 	# BEGIN OF firewall rules
-	$ipfrules .= "anchor \"firewallrules\"\n";
 	/* default block logging? */
 	if(!isset($config['syslog']['nologdefaultblock']))
 		$log = "log";
@@ -2015,16 +2014,6 @@ EOD;
 # snort2c
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
-
-# package manager early specific hook
-anchor "packageearly"
-
-EOD;
-
-	$ipfrules .= <<<EOD
-
-# carp
-anchor "carp"
 
 EOD;
 
@@ -2060,7 +2049,6 @@ EOD;
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-anchor "{$on}bogons"
 block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon networks from {$oc['descr']}"
 
 EOD;
@@ -2095,7 +2083,6 @@ EOD;
 		case "pptp":
 				$ipfrules .= <<<EOD
 # allow PPTP client
-anchor "pptpclient"
 pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
 
 EOD;
@@ -2104,7 +2091,6 @@ EOD;
 		case "carpdev-dhcp":
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-anchor "{$on}dhcp"
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
@@ -2121,7 +2107,6 @@ EOD;
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
 # allow access to DHCP server on {$oc['descr']}
-anchor "dhcpserver{$oc['descr']}"
 pass in on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
@@ -2137,14 +2122,11 @@ EOD;
 	 *		rules before them.
 	 */
 	$ipfrules .= <<<EOD
-anchor "spoofing"
 
 # loopback
-anchor "loopback"
 pass in on \$loopback all label "pass loopback"
 pass out on \$loopback all label "pass loopback"
 
-anchor "firewallout"
 
 EOD;
 
@@ -2188,7 +2170,6 @@ EOD;
 				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-anchor "anti-lockout"
 pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
@@ -2197,7 +2178,6 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-anchor "anti-lockout"
 pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
@@ -2212,7 +2192,6 @@ EOD;
 		if(is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
 			$ipfrules .= <<<EOD
 # PPTPd rules
-anchor "pptp"
 pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;
@@ -2276,7 +2255,6 @@ EOD;
 	 *  topologies
 	 */
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
@@ -2303,12 +2281,7 @@ EOD;
 	$ipfrules .= filter_generate_ipsec_rules();
 
 	$ipfrules .= <<<EOD
-# package manager late specific hook
-anchor "packagelate"
-
 anchor "tftp-proxy/*"
-
-anchor "limitingesr"
 
 # uPnPd
 anchor "miniupnpd"

@@ -406,13 +406,24 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/Latest";
 	if (empty($base_url))
 		$base_url = $priv_url;
-	$pkg_extension = strrchr($filename, '.');
+	$pkg_extension = ".tgz";
+	if (substr($filename, -4) != ".tbz")
+		$filename .= $pkg_extension;
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
-	$fetchto = "{$g['tmp_path']}/apkg_{$pkgname}{$pkg_extension}";
+	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
-		$static_output .= " could not download {$pkgname}.\n";
-		update_output_window($static_output);
-		return false;
+		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
+			$static_output .= " could not download.\n";
+			update_output_window($static_output);
+			return false;
+		} else if ($base_url == $priv_url) {
+			$static_output .= " failed to download.\n";
+			update_output_window($static_output);
+			return false;
+		} else {
+			$static_output .= " downloaded from {$osname} repository instead of provided one.\n";
+			update_output_window($static_output);
+		}
 	}
 	$static_output .= " (extracting)";
 	update_output_window($static_output);
@@ -426,8 +437,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			$raw_depends_list = array_values(preg_grep($pkgent['exclude_dependency'], PREG_GREP_INVERT));
 		foreach($raw_depends_list as $adepend) {
 			$working_depend = explode(" ", $adepend);
-			//$working_depend = explode("-", $working_depend[1]);
-			$depend_filename = $working_depend[1] . $pkg_extension;
+			if (substr($working_depend[1], -4) != ".tbz")
+				$depend_filename = $working_depend[1] . $pkg_extension;
+			else
+				$depend_filename = $working_depend[1];
 			if(is_freebsd_pkg_installed($working_depend[1]) === false) {
 				pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
 			} else {
@@ -589,9 +602,8 @@ function install_package_xml($pkg) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
 			$static_output = $static_orig . "done.\nChecking for successful package installation... ";
 			update_output_window($static_output);
-			if(isset($pkg_info['skip_install_checks']))
-				$pkg_installed = true;
-			else
+			$pkg_installed = true;
+			if (!isset($pkg_info['skip_install_checks']))
 				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
 
 			if($pkg_installed == false)

@@ -248,7 +248,7 @@ var addRowTo = (function() {
         td = d.createElement("td");
         td.rowSpan = "1";
 
-        td.innerHTML = '<input type="image" src="/themes/' + theme + '/images/icons/icon_x.gif" onclick="removeRow(this);return false;" value="Delete">';
+        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
         tr.appendChild(td);
         tbody.appendChild(tr);
         totalrows++;
@@ -307,7 +307,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncellreq"><?=gettext("First level tag");?></td>
     <td width="78%" class="vtable">
-      <input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=$pconfig['tag'];?>" />
+      <input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=htmlspecialchars($pconfig['tag']);?>" />
       <br />
       <span class="vexpl">
 	<?=gettext("This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.");?>
@@ -336,7 +336,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed).");?>
@@ -370,7 +370,7 @@ function removeRow(el) {
 	        <input name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>" value="<? echo $members;?>">
 	</td>
         <td>
-	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
+	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
 	      </td>
           </tr>
 <?php
@@ -395,7 +395,7 @@ function removeRow(el) {
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_qinqs[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
+      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

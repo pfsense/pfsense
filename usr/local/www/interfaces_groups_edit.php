@@ -212,7 +212,7 @@ var addRowTo = (function() {
         td = d.createElement("td");
         td.rowSpan = "1";
 
-        td.innerHTML = '<input type="image" src="/themes/' + theme + '/images/icons/icon_x.gif" onclick="removeRow(this);return false;" value="Delete">';
+        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
         tr.appendChild(td);
         tbody.appendChild(tr);
         totalrows++;
@@ -251,7 +251,7 @@ function removeRow(el) {
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
     <td class="vtable">
-	<input class="formfld unknown" name="ifname" id="ifname" value="<?=$pconfig['ifname'];?>" />
+	<input class="formfld unknown" name="ifname" id="ifname" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
 	<br />
 	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
     </td>
@@ -259,7 +259,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed).");?>
@@ -298,7 +298,7 @@ function removeRow(el) {
                         </select>
 	</td>
         <td>
-	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
+	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
 	      </td>
           </tr>
 <?php
@@ -323,7 +323,7 @@ function removeRow(el) {
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_ifgroups[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
+      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

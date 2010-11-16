@@ -466,7 +466,7 @@ function sshkeyClicked(obj) {
 	                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
 	                        <td width="78%" class="vtable">
 	                            <strong><?=strtoupper($pconfig['utype']);?></strong>
-								<input name="utype" type="hidden" value="<?=$pconfig['utype']?>"/>
+								<input name="utype" type="hidden" value="<?=htmlspecialchars($pconfig['utype'])?>"/>
 	                        </td>
 	                    </tr>
 						<tr>
@@ -504,7 +504,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=$pconfig['expires'];?>">
+								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>">
 								<a href="javascript:NewCal('expires','mmddyyyy')">
 									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>">
 								</a>
@@ -708,7 +708,7 @@ function sshkeyClicked(obj) {
 							<tr>
                                                         	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
                                                         	<td width="78%" class="vtable">
-									<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+									<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
                                                         	</td>
                                                 	</tr>
                                                 	<tr>

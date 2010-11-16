@@ -54,7 +54,7 @@ $databases = glob("*.rrd");
 
 
 if ($_GET['cat']) {
-	$curcat = $_GET['cat'];
+	$curcat = htmlspecialchars($_GET['cat']);
 } else {
 	if(! empty($config['rrd']['category'])) {
 		$curcat = $config['rrd']['category'];
@@ -280,7 +280,6 @@ function get_dates($curperiod, $graph) {
 	$dates['end'] = $end;
 	return $dates;
 }
-
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

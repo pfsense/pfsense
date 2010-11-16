@@ -44,11 +44,9 @@ require_once("guiconfig.inc");
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
-		$srcip  = $_GET['srcip'];
-		$dstip  = $_GET['dstip'];
-		if (is_ipaddr($srcip) and is_ipaddr($dstip)) {
-			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
-			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
+		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
+			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
+			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
@@ -58,7 +56,7 @@ if($_GET['action']) {
 
 /* get our states */
 if($_GET['filter']) {
-	exec("/sbin/pfctl -s state | grep " . escapeshellarg($_GET['filter']), $states);
+	exec("/sbin/pfctl -s state | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $states);
 }
 else {
 	exec("/sbin/pfctl -s state", $states);
@@ -135,7 +133,7 @@ include("head.inc");
 					<td><?=gettext("Current state count:");?> <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					<td>
 				</tr>

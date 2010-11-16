@@ -731,7 +731,7 @@ if ($pkg['tabs'] <> "") {
 
 						$rowcounter++;
 						echo "<td>";
-						echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
+						echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
 						echo "</td>\n";
 						echo "</tr>\n";
 					}
@@ -768,7 +768,7 @@ if ($pkg['tabs'] <> "") {
 
 					$rowcounter++;
 					echo "<td>";
-					echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
+					echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
 					echo "</td>\n";
 					echo "</tr>\n";
 				}
@@ -869,7 +869,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	global $text, $config;
 	echo "<td>\n";
 	if($type == "input") {
-		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' class='formfld unknown' value='" . $value . "'>\n";
 	} else if($type == "checkbox") {
 		if($value)
 			echo "<input size='" . $size . "' type='checkbox' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' value='ON' CHECKED>\n";

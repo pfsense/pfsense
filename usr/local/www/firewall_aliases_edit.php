@@ -558,7 +558,7 @@ EOD;
       <input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <?php if (isset($id) && $a_aliases[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
+      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
       <?php endif; ?>
       <br />
       <span class="vexpl">
@@ -569,7 +569,7 @@ EOD;
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed)."); ?>

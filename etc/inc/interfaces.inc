@@ -1792,7 +1792,7 @@ EOD;
 		fclose($fd);
 
 		/* fire up dhclient */
-		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} > {$g['tmp_path']}/{$vipif}_output > {$g['tmp_path']}/{$vipif}_error_output", false);
+		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >{$g['tmp_path']}/{$vipif}_output 2>{$g['tmp_path']}/{$vipif}_error_output", false);
 	} else {
 		log_error(sprintf(gettext("Error: cannot open dhclient_%s.conf in interfaces_carpdev_configure() for writing.%s"), $vipif, "\n"));
 		mwexec("/sbin/dhclient -b {$vipif}");
@@ -3208,9 +3208,6 @@ function get_interfaces_with_gateway() {
 
 	/* loop interfaces, check config for outbound */
 	foreach($config['interfaces'] as $ifdescr => $ifname) {
-		if (substr($ifdescr, 0, 5) ==  "ovpnc")
-			return true;
-
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "carpdev-dhcp":
@@ -3222,7 +3219,8 @@ function get_interfaces_with_gateway() {
 				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:
-				if (!empty($ifname['gateway']))
+				if (substr($ifname['if'], 0, 5) ==  "ovpnc" ||
+				    !empty($ifname['gateway']))
 					$ints[$ifdescr] = $ifdescr;
 			break;
 		}
@@ -3235,8 +3233,6 @@ function interface_has_gateway($friendly) {
 	global $config;
 
 	if (!empty($config['interfaces'][$friendly])) {
-		if (substr($friendly, 0, 5) ==  "ovpnc")
-			return true;
 		$ifname = &$config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
@@ -3248,6 +3244,8 @@ function interface_has_gateway($friendly) {
 				return true;
 			break;
 			default:
+				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
+					return true;
 				if (!empty($ifname['gateway']))
 					return true;
 			break;
@@ -3283,9 +3281,9 @@ function is_altq_capable($int) {
 
         if (in_array($int_family[0], $capable))
                 return true;
-	else if (stristr($int_family, "vlan")) /* VLANs are name $parent_$vlan now */
+	else if (stristr($int, "vlan")) /* VLANs are name $parent_$vlan now */
 		return true;
-	else if (stristr($int_family, "_wlan")) /* WLANs are name $parent_$wlan now */
+	else if (stristr($int, "_wlan")) /* WLANs are name $parent_$wlan now */
 		return true;
         else
                 return false;
@@ -3438,7 +3436,13 @@ function setup_pppoe_reset_file($pppif, $iface="") {
 	$cron_file = "{$g['varetc_path']}/pppoe_restart_{$pppif}";
 
 	if(!empty($iface) && !empty($pppif)){
-		$cron_cmd = "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$iface}); log_error(\"PPPoE periodic reset executed on {$iface}\"); ?>' | /usr/local/bin/php -q";
+		$cron_cmd = <<<EOD
+#!/bin/sh
+/usr/local/sbin/pfSctl -c 'interface reload {$iface}'
+/usr/bin/logger -t pppoe{$iface} "PPPoE periodic reset executed on {$iface}"
+
+EOD;
+
 		file_put_contents($cron_file, $cron_cmd);
 		chmod($cron_file, 0700);
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");

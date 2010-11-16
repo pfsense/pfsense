@@ -414,11 +414,6 @@ if ($pkg['tabs'] <> "") {
 </form>
 <?php include("fend.inc"); ?>
 
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 <?php
 	echo "<!-- filter_fieldname: {$filter_fieldname} -->";
 	echo "<!-- filter_regex: {$filter_regex} -->";

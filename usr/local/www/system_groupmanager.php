@@ -262,7 +262,7 @@ function presubmit() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
 							<td width="78%" class="vtable">
 								<strong><?=strtoupper($pconfig['gtype']);?></strong>
-								<input name="gtype" type="hidden" value="<?=$pconfig['gtype']?>"/>
+								<input name="gtype" type="hidden" value="<?=htmlspecialchars($pconfig['gtype'])?>"/>
 							</td>
 						</tr>
 						<tr> 
@@ -360,7 +360,7 @@ function presubmit() {
 											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
 										</td>
 										<td valign="middle" nowrap class="list">
-											<a href="system_groupmanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+											<a href="system_groupmanager.php?act=delpriv&id=<?=htmlspecialchars($id)?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
@@ -373,7 +373,7 @@ function presubmit() {
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
-											<a href="system_groupmanager_addprivs.php?groupid=<?=$id?>">
+											<a href="system_groupmanager_addprivs.php?groupid=<?=htmlspecialchars($id)?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 
@@ -389,8 +389,8 @@ function presubmit() {
 							<td width="78%"> 
 								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>"> 
 								<?php if (isset($id) && $a_group[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>">
-								<input name="gid" type="hidden" value="<?=$pconfig['gid'];?>">
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+								<input name="gid" type="hidden" value="<?=htmlspecialchars($pconfig['gid']);?>">
 								<?php endif; ?>
 							</td>
 						</tr>

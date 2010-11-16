@@ -34,6 +34,12 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+if(!$nocsrf) {
+	function csrf_startup() {
+		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
+	}
+	require_once("csrf/csrf-magic.php");
+}
 require_once("authgui.inc");
 
 /* make sure nothing is cached */
@@ -452,29 +458,6 @@ function pprint_port($port) {
 	}
 
 	return $pport;
-}
-
-/* sort by interface only, retain the original order of rules that apply to
-   the same interface */
-function filter_rules_sort() {
-	global $config;
-
-	/* mark each rule with the sequence number (to retain the order while sorting) */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
-		$config['filter']['rule'][$i]['seq'] = $i;
-
-	function filtercmp($a, $b) {
-		if ($a['interface'] == $b['interface'])
-			return $a['seq'] - $b['seq'];
-		else
-			return -strcmp($a['interface'], $b['interface']);
-	}
-
-	usort($config['filter']['rule'], "filtercmp");
-
-	/* strip the sequence numbers again */
-	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
-		unset($config['filter']['rule'][$i]['seq']);
 }
 
 function firewall_check_for_advanced_options(&$item) {

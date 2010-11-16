@@ -527,7 +527,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
+							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=htmlspecialchars($pconfig['remotegw']);?>">
 							<br>
 							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
@@ -599,7 +599,7 @@ function dpdchkbox_change() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=$pconfig['myid_data'];?>">
+							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=htmlspecialchars($pconfig['myid_data']);?>">
 						</td>
 					</tr>
 					<tr id="opt_peerid">
@@ -616,7 +616,7 @@ function dpdchkbox_change() {
 							</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
+							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>">
 						<?php if ($pconfig['mobile']) { ?>
 							<br/><br/><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>
@@ -705,7 +705,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>">
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
@@ -775,13 +775,13 @@ function dpdchkbox_change() {
 							<?=gettext("Enable DPD"); ?><br>
 							<div id="opt_dpd">
 								<br>
-								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
+								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=htmlspecialchars($pconfig['dpd_delay']);?>">
 								<?=gettext("seconds"); ?><br>
 								<span class="vexpl">
 									<?=gettext("Delay between requesting peer acknowledgement"); ?>.
 								</span><br>
 								<br>
-								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=$pconfig['dpd_maxfail'];?>">
+								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=htmlspecialchars($pconfig['dpd_maxfail']);?>">
 								<?=gettext("retries"); ?><br>
 								<span class="vexpl">
 									<?=gettext("Number of consecutive failures allowed before disconnect"); ?>.
@@ -799,7 +799,7 @@ function dpdchkbox_change() {
 							<?php if ($pconfig['mobile']): ?>
 							<input name="mobile" type="hidden" value="true">
 							<?php endif; ?>
-							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
+							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>">
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
 						</td>
 					</tr>

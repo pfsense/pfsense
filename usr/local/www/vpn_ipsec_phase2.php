@@ -367,7 +367,7 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=$pconfig['localid_address'];?>">
+										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
 										/
 										<select name="localid_netbits" class="formselect" id="localid_netbits">
 										<?php for ($i = 32; $i >= 0; $i--): ?>
@@ -402,7 +402,7 @@ function change_protocol() {
 									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=$pconfig['remoteid_address'];?>">
+										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
 										/
 										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
 										<?php for ($i = 32; $i >= 0; $i--) { 
@@ -536,7 +536,7 @@ function change_protocol() {
 							<select class="formselect" disabled>
 								<option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
 							</select>
-							<input name="pfsgroup" type="hidden" value="<?=$pconfig['pfsgroup'];?>">
+							<input name="pfsgroup" type="hidden" value="<?=htmlspecialchars($pconfig['pfsgroup']);?>">
 							<br>
 							<span class="vexpl"><em><?=gettext("Set globally in mobile client options"); ?></em></span>
 						<?php endif; ?>
@@ -545,7 +545,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>">
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
@@ -558,7 +558,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Automatically ping host"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
 							<?=gettext("IP address"); ?>
 						</td>
 					</tr>
@@ -573,7 +573,7 @@ function change_protocol() {
 							<input name="remoteid_type" type="hidden" value="mobile">
 						<?php endif; ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
+							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>">
 						</td>
 					</tr>
 				</table>
@@ -584,11 +584,11 @@ function change_protocol() {
 </form>
 <script lannguage="JavaScript">
 <!--
-change_mode('<?=$pconfig['mode']?>');
-change_protocol('<?=$pconfig['proto']?>');
-typesel_change_local(<?=$pconfig['localid_netbits']?>);
+change_mode('<?=htmlspecialchars($pconfig['mode'])?>');
+change_protocol('<?=htmlspecialchars($pconfig['proto'])?>');
+typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
 <?php if (!isset($pconfig['mobile'])): ?>
-typesel_change_remote(<?=$pconfig['remoteid_netbits']?>);
+typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 <?php endif; ?>
 //-->
 </script>

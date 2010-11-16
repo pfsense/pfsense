@@ -320,7 +320,7 @@ if ($_GET['act'] == "add") {
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	}
 
-	uksort($config['interfaces'], "compare_interface_names");
+	uksort($config['interfaces'], "compare_interface_friendly_names");
 
 	/* Find an unused port for this interface */
 	foreach ($portlist as $portname => $portinfo) {
@@ -348,21 +348,6 @@ if ($_GET['act'] == "add") {
 
 	$savemsg = gettext("Interface has been added.");
 
-}
-
-function compare_interface_names($a, $b) {
-	if ($a == $b)
-		return 0;
-	else if ($a == 'wan')
-		return -1;
-	else if ($b == 'wan')
-		return 1;
-	else if ($a == 'lan')
-		return -1;
-	else if ($b == 'lan')
-		return 1;
-
-	return strnatcmp($a, $b);
 }
 
 include("head.inc");

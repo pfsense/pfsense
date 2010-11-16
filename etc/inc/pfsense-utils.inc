@@ -149,22 +149,13 @@ function get_tmp_file() {
  ******/
 function get_dns_servers() {
 	$dns_servers = array();
-	$dns = `cat /etc/resolv.conf`;
-	$dns_s = split("\n", $dns);
+	$dns_s = file("/etc/resolv.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	foreach($dns_s as $dns) {
 		$matches = "";
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
 			$dns_servers[] = $matches[1];
 	}
-	$dns_server_master = array();
-	$lastseen = "";
-	foreach($dns_servers as $t) {
-		if($t <> $lastseen)
-			if($t <> "")
-				$dns_server_master[] = $t;
-		$lastseen = $t;
-	}
-	return $dns_server_master;
+	return array_unique($dns_servers);
 }
 
 /****f* pfsense-utils/enable_hardware_offloading
@@ -2114,6 +2105,34 @@ function get_country_name($country_code) {
 		}
 	}
 	return "";
+}
+
+/* sort by interface only, retain the original order of rules that apply to
+   the same interface */
+function filter_rules_sort() {
+	global $config;
+
+	/* mark each rule with the sequence number (to retain the order while sorting) */
+	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
+		$config['filter']['rule'][$i]['seq'] = $i;
+
+	usort($config['filter']['rule'], "filter_rules_compare");
+
+	/* strip the sequence numbers again */
+	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
+		unset($config['filter']['rule'][$i]['seq']);
+}
+function filter_rules_compare($a, $b) {
+	if (isset($a['floating']) && isset($b['floating']))
+		return $a['seq'] - $b['seq'];
+	else if (isset($a['floating']))
+		return -1;
+	else if (isset($b['floating']))
+		return 1;
+	else if ($a['interface'] == $b['interface'])
+		return $a['seq'] - $b['seq'];
+	else
+		return compare_interface_friendly_names($a['interface'], $b['interface']);
 }
 
 ?>

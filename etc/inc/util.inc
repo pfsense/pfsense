@@ -566,6 +566,22 @@ function get_configured_ip_aliases_list() {
 }
 
 
+/* comparison function for sorting by the order in which interfaces are normally created */
+function compare_interface_friendly_names($a, $b) {
+	if ($a == $b)
+		return 0;
+	else if ($a == 'wan')
+		return -1;
+	else if ($b == 'wan')
+		return 1;
+	else if ($a == 'lan')
+		return -1;
+	else if ($b == 'lan')
+		return 1;
+
+	return strnatcmp($a, $b);
+}
+
 /* return the configured interfaces list. */
 function get_configured_interface_list($only_opt = false, $withdisabled = false) {
 	global $config;
@@ -624,6 +640,21 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 	return $iflist;
 }
 
+/*
+ *   get_configured_ip_addresses() - Return a list of all configured
+ *   interfaces IP Addresses
+ *
+ */
+function get_configured_ip_addresses() {
+	require_once("interfaces.inc");
+	$ip_array = array();
+	$interfaces = get_configured_interface_list();
+	foreach($interfaces as $int) {
+		$ipaddr = get_interface_ip($int);
+		$ip_array[$int] = $ipaddr;
+	}
+	return $ip_array;
+}
 
 /*
  *   get_interface_list() - Return a list of all physical interfaces

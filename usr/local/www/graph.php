@@ -51,6 +51,7 @@ header("Content-type: image/svg+xml");
 
 /********** HTTP GET Based Conf ***********/
 $ifnum=@$_GET["ifnum"];  // BSD / SNMP interface name / number
+$ifnum = get_real_interface($ifnum);
 $ifname=@$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/

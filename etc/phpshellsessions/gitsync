@@ -19,6 +19,10 @@ $CODIR =  "/root/pfsense/";
 global $argv;
 global $command_split;
 
+// If this parameter is set, all interactive functions are disabled
+// and neither PHP nor the web gui will be killed or restarted.
+$upgrading = in_array("--upgrading", $argv);
+
 unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/git")) {
@@ -61,7 +65,7 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 if($command_split[2]) {
 	$branch = $command_split[2];
 } else {
-	if(!$argv[3]) {
+	if(!$argv[3] && !$upgrading) {
 		echo "\nCurrent repository is $GIT_REPO\n";
 		echo "\nPlease select which branch you would like to sync against:\n\n";
 		foreach($branches as $branchname => $branchdesc) {
@@ -98,7 +102,7 @@ foreach($branches as $branchname => $branchdesc) {
 		$found = true;
 }
 if(!$found) {
-	if(isURL($branch)) {
+	if(isURL($branch) && !$upgrading) {
 		echo "\n";
 		echo "NOTE: $branch was not found.\n\n";
 		$command = readline("Is this a custom GIT URL? [y]? ");
@@ -142,7 +146,7 @@ if(file_exists("/root/.gitsync_merge")) {
 		}
 	}
 }
-if(!$command_split[2] && !$argv[3]) {
+if(!$command_split[2] && !$argv[3] && !$upgrading) {
 	do {
 		echo "\nAdd a custom RCS branch URL (HTTP) to merge in or press enter if done.\n\n";
 		$merge_repo = readline("> ");
@@ -268,11 +272,15 @@ exec("mv $CODIR/pfSenseGITREPO/gitsync_temp.git $CODIR/pfSenseGITREPO/pfSenseGIT
 // Reset the repository to restore the deleted files
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");
 
-post_cvssync_commands();
+if(!$upgrading)
+	post_cvssync_commands();
 
 echo "===> Checkout complete.\n";
 echo "\n";
-echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
+if(!$upgrading)
+	echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
+else
+	echo "Your system is now sync'd.\n\n";
 
 function post_cvssync_commands() {
 	echo "===> Removing FAST-CGI temporary files...\n";

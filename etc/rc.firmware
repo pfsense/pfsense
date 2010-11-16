@@ -287,6 +287,12 @@ pfSenseNanoBSDupgrade)
 	mkdir /tmp/$GLABEL_SLICE
 	mount /dev/ufs/$GLABEL_SLICE /tmp/$GLABEL_SLICE
 
+	# If /boot/loader.conf.local exists
+	# copy to the other slice.
+	if [ -f /boot/loader.conf.local ]; then
+		cp /boot/loader.conf.local /tmp/$GLABEL_SLICE/boot/loader.conf.local
+	fi
+
 	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$GLABEL_SLICE/tmp/post_upgrade_command ]; then

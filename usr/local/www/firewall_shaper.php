@@ -65,17 +65,17 @@ if ($_GET) {
 	if ($_GET['queue'])
         	$qname = trim($_GET['queue']);
         if ($_GET['interface'])
-                $interface = trim($_GET['interface']);
+                $interface = htmlspecialchars(trim($_GET['interface']));
         if ($_GET['action'])
-                $action = $_GET['action'];
+                $action = htmlspecialchars($_GET['action']);
 }
 if ($_POST) {
 	if ($_POST['name'])
-        	$qname = trim($_POST['name']);
+        	$qname = htmlspecialchars(trim($_POST['name']));
         if ($_POST['interface'])
-                $interface = trim($_POST['interface']);
+                $interface = htmlspecialchars(trim($_POST['interface']));
 	if ($_POST['parentqueue'])
-		$parentqueue = trim($_POST['parentqueue']);
+		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
 }
 
 if ($interface) {

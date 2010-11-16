@@ -54,10 +54,10 @@ if ($_POST['clear'])
 	clear_log_file($system_logfile);
 
 if ($_GET['filtertext'])
-	$filtertext = $_GET['filtertext'];
+	$filtertext = htmlspecialchars($_GET['filtertext']);
 
 if ($_POST['filtertext'])
-	$filtertext = $_POST['filtertext'];
+	$filtertext = htmlspecialchars($_POST['filtertext']);
 
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";

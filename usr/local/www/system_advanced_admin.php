@@ -3,7 +3,7 @@
 /*
 	system_advanced_admin.php
 	part of pfSense
-	Copyright (C) 2005-2007 Scott Ullrich
+	Copyright (C) 2005-2010 Scott Ullrich
 
 	Copyright (C) 2008 Shrew Soft Inc
 
@@ -56,6 +56,7 @@ $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttp
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
+$pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
@@ -139,6 +140,11 @@ if ($_POST) {
 			$config['system']['webgui']['nodnsrebindcheck'] = true;
 		else
 			unset($config['system']['webgui']['nodnsrebindcheck']);
+
+		if ($_POST['nohttpreferercheck'] == "yes")
+			$config['system']['webgui']['nohttpreferercheck'] = true;
+		else
+			unset($config['system']['webgui']['nohttpreferercheck']);
 
 		if ($_POST['althostnames'])
 			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
@@ -353,10 +359,22 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
 									<br/>
-									<strong><?=gettext("Alternate Hostnames for DNS Rebinding Checks"); ?></strong>
+									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
 									<br/>
 									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
 									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Browser HTTP_REFERER enforcement"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="nohttpreferercheck" type="checkbox" id="nohttpreferercheck" value="yes" <?php if ($pconfig['nohttpreferercheck']) echo "checked"; ?> />
+									<strong><?=gettext("Disable HTTP_REFERER enforcement check"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
+									"is protected against HTTP_REFERER redirection attempts. " .
+									"Check this box to disable this protection if you find that it interferes with " .
+									"webConfigurator access in certain corner cases such as using 3rd party scripts to interact with pfSense. More information on HTTP_REFERER is available from <a target='_new' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
 								</td>
 							</tr>
 							<tr>

@@ -210,7 +210,7 @@ function resync_all_package_configs($show_message = false) {
  */
 function is_freebsd_pkg_installed($pkg) {
 	$output = "";
-	exec("/usr/sbin/pkg_info -E \"{$process}*\"", $output, $retval);
+	exec("/usr/sbin/pkg_info -E \"{$pkg}*\"", $output, $retval);
 
 	return (intval($retval) == 0);
 }

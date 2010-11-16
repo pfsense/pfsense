@@ -95,15 +95,24 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			$found_host = true;
 		if(!empty($config['system']['webgui']['althostnames'])) {
 			$althosts = explode(" ", $config['system']['webgui']['althostnames']);
-			foreach ($althosts as $ah)
-				if(stristr($ah, $hostname_me))
+			foreach ($althosts as $ah) {
+				if(empty($ah))
+					continue;
+				if(stristr($ah, $hostname_me)) {
 					$found_host = true;
+					break;
+				}
+			}
 		}
 		$interface_list_ips = get_configured_ip_addresses();
 		foreach($interface_list_ips as $ilips) {
+			if(empty($ilips))
+				continue;
 			$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
-			if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) 
+			if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) {
 				$found_host = true;
+				break;
+			}
 		}
 		if($found_host == false) {
 			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");

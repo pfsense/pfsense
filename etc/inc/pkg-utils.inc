@@ -60,7 +60,8 @@ if(!function_exists("update_output_window")) {
 	}
 }
 
-safe_mkdir("/var/db/pkg");
+$vardb = "/var/db/pkg";
+safe_mkdir($vardb);
 
 conf_mount_rw();
 $g['platform'] = trim(file_get_contents("/etc/platform"));
@@ -395,14 +396,24 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
  *
  * XXX: This function needs to return where a pkg_add fails. Our current error messages aren't very descriptive.
  */
-function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-8.1-release/Latest') {
+function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = '') {
 	global $pkgent, $static_output, $g, $fd_log;
 
+	$osname = php_uname("s");
+	$arch =  php_uname("m");
+	$rel = php_uname("r");
+	$rel = substr($rel, 0, strrpos($rel, "-"));
+	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/Latest";
+	if (empty($base_url))
+		$base_url = $priv_url;
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "{$g['tmp_path']}/apkg_{$pkgname}{$pkg_extension}";
-	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true)
+	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
+		$static_output .= " could not download {$pkgname}.\n";
+		update_output_window($static_output);
 		return false;
+	}
 	$static_output .= " (extracting)";
 	update_output_window($static_output);
 	$slaveout = "";
@@ -450,10 +461,15 @@ function install_package($package, $pkg_info = "") {
 	if(empty($pkg_info) or !is_array($pkg_info[$package])) {
 		$pkg_info = get_pkg_info(array($package));
 		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
+		if (empty($pkg_info)) {
+			conf_mount_ro();
+			return -1;
+		}
 	}
 	@fwrite($fd_log, "Beginning package installation.\n");
 	log_error('Beginning package installation for ' . $pkg_info['name'] . '.');
-	update_status("Beginning package installation for " . $pkg_info['name'] . "...");	
+	$static_output .= "Beginning package installation for " . $pkg_info['name'] . "...";
+	update_status($static_output);
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {
 		$static_output .= "Downloading package configuration file... ";
@@ -571,6 +587,8 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		foreach((array) $pkg_info['depends_on_package'] as $pkgdep) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
+			$static_output = $static_orig . "done.\nChecking for successful package installation... ";
+			update_output_window($static_output);
 			if(isset($pkg_info['skip_install_checks']))
 				$pkg_installed = true;
 			else
@@ -578,8 +596,6 @@ function install_package_xml($pkg) {
 
 			if($pkg_installed == false)
 				pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
-			$static_output = $static_orig . "done.\nChecking for successful package installation... ";
-			update_output_window($static_output);
 			/* make sure our package was successfully installed */
 			if($pkg_installed == false)
 				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
@@ -781,22 +797,25 @@ function install_package_xml($pkg) {
 }
 
 function delete_package($pkg) {
-	global $config, $g, $static_output;
+	global $config, $g, $static_output, $vardb;
 
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 
-	$static_output .= "\tStarting package deletion for {$pkg}...";
-	update_output_window($static_output);
 
+	if (file_exists("{$vardb}/{$pkg}/+REQUIRED_BY") && count(file("{$vardb}/{$pkg}/+REQUIRED_BY")) > 0) {
+		$static_output .= "\tSkipping package deletion for {$pkg} because it is required by other packages.\n";
+		update_output_window($static_output);
+		return;
+	} else {
+		$static_output .= "\tStarting package deletion for {$pkg}...";
+		update_output_window($static_output);
+	}
 	$info = "";
-	exec("/usr/sbin/pkg_info -r {$pkg} 2>&1", $info);
+	exec("/usr/sbin/pkg_info -qrx {$pkg}", $info);
 	remove_freebsd_package($pkg);
-	$pkgdb = "";
-	exec("/bin/ls {$g['vardb_path']}/pkg", $pkgdb);
 	foreach($info as $line) {
-		$depend = trim(array_pop(explode(":", $line)));
-		if(in_array($depend, $pkgdb)) 
-			delete_package($depend);
+		$depend = trim(str_replace("@pkgdep", "", $line));
+		delete_package($depend);
 	}
 	$static_output .= "done.\n";
 	update_output_window($static_output);

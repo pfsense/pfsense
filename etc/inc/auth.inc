@@ -87,7 +87,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 }
 
 // If the HTTP_REFERER is something other than ourselves then disallow.
-if(function_exists("display_error_form") && !$config['system']['nohttpreferercheck']) {
+if(function_exists("display_error_form") && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 	if($_SERVER['HTTP_REFERER']) {
 		$found_host = false;
 		$hostname_me = $config['system']['hostname'] . "." . $config['system']['domain'];

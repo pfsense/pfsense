@@ -768,7 +768,7 @@ function install_package_xml($pkg) {
 				update_output_window($static_output);
 			}
 			if($pkg_config['custom_php_install_command']) {
-				$static_output .= "'tExecuting custom_php_install_command()...";
+				$static_output .= "\tExecuting custom_php_install_command()...";
 				update_output_window($static_output);
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= "done.\n";

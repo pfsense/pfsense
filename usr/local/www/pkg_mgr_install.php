@@ -145,11 +145,11 @@ switch($_GET['mode']) {
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		if (install_package(htmlspecialchars($_GET['pkg'])) < 0) {
 			update_status(gettext("Package reinstallation failed."));
-			$static_output .= "\n\n" . gettext("Package reinstallation failed.");
+			$static_output .= "\n" . gettext("Package reinstallation failed.");
 			update_output_window($static_output);
 		} else {
 			update_status(gettext("Package reinstalled."));
-			$static_output .= "\n\n" . gettext("Package reinstalled.");
+			$static_output .= "\n" . gettext("Package reinstalled.");
 			update_output_window($static_output);
 			filter_configure();
 		}
@@ -180,7 +180,7 @@ switch($_GET['mode']) {
 			}
 		}
 		update_status(gettext("All packages reinstalled."));
-		$static_output .= "\n\n" . gettext("All packages reinstalled.");
+		$static_output .= "\n" . gettext("All packages reinstalled.");
 		update_output_window($static_output);
 		filter_configure();
 		break;
@@ -188,7 +188,7 @@ switch($_GET['mode']) {
 		$status = install_package(htmlspecialchars($_GET['id']));
 		if($status == -1) {
 			update_status(gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("FAILED!"));
-			$static_output .= "\n\n" . gettext("Installation halted.");
+			$static_output .= "\n" . gettext("Installation halted.");
 			update_output_window($static_output);
 		} else {
 			$filename = escapeshellcmd("/tmp/" . $_GET['id']  . ".info");
@@ -197,10 +197,10 @@ switch($_GET['mode']) {
 			update_status($status_a);
 			$status = get_after_install_info($_GET['id']);
 			if($status) 
-				$static_output .= "\n" . gettext("Installation completed.") . "\n\n{$_GET['id']} " . gettext("setup instructions") . ":\n\n{$status}";
+				$static_output .= "\n" . gettext("Installation completed.") . "\n{$_GET['id']} " . gettext("setup instructions") . ":\n{$status}";
 			else
 				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
-			fwrite($fd, $status_a . "\n\n". $static_output);
+			fwrite($fd, $status_a . "\n". $static_output);
 			fclose($fd);
 			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
 		}

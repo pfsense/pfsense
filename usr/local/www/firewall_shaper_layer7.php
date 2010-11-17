@@ -166,7 +166,7 @@ else if ($_POST) {
 		}
 		unset($dupes);
 		unset($dupe_error);
-		//Even if there are repeated protocols, we won't loose any previous values
+		//Even if there are repeated protocols, we won't lose any previous values
 		//The user will be able to solve the situation
 		$output_form .= $l7r->build_form();
 		//Necessary to correctly build the proto form

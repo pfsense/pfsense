@@ -393,7 +393,7 @@ function openvpn_reconfigure($mode,& $settings) {
 						$sed .= "\"{$authcfg}\"";
 					}
 					$sed .= ");\\\n";
-					if (isset($settings['strictusercn']))
+					if ($settings['strictusercn'])
 						$sed .= "\$strictusercn = true;";
 					mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
 					mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");

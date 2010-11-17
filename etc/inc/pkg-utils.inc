@@ -600,7 +600,7 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		foreach((array) $pkg_info['depends_on_package'] as $pkgdep) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
-			$static_output = $static_orig . "done.\nChecking for successful package installation... ";
+			$static_output = $static_orig . "Checking for package installation... ";
 			update_output_window($static_output);
 			$pkg_installed = true;
 			if (!isset($pkg_info['skip_install_checks']))

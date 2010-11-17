@@ -894,7 +894,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
  */
 
 function fixup_string($string) {
-	global $config, $myurl, $title;
+	global $config, $g, $myurl, $title;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	switch($config['system']['webgui']['protocol']) {
@@ -926,6 +926,8 @@ function fixup_string($string) {
 		else if ($urlhost == get_interface_ip() && is_ipaddr($config['interfaces']['wan']['ipaddr']))
 			$urlhost = $config['interfaces']['wan']['ipaddr'];
 	}
+	if($urlhost != $_SERVER['HTTP_HOST'])
+		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . $_SERVER['REQUEST_URI']);
 	$myurl = $proto . "://" . $urlhost . $urlport . "/";
 
 	if (strstr($newstring, "\$myurl"))

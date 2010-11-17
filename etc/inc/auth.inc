@@ -93,7 +93,16 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 		$hostname_me = $config['system']['hostname'] . "." . $config['system']['domain'];
 		if(stristr($_SERVER['HTTP_REFERER'], $hostname_me))
 			$found_host = true;
-		if(!empty($config['system']['webgui']['althostnames'])) {
+		if(file_exists("{$g['tmp_path']}/setupwizard_lastreferrer") && !$found_host) {
+			if($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
+				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
+				header("Refresh: 1; url=index.php");
+				echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+				echo "<html><head><title>" . gettext("Redirecting...") . "</title></head><body>" . gettext("Redirecting to the dashboard...") . "</body></html>";
+				exit;
+			}
+		}
+		if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 			$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 			foreach ($althosts as $ah) {
 				if(empty($ah))
@@ -104,14 +113,16 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 				}
 			}
 		}
-		$interface_list_ips = get_configured_ip_addresses();
-		foreach($interface_list_ips as $ilips) {
-			if(empty($ilips))
-				continue;
-			$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
-			if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) {
-				$found_host = true;
-				break;
+		if(!$found_host) {
+			$interface_list_ips = get_configured_ip_addresses();
+			foreach($interface_list_ips as $ilips) {
+				if(empty($ilips))
+					continue;
+				$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
+				if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) {
+					$found_host = true;
+					break;
+				}
 			}
 		}
 		if($found_host == false) {

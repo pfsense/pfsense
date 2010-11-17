@@ -49,13 +49,6 @@ require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
-
-/* set up logging if needed */
-if (!$fd_log) {
-	if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w"))
-		update_output_window("Warning, could not open log for writing.");
-}
-
 if(!function_exists("update_status")) {
 	function update_status($status) {
 		echo $status . "\n";
@@ -67,20 +60,32 @@ if(!function_exists("update_output_window")) {
 	}
 }
 
+if (!function_exists("pkg_debug")) {
+	/* set up logging if needed */
+	function pkg_debug($msg) {
+		global $g, $debug, $fd_log;
+
+		if (!$debug)
+			return;
+
+		if (!$fd_log) {
+			if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w"))
+				update_output_window("Warning, could not open log for writing.");
+		}
+		@fwrite($fd_log, $msg);
+	}
+}
+
 $vardb = "/var/db/pkg";
 safe_mkdir($vardb);
+$g['platform'] = trim(file_get_contents("/etc/platform"));
 
 conf_mount_rw();
-$g['platform'] = trim(file_get_contents("/etc/platform"));
 if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
 }
 conf_mount_ro();
-
-$version = split("-", trim(file_get_contents("/etc/version")));
-$ver = split("\.", $version[0]);
-$g['version'] = intval($ver[1]);
 
 /****f* pkg-utils/remove_package
  * NAME
@@ -453,13 +458,13 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			} else {
 				//$dependlevel++;
 				$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
-				@fwrite($fd_log, $working_depend[1] . "\n");
+				pkg_debug($working_depend[1] . "\n");
 			}
 		}
 	}
 	$pkgaddout = "";
 	exec("/usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
-	@fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
+	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 
 	return true;
 }
@@ -481,7 +486,7 @@ function install_package($package, $pkg_info = "") {
 			return -1;
 		}
 	}
-	@fwrite($fd_log, "Beginning package installation.\n");
+	pkg_debug("Beginning package installation.\n");
 	log_error('Beginning package installation for ' . $pkg_info['name'] . '.');
 	$static_output .= "Beginning package installation for " . $pkg_info['name'] . "...";
 	update_status($static_output);
@@ -489,11 +494,11 @@ function install_package($package, $pkg_info = "") {
 	if($pkg_info['config_file'] != "") {
 		$static_output .= "Downloading package configuration file... ";
 		update_output_window($static_output);
-		@fwrite($fd_log, "Downloading package configuration file...\n");
+		pkg_debug("Downloading package configuration file...\n");
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
 		download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto);
 		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
-			@fwrite($fd_log, "ERROR! Unable to fetch package configuration file. Aborting installation.\n");
+			pkg_debug("ERROR! Unable to fetch package configuration file. Aborting installation.\n");
 			if($pkg_interface == "console")
 				print "\nERROR! Unable to fetch package configuration file. Aborting package installation.\n";
 			else {
@@ -609,11 +614,11 @@ function install_package_xml($pkg) {
 			if($pkg_installed == true) {
 				$static_output .= "done.\n";
 				update_output_window($static_output);
-				@fwrite($fd_log, "pkg_add successfully completed.\n");
+				pkg_debug("pkg_add successfully completed.\n");
 			} else {
 				$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
 				update_output_window($static_output);
-				@fwrite($fd_log, "Package WAS NOT installed properly.\n");
+				pkg_debug("Package WAS NOT installed properly.\n");
 				if($pkg_interface <> "console") {
 					echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 					echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
@@ -673,13 +678,13 @@ function install_package_xml($pkg) {
 					return false;
 				}
 				if(stristr($filename, ".tgz") <> "") {
-					@fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
+					pkg_debug("Extracting tarball to -C for " . $filename . "...\n");
 					$tarout = "";
 					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
-					@fwrite($fd_log, print_r($tarout, true) . "\n");
+					pkg_debug(print_r($tarout, true) . "\n");
 				}
 				if($pkg_chmod <> "") {
-					@fwrite($fd_log, "Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
+					pkg_debug("Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
 					@chmod($prefix . $filename, $pkg_chmod);
 					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
 				}
@@ -697,7 +702,7 @@ function install_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
-			@fwrite($fd_log, "require_once('{$pkg_config['include_file']}')\n");
+			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			else {
@@ -779,7 +784,7 @@ function install_package_xml($pkg) {
 	} else {
 		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);
-		@fwrite($fd_log, "Unable to load package configuration. Installation aborted.\n");
+		pkg_debug("Unable to load package configuration. Installation aborted.\n");
 		if($pkg_interface <> "console") {
 			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
@@ -792,7 +797,7 @@ function install_package_xml($pkg) {
 	if($pkg_info['logging']) {
 		mwexec("/usr/sbin/fifolog_create -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		@chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
-		@fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
+		pkg_debug("Adding text to file /etc/syslog.conf\n");
 		if(is_process_running("syslogd"))
 			mwexec("killall syslogd");
 		system_syslogd_start();
@@ -846,7 +851,7 @@ function delete_package_xml($pkg) {
 		conf_mount_ro();
 		return;
 	}
-	@fwrite($fd_log, "Removing {$pkg} package... ");
+	pkg_debug("Removing {$pkg} package... ");
 	$static_output .= "Removing {$pkg} components...\n";
 	update_output_window($static_output);
 	/* parse package configuration */
@@ -922,7 +927,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
-			@fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\")\n");
+			pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
 			if (file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			else {
@@ -974,7 +979,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
                         $static_output .= "\tRemoving package instructions...";
                         update_output_window($static_output);
-                        @fwrite($fd_log, "Remove '{$pkg_config['include_file']}'\n");
+                        pkg_debug("Remove '{$pkg_config['include_file']}'\n");
                         unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
 			$static_output .= "done.\n";
                         update_output_window($static_output);

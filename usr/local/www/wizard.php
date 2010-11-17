@@ -894,7 +894,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
  */
 
 function fixup_string($string) {
-	global $config, $myurl;
+	global $config, $myurl, $title;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	switch($config['system']['webgui']['protocol']) {
@@ -918,7 +918,15 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$myurl = $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . "/";
+	$urlhost = $_SERVER['HTTP_HOST'];
+	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
+	if($title == "Reload in progress") {
+		if ($urlhost == get_interface_ip("lan") && is_ipaddr($config['interfaces']['lan']['ipaddr']))
+			$urlhost = $config['interfaces']['lan']['ipaddr'];
+		else if ($urlhost == get_interface_ip() && is_ipaddr($config['interfaces']['wan']['ipaddr']))
+			$urlhost = $config['interfaces']['wan']['ipaddr'];
+	}
+	$myurl = $proto . "://" . $urlhost . $urlport . "/";
 
 	if (strstr($newstring, "\$myurl"))
 		$newstring = str_replace("\$myurl", $myurl, $newstring);

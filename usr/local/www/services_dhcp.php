@@ -305,13 +305,15 @@ if ($_POST) {
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
 			$dynsubnet_end = ip2ulong($_POST['range_to']);
-			foreach ($a_maps as $map) {
-				if (empty($map['ipaddr']))
-					continue;
-				if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-					(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
-					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-					break;
+			if (is_array($a_maps)) {
+				foreach ($a_maps as $map) {
+					if (empty($map['ipaddr']))
+						continue;
+					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
+						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+						break;
+					}
 				}
 			}
 		}

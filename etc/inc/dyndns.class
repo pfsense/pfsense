@@ -92,8 +92,8 @@
 			
 			global $config, $g;
 			
-			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}.cache";
-			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}.debug";
+			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".cache";
+			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".debug";
 
 			log_error("DynDns: updatedns() starting");
 			

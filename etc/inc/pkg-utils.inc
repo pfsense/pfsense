@@ -49,6 +49,13 @@ require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
+
+/* set up logging if needed */
+if (!$fd_log) {
+	if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w"))
+		update_output_window("Warning, could not open log for writing.");
+}
+
 if(!function_exists("update_status")) {
 	function update_status($status) {
 		echo $status . "\n";
@@ -465,11 +472,6 @@ function install_package($package, $pkg_info = "") {
 
 	if($pkg_interface == "console") 	
 		echo "\n";
-	/* open logfiles and begin installation */
-	if (!$fd_log) {
-		if (!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w"))
-			update_output_window("Warning, could not open log for writing.");
-	}
 	/* fetch package information if needed */
 	if(empty($pkg_info) or !is_array($pkg_info[$package])) {
 		$pkg_info = get_pkg_info(array($package));
@@ -582,13 +584,6 @@ function install_package_xml($pkg) {
 	} else
 		$pkg_info = $config['installedpackages']['package'][$pkgid];
 
-	/* set up logging if needed */
-	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
-			update_output_window("Warning, could not open log for writing.");
-		}
-	}
-
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
 		if($pkg_interface == "console") 
@@ -614,12 +609,11 @@ function install_package_xml($pkg) {
 			if($pkg_installed == true) {
 				$static_output .= "done.\n";
 				update_output_window($static_output);
-				fwrite($fd_log, "pkg_add successfully completed.\n");
+				@fwrite($fd_log, "pkg_add successfully completed.\n");
 			} else {
 				$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
 				update_output_window($static_output);
-				fwrite($fd_log, "Package WAS NOT installed properly.\n");
-				fclose($fd_log);
+				@fwrite($fd_log, "Package WAS NOT installed properly.\n");
 				if($pkg_interface <> "console") {
 					echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 					echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
@@ -679,13 +673,13 @@ function install_package_xml($pkg) {
 					return false;
 				}
 				if(stristr($filename, ".tgz") <> "") {
-					fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
+					@fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
 					$tarout = "";
 					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
-					fwrite($fd_log, print_r($tarout, true) . "\n");
+					@fwrite($fd_log, print_r($tarout, true) . "\n");
 				}
 				if($pkg_chmod <> "") {
-					fwrite($fd_log, "Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
+					@fwrite($fd_log, "Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
 					@chmod($prefix . $filename, $pkg_chmod);
 					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
 				}
@@ -703,7 +697,7 @@ function install_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
-			fwrite($fd_log, "require_once('{$pkg_config['include_file']}')\n");
+			@fwrite($fd_log, "require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			else {
@@ -785,8 +779,7 @@ function install_package_xml($pkg) {
 	} else {
 		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);
-		fwrite($fd_log, "Unable to load package configuration. Installation aborted.\n");
-		fclose($fd_log);
+		@fwrite($fd_log, "Unable to load package configuration. Installation aborted.\n");
 		if($pkg_interface <> "console") {
 			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
@@ -853,13 +846,7 @@ function delete_package_xml($pkg) {
 		conf_mount_ro();
 		return;
 	}
-	/* set up logging if needed */
-	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
-			update_output_window("Warning, could not open log for writing.");
-		}
-	}
-	fwrite($fd_log, "Removing {$pkg} package... ");
+	@fwrite($fd_log, "Removing {$pkg} package... ");
 	$static_output .= "Removing {$pkg} components...\n";
 	update_output_window($static_output);
 	/* parse package configuration */
@@ -935,7 +922,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
-			fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\")\n");
+			@fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\")\n");
 			if (file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			else {
@@ -987,7 +974,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
                         $static_output .= "\tRemoving package instructions...";
                         update_output_window($static_output);
-                        fwrite($fd_log, "Remove '{$pkg_config['include_file']}'\n");
+                        @fwrite($fd_log, "Remove '{$pkg_config['include_file']}'\n");
                         unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
 			$static_output .= "done.\n";
                         update_output_window($static_output);
@@ -1024,21 +1011,6 @@ function delete_package_xml($pkg) {
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	write_config("Removed {$pkg} package.\n");
-	/* file cleanup */
-	$ctag = file("/etc/crontab");
-	foreach($ctag as $line)
-		if(trim($line) != "")
-			$towrite[] = $line;
-
-	$tmptab = fopen("{$g['tmp_path']}/crontab", "w");
-	foreach($towrite as $line)
-		fwrite($tmptab, $line);
-	fclose($tmptab);
-
-	// Go RW again since the write_config above will put it back to RO
-	conf_mount_rw();
-	rename("{$g['tmp_path']}/crontab", "/etc/crontab");
-	conf_mount_ro();
 }
 
 function expand_to_bytes($size) {

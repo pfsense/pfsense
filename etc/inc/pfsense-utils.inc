@@ -1454,7 +1454,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '5');
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '60');
         curl_setopt($ch, CURLOPT_TIMEOUT, 0);
 
         curl_exec($ch);

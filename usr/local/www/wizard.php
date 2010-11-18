@@ -918,7 +918,9 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$urlhost = $_SERVER['HTTP_HOST'];
+	$http_host = explode(":", $_SERVER['HTTP_HOST']);
+	$http_host = $http_host[0];
+	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if($title == "Reload in progress") {
 		if (is_ipaddr($urlhost)) {
@@ -930,8 +932,8 @@ function fixup_string($string) {
 			}
 		}
 	}
-	if($urlhost != $_SERVER['HTTP_HOST'])
-		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . $_SERVER['REQUEST_URI']);
+	if($urlhost != $http_host)
+		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $http_host . $urlport . $_SERVER['REQUEST_URI']);
 	$myurl = $proto . "://" . $urlhost . $urlport . "/";
 
 	if (strstr($newstring, "\$myurl"))

@@ -921,10 +921,14 @@ function fixup_string($string) {
 	$urlhost = $_SERVER['HTTP_HOST'];
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if($title == "Reload in progress") {
-		if ($urlhost == get_interface_ip("lan") && is_ipaddr($config['interfaces']['lan']['ipaddr']))
-			$urlhost = $config['interfaces']['lan']['ipaddr'];
-		else if ($urlhost == get_interface_ip() && is_ipaddr($config['interfaces']['wan']['ipaddr']))
-			$urlhost = $config['interfaces']['wan']['ipaddr'];
+		if (is_ipaddr($urlhost)) {
+			$host_if = find_ip_interface($urlhost);
+			if ($host_if) {
+				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
+				if ($host_if && is_ipaddr($config['interfaces'][$host_if]['ipaddr']))
+					$urlhost = $config['interfaces'][$host_if]['ipaddr'];
+			}
+		}
 	}
 	if($urlhost != $_SERVER['HTTP_HOST'])
 		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . $_SERVER['REQUEST_URI']);

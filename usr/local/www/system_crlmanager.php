@@ -214,16 +214,18 @@ if ($_POST) {
 	if (!$input_errors) {
 		$result = false;
 
-		$crl = array();
-		$crl['refid'] = uniqid();
-		if ($thiscrl)
+		if ($thiscrl) {
 			$crl =& $thiscrl;
+		} else {
+			$crl = array();
+			$crl['refid'] = uniqid();
+		}
 
 		$crl['descr'] = $pconfig['descr'];
 		$crl['caref'] = $pconfig['caref'];
 
 		if ($pconfig['method'] == "existing") {
-			$crl['text'] == base64_encode($pconfig['crltext']);
+			$crl['text'] = base64_encode($pconfig['crltext']);
 		}
 
 		if ($pconfig['method'] == "internal") {
@@ -235,7 +237,7 @@ if ($_POST) {
 		if (!$thiscrl)
 			$a_crl[] = $crl;
 
-		write_config("Saved CRL {$crl['caref']}");
+		write_config("Saved CRL {$crl['descr']}");
 
 		pfSenseHeader("system_crlmanager.php");
 	}

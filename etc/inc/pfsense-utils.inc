@@ -377,17 +377,11 @@ function add_rule_to_anchor($anchor, $rule, $label) {
  * remove $text from file $file
  */
 function remove_text_from_file($file, $text) {
-	global $fd_log;
-	if($fd_log)
-		fwrite($fd_log, "Adding needed text items:\n");
+	if(!file_exists($file) && !is_writable($file))
+		return;
 	$filecontents = file_get_contents($file);
-	$textTMP = str_replace($text, "", $filecontents);
-	$text = $textTMP;
-	if($fd_log)
-		fwrite($fd_log, $text);
-	$fd = fopen($file, "w");
-	fwrite($fd, $text);
-	fclose($fd);
+	$text = str_replace($text, "", $filecontents);
+	@file_put_contents($file, $text); 
 }
 
 /*
@@ -397,8 +391,6 @@ function remove_text_from_file($file, $text) {
 function add_text_to_file($file, $text, $replace = false) {
 	if(file_exists($file) and is_writable($file)) {
 		$filecontents = file($file);
-		$fout = fopen($file, "w");
-
 		$filecontents = array_map('rtrim', $filecontents);
 		array_push($filecontents, $text);
 		if ($replace)
@@ -406,12 +398,10 @@ function add_text_to_file($file, $text, $replace = false) {
 
 		$file_text = implode("\n", $filecontents);
 
-		fwrite($fout, $file_text);
-		fclose($fout);
+		@file_put_contents($file, $file_text); 
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 /*
@@ -724,7 +714,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 		$cli->setCredentials($username, $password);
 	}
 	$resp = $cli->send($msg, $timeout);
-	if(!$resp) {
+	if(!is_object($resp)) {
 		log_error("XMLRPC communication error: " . $cli->errstr);
 		return false;
 	} elseif($resp->faultCode()) {

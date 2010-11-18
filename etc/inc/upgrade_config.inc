@@ -1885,11 +1885,20 @@ function upgrade_055_to_056() {
 
 function upgrade_056_to_057() {
 	global $config;
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	/* migrate captivate portal to user manager */
 	if (is_array($config['captiveportal']['user'])) {
 		foreach($config['captiveportal']['user'] as $user) {
 			// avoid user conflicts
-			if ($config['system']['user'][$user['name']])
+			$found = false;
+			foreach ($config['system']['user'] as $userent) {
+				if ($userent['name'] == $user['name']) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found)
 				continue;
 			$user['scope'] = "user";
 			if (isset($user['expirationdate'])) {
@@ -1900,6 +1909,7 @@ function upgrade_056_to_057() {
 				$user['md5-hash'] = $user['password'];
 				unset($user['password']);
 			}
+			$user['uid'] = $config['system']['nextuid']++;
 			$config['system']['user'][] = $user;
 		}
 		unset($config['captiveportal']['user']);

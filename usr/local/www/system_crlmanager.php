@@ -539,9 +539,11 @@ function method_change() {
 						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" nowrap class="list">
+							<?php if (!$internal || count($tmpcrl['cert'])): ?>
 							<a href="system_crlmanager.php?act=exp&id=<?=$tmpcrl['refid'];?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
+							<?php endif; ?>
 							<?php if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&id=<?=$tmpcrl['refid'];?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />

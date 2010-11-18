@@ -61,24 +61,27 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$http_host = $_SERVER['HTTP_HOST'];
 	}
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-	   $http_host == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
+			strcasecmp($http_host, "localhost") == 0)
 		$found_host = true;
-	if($config['dyndnses']['dyndns'])
-		foreach($config['dyndnses']['dyndns'] as $dyndns)
-			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
-				$found_host = true;
+	if(strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
+			strcasecmp($http_host, $config['system']['hostname']) == 0)
+		$found_host = true;
 
-	if(!empty($config['system']['webgui']['althostnames'])) {
+	if(is_array($config['dyndnses']['dyndns']) && !$found_host)
+		foreach($config['dyndnses']['dyndns'] as $dyndns)
+			if(strcasecmp($dyndns['host'], $http_host) == 0) {
+				$found_host = true;
+				break;
+			}
+
+	if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)
-			if($ah == $http_host or $ah == $_SERVER['SERVER_ADDR'])
+			if(strcasecmp($ah, $http_host) == 0 or strcasecmp($ah, $_SERVER['SERVER_ADDR']) == 0) {
 				$found_host = true;
+				break;
+			}
 	}
-
-	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
-			$http_host == $_SERVER['SERVER_ADDR'] or
-			$http_host == $config['system']['hostname'])
-		$found_host = true;
 
 	if($found_host == false) {
 		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
@@ -89,11 +92,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 // If the HTTP_REFERER is something other than ourselves then disallow.
 if(function_exists("display_error_form") && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 	if($_SERVER['HTTP_REFERER']) {
-		$found_host = false;
-		$hostname_me = $config['system']['hostname'] . "." . $config['system']['domain'];
-		if(stristr($_SERVER['HTTP_REFERER'], $hostname_me))
-			$found_host = true;
-		if(file_exists("{$g['tmp_path']}/setupwizard_lastreferrer") && !$found_host) {
+		if(file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 			if($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
 				header("Refresh: 1; url=index.php");
@@ -102,26 +101,28 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 				exit;
 			}
 		}
-		if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
-			$althosts = explode(" ", $config['system']['webgui']['althostnames']);
-			foreach ($althosts as $ah) {
-				if(empty($ah))
-					continue;
-				if(stristr($ah, $hostname_me)) {
-					$found_host = true;
-					break;
+		$found_host = false;
+		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+		if($referrer_host) {
+			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
+					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
+				$found_host = true;
+			if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
+				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+				foreach ($althosts as $ah) {
+					if(strcasecmp($referrer_host, $ah) == 0) {
+						$found_host = true;
+						break;
+					}
 				}
 			}
-		}
-		if(!$found_host) {
-			$interface_list_ips = get_configured_ip_addresses();
-			foreach($interface_list_ips as $ilips) {
-				if(empty($ilips))
-					continue;
-				$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
-				if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) {
-					$found_host = true;
-					break;
+			if(!$found_host) {
+				$interface_list_ips = get_configured_ip_addresses();
+				foreach($interface_list_ips as $ilips) {
+					if(strcasecmp($referrer_host, $ilips) == 0) {
+						$found_host = true;
+						break;
+					}
 				}
 			}
 		}

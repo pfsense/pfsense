@@ -157,7 +157,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	$params = array(
 		"pkg" => $pkgs, 
 		"info" => $info, 
-		"freebsd_version" => $freebsd_version,
+		"freebsd_version" => $freebsd_version[0],
 		"freebsd_machine" => $freebsd_machine
 	);
 	$resp = call_pfsense_method('pfsense.get_pkgs', $params, 10);

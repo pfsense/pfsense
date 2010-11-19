@@ -445,18 +445,18 @@ function openvpn_reconfigure($mode,& $settings) {
 				break;
 		}
 
-		// The port we'll listen at
-		// If local_port is used, bind the management port
-		$lport = ($settings['local_port']) ? $settings['local_port'] : "0";
-		$conf .= "lport {$lport}\n";
+		// If there is no bind option at all (ip and/or port), add "nobind" directive
+		//  Otherwise, use the local port if defined, failing that, use lport 0 to 
+		//  ensure a random source port.
+		if ((empty($iface_ip)) && (!$settings['local_port']))
+			$conf .= "nobind\n";
+		elseif ($settings['local_port'])
+			$conf .= "lport {$settings['local_port']}\n";
+		else
+			$conf .= "lport 0\n";
 
 		// Use unix socket to overcome the problem on any type of server
 		$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
-
-		// If there is no bind option at all (ip and/or port), add "nobind" directive
-		if ((empty($iface_ip)) && (!$settings['local_port'])) {
-			$conf .= "nobind\n";
-		}
 
 		// The remote server
 		$conf .= "remote {$settings['server_addr']} {$settings['server_port']}\n";

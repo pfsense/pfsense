@@ -455,7 +455,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			else
 				$depend_filename = $working_depend[1];
 			if (is_freebsd_pkg_installed($working_depend[1]) === false) {
-				pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
+				if (pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url) == false)
+					return false;
 			} else {
 				//$dependlevel++;
 				$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " already installed.";
@@ -602,28 +603,23 @@ function install_package_xml($pkg) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
 			$static_output = $static_orig . "Checking for package installation... ";
 			update_output_window($static_output);
-			$pkg_installed = true;
 			if (!isset($pkg_info['skip_install_checks']))
-				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
-
-			if ($pkg_installed == false) {
-				pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
-				/* make sure our package was successfully installed */
-				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
-			}
-			if ($pkg_installed == true) {
-				$static_output .= "done.\n";
-				update_output_window($static_output);
-			} else {
-				$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
-				update_output_window($static_output);
-				pkg_debug("Package WAS NOT installed properly.\n");
-				if($pkg_interface <> "console") {
-					echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-					echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+				continue;
+			if (!is_freebsd_pkg_installed($pkg_name)) {
+				if (pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']) == true) {
+					$static_output .= "done.\n";
+					update_output_window($static_output);
+				} else {
+					$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
+					update_output_window($static_output);
+					pkg_debug("Package WAS NOT installed properly.\n");
+					if($pkg_interface <> "console") {
+						echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+						echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+					}
+					sleep(1);
+					return false;
 				}
-				sleep(1);
-				return false;
 			}
 		}
 	}

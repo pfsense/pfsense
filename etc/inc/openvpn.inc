@@ -447,9 +447,9 @@ function openvpn_reconfigure($mode,& $settings) {
 
 		// The port we'll listen at
 		// If local_port is used, bind the management port
-		if ($settings['local_port']) {
-			$conf .= "lport {$settings['local_port']}\n";
-		}
+		$lport = ($settings['local_port']) ? $settings['local_port'] : "0";
+		$conf .= "lport {$lport}\n";
+
 		// Use unix socket to overcome the problem on any type of server
 		$conf .= "management {$g['varetc_path']}/openvpn/{$mode_id}.sock unix\n";
 

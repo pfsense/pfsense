@@ -453,7 +453,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
 	if($raw_depends_list != "") {
 		foreach($raw_depends_list as $adepend) {
-			$working_depend = explode(" ", $adepend);
+			$working_depend = explode(" ", trim($adepend, "\n"));
 			if (substr($working_depend[1], -4) != ".tbz")
 				$depend_filename = $working_depend[1] . $pkg_extension;
 			else
@@ -825,12 +825,12 @@ function delete_package($pkg) {
 	$info = "";
 	exec("/usr/sbin/pkg_info -qrx {$pkg}", $info);
 	remove_freebsd_package($pkg);
-	foreach($info as $line) {
-		$depend = trim(str_replace("@pkgdep", "", $line));
-		delete_package($depend);
-	}
 	$static_output .= "done.\n";
 	update_output_window($static_output);
+	foreach($info as $line) {
+		$depend = trim(str_replace("@pkgdep", "", $line), " \n");
+		delete_package($depend);
+	}
 
 	return;
 }

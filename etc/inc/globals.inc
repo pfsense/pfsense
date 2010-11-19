@@ -41,7 +41,7 @@ function remove_numbers($string) {
 }
 
 function get_nics_with_capabilities($CAPABILITIES) {
-	$ifs = `ifconfig -l`;
+	$ifs = `/sbin/ifconfig -l`;
 	$if_list = split(" ", $ifs);
 	$vlan_native_supp = array();
 	foreach($if_list as $if => $iface) {

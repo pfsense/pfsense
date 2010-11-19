@@ -325,7 +325,7 @@ function force_remove_package($pkg_name) {
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
-	global $config;
+	global $config, $config_parsed;
 	
 	if(empty($config['installedpackages']['package']))
 		return;
@@ -579,7 +579,7 @@ function eval_once($toeval) {
 }
 
 function install_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface;
+	global $g, $config, $static_output, $pkg_interface, $config_parsed;
 
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nInstallation aborted.";

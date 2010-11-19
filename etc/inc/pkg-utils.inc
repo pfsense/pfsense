@@ -412,10 +412,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 /*
  * pkg_fetch_recursive: Download and install a FreeBSD package and its dependencies. This function provides output to
  * 			a progress bar and output window.
- *
- * XXX: This function needs to return where a pkg_add fails. Our current error messages aren't very descriptive.
  */
-function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = '') {
+function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
 	global $static_output, $g;
 
 	$osname = php_uname("s");
@@ -425,9 +423,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/Latest";
 	if (empty($base_url))
 		$base_url = $priv_url;
-	$pkg_extension = ".tgz";
-	if (substr($filename, -4) != ".tbz")
-		$filename .= $pkg_extension;
+	if (substr($base_url, -1) == "/")
+		$base_url = substr($base_url, 0, -1);
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
@@ -448,17 +445,16 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	update_output_window($static_output);
 	$slaveout = "";
 	exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
-	$workingdir = preg_grep("/instmp/", $slaveout);
-	$workingdir = $workingdir[0];
 	$raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
-	if($raw_depends_list != "") {
+	if ($raw_depends_list != "") {
+		$pkg_extension = ".tbz";
 		foreach($raw_depends_list as $adepend) {
 			$working_depend = explode(" ", trim($adepend, "\n"));
 			if (substr($working_depend[1], -4) != ".tbz")
 				$depend_filename = $working_depend[1] . $pkg_extension;
 			else
 				$depend_filename = $working_depend[1];
-			if(is_freebsd_pkg_installed($working_depend[1]) === false) {
+			if (is_freebsd_pkg_installed($working_depend[1]) === false) {
 				pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
 			} else {
 				//$dependlevel++;

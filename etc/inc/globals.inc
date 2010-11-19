@@ -164,6 +164,6 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 		 "net.inet.icmp.icmplim" => "0"
 		  );
 
-$config_inc_loaded = false;
+$config_parsed = false;
 
 ?>

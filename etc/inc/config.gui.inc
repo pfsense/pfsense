@@ -49,10 +49,10 @@
 require_once("globals.inc");
 
 /* do not load this file twice. */
-if($config_inc_loaded == true)
+if($config_parsed == true)
 	return;
 else
-	$config_inc_loaded = true;
+	$config_parsed = true;
 
 // Set the memory limit to 128M.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you 

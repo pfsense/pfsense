@@ -603,8 +603,10 @@ function install_package_xml($pkg) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
 			$static_output = $static_orig . "Checking for package installation... ";
 			update_output_window($static_output);
-			if (!isset($pkg_info['skip_install_checks']))
-				continue;
+			// FIXME: Not sure what the logic is for this. I see nothing that sets this variable, and it was causing some steps to be skipped.
+			//        Should be fixed or removed.
+			//if (!isset($pkg_info['skip_install_checks']))
+			//	continue;
 			if (!is_freebsd_pkg_installed($pkg_name)) {
 				if (pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']) == true) {
 					$static_output .= "done.\n";

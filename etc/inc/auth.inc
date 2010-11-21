@@ -139,7 +139,8 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			}
 			$security_passed = false;
 		}
-	}
+	} else
+		$security_passed = false;
 }
 
 if (function_exists("display_error_form") && $security_passed)

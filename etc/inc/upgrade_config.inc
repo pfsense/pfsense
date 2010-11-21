@@ -704,18 +704,14 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
 		$config['sysctl']['item'][18]['descr'] =    "TCP Offload engine";
 		$config['sysctl']['item'][18]['value'] =   "default";
-
-		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
-		$config['sysctl']['item'][19]['descr'] =    "TCP Offload engine - BCE";
-		$config['sysctl']['item'][19]['value'] =   "default";
 		
-		$config['sysctl']['item'][20]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][20]['descr'] =    "Set the ephemeral port range starting port";
-		$config['sysctl']['item'][20]['value'] =   "default";
+		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][19]['value'] =   "default";
 
-		$config['sysctl']['item'][21]['tunable'] = "hw.syscons.kbd_reboot ";
-		$config['sysctl']['item'][21]['descr'] =    "Enables ctrl+alt+delete";
-		$config['sysctl']['item'][21]['value'] =   "default";
+		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot ";
+		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
+		$config['sysctl']['item'][20]['value'] =   "default";
 
 	}
 }

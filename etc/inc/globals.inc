@@ -162,7 +162,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.log_debug" => "0", 
 	"net.inet.tcp.tso" => "1", 
 	"net.inet.icmp.icmplim" => "0",
-	"vfs.read_max" => "32";
+	"vfs.read_max" => "32"
 );
 
 $config_parsed = false;

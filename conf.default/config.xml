@@ -135,11 +135,6 @@
 			<tunable>net.inet.tcp.tso</tunable>
 			<value>default</value>
 		</item>
-		<item>
-			<descr>TCP Offload Engine - BCE</descr>
-			<tunable>hw.bce.tso_enable</tunable>
-			<value>default</value>
-		</item>
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

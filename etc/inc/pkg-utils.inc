@@ -494,7 +494,7 @@ function install_package($package, $pkg_info = "") {
 	update_status($static_output);
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {
-		$static_output .= "Downloading package configuration file... ";
+		$static_output .= "\nDownloading package configuration file... ";
 		update_output_window($static_output);
 		pkg_debug("Downloading package configuration file...\n");
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
@@ -601,7 +601,7 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		foreach((array) $pkg_info['depends_on_package'] as $pkgdep) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
-			$static_output = $static_orig . "Checking for package installation... ";
+			$static_output = $static_orig . "\nChecking for package installation... ";
 			update_output_window($static_output);
 			// FIXME: Not sure what the logic is for this. I see nothing that sets this variable, and it was causing some steps to be skipped.
 			//        Should be fixed or removed.
@@ -627,7 +627,7 @@ function install_package_xml($pkg) {
 	}
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "Loading package configuration... ";
+		$static_output .= "\nLoading package configuration... ";
 		update_output_window($static_output);
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
 		$static_output .= "done.\n";

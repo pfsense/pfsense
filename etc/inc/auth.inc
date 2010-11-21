@@ -49,6 +49,9 @@
 if(!$do_not_include_config_gui_inc)
 	require_once("config.gui.inc");
 
+// Will be changed to false if security checks fail
+$security_passed = true;
+
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
@@ -84,8 +87,11 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 	}
 
 	if($found_host == false) {
-		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
-		exit;
+		if(!security_checks_disabled()) {
+			display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
+			exit;
+		}
+		$security_passed = false;
 	}
 }
 
@@ -127,11 +133,19 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			}
 		}
 		if($found_host == false) {
-			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
-			exit;
+			if(!security_checks_disabled()) {
+				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+				exit;
+			}
+			$security_passed = false;
 		}
 	}
 }
+
+if (function_exists("display_error_form") && $security_passed)
+	/* Security checks passed, so it should be OK to turn them back on */
+	restore_security_checks();
+unset($security_passed);
 
 $groupindex = index_groups();
 $userindex = index_users();

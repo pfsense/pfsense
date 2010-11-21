@@ -550,6 +550,7 @@ function restore_config_section($section, $new_contents) {
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
 	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	disable_security_checks();
 	conf_mount_ro();
 	return;
 }
@@ -571,6 +572,7 @@ function merge_config_section($section, $new_contents) {
 	$config[$section] = $section_xml;
 	unlink($fname);
 	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	disable_security_checks();
 	conf_mount_ro();
 	return;
 }

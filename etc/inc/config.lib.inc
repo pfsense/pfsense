@@ -210,6 +210,7 @@ function restore_backup($file) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file","/cf/conf/config.xml");
+		disable_security_checks();
 		log_error("{$g['product_name']} is restoring the configuration $file");
 		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
@@ -569,6 +570,8 @@ function reset_factory_defaults($lock = false) {
 	/* copy default configuration */
 	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
 
+	disable_security_checks();
+
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
 	if (!$lock)
@@ -592,6 +595,8 @@ function config_restore($conffile) {
 
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");
+
+	disable_security_checks();
 
 	unlock($lockkey);
 
@@ -623,6 +628,8 @@ function config_install($conffile) {
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
 
+	disable_security_checks();
+
 	/* unlink cache file if it exists */
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
@@ -631,6 +638,31 @@ function config_install($conffile) {
 	conf_mount_ro();
 
     return 0;
+}
+
+/*
+ * Disable security checks for DNS rebind and HTTP referrer until next time
+ * they pass (or reboot), to aid in preventing accidental lockout when
+ * restoring settings like hostname, domain, IP addresses, and settings
+ * related to the DNS rebind and HTTP referrer checks.
+ * Intended for use when restoring a configuration or directly
+ * modifying config.xml without an unconditional reboot.
+ */
+function disable_security_checks() {
+	global $g;
+	touch("{$g['tmp_path']}/disable_security_checks");
+}
+
+/* Restores security checks.  Should be called after all succeed. */
+function restore_security_checks() {
+	global $g;
+	unlink_if_exists("{$g['tmp_path']}/disable_security_checks");
+}
+
+/* Returns status of security check temporary disable. */
+function security_checks_disabled() {
+	global $g;
+	return file_exists("{$g['tmp_path']}/disable_security_checks");
 }
 
 function config_validate($conffile) {

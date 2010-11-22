@@ -119,7 +119,7 @@ if ($_POST) {
 	if($_POST['dstport'] <> "" and !is_port($_POST['dstport']))
 		$input_errors[] = gettext("You must supply either a valid port for the destination port entry.");
 
-	if($_POST['natport'] <> "" and !is_port($_POST['natport']))
+	if($_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
 		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
@@ -147,11 +147,7 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['nonat'] && $_POST['staticnatport']) {
-		$input_errors[] = gettext("Static port cannot be used with No NAT.");
-	}
-
-	if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
+	if ($_POST['target'] && !is_ipaddr($_POST['target']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("A valid target IP address must be specified.");
 	}
 
@@ -188,7 +184,7 @@ if ($_POST) {
 		$natent['interface'] = $_POST['interface'];
 
 		/* static-port */
-		if(isset($_POST['staticnatport'])) {
+		if(isset($_POST['staticnatport']) && !isset($_POST['nonat'])) {
 			$natent['staticnatport'] = true;
 		} else {
 			unset($natent['staticnatport']);
@@ -197,6 +193,7 @@ if ($_POST) {
 		/* if user has selected not nat, set it here */
 		if(isset($_POST['nonat'])) {
 			$natent['nonat'] = true;
+			$natent['target'] = "";
 		} else {
 			unset($natent['nonat']);
 		}
@@ -211,7 +208,7 @@ if ($_POST) {
 		} else {
 			$natent['destination']['address'] = $ext;
 		}
-		if($_POST['natport'] != "") {
+		if($_POST['natport'] != "" && !isset($_POST['nonat'])) {
 	        	$natent['natport'] = $_POST['natport'];
 		} else {
 			unset($natent['natport']);

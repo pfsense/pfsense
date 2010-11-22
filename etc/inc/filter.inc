@@ -843,7 +843,7 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
 	// Initialize natrules holder string
 	$natrules = "";
 
@@ -862,21 +862,26 @@ function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $ta
 		$protocol_text = "";
 	}
 
-	$target_if_list = array();
-	if(empty($target_subnet) || !is_numeric($target_subnet) || $target_subnet == 32) {
-		$target_if_list[] = guess_interface_from_ip($target_ip);
-	} else {
-		$target_if_list[] = guess_interface_from_ip(gen_subnet_max($target_ip, $target_subnet));
+	if(empty($target_subnet) || !is_numeric($target_subnet))
+		$target_subnet = 32;
+
+	if(!is_array($route_table)) {
+		$route_table = array();
+		/* create a route table we can search */
+		exec("netstat -rnWf inet", $route_table);
 	}
 
-	foreach ($target_if_list as $target_if) {
-		/* Only install additional NAT rules if the
-		 * target is in the list of source networks */
-		if(in_array($target_if, $nat_ifs)) {
-			$target_networks = "{$target_if}:network";
-
-			$natrules .= "no nat on {$target_if}{$protocol_text} from {$target_if} to {$target}\n";
-			$natrules .= "nat on {$target_if}{$protocol_text} from {$target_networks} to {$target} -> {$target_if}{$static_port}\n";
+	/* Search for matching subnets in the routing table */
+	foreach($route_table as $line) {
+		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|link[#])/", $line)) {
+			$fields = preg_split("/[ ]+/", $line);
+			$subnet = $fields[0];
+			$subnet_split = explode("/", $subnet);
+			$subnet_if = $fields[6];
+			if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$subnet_if}{$static_port}\n";
+			}
 		}
 	}
 
@@ -1141,6 +1146,7 @@ function filter_nat_rules_generate() {
 	update_filter_reload_status("Creating 1:1 rules...");
 
 	$reflection_txt = "";
+	$route_table = "";
 
 	/* any 1:1 mappings? */
 	if(is_array($config['nat']['onetoone'])) {
@@ -1198,7 +1204,7 @@ function filter_nat_rules_generate() {
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
-			$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", $srcaddr, $srcip, $sn);
+			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";

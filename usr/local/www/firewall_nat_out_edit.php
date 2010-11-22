@@ -113,13 +113,15 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if($_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
+	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
+
+	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
 		$input_errors[] = gettext("You must supply either a valid port for the source port entry.");
 
-	if($_POST['dstport'] <> "" and !is_port($_POST['dstport']))
+	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_port($_POST['dstport']))
 		$input_errors[] = gettext("You must supply either a valid port for the destination port entry.");
 
-	if($_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
+	if($protocol_uses_ports and $_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
 		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
@@ -130,7 +132,7 @@ if ($_POST) {
 	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
-	if ($_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
+	if ($protocol_uses_ports && $_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
 		$input_errors[] = gettext("A valid source port must be specified.");
 	}
 	if ($_POST['destination_type'] != "any") {
@@ -178,13 +180,13 @@ if ($_POST) {
 	if (!$input_errors) {
 	        $natent = array();
 		$natent['source']['network'] = $osn;
-		$natent['sourceport'] = $_POST['sourceport'];
+		$natent['sourceport'] = ($protocol_uses_ports) ? $_POST['sourceport'] : "";
 		$natent['descr'] = $_POST['descr'];
-		$natent['target'] = $_POST['target'];
+		$natent['target'] = (!isset($_POST['nonat'])) ? $_POST['target'] : "";
 		$natent['interface'] = $_POST['interface'];
 
 		/* static-port */
-		if(isset($_POST['staticnatport']) && !isset($_POST['nonat'])) {
+		if(isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
 			$natent['staticnatport'] = true;
 		} else {
 			unset($natent['staticnatport']);
@@ -193,7 +195,6 @@ if ($_POST) {
 		/* if user has selected not nat, set it here */
 		if(isset($_POST['nonat'])) {
 			$natent['nonat'] = true;
-			$natent['target'] = "";
 		} else {
 			unset($natent['nonat']);
 		}
@@ -208,12 +209,12 @@ if ($_POST) {
 		} else {
 			$natent['destination']['address'] = $ext;
 		}
-		if($_POST['natport'] != "" && !isset($_POST['nonat'])) {
+		if($_POST['natport'] != "" && $protocol_uses_ports && !isset($_POST['nonat'])) {
 	        	$natent['natport'] = $_POST['natport'];
 		} else {
 			unset($natent['natport']);
 		}
-		if($_POST['dstport'] != "") {
+		if($_POST['dstport'] != "" && $protocol_uses_ports) {
 			$natent['dstport'] = $_POST['dstport'];
 		} else {
 			unset($natent['dstport']);

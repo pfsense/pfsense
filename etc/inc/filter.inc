@@ -844,6 +844,11 @@ function filter_get_reflection_interfaces($natif = "") {
 }
 
 function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+	global $config;
+
+	if(!isset($config['system']['enablenatreflectionhelper']))
+		return "";
+
 	// Initialize natrules holder string
 	$natrules = "";
 

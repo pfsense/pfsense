@@ -48,6 +48,10 @@ $pgtitle = gettext("Diagnostics: pfInfo");
 if($_REQUEST['getactivity']) {
 	$text = `/sbin/pfctl -vvsi`;
 	$text .= "<p/>";
+	$text .= `/sbin/pfctl -vvsm`;
+	$text .= "<p/>";
+	$text .= `/sbin/pfctl -vvst`;
+	$text .= "<p/>";
 	$text .= `/sbin/pfctl -vvsI`;
 	echo $text;
 	exit;

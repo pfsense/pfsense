@@ -649,14 +649,16 @@ function get_configured_ip_addresses() {
 	require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
-	foreach($interfaces as $int) {
-		$ipaddr = get_interface_ip($int);
-		$ip_array[$int] = $ipaddr;
+	if(is_array($interfaces)) {
+		foreach($interfaces as $int) {
+			$ipaddr = get_interface_ip($int);
+			$ip_array[$int] = $ipaddr;
+		}
 	}
 	$interfaces = get_configured_carp_interface_list();
-	foreach($interfaces as $int => $ipaddr) {
-		$ip_array[$int] = $ipaddr;
-	}
+	if(is_array($interfaces)) 
+		foreach($interfaces as $int => $ipaddr) 
+			$ip_array[$int] = $ipaddr;
 	return $ip_array;
 }
 

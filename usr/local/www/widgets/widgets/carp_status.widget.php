@@ -37,13 +37,14 @@ require_once("/usr/local/www/widgets/include/carp_status.inc");
 	if(is_array($config['virtualip']['vip'])) {
   	$carpint=0;
     foreach($config['virtualip']['vip'] as $carp) {
-    	if ($carp['mode'] != "carp") continue;
+    	if ($carp['mode'] != "carp")
+		continue;
       	$ipaddress = $carp['subnet'];
         $password = $carp['password'];
-				$netmask = $carp['subnet_bits'];
+	$netmask = $carp['subnet_bits'];
         $vhid = $carp['vhid'];
         $advskew = $carp['advskew'];
-        $carp_int = find_carp_interface($ipaddress);
+        $carp_int = "vip{$vhid}";
         $status = get_carp_interface_status($carp_int);
 ?>
 <tr>
@@ -54,7 +55,7 @@ require_once("/usr/local/www/widgets/include/carp_status.inc");
 	</td>
 	<td width="70%"  class="listr">
 <?php
-						if($status == "MASTER") {
+	    if($status == "MASTER") {
               echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass.gif' title=\"$status\">";
             } else if($status == "BACKUP") {
               echo "<img src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif' title=\"$status\">";

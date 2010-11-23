@@ -339,11 +339,8 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
-	/* basically cache the contents of ifconfig statement
-	to speed up this routine */
-	global $carp_query;
-	if($carp_query == "")
-		$carp_query = split("\n", `/sbin/ifconfig $carpinterface | grep carp`);
+	$carp_query = "";
+	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER")) 
 			return "MASTER";

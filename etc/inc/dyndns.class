@@ -175,7 +175,7 @@
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Completely empirical
+				curl_setopt($ch, CURLOPT_TIMEOUT, 60); // Completely empirical
 			}
 
 			switch ($this->_dnsService) {
@@ -902,11 +902,23 @@
 			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
-				$checkip = gethostbyname($hosttocheck);
+				$try = 0;
+				while ($try < 3) {
+					$checkip = gethostbyname($hosttocheck);
+					if (is_ipaddr($checkip))
+						break;
+					$try++;
+				}
+				if ($try >= 3) {
+					log_error("Dyndns debug information: Could not resolve {$hosttocheck} to ip using interface ip {$ip_address}.");
+					return $ip_address; /* XXX: Might return private ip address! */
+				}
 				$ip_ch = curl_init("http://{$checkip}");
 				curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 				curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
+				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
+				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 60);
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);

@@ -608,10 +608,7 @@ function install_package_xml($pkg) {
 			//if (!isset($pkg_info['skip_install_checks']))
 			//	continue;
 			if (!is_freebsd_pkg_installed($pkg_name)) {
-				if (pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']) == true) {
-					$static_output .= "done.\n";
-					update_output_window($static_output);
-				} else {
+				if (!pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url'])) {
 					$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
 					update_output_window($static_output);
 					pkg_debug("Package WAS NOT installed properly.\n");

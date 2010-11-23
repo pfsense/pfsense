@@ -188,6 +188,7 @@ $diagnostics_menu[] = array("Factory Defaults", "/diag_defaults.php");
 $diagnostics_menu[] = array("Halt System", "/halt.php" );
 $diagnostics_menu[] = array("Tables", "/diag_tables.php");
 $diagnostics_menu[] = array("Ping", "/diag_ping.php");
+$diagnostics_menu[] = array("pf Info", "/diag_pf_info.php");
 $diagnostics_menu[] = array("pfTOP", "/diag_system_pftop.php");
 $diagnostics_menu[] = array("Reboot", "/reboot.php");
 $diagnostics_menu[] = array("Routes", "/diag_routes.php");

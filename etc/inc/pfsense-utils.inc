@@ -320,9 +320,8 @@ function setup_microcode() {
  ******/
 function get_carp_status() {
     /* grab the current status of carp */
-    $status = `/sbin/sysctl net.inet.carp.allow | cut -d" " -f2`;
-    if(intval($status) == "0") return false;
-    return true;
+    $status = `/sbin/sysctl -n net.inet.carp.allow`;
+    return (intval($status) > 0);
 }
 
 /*

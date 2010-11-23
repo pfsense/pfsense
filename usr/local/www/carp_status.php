@@ -108,6 +108,7 @@ include("head.inc");
 		<tr>
 			<td>
 <?php
+			$carpcount = 0;
 			if(is_array($config['virtualip']['vip'])) {
 				foreach($config['virtualip']['vip'] as $carp) {
 					if ($carp['mode'] == "carp") {

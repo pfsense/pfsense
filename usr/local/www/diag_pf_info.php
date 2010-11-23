@@ -72,9 +72,9 @@ include("head.inc");
 	}
 	function activitycallback(transport) {
 		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre>' + transport.responseText  + '</pre></font>';
-		setTimeout('getcpuactivity()', 2500);		
+		setTimeout('getcpuactivity()', 2000);		
 	}
-	setTimeout('getcpuactivity()', 1000);	
+	setTimeout('getcpuactivity()', 5000);	
 </script>
 <div id='maincontent'>
 <?php

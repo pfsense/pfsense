@@ -186,6 +186,8 @@ $diagnostics_menu[] = array("DNS Lookup", "/diag_dns.php");
 $diagnostics_menu[] = array("Edit File", "/edit.php");
 $diagnostics_menu[] = array("Factory Defaults", "/diag_defaults.php");
 $diagnostics_menu[] = array("Halt System", "/halt.php" );
+$diagnostics_menu[] = array("Limiter Info", "/diag_limiter_info.php" );
+
 $diagnostics_menu[] = array("Tables", "/diag_tables.php");
 $diagnostics_menu[] = array("Ping", "/diag_ping.php");
 $diagnostics_menu[] = array("pf Info", "/diag_pf_info.php");

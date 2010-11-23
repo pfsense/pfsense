@@ -43,7 +43,7 @@ require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = gettext("Diagnostics: PF Info");
+$pgtitle = gettext("Diagnostics: pfInfo");
 
 if($_REQUEST['getactivity']) {
 	$text = `/sbin/pfctl -vvsi`;

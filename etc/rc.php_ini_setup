@@ -26,7 +26,7 @@
 #	POSSIBILITY OF SUCH DAMAGE.
 
 # Set our operating platform
-PLATFORM=`cat /etc/platform`
+PLATFORM=`/bin/cat /etc/platform`
 EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 
 # Grab amount of memory that is detected
@@ -37,8 +37,8 @@ else
 fi
 
 if [ -z "$AVAILMEM" ]; then
-	MEM=`sysctl hw.physmem | cut -d':' -f2`
-	AVAILMEM=`expr $MEM / 1048576`
+	MEM=`/sbin/sysctl hw.physmem | cut -d':' -f2`
+	AVAILMEM=`/bin/expr $MEM / 1048576`
 fi
 
 # Calculate APC SHM size according 
@@ -132,18 +132,18 @@ PHPMODULES="$PHPMODULES pfSense"
 
 # Clear the .ini file to make sure we are clean
 if [ -f /usr/local/etc/php.ini ]; then
-	rm /usr/local/etc/php.ini
+	/bin/rm /usr/local/etc/php.ini
 fi
 if [ -f /usr/local/lib/php.ini ]; then
-	rm /usr/local/lib/php.ini
+	/bin/rm /usr/local/lib/php.ini
 fi
-LOADED_MODULES=`/usr/local/bin/php -m | grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/grep -v "\["`
 
 # Get a loaded module list in the stock php
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
 # not being able to boot back up.
-cat >/usr/local/lib/php.ini <<EOF
+/bin/cat >/usr/local/lib/php.ini <<EOF
 ; File generated from /etc/rc.php_ini_setup
 output_buffering = "0"
 expose_php = Off
@@ -168,16 +168,16 @@ extension_dir=${EXTENSIONSDIR}
 EOF
 
 # Copy php.ini file to etc/ too (cli)
-cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 # Ensure directory exists
 if [ ! -d /etc/php_dynamodules ]; then
-	mkdir /etc/php_dynamodules
+	/bin/mkdir /etc/php_dynamodules
 fi
 
 # Read in dynamodules
 if [ -d /etc/php_dynamodules ]; then
-	DYNA_MODULES=`ls /etc/php_dynamodules/`
+	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
 	PHPMODULES="$PHPMODULES $DYNA_MODULES"
 fi
 
@@ -200,12 +200,12 @@ for EXT in $PHPMODULES; do
 done
 
 # Get amount of ram installed on this system
-RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
+RAM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1000000}' | /usr/bin/awk -F '.' '{print $1}'`
 export RAM
 export LOWMEM
 if [  "$RAM" -gt 96 ]; then
 
-	cat >>/usr/local/lib/php.ini <<EOF
+	/bin/cat >>/usr/local/lib/php.ini <<EOF
 
 ; APC Settings
 apc.enabled="1"
@@ -217,10 +217,10 @@ EOF
 else
 	LOWMEM="TRUE"
 	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC."
-	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC." | logger -p daemon.info -i -t rc.php_ini_setup
+	echo ">>> WARNING!  under 128 megabytes of ram detected.  Not enabling APC." | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
 fi
 
-	cat >>/usr/local/lib/php.ini <<EOF
+	/bin/cat >>/usr/local/lib/php.ini <<EOF
 
 [suhosin]
 suhosin.get.max_array_depth = 5000
@@ -240,19 +240,19 @@ EOF
 
 
 # Copy php.ini file to etc/ too (cli)
-cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then
-	rm /var/run/php_modules_load_errors.txt
+	/bin/rm /var/run/php_modules_load_errors.txt
 fi 
 
 for EXT in $PHPMODULES; do
-	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | tr '[:upper:]' '[:lower:]'`"
+	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | /usr/bin/tr '[:upper:]' '[:lower:]'`"
 done
 
 # Check loaded modules and remove anything that did not load correctly
-LOADED_MODULES=`/usr/local/bin/php -m | tr '[:upper:]' '[:lower:]' 2>/dev/null | grep -v "\["`
+LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\["`
 for EXT in $PHPMODULESLC; do
 	SHOULDREMOVE="true"
 	for LM in $LOADED_MODULES; do
@@ -272,12 +272,12 @@ for EXT in $PHPMODULESLC; do
 	if [ "$SHOULDREMOVE" = "true" ]; then
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
-			cat /usr/local/lib/php.ini | grep -v $EXT > /tmp/php.ini
-			rm -f /usr/local/lib/php.ini
-			mv /tmp/php.ini /usr/local/lib/php.ini
+			/bin/cat /usr/local/lib/php.ini | /usr/bin/grep -v $EXT > /tmp/php.ini
+			/bin/rm -f /usr/local/lib/php.ini
+			/bin/mv /tmp/php.ini /usr/local/lib/php.ini
 		fi
 	fi
 done
 
 # Copy php.ini file to etc/ too (cli)
-cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+/bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini

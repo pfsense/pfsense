@@ -2195,7 +2195,7 @@ function load_mac_manufacturer_table() {
 	if ($macs){
 		foreach ($macs as $line){
 			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)){
-				/* store values like this $mac_man['000C29']='VMW=ware' */
+				/* store values like this $mac_man['000C29']='VMware' */
 				$mac_man["$matches[1]"]=$matches[2];
 			}
 		}

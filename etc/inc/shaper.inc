@@ -4004,6 +4004,4 @@ $dn_default_shaper_msg .= "buttons at the bottom represent queue actions and are
 $dn_default_shaper_msg .= " </p></strong></span>";
 $dn_default_shaper_msg .= "</td></tr>";
 
-
-
 ?>

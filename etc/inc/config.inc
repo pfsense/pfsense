@@ -52,7 +52,7 @@ if($g['booting']) echo ".";
 // the parser needs quite a bit of ram.   Do not remove this line unless you 
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
 if(!$ARCH) 
-	$ARCH=trim(`/usr/bin/uname -m`);
+	$ARCH = trim(`/usr/bin/uname -m`);
 
 // Set memory limit to 256M on amd64.
 if($ARCH == "amd64") 

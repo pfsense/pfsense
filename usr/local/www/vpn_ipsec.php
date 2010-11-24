@@ -443,7 +443,7 @@ function show_ipsec_header($ph1ent) {
 	global $g;
 	if (isset($ph1ent['mobile'])) 
 		$mobile = "&mobile=true";
-	echo <<<EOF
+	?>
 	<tr>
 		<td class="listhdrr"><?=gettext("Remote Gateway"); ?></td>
 		<td class="listhdrr"><?=gettext("Mode"); ?></td>
@@ -454,7 +454,7 @@ function show_ipsec_header($ph1ent) {
 		</td>
 	</tr>
 
-EOF;
+<?php
 	
 }
 

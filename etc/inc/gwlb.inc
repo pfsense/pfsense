@@ -291,13 +291,14 @@ function return_gateways_array($disabled = false) {
 
 			$gateway['friendlyiface'] = $gateway['interface'];
 			$gateway['interface'] = get_real_interface($gateway['interface']);
-			/* Some interface like wan might be default but have no info recorded 
+			/* FIXME: Should this be enabled.
+			 * Some interface like wan might be default but have no info recorded 
 			 * the config.
-			 */
 			if ($gateway['friendlyiface'] == "wan" && !isset($gateway['defaultgw'])) {
 				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw"))
 					$gateway['defaultgw'] = true;
 			}
+			 */
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 

@@ -206,7 +206,7 @@ include("head.inc");
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td width="45%" align="right"><font color="white"><?=gettext("Default gateway:"); ?></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+												<td width="45%" align="right"><font color="white"><?=gettext("Default gateway:"); ?></td><td><input type="checkbox" id="defaultgw" name="defaultgw"></td>
 											</tr>												
 											<tr>
 												<td width="45%" align="right"><font color="white"><?=gettext("Interface:"); ?></td>
@@ -291,7 +291,9 @@ include("head.inc");
 						var descr = $('gatewaydescr').getValue();
 						gatewayip = $('gatewayip').getValue();
 						addrtype = $('addrtype').getValue();
-						var defaultgw = $('defaultgw').getValue();
+						var defaultgw = '';
+						if ($('defaultgw').checked)
+							defaultgw = 'yes';
 						var url = "system_gateways_edit.php";
 						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
 						var myAjax = new Ajax.Request(
@@ -310,7 +312,7 @@ include("head.inc");
 						optn.value = value;
 						selectbox.options.add(optn);
 						selectbox.selectedIndex = (selectbox.options.length-1);
-						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?>
+						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?> </strong>";
 					}				
 					function report_failure() {
 						alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");

@@ -122,7 +122,7 @@ $iptos = array("lowdelay", "throughput", "reliability");
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 if(file_exists("/etc/platform")) {
-	$arch = trim(`uname -m`);
+	$arch = php_uname("m");
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_HEAD/.updaters/";

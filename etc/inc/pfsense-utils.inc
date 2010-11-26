@@ -1418,8 +1418,8 @@ function isvm() {
 }
 
 function get_freebsd_version() {
-	$version = trim(`/usr/bin/uname -r | /usr/bin/cut  -d'.' -f1`);
-	return $version;
+	$version = php_uname("r");
+	return $version[0];
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body') {

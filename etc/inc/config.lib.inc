@@ -148,7 +148,7 @@ function parse_config($parse = false) {
 				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
 			}
 		}
-		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+		$config = parse_xml_config($g['conf_path'] . '/config.xml', array($g['xml_rootobj'], 'pfsense'));
 		if($config == "-1") {
 			$last_backup = discover_last_backup();
 			if ($last_backup)
@@ -722,7 +722,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			$i = true;
 			if($g['booting'])
 				echo ".";
-			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+			$newxml = parse_xml_config($backup, array($g['xml_rootobj'], 'pfsense'));
 			if($newxml == "-1") {
 				log_error("The backup cache file $backup is corrupted.  Unlinking.");
 				unlink($backup);

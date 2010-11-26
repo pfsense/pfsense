@@ -41,8 +41,6 @@ function setup_gateways_monitor() {
 	if (!is_array($gateways_arr)) {
 		log_error("No gateways to monitor. Apinger will not be run.");
 		killbypid("{$g['varrun_path']}/apinger.pid");
-		// TEMPORARY XXX
-		exec("/usr/bin/killall -9 apinger");
 		@unlink("{$g['tmp_path']}/apinger.status");
 		return;
 	}

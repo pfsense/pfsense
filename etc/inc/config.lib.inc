@@ -212,7 +212,7 @@ function restore_backup($file) {
 		copy("$file","/cf/conf/config.xml");
 		disable_security_checks();
 		log_error("{$g['product_name']} is restoring the configuration $file");
-		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
+		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "{$g['product_name']}Configurator", "");
 		conf_mount_ro();
 	}
 }

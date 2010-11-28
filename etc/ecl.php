@@ -82,9 +82,11 @@ function discover_config($mountpoint) {
 
 function test_config($file_location) {
 	global $g, $debug;
+	if(!$file_location) 
+		return;
 	// config.xml was found.  ensure it is sound.
 	$root_obj = trim("<{$g['xml_rootobj']}>");
-	$xml_file_head = trim(`/bin/cat {$file_location} | /usr/bin/head -n2 | /usr/bin/tail -n1`);
+	$xml_file_head = exec("/usr/bin/head -2 {$file_location} | /usr/bin/tail -n1");
 	if($debug) {
 		echo "\nroot obj  = $root_obj";
 		echo "\nfile head = $xml_file_head";
@@ -125,7 +127,6 @@ function find_config_xml() {
 				if($debug) 
 					echo "\nmounted: $mounted ";
 				if(intval($mounted) > 0) {
-					echo " ! ";
 					// Item was mounted - look for config.xml file
 					$config_location = discover_config($slice);
 					if($config_location) {

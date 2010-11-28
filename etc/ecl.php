@@ -36,6 +36,16 @@ function get_boot_disk() {
 	return $disk;
 }
 
+function get_disk_slices($disk) {
+	global $g;
+	$slices_array = array();
+	$slices = `/bin/ls /dev/{$disk}s*`;
+	if($slices == "ls: No match.") 
+		return;
+	$slices_array = split(" ", $slices);
+	return $slices_array;
+}
+
 function get_disks() {
 	global $g;
 	$disks_array = array();
@@ -45,37 +55,6 @@ function get_disks() {
 		if(trim($disk))
 			$disks_array[] = $disk;
 	return $disks_array;
-}
-
-// Probes all disks looking for config.xml
-function find_config_xml() {
-	global $g;
-	$disks = get_disks();
-	$boot_disk = get_boot_disk();
-	exec("mkdir -p /tmp/mnt/cf");
-	$found_config = false;
-	foreach($disks as $disk) {
-		echo " $disk";
-		// First try msdos fs
-		$result = exec("/sbin/mount -t msdos /dev/{$disk} /tmp/mnt/cf 2>/dev/null");
-		// Next try regular fs (ufs)
-		if(!$result) 
-			$result = exec("/sbin/mount /dev/{$disk} /tmp/mnt/cf 2>/dev/null");
-		if($result == "0") {
-			// Item was mounted - look for config.xml file
-			$config_location = discover_config($disk);
-			if($config_location) {
-				if(test_config($config_location)) {
-					// We have a valid configuration.  Install it.
-					echo " -> found ";
-					backup_config();
-					restore_backup($config_location);
-					exec("/sbin/unount /tmp/mnt/cf");
-					break;
-				}
-			}
-		}
-	}
 }
 
 function discover_config($mountpoint) {
@@ -92,7 +71,7 @@ function discover_config($mountpoint) {
 function test_config($file_location) {
 	global $g;
 	// config.xml was found.  ensure it is sound.
-	$root_obj = $g['xml_rootobj'];
+	$root_obj = trim($g['xml_rootobj']);
 	$xml_file_head = trim(`/bin/cat {$file_location} | /usr/bin/head -n1`);
 	if($xml_file_head == $root_obj) {
 		// Now parse config to make sure
@@ -101,6 +80,41 @@ function test_config($file_location) {
 			return true;
 	}
 	return false;
+}
+
+// Probes all disks looking for config.xml
+function find_config_xml() {
+	global $g;
+	$disks = get_disks();
+	$boot_disk = get_boot_disk();
+	exec("mkdir -p /tmp/mnt/cf");
+	foreach($disks as $disk) {
+		$slices = get_disk_slices($disk);
+		if(is_array($slices)) {
+			foreach($slices as $slice) {
+				echo " $slice";
+				// First try msdos fs
+				$result = exec("/sbin/mount -t msdos /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				// Next try regular fs (ufs)
+				if(!$result) 
+					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				if($result == "0") {
+					// Item was mounted - look for config.xml file
+					$config_location = discover_config($slice);
+					if($config_location) {
+						if(test_config($config_location)) {
+							// We have a valid configuration.  Install it.
+							echo " -> found ";
+							backup_config();
+							restore_backup($config_location);
+							exec("/sbin/unount /tmp/mnt/cf");
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 echo "External config loader 1.0 is now starting...";

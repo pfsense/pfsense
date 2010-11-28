@@ -27,6 +27,8 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
  
+	Currently supported file system types: MS-Dos, FreeBSD UFS
+
 */
 
 require("globals.inc");
@@ -104,6 +106,9 @@ function test_config($file_location) {
 function find_config_xml() {
 	global $g, $debug;
 	$disks = get_disks();
+	// Safety check.
+	if(!is_array($disks)) 
+		return;
 	$boot_disk = get_boot_disk();
 	exec("/bin/mkdir -p /tmp/mnt/cf");
 	foreach($disks as $disk) {
@@ -112,6 +117,11 @@ function find_config_xml() {
 			foreach($slices as $slice) {
 				if($slice == "")
 					continue;
+				if(stristr($slice, $boot_disk)) {
+					if($debug) 
+						echo "\nSkipping boot device slice $slice";
+					continue;
+				}
 				echo " $slice";
 				// First try msdos fs
 				if($debug) 
@@ -135,7 +145,7 @@ function find_config_xml() {
 							echo " -> found config.xml\n";
 							echo "Backing up old configuration...\n";
 							backup_config();
-							echo "Restoring {$config_location}...\n";
+							echo "Restoring [{$slice}] {$config_location}...\n";
 							restore_backup($config_location);
 							echo "Cleaning up...\n";
 							exec("/sbin/umount /tmp/mnt/cf");

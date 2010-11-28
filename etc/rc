@@ -342,6 +342,21 @@ cap_mkdb /etc/login.conf
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup
 
+# Launch external configuration loader for supported platforms
+if [ "$PLATFORM" = "embedded" ]; then
+	/etc/ecl.php
+fi
+
+# Launch external configuration loader for supported platforms
+if [ "$PLATFORM" = "nanobsd" ]; then
+	/etc/ecl.php
+fi
+
+# Launch external configuration loader for supported platforms
+if [ "$PLATFORM" = "pfSense" ]; then
+	/etc/ecl.php
+fi
+
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now

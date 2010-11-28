@@ -80,7 +80,7 @@ function find_config_xml() {
 
 function discover_config($mountpoint) {
 	global $g;
-	$locations_to_check = array("/", "/conf", "/conf.default", "/config");
+	$locations_to_check = array("/", "/config");
 	foreach($locations_to_check as $ltc) {
 		$tocheck = "{$mountpoint}{$ltc}/config.xml";
 		if(file_exists($tocheck)) 

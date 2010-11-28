@@ -68,7 +68,7 @@ function discover_config($mountpoint) {
 	global $g, $debug;
 	$locations_to_check = array("/", "/config");
 	foreach($locations_to_check as $ltc) {
-		$tocheck = "/tmp/mnt/cf/{$ltc}/config.xml";
+		$tocheck = "/tmp/mnt/cf{$ltc}config.xml";
 		if($debug) {
 			echo "\nChecking for $tocheck";
 			if(file_exists($tocheck)) 
@@ -132,11 +132,14 @@ function find_config_xml() {
 					if($config_location) {
 						if(test_config($config_location)) {
 							// We have a valid configuration.  Install it.
-							echo " -> found config.xml ";
+							echo " -> found config.xml\n";
+							echo "Backing up old configuration...\n";
 							backup_config();
+							echo "Restoring {$config_location}...\n";
 							restore_backup($config_location);
+							echo "Cleaning up...\n";
 							exec("/sbin/umount /tmp/mnt/cf");
-							break;
+							exit;
 						}
 						exec("/sbin/umount /tmp/mnt/cf");
 					}

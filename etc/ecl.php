@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/local/bin/php -q
 
 <?php
 /*  
@@ -31,17 +31,22 @@
 
 require("globals.inc");
 require("functions.inc");
+require("config.lib.inc");
+require("config.inc");
+
+$debug = false;
 
 function get_boot_disk() {
-	global $g;
+	global $g, $debug;
 	$disk = `/sbin/mount | /usr/bin/grep "on / " | /usr/bin/cut -d'/' -f3 | /usr/bin/cut -d' ' -f1`;
 	return $disk;
 }
 
 function get_disk_slices($disk) {
-	global $g;
+	global $g, $debug;
 	$slices_array = array();
-	$slices = `/bin/ls /dev/{$disk}s*`;
+	$slices = trim(`/bin/ls /dev/{$disk}s* 2>/dev/null`);
+	$slices = str_replace("/dev/", "", $slices);
 	if($slices == "ls: No match.") 
 		return;
 	$slices_array = split(" ", $slices);
@@ -49,7 +54,7 @@ function get_disk_slices($disk) {
 }
 
 function get_disks() {
-	global $g;
+	global $g, $debug;
 	$disks_array = array();
 	$disks = `/sbin/sysctl kern.disks | cut -d':' -f2`;
 	$disks_s = explode(" ", $disks);
@@ -60,10 +65,15 @@ function get_disks() {
 }
 
 function discover_config($mountpoint) {
-	global $g;
+	global $g, $debug;
 	$locations_to_check = array("/", "/config");
 	foreach($locations_to_check as $ltc) {
-		$tocheck = "{$mountpoint}{$ltc}/config.xml";
+		$tocheck = "/tmp/mnt/cf/{$ltc}/config.xml";
+		if($debug) {
+			echo "\nChecking for $tocheck";
+			if(file_exists($tocheck)) 
+				echo " -> found!";
+		}
 		if(file_exists($tocheck)) 
 			return $tocheck;
 	}
@@ -71,10 +81,14 @@ function discover_config($mountpoint) {
 }
 
 function test_config($file_location) {
-	global $g;
+	global $g, $debug;
 	// config.xml was found.  ensure it is sound.
-	$root_obj = trim($g['xml_rootobj']);
-	$xml_file_head = trim(`/bin/cat {$file_location} | /usr/bin/head -n1`);
+	$root_obj = trim("<{$g['xml_rootobj']}>");
+	$xml_file_head = trim(`/bin/cat {$file_location} | /usr/bin/head -n2 | /usr/bin/tail -n1`);
+	if($debug) {
+		echo "\nroot obj  = $root_obj";
+		echo "\nfile head = $xml_file_head";
+	}
 	if($xml_file_head == $root_obj) {
 		// Now parse config to make sure
 		$config_status = config_validate($file_location);
@@ -86,33 +100,45 @@ function test_config($file_location) {
 
 // Probes all disks looking for config.xml
 function find_config_xml() {
-	global $g;
+	global $g, $debug;
 	$disks = get_disks();
 	$boot_disk = get_boot_disk();
-	exec("mkdir -p /tmp/mnt/cf");
+	exec("/bin/mkdir -p /tmp/mnt/cf");
 	foreach($disks as $disk) {
 		$slices = get_disk_slices($disk);
 		if(is_array($slices)) {
 			foreach($slices as $slice) {
+				if($slice == "")
+					continue;
 				echo " $slice";
 				// First try msdos fs
-				$result = exec("/sbin/mount -t msdos /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
+				if($debug) 
+					echo "\n/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
+				$result = exec("/sbin/mount -t msdosfs /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
 				// Next try regular fs (ufs)
-				if(!$result) 
+				if(!$result) {
+					if($debug) 
+						echo "\n/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null \n";
 					$result = exec("/sbin/mount /dev/{$slice} /tmp/mnt/cf 2>/dev/null");
-				if($result == "0") {
+				}
+				$mounted = trim(exec("/sbin/mount | /usr/bin/grep -v grep | /usr/bin/grep '/tmp/mnt/cf' | /usr/bin/wc -l"));
+				if($debug) 
+					echo "\nmounted: $mounted ";
+				if(intval($mounted) > 0) {
+					echo " ! ";
 					// Item was mounted - look for config.xml file
 					$config_location = discover_config($slice);
 					if($config_location) {
 						if(test_config($config_location)) {
 							// We have a valid configuration.  Install it.
-							echo " -> found ";
+							echo " -> found config.xml ";
 							backup_config();
 							restore_backup($config_location);
-							exec("/sbin/unount /tmp/mnt/cf");
+							exec("/sbin/umount /tmp/mnt/cf");
 							break;
 						}
 					}
+					exec("/sbin/umount /tmp/mnt/cf");
 				}
 			}
 		}

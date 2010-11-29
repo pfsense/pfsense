@@ -49,9 +49,6 @@
 if(!$do_not_include_config_gui_inc)
 	require_once("config.gui.inc");
 
-// Will be changed to false if security checks fail
-$security_passed = true;
-
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
@@ -64,89 +61,30 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$http_host = $_SERVER['HTTP_HOST'];
 	}
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-			strcasecmp($http_host, "localhost") == 0)
+	   $http_host == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
 		$found_host = true;
-	if(strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
-			strcasecmp($http_host, $config['system']['hostname']) == 0)
-		$found_host = true;
-
-	if(is_array($config['dyndnses']['dyndns']) && !$found_host)
+	if($config['dyndnses']['dyndns'])
 		foreach($config['dyndnses']['dyndns'] as $dyndns)
-			if(strcasecmp($dyndns['host'], $http_host) == 0) {
+			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
 				$found_host = true;
-				break;
-			}
 
-	if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
+	if(!empty($config['system']['webgui']['althostnames'])) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)
-			if(strcasecmp($ah, $http_host) == 0 or strcasecmp($ah, $_SERVER['SERVER_ADDR']) == 0) {
+			if($ah == $http_host or $ah == $_SERVER['SERVER_ADDR'])
 				$found_host = true;
-				break;
-			}
 	}
 
-	if($found_host == false) {
-		if(!security_checks_disabled()) {
-			display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
-			exit;
-		}
-		$security_passed = false;
-	}
-}
+	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
+			$http_host == $_SERVER['SERVER_ADDR'] or
+			$http_host == $config['system']['hostname'])
+						$found_host = true;
 
-// If the HTTP_REFERER is something other than ourselves then disallow.
-if(function_exists("display_error_form") && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-	if($_SERVER['HTTP_REFERER']) {
-		if(file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
-			if($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
-				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
-				header("Refresh: 1; url=index.php");
-				echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
-				echo "<html><head><title>" . gettext("Redirecting...") . "</title></head><body>" . gettext("Redirecting to the dashboard...") . "</body></html>";
-				exit;
-			}
-		}
-		$found_host = false;
-		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-		if($referrer_host) {
-			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
-					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
-				$found_host = true;
-			if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
-				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
-				foreach ($althosts as $ah) {
-					if(strcasecmp($referrer_host, $ah) == 0) {
-						$found_host = true;
-						break;
-					}
-				}
-			}
-			if(!$found_host) {
-				$interface_list_ips = get_configured_ip_addresses();
-				foreach($interface_list_ips as $ilips) {
-					if(strcasecmp($referrer_host, $ilips) == 0) {
-						$found_host = true;
-						break;
-					}
-				}
-			}
-		}
 		if($found_host == false) {
-			if(!security_checks_disabled()) {
-				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
 				exit;
 			}
-			$security_passed = false;
-		}
-	} else
-		$security_passed = false;
 }
-
-if (function_exists("display_error_form") && $security_passed)
-	/* Security checks passed, so it should be OK to turn them back on */
-	restore_security_checks();
-unset($security_passed);
 
 $groupindex = index_groups();
 $userindex = index_users();
@@ -511,7 +449,6 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		$group['member'][] = $user['uid'];
 		$mod_groups[] = $group;
 	}
-	unset($group);
 
 	/* determine which memberships to remove */
 	foreach ($cur_groups as $groupname) {
@@ -526,7 +463,6 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 			$mod_groups[] = $group;
 		}
 	}
-	unset($group);
 
 	/* sync all modified groups */
 	foreach ($mod_groups as $group)
@@ -992,6 +928,28 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/*****************************************************************/
 	log_error("Now Searching for {$username} in directory.");
 	/* Iterate through the user containers for search */
+	/* check if the entire sting contains CN= since it will we a group except CN=Users. */
+	/* replace known default containers to be sure we find only groups */
+	  $templdapauthcont=str_ireplace("CN=Users","####",$ldapauthcont);
+    $templdapauthcont=str_ireplace("CN=Builtin","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=Computers","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=ForeignSecurityPrincipals","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=Managed Service Accounts","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=NTDS Quotas","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=Program Data","####",$templdapauthcont);
+    $templdapauthcont=str_ireplace("CN=System","####",$templdapauthcont);
+    if ( stristr($templdapauthcont,"CN=") ){
+        log_error("The container string contains at least one group, we need to find user DN now");
+        $searchUser = ldap_search($ldap,$ldapbasedn,$ldapfilter);
+        $infoUser = ldap_get_entries($ldap,$searchUser);
+        if ( $infoUser['count'] == 0 ){
+          log_error("User does not exists");
+          return false;
+        }else{
+            log_error("User found");
+            $userDN = $infoUser[0]['distinguishedname'][0];
+        }
+     }
 	foreach ($ldac_splits as $i => $ldac_split) {
 		/* Make sure we just use the first user we find */
 		log_error("Now Searching in server {$ldapname}, container {$ldac_split} with filter {$ldapfilter}.");
@@ -1000,10 +958,57 @@ function ldap_backed($username, $passwd, $authcfg) {
 		else
 			$ldapfunc = "ldap_search";
 		/* Support legacy auth container specification. */
-		if (stristr($ldac_split, "DC=") || empty($ldapbasedn))
-			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
-		else
-			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
+		if (stristr($ldac_split, "DC=")){
+		  $baseDN = $ldac_split; 
+		}else{
+		  $baseDN = $ldac_split.",".$ldapbasedn; 
+    }
+    if (stristr($ldac_split, "CN=")){
+           $searchGroup = ldap_search($ldap,$ldapbasedn,"(&(objectclass=group)(distinguishedname={$baseDN}))");
+	         $infoGroup    = ldap_get_entries($ldap,$searchGroup);
+           if ($infoGroup['count'] == 1){
+	         log_error("We found the group");
+              if( $infoGroup[0]['member']['count'] == 0){
+                  /* group is empty */
+                  log_error("group is empty");
+		              continue;
+	            }
+	           if( $infoGroup[0]['member']['count'] == 1){
+		            /*group has only one member*/
+	               log_error("group has only one member");
+	               if ( strcasecmp($userDN,$infoGroup[0]['member'][0]) == 0 ){
+                    	$userdn = $userDN;
+		                  $_SESSION['ldapou'] = $ldac_split[$i];
+		                  $_SESSION['ldapon'] = "true";
+		                  $usercount = 1;
+		                  break;
+                  }else{
+                      continue;
+                  }			            
+	           }else{
+	             /*Group has more than one member*/
+	      	      log_error("group has more than one member");
+                foreach ($infoGroup[0]['member'] as $j => $memberDN){
+		 	              if ( strcasecmp($userDN,$memberDN) == 0 ){
+				                log_error("User is a member of the group");
+				                $userdn = $_SESSION['ldapdn'] = $userDN;
+                        $_SESSION['ldapou'] = $ldac_split;
+                        $_SESSION['ldapon'] = "true";
+		        	          $usercount = 1;	
+		   		               break;
+	         	         }else{
+                		    continue;
+                 	  }
+       	        }
+            }   
+   	      }   
+	     if ( $usercount == 1 ){
+		      break;	
+	     }           
+    }else{
+            /* Normal container, OU or builtin*/
+              $search	 = @$ldapfunc($ldap,$baseDN,$ldapfilter);
+    }
 		if (!$search) {
 			log_error("Search resulted in error: " . ldap_error($ldap));
 			continue;

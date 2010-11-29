@@ -841,6 +841,7 @@ if($_REQUEST['undodrag']) {
   <script type="text/javascript">
 	var number_of_rules = <?=$nrules?>;
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
+/*
 	Sortable.create("dragtable", { 
 		tag:"tr", 
 		format:"fr([0-9999999])",
@@ -853,6 +854,7 @@ if($_REQUEST['undodrag']) {
 			updateOrder(Sortable.serialize('dragtable', 'tr'));
 		} 
 	});
+*/
 <?php endfor; ?>
 	function updateOrder(order) {
 		if(document.getElementById("redboxtable"))

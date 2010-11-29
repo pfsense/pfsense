@@ -16,7 +16,7 @@ fi
 
 # Check for different HZ 
 if [ -f /boot/loader.conf ]; then
-	HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
+	HZ=`grep kern.hz /boot/loader.conf | wc -l | awk '{ print $1 }'`
 	if [ "$HZ" = "1" ]; then
 		NOTELENGTH="10"
 	fi

@@ -52,9 +52,10 @@ function activate_powerd() {
 
 function get_default_sysctl_value($id) {
 	global $sysctls;
-
-	if (isset($sysctls[$id]))
-		return $value;
+	foreach($sysctls as $sysctl => $value) {
+		if($sysctl == $id)
+			return $value;
+	}
 }
 
 function activate_sysctls() {

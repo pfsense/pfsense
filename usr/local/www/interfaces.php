@@ -874,7 +874,7 @@ function check_wireless_mode() {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), strtoupper($pconfig['descr']));
+$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
 $statusurl = "status_interfaces.php";
 
 $closehead = false;

@@ -38,14 +38,14 @@ $debug = false;
 
 function get_boot_disk() {
 	global $g, $debug;
-	$disk = `/sbin/mount | /usr/bin/grep "on / " | /usr/bin/cut -d'/' -f3 | /usr/bin/cut -d' ' -f1`;
+	$disk = exec("/sbin/mount | /usr/bin/grep \"on / \" | /usr/bin/cut -d'/' -f3 | /usr/bin/cut -d' ' -f1");
 	return $disk;
 }
 
 function get_disk_slices($disk) {
 	global $g, $debug;
 	$slices_array = array();
-	$slices = trim(`/bin/ls /dev/{$disk}s* 2>/dev/null`);
+	$slices = trim(exec("/bin/ls /dev/{$disk}s* 2>/dev/null"));
 	$slices = str_replace("/dev/", "", $slices);
 	if($slices == "ls: No match.") 
 		return;
@@ -56,7 +56,7 @@ function get_disk_slices($disk) {
 function get_disks() {
 	global $g, $debug;
 	$disks_array = array();
-	$disks = `/sbin/sysctl kern.disks | cut -d':' -f2`;
+	$disks = exec("/sbin/sysctl kern.disks | cut -d':' -f2");
 	$disks_s = explode(" ", $disks);
 	foreach($disks_s as $disk) 
 		if(trim($disk))

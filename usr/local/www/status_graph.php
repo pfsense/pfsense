@@ -174,7 +174,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
 	if ($ifn == $curif) echo " selected";
-	echo ">" . strtoupper(htmlspecialchars($ifd)) . " (" . strtoupper($ifn) . ")</option>\n";
+	echo ">" . htmlspecialchars($ifd) . "</option>\n";
 }
 ?>
 </select>

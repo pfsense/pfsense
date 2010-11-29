@@ -559,6 +559,7 @@ function step8_stepsubmitphpaction() {
 function step9_stepsubmitphpaction() {
 	global $g, $config;
 	header("status_filter_reload.php");
+	exit;
 }
 
 function apply_all_choosen_items() {

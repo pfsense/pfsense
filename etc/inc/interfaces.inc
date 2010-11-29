@@ -1467,7 +1467,7 @@ function interfaces_carp_setup() {
 	} else
 		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", true);		
 
-	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", true);
+	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=1", true);
 	if (!empty($pfsyncinterface))
 		$carp_sync_int = get_real_interface($pfsyncinterface);
 

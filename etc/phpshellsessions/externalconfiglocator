@@ -1,0 +1,5 @@
+global $config;
+
+$config = parse_config(true);
+
+require("/etc/ecl.php");

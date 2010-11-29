@@ -354,7 +354,7 @@ fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "pfSense" ]; then
-	/etc/ecl.php
+	/usr/local/bin/php -q /etc/ecl.php
 fi
 
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status

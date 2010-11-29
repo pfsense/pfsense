@@ -978,21 +978,18 @@ function setup_serial_port() {
 		}
 		/* serial console - write out /boot/loader.conf */
 		$boot_config = file_get_contents("/boot/loader.conf");
-		$boot_config_split = split("\n", $boot_config);
-		$fd = fopen("/boot/loader.conf","w");
-		if($fd) {
-			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "console")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */
-				} else {
-					if($bcs <> "")
-						fwrite($fd, "{$bcs}\n");
-				}
-			}
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "console=\"comconsole\"\n");
-			}
-			fclose($fd);
+		$boot_config_split = explode("\n", $boot_config);
+		if(count($boot_config_split) > 0) {
+			$new_boot_config = array();
+			// Loop through and only add lines that are not empty, and which
+			//  do not contain a console directive.
+			foreach($boot_config_split as $bcs)
+				if(!empty($bcs) && (stripos($bcs, "console") === false))
+					$new_boot_config[] = $bcs;
+
+			if(isset($config['system']['enableserial']))
+				$new_boot_config[] = 'console="comconsole"');
+			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config));
 		}
 	}
 	$ttys = file_get_contents("/etc/ttys");

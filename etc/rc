@@ -332,11 +332,11 @@ echo "done."
 if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
 	echo ">>> Restoring /etc/gettytab due to unusal size"
 	echo ">>> Restoring /etc/gettytab due to unusal size" | /usr/bin/logger
-	cp /etc/gettytab.bak /etc/gettytab
+	/bin/cp /etc/gettytab.bak /etc/gettytab
 fi
 
 # Recreate capabilities DB
-cap_mkdb /etc/login.conf
+/usr/bin/cap_mkdb /etc/login.conf
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
@@ -394,12 +394,12 @@ echo "done."
 /bin/chmod a+rw /tmp/.
 
 echo "Bootup complete"
-rm $varrunpath/booting
+/bin/rm $varrunpath/booting
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 # Reset the cache.  read-only requires this.
-rm /tmp/config.cache
+/bin/rm /tmp/config.cache
 
 /etc/rc.conf_mount_ro
 

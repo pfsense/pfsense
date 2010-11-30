@@ -1734,6 +1734,8 @@ function upgrade_054_to_055() {
 	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
+	if (!file_exists($rrddbpath))
+		@mkdir($rrddbpath);
 	chdir($rrddbpath);
 	$databases = glob("*-quality.rrd");
 	rsort($databases);

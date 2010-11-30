@@ -344,12 +344,12 @@ cap_mkdb /etc/login.conf
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "embedded" ]; then
-	/etc/ecl.php
+	/usr/local/bin/php -q /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then
-	/etc/ecl.php
+	/usr/local/bin/php -q /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms

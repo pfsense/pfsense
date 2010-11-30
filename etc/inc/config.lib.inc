@@ -433,27 +433,31 @@ function convert_config() {
  *   boolean - true if successful, false if not
  ******/
 function safe_write_file($file, $content, $force_binary) {
-        $tmp_file = $file . "." . getmypid();
-        $write_mode = $force_binary ? "wb" : "w";
+		$tmp_file = $file . "." . getmypid();
+		$write_mode = $force_binary ? "wb" : "w";
 
-        $fd = fopen($tmp_file, $write_mode);
-        if (!$fd) {
-                // Unable to open temporary file for writing
-                return false;
+		$fd = fopen($tmp_file, $write_mode);
+		if (!$fd) {
+			// Unable to open temporary file for writing
+			return false;
         }
-        if (!fwrite($fd, $content)) {
-                // Unable to write to temporary file
-                fclose($fd);
-                return false;
-        }
-        fclose($fd);
+		if (!fwrite($fd, $content)) {
+			// Unable to write to temporary file
+			fclose($fd);
+			return false;
+		}
+		fclose($fd);
 
-        if (!rename($tmp_file, $file)) {
-                // Unable to move temporary file to original
-                unlink($tmp_file);
-                return false;
-        }
-        return true;
+		if (!rename($tmp_file, $file)) {
+			// Unable to move temporary file to original
+			unlink($tmp_file);
+			return false;
+		}
+
+		// Sync file before returning
+		exec("/bin/sync");
+
+		return true;
 }
 
 /****f* config/write_config

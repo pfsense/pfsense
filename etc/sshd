@@ -176,7 +176,7 @@
 	if($g['platform'] == "nanobsd") {
 		if(!is_dir("/conf/sshd"))
 			exec("mkdir /conf/sshd");
-		exec("cp /etc/ssh/ssh_host* /conf/sshd");
+		exec("/bin/cp -p /etc/ssh/ssh_host* /conf/sshd");
 	}
 	conf_mount_ro();
 

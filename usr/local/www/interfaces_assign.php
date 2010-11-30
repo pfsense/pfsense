@@ -302,7 +302,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if ($_GET['act'] == "add") {
+if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) {
 	/* find next free optional interface number */
 	if(!$config['interfaces']['lan']) {
 		$newifname = gettext("lan");
@@ -348,7 +348,8 @@ if ($_GET['act'] == "add") {
 
 	$savemsg = gettext("Interface has been added.");
 
-}
+} else if ($_GET['act'] == "add")
+	$input_errors[] = "No more interfaces available to be assigned.";
 
 include("head.inc");
 

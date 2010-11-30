@@ -201,6 +201,7 @@ function resync_all_package_configs($show_message = false) {
 	if($show_message == true)
 		echo "Syncing packages:";
 
+	conf_mount_rw();
 	foreach($config['installedpackages']['package'] as $idx => $package) {
 		if (empty($package['name']))
 			continue;
@@ -215,6 +216,7 @@ function resync_all_package_configs($show_message = false) {
 	if($show_message == true)
 		echo " done.\n";
 	@unlink("/conf/needs_package_sync");
+	conf_mount_ro();
 }
 
 /*

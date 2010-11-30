@@ -988,7 +988,7 @@ function setup_serial_port() {
 					$new_boot_config[] = $bcs;
 
 			if(isset($config['system']['enableserial']))
-				$new_boot_config[] = 'console="comconsole"');
+				$new_boot_config[] = 'console="comconsole"';
 			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config));
 		}
 	}

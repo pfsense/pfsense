@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck	/bin/sync
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -353,7 +353,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	mwexec("/bin/sync; /bin/sync");
+	pfSense_sync();
 	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f /");
 }
@@ -455,7 +455,7 @@ function safe_write_file($file, $content, $force_binary) {
 		}
 
 		// Sync file before returning
-		exec("/bin/sync");
+		pfSense_sync();
 
 		return true;
 }

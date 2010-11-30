@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/bin/sync	/usr/local/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
@@ -1333,7 +1333,7 @@ function system_set_harddisk_standby() {
 		// Check for a numeric value
 		if (is_numeric($standby)) {
 			// Sync the disk(s)
-			mwexec('/bin/sync');
+			pfSense_sync();
 			if (!mwexec('/sbin/sysctl hw.ata.standby=' . ((int)$standby))) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');

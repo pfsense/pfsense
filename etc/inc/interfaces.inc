@@ -336,6 +336,12 @@ function interface_bridge_configure(&$bridge) {
 			$commontx = false;
 		if (!isset($opts['encaps']['rxcsum']))
 			$commonrx = false;
+		if (!isset($opts['encaps']['tso4']))
+			$commontso4 = false;
+		if (!isset($opts['encaps']['tso6']))
+			$commontso6 = false;
+		if (!isset($opts['encaps']['lro']))
+			$commonlro = false;
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
 		else if (!empty($mtu) && $mtu < $smallermtu)
@@ -347,10 +353,16 @@ function interface_bridge_configure(&$bridge) {
 		$smallermtu = 1500; 
 
 	$flags = 0;
-	if ($commonrx == false)
+	if ($commonrx === false)
 		$flags |= IFCAP_RXCSUM;
-	if ($commontx == false)
+	if ($commontx === false)
 		$flags |= IFCAP_TXCSUM;
+	if ($commontso4 === false)
+		$flags |= IFCAP_TSO4;
+	if ($commontso6 === false)
+		$flags |= IFCAP_TSO6;
+	if ($commonlro === false)
+		$flags |= IFCAP_LRO;
 		
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
@@ -543,7 +555,18 @@ function interface_lagg_configure(&$lagg) {
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
         foreach ($members as $member) {
-                $mtu = get_interface_mtu($member);
+		$opts = pfSense_get_interface_addresses($member);
+                $mtu = $opts['mtu'];
+		if (!isset($opts['encaps']['txcsum']))
+                        $commontx = false;
+                if (!isset($opts['encaps']['rxcsum']))
+                        $commonrx = false;
+		if (!isset($opts['encaps']['tso4']))
+			$commontso4 = false;
+		if (!isset($opts['encaps']['tso6']))
+			$commontso6 = false;
+		if (!isset($opts['encaps']['lro']))
+			$commonlro = false;
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
                 else if (!empty($mtu) && $mtu < $smallermtu)
@@ -554,11 +577,24 @@ function interface_lagg_configure(&$lagg) {
         if ($smallermtu == 0)
                 $smallermtu = 1500;
 
+	$flags = 0;
+        if ($commonrx === false)
+                $flags |= IFCAP_RXCSUM;
+        if ($commontx === false)
+                $flags |= IFCAP_TXCSUM;
+	if ($commontso4 === false)
+                $flags |= IFCAP_TSO4;
+        if ($commontso6 === false)
+                $flags |= IFCAP_TSO6;
+        if ($commonlro === false)
+                $flags |= IFCAP_LRO;
+
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($member, $smallermtu);
+		pfSense_interface_capabilities($member, -$flags);
 		interfaces_bring_up($member);
 		mwexec("/sbin/ifconfig {$laggif} laggport {$member}");
 	}

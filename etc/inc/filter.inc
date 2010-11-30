@@ -515,6 +515,7 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n#SSH Lockout Table\n";
 	$aliases .= "table <sshlockout> persist\n";
+	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort2C table\n";
 	$aliases .= "table <snort2c>\n";
@@ -2045,6 +2046,17 @@ EOD;
 			$sshport = 22;
 		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
 	}
+
+	$ipfrules .= "\n# webConfigurator lockout\n";
+	if(!isset($config['webgui']['port'])) {
+		if($config['webgui']['protocol'] == "http") 
+			$webConfiguratorlockoutport = "80";
+		elseif($config['webgui']['protocol'] == "https") 
+			$webConfiguratorlockoutport = "443";
+	} else {
+		$webConfiguratorlockoutport = $config['webgui']['port'];
+	}
+	$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate

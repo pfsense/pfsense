@@ -1667,10 +1667,11 @@ function upgrade_053_to_054() {
 					$monitor = $split[1];
 					/* on static upgraded configuration we automatically prepend GW_ */
 					$static_name = "GW_" . strtoupper($interface);
-					if(is_ipaddr($monitor)) {
-						$interface = $static_name;
-						$config['interfaces'][$interface]['monitorip'] = $monitor;
-					}
+					if(is_ipaddr($monitor))
+						foreach ($a_gateways as & $gw)
+							if ($gw['name'] == $static_name)
+								$gw['monitor'] = $monitor;
+
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {
 						$i++;

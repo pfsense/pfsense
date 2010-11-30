@@ -145,6 +145,9 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
+	if (isset($config['system']['kill_states']))
+		return;
+
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
                 foreach ($GatewaysList as $gwname => $gateway) {

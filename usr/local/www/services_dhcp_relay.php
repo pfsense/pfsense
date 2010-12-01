@@ -176,19 +176,9 @@ function enable_change(enable_over) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php 
-	if ($dhcpd_enabled) {
-		echo "DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
-		include("fend.inc"); 
-		echo "</body>";
-		echo "</html>";
-		exit;
-	}
-?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>  
   <?php
@@ -213,6 +203,15 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
+<?php 
+	if ($dhcpd_enabled) {
+		echo "DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
+		echo "</td></tr></table></div></td></tr></table></body>";
+		echo "</html>";
+		include("fend.inc"); 
+		exit;
+	}
+?>
 <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                           <strong>Enable DHCP relay on
                           <?=htmlspecialchars($iflist[$if]);?>

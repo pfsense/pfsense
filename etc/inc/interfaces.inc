@@ -3112,7 +3112,7 @@ function link_interface_to_group($int) {
 
         if (is_array($config['ifgroups']['ifgroupentry'])) {
                 foreach ($config['ifgroups']['ifgroupentry'] as $group) {
-			if (in_array($int, explode(" ", $groupname['members'])))
+			if (in_array($int, explode(" ", $group['members'])))
                                 return "{$group['ifname']}";
 		}
 	}

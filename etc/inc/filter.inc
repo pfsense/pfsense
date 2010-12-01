@@ -2053,7 +2053,7 @@ EOD;
 	if(!$config['system']['webgui']['port']) {
 		if($config['system']['webgui']['protocol'] == "http") 
 			$webConfiguratorlockoutport = "80";
-		elseif($config['system']['webgui']['protocol'] == "https") 
+		else
 			$webConfiguratorlockoutport = "443";
 	} else {
 		$webConfiguratorlockoutport = $config['system']['webgui']['port'];

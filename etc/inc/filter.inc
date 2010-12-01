@@ -1508,11 +1508,12 @@ function filter_nat_rules_generate() {
 	fclose($inetd_fd);		// Close file handle
 	// Check if inetd is running, if not start it.	If so, restart it gracefully.
 	$helpers = isvalidproc("inetd");
-	if(!$helpers)
-		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
-	else
-		sigkillbypid("/var/run/inetd.pid", "HUP");
-
+	if(file_exists("/var/etc/inetd.conf")) {
+		if(!$helpers)
+			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+		else
+			sigkillbypid("/var/run/inetd.pid", "HUP");
+	}
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();

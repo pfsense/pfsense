@@ -130,12 +130,17 @@ function enable_change(enable_over) {
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php 
-	if ($dhcpd_enabled):
-		echo gettext("DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.");
-	else:
-?>
 		<tr>
+<?php 
+	if ($dhcpd_enabled) {
+		echo "<td>DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
+			echo "</td></tr></table></div></td></tr></table></body>";
+			echo "</html>";
+			include("fend.inc"); 
+			exit;
+		}
+?>
+
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP Relay configuration"); ?></td>
 		</tr>
 		<tr>
@@ -184,7 +189,6 @@ function enable_change(enable_over) {
                           <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
                         </td>
 		</tr>
-<?php endif; ?>
 	</table>
 	</div>
     </td>

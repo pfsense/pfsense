@@ -38,7 +38,7 @@
 
 /* kill a process by pid file */
 function killbypid($pidfile) {
-	sigkillbypid($pidfile, "TERM");
+	return sigkillbypid($pidfile, "TERM");
 }
 
 function isvalidpid($pid) {
@@ -808,17 +808,16 @@ function exec_command($command) {
 
 /* wrapper for exec() */
 function mwexec($command, $mute = false) {
-
 	global $g;
-	$oarr = array();
-	$retval = 0;
+
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
-		exec("$command 2>&1", $oarr, $retval);
-	} else {
-		exec("$command 2>&1", $oarr, $retval);
 	}
+	$oarr = array();
+	$retval = 0;
+	$garbage = exec("$command 2>&1", $oarr, $retval);
+
 	if(isset($config['system']['developerspew']))
                 $mute = false;
 	if(($retval <> 0) && ($mute === false)) {

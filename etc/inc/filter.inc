@@ -2048,13 +2048,13 @@ EOD;
 	}
 
 	$ipfrules .= "\n# webConfigurator lockout\n";
-	if(!isset($config['webgui']['port'])) {
-		if($config['webgui']['protocol'] == "http") 
+	if(!$config['system']['webgui']['port']) {
+		if($config['system']['webgui']['protocol'] == "http") 
 			$webConfiguratorlockoutport = "80";
-		elseif($config['webgui']['protocol'] == "https") 
+		elseif($config['system']['webgui']['protocol'] == "https") 
 			$webConfiguratorlockoutport = "443";
 	} else {
-		$webConfiguratorlockoutport = $config['webgui']['port'];
+		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
 	}
 	$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
 

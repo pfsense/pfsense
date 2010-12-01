@@ -354,6 +354,8 @@ function filter_configure_sync() {
 			fclose($filterdnsfd);
 		}
 		killbypid("{$g['tmp_path']}/filterdns.pid");
+		// XXX: this is temporary
+		exec("killall -9 filterdns");
 		/*
 		 * FilterDNS has three debugging levels. The default choosen is 1.
 		 * Availabe are level 2 and greater then 2.

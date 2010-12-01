@@ -2044,7 +2044,8 @@ EOD;
 			$sshport = $config['system']['ssh']['port'];
 		else
 			$sshport = 22;
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
+		if($sshport)
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
 	}
 
 	$ipfrules .= "\n# webConfigurator lockout\n";
@@ -2056,7 +2057,8 @@ EOD;
 	} else {
 		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
 	}
-	$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
+	if($webConfiguratorlockoutport)
+		$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate

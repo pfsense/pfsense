@@ -42,7 +42,7 @@ require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = gettext("Diagnostics: PFTop");
+$pgtitle = gettext("Diagnostics: pfTop");
 
 if($_REQUEST['getactivity']) {
 	if($_REQUEST['sorttype'])

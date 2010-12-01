@@ -808,7 +808,8 @@ function delete_package($pkg) {
 		update_output_window($static_output);
 		return;
 	} else {
-		$static_output .= "\tStarting package deletion for {$pkg}...";
+		if($pkg)
+			$static_output .= "\tStarting package deletion for {$pkg}...";
 		update_output_window($static_output);
 	}
 	$info = "";

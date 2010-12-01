@@ -738,7 +738,6 @@ function delete_package($pkg, $pkgid) {
 	update_output_window($static_output);
 	$pkgid = get_pkg_id($pkgid);
 	$pkg_info = $config['installedpackages']['package'][$pkgid];
-
 	$configfile = $pkg_info['configurationfile'];
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= "\nLoading package configuration $configfile... ";
@@ -754,7 +753,8 @@ function delete_package($pkg, $pkgid) {
 			require_once($pkg_config['include_file']);
 		}
 	}
-	$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";
+	if($pkg_info['name'])
+		$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";
 	update_output_window($static_output);
 	delete_package_recursive($pkg);
 	remove_freebsd_package($pkg_info['name']);

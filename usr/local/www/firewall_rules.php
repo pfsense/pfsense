@@ -550,7 +550,7 @@ if($_REQUEST['undodrag']) {
 				$schedstatus = false;
 				$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 				$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
-				if($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])){
+				if($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])) {
 					foreach ($a_schedules as $schedule)
 					{
 						if ($schedule['name'] == $filterent['sched'] ){

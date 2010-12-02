@@ -1896,6 +1896,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 		pfSense_interface_rename($newif, $realif);
 		// FIXME: not sure what ngctl is for. Doesn't work.
 		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
+		file_put_contents("{$g['tmp_path']}/{$realif}_oldmac", get_interface_mac($realif));
 	}
 	return true;
 }
@@ -2256,6 +2257,14 @@ EOD;
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
 		}
 		if ($wlcfg['mode'] == "hostap") {
+			/* restore old mac to make hostapd happy */
+			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
+				$if_oldmac = file_get_contents("{$g['tmp_path']}/{$if}_oldmac");
+				if (is_macaddr($if_oldmac))
+					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
+						" link " . escapeshellarg($if_oldmac) . "\n");
+			}
+
 			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
 		}
 	}

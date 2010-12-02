@@ -117,7 +117,7 @@ if ($_POST) {
 
 		conf_mount_rw();
 
-		mwexec("/bin/rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . ".cache");
+		unlink("{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}{$dyndns['host']}.cache");
 
 		$retval = services_dyndns_configure_client($dyndns);
 

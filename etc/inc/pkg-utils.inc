@@ -35,9 +35,8 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/cd	/usr/bin/tar	/bin/cat	/usr/sbin/fifolog_create	/bin/chmod
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/sbin/pkg_info	/usr/sbin/pkg_delete	/bin/rm	/bin/ls
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
+	pfSense_BUILDER_BINARIES:	/usr/bin/cd	/usr/bin/tar	/usr/sbin/fifolog_create	/bin/chmod
+	pfSense_BUILDER_BINARIES:	/usr/sbin/pkg_add	/usr/sbin/pkg_info	/usr/sbin/pkg_delete	/bin/rm
 	pfSense_MODULE:	pkg
 */
 

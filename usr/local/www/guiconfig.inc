@@ -1059,7 +1059,8 @@ function rule_popup($src,$srcport,$dst,$dstport){
                         	$alias_caption = substr($alias_caption, 0, $maxlength) . "...";
 
 			$alias_caption_escaped = str_replace("'", "\'", $alias_caption);
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$alias_caption_escaped</h1><p>$alias_content_text</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+			$alias_content_escaped = str_replace("'", "\'", $alias_content_text);
+			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$alias_caption_escaped</h1><p>$alias_content_escaped</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
 
                 	if ($alias_name['name'] == $src)
                         	$alias_src_span_begin = $span_begin;

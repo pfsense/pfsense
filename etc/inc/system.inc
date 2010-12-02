@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/bin/sync	/usr/local/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
@@ -52,10 +52,9 @@ function activate_powerd() {
 
 function get_default_sysctl_value($id) {
 	global $sysctls;
-	foreach($sysctls as $sysctl => $value) {
-		if($sysctl == $id)
-			return $value;
-	}
+
+	if (isset($sysctls[$id]))
+		return $sysctls[$id];
 }
 
 function activate_sysctls() {
@@ -455,11 +454,9 @@ function system_syslogd_start() {
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
-					$pkgfacilities[] = $package['logging']['facilityname'];
-					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
-					$facilitylist = implode(',', $pkgfacilities);
+					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}
 		}
@@ -623,12 +620,12 @@ EOD;
 		fclose($fd);
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 		else
-			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec("/usr/sbin/syslogd -c");
+		$retval = mwexec("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log");
 	}
 
 	if ($g['booting'])
@@ -1334,7 +1331,7 @@ function system_set_harddisk_standby() {
 		// Check for a numeric value
 		if (is_numeric($standby)) {
 			// Sync the disk(s)
-			mwexec('/bin/sync');
+			pfSense_sync();
 			if (!mwexec('/sbin/sysctl hw.ata.standby=' . ((int)$standby))) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');

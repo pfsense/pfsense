@@ -58,9 +58,11 @@ if($_REQUEST['action']) {
 				$_REQUEST['data'] = str_replace("\r", "", base64_decode($_REQUEST['data']));
 				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
 				conf_mount_ro();
-				if($_REQUEST['file'] == "config.xml")
+				if($_REQUEST['file'] == "/conf/config.xml" || $_REQUEST['file'] == "/cf/conf/config.xml") {
 					if(file_exists("/tmp/config.cache"))
 						unlink("/tmp/config.cache");
+					disable_security_checks();
+				}
 				if($ret === false) {
 					echo "|" . gettext("Failed to write file") . ".|";
 				} elseif($ret <> strlen($_REQUEST['data'])) {

@@ -174,7 +174,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
 	if ($ifn == $curif) echo " selected";
-	echo ">" . strtoupper(htmlspecialchars($ifd)) . " (" . strtoupper($ifn) . ")</option>\n";
+	echo ">" . htmlspecialchars($ifd) . "</option>\n";
 }
 ?>
 </select>
@@ -184,8 +184,8 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p>
 <div id="niftyOutter">
     <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=strtoupper(rawurlencode($ifdescrs[htmlspecialchars($curif)]));?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
-            <param name="src" value="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=strtoupper(rawurlencode($ifdescrs[htmlspecialchars($curif)]));?>" />
+        <object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
+            <param name="src" value="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" />
             <?=gettext("Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin"); ?>.
         </object>
     </div>

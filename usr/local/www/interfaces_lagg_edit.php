@@ -47,14 +47,18 @@ $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
 
+$realifchecklist = array();
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-        foreach ($config['laggs']['lagg'] as $lagg)
+        foreach ($config['laggs']['lagg'] as $lagg) {
                 unset($portlist[$lagg['laggif']]);
+		$laggiflist = explode(",", $lagg['members']);
+		foreach ($laggiflist as $tmpif)
+			$realifchecklist[get_real_interface($tmpif)] = $tmpif;
+	}
 }
 
 $checklist = get_configured_interface_list(false, true);
-$realifchecklist = array();
 foreach ($checklist as $tmpif)
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 

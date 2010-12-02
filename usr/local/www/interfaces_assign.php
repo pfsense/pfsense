@@ -302,7 +302,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if ($_GET['act'] == "add") {
+if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) {
 	/* find next free optional interface number */
 	if(!$config['interfaces']['lan']) {
 		$newifname = gettext("lan");
@@ -348,7 +348,8 @@ if ($_GET['act'] == "add") {
 
 	$savemsg = gettext("Interface has been added.");
 
-}
+} else if ($_GET['act'] == "add")
+	$input_errors[] = "No more interfaces available to be assigned.";
 
 include("head.inc");
 
@@ -401,7 +402,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   </tr>
   <?php foreach ($config['interfaces'] as $ifname => $iface):
   	if ($iface['descr'])
-		$ifdescr = strtoupper($iface['descr']);
+		$ifdescr = $iface['descr'];
 	else
 		$ifdescr = strtoupper($ifname);
 	?>
@@ -414,7 +415,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				<?php if ($portinfo['isvlan']) {
 					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
-					$descr .= " (" . strtoupper($portinfo['descr']) . ")";
+					$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);
 				} elseif ($portinfo['iswlclone']) {
 					$descr = $portinfo['cloneif'];
@@ -453,7 +454,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	</td>
 	<td valign="middle" class="list">
 		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a> 
+		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a> 
 		  <?php endif; ?>
 		</td>
   </tr>

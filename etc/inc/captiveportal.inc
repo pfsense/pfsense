@@ -608,6 +608,7 @@ EOD;
 
 	$rulenum = 65310;
 	$ipcount = 0;
+	$ips = "";
 	foreach ($cpips as $cpip) {
 		if($ipcount == 0) {
 			$ips = "{$cpip} ";
@@ -616,7 +617,7 @@ EOD;
 		}
 		$ipcount++;
 	}
-	$ips = "{ {$ips} }";
+	$ips = "{ 255.255.255.255 or {$ips} }";
 	$cprules .= "add {$rulenum} set 1 pass ip from any to {$ips} in\n";
 	$rulenum++;
 	$cprules .= "add {$rulenum} set 1 pass ip from {$ips} to any out\n";

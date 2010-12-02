@@ -427,6 +427,7 @@ function mode_change() {
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("gwredir_opts").style.display="none";
 			document.getElementById("local_opts").style.display="none";
 			document.getElementById("authmodetr").style.display="none";
 			document.getElementById("inter_client_communication").style.display="none";
@@ -434,6 +435,7 @@ function mode_change() {
 		case "p2p_tls":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_opts").style.display="";
 			document.getElementById("authmodetr").style.display="none";
 			document.getElementById("inter_client_communication").style.display="none";
@@ -443,6 +445,7 @@ function mode_change() {
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_opts").style.display="";
 			document.getElementById("inter_client_communication").style.display="";
 			break;
@@ -451,10 +454,12 @@ function mode_change() {
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_opts").style.display="";
 			document.getElementById("inter_client_communication").style.display="";
 			break;
 	}
+	gwredir_change();
 }
 
 function autokey_change() {
@@ -900,7 +905,7 @@ if ($savemsg)
 							"to connecting clients. (see Address Pool)"); ?>
 						</td>
 					</tr>
-					<tr>
+					<tr id="gwredir_opts">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Redirect Gateway"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">

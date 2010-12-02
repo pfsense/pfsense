@@ -645,7 +645,8 @@ EOF;
 		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
 		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
-		$release = trim(`uname -r | cut -d'.' -f1`);
+		$release = php_uname("r");
+		$release = $release[0];
 		if($release == "9")
 			$custom_txt .=  "<option value='UFS+J'>UFS + Journaling</option>\n";
 		if(file_exists("/boot/gptzfsboot")) 

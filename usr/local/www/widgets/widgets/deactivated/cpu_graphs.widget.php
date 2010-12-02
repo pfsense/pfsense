@@ -70,4 +70,3 @@ require_once("functions.inc");
     //GraphDynamicScale(graph[0]);
 
 </script>
-

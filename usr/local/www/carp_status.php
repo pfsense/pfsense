@@ -47,13 +47,11 @@ function gentitle_pkg($pgname) {
 
 unset($interface_arr_cache);
 unset($carp_interface_count_cache);
-unset($carp_query);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
-		$carp_ints = get_all_carp_interfaces();
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
@@ -110,10 +108,13 @@ include("head.inc");
 		<tr>
 			<td>
 <?php
+			$carpcount = 0;
 			if(is_array($config['virtualip']['vip'])) {
 				foreach($config['virtualip']['vip'] as $carp) {
-					if ($carp['mode'] == "carp") 
+					if ($carp['mode'] == "carp") {
 						$carpcount++;
+						break;
+					}
 				}
 			}
 			if($carpcount > 0) {
@@ -146,13 +147,14 @@ include("head.inc");
 
 				if(is_array($config['virtualip']['vip'])) {
 					foreach($config['virtualip']['vip'] as $carp) {
-						if ($carp['mode'] != "carp") continue;
+						if ($carp['mode'] != "carp")
+							continue;
 						$ipaddress = $carp['subnet'];
 						$password = $carp['password'];
 						$netmask = $carp['subnet_bits'];
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
-						$carp_int = find_carp_interface($ipaddress);
+						$carp_int = "vip{$vhid}";
 						$status = get_carp_interface_status($carp_int);
 						echo "<tr>";
 						$align = "valign='middle'";

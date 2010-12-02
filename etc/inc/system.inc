@@ -454,9 +454,7 @@ function system_syslogd_start() {
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
-					$pkgfacilities[] = $package['logging']['facilityname'];
-					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
-					$facilitylist = implode(',', $pkgfacilities);
+					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
 					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}

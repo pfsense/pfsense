@@ -99,8 +99,7 @@ conf_mount_ro();
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	$todel = substr(reverse_strrchr($packagestring, "."), 0, -1);
-	exec("/usr/sbin/pkg_delete -x {$todel}");
+	exec("/usr/sbin/pkg_delete -x {$packagestring}");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -456,7 +455,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				$depend_filename = $working_depend[1] . $pkg_extension;
 			else
 				$depend_filename = $working_depend[1];
-			if (is_freebsd_pkg_installed($working_depend[1]) === false) {
+			if (!is_freebsd_pkg_installed($working_depend[1])) {
 				if (pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url) == false)
 					return false;
 			} else {

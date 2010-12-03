@@ -62,7 +62,10 @@ $aliases = "";
 
 function flowtable_configure() {
 	global $config, $g;
-	return;
+
+	if(empty($config['system']['flowtable']))
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=0");
+
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
@@ -72,21 +75,12 @@ function flowtable_configure() {
 	// nmbflows cpu count * ($maxstates * 2)
 	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
 	$nmbflows = ($cpus*($maxstates*2));
-	// flowtable is not enabled
-	/*
-	if($config['system']['flowtable'])
-		$flowtable_enable = 1;
-	else
-		$flowtable_enable = 0;
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		if($flowtable_enable == 1) {
-			mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
-			mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
-		}
-		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
+		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
+		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
 	}
-	*/
 }
 
 function filter_load_ipfw() {

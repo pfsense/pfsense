@@ -63,8 +63,10 @@ $aliases = "";
 function flowtable_configure() {
 	global $config, $g;
 
-	if(empty($config['system']['flowtable']))
+	if (empty($config['system']['flowtable'])) {
 		mwexec("/sbin/sysctl net.inet.flowtable.enable=0");
+		return;
+	}
 
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.

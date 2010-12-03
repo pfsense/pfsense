@@ -73,14 +73,14 @@ function flowtable_configure() {
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
 		$maxstates = $config['system']['maximumstates'];
 	else
-		$maxstates = "150000";
+		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
+	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
 	$nmbflows = ($cpus*($maxstates*2));
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
-		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
 		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
 	}
 }

@@ -420,7 +420,8 @@ function local_user_set(& $user) {
 		$keys = base64_decode($user['authorizedkeys']);
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
-	}
+	} else
+		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 
 	$un = $lock_account ? "" : "un";
 	exec("/usr/sbin/pw {$un}lock -q {$user_name}");

@@ -170,9 +170,9 @@ $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
 		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if']))
-		$ifdescrs[$ent] = $entdesc;
+		$wifdescrs[$ent] = $entdesc;
 }
-if (count($ifdescrs) > 0)
+if (count($wifdescrs) > 0)
 	$status_menu[] = array("Wireless", "/status_wireless.php");
 $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
 

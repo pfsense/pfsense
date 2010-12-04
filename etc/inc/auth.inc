@@ -424,7 +424,7 @@ function local_user_set(& $user) {
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock -q {$user_name}");
+	exec("/usr/sbin/pw {$un}lock {$user_name} -q");
 	
 	conf_mount_ro();
 }

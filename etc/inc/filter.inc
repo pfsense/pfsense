@@ -131,11 +131,19 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
+	global $g;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
-	send_event("filter reload");
+
+	/*
+	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
+	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
+	 */
+	if (!$g['booting'])
+		send_event("filter reload");
 }
 
 function filter_delete_states_for_down_gateways() {

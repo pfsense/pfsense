@@ -118,6 +118,7 @@ function vpn_ipsec_configure($ipchg = false)
 		return true;
 	} else {
 		mwexec("/sbin/ifconfig enc0 up");
+		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
 
 		if ($g['booting'])
 			echo "Configuring IPsec VPN... ";
@@ -877,7 +878,6 @@ EOD;
  			sleep("0.1");
 			mwexec("/usr/local/sbin/setkey -F", false);
  			sleep("0.1");
-			exec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
  			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf", false);
  			sleep("0.1");

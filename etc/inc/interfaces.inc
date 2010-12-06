@@ -2560,7 +2560,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interfaces_bring_up($wancfg['if']);
  	
 	if (!$g['booting']) {
-		interface_reload_carps($realif);
+		link_interface_to_vips($interface, "update");
 
 		unset($gre);
 		$gre = link_interface_to_gre($interface);
@@ -2578,8 +2578,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			if (!empty($bridgetmp))
 				interface_bridge_add_member($bridgetmp, $realif);
 		}
-
-		link_interface_to_vips($interface, "update");
 
 		$grouptmp = link_interface_to_group($interface);
 		if (!empty($grouptmp))
@@ -3095,14 +3093,17 @@ function link_interface_to_vlans($int, $action = "") {
 function link_interface_to_vips($int, $action = "") {
         global $config;
 
-        if (is_array($config['virtualip']['vip']))
-                foreach ($config['virtualip']['vip'] as $vip)
-                        if ($int == $vip['interface']) {
-				if ($action == "update")
+        if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($int == $vip['interface']) {
+				if ($action == "update") {
+					interface_vip_bring_down($vip);
 					interfaces_vips_configure($int);
-				else
-                                	return $vip;
+				} else
+					return $vip;
 			}
+		}
+	}
 }
 
 /****f* interfaces/link_interface_to_bridge

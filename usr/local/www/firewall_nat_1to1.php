@@ -114,27 +114,39 @@ include("head.inc");
                     </table>
 		  </td>
 				</tr>
-			  <?php $i = 0; foreach ($a_1to1 as $natent): ?>
+	  <?php 
+			if (isset($natent['disabled']))
+				$textss = "<span class=\"gray\">";
+			else
+				$textss = "<span>";
+
+			$textse = "</span>";
+
+			$i = 0; foreach ($a_1to1 as $natent): ?>
                 <tr>
 		  <td class="listlr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                   <?php
+			echo $textss;
 					if (!$natent['interface'])
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
 						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+			echo $textse;
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo $natent['external']; ?>
+                    <?php 		echo $textss . $natent['external'] . $textse; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo pprint_address($natent['source']); ?>
+                    <?php 		echo $textss . pprint_address($natent['source']). $textse; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo pprint_address($natent['destination']); ?>
+                    <?php 		echo $textss . pprint_address($natent['destination']) . $textse; ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+			<?=$textss;?>
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
+			<?=$textse;?>
                   </td>
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

@@ -1770,7 +1770,6 @@ function interface_carpdev_configure(&$vip) {
 	if($vip['password'] != "")
 		$password = " pass \"" . $vip_password . "\"";
 
-	log_error("Found carpdev interface {$vip['interface']} on top of interface {$interface}");
 	if (empty($vip['interface']))
 		return;
 

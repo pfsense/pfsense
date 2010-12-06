@@ -1078,7 +1078,7 @@ function upgrade_047_to_048() {
 	if (!empty($config['dyndns'])) {
 		$config['dyndnses'] = array();
 		$config['dyndnses']['dyndns'] = array();
-		if(isset($config['dyndns'][0]['enable'])) {
+		if(isset($config['dyndns'][0]['host'])) {
 			$tempdyn = array();
 			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
 			$tempdyn['type'] = $config['dyndns'][0]['type'];

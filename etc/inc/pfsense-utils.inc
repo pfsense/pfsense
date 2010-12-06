@@ -816,7 +816,6 @@ function reload_interfaces_sync() {
  *   none
  ******/
 function reload_all() {
-	global $g;
 	send_event("service reload all");
 }
 
@@ -829,8 +828,7 @@ function reload_all() {
  *   none
  ******/
 function reload_interfaces() {
-	global $g;
-	touch("{$g['tmp_path']}/reload_interfaces");
+	send_event("interface all reload");
 }
 
 /****f* pfsense-utils/reload_all_sync

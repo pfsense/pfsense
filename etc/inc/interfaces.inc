@@ -2402,6 +2402,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$wancfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
+	$realhwif = interface_translate_type_to_real($interface);
 
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
@@ -2425,7 +2426,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 
                 /*
@@ -2434,20 +2435,20 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
                  */
                 if (is_array($config['vlans']['vlan'])) {
                         foreach ($config['vlans']['vlan'] as $vlan) {
-                                if ($vlan['if'] == $realif)
+                                if ($vlan['if'] == $realhwif)
                                         mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
                                                 " link " . escapeshellarg($wancfg['spoofmac']));
                         }
                 }
 	}  else {
-		$mac = get_interface_mac(get_real_interface($wancfg['if']));
-		if($mac == "ff:ff:ff:ff:ff:ff") {
+		$mac = get_interface_mac($realhwif);
+		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
 			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg(get_real_interface($wancfg['if'])) .
+			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
@@ -2457,7 +2458,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {
-		$cmd = "/sbin/ifconfig " . escapeshellarg(get_real_interface($wancfg['if']));
+		$cmd = "/sbin/ifconfig " . escapeshellarg($realhwif);
 		if ($wancfg['media'])
 			$cmd .= " media " . escapeshellarg($wancfg['media']);
 		if ($wancfg['mediaopt'])
@@ -2465,9 +2466,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		mwexec($cmd);
 	}
 	if (!empty($wancfg['mtu']))
-		pfSense_interface_mtu($realif, $wancfg['mtu']);
+		pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 
-	$options = pfSense_get_interface_addresses($realif);
+	$options = pfSense_get_interface_addresses($realhwif);
 	if (is_array($options) && isset($options['caps']['polling'])) {
 		if (isset($config['system']['polling']))
 			pfSense_interface_capabilities($realif, IFCAP_POLLING);
@@ -2476,7 +2477,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* skip vlans for checksumming and polling */
-        if (!stristr($realif, "vlan") && is_array($options)) {
+        if (!stristr($realhwif, "vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))
@@ -2514,7 +2515,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
         	if (!isset($config['system']['polling']) || !isset($options['caps']['polling'])) {
 			$flags |= IFCAP_POLLING;
 		}
-               	pfSense_interface_capabilities($realif, -$flags);
+               	pfSense_interface_capabilities($realhwif, -$flags);
 	}
 
 	/* invalidate interface/ip/sn cache */
@@ -2834,10 +2835,31 @@ function convert_real_interface_to_friendly_descr($interface) {
 function interface_translate_type_to_real($interface) {
         global $config;
 
-        if ($config['interfaces'][$interface]['if'] <> "")
-                return $config['interfaces'][$interface]['if'];
-        else
+	if (empty($config['interfaces'][$interface]))
 		return $interface;
+	$tmpif = $config['interfaces'][$interface];
+	switch ($tmpif['type']) {
+	case "ppp":
+	case "pppoe":
+	case "pptp":
+	case "l2tp":
+		if (is_array($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+				if ($tmpif['if'] == $ppp['if']) {
+					$interface = $ppp['ports'];
+					break;
+				}
+			}
+		}
+		break;
+	case "dhcp":
+	case "static":
+	default:
+		$interface = $tmpif['if'];
+		break;
+	}
+
+	return $interface;
 }
 
 function interface_is_wireless_clone($wlif) {

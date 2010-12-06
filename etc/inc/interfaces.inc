@@ -819,9 +819,6 @@ function interfaces_configure() {
 
 		/* reload captive portal */
 		captiveportal_init_rules();
-
-		/* set the reload filter dity flag */
-		filter_configure();
 	}
 
 	return 0;

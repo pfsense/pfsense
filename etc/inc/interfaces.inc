@@ -1721,7 +1721,6 @@ function interface_carp_configure(&$vip) {
 	// set the vip interface to the vhid
 	$vipif = "vip{$vip['vhid']}";
 
-	$interface = interface_translate_type_to_real($vip['interface']);
 	/*
 	 * ensure the interface containing the VIP really exists
  	 * prevents a panic if the interface is missing or invalid
@@ -1776,7 +1775,7 @@ function interface_carpdev_configure(&$vip) {
 		return;
 
 	$vipif = "vip" . $vip['vhid'];
-	$realif = interface_translate_type_to_real($vip['interface']);
+	$realif = get_real_interface($vip['interface']);
 	interfaces_bring_up($realif);
 	/*
 	 * ensure the interface containing the VIP really exists

@@ -2606,9 +2606,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 			/* reload captive portal */
 			captiveportal_init_rules();
-
-			/* set the reload filter dity flag */
-			filter_configure();
 		}
 	}
 

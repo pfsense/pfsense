@@ -789,13 +789,6 @@ function strncpy(&$dst, $src, $length) {
 function reload_interfaces_sync() {
 	global $config, $g;
 
-	/* XXX: Use locks?! */
-	if (file_exists("{$g['tmp_path']}/reloading_all")) {
-		log_error("WARNING: Recursive call to interfaces sync!");
-		return;
-	}
-	touch("{$g['tmp_path']}/reloading_all");
-
 	if($g['debug'])
 		log_error("reload_interfaces_sync() is starting.");
 
@@ -812,13 +805,6 @@ function reload_interfaces_sync() {
 
 	/* set up interfaces */
 	interfaces_configure();
-
-	/* remove reloading_all trigger */
-	if($g['debug'])
-		log_error("Removing {$g['tmp_path']}/reloading_all");
-
-	/* start devd back up */
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 /****f* pfsense-utils/reload_all
@@ -859,13 +845,6 @@ function reload_all_sync() {
 	global $config, $g;
 
 	$g['booting'] = false;
-
-	/* XXX: Use locks?! */
-        if (file_exists("{$g['tmp_path']}/reloading_all")) {
-                log_error("WARNING: Recursive call to reload all sync!");
-                return;
-        }
-	touch("{$g['tmp_path']}/reloading_all");
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -908,8 +887,6 @@ function reload_all_sync() {
 
 	/* restart webConfigurator if needed */
 	send_event("service restart webgui");
-
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 function auto_login() {

@@ -71,6 +71,10 @@ $oldip = "0.0.0.0";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 
+$grouptmp = link_interface_to_group($interface);
+if (!empty($grouptmp))
+	array_walk($grouptmp, 'interface_group_add_member');
+
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 

@@ -621,7 +621,8 @@ function interfaces_gre_configure() {
         }
 }
 
-function interface_gre_configure(&$gre) {
+/* NOTE: $grekey is not used but useful for passing this function to array_walk. */
+function interface_gre_configure(&$gre, $grekey = "") {
         global $config, $g;
 
 	if (!is_array($gre))
@@ -676,7 +677,8 @@ function interfaces_gif_configure() {
 	}
 }
 
-function interface_gif_configure(&$gif) {
+/* NOTE: $gifkey is not used but useful for passing this function to array_walk. */
+function interface_gif_configure(&$gif, $gifkey = "") {
 	global $config, $g;
 
 	if (!is_array($gif))
@@ -2563,12 +2565,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		unset($gre);
 		$gre = link_interface_to_gre($interface);
 		if (!empty($gre))
-			interface_gre_configure($gre);
+			array_walk($gre, 'interface_gre_configure');
 
 		unset($gif);
 		$gif = link_interface_to_gif($interface);
 		if (!empty($gif))
-                       	interface_gif_configure($gif);
+                       	array_walk($gif, 'interface_gif_configure');
 
 		if ($linkupevent == false) {
 			unset($bridgetmp);
@@ -2581,7 +2583,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 		$grouptmp = link_interface_to_group($interface);
 		if (!empty($grouptmp))
-			interface_group_add_member($realif, $grouptmp);
+			array_walk($grouptmp, 'interface_group_add_member');
 
 		if ($interface == "lan")
 			/* make new hosts file */
@@ -2720,6 +2722,7 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 }
 
 function interface_group_add_member($interface, $groupname) {
+	$interface = get_real_interface($interface);
 	mwexec("/sbin/ifconfig {$interface} group {$groupname}", true);
 }
  
@@ -3124,30 +3127,44 @@ function link_interface_to_bridge($int) {
 function link_interface_to_group($int) {
         global $config;
 
+	$result = array();
+
         if (is_array($config['ifgroups']['ifgroupentry'])) {
                 foreach ($config['ifgroups']['ifgroupentry'] as $group) {
 			if (in_array($int, explode(" ", $group['members'])))
-                                return "{$group['ifname']}";
+				$result[$group['ifname']] = $int;
 		}
 	}
+
+	return $result;
 }
 
 function link_interface_to_gre($interface) {
         global $config;
 
-        if (is_array($config['gres']['gre']))
+	$result = array();
+
+        if (is_array($config['gres']['gre'])) {
                 foreach ($config['gres']['gre'] as $gre)
                         if($gre['if'] == $interface)
-                                return $gre;
+				$result[] = $gre;
+	}
+
+	return $result;
 }
 
 function link_interface_to_gif($interface) {
         global $config;
 
-        if (is_array($config['gifs']['gif']))
+	$result = array();
+
+        if (is_array($config['gifs']['gif'])) {
                 foreach ($config['gifs']['gif'] as $gif)
                         if($gif['if'] == $interface)
-                                return $gif;
+                                $result[] = $gif;
+	}
+
+	return $result;
 }
 
 /*

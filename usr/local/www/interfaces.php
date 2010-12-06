@@ -159,7 +159,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 			}
 		}// End force pppoe reset at specific time
 	}// End if type == pppoe
-	if ($a_ppps[$pppid]['type'] == "pptp"){
+	else if ($a_ppps[$pppid]['type'] == "pptp"){
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['pptp_local'] = explode(",",$a_ppps[$pppid]['localip']);
@@ -375,7 +375,7 @@ if ($_POST['apply']) {
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
 		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
 
-	switch($_POST['type']) {
+	switch(strtolower($_POST['type'])) {
 		case "static":
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
@@ -389,15 +389,13 @@ if ($_POST['apply']) {
 				}
 			}
 		case "dhcp":
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
 			$reqdfieldsn = array(gettext("Modem Port"),gettext("Phone Number"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
-		case "PPPoE":
+		case "pppoe":
 			if ($_POST['pppoe_dialondemand']) {
 				$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
 				$reqdfieldsn = array(gettext("PPPoE username"),gettext("PPPoE password"),gettext("Dial on demand"),gettext("Idle timeout value"));
@@ -407,7 +405,7 @@ if ($_POST['apply']) {
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
-		case "PPTP":
+		case "pptp":
 			if ($_POST['pptp_dialondemand']) {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
 				$reqdfieldsn = array(gettext("PPTP username"),gettext("PPTP password"),gettext("PPTP local IP address"),gettext("PPTP subnet"),gettext("PPTP remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
@@ -515,6 +513,12 @@ if ($_POST['apply']) {
 		}
 	}
 	if (!$input_errors) {
+		if ($wancfg['type'] != $_POST['type']) {
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
+				$wancfg['if'] = $a_ppps[$pppid]['ports'];
+				unset($a_ppps[$pppid]);
+			}
+		}
 		$ppp = array();
 		if ($wancfg['ipaddr'] != "ppp")
 			unset($wancfg['ipaddr']);

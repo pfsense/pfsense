@@ -64,7 +64,7 @@ function flowtable_configure() {
 	global $config, $g;
 
 	if (empty($config['system']['flowtable'])) {
-		mwexec("/sbin/sysctl net.inet.flowtable.enable=0");
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
 		return;
 	}
 

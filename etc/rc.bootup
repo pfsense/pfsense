@@ -357,16 +357,16 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 if($avail < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
-	mwexec("sysctl net.inet.tcp.recvspace=4096");
-	mwexec("sysctl net.inet.tcp.sendspace=4096");
+	mwexec("/sbin/sysctl net.inet.tcp.recvspace=4096");
+	mwexec("/sbin/sysctl net.inet.tcp.sendspace=4096");
 }
 
 /* if we are operating at 1000 then increase timeouts.
    this was never accounted for after moving to 1000 hz */
-$kern_hz = `sysctl kern.clockrate | awk '{ print $5 }' | cut -d"," -f1`;
+$kern_hz = `/sbin/sysctl kern.clockrate | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"," -f1`;
 $kern_hz = trim($kern_hz, "\r\n");
 if($kern_hz == "1000") 
-	mwexec("sysctl net.inet.tcp.rexmit_min=30");
+	mwexec("/sbin/sysctl net.inet.tcp.rexmit_min=30");
 
 /* start the igmpproxy daemon */
 services_igmpproxy_configure();
@@ -379,7 +379,7 @@ activate_powerd();
 
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
-	unlink("/sbin/shutdown.old");
+	@unlink("/sbin/shutdown.old");
 
 /* done */
 unset($g['booting']);

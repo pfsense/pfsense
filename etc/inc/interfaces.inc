@@ -1752,7 +1752,7 @@ function interface_carp_configure(&$vip) {
 	get_interface_arr(true);
 
 	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-	mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
 
 	interfaces_bring_up($vipif);
 	
@@ -1793,7 +1793,7 @@ function interface_carpdev_configure(&$vip) {
 		pfSense_ngctl_name("{$carpdevif}:", $vipif);
 	}
 
-	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
 	interfaces_bring_up($vipif);
 
 	/*

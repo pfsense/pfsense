@@ -615,11 +615,7 @@ function step8_stepsubmitphpaction() {
 	clear_subsystem_dirty('shaper');
 
 	update_filter_reload_status("Initializing");
-}
-
-function step9_stepsubmitphpaction() {
-	global $g, $config;
-	header("status_filter_reload.php");
+	header("Location: status_filter_reload.php");
 	exit;
 }
 

@@ -210,7 +210,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 }
 
 global $g;
-if (file_exists("{$g['varrun_path']}/booting"))
+if (file_exists("{$g['varrun_path']}/booting") || $g['booting'])
 	return;
 
 if (is_array($config['installedpackages']['carpsettings']['config'])) {

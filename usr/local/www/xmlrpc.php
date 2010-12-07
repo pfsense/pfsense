@@ -61,12 +61,12 @@ if($synchronizetoip) {
 }
 
 $xmlrpc_g = array(
-			"return" => array(
-						"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
-						"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
-						"authfail" => new XML_RPC_Response(new XML_RPC_Value(gettext("Authentication failed"), $XML_RPC_String))
-				)
-		);
+	"return" => array(
+		"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
+		"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
+		"authfail" => new XML_RPC_Response(new XML_RPC_Value(gettext("Authentication failed"), $XML_RPC_String))
+	)
+);
 
 /*
  *   pfSense XMLRPC errors
@@ -75,20 +75,21 @@ $xmlrpc_g = array(
 $XML_RPC_erruser = 200;
 
 /* EXPOSED FUNCTIONS */
-
 $exec_php_doc = gettext("XMLRPC wrapper for eval(). This method must be called with two parameters: a string containing the local system\'s password followed by the PHP code to evaluate.");
 $exec_php_sig = array(
-					array(
-						$XML_RPC_Boolean, // First signature element is return value.
-						$XML_RPC_String, // password
-						$XML_RPC_String, // shell code to exec
-					)
-				);
+	array(
+		$XML_RPC_Boolean, // First signature element is return value.
+		$XML_RPC_String, // password
+		$XML_RPC_String, // shell code to exec
+	)
+);
 
 function exec_php_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	$exec_php = $params[0];
 	eval($exec_php);
 	if($toreturn) {
@@ -99,61 +100,61 @@ function exec_php_xmlrpc($raw_params) {
 }
 
 /*****************************/
-
 $exec_shell_doc = gettext("XMLRPC wrapper for mwexec(). This method must be called with two parameters: a string containing the local system\'s password followed by an shell command to execute.");
 $exec_shell_sig = array(
-					array(
-						$XML_RPC_Boolean, // First signature element is return value.
-						$XML_RPC_String, // password
-						$XML_RPC_String, // shell code to exec
-					)
-				);
-
+	array(
+		$XML_RPC_Boolean, // First signature element is return value.
+		$XML_RPC_String, // password
+		$XML_RPC_String, // shell code to exec
+	)
+);
 
 function exec_shell_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	$shell_cmd = $params[0];
 	mwexec($shell_cmd);
+
 	return $xmlrpc_g['return']['true'];
 }
 
-
-
 /*****************************/
-
-
 $backup_config_section_doc = gettext("XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.");
 $backup_config_section_sig = array(
-								array(
-									$XML_RPC_Struct, // First signature element is return value.
-									$XML_RPC_String,
-									$XML_RPC_Array
-								)
-							);
+	array(
+		$XML_RPC_Struct, // First signature element is return value.
+		$XML_RPC_String,
+		$XML_RPC_Array
+	)
+);
 
 function backup_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	$val = array_intersect_key($config, array_flip($params[0]));
+
 	return new XML_RPC_Response(XML_RPC_encode($val));
 }
 
 /*****************************/
-
 $restore_config_section_doc = gettext("XMLRPC wrapper for restore_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $restore_config_section_sig = array(
-								array(
-									$XML_RPC_Boolean,
-									$XML_RPC_String,
-									$XML_RPC_Struct
-								)
-							);
+	array(
+		$XML_RPC_Boolean,
+		$XML_RPC_String,
+		$XML_RPC_Struct
+	)
+);
 
 function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
@@ -175,47 +176,46 @@ function restore_config_section_xmlrpc($raw_params) {
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 	interfaces_vips_configure();
+
 	return $xmlrpc_g['return']['true'];
 }
 
-
 /*****************************/
-
-
 $merge_config_section_doc = gettext("XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $merge_config_section_sig = array(
-								array(
-									$XML_RPC_Boolean,
-									$XML_RPC_String,
-									$XML_RPC_Struct
-								)
-							);
+	array(
+		$XML_RPC_Boolean,
+		$XML_RPC_String,
+		$XML_RPC_Struct
+	)
+);
 
 function merge_installedpackages_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
+
 	return $xmlrpc_g['return']['true'];
 }
 
-
 /*****************************/
-
-
 $merge_config_section_doc = gettext("XMLRPC wrapper for merge_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
 $merge_config_section_sig = array(
-								array(
-									$XML_RPC_Boolean,
-									$XML_RPC_String,
-									$XML_RPC_Struct
-								)
-							);
+	array(
+		$XML_RPC_Boolean,
+		$XML_RPC_String,
+		$XML_RPC_Struct
+	)
+);
 
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
@@ -229,23 +229,25 @@ function merge_config_section_xmlrpc($raw_params) {
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
 	interfaces_vips_configure();
+
 	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/
-
 $filter_configure_doc = gettext("Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.");
 $filter_configure_sig = array(
-							array(
-								$XML_RPC_Boolean,
-								$XML_RPC_String
-							)
-						);
+	array(
+		$XML_RPC_Boolean,
+		$XML_RPC_String
+	)
+);
 
 function filter_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	filter_configure();
 	system_routing_configure();
 	setup_gateways_monitor();
@@ -255,71 +257,78 @@ function filter_configure_xmlrpc($raw_params) {
 	services_dhcpd_configure();
 	services_dnsmasq_configure();
 	local_sync_accounts();
+
 	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/
-
 $carp_configure_doc = gettext("Basic XMLRPC wrapper for configuring CARP interfaces.");
 $carp_configure_sig = array(
-							array(
-								$XML_RPC_Boolean,
-								$XML_RPC_String
-							)
-						);
+	array(
+		$XML_RPC_Boolean,
+		$XML_RPC_String
+	)
+);
 
 function interfaces_carp_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	interfaces_vips_configure();
+
 	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/
-
 $check_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.");
+
 $check_firmware_version_sig = array(
-								array(
-									$XML_RPC_String,
-									$XML_RPC_String
-								)
-							);
+	array(
+		$XML_RPC_String,
+		$XML_RPC_String
+	)
+);
 
 function check_firmware_version_xmlrpc($raw_params) {
 	global $xmlrpc_g, $XML_RPC_String;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
+
 	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
 }
 
 /*****************************/
-
 $reboot_doc = gettext("Basic XMLRPC wrapper for rc.reboot.");
 $reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
-
 function reboot_xmlrpc($raw_params) {
 	global $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
 	mwexec_bg("/etc/rc.reboot");
+
 	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/
-
 $get_notices_sig = array(
-					array(
-						$XML_RPC_Array,
-						$XML_RPC_String
-					),
-					array(
-						$XML_RPC_Array
-					)
-				);
+	array(
+		$XML_RPC_Array,
+		$XML_RPC_String
+	),
+	array(
+		$XML_RPC_Array
+	)
+);
 
 function get_notices_xmlrpc($raw_params) {
 	global $g, $xmlrpc_g;
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	require("notices.inc");
@@ -329,44 +338,44 @@ function get_notices_xmlrpc($raw_params) {
 		$toreturn = get_notices($params);
 	}
 	$response = new XML_RPC_Response(XML_RPC_encode($toreturn));
+
 	return $response;
 }
 
 /*****************************/
-
 $server = new XML_RPC_Server(
         array(
-            'pfsense.exec_shell' 		=> array('function' => 'exec_shell_xmlrpc',
-							'signature' => $exec_shell_sig,
-							'docstring' => $exec_shell_doc),
-            		 'pfsense.exec_php'	=> array('function' => 'exec_php_xmlrpc',
-							'signature' => $exec_php_sig,
-							'docstring' => $exec_php_doc),	
-			 'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
-							'signature' => $filter_configure_sig,
-							'docstring' => $filter_configure_doc),
-            'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
-							'docstring' => $carp_configure_sig),
-            'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
-							'signature' => $backup_config_section_sig,
-							'docstring' => $backup_config_section_doc),
-			'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
-							'signature' => $restore_config_section_sig,
-							'docstring' => $restore_config_section_doc),
-			'pfsense.merge_config_section' => array('function' => 'merge_config_section_xmlrpc',
-							'signature' => $merge_config_section_sig,
-							'docstring' => $merge_config_section_doc),
-			'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
-							'signature' => $merge_config_section_sig,
-							'docstring' => $merge_config_section_doc),							
-			'pfsense.check_firmware_version' =>	array('function' => 'check_firmware_version_xmlrpc',
-							'signature' => $check_firmware_version_sig,
-							'docstring' => $check_firmware_version_doc),
-			'pfsense.reboot' =>			array('function' => 'reboot_xmlrpc',
-							'signature' => $reboot_sig,
-							'docstring' => $reboot_doc),
-			'pfsense.get_notices' =>		array('function' => 'get_notices_xmlrpc',
-							'signature' => $get_notices_sig)
+		'pfsense.exec_shell' => array('function' => 'exec_shell_xmlrpc',
+		'signature' => $exec_shell_sig,
+		'docstring' => $exec_shell_doc),
+		'pfsense.exec_php' => array('function' => 'exec_php_xmlrpc',
+		'signature' => $exec_php_sig,
+		'docstring' => $exec_php_doc),	
+		'pfsense.filter_configure' => array('function' => 'filter_configure_xmlrpc',
+		'signature' => $filter_configure_sig,
+		'docstring' => $filter_configure_doc),
+		'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
+		'docstring' => $carp_configure_sig),
+		'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
+		'signature' => $backup_config_section_sig,
+		'docstring' => $backup_config_section_doc),
+		'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
+		'signature' => $restore_config_section_sig,
+		'docstring' => $restore_config_section_doc),
+		'pfsense.merge_config_section' => array('function' => 'merge_config_section_xmlrpc',
+		'signature' => $merge_config_section_sig,
+		'docstring' => $merge_config_section_doc),
+		'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
+		'signature' => $merge_config_section_sig,
+		'docstring' => $merge_config_section_doc),							
+		'pfsense.check_firmware_version' => array('function' => 'check_firmware_version_xmlrpc',
+		'signature' => $check_firmware_version_sig,
+		'docstring' => $check_firmware_version_doc),
+		'pfsense.reboot' => array('function' => 'reboot_xmlrpc',
+		'signature' => $reboot_sig,
+		'docstring' => $reboot_doc),
+		'pfsense.get_notices' => array('function' => 'get_notices_xmlrpc',
+		'signature' => $get_notices_sig)
         )
 );
 

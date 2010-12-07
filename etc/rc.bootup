@@ -312,6 +312,9 @@ send_event("service reload dyndnsall");
 /* start DHCP relay */
 services_dhcrelay_configure();
 
+/* Run a filter configure now that most all services have started */
+filter_configure_sync();
+
 /* setup pppoe and pptp */
 vpn_setup();
 
@@ -335,9 +338,6 @@ system_set_harddisk_standby();
 
 /* lock down console if necessary */
 auto_login();
-
-/* Run a filter configure now that most all services have started */
-filter_configure_sync();
 
 /* load graphing functions */
 enable_rrd_graphing();

@@ -3538,4 +3538,15 @@ EOD;
 		unlink_if_exists($cron_file);
 }
 
+function get_vip_descr($ipaddress) {
+	global $config;
+
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if ($vip['subnet'] == $ipaddress) {
+			return ($vip['descr']);
+		}
+	}
+	return "";
+}
+
 ?>

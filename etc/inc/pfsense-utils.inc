@@ -728,13 +728,16 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
+
 	$ip = gethostbyname($g['product_website']);
 	if($ip == $g['product_website'])
 		return false;
+
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
-		"platform" => trim(file_get_contents('/etc/platform'))
+		"platform" => trim(file_get_contents('/etc/platform')),
+		"config_version" => $config['version']
 		);
 	if($tocheck == "all") {
 		$params = $rawparams;
@@ -744,14 +747,16 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 			$params['platform'] = $rawparams['platform'];
 		}
 	}
-	if($config['system']['firmware']['branch']) {
+	if($config['system']['firmware']['branch'])
 		$params['branch'] = $config['system']['firmware']['branch'];
-	}
-	if(!$versions = call_pfsense_method('pfsense.get_firmware_version', $params)) {
+
+	/* XXX: What is this method? */
+	if(!($versions = call_pfsense_method('pfsense.get_firmware_version', $params))) {
 		return false;
 	} else {
 		$versions["current"] = $params;
 	}
+
 	return $versions;
 }
 

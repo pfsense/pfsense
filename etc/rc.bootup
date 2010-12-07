@@ -293,10 +293,6 @@ echo "done.\n";
 /* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
-/* static IP address? -> attempt DNS update */
-if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
-	services_dnsupdate_process();
-
 /* start DHCP service */
 services_dhcpd_configure();
 
@@ -306,11 +302,11 @@ services_dnsmasq_configure();
 /* start dhcpleases dhpcp hosts leases program */
 system_dhcpleases_configure();
 
-/* start dyndns service */
-send_event("service reload dyndnsall");
-
 /* start DHCP relay */
 services_dhcrelay_configure();
+
+/* dyndns service updates */
+send_event("service reload dyndnsall");
 
 /* Run a filter configure now that most all services have started */
 filter_configure_sync();

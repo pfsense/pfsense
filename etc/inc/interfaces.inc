@@ -2598,10 +2598,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			services_dnsmasq_configure();
 
 			/* update dyndns */
-			services_dyndns_configure($interface);
-
-			/* force DNS update */
-			services_dnsupdate_process($interface);
+			send_event("service reload dyndns {$interface}");
 
 			/* reload captive portal */
 			captiveportal_init_rules();

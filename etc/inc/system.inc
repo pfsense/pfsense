@@ -306,11 +306,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	/* Enable fast routing, if enabled */
-	/* XXX: More checks need to be done for subsystems that are not compatibel with fast routing. */
-	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
-		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
-
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;

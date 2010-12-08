@@ -80,7 +80,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");
-	$reqdfieldsn = array(",", gettext("Member interfaces"), gettext("Lagg protocol"));
+	$reqdfieldsn = array(gettext("Member interfaces"), gettext("Lagg protocol"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

@@ -261,12 +261,12 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 	fi
 fi
 
-if [ -x $ROUTE ]; then
-	if_defaultroute=`$ROUTE -n get -inet default | $GREP interface | $AWK '{print $2}'`
-else
-	$LOGGER "if_defaultroute"
-	if_defaultroute="x"
-fi
+#if [ -x $ROUTE ]; then
+#	if_defaultroute=`$ROUTE -n get -inet default | $GREP interface | $AWK '{print $2}'`
+#else
+#	$LOGGER "if_defaultroute"
+#	if_defaultroute="x"
+#fi
 
 $LOGGER $reason
 case $reason in

@@ -636,8 +636,11 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
-						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
+						/* Do not print localid in some cases, such as a pure-psk or psk/xauth mobile tunnel */
+						if (($localid_type == "none") ||
+							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
+							($ph1ent['authentication_method'] == "pre_shared_key"))
+							&& isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else {
                                                         if ($localid_type != "address") {

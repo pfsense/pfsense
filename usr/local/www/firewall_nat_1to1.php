@@ -115,14 +115,14 @@ include("head.inc");
 		  </td>
 				</tr>
 	  <?php 
+			$textse = "</span>";
+
+			$i = 0; foreach ($a_1to1 as $natent):
+
 			if (isset($natent['disabled']))
 				$textss = "<span class=\"gray\">";
 			else
-				$textss = "<span>";
-
-			$textse = "</span>";
-
-			$i = 0; foreach ($a_1to1 as $natent): ?>
+				$textss = "<span>"; ?>
                 <tr>
 		  <td class="listlr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                   <?php

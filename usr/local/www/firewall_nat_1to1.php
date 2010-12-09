@@ -135,10 +135,14 @@ include("head.inc");
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo $textss . $natent['external'] . $textse; ?>
+                    <?php 
+			$source_net = pprint_address($natent['source']);
+			$source_cidr = strstr($source_net, '/');
+			echo $textss . $natent['external'] . $source_cidr . $textse;
+                    ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo $textss . pprint_address($natent['source']). $textse; ?>
+                    <?php 		echo $textss . $source_net . $textse; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <?php 		echo $textss . pprint_address($natent['destination']) . $textse; ?>

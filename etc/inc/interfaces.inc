@@ -2742,7 +2742,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 $index = intval(substr($interface, 3));
                 foreach ($config['virtualip']['vip'] as $counter => $vip) {
                         if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-                                if ($index == $counter)
+                                if ($index == $vip['vhid'])
                                         return $vip['interface'];
                         }
                 }

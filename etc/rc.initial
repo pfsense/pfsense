@@ -59,7 +59,7 @@ for i in /var/db/pfi/capable_*; do
 done
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    option99="99) Install ${product} to a hard drive, etc.\n"
+    option99="99) Install ${product} to a hard drive, etc."
 fi
 
 # display a cheap menu

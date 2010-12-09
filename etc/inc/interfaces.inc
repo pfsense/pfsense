@@ -2771,22 +2771,22 @@ function convert_friendly_interface_to_friendly_descr($interface) {
         global $config;
 
         switch ($interface) {
-                case "l2tp":
-                                $ifdesc = "L2TP";
-                                break;
-                case "pptp":
-                                $ifdesc = "PPTP";
-                                break;
-                case "pppoe":
-                                $ifdesc = "PPPoE";
-                                break;
-                case "openvpn":
-                                $ifdesc = "OpenVPN";
-                                break;
-                case "enc0":
-                        case "ipsec":
-                                $ifdesc = "IPsec";
-                                break;
+        case "l2tp":
+        	$ifdesc = "L2TP";
+                break;
+	case "pptp":
+		$ifdesc = "PPTP";
+		break;
+	case "pppoe":
+		$ifdesc = "PPPoE";
+		break;
+	case "openvpn":
+		$ifdesc = "OpenVPN";
+		break;
+	case "enc0":
+	case "ipsec":
+		$ifdesc = "IPsec";
+		break;
         default:
                 if (isset($config['interfaces'][$interface])) {
                         if (empty($config['interfaces'][$interface]['descr']))
@@ -2794,13 +2794,23 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                         else
                                 $ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
+		} else if (substr($interface, 0, 3) == "vip") {
+			if (is_array($config['virtualip']['vip'])) {
+				foreach ($config['virtualip']['vip'] as $counter => $vip) {
+					if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+						if ($interface == "vip{$vip['vhid']}")
+							return "{$vip['subnet']} - {$vip['descr']}";
+					}
+				}
+                        }
+                } else {
+			/* if list */
+			$ifdescrs = get_configured_interface_with_descr(false, true);
+			foreach ($ifdescrs as $if => $ifname) {
+					if ($if == $interface || $ifname == $interface)
+						return $ifname;
+			}
 		}
-                /* if list */
-                $ifdescrs = get_configured_interface_with_descr(false, true);
-                foreach ($ifdescrs as $if => $ifname) {
-                                if ($if == $interface || $ifname == $interface)
-                                        return $ifname;
-                }
                 break;
         }
 

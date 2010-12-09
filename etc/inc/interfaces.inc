@@ -609,14 +609,12 @@ function interface_lagg_configure(&$lagg) {
 function interfaces_gre_configure() {
         global $config;
 
-        $i = 0;
         if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
-                foreach ($config['gres']['gre'] as $gre) {
+                foreach ($config['gres']['gre'] as $i => $gre) {
                         if(empty($gre['greif']))
                                 $gre['greif'] = "gre{$i}";
                         /* XXX: Maybe we should report any errors?! */
                         interface_gre_configure($gre);
-                        $i++;
                 }
         }
 }
@@ -665,14 +663,13 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 function interfaces_gif_configure() {
 	global $config;
-	$i = 0;
+
 	if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
-		foreach ($config['gifs']['gif'] as $gif) {
+		foreach ($config['gifs']['gif'] as $i => $gif) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
 			/* XXX: Maybe we should report any errors?! */
 			interface_gif_configure($gif);
-			$i++;
 		}
 	}
 }

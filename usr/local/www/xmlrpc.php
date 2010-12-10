@@ -302,8 +302,7 @@ function check_firmware_version_xmlrpc($raw_params) {
 }
 
 /*****************************/
-$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon co
-mpletion.");
+$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon co mpletion.");
 
 function pfsense_firmware_version_xmlrpc($raw_params) {
         global $xmlrpc_g, $XML_RPC_String;

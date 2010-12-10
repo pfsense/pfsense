@@ -643,11 +643,11 @@ EOD;
 							&& isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else {
-                                                        if ($localid_type != "address") {
-                                                                $localid_type = "subnet";
-                                                        }
-                                                        $localid_spec = $localid_type." ".$localid_data." any";
-                                                }
+							if ($localid_type != "address") {
+								$localid_type = "subnet";
+							}
+							$localid_spec = $localid_type." ".$localid_data." any";
+						}
 
 						if (!isset($ph2ent['mobile'])) {
 							$remoteid_type = $ph2ent['remoteid']['type'];
@@ -660,16 +660,23 @@ EOD;
 							$remoteid_spec = "anonymous";
 
 					} else {
-
 						$rgip = $rgmap[$ph1ent['remote-gateway']];
 
-						$localid_data = ipsec_get_phase1_src($ph1ent);
-						if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
-						$localid_spec = "address {$localid_data}";
-
-						$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
-						if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
-						$remoteid_spec = "address {$remoteid_data}";
+						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
+							($ph1ent['authentication_method'] == "pre_shared_key"))
+							&& isset($ph1ent['mobile']))
+							$localid_spec = " ";
+						else {
+							$localid_data = ipsec_get_phase1_src($ph1ent);
+							if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
+							$localid_spec = "address {$localid_data}";
+						}
+						if (!isset($ph2ent['mobile'])) {
+							$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
+							if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
+							$remoteid_spec = "address {$remoteid_data}";
+						} else
+							$remoteid_spec = "anonymous";
 					}
 
 					if($ph2ent['protocol'] == 'esp') {

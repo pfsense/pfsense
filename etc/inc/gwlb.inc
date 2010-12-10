@@ -232,6 +232,7 @@ EOD;
 
 	/* start a new apinger process */
 	@unlink("{$g['tmp_path']}/apinger.status");
+	sleep(1);
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;
@@ -406,9 +407,11 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				$msg = "Gateways status could not be determined, considering all as up/active.";
-				log_error($msg);
-				notify_via_growl($msg);
+				if (!$g['booting']) {
+					$msg = "Gateways status could not be determined, considering all as up/active.";
+					log_error($msg);
+					notify_via_growl($msg);
+				}
 				$tiers = $backupplan;
 			}
 			/* sort the tiers array by the tier key */

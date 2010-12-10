@@ -302,6 +302,24 @@ function check_firmware_version_xmlrpc($raw_params) {
 }
 
 /*****************************/
+$pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon co
+mpletion.");
+
+$pfsense_firmware_version_sig = array(
+	$XML_RPC_String,
+);
+
+function pfsense_firmware_version_xmlrpc($raw_params) {
+        global $xmlrpc_g, $XML_RPC_String;
+
+        $params = xmlrpc_params_to_php($raw_params);
+        if(!xmlrpc_auth($params))
+                return $xmlrpc_g['return']['authfail'];
+
+        return new XML_RPC_Response(new XML_RPC_Value(host_firmware_version(), $XML_RPC_String));
+}
+
+/*****************************/
 $reboot_doc = gettext("Basic XMLRPC wrapper for rc.reboot.");
 $reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 function reboot_xmlrpc($raw_params) {
@@ -371,6 +389,9 @@ $server = new XML_RPC_Server(
 		'pfsense.check_firmware_version' => array('function' => 'check_firmware_version_xmlrpc',
 		'signature' => $check_firmware_version_sig,
 		'docstring' => $check_firmware_version_doc),
+		'pfsense.host_firmware_version' => array('function' => 'pfsense_firmware_version_xmlrpc',
+		'signature' => $host_firmware_version_sig,
+		'docstring' => $host_firmware_version_doc),
 		'pfsense.reboot' => array('function' => 'reboot_xmlrpc',
 		'signature' => $reboot_sig,
 		'docstring' => $reboot_doc),

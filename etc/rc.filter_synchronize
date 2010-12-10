@@ -88,7 +88,7 @@ function remove_special_characters($string) {
 	return $string;
 }
 
-function carp_check_version($url, $password, $port = 80, $method = 'pfsense.check_firmware_version') {
+function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
 	global $config, $g;
 
 	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])

@@ -760,11 +760,25 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	return $versions;
 }
 
+/*
+ * host_firmware_version(): Return the versions used in this install
+ */
+function host_firmware_version() {
+        global $g, $config;
+
+        return array(
+		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
+                "kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
+                "base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+                "platform" => trim(file_get_contents('/etc/platform', " \n")),
+                "config_version" => $config['version']
+                );
+}
+
 function get_disk_info() {
 	$diskout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $2, $3, $4, $5 }'", $diskout);
 	return explode(' ', $diskout[0]);
-	// $size, $used, $avail, $cap
 }
 
 /****f* pfsense-utils/strncpy

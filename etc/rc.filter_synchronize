@@ -95,7 +95,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 		return;
 
 	$params = array(
-                XML_RPC_encode($password),
+                XML_RPC_encode($password)
         );
 
         $numberofruns = 0;
@@ -113,7 +113,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
                 } elseif($resp->faultCode()) {
                         $error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
                 } else {
-			$parsed_response =  XML_RPC_Decode($resp->value());
+			$parsed_response =  XML_RPC_decode($resp->value());
 			if(!is_array($parsed_response)) {
 				if (trim($parsed_response) == "Authentication failed") {
 					$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
@@ -244,21 +244,19 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
-			continue;
 		} elseif($resp->faultCode()) {
 			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
-			continue;
 		} else {
-			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
+			$parsed_response =  XML_RPC_decode($resp->value());
+			if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
+				$error = "A authentication failure occurred while trying to access {$url}:{$port} ($method).";
+				log_error($error);
+				break;
+			} else
+				log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 			$numberofruns = 3;
-		}
-		$parsed_response =  XML_RPC_Decode($resp->value());
-		if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
-			$error = "A authentication failure occurred while trying to access {$url}:{$port} ($method).";
-			log_error($error);
-			break;
 		}
 		$numberofruns++;
 	}

@@ -159,7 +159,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
 	$vipbackup = array();
-	if (isset($params[0]['virtualip'])) {
+	if (isset($params[1]['virtualip'])) {
 		if(is_array($config['virtualip']['vip'])) {
 			foreach ($config['virtualip']['vip'] as $vip)
 				interface_vip_bring_down($vip);
@@ -219,7 +219,7 @@ function merge_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
-	if (isset($params[0]['virtualip'])) {
+	if (isset($params[1]['virtualip'])) {
                 if(is_array($config['virtualip']['vip'])) {
                         foreach ($config['virtualip']['vip'] as $vip)
                                 interface_vip_bring_down($vip);

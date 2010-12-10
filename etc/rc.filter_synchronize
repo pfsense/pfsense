@@ -121,8 +121,8 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 					return false;
 				}
 			} else {
-				if (!isset($parsed_response['current']['config_version']) ||
-				    $parsed_response['current']['config_version'] < $config['version'])
+				if (!isset($parsed_response['config_version']) ||
+				    $parsed_response['config_version'] < $config['version'])
 					return false;
 				else
 					return true;

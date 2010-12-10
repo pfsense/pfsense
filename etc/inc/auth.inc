@@ -1212,7 +1212,7 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
-			log_error("Successful webConfigurator login for user '{$_POST['usernamefld']}' host: {$_SERVER['REMOTE_ADDR']}");
+			log_auth("Successful webConfigurator login for user '{$_POST['usernamefld']}' host: {$_SERVER['REMOTE_ADDR']}");
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
@@ -1225,8 +1225,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";
-			log_error("webConfigurator authentication error for '{$_POST['usernamefld']}' host: '{$_SERVER['REMOTE_ADDR']}'");
-			
+			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' host: '{$_SERVER['REMOTE_ADDR']}'");
 			if(isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;

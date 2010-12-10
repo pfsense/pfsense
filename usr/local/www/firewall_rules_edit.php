@@ -364,6 +364,8 @@ if ($_POST) {
 	}
 	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "none" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
 		$input_errors[] = gettext("You can not use limiters in Floating rules without choosing a direction.");
+	if (isset($_POST['floating']) && $_POST['gateway'] != "default" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
+		$input_errors[] = gettext("You can not use gateways in Floating rules without choosing a direction.");
 	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "none") {
 		if ($_POST['dnpipe'] == "none" )
 			$input_errors[] = gettext("You must select a queue for the In direction before selecting one for Out too.");

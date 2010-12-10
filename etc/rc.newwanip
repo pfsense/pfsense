@@ -41,6 +41,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
 
+// Do not process while booting
+if($g['booting']) 
+	exit;
+
 /* Interface IP address has changed */
 
 $argument = str_replace("\n", "", $argv[1]);
@@ -115,5 +119,4 @@ mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 mwexec_bg("/etc/rc.start_packages");
 log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
 
-return 0;
 ?>

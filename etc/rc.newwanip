@@ -92,6 +92,9 @@ system_routing_configure($interface);
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 
+/* signal filter reload */
+filter_configure();
+
 if (is_ipaddr($oldip) && $curwanip == $oldip)
 	exit;
 
@@ -106,10 +109,6 @@ vpn_ipsec_force_reload();
 
 /* start OpenVPN server & clients */
 openvpn_resync_all($interface);
-
-/* signal filter reload */
-unlink_if_exists("/tmp/config.cache");
-filter_configure();
 
 /* reload graphing functions */
 enable_rrd_graphing();

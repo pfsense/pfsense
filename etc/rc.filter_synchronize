@@ -96,7 +96,6 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 
 	$params = array(
                 XML_RPC_encode($password),
-                XML_RPC_encode("all")
         );
 
         $numberofruns = 0;

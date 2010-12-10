@@ -109,21 +109,30 @@ function php_value_to_xmlrpc($value, $force_array = false) {
 function xmlrpc_auth(&$params) {
 	global $config;
 
-	if (!is_array($config['system']['user']))
+	if (!is_array($config['system']['user'])) {
+		array_shift($params);
+		unset($params['xmlrpcauth']);
 		return false;
-	if (!isset($config['system']['user'][0]['password']))
+	}
+	if (!isset($config['system']['user'][0]['password'])) {
+		array_shift($params);
+		unset($params['xmlrpcauth']);
 		return false;
+	}
 
 	$localpass =  $config['system']['user'][0]['password'];	
 	if(crypt($params[0], $localpass) == $localpass) {
 		array_shift($params);
+		unset($params['xmlrpcauth']);
 		return true;
 	} else if(crypt($params['xmlrpcauth'],  $localpass)  ==  $localpass)  {
+		array_shift($params);
 		unset($params['xmlrpcauth']);
 		return true;
 	}
-	unset($params['xmlrpcauth']);
 
+	array_shift($params);
+	unset($params['xmlrpcauth']);
 	return false;
 }
 

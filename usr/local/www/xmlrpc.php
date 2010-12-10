@@ -305,10 +305,6 @@ function check_firmware_version_xmlrpc($raw_params) {
 $pfsense_firmware_version_doc = gettext("Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon co
 mpletion.");
 
-$pfsense_firmware_version_sig = array(
-	$XML_RPC_String,
-);
-
 function pfsense_firmware_version_xmlrpc($raw_params) {
         global $xmlrpc_g, $XML_RPC_String;
 
@@ -390,7 +386,6 @@ $server = new XML_RPC_Server(
 		'signature' => $check_firmware_version_sig,
 		'docstring' => $check_firmware_version_doc),
 		'pfsense.host_firmware_version' => array('function' => 'pfsense_firmware_version_xmlrpc',
-		'signature' => $host_firmware_version_sig,
 		'docstring' => $host_firmware_version_doc),
 		'pfsense.reboot' => array('function' => 'reboot_xmlrpc',
 		'signature' => $reboot_sig,

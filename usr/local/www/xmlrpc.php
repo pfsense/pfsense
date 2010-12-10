@@ -316,7 +316,7 @@ function pfsense_firmware_version_xmlrpc($raw_params) {
         if(!xmlrpc_auth($params))
                 return $xmlrpc_g['return']['authfail'];
 
-        return new XML_RPC_Response(new XML_RPC_Value(host_firmware_version(), $XML_RPC_String));
+        return new XML_RPC_Response(new XML_RPC_encode(host_firmware_version()));
 }
 
 /*****************************/

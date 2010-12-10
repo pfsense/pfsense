@@ -763,7 +763,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 /*
  * host_firmware_version(): Return the versions used in this install
  */
-function host_firmware_version() {
+function host_firmware_version($tocheck = "") {
         global $g, $config;
 
         return array(

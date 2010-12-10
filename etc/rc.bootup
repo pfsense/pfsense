@@ -249,9 +249,6 @@ echo "Starting PFLOG...";
 filter_pflog_start();
 echo "done.\n";
 
-/* start load balancer daemon */
-relayd_configure();
-
 /* reconfigure our gateway monitor */
 echo "Setting up gateway monitors...";
 setup_gateways_monitor();
@@ -281,6 +278,9 @@ system_routing_configure();
 
 /* enable routing */
 system_routing_enable();
+
+/* start load balancer daemon */
+relayd_configure();
 
 /* configure console menu */
 system_console_configure();

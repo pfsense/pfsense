@@ -172,7 +172,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	if (is_array($vipbackup)) {
 		foreach ($vipbackup as $vip) {
 			if (($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp'))
-				$config['virtualip']['vip'][]=$vip ;
+				array_unshift($config['virtualip']['vip'], $vip);
 		}
 	}
 	$mergedkeys = implode(",", array_keys($params[0]));

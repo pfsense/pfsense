@@ -512,7 +512,7 @@ function dpdchkbox_change() {
 									$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
 								$aliaslist = get_configured_ip_aliases_list();
 								foreach ($aliaslist as $aliasip => $aliasif)
-									$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")" = $aliasip." (".get_vip_descr($aliasip).")" = $aliasip." (".get_vip_descr($aliasip).")";
+									$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
 								foreach ($interfaces as $iface => $ifacename):
 							?>
 								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>

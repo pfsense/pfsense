@@ -32,5 +32,4 @@ if [ "$PLATFORM" = "pfSense" ]; then
 else
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh
-	/etc/rc.backup_vouchers.sh
 fi

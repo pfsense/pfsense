@@ -63,14 +63,12 @@ EOF;
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
-	if(!$resp) {
+	if(!is_object($resp)) {
 		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
 		return array("timeleft" => "0");
 	} elseif($resp->faultCode()) {
-		$cli->setDebug(1);
-		$resp = $cli->send($msg, "250");
 		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
@@ -84,7 +82,8 @@ EOF;
 		write_config("Captive Portal Voucher database synchronized with {$url}");
 		voucher_configure();
 	}
-    return $toreturn['timeleft'];
+
+	return $toreturn['timeleft'];
 }
 
 /* 

@@ -420,10 +420,11 @@ function local_user_set(& $user) {
 		$keys = base64_decode($user['authorizedkeys']);
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
-	}
+	} else
+		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock -q {$user_name}");
+	exec("/usr/sbin/pw {$un}lock {$user_name} -q");
 	
 	conf_mount_ro();
 }
@@ -1211,7 +1212,7 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
-			log_error("Successful webConfigurator login for user '{$_POST['usernamefld']}' host: {$_SERVER['REMOTE_ADDR']}");
+			log_auth("Successful webConfigurator login for user '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
@@ -1224,8 +1225,7 @@ function session_auth() {
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";
-			log_error("webConfigurator authentication error for '{$_POST['usernamefld']}' host: '{$_SERVER['REMOTE_ADDR']}'");
-			
+			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
 			if(isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;

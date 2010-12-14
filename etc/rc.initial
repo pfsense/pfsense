@@ -3,7 +3,7 @@
 # $Id$
 # /etc/rc.initial
 # part of pfSense by Scott Ullrich
-# Copyright (C) 2004 Scott Ullrich, All rights reserved.
+# Copyright (C) 2004-2010 Scott Ullrich, All rights reserved.
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
@@ -43,45 +43,38 @@ fi
 product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
 hidebanner=`grep hidebanner /etc/inc/globals.inc | cut -d'"' -f4`
 
-# display a cheap menu
-echo
-echo
-echo " ${product} console setup "
-echo "***************************"
-echo " 0)  Logout (SSH only)"
-echo " 1)  Assign Interfaces"
-echo " 2)  Set interface(s) IP address"
-echo " 3)  Reset webConfigurator password"
-echo " 4)  Reset to factory defaults"
-echo " 5)  Reboot system"
-echo " 6)  Halt system"
-echo " 7)  Ping host"
-echo " 8)  Shell"
-echo " 9)  PFtop"
-echo "10)  Filter Logs"
-echo "11)  Restart webConfigurator"
-echo "12)  ${product} Developer Shell"
-echo "13)  Upgrade from console"
+# Check to see if SSH is listening.
 SSHD=`/usr/bin/sockstat -4l | grep "*.22" | wc -l`
 if [ "$SSHD" -gt 0 ]; then
-	echo "14)  Disable Secure Shell (sshd)";
+	sshd_option="14) Disable Secure Shell (sshd)";
 else
-	echo "14)  Enable Secure Shell (sshd)";
+	sshd_option="14) Enable Secure Shell (sshd)";
 fi
 
 for i in /var/db/pfi/capable_*; do
     if [ -f $i -a ! -L /cf/conf ]; then
-	echo "98)  Move configuration file to removable device"
+	option98="98) Move configuration file to removable device"
 	break
     fi
 done
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    echo "99)  Install ${product} to a hard drive/memory drive, etc."
-    echo
+    option99="99) Install ${product} to a hard drive, etc."
 fi
 
-echo
+# display a cheap menu
+echo ""
+echo ""
+echo " 0) Logout (SSH only)                  8) Shell"
+echo " 1) Assign Interfaces                  9) pfTop"
+echo " 2) Set interface(s) IP address       10) Filter Logs"
+echo " 3) Reset webConfigurator password    11) Restart webConfigurator"
+echo " 4) Reset to factory defaults         12) ${product} Developer Shell"
+echo " 5) Reboot system                     13) Upgrade from console"
+echo " 6) Halt system                       ${sshd_option}"
+echo " 7) Ping host                         ${option98}"
+/bin/echo "${option99}"
+
 read -p "Enter an option: " opmode
 echo
 

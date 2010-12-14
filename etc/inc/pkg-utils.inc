@@ -427,9 +427,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$base_url = substr($base_url, 0, -1);
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
+	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Trying to download {$base_url}/{$filename} ... ";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
 		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
-			$static_output .= " could not download.\n";
+			$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
 			update_output_window($static_output);
 			return false;
 		} else if ($base_url == $priv_url) {
@@ -549,7 +550,6 @@ function install_package($package, $pkg_info = "") {
 		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 
 			update_output_window($pkg_info['after_install_info']);	
-		start_service($pkg_info['name']);
 	}
 }
 

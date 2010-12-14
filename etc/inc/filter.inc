@@ -62,31 +62,27 @@ $aliases = "";
 
 function flowtable_configure() {
 	global $config, $g;
-	return;
+
+	if (empty($config['system']['flowtable'])) {
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
+		return;
+	}
+
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
 		$maxstates = $config['system']['maximumstates'];
 	else
-		$maxstates = "150000";
+		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
+	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
 	$nmbflows = ($cpus*($maxstates*2));
-	// flowtable is not enabled
-	/*
-	if($config['system']['flowtable'])
-		$flowtable_enable = 1;
-	else
-		$flowtable_enable = 0;
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		if($flowtable_enable == 1) {
-			mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
-			mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
-		}
-		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
+		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
 	}
-	*/
 }
 
 function filter_load_ipfw() {
@@ -135,11 +131,19 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
+	global $g;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
-	send_event("filter reload");
+
+	/*
+	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
+	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
+	 */
+	if (!$g['booting'])
+		send_event("filter reload");
 }
 
 function filter_delete_states_for_down_gateways() {
@@ -180,8 +184,9 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
-	/* Use config lock to not allow recursion and config changes during this run. */
-	$filterlck = lock('config');
+	/* Use filter lock to not allow recursion and config lock to prevent changes during this run. */
+	$filterlck = lock('filter', LOCK_EX);
+	$configlck = lock('config');
 
 
 	filter_pflog_start();
@@ -236,6 +241,7 @@ function filter_configure_sync() {
 		update_filter_reload_status("Filter is disabled.  Not loading rules.");
 		if($g['booting'] == true)
 			echo "done.\n";
+		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -293,6 +299,7 @@ function filter_configure_sync() {
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
+		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -331,6 +338,7 @@ function filter_configure_sync() {
 			file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
 			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
+			unlock($configlck);
 			unlock($filterlck);
 			return;
 		}
@@ -378,7 +386,7 @@ function filter_configure_sync() {
 		fclose($fda);
 	}
 
-	unlock($filterlck);
+	unlock($configlck);
 
 	if(file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
@@ -409,6 +417,7 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo "done.\n";
 
+	unlock($filterlck);
 	return 0;
 }
 

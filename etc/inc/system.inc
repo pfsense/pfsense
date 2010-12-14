@@ -306,11 +306,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	/* Enable fast routing, if enabled */
-	/* XXX: More checks need to be done for subsystems that are not compatibel with fast routing. */
-	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
-		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
-
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;
@@ -521,7 +516,7 @@ news.err;local0.none;local3.none;local4.none; 	 {$log_directive}{$g['varlog_path
 local7.none										 {$log_directive}{$g['varlog_path']}/system.log
 security.*										 {$log_directive}{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info				 {$log_directive}{$g['varlog_path']}/system.log
-auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
+auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf 15
 *.emerg											 *
 
 EOD;
@@ -620,12 +615,12 @@ EOD;
 		fclose($fd);
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 		else
-			$retval = system("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec("/usr/sbin/syslogd -c -l /var/dhcpd/var/run/log");
+		$retval = mwexec("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log");
 	}
 
 	if ($g['booting'])

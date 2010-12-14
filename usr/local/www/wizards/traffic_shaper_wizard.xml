@@ -1215,16 +1215,4 @@
 		<stepsubmitphpaction>step8_stepsubmitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 	</step>
-	<step>
-		<id>9</id>
-		<title>pfSense Traffic Shaper Wizard</title>
-		<fields>
-			<field>
-				<name>Finish</name>
-				<type>submit</type>
-			</field>
-		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
-		<stepsubmitphpaction>step9_stepsubmitphpaction();</stepsubmitphpaction>
-	</step>
 </pfsensewizard>

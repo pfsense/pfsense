@@ -728,13 +728,16 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
+
 	$ip = gethostbyname($g['product_website']);
 	if($ip == $g['product_website'])
 		return false;
+
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
-		"platform" => trim(file_get_contents('/etc/platform'))
+		"platform" => trim(file_get_contents('/etc/platform')),
+		"config_version" => $config['version']
 		);
 	if($tocheck == "all") {
 		$params = $rawparams;
@@ -744,22 +747,38 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 			$params['platform'] = $rawparams['platform'];
 		}
 	}
-	if($config['system']['firmware']['branch']) {
+	if($config['system']['firmware']['branch'])
 		$params['branch'] = $config['system']['firmware']['branch'];
-	}
-	if(!$versions = call_pfsense_method('pfsense.get_firmware_version', $params)) {
+
+	/* XXX: What is this method? */
+	if(!($versions = call_pfsense_method('pfsense.get_firmware_version', $params))) {
 		return false;
 	} else {
 		$versions["current"] = $params;
 	}
+
 	return $versions;
+}
+
+/*
+ * host_firmware_version(): Return the versions used in this install
+ */
+function host_firmware_version($tocheck = "") {
+        global $g, $config;
+
+        return array(
+		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
+                "kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
+                "base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+                "platform" => trim(file_get_contents('/etc/platform', " \n")),
+                "config_version" => $config['version']
+                );
 }
 
 function get_disk_info() {
 	$diskout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $2, $3, $4, $5 }'", $diskout);
 	return explode(' ', $diskout[0]);
-	// $size, $used, $avail, $cap
 }
 
 /****f* pfsense-utils/strncpy
@@ -789,13 +808,6 @@ function strncpy(&$dst, $src, $length) {
 function reload_interfaces_sync() {
 	global $config, $g;
 
-	/* XXX: Use locks?! */
-	if (file_exists("{$g['tmp_path']}/reloading_all")) {
-		log_error("WARNING: Recursive call to interfaces sync!");
-		return;
-	}
-	touch("{$g['tmp_path']}/reloading_all");
-
 	if($g['debug'])
 		log_error("reload_interfaces_sync() is starting.");
 
@@ -812,13 +824,6 @@ function reload_interfaces_sync() {
 
 	/* set up interfaces */
 	interfaces_configure();
-
-	/* remove reloading_all trigger */
-	if($g['debug'])
-		log_error("Removing {$g['tmp_path']}/reloading_all");
-
-	/* start devd back up */
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 /****f* pfsense-utils/reload_all
@@ -830,7 +835,6 @@ function reload_interfaces_sync() {
  *   none
  ******/
 function reload_all() {
-	global $g;
 	send_event("service reload all");
 }
 
@@ -843,8 +847,7 @@ function reload_all() {
  *   none
  ******/
 function reload_interfaces() {
-	global $g;
-	touch("{$g['tmp_path']}/reload_interfaces");
+	send_event("interface all reload");
 }
 
 /****f* pfsense-utils/reload_all_sync
@@ -859,13 +862,6 @@ function reload_all_sync() {
 	global $config, $g;
 
 	$g['booting'] = false;
-
-	/* XXX: Use locks?! */
-        if (file_exists("{$g['tmp_path']}/reloading_all")) {
-                log_error("WARNING: Recursive call to reload all sync!");
-                return;
-        }
-	touch("{$g['tmp_path']}/reloading_all");
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -908,8 +904,6 @@ function reload_all_sync() {
 
 	/* restart webConfigurator if needed */
 	send_event("service restart webgui");
-
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 function auto_login() {

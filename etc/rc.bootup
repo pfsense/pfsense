@@ -249,9 +249,6 @@ echo "Starting PFLOG...";
 filter_pflog_start();
 echo "done.\n";
 
-/* start load balancer daemon */
-relayd_configure();
-
 /* reconfigure our gateway monitor */
 echo "Setting up gateway monitors...";
 setup_gateways_monitor();
@@ -282,6 +279,9 @@ system_routing_configure();
 /* enable routing */
 system_routing_enable();
 
+/* start load balancer daemon */
+relayd_configure();
+
 /* configure console menu */
 system_console_configure();
 
@@ -293,10 +293,6 @@ echo "done.\n";
 /* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
-/* static IP address? -> attempt DNS update */
-if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
-	services_dnsupdate_process();
-
 /* start DHCP service */
 services_dhcpd_configure();
 
@@ -306,11 +302,14 @@ services_dnsmasq_configure();
 /* start dhcpleases dhpcp hosts leases program */
 system_dhcpleases_configure();
 
-/* start dyndns service */
-send_event("service reload dyndnsall");
-
 /* start DHCP relay */
 services_dhcrelay_configure();
+
+/* dyndns service updates */
+send_event("service reload dyndnsall");
+
+/* Run a filter configure now that most all services have started */
+filter_configure_sync();
 
 /* setup pppoe and pptp */
 vpn_setup();
@@ -336,9 +335,6 @@ system_set_harddisk_standby();
 /* lock down console if necessary */
 auto_login();
 
-/* Run a filter configure now that most all services have started */
-filter_configure_sync();
-
 /* load graphing functions */
 enable_rrd_graphing();
 
@@ -361,16 +357,16 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 if($avail < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
-	mwexec("sysctl net.inet.tcp.recvspace=4096");
-	mwexec("sysctl net.inet.tcp.sendspace=4096");
+	mwexec("/sbin/sysctl net.inet.tcp.recvspace=4096");
+	mwexec("/sbin/sysctl net.inet.tcp.sendspace=4096");
 }
 
 /* if we are operating at 1000 then increase timeouts.
    this was never accounted for after moving to 1000 hz */
-$kern_hz = `sysctl kern.clockrate | awk '{ print $5 }' | cut -d"," -f1`;
+$kern_hz = `/sbin/sysctl kern.clockrate | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"," -f1`;
 $kern_hz = trim($kern_hz, "\r\n");
 if($kern_hz == "1000") 
-	mwexec("sysctl net.inet.tcp.rexmit_min=30");
+	mwexec("/sbin/sysctl net.inet.tcp.rexmit_min=30");
 
 /* start the igmpproxy daemon */
 services_igmpproxy_configure();
@@ -383,7 +379,7 @@ activate_powerd();
 
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
-	unlink("/sbin/shutdown.old");
+	@unlink("/sbin/shutdown.old");
 
 /* done */
 unset($g['booting']);

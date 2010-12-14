@@ -113,7 +113,7 @@ $vlan_native_supp = get_nics_with_capabilities("vlanmtu");
 if(count($vlan_native_supp) > 0)
 	$g['vlan_long_frame'] = $vlan_native_supp;
 else 
-	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le",  "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
+	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");
@@ -147,7 +147,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.syncookies" => "1", 
 	"net.inet.tcp.recvspace" => "65228", 
 	"net.inet.tcp.sendspace" => "65228", 
-	"net.inet.ip.fastforwarding" => "1", 
+	"net.inet.ip.fastforwarding" => "0", 
 	"net.inet.tcp.delayed_ack" => "0", 
 	"net.inet.udp.maxdgram" => "57344", 
 	"net.link.bridge.pfil_onlyip" => "0", 

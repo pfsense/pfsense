@@ -107,16 +107,35 @@ function php_value_to_xmlrpc($value, $force_array = false) {
  *                the array before returning it.
  */
 function xmlrpc_auth(&$params) {
-	global $config;
+	global $config, $_SERVER;
+
+	if (!is_array($config['system']['user'])) {
+		array_shift($params);
+		unset($params['xmlrpcauth']);
+		log_error("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']} during sync settings.");
+		return false;
+	}
+	if (!isset($config['system']['user'][0]['password'])) {
+		array_shift($params);
+		unset($params['xmlrpcauth']);
+		log_error("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']} during sync settings.");
+		return false;
+	}
+
 	$localpass =  $config['system']['user'][0]['password'];	
 	if(crypt($params[0], $localpass) == $localpass) {
 		array_shift($params);
-		return true;
-	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {
 		unset($params['xmlrpcauth']);
-		return false;
+		return true;
+	} else if(crypt($params['xmlrpcauth'],  $localpass)  ==  $localpass)  {
+		array_shift($params);
+		unset($params['xmlrpcauth']);
+		return true;
 	}
+
+	array_shift($params);
 	unset($params['xmlrpcauth']);
+	log_error("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']} during sync settings.");
 	return false;
 }
 

@@ -154,6 +154,7 @@ include("head.inc");
 						$netmask = $carp['subnet_bits'];
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
+						$advbase = $carp['advbase'];
 						$carp_int = "vip{$vhid}";
 						$status = get_carp_interface_status($carp_int);
 						echo "<tr>";

@@ -790,6 +790,23 @@ function log_error($error) {
         return;
 }
 
+/****f* util/log_auth
+* NAME
+*   log_error  - Sends a string to syslog as LOG_AUTH facility
+* INPUTS
+*   $error     - string containing the syslog message.
+* RESULT
+*   null
+******/
+function log_auth($error) {
+        global $g;
+        $page = $_SERVER['SCRIPT_NAME'];
+        syslog(LOG_AUTH, "$page: $error");
+        if ($g['debug'])
+                syslog(LOG_WARNING, var_dump(debug_backtrace()));
+        return;
+}
+
 /****f* util/exec_command
  * NAME
  *   exec_command - Execute a command and return a string of the result.

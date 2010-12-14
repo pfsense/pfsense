@@ -206,7 +206,12 @@ function relayd_configure() {
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {
       if(is_array($pool_a[$i]['servers'])) {
-        $srvtxt = implode(", ", $pool_a[$i]['servers']);
+	if (!empty($pool_a[$i]['retry'])) {
+		$retrytext = " retry {$pool_a[$i]['retry']}";
+		$srvtxt = implode("{$retrytext}, ", $pool_a[$i]['servers']) . "{$retrytext}";
+	} else {
+		$srvtxt = implode(", ", $pool_a[$i]['servers']);
+	}
         $conf .= "table <{$pool_a[$i]['name']}> { $srvtxt }\n";
         /* Index by name for easier fetching when we loop through the virtual servers */
         $pools[$pool_a[$i]['name']] = $pool_a[$i];

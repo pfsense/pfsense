@@ -218,13 +218,6 @@
 			<type>listtopic</type>
 		</field>
 		<field>
-			<name>interface</name>
-			<type>interface_select</type>
-			<donotdisable>true</donotdisable>
-			<displayname>Interface</displayname>
-			<bindstofield>interfaces->wan->if</bindstofield>
-		</field>
-		<field>
 			<donotdisable>true</donotdisable>
 			<name>MAC Address</name>
 			<bindstofield>interfaces->wan->spoofmac</bindstofield>

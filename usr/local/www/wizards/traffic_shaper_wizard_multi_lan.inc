@@ -1348,7 +1348,7 @@ function apply_all_choosen_items() {
 		write_config();
 }
 
-function wizard_get_bandwidthtype_scale($type) {
+function wizard_get_bandwidthtype_scale($type = "b") {
 	switch ($type) {
 		case "Gb":
 	        $factor = 1000 * 1000 * 1000;
@@ -1364,7 +1364,7 @@ function wizard_get_bandwidthtype_scale($type) {
 	        $factor = 1;
 			break;
 	}
-	return floatval($factor);
+	return intval($factor);
 }
 
 ?>

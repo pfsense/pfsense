@@ -586,7 +586,7 @@ function apply_all_choosen_items() {
 	$lanbw = 0;
 	for ($i = 0; $i < $steps; $i++) {
 		$down = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-		$input_bw = $config['ezshaper']['step2']["conn{$i}download"] * $down;
+		$input_bw = floatval($config['ezshaper']['step2']["conn{$i}download"]) * $down;
 		$lanbw += $input_bw;
 	}
 
@@ -624,7 +624,7 @@ function apply_all_choosen_items() {
 
 			if ($config['ezshaper']['step3']['enable']) {
 					$voip = true;
-					$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
+					$voipbw = floatval($config['ezshaper']['step3']["conn{$i}upload"]);
 					$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
 					if ($sched != "HFSC") {
 						if ($voipbwunit == "%") 
@@ -1504,7 +1504,7 @@ function apply_all_choosen_items() {
 		write_config();
 }
 
-function wizard_get_bandwidthtype_scale($type) {
+function wizard_get_bandwidthtype_scale($type = "b") {
         switch ($type) {
         case "Gb":
                 $factor = 1000 * 1000 * 1000;
@@ -1520,7 +1520,7 @@ function wizard_get_bandwidthtype_scale($type) {
                 $factor = 1;
         break;
         }
-        return floatval($factor);
+        return intval($factor);
 }
 
 ?>

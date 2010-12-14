@@ -39,6 +39,7 @@
 */
 
 /* DISABLE_PHP_LINT_CHECKING */
+// vim: ts=4 sw=4 noexpandtab
 
 /* include all configuration functions */
 
@@ -2165,7 +2166,6 @@ EOD;
 pass in on \$loopback all label "pass loopback"
 pass out on \$loopback all label "pass loopback"
 
-
 EOD;
 
 	$ipfrules .= <<<EOD
@@ -2763,7 +2763,5 @@ function discover_pkg_rules($ruletype) {
 	}
 	return $rules;
 }
-
-// vim: ts=4 sw=4 noexpandtab
 
 ?>

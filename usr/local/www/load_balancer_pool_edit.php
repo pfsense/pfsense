@@ -56,6 +56,7 @@ if (isset($id) && $a_pool[$id]) {
 	$pconfig['mode'] = $a_pool[$id]['mode'];
 	$pconfig['descr'] = $a_pool[$id]['descr'];
 	$pconfig['port'] = $a_pool[$id]['port'];
+	$pconfig['retry'] = $a_pool[$id]['retry'];
 	$pconfig['servers'] = &$a_pool[$id]['servers'];
 	$pconfig['serversdisabled'] = &$a_pool[$id]['serversdisabled'];
 	$pconfig['monitor'] = $a_pool[$id]['monitor'];
@@ -86,6 +87,11 @@ if ($_POST) {
 
 	if (!is_port($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
+
+	// May as well use is_port as we want a positive integer and such.
+	if (!empty($_POST['retry']) && !is_port($_POST['retry']))
+		$input_errors[] = gettext("The retry value must be an integer between 1 and 65535.");
+
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
@@ -118,6 +124,7 @@ if ($_POST) {
 		update_if_changed("mode", $poolent['mode'], $_POST['mode']);
 		update_if_changed("description", $poolent['descr'], $_POST['descr']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
+		update_if_changed("retry", $poolent['retry'], $_POST['retry']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
 		update_if_changed("serversdisabled", $poolent['serversdisabled'], $_POST['serversdisabled']);
 		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
@@ -197,6 +204,13 @@ function clearcombo(){
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
 				<div id="monitorport_desc"><?=gettext("This is the port your servers are listening on."); ?></div>
+			</td>
+		</tr>
+		<tr align="left">
+			<td width="22%" valign="top" id="retry_text" class="vncell"><?=gettext("Retry"); ?></td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="retry" type="text" <?if(isset($pconfig['retry'])) echo "value=\"{$pconfig['retry']}\"";?> size="16" maxlength="16"><br>
+				<div id="retry_desc"><?=gettext("Optionally specify how many times to retry checking a server before declaring it down."); ?></div>
 			</td>
 		</tr>
 		<tr>

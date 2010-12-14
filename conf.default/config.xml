@@ -6,6 +6,11 @@
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
+			<descr>Increase UFS read-ahead speeds to match current state of hard drives and NCQ. More information here: http://ivoras.sharanet.org/blog/tree/2010-11-19.ufs-read-ahead.html</descr>
+			<tunable>vfs.read_max</tunable>
+			<value>default</value>
+		</item>
+		<item>
 			<descr>Set the ephemeral port range to be lower.</descr>
 			<tunable>net.inet.ip.portrange.first</tunable>
 			<value>default</value>
@@ -128,11 +133,6 @@
 		<item>
 			<descr>TCP Offload Engine</descr>
 			<tunable>net.inet.tcp.tso</tunable>
-			<value>default</value>
-		</item>
-		<item>
-			<descr>TCP Offload Engine - BCE</descr>
-			<tunable>hw.bce.tso_enable</tunable>
 			<value>default</value>
 		</item>
 	</sysctl>

@@ -41,6 +41,7 @@
  * in our config.xml file and check the credentials.
  */
 
+require_once("globals.inc");
 require_once("config.inc");
 require_once("radius.inc");
 require_once("auth.inc");
@@ -94,6 +95,11 @@ if (!$username || !$password) {
 
 /* Replaced by a sed with propper variables used below(ldap parameters). */
 //<template>
+
+if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
+	putenv("LDAPTLS_CACERT={$g['varetc_path']}/openvpn/{$modeid}.ca");
+	putenv("LDAPTLS_REQCERT=never");
+}
 
 $authenticated = false;
 

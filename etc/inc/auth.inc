@@ -49,6 +49,9 @@
 if(!$do_not_include_config_gui_inc)
 	require_once("config.gui.inc");
 
+// Will be changed to false if security checks fail
+$security_passed = true;
+
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
@@ -61,65 +64,89 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$http_host = $_SERVER['HTTP_HOST'];
 	}
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-	   $http_host == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
+			strcasecmp($http_host, "localhost") == 0)
 		$found_host = true;
-	if($config['dyndnses']['dyndns'])
-		foreach($config['dyndnses']['dyndns'] as $dyndns)
-			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
-				$found_host = true;
+	if(strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
+			strcasecmp($http_host, $config['system']['hostname']) == 0)
+		$found_host = true;
 
-	if(!empty($config['system']['webgui']['althostnames'])) {
+	if(is_array($config['dyndnses']['dyndns']) && !$found_host)
+		foreach($config['dyndnses']['dyndns'] as $dyndns)
+			if(strcasecmp($dyndns['host'], $http_host) == 0) {
+				$found_host = true;
+				break;
+			}
+
+	if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)
-			if($ah == $http_host or $ah == $_SERVER['SERVER_ADDR'])
+			if(strcasecmp($ah, $http_host) == 0 or strcasecmp($ah, $_SERVER['SERVER_ADDR']) == 0) {
 				$found_host = true;
+				break;
+			}
 	}
 
-	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
-			$http_host == $_SERVER['SERVER_ADDR'] or
-			$http_host == $config['system']['hostname'])
-		$found_host = true;
-
 	if($found_host == false) {
-		display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."));
-		exit;
+		if(!security_checks_disabled()) {
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."));
+			exit;
+		}
+		$security_passed = false;
 	}
 }
 
 // If the HTTP_REFERER is something other than ourselves then disallow.
 if(function_exists("display_error_form") && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 	if($_SERVER['HTTP_REFERER']) {
+		if(file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
+			if($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
+				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
+				header("Refresh: 1; url=index.php");
+				echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+				echo "<html><head><title>" . gettext("Redirecting...") . "</title></head><body>" . gettext("Redirecting to the dashboard...") . "</body></html>";
+				exit;
+			}
+		}
 		$found_host = false;
-		$hostname_me = $config['system']['hostname'] . "." . $config['system']['domain'];
-		if(stristr($_SERVER['HTTP_REFERER'], $hostname_me))
-			$found_host = true;
-		if(!empty($config['system']['webgui']['althostnames'])) {
-			$althosts = explode(" ", $config['system']['webgui']['althostnames']);
-			foreach ($althosts as $ah) {
-				if(empty($ah))
-					continue;
-				if(stristr($ah, $hostname_me)) {
-					$found_host = true;
-					break;
+		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+		if($referrer_host) {
+			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
+					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
+				$found_host = true;
+			if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
+				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+				foreach ($althosts as $ah) {
+					if(strcasecmp($referrer_host, $ah) == 0) {
+						$found_host = true;
+						break;
+					}
+				}
+			}
+			if(!$found_host) {
+				$interface_list_ips = get_configured_ip_addresses();
+				foreach($interface_list_ips as $ilips) {
+					if(strcasecmp($referrer_host, $ilips) == 0) {
+						$found_host = true;
+						break;
+					}
 				}
 			}
 		}
-		$interface_list_ips = get_configured_ip_addresses();
-		foreach($interface_list_ips as $ilips) {
-			if(empty($ilips))
-				continue;
-			$hostname_me_ip = $config['webgui']['protocol'] . "://" . $ilips;
-			if(stristr($_SERVER['HTTP_REFERER'],$hostname_me_ip)) {
-				$found_host = true;
-				break;
-			}
-		}
 		if($found_host == false) {
-			display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
-			exit;
+			if(!security_checks_disabled()) {
+				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+				exit;
+			}
+			$security_passed = false;
 		}
-	}
+	} else
+		$security_passed = false;
 }
+
+if (function_exists("display_error_form") && $security_passed)
+	/* Security checks passed, so it should be OK to turn them back on */
+	restore_security_checks();
+unset($security_passed);
 
 $groupindex = index_groups();
 $userindex = index_users();
@@ -393,10 +420,11 @@ function local_user_set(& $user) {
 		$keys = base64_decode($user['authorizedkeys']);
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
-	}
+	} else
+		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock -q {$user_name}");
+	exec("/usr/sbin/pw {$un}lock {$user_name} -q");
 	
 	conf_mount_ro();
 }
@@ -1184,7 +1212,7 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
-			log_error(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
+			log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
@@ -1196,8 +1224,8 @@ function session_auth() {
 			exit;
 		} else {
 			/* give the user an error message */
-			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
-			log_error(sprintf(gettext("Login attempt with user: '%1\$s' from: '%2\$s' failed."), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
+			$_SESSION['Login_Error'] = "Username or Password incorrect";
+			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
 			if(isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 				return;

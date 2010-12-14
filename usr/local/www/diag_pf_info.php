@@ -1,8 +1,8 @@
 <?php
 /* $Id$ */
 /*
-    diag_system_pftop.php
-    Copyright (C) 2008-2009 Scott Ullrich
+    diag_pf_info.php
+    Copyright (C) 2010 Scott Ullrich
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,44 @@
 */
 
 /*
-	pfSense_MODULE:	filter
+	pfSense_BUILDER_BINARIES:	/usr/bin/top
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV
 ##|*IDENT=page-diag-system-activity
 ##|*NAME=Diagnostics: System Activity
 ##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
-##|*MATCH=diag_system_pftop*
+##|*MATCH=diag_system_activity*
 ##|-PRIV
 
 require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = gettext("Diagnostics: pfTop");
+$pgtitle = gettext("Diagnostics: pfInfo");
 
 if($_REQUEST['getactivity']) {
-	if($_REQUEST['sorttype'])
-		$sorttype = escapeshellarg($_REQUEST['sorttype']);
-	else
-		$sorttype = gettext("bytes");	
-	$text = `pftop -b -a -o {$sorttype}`;
+	$text = `/sbin/pfctl -vvsi`;
+	$text .= "<p/>";
+	$text .= `/sbin/pfctl -vvsm`;
+	$text .= "<p/>";
+	$text .= `/sbin/pfctl -vvst`;
+	$text .= "<p/>";
+	$text .= `/sbin/pfctl -vvsI`;
 	echo $text;
 	exit;
 }
 
 include("head.inc");
 
-if($_REQUEST['sorttype'])
-	$sorttype = htmlentities($_REQUEST['sorttype']);
-else
-	$sorttype = gettext("bytes");
-
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form method="post" action="diag_system_pftop.php">
+
 <script type="text/javascript">
 	function getcpuactivity() {
-		var url = "/diag_system_pftop.php";
-		var pars = 'getactivity=yes&sorttype=' + $('sorttype').value;
+		var url = "/diag_pf_info.php";
+		var pars = 'getactivity=yes';
 		var myAjax = new Ajax.Request(
 			url,
 			{
@@ -78,9 +76,9 @@ else
 	}
 	function activitycallback(transport) {
 		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre>' + transport.responseText  + '</pre></font>';
-		setTimeout('getcpuactivity()', 2500);		
+		setTimeout('getcpuactivity()', 2000);		
 	}
-	setTimeout('getcpuactivity()', 1000);	
+	setTimeout('getcpuactivity()', 5000);	
 </script>
 <div id='maincontent'>
 <?php
@@ -95,24 +93,6 @@ else
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-	<form method="post">
-	<?=gettext("Sort type:"); ?>
-	<select name='sorttype' id='sorttype' onChange='this.form.submit();'>
-		<option value='<?=$sorttype?>'><?=$sorttype?></option>
-		<option value='age'><?=gettext("age");?></option>
-		<option value='bytes'><?=gettext("bytes");?></option>
-		<option value='dest'><?=gettext("dest");?></option>
-		<option value='dport'><?=gettext("dport");?></option>
-		<option value='exp'><?=gettext("exp");?></option>
-		<option value='none'><?=gettext("none");?></option>
-		<option value='peak'><?=gettext("peak");?></option>
-		<option value='pkt'><?=gettext("pkt");?></option>
-		<option value='rate'><?=gettext("rate");?></option>
-		<option value='size'><?=gettext("size");?></option>
-		<option value='sport'><?=gettext("sport");?></option>
-		<option value='src'><?=gettext("src");?></option>														
-	</select>
-	<p/>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  
   <tr>
     <td>
@@ -123,7 +103,7 @@ else
 				<table>
 					<tr><td>
 						<div name='cpuactivitydiv' id='cpuactivitydiv'>
-							<b><?=gettext("Gathering pfTOP activity, please wait...");?>
+							<b><?=gettext("Gathering PF information, please wait...");?>
 						</div>
 					</td></tr>
 				</table>

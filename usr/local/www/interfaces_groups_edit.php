@@ -96,7 +96,6 @@ if ($_POST) {
 		$ifgroupentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 
 		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
-
 			if (!empty($config['filter']) && is_array($config['filter']['rule'])) {
 				foreach ($config['filter']['rule'] as $ridx => $rule) {
 					if (isset($rule['floating'])) {

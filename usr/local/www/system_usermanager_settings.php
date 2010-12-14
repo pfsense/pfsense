@@ -62,10 +62,13 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if ($_POST['savetest'] && $_POST['authmode'] == "ldap")
-			$save_and_test = true;
-		else
-			$savemsg = gettext("The test was not performed becuase it is supported only for ldap based backends.");
+		if ($_POST['authmode'] != "local") {
+			$authsrv = auth_get_authserver($_POST['authmode']);
+			if ($_POST['savetest'] && $authsrv['type'] == "ldap")
+				$save_and_test = true;
+			else
+				$savemsg = gettext("The test was not performed becuase it is supported only for ldap based backends.");
+		}
 
 
 		if(isset($_POST['session_timeout']) && $_POST['session_timeout'] != "")

@@ -123,12 +123,18 @@ function ipsec_ikeid_next() {
  */
 function ipsec_get_phase1_src(& $ph1ent) {
 
-	if ($ph1ent['interface'])
-		$if = $ph1ent['interface'];
-	else
+	if ($ph1ent['interface']) {
+		if (!is_ipaddr($ph1ent['interface'])) {
+			$if = $ph1ent['interface'];
+			$interfaceip = get_interface_ip($if);
+		} else {
+			$interfaceip=$ph1ent['interface'];
+		}
+	}
+	else {
 		$if = "wan";
-
-	$interfaceip = get_interface_ip($if);
+		$interfaceip = get_interface_ip($if);
+	}
 
 	return $interfaceip;
 }

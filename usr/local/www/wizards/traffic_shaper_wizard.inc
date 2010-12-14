@@ -555,10 +555,8 @@ function step8_stepsubmitphpaction() {
 	clear_subsystem_dirty('shaper');
 
 	update_filter_reload_status("Initializing");
-}
-function step9_stepsubmitphpaction() {
-	global $g, $config;
-	header("status_filter_reload.php");
+	header("Location: status_filter_reload.php");
+	exit;
 }
 
 function apply_all_choosen_items() {
@@ -685,7 +683,7 @@ function apply_all_choosen_items() {
 
 			if ($remainbw > 0 && $remainbw > 30) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
+				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$savemsg}");
 				exit;
 			} else {
 				$remainbw = 100 - $remainbw;
@@ -1037,7 +1035,7 @@ function apply_all_choosen_items() {
 
 			if ($remainbw > 0 && $remainbw > 30) {
 				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
+				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$savemsg}");
 				exit;
 			} else {
 				$remainbw = 100 - $remainbw;

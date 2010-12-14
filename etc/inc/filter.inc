@@ -62,31 +62,27 @@ $aliases = "";
 
 function flowtable_configure() {
 	global $config, $g;
-	return;
+
+	if (empty($config['system']['flowtable'])) {
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
+		return;
+	}
+
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
 		$maxstates = $config['system']['maximumstates'];
 	else
-		$maxstates = "150000";
+		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
+	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
 	$nmbflows = ($cpus*($maxstates*2));
-	// flowtable is not enabled
-	/*
-	if($config['system']['flowtable'])
-		$flowtable_enable = 1;
-	else
-		$flowtable_enable = 0;
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		if($flowtable_enable == 1) {
-			mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
-			mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
-		}
-		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
+		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
 	}
-	*/
 }
 
 function filter_load_ipfw() {
@@ -135,15 +131,26 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
+	global $g;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
-	send_event("filter reload");
+
+	/*
+	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
+	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
+	 */
+	if (!$g['booting'])
+		send_event("filter reload");
 }
 
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
+
+	if (isset($config['system']['kill_states']))
+		return;
 
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
@@ -177,8 +184,9 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
-	/* Use config lock to not allow recursion and config changes during this run. */
-	$filterlck = lock('config');
+	/* Use filter lock to not allow recursion and config lock to prevent changes during this run. */
+	$filterlck = lock('filter', LOCK_EX);
+	$configlck = lock('config');
 
 
 	filter_pflog_start();
@@ -233,6 +241,7 @@ function filter_configure_sync() {
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
 		if($g['booting'] == true)
 			echo gettext("done.") . "\n";
+		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -290,6 +299,7 @@ function filter_configure_sync() {
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error(gettext("WARNING: Could not write new rules!"));
+		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -329,6 +339,7 @@ function filter_configure_sync() {
 			file_notice("filter_load", $error_msg, "Filter Reload", "");
 			log_error($error_msg);
 			update_filter_reload_status($error_msg);
+			unlock($configlck);
 			unlock($filterlck);
 			return;
 		}
@@ -357,7 +368,7 @@ function filter_configure_sync() {
 		 * FilterDNS has three debugging levels. The default choosen is 1.
 		 * Availabe are level 2 and greater then 2.
 		 */
-		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf 1");
+		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
 	}
 
 	/* run items scheduled for after filter configure run */
@@ -377,7 +388,7 @@ function filter_configure_sync() {
 		fclose($fda);
 	}
 
-	unlock($filterlck);
+	unlock($configlck);
 
 	if(file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
@@ -408,6 +419,7 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo gettext("done.") . "\n";
 
+	unlock($filterlck);
 	return 0;
 }
 
@@ -514,6 +526,7 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n#SSH Lockout Table\n";
 	$aliases .= "table <sshlockout> persist\n";
+	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort2C table\n";
 	$aliases .= "table <snort2c>\n";
@@ -845,7 +858,12 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+	global $config;
+
+	if(!isset($config['system']['enablenatreflectionhelper']))
+		return "";
+
 	// Initialize natrules holder string
 	$natrules = "";
 
@@ -864,21 +882,26 @@ function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $ta
 		$protocol_text = "";
 	}
 
-	$target_if_list = array();
-	if(empty($target_subnet) || !is_numeric($target_subnet) || $target_subnet == 32) {
-		$target_if_list[] = guess_interface_from_ip($target_ip);
-	} else {
-		$target_if_list[] = guess_interface_from_ip(gen_subnet_max($target_ip, $target_subnet));
+	if(empty($target_subnet) || !is_numeric($target_subnet))
+		$target_subnet = 32;
+
+	if(!is_array($route_table)) {
+		$route_table = array();
+		/* create a route table we can search */
+		exec("netstat -rnWf inet", $route_table);
 	}
 
-	foreach ($target_if_list as $target_if) {
-		/* Only install additional NAT rules if the
-		 * target is in the list of source networks */
-		if(in_array($target_if, $nat_ifs)) {
-			$target_networks = "{$target_if}:network";
-
-			$natrules .= "no nat on {$target_if}{$protocol_text} from {$target_if} to {$target}\n";
-			$natrules .= "nat on {$target_if}{$protocol_text} from {$target_networks} to {$target} -> {$target_if}{$static_port}\n";
+	/* Search for matching subnets in the routing table */
+	foreach($route_table as $line) {
+		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|link[#])/", $line)) {
+			$fields = preg_split("/[ ]+/", $line);
+			$subnet = $fields[0];
+			$subnet_split = explode("/", $subnet);
+			$subnet_if = $fields[6];
+			if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$subnet_if}{$static_port}\n";
+			}
 		}
 	}
 
@@ -1143,6 +1166,7 @@ function filter_nat_rules_generate() {
 	update_filter_reload_status(gettext("Creating 1:1 rules..."));
 
 	$reflection_txt = "";
+	$route_table = "";
 
 	/* any 1:1 mappings? */
 	if(is_array($config['nat']['onetoone'])) {
@@ -1200,7 +1224,7 @@ function filter_nat_rules_generate() {
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
-			$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", $srcaddr, $srcip, $sn);
+			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";
@@ -1493,11 +1517,12 @@ function filter_nat_rules_generate() {
 	fclose($inetd_fd);		// Close file handle
 	// Check if inetd is running, if not start it.	If so, restart it gracefully.
 	$helpers = isvalidproc("inetd");
-	if(!$helpers)
-		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
-	else
-		sigkillbypid("/var/run/inetd.pid", "HUP");
-
+	if(file_exists("/var/etc/inetd.conf")) {
+		if(!$helpers)
+			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+		else
+			sigkillbypid("/var/run/inetd.pid", "HUP");
+	}
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
@@ -2031,8 +2056,21 @@ EOD;
 			$sshport = $config['system']['ssh']['port'];
 		else
 			$sshport = 22;
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
+		if($sshport)
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
 	}
+
+	$ipfrules .= "\n# webConfigurator lockout\n";
+	if(!$config['system']['webgui']['port']) {
+		if($config['system']['webgui']['protocol'] == "http") 
+			$webConfiguratorlockoutport = "80";
+		else
+			$webConfiguratorlockoutport = "443";
+	} else {
+		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
+	}
+	if($webConfiguratorlockoutport)
+		$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate

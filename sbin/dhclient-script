@@ -59,7 +59,7 @@ arp_flush() {
 }
 
 delete_old_address() {
-	rm -f /var/db/${interface}_ip
+	/bin/rm -f /var/db/${interface}_ip
 	$IFCONFIG $interface inet -alias $old_ip_address $medium
 }
 
@@ -82,8 +82,6 @@ add_new_address() {
 
         echo $new_routers > /tmp/${interface}_router
 	echo $new_ip_address > /var/db/${interface}_ip
-	/usr/local/sbin/pfSctl -c "interface newip $interface"
-				
 }
 
 delete_old_alias() {
@@ -185,6 +183,7 @@ add_new_routes() {
 		return
 	fi
 
+	ADDED_ROUTE=no
 	# Only allow the default route to be overridden if it's on our own interface
 	if [ -f "/tmp/${interface}_defaultgw" ]; then
 		$ROUTE delete default
@@ -193,13 +192,12 @@ add_new_routes() {
 				$ROUTE add default -iface $interface
 				echo $ROUTE add default -iface $interface | $LOGGER
 				echo $router > /tmp/${interface}_router
-				echo $router > /tmp/${interface}_defaultgw
 			else
 				$ROUTE add default $router
 				echo $ROUTE add default $router | $LOGGER
                        		echo $router > /tmp/${interface}_router
-				echo $router > /tmp/${interface}_defaultgw
 			fi
+			ADDED_ROUTE=yes
 			# 2nd and subsequent default routers error out, so explicitly
 			# stop processing the list after the first one.
 			break
@@ -211,8 +209,10 @@ add_new_routes() {
 		set $new_static_routes
 		while [ $# -gt 1 ]; do
 			$ROUTE add $1 $2
+			if [ "$ADDED_ROUTE" = "no" ]; then
+                        	echo $2 > /tmp/${interface}_router
+			fi
 			shift; shift
-                        echo $new_routers > /tmp/${interface}_router
 		done
 	fi
 }
@@ -226,7 +226,7 @@ add_new_resolv_conf() {
 		done
 	fi
 	if [ -n "$new_domain_name_servers" ]; then 
-		rm -f /var/etc/nameserver_$interface
+		/bin/rm -f /var/etc/nameserver_$interface
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface
 			# so that mulitple wans work correctly with multiple dns
@@ -235,7 +235,6 @@ add_new_resolv_conf() {
 			$ROUTE add $nameserver -iface $interface
 		done
 		echo $new_domain_name >/var/etc/searchdomain_$interface
-		/usr/local/sbin/pfSctl -c 'service reload dns'
 	fi
 
 	return 0
@@ -243,6 +242,7 @@ add_new_resolv_conf() {
 
 # Notify rc.newwanip of changes to an interface
 notify_rc_newwanip() {
+	/usr/local/sbin/pfSctl -c "interface newip $interface"
 }
 
 #
@@ -261,12 +261,12 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 	fi
 fi
 
-if [ -x $ROUTE ]; then
-	if_defaultroute=`$ROUTE get default | $GREP interface | $AWK '{print $2}'`
-else
-	$LOGGER "if_defaultroute"
-	if_defaultroute="x"
-fi
+#if [ -x $ROUTE ]; then
+#	if_defaultroute=`$ROUTE -n get -inet default | $GREP interface | $AWK '{print $2}'`
+#else
+#	$LOGGER "if_defaultroute"
+#	if_defaultroute="x"
+#fi
 
 $LOGGER $reason
 case $reason in
@@ -287,17 +287,17 @@ ARPCHECK|ARPSEND)
 
 BOUND|RENEW|REBIND|REBOOT)
 	check_hostname
-	changes=no
+	changes="no"
 	if [ -n "$old_ip_address" ]; then
 		if [ -n "$alias_ip_address" ] && \
 		   [ "$old_ip_address" != "$alias_ip_address" ]; then
 			delete_old_alias
-			changes=yes
+			changes="yes"
 		fi
 		if [ "$old_ip_address" != "$new_ip_address" ]; then
 			delete_old_address
 			delete_old_routes
-			changes=yes
+			changes="yes"
 		fi
 	fi
 	if [ "$reason" = BOUND ] || \
@@ -306,12 +306,12 @@ BOUND|RENEW|REBIND|REBOOT)
 	   [ "$old_ip_address" != "$new_ip_address" ]; then
 		add_new_address
 		add_new_routes
-		changes=yes
+		changes="yes"
 	fi
 	if [ -n "$alias_ip_address" ] && \
        [ "$new_ip_address" != "$alias_ip_address" ]; then
 		add_new_alias
-		changes=yes
+		changes="yes"
 	fi
 	add_new_resolv_conf
 	if [ "$changes" = "yes" ] ; then
@@ -334,7 +334,7 @@ TIMEOUT)
 	if [ -n "$new_routers" ]; then
 		$LOGGER "New Routers ($interface): $new_routers"
 		set "$new_routers"
-		if /sbin/ping -q -c 1 -w 1 "$1"; then
+		if /sbin/ping -q -c 1 -t 1 "$1"; then
 			if [ "$new_ip_address" != "$alias_ip_address" ]; then
 				add_new_alias
 			fi

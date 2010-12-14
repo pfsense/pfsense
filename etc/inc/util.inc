@@ -38,7 +38,7 @@
 
 /* kill a process by pid file */
 function killbypid($pidfile) {
-	sigkillbypid($pidfile, "TERM");
+	return sigkillbypid($pidfile, "TERM");
 }
 
 function isvalidpid($pid) {
@@ -649,10 +649,16 @@ function get_configured_ip_addresses() {
 	require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
-	foreach($interfaces as $int) {
-		$ipaddr = get_interface_ip($int);
-		$ip_array[$int] = $ipaddr;
+	if(is_array($interfaces)) {
+		foreach($interfaces as $int) {
+			$ipaddr = get_interface_ip($int);
+			$ip_array[$int] = $ipaddr;
+		}
 	}
+	$interfaces = get_configured_carp_interface_list();
+	if(is_array($interfaces)) 
+		foreach($interfaces as $int => $ipaddr) 
+			$ip_array[$int] = $ipaddr;
 	return $ip_array;
 }
 
@@ -784,6 +790,23 @@ function log_error($error) {
         return;
 }
 
+/****f* util/log_auth
+* NAME
+*   log_error  - Sends a string to syslog as LOG_AUTH facility
+* INPUTS
+*   $error     - string containing the syslog message.
+* RESULT
+*   null
+******/
+function log_auth($error) {
+        global $g;
+        $page = $_SERVER['SCRIPT_NAME'];
+        syslog(LOG_AUTH, "$page: $error");
+        if ($g['debug'])
+                syslog(LOG_WARNING, var_dump(debug_backtrace()));
+        return;
+}
+
 /****f* util/exec_command
  * NAME
  *   exec_command - Execute a command and return a string of the result.
@@ -802,17 +825,16 @@ function exec_command($command) {
 
 /* wrapper for exec() */
 function mwexec($command, $mute = false) {
-
 	global $g;
-	$oarr = array();
-	$retval = 0;
+
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
-		exec("$command 2>&1", $oarr, $retval);
-	} else {
-		exec("$command 2>&1", $oarr, $retval);
 	}
+	$oarr = array();
+	$retval = 0;
+	$garbage = exec("$command 2>&1", $oarr, $retval);
+
 	if(isset($config['system']['developerspew']))
                 $mute = false;
 	if(($retval <> 0) && ($mute === false)) {

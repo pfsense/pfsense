@@ -74,10 +74,6 @@ function update_div_rows(data) {
 	var isIE = navigator.appName.indexOf('Microsoft') != -1;
 	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 	var isOpera = navigator.userAgent.indexOf('Opera') != -1;
-	var rows = $$('.log-entry-mini');
-	if (rows.length == 0) {
-		rows = $$('.log-entry');
-	}
 	var showanim = 1;
 	if (isIE) {
 		showanim = 0;
@@ -89,6 +85,11 @@ function update_div_rows(data) {
 	}
 	data = data.slice(startat, data.length);
 
+	var rows = $$('.log-entry-mini');
+	if (rows.length == 0) {
+		rows = $$('.log-entry');
+	}
+
 	for(var x=0; x<data.length; x++) {
 		/*    if reverse logging is enabled we need to show the
 		 *    records in a reverse order with new items appearing
@@ -96,18 +97,17 @@ function update_div_rows(data) {
 		 */
 		if(isReverse == false) {
 			for (var i = 1; i < rows.length; i++) {
-				nextrecord = i - 1;
-				rows[nextrecord].innerHTML = rows[i].innerHTML;
+				rows[i-1].innerHTML = rows[i].innerHTML;
 			}
 		} else {
-			for (var i = rows.length - 2; i > 0; i--) {
-				nextrecord = i + 1;
-				rows[nextrecord].innerHTML = rows[i].innerHTML;
+			for (var i = rows.length - 1; i > 0; i--) {
+				rows[i].innerHTML = rows[i-1].innerHTML;
 			}
 		}
 		$('firstrow').update(data[x]);
 	}
 }
+
 function toggle_pause() {
 	if(isPaused) {
 		isPaused = false;

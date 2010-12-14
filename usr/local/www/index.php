@@ -423,7 +423,7 @@ EOD;
 $closehead = false;
 
 ## Set Page Title and Include Header
-$pgtitle = array(sprintf(gettext("%s Dashboard"), $g['product_name']));
+$pgtitle = array(gettext("Status: Dashboard"));
 include("head.inc");
 
 echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";

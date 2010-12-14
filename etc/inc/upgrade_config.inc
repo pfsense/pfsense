@@ -704,18 +704,14 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
 		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][18]['value'] =   "default";
-
-		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
-		$config['sysctl']['item'][19]['descr'] =    gettext("TCP Offload engine - BCE");
-		$config['sysctl']['item'][19]['value'] =   "default";
 		
-		$config['sysctl']['item'][20]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][20]['descr'] =    gettext("Set the ephemeral port range starting port");
-		$config['sysctl']['item'][20]['value'] =   "default";
+		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][19]['value'] =   "default";
 
-		$config['sysctl']['item'][21]['tunable'] = "hw.syscons.kbd_reboot ";
-		$config['sysctl']['item'][21]['descr'] =    gettext("Enables ctrl+alt+delete");
-		$config['sysctl']['item'][21]['value'] =   "default";
+		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot ";
+		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
+		$config['sysctl']['item'][20]['value'] =   "default";
 
 	}
 }
@@ -1082,7 +1078,7 @@ function upgrade_047_to_048() {
 	if (!empty($config['dyndns'])) {
 		$config['dyndnses'] = array();
 		$config['dyndnses']['dyndns'] = array();
-		if(isset($config['dyndns'][0]['enable'])) {
+		if(isset($config['dyndns'][0]['host'])) {
 			$tempdyn = array();
 			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
 			$tempdyn['type'] = $config['dyndns'][0]['type'];
@@ -1671,10 +1667,11 @@ function upgrade_053_to_054() {
 					$monitor = $split[1];
 					/* on static upgraded configuration we automatically prepend GW_ */
 					$static_name = "GW_" . strtoupper($interface);
-					if(is_ipaddr($monitor)) {
-						$interface = $static_name;
-						$config['interfaces'][$interface]['monitorip'] = $monitor;
-					}
+					if(is_ipaddr($monitor))
+						foreach ($a_gateways as & $gw)
+							if ($gw['name'] == $static_name)
+								$gw['monitor'] = $monitor;
+
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {
 						$i++;
@@ -1738,6 +1735,8 @@ function upgrade_054_to_055() {
 	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
+	if (!file_exists($rrddbpath))
+		@mkdir($rrddbpath);
 	chdir($rrddbpath);
 	$databases = glob("*-quality.rrd");
 	rsort($databases);
@@ -1885,11 +1884,20 @@ function upgrade_055_to_056() {
 
 function upgrade_056_to_057() {
 	global $config;
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	/* migrate captivate portal to user manager */
 	if (is_array($config['captiveportal']['user'])) {
 		foreach($config['captiveportal']['user'] as $user) {
 			// avoid user conflicts
-			if ($config['system']['user'][$user['name']])
+			$found = false;
+			foreach ($config['system']['user'] as $userent) {
+				if ($userent['name'] == $user['name']) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found)
 				continue;
 			$user['scope'] = "user";
 			if (isset($user['expirationdate'])) {
@@ -1900,6 +1908,7 @@ function upgrade_056_to_057() {
 				$user['md5-hash'] = $user['password'];
 				unset($user['password']);
 			}
+			$user['uid'] = $config['system']['nextuid']++;
 			$config['system']['user'][] = $user;
 		}
 		unset($config['captiveportal']['user']);
@@ -2228,10 +2237,10 @@ function upgrade_070_to_071() {
 function rename_field(& $section, $oldname, $newname) {
 	if (is_array($section)) {
 		foreach($section as & $item) {
-			if (!empty($item[$oldname])) {
+			if (!empty($item[$oldname]))
 				$item[$newname] = $item[$oldname];
+			if (isset($item[$oldname]))
 				unset($item[$oldname]);
-			}
 		}
 	}
 }

@@ -358,7 +358,12 @@ function change_protocol() {
 										<select name="localid_type" class="formselect" onChange="typesel_change_local()">
 											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
 											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
-											<option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>><?=gettext("LAN subnet"); ?></option>
+											<?php
+												$iflist = get_configured_interface_with_descr();
+												foreach ($iflist as $ifname => $ifdescr):
+											?>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<?php endforeach; ?>
 											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>

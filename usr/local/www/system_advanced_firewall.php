@@ -124,6 +124,11 @@ if ($_POST) {
 		else
 			$config['system']['enablebinatreflection'] = "yes";
 
+		if($_POST['enablenatreflectionhelper'] == "yes")
+			$config['system']['enablenatreflectionhelper'] = "yes";
+		else
+			unset($config['system']['enablenatreflectionhelper']);
+
 		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
 
 		if($_POST['bypassstaticroutes'] == "yes")
@@ -345,6 +350,15 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="disablebinatreflection" type="checkbox" id="disablebinatreflection" value="yes" <?php if (!isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
 									<strong><?=gettext("Disables the automatic creation of additional NAT 1:1 mappings for access to 1:1 mappings of your external IP addresses from within your internal networks.  Note: Reflection for 1:1 NAT might not fully work in certain complex routing scenarios.");?></strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">&nbsp;</td>
+								<td width="78%" class="vtable">
+									<input name="enablenatreflectionhelper" type="checkbox" id="enablenatreflectionhelper" value="yes" <?php if (isset($config['system']['enablenatreflectionhelper'])) echo "checked"; ?> />
+									<strong><?=gettext("Automatically create outbound NAT rules which assist inbound NAT rules that direct traffic back out to the same subnet it originated from.");?></strong>
+									<br/>
+									<?=gettext("Currently only applies to 1:1 NAT rules.  Required for full functionality of NAT Reflection for 1:1 NAT.");?>
 								</td>
 							</tr>
 							<tr>

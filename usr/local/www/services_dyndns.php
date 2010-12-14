@@ -114,21 +114,21 @@ include("head.inc");
 		  </td>
                   <td class="listlr">
 				  <?php
-						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap");
-						$j = 0; for ($j = 0; $j < count($vals); $j++) 
-                      				if ($vals[$j] == $dyndns['type']) { 
-                      					echo htmlspecialchars($types[$j]);
-											break;
-									}
-						?>
+					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap");
+					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap");
+					$j = 0; for ($j = 0; $j < count($vals); $j++) 
+                      			if ($vals[$j] == $dyndns['type']) { 
+                      				echo htmlspecialchars($types[$j]);
+							break;
+					}
+				?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($dyndns['host']);?>
                   </td>
                   <td class="listlr">
 			<?php
-				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}.cache";
+				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . ".cache";
 				$ipaddr = dyndnsCheckIP($if);
 				if(file_exists($filename)) {
 					$cached_ip_s = split(":", file_get_contents($filename));

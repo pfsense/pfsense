@@ -108,6 +108,10 @@ if (isset($_POST['dhcpbackup'])) {
 	$config['system']['dhcpbackup'] = $_POST['dhcpbackup'];
 	install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 }
+if (isset($_POST['voucherbackup'])) {
+	$config['system']['voucherbackup'] = $_POST['voucherbackup'];
+	install_cron_job("/etc/rc.backup_voucherleases.sh", ($config['system']['voucherbackup'] > 0), $minute="0", "*/{$config['system']['voucherbackup']}");
+}
 
 
 if ($savemsg)
@@ -211,6 +215,23 @@ if ($savemsg)
 								</select>
 								<br/>
 								<?=gettext("This will peridoically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+								<br/>
+								<br/>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Voucher Backup");?></td>
+						<td width="78%" class="vtable">
+							<form action="diag_nanobsd.php" method="post" name="iform">
+								<?=gettext("Frequency:");?>
+								<select name='voucherbackup'>
+									<option value='0' <? if (!isset($config['system']['voucherbackup']) || ($config['system']['voucherbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+								<? for ($x=1; $x<=24; $x++) { ?>
+									<option value='<?= $x ?>' <? if ($config['system']['voucherbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><? if ($x>1) echo "s"; ?></option>
+								<? } ?>
+								</select>
+								<br/>
+								<?=gettext("This will peridoically backup the Captive Portal Voucher Database so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
 								<br/>
 								<br/>
 						</td>

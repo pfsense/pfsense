@@ -210,8 +210,21 @@ function captiveportal_configure() {
 	
 	if (isset($config['captiveportal']['enable'])) {
 
-		if ($g['booting'])
+		if ($g['booting']) {
 			echo "Starting captive portal... ";
+			if ($g['platform'] != "pfSense") {
+				/* restore the vouchers, if we have them */
+				if (file_exists("{$g['cf_conf_path']}/vouchers.tgz")) {
+					$voucherrestore = "";
+					$voucherreturn = "";
+					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/vouchers.tgz 2>&1", $voucherrestore, $voucherreturn);
+					$voucherrestore = implode(" ", $voucherrestore);
+					if($voucherreturn <> 0) {
+						log_error("Voucher restore failed exited with $voucherreturn, the error is: $voucherrestore\n");
+					}
+				}
+			}
+		}
 
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");

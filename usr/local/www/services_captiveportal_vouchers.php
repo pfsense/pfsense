@@ -77,7 +77,7 @@ if (!isset($config['voucher']['rollbits']))
 if (!isset($config['voucher']['ticketbits'])) 
 	$config['voucher']['ticketbits'] = 10;
 if (!isset($config['voucher']['saveinterval'])) 
-	$config['voucher']['saveinterval'] = 300;
+	$config['voucher']['saveinterval'] = 5;
 if (!isset($config['voucher']['checksumbits'])) 
 	$config['voucher']['checksumbits'] = 5;
 if (!isset($config['voucher']['magic'])) 

@@ -250,15 +250,15 @@ function voucher_auth($voucher_received, $test = 0) {
 
 function voucher_configure() {
     global $config, $g;
-    
-    /* kill any running minicron */
-    killbypid("{$g['varrun_path']}/vouchercron.pid");
 
-    if (isset($config['voucher']['enable'])) {
+	/* kill any running minicron */
+	killbypid("{$g['varrun_path']}/vouchercron.pid");
 
-        if ($g['booting']) {
+	if (isset($config['voucher']['enable']))
+		return 0;
+
+        if ($g['booting'])
             echo "Enabling voucher support... ";
-        }
 
         // start cron if we're asked to save runtime DB periodically
         // to XML config if it changed
@@ -269,7 +269,8 @@ function voucher_configure() {
                     "/etc/rc.savevoucher");
         }
 
-	$voucherlck = lock('voucher');
+	$voucherlck = lock('voucher', LOCK_EX);
+
         /* write public key used to verify vouchers */
         $pubkey = base64_decode($config['voucher']['publickey']);
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
@@ -323,8 +324,8 @@ function voucher_configure() {
 	    unlock($voucherlck);
             echo "done\n";
         }
-    }
-    return 0;
+
+	return 0;
 }
 
 /* write bitstring of used vouchers to ramdisk. 

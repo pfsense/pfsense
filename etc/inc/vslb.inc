@@ -283,4 +283,70 @@ function relayd_configure() {
 
 }
 
+function get_lb_redirects() {
+/*
+# relayctl show summary
+Id   Type      Name                      Avlblty Status
+1    redirect  testvs2                           active
+5    table     test2:80                          active (3 hosts up)
+11   host      192.168.1.2               91.55%  up
+10   host      192.168.1.3               100.00% up
+9    host      192.168.1.4               88.73%  up
+3    table     test:80                           active (1 hosts up)
+7    host      192.168.1.2               66.20%  down
+6    host      192.168.1.3               97.18%  up
+0    redirect  testvs                            active
+3    table     test:80                           active (1 hosts up)
+7    host      192.168.1.2               66.20%  down
+6    host      192.168.1.3               97.18%  up
+4    table     testvs-sitedown:80                active (1 hosts up)
+8    host      192.168.1.4               84.51%  up
+# relayctl show redirects
+Id   Type      Name                      Avlblty Status
+1    redirect  testvs2                           active
+0    redirect  testvs                            active
+# relayctl show redirects
+Id   Type      Name                      Avlblty Status
+1    redirect  testvs2                           active
+           total: 2 sessions
+           last: 2/60s 2/h 2/d sessions
+           average: 1/60s 0/h 0/d sessions
+0    redirect  testvs                            active
+*/
+	$rdr_a = array();
+	exec('/usr/local/sbin/relayctl show redirects 2>&1', $rdr_a);
+	$vs = array();
+	for ($i = 0; isset($rdr_a[$i]); $i++) {
+		$line = $rdr_a[$i];
+		if (preg_match("/^[0-9]+/", $line)) {
+			$regs = array();
+			if($x = preg_match("/^[0-9]+\s+redirect\s+([^\s]+)\s+([^\s]+)/", $line, $regs)) {
+				$vs[trim($regs[1])] = array();
+				$vs[trim($regs[1])]['status'] = trim($regs[2]);
+			}
+		}
+	}
+	return $vs;
+}
+
+function get_lb_summary() {
+	$relayctl = array();
+	exec('/usr/local/sbin/relayctl show summary 2>&1', $relayctl);
+	$relay_hosts=Array();
+	foreach( (array) $relayctl as $line) {
+		$t=split("\t", $line);
+		switch (trim($t[1])) {
+			case "table":
+				$curpool=trim($t[2]);
+			break;
+			case "host":
+				$curhost=trim($t[2]);
+				$relay_hosts[$curpool][$curhost]['avail']=trim($t[3]);
+				$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
+			break;
+		}
+	}
+	return $relay_hosts;
+}
+
 ?>

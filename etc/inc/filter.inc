@@ -185,9 +185,8 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
-	/* Use filter lock to not allow recursion and config lock to prevent changes during this run. */
+	/* Use filter lock to not allow concurrent filter reloads during this run. */
 	$filterlck = lock('filter', LOCK_EX);
-	$configlck = lock('config');
 
 
 	filter_pflog_start();
@@ -242,7 +241,6 @@ function filter_configure_sync() {
 		update_filter_reload_status("Filter is disabled.  Not loading rules.");
 		if($g['booting'] == true)
 			echo "done.\n";
-		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -300,7 +298,6 @@ function filter_configure_sync() {
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
-		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -339,7 +336,6 @@ function filter_configure_sync() {
 			file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
 			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
-			unlock($configlck);
 			unlock($filterlck);
 			return;
 		}
@@ -386,8 +382,6 @@ function filter_configure_sync() {
 
 		fclose($fda);
 	}
-
-	unlock($configlck);
 
 	if(file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");

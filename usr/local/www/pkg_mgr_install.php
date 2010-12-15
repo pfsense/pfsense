@@ -153,7 +153,7 @@ switch($_GET['mode']) {
 			update_output_window($static_output);
 			filter_configure();
 		}
-		file_put_contents("/tmp/" . escapeshellcmd($_GET['pkg'])  . ".info", $static_output);
+		file_put_contents("/tmp{$_GET['pkg']}.info", $static_output);
 		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
 		break;
 	case "installedinfo":
@@ -200,7 +200,7 @@ switch($_GET['mode']) {
 				$static_output .= "\n" . gettext("Installation completed.") . "\n{$_GET['id']} " . gettext("setup instructions") . ":\n{$status}";
 			else
 				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
-		file_put_contents("/tmp/" . escapeshellcmd($_GET['id'])  . ".info", $static_output);
+		file_put_contents("/tmp/{$_GET['id']}.info", $static_output);
 		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
 		}
 		filter_configure();

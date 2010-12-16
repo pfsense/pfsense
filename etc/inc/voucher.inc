@@ -248,7 +248,7 @@ function voucher_configure() {
 	/* kill any running minicron */
 	killbypid("{$g['varrun_path']}/vouchercron.pid");
 
-	if (isset($config['voucher']['enable']))
+	if (!isset($config['voucher']['enable']))
 		return 0;
 
         if ($g['booting'])
@@ -295,6 +295,7 @@ function voucher_configure() {
             $a_roll = &$config['voucher']['roll'];
 	    $voucherlck = lock('voucher');
 
+            if (is_array($a_roll))
             foreach ($a_roll as $rollent) {
 
                 $roll = $rollent['number'];

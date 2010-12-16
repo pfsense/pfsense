@@ -95,6 +95,9 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
+/* start OpenVPN server & clients */
+openvpn_resync_all($interface);
+
 if (is_ipaddr($oldip) && $curwanip == $oldip)
 	exit;
 
@@ -106,9 +109,6 @@ services_dyndns_configure($interface);
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();
-
-/* start OpenVPN server & clients */
-openvpn_resync_all($interface);
 
 /* reload graphing functions */
 enable_rrd_graphing();

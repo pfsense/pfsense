@@ -108,12 +108,16 @@ function voucher_auth($voucher_received, $test = 0) {
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
-    // read rolls into assoc array with rollid as key and minutes as value
-    $a_roll = &$config['voucher']['roll'];
-    foreach ($a_roll as $rollent) {
-        $tickets_per_roll[$rollent['number']] = $rollent['count'];
-        $minutes_per_roll[$rollent['number']] = $rollent['minutes'];
-    }
+	// read rolls into assoc array with rollid as key and minutes as value
+	$tickets_per_roll = array();
+	$minutes_per_roll = array();
+	if (is_array($config['voucher']['roll'])) {
+		$a_roll = &$config['voucher']['roll'];
+		foreach ($a_roll as $rollent) {
+			$tickets_per_roll[$rollent['number']] = $rollent['count'];
+			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
+		}
+	}
 
     // split into an array. Useful for multiple vouchers given
     $a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
@@ -289,13 +293,12 @@ function voucher_configure() {
         @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
 	unlock($voucherlck);
 
-        if ($g['booting']) {
+        if ($g['booting'] && is_array($config['voucher']['roll'])) {
 
             // create active and used DB per roll on ramdisk from config
             $a_roll = &$config['voucher']['roll'];
 	    $voucherlck = lock('voucher');
 
-            if (is_array($a_roll))
             foreach ($a_roll as $rollent) {
 
                 $roll = $rollent['number'];

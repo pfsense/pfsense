@@ -153,6 +153,8 @@ if ($_POST) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		}
+		if (substr($_POST['interface'], 0, 3) == "vip")
+                        $input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
 		break;
 	case "ipalias":
 		if (substr($_POST['interface'], 0, 3) == "vip") {
@@ -163,6 +165,10 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 			}
 		}
+		break;
+	default:
+		if (substr($_POST['interface'], 0, 3) == "vip")
+			$input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
 		break;
 	}
 

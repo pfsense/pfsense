@@ -58,21 +58,22 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false, $encryption = false, $encpass = "", $bootmanager = "bsd") {
+function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = "", $encryption = false, $encpass = "", $bootmanager = "bsd") {
+	$diskareas = "";
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
 	}
 	if($swapsize <> "") {
-		$diskareas =  "disk0-part=SWAP {$swapsize} none \n";
 		$diskareas .= "disk0-part={$fstype} 0 /\n";
+		$diskareas .=  "disk0-part=SWAP {$swapsize} none \n";
 	} else {
-		$diskareas = "disk0-part={$fstype} 0 /\n";
+		$diskareas .= "disk0-part={$fstype} 0 /\n";
 	}
 	if($encpass)
 		$diskareaspass = "encpass={$encpass}\n";
-	if($encryption) 
-		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
+//	if($encryption) 
+//		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
 	if($bootmanager == "") 
 	 	$bootmanager = "none";
 	
@@ -312,6 +313,10 @@ function begin_install() {
 		$disk = htmlspecialchars($_REQUEST['disk']);
 	else 
 		$disk = installer_find_first_disk();
+	if($_REQUEST['swapsize'])
+		$swapsize = $_REQUEST['swapsize'];
+	if($_REQUEST['bootmanager'])
+		$bootmanager = $_REQUEST['bootmanager'];
 	if(!$disk) {
 		echo "<script type=\"text/javascript\">";
 		echo "\$('pbdiv').Fade();\n";
@@ -335,7 +340,7 @@ function begin_install() {
 		$encryption = false;
 		$encpass = "";
 	}
-	write_out_pc_sysinstaller_config($disk, $fstype, $encryption, $encpass);
+	write_out_pc_sysinstaller_config($disk, $fstype, $swapsize, $encryption, $encpass);
 	update_installer_status_win(sprintf(gettext("Beginning installation on disk %s."),$disk));
 	start_installation();
 }
@@ -454,7 +459,10 @@ function verify_before_install() {
 	page_table_start();
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	$swapsize = htmlspecialchars($_REQUEST['swapsize']);
+	if($_REQUEST['swapsize'])
+		$swapsize = htmlspecialchars($_REQUEST['swapsize']);
+	if($swapsize) 
+		$swapsizeline = "<tr><td align=\"right\"><b>SWAP Size:</td><td>{$swapsize}</td></tr>";
 	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
 	$encpass = htmlspecialchars($_REQUEST['encpass']);
 	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);
@@ -467,7 +475,7 @@ function verify_before_install() {
 	<input type="hidden" name="fstype" value="{$fstype_echo}">
 	<input type="hidden" name="disk" value="{$disk_echo}">
 	<input type="hidden" name="state" value="begin_install">
-	<input type="hidden" name="swapsize" value="{$swapsize_echo}">
+	<input type="hidden" name="swapsize" value="{$swapsize}">
 	<input type="hidden" name="encpass" value="{$encpass}">
 	<input type="hidden" name="bootmanager" value="{$bootmanager}">
 	<div id="mainlevel">
@@ -493,7 +501,7 @@ function verify_before_install() {
 													<tr><td align="right"><b>Disk:</td><td>{$disk_echo}</td></tr>
 													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
 													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
-													<tr><td align="right"><b>SWAP Size:</td><td>{$swapsize}</td></tr>
+													{$swapsizeline}
 													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}{$fstype_echo_enc}</td></tr>
 													<tr><td align="right"><b>Boot manager:</td><td>{$bootmanager}</td></tr>
 												</table>

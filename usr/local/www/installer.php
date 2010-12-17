@@ -72,8 +72,8 @@ function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = 
 	}
 	if($encpass)
 		$diskareaspass = "encpass={$encpass}\n";
-//	if($encryption) 
-//		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
+	if($encryption) 
+		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
 	if($bootmanager == "") 
 	 	$bootmanager = "none";
 	

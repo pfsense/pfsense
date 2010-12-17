@@ -658,7 +658,7 @@ EOF;
 		$custom_txt .= "</select></td></tr>\n";
 		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
 		// Prepare disk types
-		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select onChange='onfstypeChange()' name='fstype'>\n";
+		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select onChange='javascript:onfstypeChange()' id='fstype' name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
 		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
 		$custom_txt .=  "<option value='UFS.eli'>Encrypted UFS</option>\n";
@@ -675,7 +675,7 @@ EOF;
 		}
 		$custom_txt .= "</select>\n";
 		$custom_txt .= "</td></tr>";
-		$custom_txt .= "<tr><td align='right'>Disk encryption password:</td><td>";
+		$custom_txt .= "<tr name='encpassrow' id='encpassrow'><td align='right'><nobr>Disk encryption password:</nobr></td><td>";
 		$custom_txt .= "<input name='encpass' id='encpass'>";
 		$custom_txt .= "</td></tr></table><p/>";
 	}
@@ -693,12 +693,17 @@ EOF;
 														// Start out with this option disabled.
 														\$('encpass').disabled = 1;
 														function onfstypeChange() {
-															var fstype = $V('fstype');
-															if(fstype.substring(fstype.length - 4, 4) == ".eli") 
+															var fstype = \$F('fstype');
+															if(fstype.substring(fstype.length - 4) == ".eli") {
 																\$('encpass').disabled = 0;
-															else 
+																\$('encpassrow').show();
+																alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
+															} else { 
 																\$('encpass').disabled = 1;
+																\$('encpassrow').hide();
+															}
 														}
+														onfstypeChange();
 													</script>
 												</center>
 												</td></tr>

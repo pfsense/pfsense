@@ -58,7 +58,7 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false) {
+function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false, $encryption = false, $encpass = "") {
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
@@ -87,6 +87,12 @@ commitDiskPart
 # All sizes are expressed in MB
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
 # Size 0 means use the rest of the slice size
+# Alternatively, you can append .eli to any of
+# the above filesystem types to encrypt that disk.
+# If you with to use a passphrase with this 
+# encrypted partition, on the next line 
+# the flag "encpass=" should be entered:
+# encpass=mypass
 {$diskareas}
 
 # Do it now!
@@ -307,7 +313,17 @@ function begin_install() {
 		$fstype = htmlspecialchars(strtoupper($_REQUEST['fstype']));
 	else 
 		$fstype = "UFS+S";
-	write_out_pc_sysinstaller_config($disk, $fstype);
+	if(substr($_REQUEST['fstype'], -4, 4) == ".eli") {
+		$encryption = true;
+		if($_REQUEST['encpass'])
+			$encpass = $_REQUEST['encpass'];
+		else 
+			$encpass = "";
+	} else {
+		$encryption = false;
+		$encpass = "";
+	}
+	write_out_pc_sysinstaller_config($disk, $fstype, $encryption, $encpass);
 	update_installer_status_win(sprintf(gettext("Beginning installation on disk %s."),$disk));
 	start_installation();
 }
@@ -642,16 +658,26 @@ EOF;
 		$custom_txt .= "</select></td></tr>\n";
 		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
 		// Prepare disk types
-		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select name='fstype'>\n";
+		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select onChange='onfstypeChange()' name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
 		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
+		$custom_txt .=  "<option value='UFS.eli'>Encrypted UFS</option>\n";
+		$custom_txt .=  "<option value='UFS+S.eli'>Encrypted UFS + Softupdates</option>\n";
 		$release = php_uname("r");
 		$release = $release[0];
-		if($release == "9")
+		if($release == "9") {
 			$custom_txt .=  "<option value='UFS+J'>UFS + Journaling</option>\n";
-		if(file_exists("/boot/gptzfsboot")) 
+			$custom_txt .=  "<option value='UFS+J.eli'>Encrypted UFS + Journaling</option>\n";
+		}
+		if(file_exists("/boot/gptzfsboot")) {
 			$custom_txt .= "<option value='ZFS'>ZFS</option>\n";
-		$custom_txt .= "</select>\n</td></tr></table><p/>";
+			$custom_txt .= "<option value='ZFS.eli'>Encrypted ZFS</option>\n";
+		}
+		$custom_txt .= "</select>\n";
+		$custom_txt .= "</td></tr>";
+		$custom_txt .= "<tr><td align='right'>Disk encryption password:</td><td>";
+		$custom_txt .= "<input name='encpass' id='encpass'>";
+		$custom_txt .= "</td></tr></table><p/>";
 	}
 	echo <<<EOF
 													<script type="text/javascript">
@@ -664,6 +690,15 @@ EOF;
 													</div>
 													<script type="text/javascript">
 														\$('contentdiv').appear();
+														// Start out with this option disabled.
+														\$('encpass').disabled = 1;
+														function onfstypeChange() {
+															var fstype = $V('fstype');
+															if(fstype.substring(fstype.length - 4, 4) == ".eli") 
+																\$('encpass').disabled = 0;
+															else 
+																\$('encpass').disabled = 1;
+														}
 													</script>
 												</center>
 												</td></tr>

@@ -58,7 +58,7 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false, $encryption = false, $encpass = "") {
+function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = false, $encryption = false, $encpass = "", $bootmanager = "bsd") {
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
@@ -71,6 +71,11 @@ function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = 
 	}
 	if($encpass)
 		$diskareaspass = "encpass={$encpass}\n";
+	if($encryption) 
+		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
+	if($bootmanager == "") 
+	 	$bootmanager = "none";
+	
 	$config = <<<EOF
 # Sample configuration file for an installation using pc-sysinstall
 
@@ -82,7 +87,7 @@ installMedium=LiveCD
 # Set the disk parameters
 disk0={$disk}
 partition=all
-bootManager=bsd
+bootManager={$bootmanager}
 commitDiskPart
 
 # Setup the disk label
@@ -95,6 +100,10 @@ commitDiskPart
 # encrypted partition, on the next line 
 # the flag "encpass=" should be entered:
 # encpass=mypass
+# disk0-part=UFS 500 /boot
+# disk0-part=UFS.eli 500 /
+# disk0-part=UFS.eli 500 /usr
+{$diskareaspre}
 {$diskareas}
 {$diskareaspass}
 
@@ -447,6 +456,8 @@ function verify_before_install() {
 	$disksize = format_bytes($disk['size'] * 1048576);
 	$swapsize = htmlspecialchars($_REQUEST['swapsize']);
 	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
+	$encpass = htmlspecialchars($_REQUEST['encpass']);
+	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);
 	if(stristr($fstype_echo, ".eli")) 
 		$fstype_echo_enc = " (Encrypted)";
 	$disk_echo = htmlspecialchars($_REQUEST['disk']);
@@ -457,6 +468,8 @@ function verify_before_install() {
 	<input type="hidden" name="disk" value="{$disk_echo}">
 	<input type="hidden" name="state" value="begin_install">
 	<input type="hidden" name="swapsize" value="{$swapsize_echo}">
+	<input type="hidden" name="encpass" value="{$encpass}">
+	<input type="hidden" name="bootmanager" value="{$bootmanager}">
 	<div id="mainlevel">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	 		<tr>
@@ -482,6 +495,7 @@ function verify_before_install() {
 													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
 													<tr><td align="right"><b>SWAP Size:</td><td>{$swapsize}</td></tr>
 													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}{$fstype_echo_enc}</td></tr>
+													<tr><td align="right"><b>Boot manager:</td><td>{$bootmanager}</td></tr>
 												</table>
 											</div>
 										</center>
@@ -660,9 +674,9 @@ EOF;
 			$disksize = format_bytes($disk['size'] * 1048576);
 			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>\n";
 		}
+		// File system type
 		$custom_txt .= "</select></td></tr>\n";
 		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
-		// Prepare disk types
 		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select onChange='javascript:onfstypeChange()' id='fstype' name='fstype'>\n";
 		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
 		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
@@ -680,9 +694,15 @@ EOF;
 		}
 		$custom_txt .= "</select>\n";
 		$custom_txt .= "</td></tr>";
+		// Disk encryption password
 		$custom_txt .= "<tr name='encpassrow' id='encpassrow'><td align='right'><nobr>Disk encryption password:</nobr></td><td>";
 		$custom_txt .= "<input name='encpass' id='encpass'>";
-		$custom_txt .= "</td></tr></table><p/>";
+		$custom_txt .= "</td></tr>";
+		// Boot manager type
+		$custom_txt .= "<tr><td align='right'>Boot manager:</td><td>";
+		$custom_txt .= "<select name='bootmanager'><option value='bsd'>BSD</option><option value='none'>None</select>";
+		$custom_txt .= "</td></tr>";
+		$custom_txt .= "</table><p/>";
 	}
 	echo <<<EOF
 													<script type="text/javascript">

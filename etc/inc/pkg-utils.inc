@@ -420,7 +420,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$arch =  php_uname("m");
 	$rel = php_uname("r");
 	$rel = strtolower(substr($rel, 0, strrpos($rel, "-")));
-	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/Latest";
+	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/All";
 	if (empty($base_url))
 		$base_url = $priv_url;
 	if (substr($base_url, -1) == "/")

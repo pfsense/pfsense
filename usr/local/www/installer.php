@@ -117,7 +117,7 @@ installType=FreeBSD
 packageType=cpdup
 
 # Optional Components
-cpdupPaths=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,sys,usr,var
+cpdupPaths=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,usr,var
 
 # runExtCommand=chmod a+rx /usr/local/bin/after_installation_routines.sh ; cd / ; /usr/local/bin/after_installation_routines.sh
 EOF;

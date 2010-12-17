@@ -378,6 +378,9 @@ function typesel_change() {
 					<select name="interface" class="formselect">
 					<?php 
 					  $interfaces = get_configured_interface_with_descr(false, true);
+					  $carplist = get_configured_carp_interface_list();
+                                          foreach ($carplist as $cif => $carpip)
+                                          	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
 					  foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
 						<?=htmlspecialchars($ifacename);?>

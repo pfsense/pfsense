@@ -1460,8 +1460,11 @@ function read_body($ch, $string) {
         global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
         $length = strlen($string);
         $downloaded += intval($length);
-        $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-        $downloadProgress = 100 - $downloadProgress;
+        if($file_size > 0) {
+                $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+                $downloadProgress = 100 - $downloadProgress;
+        } else
+                $downloadProgress = 0;
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
                         $tostatus = $static_status . $downloadProgress . "%";

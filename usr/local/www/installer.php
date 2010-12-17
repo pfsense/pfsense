@@ -313,7 +313,7 @@ function begin_install() {
 	}
 	// Handle other type of file systems
 	if($_REQUEST['fstype']) 
-		$fstype = htmlspecialchars(strtoupper($_REQUEST['fstype']));
+		$fstype = htmlspecialchars($_REQUEST['fstype']);
 	else 
 		$fstype = "UFS+S";
 	if(substr($_REQUEST['fstype'], -4, 4) == ".eli") {
@@ -447,6 +447,8 @@ function verify_before_install() {
 	$disksize = format_bytes($disk['size'] * 1048576);
 	$swapsize = htmlspecialchars($_REQUEST['swapsize']);
 	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
+	if(stristr($fstype_echo, ".eli")) 
+		$fstype_echo_enc = " (Encrypted)";
 	$disk_echo = htmlspecialchars($_REQUEST['disk']);
 	$swapsize_echo = htmlspecialchars($_REQUEST['swapsize']);
 	echo <<<EOF
@@ -479,7 +481,7 @@ function verify_before_install() {
 													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
 													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
 													<tr><td align="right"><b>SWAP Size:</td><td>{$swapsize}</td></tr>
-													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}</td></tr>
+													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}{$fstype_echo_enc}</td></tr>
 												</table>
 											</div>
 										</center>

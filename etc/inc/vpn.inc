@@ -963,6 +963,15 @@ function vpn_setup() {
 	vpn_l2tp_configure();
 }
 
+function vpn_netgraph_support() {
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $iface) {
+		$realif = get_real_interface($iface);
+		/* Get support for netgraph(4) from the nic */
+                pfSense_ngctl_attach(".", $realif);
+	}
+}
+
 function vpn_pptpd_configure() {
 	global $config, $g;
 
@@ -1152,6 +1161,8 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
+
+			vpn_netgraph_support();
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptps pptps");
@@ -1356,6 +1367,8 @@ EOD;
 				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
 
+			/* Get support for netgraph(4) from the nic */
+			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
@@ -1536,6 +1549,8 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
+
+			vpn_netgraph_support();
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");

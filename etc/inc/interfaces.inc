@@ -84,6 +84,46 @@ function does_interface_exist($interface) {
 		return false;
 }
 
+function interface_netgraph_needed($interface = "wan") {
+	global $config;
+
+	$found = false;
+	if (!empty($config['pptpd']) &&
+		$config['pptpd']['mode'] == "server")
+		$found = true;
+	if ($found == false && !empty($config['l2tp']) &&
+		$config['l2tp']['mode'] == "server")
+		$found = true;
+	if ($found == false && is_array($config['pppoes']['pppoe'])) {
+		foreach ($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] != "server")
+				continue;
+			if ($pppoe['interface'] == $interface)
+				$found = true;
+				break;
+		}
+	}
+	if ($found == false && !empty($config['interfaces'][$interface])) {
+		switch ($config['interfaces'][$interface]['ipaddr']) {
+		case "ppp":
+		case "pppoe":
+		case "l2tp":
+		case "pptp":
+			$found = true;
+			break;
+		default:
+			$found = false;
+			break;
+		}
+	}
+
+	$realif = get_real_interface($interface);
+	if ($found == true)
+		pfSense_ngctl_attach(".", $realif);
+	else
+		pfSense_ngctl_detach("{$realif}:", $realif);
+}
+
 function interfaces_loopback_configure() {
 	if($g['booting'])
 		echo "Configuring loopback interface...";
@@ -2554,6 +2594,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
+
+	interface_netgraph_needed($interface);
  	
 	if (!$g['booting']) {
 		link_interface_to_vips($interface, "update");

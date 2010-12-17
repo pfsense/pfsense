@@ -69,6 +69,8 @@ function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = 
 	} else {
 		$diskareas = "disk0-part={$fstype} 0 /\n";
 	}
+	if($encpass)
+		$diskareaspass = "encpass={$encpass}\n";
 	$config = <<<EOF
 # Sample configuration file for an installation using pc-sysinstall
 
@@ -94,6 +96,7 @@ commitDiskPart
 # the flag "encpass=" should be entered:
 # encpass=mypass
 {$diskareas}
+{$diskareaspass}
 
 # Do it now!
 commitDiskLabel
@@ -363,9 +366,9 @@ EOF;
 function body_html() {
 	global $g, $fstype;
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-	if(strstr($pfSversion, "1.2"))
+	if(strstr($pfSversion, "1.2")) 
 		$one_two = true;
-	$pgtitle = "{$g['product_name']}: " . gettext("Installer");
+	$pgtitle = array("{$g['product_name']}", gettext("Installer"));
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">

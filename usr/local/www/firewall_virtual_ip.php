@@ -117,6 +117,12 @@ if ($_GET['act'] == "del") {
 					if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits']))
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by CARP") . " {$vip['descr']}.";
 			}
+		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
+			$vipiface = $a_vip[$_GET['id']]['interface'];
+			foreach ($a_vip as $vip) {
+				if ($vipiface == "vip{$vip['vhid']}" && $vip['mode'] == "ipalias")
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by ip alias entry") . " {$vip['descr']}.";
+			}
 		}
 
 		

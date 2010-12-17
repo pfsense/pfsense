@@ -461,7 +461,7 @@ function verify_before_install() {
 	$disksize = format_bytes($disk['size'] * 1048576);
 	if($_REQUEST['swapsize'])
 		$swapsize = htmlspecialchars($_REQUEST['swapsize']);
-	if($swapsize) 
+	if($_REQUEST['swapsize']) 
 		$swapsizeline = "<tr><td align=\"right\"><b>SWAP Size:</td><td>{$swapsize}</td></tr>";
 	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
 	$encpass = htmlspecialchars($_REQUEST['encpass']);

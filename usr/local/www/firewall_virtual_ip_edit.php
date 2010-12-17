@@ -134,7 +134,9 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	if ($_POST['mode'] == "carp" or $_POST['mode'] == "carpdev-dhcp") {
+	switch ($_POST['mode']) {
+	case "carp":
+	case "carpdev-dhcp":
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -151,7 +153,19 @@ if ($_POST) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		}
+		break;
+	case "ipalias":
+		if (substr($_POST['interface'], 0, 3) == "vip") {
+			$parent_ip = get_interface_ip($_POST['interface']);
+			$parent_sn = get_interface_subnet($_POST['interface']);
+			if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
+				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
+				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+			}
+		}
+		break;
 	}
+
 
 	if (isset($id) && ($a_vip[$id])) {
 		if ($a_vip[$id]['mode'] != $_POST['mode']) {

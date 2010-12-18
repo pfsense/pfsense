@@ -430,6 +430,11 @@ function verify_before_install() {
 	head_html();
 	body_html();
 	page_table_start();
+	if(!$_REQUEST['fstype0'] && file_exists("/tmp/webInstaller_disk_layout.txt")) {
+		$disks = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
+		$restored_layout_from_file = true;
+		$restored_layout_txt = "The previous disk layout was restored from disk";
+	}
 	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
@@ -536,6 +541,7 @@ EOFAMB;
 	page_table_end();
 	end_html();
 	write_out_pc_sysinstaller_config($disks, $bootmanager);
+	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disks));
 
 }
 
@@ -749,17 +755,38 @@ EOF;
 
 EOF;
 
-		// Output disk editor rows
+		// Calculate swap disk sizes
 		$memory = get_memory();
 		$swap_size = $memory[0] * 2;
 		$first_disk = trim(installer_find_first_disk());
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];
 		$first_disk_size = $size - $swap_size;
-		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
-		$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
-		$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "$swap_size", "");
 
+		// Debugging
+		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
+
+		// Check to see if a on disk layout exists
+		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {
+			$disks_restored = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
+			$restored_layout_from_file = true;
+			$restored_layout_txt = "The previous disk layout was restored from disk";
+		}
+
+		// If we restored disk layout(s) from a file then build the rows
+		if($restored_layout_from_file == true) {
+			$diskcounter = 0;
+			foreach($disks_restored as $dr) {
+				$custom_txt .= return_rowhelper_row("$diskcounter", $dr['mountpoint'], $dr['fstype'], $dr['disk'], $dr['size'], "");
+				$diskcounter++;
+			}
+		} else {		
+			// Construct the default rows that outline the disks configuration.
+			$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
+			$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "$swap_size", "");
+		}
+
+		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody></table>";
 	}

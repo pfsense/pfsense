@@ -35,7 +35,7 @@ require("guiconfig.inc");
 define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
-	Header("Location: /installer.php");
+	Header("Location: /");
 	exit;
 }
 

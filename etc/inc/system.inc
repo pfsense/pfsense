@@ -694,7 +694,7 @@ function system_webgui_start() {
 			if (!is_array($config['cert']))
 				$config['cert'] = array();
 			$a_cert =& $config['cert'];
-			echo "Creating SSL Certificate... ";
+			log_error("Creating SSL Certificate for this host");
 			$cert = array();
 			$cert['refid'] = uniqid();
 			$cert['descr'] = "webConfigurator default";

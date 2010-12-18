@@ -713,11 +713,12 @@ EOF;
 													</td>
 													<td>
 														<select name='bootmanager'>
+															<option value='none'>
+																None
+															</option>
 															<option value='bsd'>
 																BSD
 															</option>
-															<option value='none'>
-																None
 														</select>
 													</td>
 												</tr>

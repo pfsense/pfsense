@@ -1,6 +1,6 @@
 <?php
 /*
-	installer.php
+	index.php (pfSense installer)
 	part of pfSense (http://www.pfsense.com/)
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
@@ -58,24 +58,38 @@ switch ($_REQUEST['state']) {
 		installer_main();	
 }
 
-function write_out_pc_sysinstaller_config($disk, $fstype = "UFS+S", $swapsize = "", $encryption = false, $encpass = "", $bootmanager = "bsd") {
+function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 	$diskareas = "";
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
 		return true;
 	}
-	if($swapsize <> "") {
-		$diskareas .= "disk0-part={$fstype} 0 /\n";
-		$diskareas .=  "disk0-part=SWAP {$swapsize} none \n";
-	} else {
-		$diskareas .= "disk0-part={$fstype} 0 /\n";
-	}
-	if($encpass)
-		$diskareaspass = "encpass={$encpass}\n";
-	if($encryption) 
-		$diskareaspre =  "disk0-part=UFS 500 /boot\n";
 	if($bootmanager == "") 
 	 	$bootmanager = "none";
+	$numdisks = -1;
+	$lastdisk = "";
+	$diskdefs = "";
+	// First make sure we have a boot partition if any slices are encrypted
+	foreach($disks as $disksa) {
+		$fstype = $disksa['fstype'];
+		if(stristr($fstype,".eli")) 
+			$diskareas .=  "disk{$numdisks}-part=UFS 500 /boot\n";
+	}
+	// Run through the disks and create the conf areas for pc-sysinstaller
+	foreach($disks as $disksa) {
+		$fstype = $disksa['fstype'];
+		$size = $disksa['size'];
+		$mountpoint = $disksa['mountpoint'];
+		$disk = $disksa['disk'];
+		if($disk <> $lastdisk) {
+			$lastdisk = $disk;
+			$numdisks++;
+			$diskdefs .= "disk{$numdisks}={$disk}\n";
+		}
+		$diskareas .= "disk{$numdisks}-part={$fstype} {$size} {$mountpoint} \n";
+		if($encpass)
+			$diskareas .= "encpass={$encpass}\n";
+	}
 	
 	$config = <<<EOF
 # Sample configuration file for an installation using pc-sysinstall
@@ -86,7 +100,7 @@ installType=FreeBSD
 installMedium=LiveCD
 
 # Set the disk parameters
-disk0={$disk}
+{$diskdefs}
 partition=all
 bootManager={$bootmanager}
 commitDiskPart
@@ -271,7 +285,7 @@ function update_installer_status() {
 	// Check for error and bail if we see one.
 	if(stristr($status, "error")) {
 		$error = true;
-		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href=\"installer.php\">Back</a> to webInstaller'; ";
+		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href=\"/installer\">Back</a> to webInstaller'; ";
 		echo "\$('progressbar').style.width='100%';\n";
 		unlink_if_exists("/tmp/install_complete");
 		return;
@@ -309,38 +323,6 @@ function begin_install() {
 	if(file_exists("/tmp/install_complete"))
 		return;
 	unlink_if_exists("/tmp/install_complete");
-	if($_REQUEST['disk'])
-		$disk = htmlspecialchars($_REQUEST['disk']);
-	else 
-		$disk = installer_find_first_disk();
-	if($_REQUEST['swapsize'])
-		$swapsize = $_REQUEST['swapsize'];
-	if($_REQUEST['bootmanager'])
-		$bootmanager = $_REQUEST['bootmanager'];
-	if(!$disk) {
-		echo "<script type=\"text/javascript\">";
-		echo "\$('pbdiv').Fade();\n";
-		echo "</script>";
-		$savemsg = gettext("Could not find a suitable disk for installation");
-		update_installer_status_win(gettext("Could not find a suitable disk for installation."));
-		return;
-	}
-	// Handle other type of file systems
-	if($_REQUEST['fstype']) 
-		$fstype = htmlspecialchars($_REQUEST['fstype']);
-	else 
-		$fstype = "UFS+S";
-	if(substr($_REQUEST['fstype'], -4, 4) == ".eli") {
-		$encryption = true;
-		if($_REQUEST['encpass'])
-			$encpass = $_REQUEST['encpass'];
-		else 
-			$encpass = "";
-	} else {
-		$encryption = false;
-		$encpass = "";
-	}
-	write_out_pc_sysinstaller_config($disk, $fstype, $swapsize, $encryption, $encpass);
 	update_installer_status_win(sprintf(gettext("Beginning installation on disk %s."),$disk));
 	start_installation();
 }
@@ -389,7 +371,7 @@ function body_html() {
 	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getinstallerprogress() {
-			url = 'installer.php';
+			url = '/installer/index.php';
 			pars = 'state=update_installer_status';
 			callajax(url, pars, installcallback);
 		}
@@ -435,7 +417,7 @@ function template() {
 						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 	     						<td class="tabcont" >
-	      							<form action="installer.php" method="post">
+	      							<form action="index.php" method="post">
 									<div id="pfsensetemplate">
 
 
@@ -457,21 +439,24 @@ function verify_before_install() {
 	head_html();
 	body_html();
 	page_table_start();
+	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	if($_REQUEST['swapsize'])
-		$swapsize = htmlspecialchars($_REQUEST['swapsize']);
-	if($_REQUEST['swapsize']) 
-		$swapsizeline = "<tr><td align=\"right\"><b>SWAP Size:</td><td>{$swapsize}</td></tr>";
-	$fstype_echo = htmlspecialchars($_REQUEST['fstype']);
-	$encpass = htmlspecialchars($_REQUEST['encpass']);
-	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);
-	if(stristr($fstype_echo, ".eli")) 
-		$fstype_echo_enc = " (Encrypted)";
-	$disk_echo = htmlspecialchars($_REQUEST['disk']);
-	$swapsize_echo = htmlspecialchars($_REQUEST['swapsize']);
-	echo <<<EOF
-	<form method="post" action="installer.php">
+	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);	
+	$disks = array();
+	// Loop through posted items and create an array
+	for($x=1; isset($_REQUEST['fstype' . $x]); $x++) {
+		$tmparray = array();
+		$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
+		$tmparray['disk'] = $_REQUEST['disk' . $x];
+		$tmparray['fstype'] = $_REQUEST['fstype' . $x];
+		$tmparray['size'] = $_REQUEST['size' . $x];
+		$tmparray['encpass'] = $_REQUEST['encpass' . $x];
+		$disks[] = $tmparray;
+	}
+	echo "\n<!-- " . print_r($disks, true) . " --> \n";
+	echo <<<EOFAMBAC
+	<form method="post" action="index.php">
 	<input type="hidden" name="fstype" value="{$fstype_echo}">
 	<input type="hidden" name="disk" value="{$disk_echo}">
 	<input type="hidden" name="state" value="begin_install">
@@ -489,7 +474,7 @@ function verify_before_install() {
 									<div>
 										<center>
 											<div id="pfsensetemplate">
-												<table bgcolor="FFFF00" width="400" height="30" cellpadding="2" style="border:1px dashed;">
+												<table bgcolor="FFFF00" width="800" height="30" cellpadding="2" style="border:1px dashed;">
 													<tr valign="middle">
 														<td>
 															<center><b>Please verify that the following is correct:</b></center>
@@ -497,13 +482,41 @@ function verify_before_install() {
 													</tr>
 												</table>
 												<p/>
-												<table>
-													<tr><td align="right"><b>Disk:</td><td>{$disk_echo}</td></tr>
-													<tr><td align="right"><b>Description:</td><td>{$disk['desc']}</td></tr>
-													<tr><td align="right"><b>Size:</td><td>{$disksize}</td></tr>
-													{$swapsizeline}
-													<tr><td align="right"><b>Filesystem:</td><td>{$fstype_echo}{$fstype_echo_enc}</td></tr>
-													<tr><td align="right"><b>Boot manager:</td><td>{$bootmanager}</td></tr>
+												<table width='100%'>
+												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanager}</td></tr>
+												<tr><td colspan='5'><hr></td></tr>
+												<tr>
+													<td>
+														<b>Mount point</b>
+													</td>
+													<td>
+														<b>Filesysyem type</b>
+													</td>
+													<td>
+														<b>Disk</b>
+													</td>
+													<td>
+														<b>Size</b>
+													</td>
+													<td>
+														<b>Encryption password</b>
+													</td>
+
+EOFAMBAC;
+
+													foreach($disks as $disk) {
+														$desc = pcsysinstall_get_disk_info($disk['disk']);
+														echo "<tr>";
+														echo "<td>{$disk['mountpoint']}</td>";
+														echo "<td>{$disk['fstype']}</td>";
+														echo "<td>{$disk['disk']} {$desc['desc']}</td>";
+														echo "<td>{$disk['size']}</td>";
+														echo "<td>{$disk['encpass']}</td>";
+														echo "</tr>";
+													}
+
+echo <<<EOFAMB
+												<tr><td colspan='5'><hr></td></tr>
 												</table>
 											</div>
 										</center>
@@ -514,23 +527,27 @@ function verify_before_install() {
 					</div>
 					<center>
 						<p/>
-						<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';"> &nbsp;&nbsp;
+						<input type="button" value="Cancel" onClick="javascript:document.location='/installer';"> &nbsp;&nbsp;
 						<input type="submit" value="Begin installation"> 
 					</center>
 				</td>
 			</tr>
 		</table>
 	</div>
-EOF;
+
+EOFAMB;
+
 	page_table_end();
 	end_html();
+	write_out_pc_sysinstaller_config($disks, $bootmanager);
+
 }
 
 function installing_gui() {
 	global $g, $fstype;
 	head_html();
 	body_html();
-	echo "<form action=\"installer.php\" method=\"post\" state=\"step1_post\">";
+	echo "<form action=\"index.php\" method=\"post\" state=\"step1_post\">";
 	page_table_start();
 	echo <<<EOF
 	<center>
@@ -598,17 +615,19 @@ EOF;
 	end_html();
 }
 
-function page_table_start() {
+function page_table_start($pgtitle = "") {
 	global $g, $fstype;
+	if($pgtitle == "") 
+		$pgtitle = "{$g['product_name']} installer";
 	echo <<<EOF
 	<center>
-		<img border="0" src="./themes/{$g['theme']}/images/logo.gif"></a><br/>
-		<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
+		<img border="0" src="/themes/{$g['theme']}/images/logo.gif"></a><br/>
+		<table cellpadding="6" cellspacing="0" width="550" style="border:1px solid #000000">
 		<tr height="10" bgcolor="#990000">
 			<td style="border-bottom:1px solid #000000">
 				<font color='white'>
 					<b>
-						{$g['product_name']} installer
+						{$pgtitle}
 					</b>
 				</font>
 			</td>
@@ -640,7 +659,30 @@ function installer_custom() {
 	body_html();
 	page_table_start();
 	echo <<<EOF
-		<form action="installer.php" method="post">
+		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
+		<script type="text/javascript">
+			// Setup rowhelper data types
+			rowname[0] = "mountpoint";
+			rowtype[0] = "textbox";
+			rowsize[0] = "8";
+			rowname[1] = "fstype";
+			rowtype[1] = "select";
+			rowsize[1] = "1";
+			rowname[2] = "disk";
+			rowtype[2] = "select";
+			rowsize[2] = "1";
+			rowname[3] = "size";
+			rowtype[3] = "textbox";
+			rowsize[3] = "8";
+			rowname[4] = "encpass";
+			rowtype[4] = "textbox";
+			rowsize[4] = "8";
+			field_counter_js = 5;
+			rows = 1;
+			totalrows = 1;
+			loaded = 1;
+		</script>
+		<form action="index.php" method="post">
 			<input type="hidden" name="state" value="verify_before_install">
 			<div id="mainlevel">
 				<center>
@@ -649,7 +691,6 @@ function installer_custom() {
 			    		<td>
 							<center>
 							<div id="mainarea">
-								<br/>
 								<center>
 								<table width="100%" border="0" cellpadding="5" cellspacing="5">
 									<tr>
@@ -667,73 +708,115 @@ EOF;
 	} else {
 		// Prepare disk selection dropdown
 		$custom_txt = <<<EOF
-												<table bgcolor="FFFF00" width="400" height="30" cellpadding="2" style="border:1px dashed;">
-													<tr valign="middle">
-														<td>
-															<center><b>Select the installation parameters for {$g['product_name']}:</b></center>
-														</td>
-													</tr>
-												</table><p/>
+												<center>
 												<table>
+												<tr>
+													<td align='right'>
+														Boot manager:
+													</td>
+													<td>
+														<select name='bootmanager'>
+															<option value='bsd'>
+																BSD
+															</option>
+															<option value='none'>
+																None
+														</select>
+													</td>
+												</tr>
+												</table>
+												<hr>
+												<table id='maintable'><tbody>
+												<tr>
+													<td>
+														<b>Mount point</b>
+													</td>
+													<td>
+														<b>Filesysyem type</b>
+													</td>
+													<td>
+														<b>Disk</b>
+													</td>
+													<td>
+														<b>Size</b>
+													</td>
+													<td>
+														<b>Encryption password</b>
+													</td>
+													<td>
+														&nbsp;
+													</td>
+												</tr>
+												<tr>
+
 EOF;
-		$custom_txt .= "<tr><td align='right'><b>Swap size</td><td><input name='swapsize' type='text' value='200M'></td></tr>\n";
-		$custom_txt .= "<tr><td align='right'><b>Disk:</td><td><select name='disk'>\n";
-		foreach($disks as $disk) {
-			$disksize = format_bytes($disk['size'] * 1048576);
-			$custom_txt .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>\n";
-		}
+		// Mount point
+		$custom_txt .=  "<td><input size='8' id='mountpoint1' name='mountpoint1' value='/'></td>";
 		// File system type
-		$custom_txt .= "</select></td></tr>\n";
-		// XXX: Convert to rowhelper.  Add Ajax callbacks to verify sizes, etc.
-		$custom_txt .=  "<tr><td align='right'><b>Filesystem type:</td><td><select onChange='javascript:onfstypeChange()' id='fstype' name='fstype'>\n";
-		$custom_txt .=  "<option value='UFS'>UFS</option>\n";
-		$custom_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>\n";
-		$custom_txt .=  "<option value='UFS.eli'>Encrypted UFS</option>\n";
-		$custom_txt .=  "<option value='UFS+S.eli'>Encrypted UFS + Softupdates</option>\n";
+		$custom_txt .=  "<td><select onChange='javascript:onfstypeChange()' id='fstype1' name='fstype1'>";
+		$select_txt .=  "<option value='UFS'>UFS</option>";
+		$select_txt .=  "<option value='UFS+S'>UFS + Softupdates</option>";
+		$select_txt .=  "<option value='UFS.eli'>Encrypted UFS</option>";
+		$select_txt .=  "<option value='UFS+S.eli'>Encrypted UFS + Softupdates</option>";
 		$release = php_uname("r");
 		$release = $release[0];
 		if($release == "9") {
-			$custom_txt .=  "<option value='UFS+J'>UFS + Journaling</option>\n";
-			$custom_txt .=  "<option value='UFS+J.eli'>Encrypted UFS + Journaling</option>\n";
+			$select_txt .=  "<option value='UFS+J'>UFS + Journaling</option>";
+			$select_txt .=  "<option value='UFS+J.eli'>Encrypted UFS + Journaling</option>";
 		}
 		if(file_exists("/boot/gptzfsboot")) {
-			$custom_txt .= "<option value='ZFS'>ZFS</option>\n";
-			$custom_txt .= "<option value='ZFS.eli'>Encrypted ZFS</option>\n";
+			$select_txt .= "<option value='ZFS'>ZFS</option>";
+			$select_txt .= "<option value='ZFS.eli'>Encrypted ZFS</option>";
 		}
-		$custom_txt .= "</select>\n";
-		$custom_txt .= "</td></tr>";
-		// Disk encryption password
-		$custom_txt .= "<tr name='encpassrow' id='encpassrow'><td align='right'><nobr>Disk encryption password:</nobr></td><td>";
-		$custom_txt .= "<input name='encpass' id='encpass'>";
-		$custom_txt .= "</td></tr>";
-		// Boot manager type
-		$custom_txt .= "<tr><td align='right'>Boot manager:</td><td>";
-		$custom_txt .= "<select name='bootmanager'><option value='bsd'>BSD</option><option value='none'>None</select>";
-		$custom_txt .= "</td></tr>";
-		$custom_txt .= "</table><p/>";
+		$select_txt .=  "<option value='SWAP'>SWAP</option>";
+		$custom_txt .= "{$select_txt}</select>\n";
+		$custom_txt .= "</td>";
+		$custom_txt .= "<td><select id='disk1' name='disk1'>\n";
+		foreach($disks as $disk) {
+			$disksize = format_bytes($disk['size'] * 1048576);
+			$custom_disks .= "<option value='{$disk['disk']}'>{$disk['disk']} - {$disksize} - {$disk['desc']}</option>";
+		}
+		$custom_txt .= "{$custom_disks}</select></td>\n";
+
+		$custom_txt .= "<td><input name='size1' id='size1' size='8' type='text' value='200M'></td>";
+
+		$custom_txt .= "<td>";
+		$custom_txt .= "<input name='encpass1' size='8' id='encpass1'>";
+		$custom_txt .= "</td>";
+
+		$custom_txt .= "<td>";
+		$custom_txt .= "<div id=\"addrowbutton\">";
+		$custom_txt .= "<a onclick=\"javascript:addRowTo('maintable', 'formfldalias'); return false;\" href=\"#\">";
+		$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
+		$custom_txt .= "</div>";
+		$custom_txt .= "</td>";
+
+		$custom_txt .= "</tr>";
+		$custom_txt .= "<tfoot></tfoot></tbody></table>";
 	}
 	echo <<<EOF
+
+												<tr>
+													<td colspan='4'>
 													<script type="text/javascript">
 														\$('loadingdiv').style.visibility='hidden';
 													</script>
 													<div id='contentdiv' style="display:none;">
+														<p/>
 														{$custom_txt}<p/>
-														<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';"> &nbsp;&nbsp
+														<hr><p/>
+														<input type="button" value="Cancel" onClick="javascript:document.location='/index.php';"> &nbsp;&nbsp
 														<input type="submit" value="Next">
 													</div>
 													<script type="text/javascript">
 														\$('contentdiv').appear();
-														// Start out with this option disabled.
-														\$('encpass').disabled = 1;
 														function onfstypeChange() {
 															var fstype = \$F('fstype');
 															if(fstype.substring(fstype.length - 4) == ".eli") {
-																\$('encpass').disabled = 0;
-																\$('encpassrow').show();
+																//\$('encpass').disabled = 0;
 																alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
 															} else { 
-																\$('encpass').disabled = 1;
-																\$('encpassrow').hide();
+																//\$('encpass').disabled = 1;
 															}
 														}
 														onfstypeChange();
@@ -750,6 +833,13 @@ EOF;
 					</tr>
 				</table>
 			</div>
+			<script type="text/javascript">
+			<!--
+				newrow[1] = "{$select_txt}";
+				newrow[2] = "{$custom_disks}";
+			-->
+			</script>
+			
 
 EOF;
 	page_table_end();
@@ -765,10 +855,10 @@ function installer_main() {
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
 	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS&swapsize=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"index.php?state=verify_before_install&fstype=ZFS&swapsize=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
-		<form action="installer.php" method="post" state="step1_post">
+		<form action="index.php" method="post" state="step1_post">
 			<div id="mainlevel">
 				<center>
 				<b><font face="arial" size="+2">Welcome to the {$g['product_name']} webInstaller!</b></font><p/>
@@ -798,11 +888,11 @@ EOF;
 
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
+															<a href="index.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">
-															<a href="installer.php?state=custominstall">Custom installation of {$g['product_name']}</a>
+															<a href="index.php?state=custominstall">Custom installation of {$g['product_name']}</a>
 														</td></tr>
 														<tr bgcolor="#CECECE"><td align="center">
 															<a href='/'>Cancel and return to Dashboard</a>

@@ -930,12 +930,13 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		$custom_txt .= "<td><select id='disk{$rownum}' name='disk{$rownum}'>\n";
 		$custom_disks = "";
 		foreach($disks as $dsk) {
-			$disksize = format_bytes($dsk['size'] * 1048576);
+			$disksize_bytes = format_bytes($dsk['size'] * 1048576);
+			$disksize = $dsk['size'];
 			if($disk == $dsk['disk'])
 				$SELECTED="SELECTED";
 			else 
 				$SELECTED="";
-			$custom_disks .= "<option value='{$dsk['disk']}' $SELECTED>{$dsk['disk']} - {$disksize} - {$dsk['desc']}</option>";
+			$custom_disks .= "<option value='{$dsk['disk']}' $SELECTED>{$dsk['disk']} - {$dsk['desc']} - {$disksize}MB ({$disksize_bytes})</option>";
 		}
 		$custom_txt .= "{$custom_disks}</select></td>\n";
 

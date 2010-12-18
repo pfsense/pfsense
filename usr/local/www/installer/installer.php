@@ -770,14 +770,14 @@ EOF;
 		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {
 			$disks_restored = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
 			$restored_layout_from_file = true;
-			$restored_layout_txt = "The previous disk layout was restored from disk";
+			$restored_layout_txt = "<br/>* The previous disk layout was restored from disk";
 		}
 
 		// If we restored disk layout(s) from a file then build the rows
 		if($restored_layout_from_file == true) {
 			$diskcounter = 0;
 			foreach($disks_restored as $dr) {
-				$custom_txt .= return_rowhelper_row("$diskcounter", $dr['mountpoint'], $dr['fstype'], $dr['disk'], $dr['size'], "");
+				$custom_txt .= return_rowhelper_row("$diskcounter", $dr['mountpoint'], $dr['fstype'], $dr['disk'], $dr['size'], $dr['encpass']);
 				$diskcounter++;
 			}
 		} else {		
@@ -833,6 +833,7 @@ EOF;
 									</span>
 									<br/>* Sizes are in megabytes.
 									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
+									{$restored_layout_txt}
 								</span>
 								</strong>
 							</div>

@@ -894,12 +894,15 @@ EOF;
 
 function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encpass) {
 		global $g, $select_txt, $custom_disks;
-		// Slice #2 - SWAP
+		$release = php_uname("r");
+		$release = trim($release[0]);
+
 		// Mount point
 		$disks = installer_find_all_disks();
 		$custom_txt .= "<tr>";
 		$custom_txt .=  "<td><input size='8' id='mountpoint{$rownum}' name='mountpoint{$rownum}' value='{$mountpoint}'></td>";
-		// File system type
+
+		// Filesystem type array
 		$types = array(
 			'UFS' => 'UFS',
 			'UFS+S' => 'UFS + Softupdates',
@@ -907,16 +910,20 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 			'UFS+S.eli' => 'Encrypted UFS + Softupdates',
 			'SWAP' => 'SWAP'
 		);
-		$release = php_uname("r");
-		$release = $release[0];
+
+		// UFS + Journaling was introduced in 9.0
 		if($release == "9") {
 			$types['UFS+J'] = "UFS + Journaling";
 			$types['UFS+J.eli'] = "Encrypted UFS + Journaling";
 		}
+		
+		// Add ZFS Boot loader if it exists
 		if(file_exists("/boot/gptzfsboot")) {
 			$types['ZFS'] = "Zetabyte Filesystem";
 			$types['ZFS.eli'] = "Encrypted Zetabyte Filesystem";
 		}
+
+		// fstype form field
 		$custom_txt .=  "<td><select onChange='javascript:onfstypeChange()' id='fstype{$rownum}' name='fstype{$rownum}'>";
 		$select_txt = "";
 		foreach($types as $desc => $type) {
@@ -928,6 +935,8 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		}
 		$custom_txt .= "{$select_txt}</select>\n";
 		$custom_txt .= "</td>";
+		
+		// Disk selection form field
 		$custom_txt .= "<td><select id='disk{$rownum}' name='disk{$rownum}'>\n";
 		$custom_disks = "";
 		foreach($disks as $dsk) {
@@ -941,8 +950,10 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		}
 		$custom_txt .= "{$custom_disks}</select></td>\n";
 
+		// Slice size
 		$custom_txt .= "<td><input name='size{$rownum}' id='size{$rownum}' size='8' type='text' value='{$size}'></td>";
 
+		// Encryption password
 		$custom_txt .= "<td>";
 		$custom_txt .= "<input id='encpass{$rownum}' name='encpass{$rownum}' size='8' value='{$encpass}'>";
 		$custom_txt .= "</td>";

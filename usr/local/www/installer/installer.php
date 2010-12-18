@@ -445,10 +445,15 @@ function verify_before_install() {
 		if(!$_REQUEST['fstype' . $x])
 			continue;
 		$tmparray = array();
-		if($_REQUEST['fstype'] <> "SWAP")
+		if($_REQUEST['fstype'] <> "SWAP") {
 			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
-		else 
+			if($tmparray['mountpoint'] == "/conf") {	
+				$tmparray['mountpoint'] = "/confa";
+				$error_txt = "<center><font color='red'>/conf is not an allowed mount point and has been renamed.</font></center><br/>";
+			}
+		} else  {
 			$tmparray['mountpoint'] = "none";
+		}
 		$tmparray['disk'] = $_REQUEST['disk' . $x];
 		$tmparray['fstype'] = $_REQUEST['fstype' . $x];
 		$tmparray['size'] = $_REQUEST['size' . $x];
@@ -483,6 +488,7 @@ function verify_before_install() {
 													</tr>
 												</table>
 												<p/>
+												{$error_txt}
 												<table width='100%'>
 												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanager}</td></tr>
 												<tr><td colspan='5'><hr></td></tr>
@@ -833,6 +839,7 @@ EOF;
 									</span>
 									<br/>* Sizes are in megabytes.
 									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
+									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
 									{$restored_layout_txt}
 								</span>
 								</strong>

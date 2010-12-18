@@ -615,7 +615,7 @@ EOD;
 		fclose($fd);
 
 		// Ensure that the log directory exists
-		if(!isdir("{$g['dhcpd_chroot_path']}/var/run"))
+		if(!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
 			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
 
 		// Are we logging to a least one remote server ?

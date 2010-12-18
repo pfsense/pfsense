@@ -833,8 +833,8 @@ function installer_main() {
 	body_html();
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
-	if(file_exists("/boot/gptzfsboot")) 
-		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype=ZFS&swapsize=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+//	if(file_exists("/boot/gptzfsboot")) 
+//		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype0=ZFS&size=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">
@@ -867,7 +867,9 @@ EOF;
 
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
+<!--
 															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
+-->
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">

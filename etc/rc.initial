@@ -76,9 +76,9 @@ echo " 7) Ping host                         ${option98}"
 
 if [ "${option99}" != "" ]; then
 	/bin/echo "${option99}"
-	echo
 fi
 
+echo
 read -p "Enter an option: " opmode
 echo
 

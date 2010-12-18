@@ -38,7 +38,7 @@
 # Set this to the program location
 if [ -z "${PROGDIR}" ]
 then
-  PROGDIR="/usr/share/pc-sysinstall"
+  PROGDIR="/usr/sbin/pc-sysinstall"
   export PROGDIR
 fi
 

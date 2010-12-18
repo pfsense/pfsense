@@ -24,8 +24,11 @@ var addRowTo = (function() {
 	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
 	tr = d.createElement("tr");
 	totalrows++;
-	if(function_exists('row_helper_dynamic_custom')) 
-		onChange = " onchange='row_helper_dynamic_custom(" + tr + ")' ";
+	// Check to see if our hook function is defined.  If it is defined we will
+	// call into the hook for every row change event allowing javascript
+	// to enable/disable and do other things to the row.
+	if(function_exists('row_helper_dynamic_custom') == true) 
+		onChange = " onChange='javascript:row_helper_dynamic_custom(" + tr + ")' ";
 	if (!objectSize)
 		objectSize = rowsize[i];
 	for (i = 0; i < field_counter_js; i++) {

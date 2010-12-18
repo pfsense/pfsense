@@ -668,6 +668,18 @@ function installer_custom() {
 	body_html();
 	page_table_start();
 	echo <<<EOF
+		<script type="text/javascript">
+			function row_helper_dynamic_custom(tr) {
+				var totalsize = 0;
+				for(var x = 0; x<99; x++) { //optimize me better
+					if($('size' + x)) {
+						totalsize += parseInt($('size' + x).value);
+						//alert($('size' + x).value);
+					}
+				}
+				$('totalsize').value = totalsize;
+			}
+		</script>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 		<script type="text/javascript">
 			// Setup rowhelper data types
@@ -794,7 +806,10 @@ EOF;
 
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
-		$custom_txt .= "<tfoot></tfoot></tbody></table>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size=\"8\" id='totalsize' name='totalsize'></td></tr>";
+		$custom_txt .= "<tfoot></tfoot></tbody>";
+		$custom_txt .= "</table>";
+		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}
 	echo <<<EOF
 
@@ -990,7 +1005,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		$custom_txt .= "{$custom_disks}</select></td>\n";
 
 		// Slice size
-		$custom_txt .= "<td><input name='size{$rownum}' id='size{$rownum}' size='8' type='text' value='{$size}'></td>";
+		$custom_txt .= "<td><input onChange='javascript:row_helper_dynamic_custom();' name='size{$rownum}' id='size{$rownum}' size='8' type='text' value='{$size}'></td>";
 
 		// Encryption password
 		$custom_txt .= "<td>";

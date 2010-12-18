@@ -73,7 +73,6 @@ function services_dhcpd_configure() {
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
-	fwrite($fd, "touch {$g['dhcpd_chroot_path']}/var/run/log\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");

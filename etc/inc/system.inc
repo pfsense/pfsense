@@ -613,6 +613,11 @@ EOD;
 }
 		fwrite($fd, $syslogconf);
 		fclose($fd);
+
+		// Ensure that the log directory exists
+		if(!isdir("{$g['dhcpd_chroot_path']}/var/run"))
+			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
+
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
 			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");

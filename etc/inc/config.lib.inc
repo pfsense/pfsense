@@ -412,9 +412,6 @@ function convert_config() {
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
-
-	if($g['booting'])
-		echo "Loading new configuration...";
 }
 
 /****f* config/safe_write_file

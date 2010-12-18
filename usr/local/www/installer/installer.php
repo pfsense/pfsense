@@ -444,7 +444,9 @@ function verify_before_install() {
 	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);	
 	$disks = array();
 	// Loop through posted items and create an array
-	for($x=1; isset($_REQUEST['fstype' . $x]); $x++) {
+	for($x=0; $x<99; $x++) {
+		if(!$_REQUEST['fstype' . $x])
+			continue;
 		$tmparray = array();
 		if($_REQUEST['fstype'] <> "SWAP")
 			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
@@ -655,6 +657,7 @@ EOF;
 
 function installer_custom() {
 	global $g, $fstype;
+	global $select_txt, $custom_disks;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
@@ -759,8 +762,8 @@ EOF;
 		$size = $disk_info['size'];
 		$first_disk_size = $size - 256;
 		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
-		$custom_txt .= return_rowhelper_row("1", "/", "UFS", $first_disk, "{$first_disk_size}", "");
-		$custom_txt .= return_rowhelper_row("2", "none", "SWAP", $first_disk, "256", "");
+		$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
+		$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "256", "");
 
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody></table>";
@@ -897,7 +900,7 @@ EOF;
 }
 
 function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encpass) {
-		global $g;
+		global $g, $select_txt, $custom_disks;
 		// Slice #2 - SWAP
 		// Mount point
 		$disks = installer_find_all_disks();
@@ -922,6 +925,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 			$types['ZFS.eli'] = "Encrypted Zetabyte Filesystem";
 		}
 		$custom_txt .=  "<td><select onChange='javascript:onfstypeChange()' id='fstype{$rownum}' name='fstype{$rownum}'>";
+		$select_txt = "";
 		foreach($types as $desc => $type) {
 			if($type == $fstype)
 				$SELECTED="SELECTED";
@@ -932,6 +936,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		$custom_txt .= "{$select_txt}</select>\n";
 		$custom_txt .= "</td>";
 		$custom_txt .= "<td><select id='disk{$rownum}' name='disk{$rownum}'>\n";
+		$custom_disks = "";
 		foreach($disks as $dsk) {
 			$disksize = format_bytes($dsk['size'] * 1048576);
 			if($disk == $dsk['disk'])

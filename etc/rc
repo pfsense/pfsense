@@ -115,6 +115,7 @@ else
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
+	echo -n "Mounting unionfs directories..."
 	/bin/mkdir /tmp/unionfs
 	/bin/mkdir /tmp/unionfs/usr
 	/bin/mkdir /tmp/unionfs/root
@@ -122,21 +123,13 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	/bin/mkdir /tmp/unionfs/bin
 	/bin/mkdir /tmp/unionfs/boot
 	/bin/mkdir /tmp/unionfs/confdefault
-	echo -n "Mounting unionfs directories:"
-	echo -n " usr"
 	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
-	echo -n " root"
 	/sbin/mount_unionfs /tmp/unionfs/root /root/
-	echo -n " bin"
 	/sbin/mount_unionfs /tmp/unionfs/bin /bin/		
-	echo -n " sbin"
 	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/	
-	echo -n " boot"
 	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
-	echo -n " conf.default"
 	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
-	echo -n " installer"
-	echo "... done."
+	echo "done."
 fi
 
 echo -n "Creating symlinks..."

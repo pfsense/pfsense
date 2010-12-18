@@ -447,7 +447,8 @@ function verify_before_install() {
 	// Loop through posted items and create an array
 	for($x=1; isset($_REQUEST['fstype' . $x]); $x++) {
 		$tmparray = array();
-		$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
+		if($_REQUEST['fstype'] <> "SWAP")
+			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
 		$tmparray['disk'] = $_REQUEST['disk' . $x];
 		$tmparray['fstype'] = $_REQUEST['fstype' . $x];
 		$tmparray['size'] = $_REQUEST['size' . $x];

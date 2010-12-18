@@ -726,19 +726,19 @@ EOF;
 												<hr>
 												<table id='maintable'><tbody>
 												<tr>
-													<td>
-														<b>Mount point</b>
+													<td align="middle">
+														<b>Mount</b>
 													</td>
 													<td>
-														<b>Filesysyem type</b>
+														<b>Filesysyem</b>
 													</td>
-													<td>
+													<td align="middle">
 														<b>Disk</b>
 													</td>
-													<td>
+													<td align="middle">
 														<b>Size</b>
 													</td>
-													<td>
+													<td align="middle">
 														<b>Encryption password</b>
 													</td>
 													<td>
@@ -750,13 +750,15 @@ EOF;
 EOF;
 
 		// Output disk editor rows
+		$memory = get_memory();
+		$swap_size = $memory[0] * 2;
 		$first_disk = trim(installer_find_first_disk());
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];
-		$first_disk_size = $size - 256;
+		$first_disk_size = $size - $swap_size;
 		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
 		$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
-		$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "256", "");
+		$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "$swap_size", "");
 
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody></table>";

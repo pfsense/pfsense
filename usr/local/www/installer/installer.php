@@ -448,8 +448,8 @@ function verify_before_install() {
 		if($_REQUEST['fstype'] <> "SWAP") {
 			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
 			if($tmparray['mountpoint'] == "/conf") {	
-				$tmparray['mountpoint'] = "/confa";
-				$error_txt = "<center><font color='red'>/conf is not an allowed mount point and has been renamed.</font></center><br/>";
+				$tmparray['mountpoint'] = "/conf{$x}";
+				$error_txt .= "<center><font color='red'>/conf is not an allowed mount point and has been renamed to /conf{$x}.</font></center><br/>";
 			}
 		} else  {
 			$tmparray['mountpoint'] = "none";

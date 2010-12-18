@@ -803,7 +803,7 @@ EOF;
 										</strong>
 									</span>
 									<br/>* Sizes are in megabytes.
-									<br/>* Encryption password field should only be used if a encrypted filesystem was chosen
+									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
 								</span>
 								</strong>
 							</div>

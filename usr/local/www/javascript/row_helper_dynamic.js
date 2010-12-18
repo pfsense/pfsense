@@ -19,10 +19,13 @@ var temp_streaming_text = "";
 var addRowTo = (function() {
     return (function (tableId, objectSize) {
 	var d, tbody, tr, td, bgc, i, ii, j;
+	var onChange;
 	d = document;
 	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
 	tr = d.createElement("tr");
 	totalrows++;
+	if(function_exists('row_helper_dynamic_custom')) 
+		onChange = " onchange='row_helper_dynamic_custom(" + tr + ")' ";
 	if (!objectSize)
 		objectSize = rowsize[i];
 	for (i = 0; i < field_counter_js; i++) {
@@ -30,17 +33,17 @@ var addRowTo = (function() {
 		if(typeof(rowtype[i]) == 'function') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], objectSize, totalrows) + " ";
 		} else if(rowtype[i] == 'textbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + onChange + " type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input class='formfld unknown' size='" + objectSize + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + onChange + " class='formfld unknown' size='" + objectSize + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + onChange + " class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		}
 		tr.appendChild(td);
 	}
@@ -75,4 +78,18 @@ function find_unique_field_name(field_name) {
 	if (last_found_dash < 1)
 		return field_name;
 	return(field_name.substr(0,last_found_dash));
+}
+
+function function_exists (function_name) {
+    // http://kevin.vanzonneveld.net
+    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // +   improved by: Steve Clay
+    // +   improved by: Legaev Andrey
+    // *     example 1: function_exists('isFinite');
+    // *     returns 1: true
+    if (typeof function_name == 'string'){
+        return (typeof this.window[function_name] == 'function');
+    } else{
+        return (function_name instanceof Function);
+    }
 }

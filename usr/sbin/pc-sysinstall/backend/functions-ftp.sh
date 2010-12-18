@@ -23,12 +23,14 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-ftp.sh,v 1.2 2010/07/13 23:47:12 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-ftp.sh,v 1.4 2010/08/24 06:11:46 imp Exp $
 
 # Functions which runs commands on the system
 
 . ${BACKEND}/functions.sh
 . ${BACKEND}/functions-parse.sh
+
+DEFAULT_FTP_SERVER="ftp.freebsd.org"
 
 MAIN_FTP_SERVERS="\
 Main Site: ftp.freebsd.org"
@@ -274,7 +276,48 @@ show_mirrors()
     done
     IFS="${SAVE_IFS}"
   fi
-}
+};
+
+set_ftp_mirror()
+{
+  MIRROR="${1}"
+  echo "${MIRROR}" > "${CONFDIR}/mirrors.conf"
+};
+
+get_ftp_mirror()
+{
+  MIRROR="${DEFAULT_FTP_SERVER}"
+  if [ -f "${CONFDIR}/mirrors.conf" ]
+  then
+    MIRROR=`cat "${CONFDIR}/mirrors.conf"`
+  fi
+
+  VAL="${MIRROR}"
+  export VAL
+};
+
+
+get_ftpHost()
+{
+  get_value_from_cfg ftpPath
+  ftpPath="$VAL"
+
+  ftpHost=`echo "${ftpPath}" | sed -E 's|^(ftp://)([^/]*)(.*)|\2|'`
+  VAL="${ftpHost}"
+
+  export VAL
+};
+
+get_ftpDir()
+{
+  get_value_from_cfg ftpPath
+  ftpPath="$VAL"
+
+  ftpDir=`echo "${ftpPath}" | sed -E 's|^(ftp://)([^/]*)(.*)|\3|'`
+  VAL="${ftpDir}"
+
+  export VAL
+};
 
 get_ftp_mirrors()
 {
@@ -371,4 +414,4 @@ get_ftp_mirrors()
   fi
 
   export VAL
-}
+};

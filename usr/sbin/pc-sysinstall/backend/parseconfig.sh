@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/parseconfig.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/parseconfig.sh,v 1.6 2010/10/09 08:52:09 imp Exp $
 
 # Main install configuration parsing script
 #
@@ -35,12 +35,15 @@
 . ${BACKEND}/functions-disk.sh
 . ${BACKEND}/functions-extractimage.sh
 . ${BACKEND}/functions-installcomponents.sh
+. ${BACKEND}/functions-installpackages.sh
 . ${BACKEND}/functions-localize.sh
 . ${BACKEND}/functions-mountdisk.sh
 . ${BACKEND}/functions-networking.sh
 . ${BACKEND}/functions-newfs.sh
+. ${BACKEND}/functions-packages.sh
 . ${BACKEND}/functions-parse.sh
 . ${BACKEND}/functions-runcommands.sh
+. ${BACKEND}/functions-ftp.sh
 . ${BACKEND}/functions-unmount.sh
 . ${BACKEND}/functions-upgrade.sh
 . ${BACKEND}/functions-users.sh
@@ -95,73 +98,23 @@ PACKAGETYPE="${VAL}" ; export PACKAGETYPE
 start_networking
 
 # If we are not doing an upgrade, lets go ahead and setup the disk
-if [ "${INSTALLMODE}" = "fresh" ]
-then
+case "${INSTALLMODE}" in
+  fresh)
+    if [ "${INSTALLMEDIUM}" = "image" ]
+    then
+      install_image
+    else
+      install_fresh
+    fi
+    ;;
 
-  # Lets start setting up the disk slices now
-  setup_disk_slice
-  
-  # Disk setup complete, now lets parse WORKINGSLICES and setup the bsdlabels
-  setup_disk_label
-  
-  # Now we've setup the bsdlabels, lets go ahead and run newfs / zfs 
-  # to setup the filesystems
-  setup_filesystems
+  upgrade)
+    install_upgrade
+    ;;
 
-  # Lets mount the partitions now
-  mount_all_filesystems
+  *)
+    exit 1
+    ;;
+esac
 
-  # We are ready to begin extraction, lets start now
-  init_extraction
-
-  # Check if we have any optional modules to load 
-  install_components
-
-  # Do any localization in configuration
-  run_localize
-  
-  # Save any networking config on the installed system
-  save_networking_install
-
-  # Now add any users
-  setup_users
-
-  # Now run any commands specified
-  run_commands
-  
-  # Do any last cleanup / setup before unmounting
-  run_final_cleanup
-
-  # Unmount and finish up
-  unmount_all_filesystems
-
-  echo_log "Installation finished!"
-  exit 0
-
-else
-  # We're going to do an upgrade, skip all the disk setup 
-  # and start by mounting the target drive/slices
-  mount_upgrade
-  
-  # Start the extraction process
-  init_extraction
-
-  # Do any localization in configuration
-  run_localize
-
-  # Now run any commands specified
-  run_commands
-  
-  # Merge any old configuration files
-  merge_old_configs
-
-  # Check if we have any optional modules to load 
-  install_components
-
-  # All finished, unmount the file-systems
-  unmount_upgrade
-
-  echo_log "Upgrade finished!"
-  exit 0
-fi
-
+exit 0

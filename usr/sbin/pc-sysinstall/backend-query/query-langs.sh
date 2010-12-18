@@ -23,9 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/query-langs.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
-
-FOUND="0"
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/query-langs.sh,v 1.3 2010/10/22 00:10:48 imp Exp $
 
 cat ${PROGDIR}/conf/avail-langs
 

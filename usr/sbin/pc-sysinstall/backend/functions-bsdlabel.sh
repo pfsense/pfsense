@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-bsdlabel.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-bsdlabel.sh,v 1.9 2010/10/21 22:46:10 imp Exp $
 
 # Functions related to disk operations using bsdlabel
 
@@ -58,20 +58,13 @@ get_fs_line_xvars()
     echo $LINE | grep '^ZFS' >/dev/null 2>/dev/null
     if [ "$?" = "0" ] ; then
       ZTYPE="NONE"
-      ZFSVARS="`echo $LINE | cut -d '(' -f 2- | cut -d ')' -f 1`"
+      ZFSVARS="`echo $LINE | cut -d '(' -f 2- | cut -d ')' -f 1 | xargs`"
 
-      # Check if we are doing raidz setup
-      echo $ZFSVARS | grep "^raidz:" >/dev/null 2>/dev/null
-      if [ "$?" = "0" ] ; then
-       ZTYPE="raidz" 
-       ZFSVARS="`echo $ZFSVARS | sed 's|raidz: ||g' | sed 's|raidz:||g'`"
-      fi
-
-      echo $ZFSVARS | grep "^mirror:" >/dev/null 2>/dev/null
-      if [ "$?" = "0" ] ; then
-        ZTYPE="mirror" 
-        ZFSVARS="`echo $ZFSVARS | sed 's|mirror: ||g' | sed 's|mirror:||g'`"
-      fi
+      echo $ZFSVARS | grep -E "^(disk|file|mirror|raidz(1|2)?|spare|log|cache):" >/dev/null 2>/dev/null
+	  if [ "$?" = "0" ] ; then
+       ZTYPE=`echo $ZFSVARS | cut -f1 -d:`
+       ZFSVARS=`echo $ZFSVARS | sed "s|$ZTYPE: ||g" | sed "s|$ZTYPE:||g"`
+	  fi
 
       # Return the ZFS options
       if [ "${ZTYPE}" = "NONE" ] ; then
@@ -83,7 +76,6 @@ get_fs_line_xvars()
       return
     fi # End of ZFS block
 
-
   fi # End of xtra-options block
 
   # If we got here, set VAR to empty and export
@@ -93,30 +85,31 @@ get_fs_line_xvars()
 };
 
 # Init each zfs mirror disk with a boot sector so we can failover
-setup_zfs_mirror_parts() {
-	
-	_nZFS=""
-	# Using mirroring, setup boot partitions on each disk
-	_mirrline="`echo ${1} | sed 's|mirror ||g'`"
-	for _zvars in $_mirrline
-	do
-		echo "Looping through _zvars: $_zvars" >>${LOGOUT}
-		echo "$_zvars" | grep "${2}" >/dev/null 2>/dev/null
-		if [ "$?" = "0" ] ; then continue ; fi
-		if [ -z "$_zvars" ] ; then continue ; fi
+setup_zfs_mirror_parts()
+{
+  _nZFS=""
 
-		is_disk "$_zvars" >/dev/null 2>/dev/null
-		if [ "$?" = "0" ] ; then
-		echo "Setting up ZFS mirror disk $_zvars" >>${LOGOUT}
-		init_gpt_full_disk "$_zvars" >/dev/null 2>/dev/null
-          	rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${_zvars}" >/dev/null 2>/dev/null
-          	rc_halt "gpart add -t freebsd-zfs ${_zvars}" >/dev/null 2>/dev/null
-			_nZFS="$_nZFS ${_zvars}p2"	
-		else
-			_nZFS="$_nZFS ${_zvars}"	
-		fi	
-	done
-	echo "mirror $2 `echo $_nZFS | tr -s ' '`"
+  # Using mirroring, setup boot partitions on each disk
+  _mirrline="`echo ${1} | sed 's|mirror ||g'`"
+  for _zvars in $_mirrline
+  do
+    echo "Looping through _zvars: $_zvars" >>${LOGOUT}
+    echo "$_zvars" | grep "${2}" >/dev/null 2>/dev/null
+    if [ "$?" = "0" ] ; then continue ; fi
+    if [ -z "$_zvars" ] ; then continue ; fi
+
+    is_disk "$_zvars" >/dev/null 2>/dev/null
+    if [ "$?" = "0" ] ; then
+      echo "Setting up ZFS mirror disk $_zvars" >>${LOGOUT}
+      init_gpt_full_disk "$_zvars" >/dev/null 2>/dev/null
+      rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${_zvars}" >/dev/null 2>/dev/null
+      rc_halt "gpart add -t freebsd-zfs ${_zvars}" >/dev/null 2>/dev/null
+      _nZFS="$_nZFS ${_zvars}p2"	
+    else
+      _nZFS="$_nZFS ${_zvars}"	
+    fi	
+  done
+  echo "mirror $2 `echo $_nZFS | tr -s ' '`"
 } ;
 
 # Function which creates a unique label name for the specified mount
@@ -168,11 +161,9 @@ gen_glabel_name()
 # Function to setup / stamp a legacy MBR bsdlabel
 setup_mbr_partitions()
 {
-
   DISKTAG="$1"
   WRKSLICE="$2"
   FOUNDPARTS="1"
-
 
   # Lets setup the BSDLABEL
   BSDLABEL="${TMPDIR}/bsdLabel-${WRKSLICE}"
@@ -201,6 +192,11 @@ setup_mbr_partitions()
       SIZE=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2` 
       MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 3` 
 
+      if echo $STRING | grep -E '^/.+' >/dev/null 2>&1
+      then
+        IMAGE=`echo ${STRING} | cut -f1 -d' '`
+      fi
+
       # Check if we have a .eli extension on this FS
       echo ${FS} | grep ".eli" >/dev/null 2>/dev/null
       if [ "$?" = "0" ]
@@ -223,9 +219,17 @@ setup_mbr_partitions()
         USINGENCROOT="0" ; export USINGENCROOT
       fi
           
+      if [ -n "${IMAGE}" ]
+      then
+        FS="IMAGE"
+        SIZE=`ls -l "${IMAGE}" | awk '{ print $5 }'`
+        MNT=`echo $STRING | tr -s '\t' ' ' | cut -d ' ' -f 2`
+		SIZE=`convert_byte_to_megabyte $SIZE`
+      fi
+
       # Now check that these values are sane
       case $FS in
-       UFS|UFS+S|UFS+J|ZFS|SWAP) ;;
+        UFS|UFS+S|UFS+J|UFS+SUJ|ZFS|SWAP|IMAGE) ;;
        *) exit_err "ERROR: Invalid file system specified on $line" ;;
       esac
 
@@ -262,20 +266,20 @@ setup_mbr_partitions()
         # Check if we found a valid root partition
         check_for_mount "${MNT}" "/"
         if [ "$?" = "0" ] ; then
-            FOUNDROOT="0" ; export FOUNDROOT
+          FOUNDROOT="0" ; export FOUNDROOT
         fi
 
         # Check if we have a "/boot" instead
         check_for_mount "${MNT}" "/boot"
         if [ "${?}" = "0" ] ; then
           USINGBOOTPART="0" ; export USINGBOOTPART
-          if [ "${FS}" != "UFS" -a "${FS}" != "UFS+S" -a "${FS}" != "UFS+J" ]
+          if [ "${FS}" != "UFS" -a "${FS}" != "UFS+S" -a "${FS}" != "UFS+J" -a "${FS}" != "UFS+SUJ" ]
           then
             exit_err "/boot partition must be formatted with UFS"
           fi
         fi
 
-      else
+       else
         # Done with the a: partitions
 
         # Check if we found a valid root partition not on a:
@@ -314,7 +318,7 @@ setup_mbr_partitions()
       fi
 
       # Save this data to our partition config dir
-      echo "${FS}:${MNT}:${ENC}:${PLABEL}:MBR:${XTRAOPTS}" >${PARTDIR}/${WRKSLICE}${PARTLETTER}
+      echo "${FS}:${MNT}:${ENC}:${PLABEL}:MBR:${XTRAOPTS}:${IMAGE}" >${PARTDIR}/${WRKSLICE}${PARTLETTER}
 
       # If we have a enc password, save it as well
       if [ ! -z "${ENCPASS}" ] ; then
@@ -323,17 +327,19 @@ setup_mbr_partitions()
 
       # This partition letter is used, get the next one
       case ${PARTLETTER} in
-          a) PARTLETTER="b" ;;
-          b) # When we hit b, add the special c: setup for bsdlabel 
-             echo "c:	*	*	unused" >>${BSDLABEL}
-             PARTLETTER="d" ;;
-          d) PARTLETTER="e" ;;
-          e) PARTLETTER="f" ;;
-          f) PARTLETTER="g" ;;
-          g) PARTLETTER="h" ;;
-          h) PARTLETTER="ERR" ;;
-          *) exit_err "ERROR: bsdlabel only supports up to letter h for partitions." ;;
+        a) PARTLETTER="b" ;;
+        b) # When we hit b, add the special c: setup for bsdlabel 
+           echo "c:	*	*	unused" >>${BSDLABEL}
+           PARTLETTER="d" ;;
+        d) PARTLETTER="e" ;;
+        e) PARTLETTER="f" ;;
+        f) PARTLETTER="g" ;;
+        g) PARTLETTER="h" ;;
+        h) PARTLETTER="ERR" ;;
+        *) exit_err "ERROR: bsdlabel only supports up to letter h for partitions." ;;
       esac
+
+      unset IMAGE
 
     fi # End of subsection locating a slice in config
 
@@ -409,7 +415,7 @@ setup_gpt_partitions()
           
       # Now check that these values are sane
       case $FS in
-       UFS|UFS+S|UFS+J|ZFS|SWAP) ;;
+        UFS|UFS+S|UFS+J|UFS+SUJ|ZFS|SWAP) ;;
        *) exit_err "ERROR: Invalid file system specified on $line" ;;
       esac
 
@@ -446,7 +452,7 @@ setup_gpt_partitions()
       if [ "${?}" = "0" ] ; then
         if [ "${CURPART}" = "2" ] ; then
           USINGBOOTPART="0" ; export USINGBOOTPART
-          if [ "${FS}" != "UFS" -a "${FS}" != "UFS+S" -a "${FS}" != "UFS+J" ]
+          if [ "${FS}" != "UFS" -a "${FS}" != "UFS+S" -a "${FS}" != "UFS+J" -a "${FS}" != "UFS+SUJ" ]
           then
             exit_err "/boot partition must be formatted with UFS"
           fi
@@ -471,9 +477,9 @@ setup_gpt_partitions()
 
       # Figure out the gpart type to use
       case ${FS} in
-          ZFS) PARTYPE="freebsd-zfs" ;;
-         SWAP) PARTYPE="freebsd-swap" ;;
-            *) PARTYPE="freebsd-ufs" ;;
+        ZFS) PARTYPE="freebsd-zfs" ;;
+        SWAP) PARTYPE="freebsd-swap" ;;
+        *) PARTYPE="freebsd-ufs" ;;
       esac
 
       # Create the partition
@@ -514,8 +520,8 @@ setup_gpt_partitions()
       # If this is the boot disk, stamp the right gptboot
       if [ ! -z "${BOOTTYPE}" ] ; then
         case ${BOOTTYPE} in
-           freebsd-ufs) rc_halt "gpart bootcode -p /boot/gptboot -i 1 ${DISK}" ;;
-           freebsd-zfs) rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${DISK}" ;;
+          freebsd-ufs) rc_halt "gpart bootcode -p /boot/gptboot -i 1 ${DISK}" ;;
+          freebsd-zfs) rc_halt "gpart bootcode -p /boot/gptzfsboot -i 1 ${DISK}" ;;
         esac 
       fi
 
@@ -574,7 +580,6 @@ populate_disk_label()
 setup_disk_label()
 {
   # We are ready to start setting up the label, lets read the config and do the actions
-
   # First confirm that we have a valid WORKINGSLICES
   if [ -z "${WORKINGSLICES}" ]; then
     exit_err "ERROR: No slices were setup! Please report this to the maintainers"
@@ -639,3 +644,176 @@ setup_disk_label()
   fi
 };
 
+check_fstab_mbr()
+{
+  local SLICE
+  local FSTAB
+
+  if [ -z "$2" ]
+  then
+	return 1
+  fi
+
+  SLICE="$1"
+  FSTAB="$2/etc/fstab"
+
+  if [ -f "${FSTAB}" ]
+  then
+    PARTLETTER=`echo "$SLICE" | sed -E 's|^.+([a-h])$|\1|'`
+
+    cat "${FSTAB}" | awk '{ print $2 }' | grep -E '^/$' >/dev/null 2>&1
+    if [ "$?" = "0" ]
+    then
+      if [ "${PARTLETTER}" = "a" ]
+      then
+        FOUNDROOT="0"
+      else
+        FOUNDROOT="1"
+      fi
+
+      ROOTIMAGE="1"
+
+      export FOUNDROOT
+      export ROOTIMAGE
+    fi
+
+    cat "${FSTAB}" | awk '{ print $2 }' | grep -E '^/boot$' >/dev/null 2>&1
+    if [ "$?" = "0" ]
+    then
+      if [ "${PARTLETTER}" = "a" ]
+      then
+        USINGBOOTPART="0"
+      else 
+        exit_err "/boot partition must be first partition"
+      fi 
+      export USINGBOOTPART
+    fi
+
+    return 0
+  fi
+
+  return 1
+};
+
+check_fstab_gpt()
+{
+  local SLICE
+  local FSTAB
+
+  if [ -z "$2" ]
+  then
+	return 1
+  fi
+
+  SLICE="$1"
+  FSTAB="$2/etc/fstab"
+
+  if [ -f "${FSTAB}" ]
+  then
+    PARTNUMBER=`echo "${SLICE}" | sed -E 's|^.+p([0-9]*)$|\1|'`
+
+    cat "${FSTAB}" | awk '{ print $2 }' | grep -E '^/$' >/dev/null 2>&1
+    if [ "$?" = "0" ]
+    then
+      if [ "${PARTNUMBER}" = "2" ]
+      then
+        FOUNDROOT="0"
+      else
+        FOUNDROOT="1"
+      fi
+
+      ROOTIMAGE="1"
+
+      export FOUNDROOT
+      export ROOTIMAGE
+    fi
+
+    cat "${FSTAB}" | awk '{ print $2 }' | grep -E '^/boot$' >/dev/null 2>&1
+    if [ "$?" = "0" ]
+    then
+      if [ "${PARTNUMBER}" = "2" ]
+      then
+        USINGBOOTPART="0"
+      else 
+        exit_err "/boot partition must be first partition"
+      fi 
+      export USINGBOOTPART
+    fi
+
+    return 0
+  fi
+
+
+  return 1
+};
+
+check_disk_layout()
+{
+  local SLICES
+  local TYPE
+  local DISK
+  local RES
+  local F
+
+  DISK="$1"
+  TYPE="MBR"
+
+  if [ -z "${DISK}" ]
+  then
+	return 1
+  fi
+
+  SLICES_MBR=`ls /dev/${DISK}s[1-4]*[a-h]* 2>/dev/null`
+  SLICES_GPT=`ls /dev/${DISK}p[0-9]* 2>/dev/null`
+  SLICES_SLICE=`ls /dev/${DISK}[a-h]* 2>/dev/null`
+
+  if [ -n "${SLICES_MBR}" ]
+  then
+    SLICES="${SLICES_MBR}"
+    TYPE="MBR"
+    RES=0
+  fi
+  if [ -n "${SLICES_GPT}" ]
+  then
+    SLICES="${SLICES_GPT}"
+    TYPE="GPT"
+    RES=0
+  fi
+  if [ -n "${SLICES_SLICE}" ]
+  then
+    SLICES="${SLICES_SLICE}"
+    TYPE="MBR"
+    RES=0
+  fi
+  
+  for slice in ${SLICES}
+  do
+    F=1
+    mount ${slice} /mnt 2>/dev/null
+    if [ "$?" != "0" ]
+    then
+      continue
+    fi 
+
+    if [ "${TYPE}" = "MBR" ]
+    then
+	  check_fstab_mbr "${slice}" "/mnt"
+      F="$?"
+
+    elif [ "${TYPE}" = "GPT" ]
+    then
+	  check_fstab_gpt "${slice}" "/mnt"
+      F="$?"
+    fi 
+
+    if [ "${F}" = "0" ]
+    then
+      #umount /mnt
+      break 
+    fi
+
+    #umount /mnt
+  done
+
+  return ${RES}
+};

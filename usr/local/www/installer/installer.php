@@ -958,7 +958,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		// fstype form field
 		$custom_txt .=  "<td><select onChange='javascript:onfstypeChange()' id='fstype{$rownum}' name='fstype{$rownum}'>";
 		$select_txt = "";
-		foreach($types as $desc => $type) {
+		foreach($types as $type => $desc) {
 			if($type == $fstype)
 				$SELECTED="SELECTED";
 			else 

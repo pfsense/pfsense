@@ -867,7 +867,7 @@ EOF;
 		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {
 			$disks_restored = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
 			$restored_layout_from_file = true;
-			$restored_layout_txt = "<br/>* The previous disk layout was restored from disk";
+			$restored_layout_txt = "<br/>* The previous disk layout was restored from a previous session";
 		}
 
 		// If we restored disk layout(s) from a file then build the rows

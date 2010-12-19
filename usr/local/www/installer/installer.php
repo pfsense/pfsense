@@ -511,14 +511,19 @@ function verify_before_install() {
 									<div>
 										<center>
 											<div id="pfsensetemplate">
+												<table width='100%'>
 EOFAMBAC;
 												// If errors are found, throw the big red box.
-												if ($error_txt) 
+												if ($error_txt) {
+													echo "<tr><td colspan=\"5\">&nbsp;</td>";
+													echo "<tr><td colspan=\"5\">";
 													print_input_errors($error_txt);
+													echo "</td></tr>";
+												} else 
+													echo "<tr><td>&nbsp;</td></tr>";
+
 	echo <<<EOFAMBACBAF
 
-												<table width='100%'>
-												<tr><td>&nbsp;</td></tr>
 												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanagerupper}</td></tr>
 												<tr><td>&nbsp;</td></tr>
 												<tr>

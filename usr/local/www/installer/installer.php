@@ -510,19 +510,19 @@ EOFAMBAC;
 												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanager}</td></tr>
 												<tr><td colspan='5'><hr></td></tr>
 												<tr>
-													<td>
+													<td align='middle'>
 														<b>Mount point</b>
 													</td>
-													<td>
-														<b>Filesysyem type</b>
+													<td align='middle'>
+														<b>Filesysytem type</b>
 													</td>
-													<td>
+													<td align='middle'>
 														<b>Disk</b>
 													</td>
-													<td>
+													<td align='middle'>
 														<b>Size</b>
 													</td>
-													<td>
+													<td align='middle'>
 														<b>Encryption password</b>
 													</td>
 
@@ -774,8 +774,8 @@ EOF;
 													<td align="middle">
 														<b>Mount</b>
 													</td>
-													<td>
-														<b>Filesysyem</b>
+													<td align='middle'>
+														<b>Filesysytem</b>
 													</td>
 													<td align="middle">
 														<b>Disk</b>

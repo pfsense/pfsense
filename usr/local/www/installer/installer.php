@@ -754,7 +754,16 @@ function installer_custom() {
 											<div id="pfsenseinstaller">
 												<center>
 												<div id='loadingdiv'>
-													<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Probing disks, please wait...
+													<table>
+														<tr>
+															<td>
+																<img src="/themes/{$g['theme']}/images/misc/loader.gif">
+															</td>
+															<td valign="center">
+														 		&nbsp;Probing disks, please wait...
+															</td>
+														</tr>
+													</table>
 												</div>
 EOF;
 	ob_flush();

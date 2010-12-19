@@ -709,7 +709,8 @@ function installer_custom() {
 	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
-			function onfstypeChange() {
+			function row_helper_dynamic_custom() {
+				var totalsize = 0;
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('fstype' + x)) {
 						var fstype = \$F('fstype' + x);
@@ -724,21 +725,18 @@ function installer_custom() {
 						}
 					}
 				}
-			}
-			onfstypeChange();
-		</script>
-		<script type="text/javascript">
-			function row_helper_dynamic_custom() {
-				onfstypeChange();
-				var totalsize = 0;
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('size' + x)) {
 						if(parseInt($('size' + x).value) > 0)
 							totalsize += parseInt($('size' + x).value);
 					}
 				}
-				\$('totalsize').value = totalsize;
+				if(\$('totalsize')) {
+					\$('totalsize').value = totalsize;
+					\$('totalsize').disabled = 1;
+				}
 			}
+			row_helper_dynamic_custom();
 		</script>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 		<script type="text/javascript">
@@ -1049,7 +1047,7 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		}
 
 		// fstype form field
-		$custom_txt .=  "<td><select onChange='javascript:onfstypeChange()' id='fstype{$rownum}' name='fstype{$rownum}'>";
+		$custom_txt .=  "<td><select onChange='javascript:row_helper_dynamic_custom()' id='fstype{$rownum}' name='fstype{$rownum}'>";
 		$select_txt = "";
 		foreach($types as $type => $desc) {
 			if($type == $fstype)

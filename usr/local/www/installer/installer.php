@@ -427,8 +427,9 @@ EOF;
 
 function verify_before_install() {
 	global $g, $fstype, $savemsg;
-	$encyrpted_root = false;
-	$non_encyrpted_boot = false;
+	$encrypted_root = false;
+	$non_encrypted_boot = false;
+	$non_encrypted_notice = false;
 	head_html();
 	body_html();
 	page_table_start();
@@ -449,17 +450,17 @@ function verify_before_install() {
 		if(!$_REQUEST['fstype' . $x])
 			continue;
 		$tmparray = array();
-		if($_REQUEST['fstype' . $x] <> "SWAP") {			
+		if($_REQUEST['fstype' . $x] <> "SWAP") {
 			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
 			// Check for encrypted slice /
 			if(stristr($_REQUEST['fstype' . $x], ".eli")) {
 				if($tmparray['mountpoint'] == "/") 
-					$encyrpted_root = true;
+					$encrypted_root = true;
 			}
 			// Check if we have a non-encrypted /boot
 			if($tmparray['mountpoint'] == "/boot") 	{
 				if(!stristr($_REQUEST['fstype' . $x], ".eli"))
-					$non_encyrpted_boot = true;
+					$non_encrypted_boot = true;
 			}
 			if($tmparray['mountpoint'] == "/conf") {	
 				$tmparray['mountpoint'] = "/conf{$x}";
@@ -468,9 +469,11 @@ function verify_before_install() {
 		} else  {
 			$tmparray['mountpoint'] = "none";
 		}
-		// If we have an encrypted /root and lack a non encyrpted /boot, throw an error/warning
-		if($encyrpted_root && $non_encyrpted_boot) 
+		// If we have an encrypted /root and lack a non encrypted /boot, throw an error/warning
+		if($encrypted_root && !$non_encrypted_boot && !$non_encrypted_notice) {
 			$error_txt .= "<center><font color='red'>A non-encrypted /boot slice is required when encrypting the / slice</font></center><br/>";
+			$non_encrypted_notice = true;
+		}
 		$tmparray['disk'] = $_REQUEST['disk' . $x];
 		$tmparray['fstype'] = $_REQUEST['fstype' . $x];
 		$tmparray['size'] = $_REQUEST['size' . $x];

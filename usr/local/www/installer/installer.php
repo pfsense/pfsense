@@ -534,7 +534,7 @@ echo <<<EOFAMB
 					</div>
 					<center>
 						<p/>
-						<input type="button" value="Cancel" onClick="javascript:document.location='/installer';"> &nbsp;&nbsp;
+						<input type="button" value="Cancel" onClick="javascript:document.location='installer.php?state=custominstall';"> &nbsp;&nbsp;
 						<input type="submit" value="Begin installation"> 
 					</center>
 				</td>
@@ -806,8 +806,8 @@ EOF;
 
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size=\"8\" id='totalsize' name='totalsize'></td></tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size=\"8\" id='totalsize' name='totalsize'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}
@@ -822,7 +822,7 @@ EOF;
 														<p/>
 														{$custom_txt}<p/>
 														<hr><p/>
-														<input type="button" value="Cancel" onClick="javascript:document.location='/installer.php';"> &nbsp;&nbsp
+														<input type="button" value="Cancel" onClick="javascript:document.location='/installer/installer.php';"> &nbsp;&nbsp
 														<input type="submit" value="Next">
 													</div>
 													<script type="text/javascript">

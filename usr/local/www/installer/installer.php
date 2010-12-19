@@ -925,6 +925,7 @@ EOF;
 									<br/>* Sizes are in megabytes.
 									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
 									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
+									<br/>* Leave at least one megabyte unallocated to avoid errors
 									{$restored_layout_txt}
 								</span>
 								</strong>

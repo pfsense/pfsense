@@ -368,6 +368,7 @@ function body_html() {
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+	<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getinstallerprogress() {
 			url = '/installer/installer.php';
@@ -733,7 +734,11 @@ function installer_custom() {
 				}
 				// If the totalsize element exists, set it and disable
 				if(\$('totalsize')) {
-					\$('totalsize').value = totalsize;
+					if(\$('totalsize').value != totalsize) {
+						// When size allocation changes, draw attention.
+ 						new Effect.Highlight('totalsize');
+						\$('totalsize').value = totalsize;
+					}
 					\$('totalsize').disabled = 1;
 				}
 			}

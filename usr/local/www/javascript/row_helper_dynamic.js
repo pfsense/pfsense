@@ -4,6 +4,7 @@ var rowtype				= new Array(99);
 var newrow 				= new Array(99);
 var rowsize  			= new Array(99);
 var rowhelper_onChange 	= '';
+var rowhelper_onAdd		= '';
 
 for (i = 0; i < 99; i++) {
 	rowname[i] = '';
@@ -50,6 +51,8 @@ var addRowTo = (function() {
 	td.innerHTML = '<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
 	tr.appendChild(td);
 	tbody.appendChild(tr);
+	if(rowhelper_onAdd != '') 
+		eval(rowhelper_onAdd);
     });
 })();
 

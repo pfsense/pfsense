@@ -763,6 +763,7 @@ function installer_custom() {
 			totalrows = 1;
 			loaded = 1;
 			rowhelper_onChange = " onChange='javascript:row_helper_dynamic_custom()' ";
+			rowhelper_onAdd = 'row_helper_dynamic_custom();';
 		</script>
 		<form action="installer.php" method="post">
 			<input type="hidden" name="state" value="verify_before_install">

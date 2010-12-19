@@ -5,12 +5,13 @@ var newrow 				= new Array(99);
 var rowsize  			= new Array(99);
 var rowhelper_onChange 	= '';
 var rowhelper_onAdd		= '';
+var rowhelper_onDelete	= '';
 
 for (i = 0; i < 99; i++) {
 	rowname[i] = '';
 	rowtype[i] = '';
-	 newrow[i] = '';
-	 rowsize[i] = '25';
+	newrow[i] = '';
+	rowsize[i] = '25';
 }
 
 var field_counter_js = 0;
@@ -65,6 +66,8 @@ function removeRow(el) {
 	cel = el.getElementsByTagName("td").item(0);
 	el.parentNode.removeChild(el);
     }
+	if(rowhelper_onDelete != '') 
+		eval(rowhelper_onDelete);
 }
 
 function find_unique_field_name(field_name) {

@@ -756,7 +756,7 @@ function installer_custom() {
 												<div id='loadingdiv'>
 													<table>
 														<tr>
-															<td>
+															<td valign="center">
 																<img src="/themes/{$g['theme']}/images/misc/loader.gif">
 															</td>
 															<td valign="center">
@@ -827,6 +827,8 @@ EOF;
 		// Calculate swap disk sizes
 		$memory = get_memory();
 		$swap_size = $memory[0] * 2;
+		// Decreate by 1 megabyte as some disks will fail
+		$swap_size--;
 		$first_disk = trim(installer_find_first_disk());
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];

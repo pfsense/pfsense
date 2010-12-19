@@ -843,6 +843,7 @@ EOF;
 														<input type="submit" value="Next">
 													</div>
 													<script type="text/javascript">
+														var encryption_warning_shown = false;
 														\$('contentdiv').appear();
 														function onfstypeChange() {
 															for(var x = 0; x<99; x++) { //optimize me better
@@ -850,7 +851,10 @@ EOF;
 																	var fstype = \$F('fstype' + x);
 																	if(fstype.substring(fstype.length - 4) == ".eli") {
 																		\$('encpass' + x).disabled = 0;
-																		alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
+																		if(!encryption_warning_shown) {
+																			alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
+																			encryption_warning_shown = true;
+																		}
 																	} else { 
 																		\$('encpass' + x).disabled = 1;
 																	}

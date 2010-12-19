@@ -24,7 +24,6 @@ var addRowTo = (function() {
 	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
 	tr = d.createElement("tr");
 	totalrows++;
-	alert(rowhelper_onChange);
 	if (!objectSize)
 		objectSize = rowsize[i];
 	for (i = 0; i < field_counter_js; i++) {

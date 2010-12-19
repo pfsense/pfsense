@@ -134,10 +134,10 @@ EOF;
 }
 
 function start_installation() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	if(file_exists("/tmp/install_complete"))
 		return;
-	$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+	$ps_running = exec("/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep 'sh /tmp/installer.sh'");
 	if($ps_running)	
 		return;
 	$fd = fopen("/tmp/installer.sh", "w");
@@ -145,25 +145,25 @@ function start_installation() {
 		die(gettext("Could not open /tmp/installer.sh for writing"));
 		exit;
 	}
-	fwrite($fd, "rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null\n");
+	fwrite($fd, "/bin/rm /tmp/.pc-sysinstall/pc-sysinstall.log 2>/dev/null\n");
 	fwrite($fd, "/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh -c /usr/sbin/pc-sysinstall/examples/pfSense-install.cfg \n");
-	fwrite($fd, "chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
+	fwrite($fd, "/bin/chmod a+rx /usr/local/bin/after_installation_routines.sh\n");
 	fwrite($fd, "cd / && /usr/local/bin/after_installation_routines.sh\n");
-	fwrite($fd, "mkdir /mnt/tmp\n");
-	fwrite($fd, "touch /tmp/install_complete\n");
+	fwrite($fd, "/bin/mkdir /mnt/tmp\n");
+	fwrite($fd, "/usr/bin/touch /tmp/install_complete\n");
 	fclose($fd);
-	exec("chmod a+rx /tmp/installer.sh");
-	mwexec_bg("sh /tmp/installer.sh");
+	exec("/bin/chmod a+rx /tmp/installer.sh");
+	mwexec_bg("/bin/sh /tmp/installer.sh");
 }
 
 function installer_find_first_disk() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	$disk = `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list | head -n1 | cut -d':' -f1`;
 	return trim($disk);
 }
 
 function pcsysinstall_get_disk_info($diskname) {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
@@ -186,7 +186,7 @@ function pcsysinstall_get_disk_info($diskname) {
 
 // Return an array with all disks information.
 function installer_find_all_disks() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
@@ -208,7 +208,7 @@ function installer_find_all_disks() {
 }
 
 function update_installer_status() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	// Ensure status files exist
 	if(!file_exists("/tmp/installer_installer_running"))
 		touch("/tmp/installer_installer_running");
@@ -283,7 +283,7 @@ function update_installer_status() {
 	}
 	$running_old = trim(file_get_contents("/tmp/installer_installer_running"));
 	if($installer_running <> "running") {
-		$ps_running = exec("ps awwwux | grep -v grep | grep 'sh /tmp/installer.sh'");
+		$ps_running = exec("/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep 'sh /tmp/installer.sh'");
 		if($ps_running)	{
 			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'; ";
 			if($running_old <> $running) {
@@ -303,14 +303,14 @@ function update_installer_status() {
 }
 
 function update_installer_status_win($status) {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
 	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
 	echo "</script>";
 }
 
 function begin_install() {
-	global $g;
+	global $g, $savemsg;
 	if(file_exists("/tmp/install_complete"))
 		return;
 	unlink_if_exists("/tmp/install_complete");
@@ -319,7 +319,7 @@ function begin_install() {
 }
 
 function head_html() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	echo <<<EOF
 <html>
 	<head>
@@ -351,7 +351,7 @@ EOF;
 }
 
 function body_html() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 	if(strstr($pfSversion, "1.2")) 
 		$one_two = true;
@@ -389,14 +389,14 @@ EOF;
 }
 
 function end_html() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	echo "</form>";
 	echo "</body>";
 	echo "</html>";
 }
 
 function template() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	head_html();
 	body_html();
 	echo <<<EOF
@@ -426,12 +426,14 @@ EOF;
 }
 
 function verify_before_install() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	$encyrpted_root = false;
 	$non_encyrpted_boot = false;
 	head_html();
 	body_html();
 	page_table_start();
+	// If we are visiting this step from anything but the row editor / custom install
+	// then load the on disk layout contents if they are available.
 	if(!$_REQUEST['fstype0'] && file_exists("/tmp/webInstaller_disk_layout.txt")) {
 		$disks = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
 		$restored_layout_from_file = true;
@@ -567,7 +569,7 @@ EOFAMB;
 }
 
 function installing_gui() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	head_html();
 	body_html();
 	echo "<form action=\"installer.php\" method=\"post\" state=\"step1_post\">";
@@ -639,7 +641,7 @@ EOF;
 }
 
 function page_table_start($pgtitle = "") {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	if($pgtitle == "") 
 		$pgtitle = "{$g['product_name']} installer";
 	echo <<<EOF
@@ -663,7 +665,7 @@ EOF;
 }
 
 function page_table_end() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	echo <<<EOF
 			</td>
 		</tr>
@@ -675,7 +677,7 @@ EOF;
 }
 
 function installer_custom() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	global $select_txt, $custom_disks;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
@@ -893,7 +895,7 @@ EOF;
 }
 
 function installer_main() {
-	global $g, $fstype;
+	global $g, $fstype, $savemsg;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
@@ -962,7 +964,7 @@ EOF;
 }
 
 function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encpass) {
-		global $g, $select_txt, $custom_disks;
+		global $g, $select_txt, $custom_disks, $savemsg;
 		$release = php_uname("r");
 		$release = trim($release[0]);
 

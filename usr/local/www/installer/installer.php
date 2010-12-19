@@ -709,7 +709,27 @@ function installer_custom() {
 	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
-			function row_helper_dynamic_custom(tr) {
+			function onfstypeChange() {
+				for(var x = 0; x<99; x++) { //optimize me better
+					if(\$('fstype' + x)) {
+						var fstype = \$F('fstype' + x);
+						if(fstype.substring(fstype.length - 4) == ".eli") {
+							\$('encpass' + x).disabled = 0;
+							if(!encryption_warning_shown) {
+								alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
+								encryption_warning_shown = true;
+							}
+						} else { 
+							\$('encpass' + x).disabled = 1;
+						}
+					}
+				}
+			}
+			onfstypeChange();
+		</script>
+		<script type="text/javascript">
+			function row_helper_dynamic_custom() {
+				onfstypeChange();
 				var totalsize = 0;
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('size' + x)) {
@@ -742,6 +762,7 @@ function installer_custom() {
 			rows = 1;
 			totalrows = 1;
 			loaded = 1;
+			rowhelper_onChange = " onChange='javascript:row_helper_dynamic_custom()' ";
 		</script>
 		<form action="installer.php" method="post">
 			<input type="hidden" name="state" value="verify_before_install">
@@ -886,23 +907,6 @@ EOF;
 													<script type="text/javascript">
 														var encryption_warning_shown = false;
 														\$('contentdiv').appear();
-														function onfstypeChange() {
-															for(var x = 0; x<99; x++) { //optimize me better
-																if(\$('fstype' + x)) {
-																	var fstype = \$F('fstype' + x);
-																	if(fstype.substring(fstype.length - 4) == ".eli") {
-																		\$('encpass' + x).disabled = 0;
-																		if(!encryption_warning_shown) {
-																			alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
-																			encryption_warning_shown = true;
-																		}
-																	} else { 
-																		\$('encpass' + x).disabled = 1;
-																	}
-																}
-															}
-														}
-														onfstypeChange();
 													</script>
 												</center>
 												</td></tr>

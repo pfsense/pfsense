@@ -3,6 +3,9 @@ var rowname				= new Array(99);
 var rowtype				= new Array(99);
 var newrow 				= new Array(99);
 var rowsize  			= new Array(99);
+
+// Global variables.  Set to javascript code
+// that will be eval() after change, add & delete.
 var rowhelper_onChange 	= '';
 var rowhelper_onAdd		= '';
 var rowhelper_onDelete	= '';

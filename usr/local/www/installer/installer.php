@@ -432,7 +432,7 @@ function verify_before_install() {
 	$non_encrypted_notice = false;
 	head_html();
 	body_html();
-	page_table_start();
+	page_table_start($g['product_name'] . " installer - Verify final installation settings");
 	// If we are visiting this step from anything but the row editor / custom install
 	// then load the on disk layout contents if they are available.
 	if(!$_REQUEST['fstype0'] && file_exists("/tmp/webInstaller_disk_layout.txt")) {
@@ -464,14 +464,14 @@ function verify_before_install() {
 			}
 			if($tmparray['mountpoint'] == "/conf") {	
 				$tmparray['mountpoint'] = "/conf{$x}";
-				$error_txt .= "<center><font color='red'>/conf is not an allowed mount point and has been renamed to /conf{$x}.</font></center><br/>";
+				$error_txt[] = "/conf is not an allowed mount point and has been renamed to /conf{$x}.";
 			}
 		} else  {
 			$tmparray['mountpoint'] = "none";
 		}
 		// If we have an encrypted /root and lack a non encrypted /boot, throw an error/warning
 		if($encrypted_root && !$non_encrypted_boot && !$non_encrypted_notice) {
-			$error_txt .= "<center><font color='red'>A non-encrypted /boot slice is required when encrypting the / slice</font></center><br/>";
+			$error_txt[] = "A non-encrypted /boot slice is required when encrypting the / slice";
 			$non_encrypted_notice = true;
 		}
 		$tmparray['disk'] = $_REQUEST['disk' . $x];
@@ -490,7 +490,7 @@ function verify_before_install() {
 	<input type="hidden" name="encpass" value="{$encpass}">
 	<input type="hidden" name="bootmanager" value="{$bootmanager}">
 	<div id="mainlevel">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="800" border="0" cellpadding="0" cellspacing="0">
 	 		<tr>
 	    		<td>
 					<div id="mainarea">
@@ -500,15 +500,12 @@ function verify_before_install() {
 									<div>
 										<center>
 											<div id="pfsensetemplate">
-												<table bgcolor="FFFF00" width="800" height="30" cellpadding="2" style="border:1px dashed;">
-													<tr valign="middle">
-														<td>
-															<center><b>Please verify that the following is correct:</b></center>
-														</td>
-													</tr>
-												</table>
-												<p/>
-												{$error_txt}
+EOFAMBAC;
+												// If errors are found, throw the big red box.
+												if ($error_txt) 
+													print_input_errors($error_txt);
+	echo <<<EOFAMBACBAF
+
 												<table width='100%'>
 												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanager}</td></tr>
 												<tr><td colspan='5'><hr></td></tr>
@@ -529,7 +526,7 @@ function verify_before_install() {
 														<b>Encryption password</b>
 													</td>
 
-EOFAMBAC;
+EOFAMBACBAF;
 
 													foreach($disks as $disk) {
 														$desc = pcsysinstall_get_disk_info($disk['disk']);
@@ -555,14 +552,18 @@ echo <<<EOFAMB
 					<center>
 						<p/>
 						<input type="button" value="Cancel" onClick="javascript:document.location='installer.php?state=custominstall';"> &nbsp;&nbsp;
-						<input type="submit" value="Begin installation"> 
+EOFAMB;
+						if(!$error_txt) 
+						echo "<input type=\"submit\" value=\"Begin installation\"> ";
+echo <<<EOFAMBASDF
+
 					</center>
 				</td>
 			</tr>
 		</table>
 	</div>
+EOFAMBASDF;
 
-EOFAMB;
 
 	page_table_end();
 	end_html();
@@ -686,7 +687,7 @@ function installer_custom() {
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
 	head_html();
 	body_html();
-	page_table_start();
+	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
 			function row_helper_dynamic_custom(tr) {

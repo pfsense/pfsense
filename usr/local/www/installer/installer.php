@@ -427,6 +427,8 @@ EOF;
 
 function verify_before_install() {
 	global $g, $fstype;
+	$encyrpted_root = false;
+	$non_encyrpted_boot = false;
 	head_html();
 	body_html();
 	page_table_start();
@@ -441,12 +443,22 @@ function verify_before_install() {
 	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);	
 	$disks = array();
 	// Loop through posted items and create an array
-	for($x=0; $x<99; $x++) {
+	for($x=0; $x<99; $x++) { // XXX: Make this more optimal
 		if(!$_REQUEST['fstype' . $x])
 			continue;
 		$tmparray = array();
-		if($_REQUEST['fstype'] <> "SWAP") {
+		if($_REQUEST['fstype' . $x] <> "SWAP") {			
 			$tmparray['mountpoint'] = $_REQUEST['mountpoint' . $x];
+			// Check for encrypted slice /
+			if(stristr($_REQUEST['fstype' . $x], ".eli")) {
+				if($tmparray['mountpoint'] == "/") 
+					$encyrpted_root = true;
+			}
+			// Check if we have a non-encrypted /boot
+			if($tmparray['mountpoint'] == "/boot") 	{
+				if(!stristr($_REQUEST['fstype' . $x], ".eli"))
+					$non_encyrpted_boot = true;
+			}
 			if($tmparray['mountpoint'] == "/conf") {	
 				$tmparray['mountpoint'] = "/conf{$x}";
 				$error_txt .= "<center><font color='red'>/conf is not an allowed mount point and has been renamed to /conf{$x}.</font></center><br/>";
@@ -454,6 +466,9 @@ function verify_before_install() {
 		} else  {
 			$tmparray['mountpoint'] = "none";
 		}
+		// If we have an encrypted /root and lack a non encyrpted /boot, throw an error/warning
+		if($encyrpted_root && $non_encyrpted_boot) 
+			$error_txt .= "<center><font color='red'>A non-encrypted /boot slice is required when encrypting the / slice</font></center><br/>";
 		$tmparray['disk'] = $_REQUEST['disk' . $x];
 		$tmparray['fstype'] = $_REQUEST['fstype' . $x];
 		$tmparray['size'] = $_REQUEST['size' . $x];

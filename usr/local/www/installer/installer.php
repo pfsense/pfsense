@@ -324,6 +324,14 @@ function head_html() {
 <html>
 	<head>
 		<style type='text/css'>
+			hr {
+				border: 0;
+				color: #000000;
+				background-color: #000000;
+				height: 1px;
+				width: 100%;
+				text-align: left;
+			}
 			a:link { 
 				color: #000000;
 				text-decoration:underline;
@@ -483,6 +491,7 @@ function verify_before_install() {
 		$disks[] = $tmparray;
 	}
 	echo "\n<!-- " . print_r($disks, true) . " --> \n";
+	$bootmanagerupper = strtoupper($bootmanager);
 	echo <<<EOFAMBAC
 	<form method="post" action="installer.php">
 	<input type="hidden" name="fstype" value="{$fstype_echo}">
@@ -509,31 +518,34 @@ EOFAMBAC;
 	echo <<<EOFAMBACBAF
 
 												<table width='100%'>
-												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanager}</td></tr>
-												<tr><td colspan='5'><hr></td></tr>
+												<tr><td>&nbsp;</td></tr>
+												<tr><td colspan='5' align="center"><b>Boot manager: {$bootmanagerupper}</td></tr>
+												<tr><td>&nbsp;</td></tr>
 												<tr>
-													<td align='middle'>
+													<td align='left'>
 														<b>Mount point</b>
 													</td>
-													<td align='middle'>
+													<td align='left'>
 														<b>Filesysytem type</b>
 													</td>
-													<td align='middle'>
+													<td align='left'>
 														<b>Disk</b>
 													</td>
-													<td align='middle'>
+													<td align='left'>
 														<b>Size</b>
 													</td>
-													<td align='middle'>
+													<td align='left'>
 														<b>Encryption password</b>
 													</td>
+												</tr>
+												<tr><td colspan='5'><hr></td></tr>
 
 EOFAMBACBAF;
 
 													foreach($disks as $disk) {
 														$desc = pcsysinstall_get_disk_info($disk['disk']);
 														echo "<tr>";
-														echo "<td>{$disk['mountpoint']}</td>";
+														echo "<td>&nbsp;&nbsp;&nbsp;{$disk['mountpoint']}</td>";
 														echo "<td>{$disk['fstype']}</td>";
 														echo "<td>{$disk['disk']} {$desc['desc']}</td>";
 														echo "<td>{$disk['size']}</td>";
@@ -542,7 +554,7 @@ EOFAMBACBAF;
 													}
 
 echo <<<EOFAMB
-												<tr><td colspan='5'><hr></td></tr>
+												<tr><td colspan="5"><hr></td></tr>
 												</table>
 											</div>
 										</center>
@@ -556,7 +568,7 @@ echo <<<EOFAMB
 						<input type="button" value="Cancel" onClick="javascript:document.location='installer.php?state=custominstall';"> &nbsp;&nbsp;
 EOFAMB;
 						if(!$error_txt) 
-						echo "<input type=\"submit\" value=\"Begin installation\"> ";
+						echo "<input type=\"submit\" value=\"Begin installation\"> <br/>&nbsp;";
 echo <<<EOFAMBASDF
 
 					</center>

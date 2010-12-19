@@ -437,13 +437,15 @@ function verify_before_install() {
 	// then load the on disk layout contents if they are available.
 	if(!$_REQUEST['fstype0'] && file_exists("/tmp/webInstaller_disk_layout.txt")) {
 		$disks = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
+		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 		$restored_layout_from_file = true;
 		$restored_layout_txt = "The previous disk layout was restored from disk";
 	}
+	if(!$bootmanager) 
+		$bootmanager = $_REQUEST['bootmanager'];
 	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	$bootmanager = htmlspecialchars($_REQUEST['bootmanager']);	
 	$disks = array();
 	// Loop through posted items and create an array
 	for($x=0; $x<99; $x++) { // XXX: Make this more optimal
@@ -569,7 +571,7 @@ EOFAMBASDF;
 	end_html();
 	write_out_pc_sysinstaller_config($disks, $bootmanager);
 	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disks));
-
+	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
 }
 
 function installing_gui() {
@@ -745,6 +747,13 @@ function installer_custom() {
 EOF;
 	ob_flush();
 	$disks = installer_find_all_disks();
+	if(file_exists("/tmp/webInstaller_disk_bootmanager.txt"))
+		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
+	if($bootmanager == "none") 
+		$noneselected = " SELECTED";
+	if($bootmanager == "bsd") 
+		$bsdeselected = " SELECTED";
+
 	if(!$disks)  {
 		$custom_txt = gettext("ERROR: Could not find any suitable disks for installation.");
 	} else {
@@ -758,10 +767,10 @@ EOF;
 													</td>
 													<td>
 														<select name='bootmanager'>
-															<option value='none'>
+															<option value='none' $noneselected>
 																None
 															</option>
-															<option value='bsd'>
+															<option value='bsd' $bsdeselected>
 																BSD
 															</option>
 														</select>
@@ -914,8 +923,8 @@ function installer_main() {
 	body_html();
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
-//	if(file_exists("/boot/gptzfsboot")) 
-//		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype0=ZFS&size=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+	//	if(file_exists("/boot/gptzfsboot")) 
+	//		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype0=ZFS&size=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">

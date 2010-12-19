@@ -711,6 +711,7 @@ function installer_custom() {
 		<script type="text/javascript">
 			function row_helper_dynamic_custom() {
 				var totalsize = 0;
+				// Run through all rows and process data
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('fstype' + x)) {
 						var fstype = \$F('fstype' + x);
@@ -724,13 +725,13 @@ function installer_custom() {
 							\$('encpass' + x).disabled = 1;
 						}
 					}
-				}
-				for(var x = 0; x<99; x++) { //optimize me better
+					// Calculate size allocations
 					if(\$('size' + x)) {
 						if(parseInt($('size' + x).value) > 0)
 							totalsize += parseInt($('size' + x).value);
 					}
 				}
+				// If the totalsize element exists, set it and disable
 				if(\$('totalsize')) {
 					\$('totalsize').value = totalsize;
 					\$('totalsize').disabled = 1;

@@ -689,12 +689,12 @@ function installer_custom() {
 			function row_helper_dynamic_custom(tr) {
 				var totalsize = 0;
 				for(var x = 0; x<99; x++) { //optimize me better
-					if($('size' + x)) {
-						totalsize += parseInt($('size' + x).value);
-						//alert($('size' + x).value);
+					if(\$('size' + x)) {
+						if(parseInt($('size' + x).value) > 0)
+							totalsize += parseInt($('size' + x).value);
 					}
 				}
-				$('totalsize').value = totalsize;
+				\$('totalsize').value = totalsize;
 			}
 		</script>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
@@ -846,7 +846,7 @@ EOF;
 														\$('contentdiv').appear();
 														function onfstypeChange() {
 															for(var x = 0; x<99; x++) { //optimize me better
-																if($('fstype' + x)) {
+																if(\$('fstype' + x)) {
 																	var fstype = \$F('fstype' + x);
 																	if(fstype.substring(fstype.length - 4) == ".eli") {
 																		\$('encpass' + x).disabled = 0;

@@ -827,12 +827,12 @@ EOF;
 		// Calculate swap disk sizes
 		$memory = get_memory();
 		$swap_size = $memory[0] * 2;
-		// Decreate by 1 megabyte as some disks will fail
-		$swap_size--;
 		$first_disk = trim(installer_find_first_disk());
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];
 		$first_disk_size = $size - $swap_size;
+		// Decreate by 1 megabyte as some disks will fail
+		$first_disk_size--;
 
 		// Debugging
 		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";

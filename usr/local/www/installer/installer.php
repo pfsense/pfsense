@@ -742,7 +742,6 @@ function installer_custom() {
 					\$('totalsize').disabled = 1;
 				}
 			}
-			row_helper_dynamic_custom();
 		</script>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 		<script type="text/javascript">
@@ -912,6 +911,7 @@ EOF;
 													<script type="text/javascript">
 														var encryption_warning_shown = false;
 														\$('contentdiv').appear();
+														row_helper_dynamic_custom();
 													</script>
 												</center>
 												</td></tr>

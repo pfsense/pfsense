@@ -471,6 +471,8 @@ any)");?></td>
 				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>><?=gettext("Interface address");?></option>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
+			if (isset($sn['noexpand']))
+				continue;
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));

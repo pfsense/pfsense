@@ -128,11 +128,11 @@ $now = time();
 if($curcat == "custom") {
 	if (is_numeric($_GET['start'])) {
 			if($start < ($now - (3600 * 24 * 365 * 5))) {
-					$start = $now - (4 * 3600);
+					$start = $now - (8 * 3600);
 			}
 			$start = $_GET['start'];
 	} else {
-			$start = $now - (4 * 3600);
+			$start = $now - (8 * 3600);
 	}
 }
 
@@ -144,6 +144,7 @@ if (is_numeric($_GET['end'])) {
 
 /* this should never happen */
 if($end < $start) {
+	log_error("start $start is smaller than end $end");
         $end = $now;
 }
 
@@ -198,7 +199,7 @@ $custom_databases = array_merge($dbheader_custom, $databases);
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
-$graphs = array("day", "week", "month", "quarter", "year", "4year");
+$graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
 $periods = array("current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
@@ -212,6 +213,7 @@ function get_dates($curperiod, $graph) {
 	$curweek = date('W', $now);
 	$curweekday = date('N', $now) - 1; // We want to start on monday
 	$curday = date('d', $now);
+	$curhour = date('G', $now);
 
 	switch($curperiod) {
 		case "previous":
@@ -221,18 +223,25 @@ function get_dates($curperiod, $graph) {
 			$offset = 0;
 	}
 	switch($graph) {
-		case "12hour":
+		case "8hour":
+			if($curhour < 24)
+				$starthour = 16;
+			if($curhour < 16)
+				$starthour = 8;
+			if($starthour < 8)                                  
+				$starthour = 0;
+
 			switch($offset) {
 				case 0;
-					$houroffset = 0;
+					$houroffset = $starthour;
 					break;
 				default:
-					$houroffset = ($offset * 12) - 12;
+					$houroffset = $starthour + ($offset * 8);
 					break;
 			}
-			$start = mktime((8 + $houroffset), 0, 0, $curmonth, $curday, $curyear);
-			if(($offset != 0) || (($end - ($start + (12 * 3600)) ) > 0) ) {
-				$end = mktime((8 + $houroffset) + 12, 0, 0, $curmonth, $curday, $curyear);
+			$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
+			if(($offset != 0) {
+				$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
 			}
 			break;
 		case "day":

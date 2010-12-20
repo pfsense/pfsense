@@ -64,6 +64,13 @@ function backup_vip_config_section() {
 				$section_val = 255;
 			$section['advskew'] = $section_val;
 		}
+		if($section['advbase'] <> "") {
+			$section_val = intval($section['advbase']);
+			$section_val=$section_val+1;
+			if($section_val > 255)
+				$section_val = 255;
+			$section['advbase'] = $section_val;
+		}
 		$temp['vip'][] = $section;
 	}
 	return $temp;
@@ -81,10 +88,59 @@ function remove_special_characters($string) {
 	return $string;
 }
 
+function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
+	global $config, $g;
+
+	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+		return;
+
+	$params = array(
+                XML_RPC_encode($password)
+        );
+
+        $numberofruns = 0;
+        while ($numberofruns < 2) {
+                $msg = new XML_RPC_Message($method, $params);
+                $cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+                $username = $config['system']['user'][0]['name'];
+                $cli->setCredentials($username, $password);
+                if($numberofruns > 1)
+                        $cli->setDebug(1);
+                /* send our XMLRPC message and timeout after 240 seconds */
+                $resp = $cli->send($msg, "240");
+		if(!is_object($resp)) {
+                        $error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+                } elseif($resp->faultCode()) {
+                        $error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+                } else {
+			$parsed_response =  XML_RPC_decode($resp->value());
+			if(!is_array($parsed_response)) {
+				if (trim($parsed_response) == "Authentication failed") {
+					$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
+					log_error($error);
+					file_notice("sync_settings", $error, "Settings Sync", "");
+					exit;
+				}
+			} else {
+				if (!isset($parsed_response['config_version']) ||
+				    $parsed_response['config_version'] < $config['version'])
+					return false;
+				else
+					return true;
+			}
+		}
+		log_error($error);
+		file_notice("sync_settings", $error, "Settings Sync", "");
+                $numberofruns++;
+        }
+
+	return false;
+}
+
 function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
-	if(file_exists("{$g['varrun_path']}/booting"))
+	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
 		return;
 
 	update_filter_reload_status("Syncing CARP data to {$url}");
@@ -185,12 +241,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			$cli->setDebug(1);
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
-		if($resp->faultCode()) {
-			$error = "A communications error occurred while attempting communication with {$url}:{$port} (pfsense.exec_php).";
-			log_error($error);
-			return;	
-		}
-		if(!$resp) {
+		if(!is_object($resp)) {
 			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
@@ -199,39 +250,43 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} else {
-			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
+			$parsed_response =  XML_RPC_decode($resp->value());
+			if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
+				$error = "A authentication failure occurred while trying to access {$url}:{$port} ($method).";
+				log_error($error);
+				file_notice("sync_settings", $error, "Settings Sync", "");
+				exit;
+			} else
+				log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 			$numberofruns = 3;
-		}
-		$parsed_response =  XML_RPC_Decode($resp->value());
-		if(!is_array($firewall_info) && trim($firewall_info) == "Authentication failed") {
-			$error = "A authentication failure occurred while trying to access {$url}:{$port} (pfsense.exec_php).";
-			log_error($error);
-			$numberofruns = 5;
 		}
 		$numberofruns++;
 	}
 }
 
 global $g;
-if (file_exists("{$g['varrun_path']}/booting"))
+if (file_exists("{$g['varrun_path']}/booting") || $g['booting'])
 	return;
 
 if (is_array($config['installedpackages']['carpsettings']['config'])) {
 	update_filter_reload_status("Building CARP sync information");
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
-		if ($carp['synchronizetoip'] != "" ) {
-		   /*
-			* XXX: The way we're finding the port right now is really suboptimal -
-			*              we can't assume that the other machine is setup identically.
-			*/
-		if ($config['system']['webgui']['protocol'] != "") {
+		if (empty($carp['synchronizetoip'])) {
+			log_error("CARP sync not being done because of missing sync ip!");
+			break;
+		}
+		/*
+		 * XXX: The way we're finding the port right now is really suboptimal -
+		 *     we can't assume that the other machine is setup identically.
+		 */
+		if (!empty($config['system']['webgui']['protocol'])) {
 			$synchronizetoip = $config['system']['webgui']['protocol'];
 			$synchronizetoip .= "://";
 		}
 
 		/* if port is empty lets rely on the protocol selection */
 		$port = $config['system']['webgui']['port'];
-		if ($port == "") {
+		if (empty($port)) {
 			if ($config['system']['webgui']['protocol'] == "http")
 				$port = "80";
 			else
@@ -328,6 +383,12 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 		if ($carp['synchronizecaptiveportal'] != "" and is_array($config['vouchers']))
 			$sections[] = 'vouchers';
 		if (count($sections) > 0) {
+			if (!carp_check_version($synchronizetoip, $carp['password'], $port)) {
+				update_filter_reload_status("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
+				log_error("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
+				break;
+			}
+				
 			update_filter_reload_status("Signaling CARP reload signal...");
 			carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			if (is_array($mergesections))
@@ -356,7 +417,6 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			}
 		}
 		break;
-		}
 	}
 }
 

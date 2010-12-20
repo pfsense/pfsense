@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/disk-part.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/disk-part.sh,v 1.3 2010/08/24 06:11:46 imp Exp $
 
 # Query a disk for partitions and display them
 #############################
@@ -50,8 +50,6 @@ KB="`diskinfo -v ${1} | grep 'bytes' | cut -d '#' -f 1 | tr -s '\t' ' ' | tr -d 
 MB=$(convert_byte_to_megabyte ${KB})
 TOTALSIZE="$MB"
 TOTALB="`diskinfo -v ${1} | grep 'in sectors' | tr -s '\t' ' ' | cut -d ' ' -f 2`"
-
-
 
 gpart show ${1} >/dev/null 2>/dev/null
 if [ "$?" != "0" ] ; then
@@ -85,14 +83,14 @@ do
 
   # First get the sysid / label for this partition
   if [ "$TYPE" = "MBR" ] ; then
-     get_partition_sysid_mbr "${DISK}" "${curpart}"
-     echo "${curpart}-sysid: ${VAL}"
-     get_partition_label_mbr "${DISK}" "${curpart}"
-     echo "${curpart}-label: ${VAL}"
+    get_partition_sysid_mbr "${DISK}" "${curpart}"
+    echo "${curpart}-sysid: ${VAL}"
+    get_partition_label_mbr "${DISK}" "${curpart}"
+    echo "${curpart}-label: ${VAL}"
   else
-     get_partition_label_gpt "${DISK}" "${curpart}"
-     echo "${curpart}-sysid: ${VAL}"
-     echo "${curpart}-label: ${VAL}"
+    get_partition_label_gpt "${DISK}" "${curpart}"
+    echo "${curpart}-sysid: ${VAL}"
+    echo "${curpart}-label: ${VAL}"
   fi
 
   # Now get the startblock, blocksize and MB size of this partition

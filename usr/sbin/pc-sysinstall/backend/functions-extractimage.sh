@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-extractimage.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-extractimage.sh,v 1.8 2010/10/21 23:08:42 imp Exp $
 
 # Functions which perform the extraction / installation of system to disk
 
@@ -54,39 +54,41 @@ start_extract_uzip_tar()
   echo_log "pc-sysinstall: Starting Extraction"
 
   case ${PACKAGETYPE} in
-   uzip) # Start by mounting the uzip image
-         MDDEVICE=`mdconfig -a -t vnode -o readonly -f ${INSFILE}`
-         mkdir -p ${FSMNT}.uzip
-         mount -r /dev/${MDDEVICE}.uzip ${FSMNT}.uzip
-         if [ "$?" != "0" ]
-         then
-           exit_err "ERROR: Failed mounting the ${INSFILE}"
-         fi
-         cd ${FSMNT}.uzip
+    uzip)
+	  # Start by mounting the uzip image
+      MDDEVICE=`mdconfig -a -t vnode -o readonly -f ${INSFILE}`
+      mkdir -p ${FSMNT}.uzip
+      mount -r /dev/${MDDEVICE}.uzip ${FSMNT}.uzip
+      if [ "$?" != "0" ]
+      then
+        exit_err "ERROR: Failed mounting the ${INSFILE}"
+      fi
+      cd ${FSMNT}.uzip
 
-         # Copy over all the files now!
-         tar cvf - . 2>/dev/null | tar -xpv -C ${FSMNT} ${TAROPTS} -f - 2>&1 | tee -a ${FSMNT}/.tar-extract.log
-         if [ "$?" != "0" ]
-         then
-           cd /
-           echo "TAR failure occured:" >>${LOGOUT}
-           cat ${FSMNT}/.tar-extract.log | grep "tar:" >>${LOGOUT}
-           umount ${FSMNT}.uzip
-           mdconfig -d -u ${MDDEVICE}
-           exit_err "ERROR: Failed extracting the tar image"
-         fi
+      # Copy over all the files now!
+      tar cvf - . 2>/dev/null | tar -xpv -C ${FSMNT} ${TAROPTS} -f - 2>&1 | tee -a ${FSMNT}/.tar-extract.log
+      if [ "$?" != "0" ]
+      then
+        cd /
+        echo "TAR failure occurred:" >>${LOGOUT}
+        cat ${FSMNT}/.tar-extract.log | grep "tar:" >>${LOGOUT}
+        umount ${FSMNT}.uzip
+        mdconfig -d -u ${MDDEVICE}
+        exit_err "ERROR: Failed extracting the tar image"
+      fi
 
-         # All finished, now lets umount and cleanup
-         cd /
-         umount ${FSMNT}.uzip
-         mdconfig -d -u ${MDDEVICE}
-         ;;
-    tar) tar -xpv -C ${FSMNT} -f ${INSFILE} ${TAROPTS} >&1 2>&1
-         if [ "$?" != "0" ]
-         then
-           exit_err "ERROR: Failed extracting the tar image"
-         fi
-         ;;
+      # All finished, now lets umount and cleanup
+      cd /
+      umount ${FSMNT}.uzip
+      mdconfig -d -u ${MDDEVICE}
+       ;;
+    tar)
+	  tar -xpv -C ${FSMNT} -f ${INSFILE} ${TAROPTS} >&1 2>&1
+      if [ "$?" != "0" ]
+      then
+        exit_err "ERROR: Failed extracting the tar image"
+      fi
+      ;;
   esac
 
   # Check if this was a FTP download and clean it up now
@@ -120,10 +122,10 @@ start_extract_split()
   DIRS=`ls -d ${INSDIR}/*|grep -Ev '(uzip|kernels|src)'`
   for dir in ${DIRS}
   do
-	cd "${dir}"
-	if [ -f "install.sh" ]
-	then
-	  echo "Extracting" `basename ${dir}`
+    cd "${dir}"
+    if [ -f "install.sh" ]
+    then
+      echo_log "Extracting" `basename ${dir}`
       echo "y" | sh install.sh >/dev/null
       if [ "$?" != "0" ]
       then
@@ -139,13 +141,14 @@ start_extract_split()
   cd "${KERNELS}"
   if [ -f "install.sh" ]
   then
-	echo "Extracting" `basename ${KERNELS}`
+    echo_log "Extracting" `basename ${KERNELS}`
     echo "y" | sh install.sh generic >/dev/null
     if [ "$?" != "0" ]
     then
       exit_err "ERROR: Failed extracting ${KERNELS}"
     fi
-	echo 'kernel="GENERIC"' > "${FSMNT}/boot/loader.conf"
+    rm -rf "${FSMNT}/boot/kernel"
+    mv "${FSMNT}/boot/GENERIC" "${FSMNT}/boot/kernel"
   else
     exit_err "ERROR: ${KERNELS}/install.sh does not exist"
   fi
@@ -155,7 +158,7 @@ start_extract_split()
   cd "${SOURCE}"
   if [ -f "install.sh" ]
   then
-	echo "Extracting" `basename ${SOURCE}`
+    echo_log "Extracting" `basename ${SOURCE}`
     echo "y" | sh install.sh all >/dev/null
     if [ "$?" != "0" ]
     then
@@ -203,7 +206,76 @@ fetch_install_file()
 
 };
 
-# Function which does the rsync download from the server specifed in cfg
+# Function which will download freebsd install files
+fetch_split_files()
+{
+  get_ftpHost
+  if [ -z "$VAL" ]
+  then
+    exit_err "ERROR: Install medium was set to ftp, but no ftpHost was provided!" 
+  fi
+  FTPHOST="${VAL}"
+
+  get_ftpDir
+  if [ -z "$VAL" ]
+  then
+    exit_err "ERROR: Install medium was set to ftp, but no ftpDir was provided!" 
+  fi
+  FTPDIR="${VAL}"
+
+  # Check if we have a /usr partition to save the download
+  if [ -d "${FSMNT}/usr" ]
+  then
+    OUTFILE="${FSMNT}/usr/.fetch-${INSFILE}"
+  else
+    OUTFILE="${FSMNT}/.fetch-${INSFILE}"
+  fi
+
+  DIRS="base catpages dict doc games info manpages proflibs kernels src"
+  if [ "${FBSD_ARCH}" = "amd64" ]
+  then
+    DIRS="${DIRS} lib32"
+  fi
+
+  for d in ${DIRS}
+  do
+    mkdir -p "${OUTFILE}/${d}"
+  done
+
+
+  NETRC="${OUTFILE}/.netrc"
+  cat<<EOF>"${NETRC}"
+machine ${FTPHOST}
+login anonymous
+password anonymous
+macdef INSTALL
+bin
+prompt
+EOF
+
+  for d in ${DIRS}
+  do
+    cat<<EOF>>"${NETRC}"
+cd ${FTPDIR}/${d}
+lcd ${OUTFILE}/${d}
+mreget *
+EOF
+  done
+
+  cat<<EOF>>"${NETRC}"
+bye
+
+
+EOF
+
+  # Fetch the files via ftp
+  echo "$ INSTALL" | ftp -N "${NETRC}" "${FTPHOST}"
+
+  # Done fetching, now reset the INSFILE to our downloaded archived
+  INSFILE="${OUTFILE}" ; export INSFILE
+}
+
+# Function which does the rsync download from the server specified in cfg
 start_rsync_copy()
 {
   # Load our rsync config values
@@ -257,6 +329,46 @@ start_rsync_copy()
 
 };
 
+start_image_install()
+{
+  if [ -z "${IMAGE_FILE}" ]
+  then
+    exit_err "ERROR: installMedium set to image but no image file specified!"
+  fi
+
+  # We are ready to start mounting, lets read the config and do it
+  while read line
+  do
+    echo $line | grep "^disk0=" >/dev/null 2>/dev/null
+    if [ "$?" = "0" ]
+    then
+      # Found a disk= entry, lets get the disk we are working on
+      get_value_from_string "${line}"
+      strip_white_space "$VAL"
+      DISK="$VAL"
+    fi
+
+    echo $line | grep "^commitDiskPart" >/dev/null 2>/dev/null
+    if [ "$?" = "0" ]
+    then
+      # Found our flag to commit this disk setup / lets do sanity check and do it
+      if [ ! -z "${DISK}" ]
+      then
+
+        # Write the image
+        write_image "${IMAGE_FILE}" "${DISK}"
+
+        # Increment our disk counter to look for next disk and unset
+        unset DISK
+        break
+
+      else
+        exit_err "ERROR: commitDiskPart was called without procceding disk<num>= and partition= entries!!!"
+      fi
+    fi
+
+  done <${CFGF}
+};
 
 # Entrance function, which starts the installation process
 init_extraction()
@@ -272,19 +384,19 @@ init_extraction()
     if [ "$INSTALLTYPE" = "FreeBSD" ]
     then
       case $PACKAGETYPE in
-         uzip) INSFILE="${FBSD_UZIP_FILE}" ;;
-          tar) INSFILE="${FBSD_TAR_FILE}" ;;
-		  split)
-			INSDIR="${FBSD_BRANCH_DIR}"
+        uzip) INSFILE="${FBSD_UZIP_FILE}" ;;
+        tar) INSFILE="${FBSD_TAR_FILE}" ;;
+        split)
+          INSDIR="${FBSD_BRANCH_DIR}"
 
-			# This is to trick opt_mount into not failing
-			INSFILE="${INSDIR}"
-			;;
+          # This is to trick opt_mount into not failing
+          INSFILE="${INSDIR}"
+          ;;
       esac
     else
       case $PACKAGETYPE in
-         uzip) INSFILE="${UZIP_FILE}" ;;
-          tar) INSFILE="${TAR_FILE}" ;;
+        uzip) INSFILE="${UZIP_FILE}" ;;
+        tar) INSFILE="${TAR_FILE}" ;;
       esac
     fi
     export INSFILE

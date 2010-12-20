@@ -190,7 +190,7 @@ $GLOBALS['XML_RPC_backslash'] = chr(92) . chr(92);
  * which can cause PHP's SAX-based XML parser to break?
  * @global boolean $GLOBALS['XML_RPC_auto_base64']
  */
-$GLOBALS['XML_RPC_auto_base64'] = false;
+$GLOBALS['XML_RPC_auto_base64'] = true;
 
 
 /**

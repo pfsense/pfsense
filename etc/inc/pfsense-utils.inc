@@ -320,9 +320,8 @@ function setup_microcode() {
  ******/
 function get_carp_status() {
     /* grab the current status of carp */
-    $status = `/sbin/sysctl net.inet.carp.allow | cut -d" " -f2`;
-    if(intval($status) == "0") return false;
-    return true;
+    $status = `/sbin/sysctl -n net.inet.carp.allow`;
+    return (intval($status) > 0);
 }
 
 /*
@@ -339,11 +338,8 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
-	/* basically cache the contents of ifconfig statement
-	to speed up this routine */
-	global $carp_query;
-	if($carp_query == "")
-		$carp_query = split("\n", `/sbin/ifconfig $carpinterface | grep carp`);
+	$carp_query = "";
+	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER")) 
 			return "MASTER";
@@ -377,17 +373,11 @@ function add_rule_to_anchor($anchor, $rule, $label) {
  * remove $text from file $file
  */
 function remove_text_from_file($file, $text) {
-	global $fd_log;
-	if($fd_log)
-		fwrite($fd_log, "Adding needed text items:\n");
+	if(!file_exists($file) && !is_writable($file))
+		return;
 	$filecontents = file_get_contents($file);
-	$textTMP = str_replace($text, "", $filecontents);
-	$text = $textTMP;
-	if($fd_log)
-		fwrite($fd_log, $text);
-	$fd = fopen($file, "w");
-	fwrite($fd, $text);
-	fclose($fd);
+	$text = str_replace($text, "", $filecontents);
+	@file_put_contents($file, $text); 
 }
 
 /*
@@ -397,8 +387,6 @@ function remove_text_from_file($file, $text) {
 function add_text_to_file($file, $text, $replace = false) {
 	if(file_exists($file) and is_writable($file)) {
 		$filecontents = file($file);
-		$fout = fopen($file, "w");
-
 		$filecontents = array_map('rtrim', $filecontents);
 		array_push($filecontents, $text);
 		if ($replace)
@@ -406,12 +394,10 @@ function add_text_to_file($file, $text, $replace = false) {
 
 		$file_text = implode("\n", $filecontents);
 
-		fwrite($fout, $file_text);
-		fclose($fout);
+		@file_put_contents($file, $file_text); 
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 /*
@@ -560,6 +546,7 @@ function restore_config_section($section, $new_contents) {
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
 	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	disable_security_checks();
 	conf_mount_ro();
 	return;
 }
@@ -581,6 +568,7 @@ function merge_config_section($section, $new_contents) {
 	$config[$section] = $section_xml;
 	unlink($fname);
 	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	disable_security_checks();
 	conf_mount_ro();
 	return;
 }
@@ -724,7 +712,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 		$cli->setCredentials($username, $password);
 	}
 	$resp = $cli->send($msg, $timeout);
-	if(!$resp) {
+	if(!is_object($resp)) {
 		log_error("XMLRPC communication error: " . $cli->errstr);
 		return false;
 	} elseif($resp->faultCode()) {
@@ -740,13 +728,16 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
+
 	$ip = gethostbyname($g['product_website']);
 	if($ip == $g['product_website'])
 		return false;
+
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
-		"platform" => trim(file_get_contents('/etc/platform'))
+		"platform" => trim(file_get_contents('/etc/platform')),
+		"config_version" => $config['version']
 		);
 	if($tocheck == "all") {
 		$params = $rawparams;
@@ -756,22 +747,38 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 			$params['platform'] = $rawparams['platform'];
 		}
 	}
-	if($config['system']['firmware']['branch']) {
+	if($config['system']['firmware']['branch'])
 		$params['branch'] = $config['system']['firmware']['branch'];
-	}
-	if(!$versions = call_pfsense_method('pfsense.get_firmware_version', $params)) {
+
+	/* XXX: What is this method? */
+	if(!($versions = call_pfsense_method('pfsense.get_firmware_version', $params))) {
 		return false;
 	} else {
 		$versions["current"] = $params;
 	}
+
 	return $versions;
+}
+
+/*
+ * host_firmware_version(): Return the versions used in this install
+ */
+function host_firmware_version($tocheck = "") {
+        global $g, $config;
+
+        return array(
+		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
+                "kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
+                "base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+                "platform" => trim(file_get_contents('/etc/platform', " \n")),
+                "config_version" => $config['version']
+                );
 }
 
 function get_disk_info() {
 	$diskout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $2, $3, $4, $5 }'", $diskout);
 	return explode(' ', $diskout[0]);
-	// $size, $used, $avail, $cap
 }
 
 /****f* pfsense-utils/strncpy
@@ -801,13 +808,6 @@ function strncpy(&$dst, $src, $length) {
 function reload_interfaces_sync() {
 	global $config, $g;
 
-	/* XXX: Use locks?! */
-	if (file_exists("{$g['tmp_path']}/reloading_all")) {
-		log_error("WARNING: Recursive call to interfaces sync!");
-		return;
-	}
-	touch("{$g['tmp_path']}/reloading_all");
-
 	if($g['debug'])
 		log_error("reload_interfaces_sync() is starting.");
 
@@ -824,13 +824,6 @@ function reload_interfaces_sync() {
 
 	/* set up interfaces */
 	interfaces_configure();
-
-	/* remove reloading_all trigger */
-	if($g['debug'])
-		log_error("Removing {$g['tmp_path']}/reloading_all");
-
-	/* start devd back up */
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 /****f* pfsense-utils/reload_all
@@ -842,7 +835,6 @@ function reload_interfaces_sync() {
  *   none
  ******/
 function reload_all() {
-	global $g;
 	send_event("service reload all");
 }
 
@@ -855,8 +847,7 @@ function reload_all() {
  *   none
  ******/
 function reload_interfaces() {
-	global $g;
-	touch("{$g['tmp_path']}/reload_interfaces");
+	send_event("interface all reload");
 }
 
 /****f* pfsense-utils/reload_all_sync
@@ -871,13 +862,6 @@ function reload_all_sync() {
 	global $config, $g;
 
 	$g['booting'] = false;
-
-	/* XXX: Use locks?! */
-        if (file_exists("{$g['tmp_path']}/reloading_all")) {
-                log_error("WARNING: Recursive call to reload all sync!");
-                return;
-        }
-	touch("{$g['tmp_path']}/reloading_all");
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -920,8 +904,6 @@ function reload_all_sync() {
 
 	/* restart webConfigurator if needed */
 	send_event("service restart webgui");
-
-	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 function auto_login() {
@@ -990,21 +972,18 @@ function setup_serial_port() {
 		}
 		/* serial console - write out /boot/loader.conf */
 		$boot_config = file_get_contents("/boot/loader.conf");
-		$boot_config_split = split("\n", $boot_config);
-		$fd = fopen("/boot/loader.conf","w");
-		if($fd) {
-			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "console")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */
-				} else {
-					if($bcs <> "")
-						fwrite($fd, "{$bcs}\n");
-				}
-			}
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "console=\"comconsole\"\n");
-			}
-			fclose($fd);
+		$boot_config_split = explode("\n", $boot_config);
+		if(count($boot_config_split) > 0) {
+			$new_boot_config = array();
+			// Loop through and only add lines that are not empty, and which
+			//  do not contain a console directive.
+			foreach($boot_config_split as $bcs)
+				if(!empty($bcs) && (stripos($bcs, "console") === false))
+					$new_boot_config[] = $bcs;
+
+			if(isset($config['system']['enableserial']))
+				$new_boot_config[] = 'console="comconsole"';
+			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config));
 		}
 	}
 	$ttys = file_get_contents("/etc/ttys");
@@ -1445,8 +1424,8 @@ function isvm() {
 }
 
 function get_freebsd_version() {
-	$version = trim(`/usr/bin/uname -r | /usr/bin/cut  -d'.' -f1`);
-	return $version;
+	$version = php_uname("r");
+	return $version[0];
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body') {
@@ -1469,7 +1448,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '5');
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '60');
         curl_setopt($ch, CURLOPT_TIMEOUT, 0);
 
         curl_exec($ch);
@@ -1496,8 +1475,11 @@ function read_body($ch, $string) {
         global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
         $length = strlen($string);
         $downloaded += intval($length);
-        $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-        $downloadProgress = 100 - $downloadProgress;
+        if($file_size > 0) {
+                $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+                $downloadProgress = 100 - $downloadProgress;
+        } else
+                $downloadProgress = 0;
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
                         $tostatus = $static_status . $downloadProgress . "%";
@@ -1521,9 +1503,7 @@ function read_body($ch, $string) {
 function update_output_window($text) {
         global $pkg_interface;
         $log = ereg_replace("\n", "\\n", $text);
-        if($pkg_interface == "console") {
-                /* too chatty */
-        } else {
+        if($pkg_interface != "console") {
                 echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
         }
         /* ensure that contents are written out */

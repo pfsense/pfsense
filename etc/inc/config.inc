@@ -38,7 +38,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck	/bin/sync
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -48,10 +48,17 @@ if($g['booting']) echo ".";
 //if (in_array("/etc/inc/config.inc", get_included_files()))
 //	return;
 
-// Set the memory limit to 128M.  When someone has something like 500+ tunnels
+// Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you 
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
-ini_set("memory_limit","128M");
+if(!$ARCH) 
+	$ARCH = php_uname("m");
+
+// Set memory limit to 256M on amd64.
+if($ARCH == "amd64") 
+	ini_set("memory_limit","256M");
+else
+	ini_set("memory_limit","128M");
 
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");

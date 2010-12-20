@@ -3,58 +3,54 @@
 	<name>carpsettings</name>
 	<version>0.1.0</version>
 	<title>Services: CARP Settings</title>
-	<!-- configpath gets expanded out automatically and config items will be
-         stored in that location -->
 	<configpath>['installedpackages']['carpsettings']['config']</configpath>
 	<aftersaveredirect>pkg_edit.php?xml=carp_settings.xml&amp;id=0</aftersaveredirect>
-	<!-- Menu is where this packages menu will appear -->
 	<menu>
-	    <name>CARP (failover)</name>
-	    <tooltiptext>CARP is a tool to help achieve system redundancy, by having multiple computers creating a single, virtual network interface between them, so that if any machine fails, another can respond instead. CARP is an improvement over the Virtual Router Redundancy Protocol (VRRP) standard. It was developed after VRRP was deemed to be not free enough because of a possibly-overlapping Cisco patent.</tooltiptext>
-	    <section>Firewall</section>
-	    <configfile>carp_settings.xml</configfile>
+		<name>CARP (failover)</name>
+		<tooltiptext>CARP is a tool to help achieve system redundancy, by having multiple computers creating a single, virtual network interface between them, so that if any machine fails, another can respond instead. CARP is an improvement over the Virtual Router Redundancy Protocol (VRRP) standard. It was developed after VRRP was deemed to be not free enough because of a possibly-overlapping Cisco patent.</tooltiptext>
+		<section>Firewall</section>
+		<configfile>carp_settings.xml</configfile>
 	</menu>
 	<tabs>
-<!--	    <tab>
-		<text>CARP Virtual IPs</text>
-		<url>/pkg.php?xml=carp.xml</url>
-	    </tab>
--->
-	    <tab>
-		<text>Virtual IPs</text>
-		<url>firewall_virtual_ip.php</url>
-	    </tab>
-	    <tab>
-		<text>CARP Settings</text>
-		<url>pkg_edit.php?xml=carp_settings.xml&amp;id=0</url>
-		<active/>
-	    </tab>
+		<tab>
+			<text>Virtual IPs</text>
+			<url>firewall_virtual_ip.php</url>
+		</tab>
+		<tab>
+			<text>CARP Settings</text>
+			<url>pkg_edit.php?xml=carp_settings.xml&amp;id=0</url>
+			<active/>
+		</tab>
 	</tabs>
 	<adddeleteeditpagefields>
-	    <columnitem>
-		    <fielddescr>PFSync Enabled</fielddescr>
-		    <fieldname>pfsyncenabled</fieldname>
-	    </columnitem>
-	    <columnitem>
-		    <fielddescr>PFSync IP</fielddescr>
-		    <fieldname>pfsyncip</fieldname>
-	    </columnitem>
-	    <columnitem>
-		    <fielddescr>PFSync Interface</fielddescr>
-		    <fieldname>pfsyncinterface</fieldname>
-	    </columnitem>
+		<columnitem>
+			<fielddescr>PFSync Enabled</fielddescr>
+			<fieldname>pfsyncenabled</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>PFSync IP</fielddescr>
+			<fieldname>pfsyncip</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>PFSync Interface</fielddescr>
+			<fieldname>pfsyncinterface</fieldname>
+		</columnitem>
 	</adddeleteeditpagefields>
-	<!-- fields gets invoked when the user adds or edits a item.   the following items
-         will be parsed and rendered for the user as a gui with input, and selectboxes. -->
 	<fields>
 		<field>
-			<fielddescr>Synchronize Enabled</fielddescr>
+			<name>State Synchronization Settings (pfsync)</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize States</fielddescr>
 			<fieldname>pfsyncenabled</fieldname>
-			    <description>
-				PFSync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.
+			<description>
+				pfsync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.
 				&lt;p&gt;
-				NOTE: Clicking save will force a configuration sync!
-			    </description>
+				This setting should be enabled on all members of a failover group.
+				&lt;p&gt;
+				NOTE: Clicking save will force a configuration sync if it is enabled! (see Configuration Synchronization Settings below)
+			</description>
 			<type>checkbox</type>
 		</field>
 		<field>
@@ -62,19 +58,39 @@
 			<fieldname>pfsyncinterface</fieldname>
 			<type>interfaces_selection</type>
 			<description>
-			    If Synchronize State is enabled, it will utilize this interface for communication.
-			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  We recommend setting this to a interface other than LAN!  A dedicated interface works the best.
-			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must define a IP on each machine participating in this failover group.
-			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must have an IP assigned to the interface on any participating sync nodes.
+				If Synchronize States is enabled, it will utilize this interface for communication.
+				&lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  We recommend setting this to a interface other than LAN!  A dedicated interface works the best.
+				&lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must define a IP on each machine participating in this failover group.
+				&lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must have an IP assigned to the interface on any participating sync nodes.
 			</description>
 		</field>
 		<field>
-			<fielddescr>pfSync sync peer IP</fielddescr>
+			<fielddescr>pfsync Synchronize Peer IP</fielddescr>
 			<fieldname>pfsyncpeerip</fieldname>
 			<type>input</type>
 			<description>
 				Setting this option will force pfsync to synchronize its state table to this IP address.  The default is directed multicast.
 			</description>
+		</field>
+		<field>
+			<name>Configuration Synchronization Settings (XMLRPC Sync)</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize Config to IP</fielddescr>
+			<fieldname>synchronizetoip</fieldname>
+			<description>Enter the IP address of the firewall to which the selected configuration sections should be synchronized.
+			&lt;br&gt;&lt;br&gt;NOTE: XMLRPC sync is currently only supported over connections using the same protocol and port as this system - make sure the remote system's port and protocol are set accordingly!
+			&lt;br&gt;&lt;br&gt;NOTE: &lt;b&gt;Do not use the Synchronize Config to IP and password option on backup cluster members!&lt;/b&gt;
+			</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Remote System Password</fielddescr>
+			<fieldname>password</fieldname>
+			<description>Enter the webConfigurator password of the system entered above for synchronizing your configuration.
+			&lt;br&gt;&lt;br&gt;NOTE: &lt;b&gt;Do not use the Synchronize Config to IP and password option on backup cluster members!&lt;/b&gt;</description>
+			<type>password</type>
 		</field>
 		<field>
 			<fielddescr>Synchronize Users and Groups</fielddescr>
@@ -165,20 +181,6 @@
 			<fieldname>synchronizecaptiveportal</fieldname>
 			<description>When this option is enabled, this system will automatically sync the Captive Portal configuration to the other CARP host when changes are made.</description>
 			<type>checkbox</type>
-		</field>
-		<field>
-			<fielddescr>Synchronize to IP</fielddescr>
-			<fieldname>synchronizetoip</fieldname>
-			<description>Enter the IP address of the firewall you are synchronizing with.</description>
-			<type>input</type>
-			<note>Note: CARP sync is currently only supported over connections using the same protocol and port as this system - make sure the remote system's port and protocol are set accordingly!   Also note that you will not use the Synchronize to IP and password option on backup cluster members!</note>
-		</field>
-		<field>
-            <fielddescr>Remote System Password</fielddescr>
-            <fieldname>password</fieldname>
-            <description>Enter the webConfigurator password of the system that you would like to synchronize with.</description>
-            <type>password</type>
-			<note>NOTE: You will not use the Synchronize to IP and password option on backup cluster members!</note>
 		</field>
 	</fields>
 	<custom_php_validation_command>

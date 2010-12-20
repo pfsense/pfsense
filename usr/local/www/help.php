@@ -121,7 +121,7 @@ $helppages = array(
 	'services_snmp.php' => 'http://doc.pfsense.org/index.php/SNMP_Daemon',
 	'services_wol.php' => 'http://doc.pfsense.org/index.php/Wake_on_LAN',
 	'services_wol_edit.php' => 'http://doc.pfsense.org/index.php/Wake_on_LAN',
-	'routed/routed.xml' => 'http://doc.pfsense.org/index.php/Routing_Information_Protocol_(RIP)', # RIP
+	'routed.xml' => 'http://doc.pfsense.org/index.php/Routing_Information_Protocol_(RIP)', # RIP
 	'system.php' => 'http://doc.pfsense.org/index.php/General_Setup_(2.0)',
 	'system_advanced_admin.php' => 'http://doc.pfsense.org/index.php/Advanced_Setup_(2.0)',
 	'system_advanced_firewall.php' => 'http://doc.pfsense.org/index.php/Advanced_Setup_(2.0)#Firewall.2FNAT',
@@ -208,6 +208,14 @@ $helppages = array(
 	'vpn_openvpn_crl_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_srv.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_srv_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+	'diag_authentication.php' => 'http://doc.pfsense.org/index.php/User_Authentication_Servers',
+	'diag_limiter_info.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide#Display_Pipes',
+	'diag_pf_info.php' => 'http://doc.pfsense.org/index.php/Packet_Filter_Information',
+	'diag_smart.php' => 'http://doc.pfsense.org/index.php/SMART_Status',
+	'diag_states_summary.php' => 'http://doc.pfsense.org/index.php/States_Summary',
+	'interfaces_wireless.php' => 'http://doc.pfsense.org/index.php/Wireless_Interfaces',
+	'interfaces_wireless_edit.php' => 'http://doc.pfsense.org/index.php/Wireless_Interfaces',
+	'system_crlmanager.php' => 'http://doc.pfsense.org/index.php/Certificate_Management',
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 

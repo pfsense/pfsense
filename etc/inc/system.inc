@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/bin/sync	/usr/local/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
@@ -52,10 +52,9 @@ function activate_powerd() {
 
 function get_default_sysctl_value($id) {
 	global $sysctls;
-	foreach($sysctls as $sysctl => $value) {
-		if($sysctl == $id)
-			return $value;
-	}
+
+	if (isset($sysctls[$id]))
+		return $sysctls[$id];
 }
 
 function activate_sysctls() {
@@ -307,11 +306,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	/* Enable fast routing, if enabled */
-	/* XXX: More checks need to be done for subsystems that are not compatibel with fast routing. */
-	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
-		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
-
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;
@@ -511,11 +505,9 @@ function system_syslogd_start() {
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
-					$pkgfacilities[] = $package['logging']['facilityname'];
-					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
-					$facilitylist = implode(',', $pkgfacilities);
+					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}
 		}
@@ -580,7 +572,7 @@ news.err;local0.none;local3.none;local4.none; 	 {$log_directive}{$g['varlog_path
 local7.none										 {$log_directive}{$g['varlog_path']}/system.log
 security.*										 {$log_directive}{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info				 {$log_directive}{$g['varlog_path']}/system.log
-auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
+auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf 15
 *.emerg											 *
 
 EOD;
@@ -677,14 +669,19 @@ EOD;
 }
 		fwrite($fd, $syslogconf);
 		fclose($fd);
+
+		// Ensure that the log directory exists
+		if(!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
+			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
+
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 		else
-			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec("/usr/sbin/syslogd -c");
+		$retval = mwexec("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log");
 	}
 
 	if ($g['booting'])
@@ -753,7 +750,7 @@ function system_webgui_start() {
 			if (!is_array($config['cert']))
 				$config['cert'] = array();
 			$a_cert =& $config['cert'];
-			echo "Creating SSL Certificate... ";
+			log_error("Creating SSL Certificate for this host");
 			$cert = array();
 			$cert['refid'] = uniqid();
 			$cert['descr'] = "webConfigurator default";
@@ -1426,7 +1423,7 @@ function system_set_harddisk_standby() {
 		// Check for a numeric value
 		if (is_numeric($standby)) {
 			// Sync the disk(s)
-			mwexec('/bin/sync');
+			pfSense_sync();
 			if (!mwexec('/sbin/sysctl hw.ata.standby=' . ((int)$standby))) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');

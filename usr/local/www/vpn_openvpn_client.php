@@ -457,10 +457,10 @@ if ($savemsg)
 									$interfaces = get_configured_interface_with_descr();
 									$carplist = get_configured_carp_interface_list();
 									foreach ($carplist as $cif => $carpip)
-										$interfaces[$cif.'|'.$carpip] = strtoupper($cif) . " ({$carpip})";
+										$interfaces[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
 									$aliaslist = get_configured_ip_aliases_list();
 									foreach ($aliaslist as $aliasip => $aliasif)
-										$interfaces[$aliasif.'|'.$aliasip] = strtoupper($aliasif) . " ({$aliasip})";
+										$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
 									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
@@ -479,7 +479,7 @@ if ($savemsg)
 						<td width="78%" class="vtable">
 							<input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>"/>
 							<br/>
-							<?=gettext("Set this option if you would like to bind to a specific port"); ?>.
+							<?=gettext("Set this option if you would like to bind to a specific port. Leave this blank or enter 0 for a random dynamic port."); ?>
 						</td>
 					</tr>
 					<tr>

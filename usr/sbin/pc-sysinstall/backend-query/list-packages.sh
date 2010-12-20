@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/list-packages.sh,v 1.1 2010/07/13 23:47:12 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/list-packages.sh,v 1.3 2010/08/24 06:11:46 imp Exp $
 
 # Script which lists the available packages for this release
 ###########################################################################
@@ -37,38 +37,50 @@ NARGS=0
 
 if [ ! -f "${PKGDIR}/INDEX" ]
 then
-	echo "Error: please fetch package index with get-packages!"
-	exit 1
+  echo "Error: please fetch package index with get-packages!"
+  exit 1
 fi
 
 if [ ! -f "${PKGDIR}/INDEX.parsed" ]
 then
-	parse_package_index
+  parse_package_index
 fi
 
 if [ -n "${PACKAGE_CATEGORY}" ]
 then
-	NARGS=$((NARGS+1))
+  NARGS=$((NARGS+1))
 fi
 
 if [ -n "${PACKAGE_NAME}" ]
 then
-	NARGS=$((NARGS+1))
+  NARGS=$((NARGS+1))
 fi
 
-echo "Available Packages:"
 if [ "${NARGS}" -eq "0" ]
 then
-	show_packages
+  show_packages
 
 elif [ "${NARGS}" -eq "1" ]
 then
-	show_packages_by_category "${PACKAGE_CATEGORY}"
+	
+  if [ "${PACKAGE_CATEGORY}" = "@INDEX@" ]
+  then
+    if [ -f "${PKGDIR}/INDEX" ]
+    then
+      echo "${PKGDIR}/INDEX"
+      exit 0
+    else
+      exit 1
+    fi
+		
+  else
+    show_packages_by_category "${PACKAGE_CATEGORY}"
+  fi
 
 elif [ "${NARGS}" -eq "2" ]
 then
-	show_package_by_name "${PACKAGE_CATEGORY}" "${PACKAGE_NAME}"
+  show_package_by_name "${PACKAGE_CATEGORY}" "${PACKAGE_NAME}"
 
 else
-	show_packages
+  show_packages
 fi

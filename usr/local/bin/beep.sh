@@ -9,14 +9,14 @@ if [ "$PFSENSETYPE" = "embedded" ]; then
 fi
 
 # this is super annoying in VMware, exit if in VMware
-VMWCOUNT=`dmesg -a | grep VMware | wc -l | awk '{ print $1 }'`
+VMWCOUNT=`/usr/bin/grep -c VMware /var/log/dmesg.boot`
 if [ $VMWCOUNT -gt 0 ]; then
     exit;
 fi
 
 # Check for different HZ 
 if [ -f /boot/loader.conf ]; then
-	HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
+	HZ=`/usr/bin/grep -c kern.hz /boot/loader.conf`
 	if [ "$HZ" = "1" ]; then
 		NOTELENGTH="10"
 	fi

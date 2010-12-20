@@ -171,9 +171,9 @@ $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
 	if (is_array($config['interfaces'][$ent]['wireless']) &&
 		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if']))
-		$ifdescrs[$ent] = $entdesc;
+		$wifdescrs[$ent] = $entdesc;
 }
-if (count($ifdescrs) > 0)
+if (count($wifdescrs) > 0)
 	$status_menu[] = array("Wireless", "/status_wireless.php");
 $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
 
@@ -187,9 +187,12 @@ $diagnostics_menu[] = array("DNS Lookup", "/diag_dns.php");
 $diagnostics_menu[] = array("Edit File", "/edit.php");
 $diagnostics_menu[] = array("Factory Defaults", "/diag_defaults.php");
 $diagnostics_menu[] = array("Halt System", "/halt.php" );
+$diagnostics_menu[] = array("Limiter Info", "/diag_limiter_info.php" );
+
 $diagnostics_menu[] = array("Tables", "/diag_tables.php");
 $diagnostics_menu[] = array("Ping", "/diag_ping.php");
-$diagnostics_menu[] = array("pfTOP", "/diag_system_pftop.php");
+$diagnostics_menu[] = array("pfInfo", "/diag_pf_info.php");
+$diagnostics_menu[] = array("pfTop", "/diag_system_pftop.php");
 $diagnostics_menu[] = array("Reboot", "/reboot.php");
 $diagnostics_menu[] = array("Routes", "/diag_routes.php");
 $diagnostics_menu[] = array("SMART Status", "/diag_smart.php");

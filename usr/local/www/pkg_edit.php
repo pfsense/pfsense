@@ -84,17 +84,16 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = htmlspecialchars($_POST['id']);
 
-if(!is_numeric($id)) {
-	Header("Location: /");
-	exit;
-}
-	
-	
 // Not posting?  Then user is editing a record. There must be a valid id
 // when editing a record.
 if(!$id && !$_POST)
 	$id = "0";
-	
+
+if(!is_numeric($id)) {
+	Header("Location: /");
+	exit;
+}
+
 if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
 

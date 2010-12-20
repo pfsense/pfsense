@@ -41,8 +41,6 @@ function setup_gateways_monitor() {
 	if (!is_array($gateways_arr)) {
 		log_error("No gateways to monitor. Apinger will not be run.");
 		killbypid("{$g['varrun_path']}/apinger.pid");
-		// TEMPORARY XXX
-		exec("/usr/bin/killall -9 apinger");
 		@unlink("{$g['tmp_path']}/apinger.status");
 		return;
 	}
@@ -220,7 +218,7 @@ EOD;
 			log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
 			mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']), true);
 			mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
-				" " . escapeshellarg($gateway['gateway']));
+				" " . escapeshellarg($gateway['gateway']), true);
 		}
 
 		$apingerconfig .= $alarmscfg;
@@ -230,8 +228,6 @@ EOD;
 	fclose($fd);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");
-	// TEMPORARY XXX
-	exec("/usr/bin/killall -9 apinger");
 	if (is_dir("{$g['tmp_path']}"))
 		chmod("{$g['tmp_path']}", 01777);
 	if (!is_dir("{$g['vardb_path']}/rrd"))
@@ -241,6 +237,7 @@ EOD;
 
 	/* start a new apinger process */
 	@unlink("{$g['tmp_path']}/apinger.status");
+	sleep(1);
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;
@@ -296,13 +293,14 @@ function return_gateways_array($disabled = false) {
 
 			$gateway['friendlyiface'] = $gateway['interface'];
 			$gateway['interface'] = get_real_interface($gateway['interface']);
-			/* Some interface like wan might be default but have no info recorded 
+			/* FIXME: Should this be enabled.
+			 * Some interface like wan might be default but have no info recorded 
 			 * the config.
-			 */
 			if ($gateway['friendlyiface'] == "wan" && !isset($gateway['defaultgw'])) {
 				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw"))
 					$gateway['defaultgw'] = true;
 			}
+			 */
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
@@ -414,9 +412,11 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				$msg = "Gateways status could not be determined, considering all as up/active.";
-				log_error($msg);
-				notify_via_growl($msg);
+				if (!$g['booting']) {
+					$msg = "Gateways status could not be determined, considering all as up/active.";
+					log_error($msg);
+					notify_via_growl($msg);
+				}
 				$tiers = $backupplan;
 			}
 			/* sort the tiers array by the tier key */

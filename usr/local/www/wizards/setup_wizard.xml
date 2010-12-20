@@ -57,7 +57,7 @@
 		<field>
 			<name>Hostname</name>
 			<type>input</type>
-			<bindstofield>system->hostname</bindstofield>
+			<bindstofield>wizardtemp->system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
 			<validate>^[a-z0-9.|-]+$</validate>
 			<message>Invalid Hostname</message>
@@ -65,7 +65,7 @@
 		<field>
 			<name>Domain</name>
 			<type>input</type>
-			<bindstofield>system->domain</bindstofield>
+			<bindstofield>wizardtemp->system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
 			<validate>^[a-z0-9.|-]+$</validate>
 			<message>Domain name field is invalid</message>
@@ -99,6 +99,14 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepbeforeformdisplay>
+		<![CDATA[
+		$config['wizardtemp'] = array();
+		$config['wizardtemp']['system'] = array();
+		$config['wizardtemp']['system']['hostname'] = $config['system']['hostname'];
+		$config['wizardtemp']['system']['domain'] = $config['system']['domain'];
+		]]>
+	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
 		if(empty($_POST['hostname']) || !is_hostname($_POST['hostname'])) {
@@ -208,13 +216,6 @@
 		<field>
 			<name>General configuration</name>
 			<type>listtopic</type>
-		</field>
-		<field>
-			<name>interface</name>
-			<type>interface_select</type>
-			<donotdisable>true</donotdisable>
-			<displayname>Interface</displayname>
-			<bindstofield>interfaces->wan->if</bindstofield>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
@@ -553,6 +554,10 @@
 	<description>A reload is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
 	&lt;meta http-equiv="refresh" content="60; url=$myurl" &gt;</description>
 	<stepafterformdisplay>
+		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
+		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
+		unset($config['wizardtemp']);
+		write_config();
 		reload_all();
                 mwexec_bg("/etc/rc.update_bogons.sh now");
 	</stepafterformdisplay>

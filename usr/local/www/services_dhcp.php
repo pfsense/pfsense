@@ -265,21 +265,21 @@ if ($_POST) {
 			foreach ($pconfig['numberoptions']['item'] as $numberoption) {
 				if ( $numberoption['type'] == 'text' && strstr($numberoption['value'], '"') )
 					$input_errors[] = gettext("Text type cannot include quotation marks.");
-				else if ( $numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption['value']) && !preg_match('/^[0-9a-z]{2}(?:\:[0-9a-z]{2})*$/i', $numberoption['value']) )
+				else if ( $numberoption['type'] == 'string' && !preg_match('/^"[^"]*"$/', $numberoption['value']) && !preg_match('/^[0-9a-f]{2}(?:\:[0-9a-f]{2})*$/i', $numberoption['value']) )
 					$input_errors[] = gettext("String type must be enclosed in quotes like \"this\" or must be a series of octets specified in hexadecimal, separated by colons, like 01:23:45:67:89:ab:cd:ef");
-				else if ( $numberoption['type'] == 'flag' && $numberoption['value'] != 'true' && $numberoption['value'] != 'false' && $numberoption['value'] != 'on' && $numberoption['value'] != 'off' )
+				else if ( $numberoption['type'] == 'boolean' && $numberoption['value'] != 'true' && $numberoption['value'] != 'false' && $numberoption['value'] != 'on' && $numberoption['value'] != 'off' )
 					$input_errors[] = gettext("Boolean type must be true, false, on, or off.");
-				else if ( $numberoption['type'] == 'uint8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 255) )
+				else if ( $numberoption['type'] == 'unsigned integer 8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 255) )
 					$input_errors[] = gettext("Unsigned 8-bit integer type must be a number in the range 0 to 255.");
-				else if ( $numberoption['type'] == 'uint16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 65535) )
+				else if ( $numberoption['type'] == 'unsigned integer 16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 65535) )
 					$input_errors[] = gettext("Unsigned 16-bit integer type must be a number in the range 0 to 65535.");
-				else if ( $numberoption['type'] == 'uint32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 4294967295) )
+				else if ( $numberoption['type'] == 'unsigned integer 32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < 0 || $numberoption['value'] > 4294967295) )
 					$input_errors[] = gettext("Unsigned 32-bit integer type must be a number in the range 0 to 4294967295.");
-				else if ( $numberoption['type'] == 'int8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -128 || $numberoption['value'] > 127) )
+				else if ( $numberoption['type'] == 'signed integer 8' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -128 || $numberoption['value'] > 127) )
 					$input_errors[] = gettext("Signed 8-bit integer type must be a number in the range -128 to 127.");
-				else if ( $numberoption['type'] == 'int16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -32768 || $numberoption['value'] > 32767) )
+				else if ( $numberoption['type'] == 'signed integer 16' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -32768 || $numberoption['value'] > 32767) )
 					$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
-				else if ( $numberoption['type'] == 'int32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -2147483648 || $numberoption['value'] > 2147483647) )
+				else if ( $numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -2147483648 || $numberoption['value'] > 2147483647) )
 					$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
 				else if ( $numberoption['type'] == 'ip-address' && !is_ipaddr($numberoption['value']) && !is_hostname($numberoption['value']) )
 					$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
@@ -305,13 +305,15 @@ if ($_POST) {
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
 			$dynsubnet_end = ip2ulong($_POST['range_to']);
-			foreach ($a_maps as $map) {
-				if (empty($map['ipaddr']))
-					continue;
-				if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-					(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
-					$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-					break;
+			if (is_array($a_maps)) {
+				foreach ($a_maps as $map) {
+					if (empty($map['ipaddr']))
+						continue;
+					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
+						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
+						break;
+					}
 				}
 			}
 		}
@@ -429,9 +431,9 @@ include("head.inc");
 <script type="text/javascript">
 	function itemtype_field(fieldname, fieldsize, n) {
 		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
-			$customitemtypes = array('text' => gettext('Text'), 'string' => gettext('String'), 'flag' => gettext('Boolean'),
-				'uint8' => gettext('Unsigned 8-bit integer'), 'uint16' => gettext('Unsigned 16-bit integer'), 'uint32' => gettext('Unsigned 32-bit integer'),
-				'int8' => gettext('Signed 8-bit integer'), 'int16' => gettext('Signed 16-bit integer'), 'int32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host'));
+			$customitemtypes = array('text' => gettext('Text'), 'string' => gettext('String'), 'boolean' => gettext('Boolean'),
+				'unsigned integer 8' => gettext('Unsigned 8-bit integer'), 'unsigned integer 16' => gettext('Unsigned 16-bit integer'), 'unsigned integer 32' => gettext('Unsigned 32-bit integer'),
+				'signed integer 8' => gettext('Signed 8-bit integer'), 'signed integer 16' => gettext('Signed 16-bit integer'), 'signed integer 32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host'));
 			foreach ($customitemtypes as $typename => $typedescr) {
 				echo "<option value=\"{$typename}\">{$typedescr}</option>";
 			}

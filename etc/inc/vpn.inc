@@ -118,6 +118,7 @@ function vpn_ipsec_configure($ipchg = false)
 		return true;
 	} else {
 		mwexec("/sbin/ifconfig enc0 up");
+		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
 
 		if ($g['booting'])
 			echo "Configuring IPsec VPN... ";
@@ -635,15 +636,18 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
-						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
+						/* Do not print localid in some cases, such as a pure-psk or psk/xauth mobile tunnel */
+						if (($localid_type == "none") ||
+							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
+							($ph1ent['authentication_method'] == "pre_shared_key"))
+							&& isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else {
-                                                        if ($localid_type != "address") {
-                                                                $localid_type = "subnet";
-                                                        }
-                                                        $localid_spec = $localid_type." ".$localid_data." any";
-                                                }
+							if ($localid_type != "address") {
+								$localid_type = "subnet";
+							}
+							$localid_spec = $localid_type." ".$localid_data." any";
+						}
 
 						if (!isset($ph2ent['mobile'])) {
 							$remoteid_type = $ph2ent['remoteid']['type'];
@@ -656,16 +660,23 @@ EOD;
 							$remoteid_spec = "anonymous";
 
 					} else {
-
 						$rgip = $rgmap[$ph1ent['remote-gateway']];
 
-						$localid_data = ipsec_get_phase1_src($ph1ent);
-						if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
-						$localid_spec = "address {$localid_data}";
-
-						$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
-						if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
-						$remoteid_spec = "address {$remoteid_data}";
+						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
+							($ph1ent['authentication_method'] == "pre_shared_key"))
+							&& isset($ph1ent['mobile']))
+							$localid_spec = " ";
+						else {
+							$localid_data = ipsec_get_phase1_src($ph1ent);
+							if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
+							$localid_spec = "address {$localid_data}";
+						}
+						if (!isset($ph2ent['mobile'])) {
+							$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
+							if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
+							$remoteid_spec = "address {$remoteid_data}";
+						} else
+							$remoteid_spec = "anonymous";
 					}
 
 					if($ph2ent['protocol'] == 'esp') {
@@ -877,7 +888,6 @@ EOD;
  			sleep("0.1");
 			mwexec("/usr/local/sbin/setkey -F", false);
  			sleep("0.1");
-			exec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
  			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf", false);
  			sleep("0.1");
@@ -951,6 +961,15 @@ function vpn_setup() {
 
 	/* setup l2tp */
 	vpn_l2tp_configure();
+}
+
+function vpn_netgraph_support() {
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $iface) {
+		$realif = get_real_interface($iface);
+		/* Get support for netgraph(4) from the nic */
+                pfSense_ngctl_attach(".", $realif);
+	}
 }
 
 function vpn_pptpd_configure() {
@@ -1142,6 +1161,8 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
+
+			vpn_netgraph_support();
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptps pptps");
@@ -1346,6 +1367,8 @@ EOD;
 				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
 
+			/* Get support for netgraph(4) from the nic */
+			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
@@ -1526,6 +1549,8 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
+
+			vpn_netgraph_support();
 
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");

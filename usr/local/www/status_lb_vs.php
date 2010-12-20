@@ -40,7 +40,8 @@
 ##|*MATCH=status_lb_vs.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+require_once("vslb.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -50,63 +51,7 @@ if (!is_array($config['load_balancer']['virtual_server'])) {
 }
 $a_vs = &$config['load_balancer']['virtual_server'];
 $a_pool = &$config['load_balancer']['lbpool'];
-
-
-
-// # relayctl show summary
-// Id   Type      Name                      Avlblty Status
-// 1    redirect  testvs2                           active
-// 5    table     test2:80                          active (3 hosts up)
-// 11   host      192.168.1.2               91.55%  up
-// 10   host      192.168.1.3               100.00% up
-// 9    host      192.168.1.4               88.73%  up
-// 3    table     test:80                           active (1 hosts up)
-// 7    host      192.168.1.2               66.20%  down
-// 6    host      192.168.1.3               97.18%  up
-// 0    redirect  testvs                            active
-// 3    table     test:80                           active (1 hosts up)
-// 7    host      192.168.1.2               66.20%  down
-// 6    host      192.168.1.3               97.18%  up
-// 4    table     testvs-sitedown:80                active (1 hosts up)
-// 8    host      192.168.1.4               84.51%  up
-// # relayctl show redirects
-// Id   Type      Name                      Avlblty Status
-// 1    redirect  testvs2                           active
-// 0    redirect  testvs                            active
-// # relayctl show redirects
-// Id   Type      Name                      Avlblty Status
-// 1    redirect  testvs2                           active
-//            total: 2 sessions
-//            last: 2/60s 2/h 2/d sessions
-//            average: 1/60s 0/h 0/d sessions
-// 0    redirect  testvs                            active
-
-$redirects_a = array();
-exec('/usr/local/sbin/relayctl show redirects 2>&1', $redirects_a);
-$summary_a = array();
-exec('/usr/local/sbin/relayctl show summary 2>&1', $summary_a);
-$rdr_a = parse_redirects($redirects_a);
-//$server_a = parse_summary($summary_a, parse_redirects($redirects_a));
-
-function parse_redirects($rdr_a) {
-  $vs = array();
-  for ($i = 0; isset($rdr_a[$i]); $i++) {
-    $line = $rdr_a[$i];
-    if (preg_match("/^[0-9]+/", $line)) {
-      $regs = array();
-      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z\s]+)\s+([a-z]+)/", $line, $regs)) {
-        $vs[trim($regs[1])] = array();
-        $vs[trim($regs[1])]['status'] = trim($regs[2]);
-      }
-    }
-  }
-  return $vs;
-}
-
-function parse_summary($summary, $rdrs_a) {
-  $server_a = array();
-  return $server_a;
-}
+$rdr_a = get_lb_redirects();
 
 $pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Virtual Server"));
 include("head.inc");

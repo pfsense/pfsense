@@ -41,6 +41,10 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
 
+// Do not process while booting
+if($g['booting']) 
+	exit;
+
 /* Interface IP address has changed */
 
 $argument = str_replace("\n", "", $argv[1]);
@@ -71,6 +75,10 @@ $oldip = "0.0.0.0";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 
+$grouptmp = link_interface_to_group($interface);
+if (!empty($grouptmp))
+	array_walk($grouptmp, 'interface_group_add_member');
+
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
@@ -84,8 +92,20 @@ system_routing_configure($interface);
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 
-if (is_ipaddr($oldip) && $curwanip == $oldip)
+/* signal filter reload */
+filter_configure();
+
+if (is_ipaddr($oldip) && $curwanip == $oldip) {
+	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
+	if (in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
+		/* reconfigure IPsec tunnels */
+		vpn_ipsec_force_reload();
+
+		/* start OpenVPN server & clients */
+		openvpn_resync_all($interface);
+	}
 	exit;
+}
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);
@@ -99,10 +119,6 @@ vpn_ipsec_force_reload();
 /* start OpenVPN server & clients */
 openvpn_resync_all($interface);
 
-/* signal filter reload */
-unlink_if_exists("/tmp/config.cache");
-filter_configure();
-
 /* reload graphing functions */
 enable_rrd_graphing();
 
@@ -111,5 +127,4 @@ mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 mwexec_bg("/etc/rc.start_packages");
 log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
 
-return 0;
 ?>

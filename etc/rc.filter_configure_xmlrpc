@@ -43,7 +43,6 @@ require_once("shaper.inc");
 require_once("xmlrpc.inc");
 require_once("interfaces.inc");
 
-filter_configure();
 system_routing_configure();
 setup_gateways_monitor();
 relayd_configure();

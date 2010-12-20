@@ -41,7 +41,7 @@ function remove_numbers($string) {
 }
 
 function get_nics_with_capabilities($CAPABILITIES) {
-	$ifs = `ifconfig -l`;
+	$ifs = `/sbin/ifconfig -l`;
 	$if_list = split(" ", $ifs);
 	$vlan_native_supp = array();
 	foreach($if_list as $if => $iface) {
@@ -113,7 +113,7 @@ $vlan_native_supp = get_nics_with_capabilities("vlanmtu");
 if(count($vlan_native_supp) > 0)
 	$g['vlan_long_frame'] = $vlan_native_supp;
 else 
-	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le",  "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
+	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");
@@ -122,7 +122,7 @@ $iptos = array("lowdelay", "throughput", "reliability");
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 if(file_exists("/etc/platform")) {
-	$arch = trim(`uname -m`);
+	$arch = php_uname("m");
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_HEAD/.updaters/";
@@ -138,32 +138,33 @@ if(file_exists("/etc/platform")) {
 
 /* Default sysctls */
 $sysctls = array("net.inet.ip.portrange.first" => "1024", 
-		 "net.inet.tcp.blackhole" => "2", 
-		 "net.inet.udp.blackhole" => "1", 
-		 "net.inet.ip.random_id" => "1", 
-		 "net.inet.tcp.drop_synfin" => "1", 
-		 "net.inet.ip.redirect" => "1", 
-		 "net.inet6.ip6.redirect" => "1", 
-		 "net.inet.tcp.syncookies" => "1", 
-		 "net.inet.tcp.recvspace" => "65228", 
-		 "net.inet.tcp.sendspace" => "65228", 
-		 "net.inet.ip.fastforwarding" => "1", 
-		 "net.inet.tcp.delayed_ack" => "0", 
-		 "net.inet.udp.maxdgram" => "57344", 
-		 "net.link.bridge.pfil_onlyip" => "0", 
-		 "net.link.bridge.pfil_member" => "1", 
-		 "net.link.bridge.pfil_bridge" => "0", 
-		 "net.link.tap.user_open" => "1", 
-		 "kern.rndtest.verbose" => "0", 
-		 "kern.randompid" => "347", 
-		 "net.inet.ip.intr_queue_maxlen" => "1000", 
-		 "hw.syscons.kbd_reboot" => "0", 
-		 "net.inet.tcp.inflight.enable" => "1", 
-		 "net.inet.tcp.log_debug" => "0", 
-		 "net.inet.tcp.tso" => "1", 
-		 "net.inet.icmp.icmplim" => "0"
-		  );
+	"net.inet.tcp.blackhole" => "2", 
+	"net.inet.udp.blackhole" => "1", 
+	"net.inet.ip.random_id" => "1", 
+	"net.inet.tcp.drop_synfin" => "1", 
+	"net.inet.ip.redirect" => "1", 
+	"net.inet6.ip6.redirect" => "1", 
+	"net.inet.tcp.syncookies" => "1", 
+	"net.inet.tcp.recvspace" => "65228", 
+	"net.inet.tcp.sendspace" => "65228", 
+	"net.inet.ip.fastforwarding" => "0", 
+	"net.inet.tcp.delayed_ack" => "0", 
+	"net.inet.udp.maxdgram" => "57344", 
+	"net.link.bridge.pfil_onlyip" => "0", 
+	"net.link.bridge.pfil_member" => "1", 
+	"net.link.bridge.pfil_bridge" => "0", 
+	"net.link.tap.user_open" => "1", 
+	"kern.rndtest.verbose" => "0", 
+	"kern.randompid" => "347", 
+	"net.inet.ip.intr_queue_maxlen" => "1000", 
+	"hw.syscons.kbd_reboot" => "0", 
+	"net.inet.tcp.inflight.enable" => "1", 
+	"net.inet.tcp.log_debug" => "0", 
+	"net.inet.tcp.tso" => "1", 
+	"net.inet.icmp.icmplim" => "0",
+	"vfs.read_max" => "32"
+);
 
-$config_inc_loaded = false;
+$config_parsed = false;
 
 ?>

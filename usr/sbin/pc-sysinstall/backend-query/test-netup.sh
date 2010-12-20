@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/test-netup.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/test-netup.sh,v 1.3 2010/08/24 06:11:46 imp Exp $
 
 
 # Script which tests "fetch" when using a network connection, and saves
@@ -35,15 +35,15 @@ rm ${TMPDIR}/.testftp >/dev/null 2>/dev/null
 ping -c 2 www.pcbsd.org >/dev/null 2>/dev/null
 if [ "$?" = "0" ]
 then
-   echo "ftp: Up"
-   exit 0
+  echo "ftp: Up"
+  exit 0
 fi
 
 ping -c 2 www.freebsd.org >/dev/null 2>/dev/null
 if [ "$?" = "0" ]
 then
-   echo "ftp: Up"
-   exit 0
+  echo "ftp: Up"
+  exit 0
 fi
    
 echo "ftp: Down"

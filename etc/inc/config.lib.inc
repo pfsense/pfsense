@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck	/bin/sync
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -148,7 +148,7 @@ function parse_config($parse = false) {
 				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
 			}
 		}
-		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+		$config = parse_xml_config($g['conf_path'] . '/config.xml', array($g['xml_rootobj'], 'pfsense'));
 		if($config == "-1") {
 			$last_backup = discover_last_backup();
 			if ($last_backup)
@@ -210,8 +210,9 @@ function restore_backup($file) {
 		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file","/cf/conf/config.xml");
+		disable_security_checks();
 		log_error("{$g['product_name']} is restoring the configuration $file");
-		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
+		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "{$g['product_name']}Configurator", "");
 		conf_mount_ro();
 	}
 }
@@ -352,7 +353,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	mwexec("/bin/sync; /bin/sync");
+	pfSense_sync();
 	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f /");
 }
@@ -411,9 +412,6 @@ function convert_config() {
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
-
-	if($g['booting'])
-		echo "Loading new configuration...";
 }
 
 /****f* config/safe_write_file
@@ -432,27 +430,32 @@ function convert_config() {
  *   boolean - true if successful, false if not
  ******/
 function safe_write_file($file, $content, $force_binary) {
-        $tmp_file = $file . "." . getmypid();
-        $write_mode = $force_binary ? "wb" : "w";
+	$tmp_file = $file . "." . getmypid();
+	$write_mode = $force_binary ? "wb" : "w";
 
-        $fd = fopen($tmp_file, $write_mode);
-        if (!$fd) {
-                // Unable to open temporary file for writing
-                return false;
+	$fd = fopen($tmp_file, $write_mode);
+	if (!$fd) {
+		// Unable to open temporary file for writing
+		return false;
         }
-        if (!fwrite($fd, $content)) {
-                // Unable to write to temporary file
-                fclose($fd);
-                return false;
-        }
-        fclose($fd);
+	if (!fwrite($fd, $content)) {
+		// Unable to write to temporary file
+		fclose($fd);
+		return false;
+	}
+	fflush($fd);
+	fclose($fd);
 
-        if (!rename($tmp_file, $file)) {
-                // Unable to move temporary file to original
-                unlink($tmp_file);
-                return false;
-        }
-        return true;
+	if (!rename($tmp_file, $file)) {
+		// Unable to move temporary file to original
+		@unlink($tmp_file);
+		return false;
+	}
+
+	// Sync file before returning
+	pfSense_sync();
+
+	return true;
 }
 
 /****f* config/write_config
@@ -569,6 +572,8 @@ function reset_factory_defaults($lock = false) {
 	/* copy default configuration */
 	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
 
+	disable_security_checks();
+
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
 	if (!$lock)
@@ -592,6 +597,8 @@ function config_restore($conffile) {
 
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");
+
+	disable_security_checks();
 
 	unlock($lockkey);
 
@@ -623,6 +630,8 @@ function config_install($conffile) {
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
 
+	disable_security_checks();
+
 	/* unlink cache file if it exists */
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
@@ -631,6 +640,31 @@ function config_install($conffile) {
 	conf_mount_ro();
 
     return 0;
+}
+
+/*
+ * Disable security checks for DNS rebind and HTTP referrer until next time
+ * they pass (or reboot), to aid in preventing accidental lockout when
+ * restoring settings like hostname, domain, IP addresses, and settings
+ * related to the DNS rebind and HTTP referrer checks.
+ * Intended for use when restoring a configuration or directly
+ * modifying config.xml without an unconditional reboot.
+ */
+function disable_security_checks() {
+	global $g;
+	touch("{$g['tmp_path']}/disable_security_checks");
+}
+
+/* Restores security checks.  Should be called after all succeed. */
+function restore_security_checks() {
+	global $g;
+	unlink_if_exists("{$g['tmp_path']}/disable_security_checks");
+}
+
+/* Returns status of security check temporary disable. */
+function security_checks_disabled() {
+	global $g;
+	return file_exists("{$g['tmp_path']}/disable_security_checks");
 }
 
 function config_validate($conffile) {
@@ -690,7 +724,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			$i = true;
 			if($g['booting'])
 				echo ".";
-			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+			$newxml = parse_xml_config($backup, array($g['xml_rootobj'], 'pfsense'));
 			if($newxml == "-1") {
 				log_error("The backup cache file $backup is corrupted.  Unlinking.");
 				unlink($backup);

@@ -82,6 +82,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
 	$pconfig['advskew'] = $a_vip[$id]['advskew'];
+	$pconfig['advbase'] = $a_vip[$id]['advbase'];
 	$pconfig['password'] = $a_vip[$id]['password'];
 	$pconfig['range'] = $a_vip[$id]['range'];
 	$pconfig['subnet'] = $a_vip[$id]['subnet'];
@@ -138,7 +139,9 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	if ($_POST['mode'] == "carp" or $_POST['mode'] == "carpdev-dhcp") {
+	switch ($_POST['mode']) {
+	case "carp":
+	case "carpdev-dhcp":
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -166,7 +169,25 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 			}
 		}
+		if (substr($_POST['interface'], 0, 3) == "vip")
+                        $input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
+		break;
+	case "ipalias":
+		if (substr($_POST['interface'], 0, 3) == "vip") {
+			$parent_ip = get_interface_ip($_POST['interface']);
+			$parent_sn = get_interface_subnet($_POST['interface']);
+			if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
+				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
+				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+			}
+		}
+		break;
+	default:
+		if (substr($_POST['interface'], 0, 3) == "vip")
+			$input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
+		break;
 	}
+
 
 	if (isset($id) && ($a_vip[$id])) {
 		if ($a_vip[$id]['mode'] != $_POST['mode']) {
@@ -201,6 +222,7 @@ if ($_POST) {
 		if ($_POST['mode'] === "carp" or $_POST['mode'] == "carpdev-dhcp") {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['advskew'] = $_POST['advskew'];
+			$vipent['advbase'] = $_POST['advbase'];
 			$vipent['password'] = $_POST['password'];
 		}
 
@@ -278,28 +300,30 @@ function enable_change(enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
                 document.iform.advskew.disabled = 0;
+                document.iform.advbase.disabled = 0;
                 document.iform.type.disabled = 1;
                 document.iform.subnet_bits.disabled = 0;
-				document.iform.subnet.disabled = 0;
-				if (note.firstChild == null) {
-					note.appendChild(carpnote);
-				} else {
-					note.removeChild(note.firstChild);
-					note.appendChild(carpnote);
-				}
+		document.iform.subnet.disabled = 0;
+		if (note.firstChild == null) {
+			note.appendChild(carpnote);
+		} else {
+			note.removeChild(note.firstChild);
+			note.appendChild(carpnote);
+		}
         } else {
                 document.iform.vhid.disabled = 1;
                 document.iform.password.disabled = 1;
                 document.iform.advskew.disabled = 1;
+                document.iform.advbase.disabled = 1;
                 document.iform.type.disabled = 0;
                 document.iform.subnet_bits.disabled = 1;
-				document.iform.subnet.disabled = 0;
-				if (note.firstChild == null) {
-					note.appendChild(proxyarpnote);
-				} else {
-					note.removeChild(note.firstChild);
-					note.appendChild(proxyarpnote);
-				}
+		document.iform.subnet.disabled = 0;
+		if (note.firstChild == null) {
+			note.appendChild(proxyarpnote);
+		} else {
+			note.removeChild(note.firstChild);
+			note.appendChild(proxyarpnote);
+		}
         }
 	if (get_radio_value(document.iform.mode) == "other") {
 		document.iform.type.disabled = 1;
@@ -323,9 +347,10 @@ function enable_change(enable_over) {
 		document.iform.subnet.disabled = 1;
 		document.iform.subnet.value = '';
 		document.iform.subnet_bits.value = '';		
-        document.iform.vhid.disabled = 0;
-        document.iform.password.disabled = 0;
-        document.iform.advskew.disabled = 0;
+        	document.iform.vhid.disabled = 0;
+        	document.iform.password.disabled = 0;
+        	document.iform.advskew.disabled = 0;
+        	document.iform.advbase.disabled = 0;
 	}
 }
 function typesel_change() {
@@ -389,6 +414,9 @@ function typesel_change() {
 					<select name="interface" class="formselect">
 					<?php 
 					  $interfaces = get_configured_interface_with_descr(false, true);
+					  $carplist = get_configured_carp_interface_list();
+                                          foreach ($carplist as $cif => $carpip)
+                                          	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
 					  foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
 						<?=htmlspecialchars($ifacename);?>
@@ -447,7 +475,7 @@ function typesel_change() {
 				<tr valign="top">
 				  <td width="22%" class="vncellreq"><?=gettext("VHID Group");?></td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
-                            <?php for ($i = 1; $i <= 254; $i++): ?>
+                            <?php for ($i = 1; $i <= 255; $i++): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected"; ?>>
                             <?=$i;?>
                       </option>
@@ -458,14 +486,23 @@ function typesel_change() {
 				</tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq"><?=gettext("Advertising Frequency");?></td>
-				  <td class="vtable"><select id='advskew' name='advskew'>
-                            <?php for ($i = 0; $i <= 254; $i++): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected"; ?>>
+				  <td class="vtable">
+					 Base: <select id='advbase' name='advbase'>
+                            <?php for ($i = 1; $i <= 254; $i++): ?>
+                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advbase']) echo "selected"; ?>>
                             <?=$i;?>
-                      </option>
+                      			</option>
                             <?php endfor; ?>
-                      </select>
-					<br><?=gettext("The frequency that this machine will advertise.  0 = master.   Anything above 0 designates a backup.");?>
+                      		</select>
+					Skew: <select id='advskew' name='advskew'>
+                            <?php for ($i = 0; $i <= 254; $i++): ?>
+                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected"; ?>>
+                            <?=$i;?>
+                      			</option>
+                            <?php endfor; ?>
+                      		</select>
+				<br/><br/>
+				<?=gettext("The frequency that this machine will advertise.  0 means usually master. Otherwise the lowest combination of both values in the cluster detrmines the master.");?>
 				  </td>
 				</tr>
                 <tr>

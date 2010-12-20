@@ -57,6 +57,7 @@ $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
+$pconfig['kill_states'] = isset($config['system']['kill_states']);
 
 if ($_POST) {
 
@@ -106,6 +107,11 @@ if ($_POST) {
                         $config['system']['schedule_states'] = true;
                 else
                         unset($config['system']['schedule_states']);
+
+		if($_POST['kill_states'] == "yes")
+                        $config['system']['kill_states'] = true;
+                else
+                        unset($config['system']['kill_states']);
 
 		write_config();
 
@@ -276,6 +282,21 @@ function maxmss_checked(obj) {
                                                                         <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
                                                                         <br />
 									<?=gettext("By default schedules clear the states of existing connections when expiry time has come. ".
+									"This option allows to override this setting by not clearing states for existing connections."); ?>
+                                                                </td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="2" class="list" height="12">&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="2" valign="top" class="listtopic"><?=gettext("Gateway Monitoring"); ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
+                                                                <td width="78%" class="vtable">
+                                                                        <input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked"; ?> />
+                                                                        <br />
+									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
 									"This option allows to override this setting by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>

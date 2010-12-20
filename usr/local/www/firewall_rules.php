@@ -379,7 +379,22 @@ if($_REQUEST['undodrag']) {
 <?php   // Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 	if (!isset($config['system']['webgui']['noantilockout']) &&
 		(((count($config['interfaces']) > 1) && ($if == 'lan'))
-		|| ((count($config['interfaces']) == 1) && ($if == 'wan')))): ?>
+		|| ((count($config['interfaces']) == 1) && ($if == 'wan')))):
+
+		$guiport = "80";
+		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
+			$guiport = "{$config['system']['webgui']['port']}";
+		if ($config['system']['webgui']['protocol'] == "https")
+			$guiport .= "<br/>443";
+
+		$sshport = "";
+		if (isset($config['system']['enablesshd'])) {
+			$sshport = 22;
+		if($config['system']['ssh']['port'] <> "")
+			$sshport = $config['system']['ssh']['port'];
+		}
+		$sshport = "22<br/>";
+?>
 		<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0"></td>
@@ -388,7 +403,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"><?=$iflist[$if];?> Address</td>
-			<td class="listr" style="background-color: #E0E0E0">*</td>
+			<td class="listr" style="background-color: #E0E0E0"><?= $sshport . $guiport ?></td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"></td>
@@ -535,7 +550,7 @@ if($_REQUEST['undodrag']) {
 				$schedstatus = false;
 				$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 				$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
-				if($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])){
+				if($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])) {
 					foreach ($a_schedules as $schedule)
 					{
 						if ($schedule['name'] == $filterent['sched'] ){
@@ -838,6 +853,7 @@ if($_REQUEST['undodrag']) {
   <script type="text/javascript">
 	var number_of_rules = <?=$nrules?>;
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
+/*
 	Sortable.create("dragtable", { 
 		tag:"tr", 
 		format:"fr([0-9999999])",
@@ -850,6 +866,7 @@ if($_REQUEST['undodrag']) {
 			updateOrder(Sortable.serialize('dragtable', 'tr'));
 		} 
 	});
+*/
 <?php endfor; ?>
 	function updateOrder(order) {
 		if(document.getElementById("redboxtable"))

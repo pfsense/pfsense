@@ -308,10 +308,15 @@ function cert_get_subject($str_crt, $decode = true) {
 		return "unknown";
 
 	foreach ($components as $a => $v) {
-		if (!strlen($subject))
-			$subject = "{$a}={$v}";
-		else
-			$subject = "{$a}={$v}, {$subject}";
+		if (is_array($v))
+			foreach ($v as $w) {
+				$asubject = "{$a}={$w}";
+				$subject = (strlen($subject)) ? "{$asubject}, {$subject}" : $asubject;
+			}
+		else {
+			$asubject = "{$a}={$v}";
+			$subject = (strlen($subject)) ? "{$asubject}, {$subject}" : $asubject;
+		}
 	}
 
 	return $subject;

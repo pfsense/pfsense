@@ -87,15 +87,11 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" valign="top" class="vncellt">Version</td>
 			<td width="75%" class="listr">
 				<strong><?php readfile("/etc/version"); ?></strong>
-				(<?php
-					$arch = "";
-					exec('uname -m', $arch);
-					echo $arch[0];
-				?>)
+				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />
-                <div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><?=`uname -sr`?></a></div>
+                <div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
                 <div id='updatestatus'><br/>Obtaining update status...</div>
 			</td>
 		</tr>
@@ -271,7 +267,7 @@ $curcfg = $config['system']['firmware'];
 		$('updatestatus').innerHTML = transport.responseText;
 	}
 	function swapuname() {
-		$('uname').innerHTML="<?php echo exec("uname -a"); ?>";
+		$('uname').innerHTML="<?php echo php_uname("a"); ?>";
 	}
 	setTimeout('getstatus()', 4000);
 </script>

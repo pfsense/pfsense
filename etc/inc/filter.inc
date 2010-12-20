@@ -39,6 +39,7 @@
 */
 
 /* DISABLE_PHP_LINT_CHECKING */
+// vim: ts=4 sw=4 noexpandtab
 
 /* include all configuration functions */
 
@@ -62,31 +63,27 @@ $aliases = "";
 
 function flowtable_configure() {
 	global $config, $g;
-	return;
+
+	if (empty($config['system']['flowtable'])) {
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
+		return;
+	}
+
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
 		$maxstates = $config['system']['maximumstates'];
 	else
-		$maxstates = "150000";
+		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
+	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
 	$nmbflows = ($cpus*($maxstates*2));
-	// flowtable is not enabled
-	/*
-	if($config['system']['flowtable'])
-		$flowtable_enable = 1;
-	else
-		$flowtable_enable = 0;
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		if($flowtable_enable == 1) {
-			mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
-			mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
-		}
-		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
+		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
+		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
+		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
 	}
-	*/
 }
 
 function filter_load_ipfw() {
@@ -135,15 +132,26 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
+	global $g;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
-	send_event("filter reload");
+
+	/*
+	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
+	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
+	 */
+	if (!$g['booting'])
+		send_event("filter reload");
 }
 
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
+
+	if (isset($config['system']['kill_states']))
+		return;
 
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
@@ -177,8 +185,8 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
-	/* Use config lock to not allow recursion and config changes during this run. */
-	$filterlck = lock('config');
+	/* Use filter lock to not allow concurrent filter reloads during this run. */
+	$filterlck = lock('filter', LOCK_EX);
 
 
 	filter_pflog_start();
@@ -355,7 +363,7 @@ function filter_configure_sync() {
 		 * FilterDNS has three debugging levels. The default choosen is 1.
 		 * Availabe are level 2 and greater then 2.
 		 */
-		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf 1");
+		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
 	}
 
 	/* run items scheduled for after filter configure run */
@@ -374,8 +382,6 @@ function filter_configure_sync() {
 
 		fclose($fda);
 	}
-
-	unlock($filterlck);
 
 	if(file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
@@ -406,6 +412,7 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo "done.\n";
 
+	unlock($filterlck);
 	return 0;
 }
 
@@ -512,6 +519,7 @@ function filter_generate_aliases() {
 
 	$aliases .= "\n#SSH Lockout Table\n";
 	$aliases .= "table <sshlockout> persist\n";
+	$aliases .= "table <webConfiguratorlockout> persist\n";
 
 	$aliases .= "#Snort2C table\n";
 	$aliases .= "table <snort2c>\n";
@@ -847,7 +855,12 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+	global $config;
+
+	if(!isset($config['system']['enablenatreflectionhelper']))
+		return "";
+
 	// Initialize natrules holder string
 	$natrules = "";
 
@@ -866,21 +879,26 @@ function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $ta
 		$protocol_text = "";
 	}
 
-	$target_if_list = array();
-	if(empty($target_subnet) || !is_numeric($target_subnet) || $target_subnet == 32) {
-		$target_if_list[] = guess_interface_from_ip($target_ip);
-	} else {
-		$target_if_list[] = guess_interface_from_ip(gen_subnet_max($target_ip, $target_subnet));
+	if(empty($target_subnet) || !is_numeric($target_subnet))
+		$target_subnet = 32;
+
+	if(!is_array($route_table)) {
+		$route_table = array();
+		/* create a route table we can search */
+		exec("netstat -rnWf inet", $route_table);
 	}
 
-	foreach ($target_if_list as $target_if) {
-		/* Only install additional NAT rules if the
-		 * target is in the list of source networks */
-		if(in_array($target_if, $nat_ifs)) {
-			$target_networks = "{$target_if}:network";
-
-			$natrules .= "no nat on {$target_if}{$protocol_text} from {$target_if} to {$target}\n";
-			$natrules .= "nat on {$target_if}{$protocol_text} from {$target_networks} to {$target} -> {$target_if}{$static_port}\n";
+	/* Search for matching subnets in the routing table */
+	foreach($route_table as $line) {
+		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|link[#])/", $line)) {
+			$fields = preg_split("/[ ]+/", $line);
+			$subnet = $fields[0];
+			$subnet_split = explode("/", $subnet);
+			$subnet_if = $fields[6];
+			if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$subnet_if}{$static_port}\n";
+			}
 		}
 	}
 
@@ -1145,6 +1163,7 @@ function filter_nat_rules_generate() {
 	update_filter_reload_status("Creating 1:1 rules...");
 
 	$reflection_txt = "";
+	$route_table = "";
 
 	/* any 1:1 mappings? */
 	if(is_array($config['nat']['onetoone'])) {
@@ -1202,7 +1221,7 @@ function filter_nat_rules_generate() {
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
-			$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", $srcaddr, $srcip, $sn);
+			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";
@@ -1495,25 +1514,12 @@ function filter_nat_rules_generate() {
 	fclose($inetd_fd);		// Close file handle
 	// Check if inetd is running, if not start it.	If so, restart it gracefully.
 	$helpers = isvalidproc("inetd");
-	if(!$helpers)
-		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
-	else
-		sigkillbypid("/var/run/inetd.pid", "HUP");
-
-	$pptpdcfg = $config['pptpd'];
-	if($pptpdcfg['mode'] && $pptpdcfg['mode'] == "redir") {
-		$pptpdtarget = $pptpdcfg['redir'];
-		if(is_ipaddr($pptpdtarget) && is_array($FilterIflist['wan'])) {
-			$natrules .= <<<EOD
-
-# PPTP
-rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> $pptpdtarget
-rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> $pptpdtarget
-
-EOD;
-		}
+	if(file_exists("/var/etc/inetd.conf")) {
+		if(!$helpers)
+			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+		else
+			sigkillbypid("/var/run/inetd.pid", "HUP");
 	}
-
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
@@ -2027,46 +2033,9 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	//$ipfrules .= discover_pkg_rules("filter");
 
-	/* if captive portal is enabled, ensure that access to this port
-	 * is allowed on a locked down interface
-	 */
-	if(isset($config['captiveportal']['enable'])) {
-		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
-		$cpiflist = array();
-		$cpiplist = array();
-		foreach ($cpinterfaces as $cpifgrp) {
-			if(!isset($FilterIflist[$cpifgrp]))
-				continue;
-			$tmpif = get_real_interface($cpifgrp);
-			if(!empty($tmpif)) {
-				$cpiflist[] = "{$tmpif}";
-				$cpipm = get_interface_ip($cpifgrp);
-				if(is_ipaddr($cpipm)) {
-					$carpif = link_ip_to_carp_interface($cpipm);
-					if (!empty($carpif)) {
-						$cpiflist[] = $carpif;
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp) {
-							$carpip = find_interface_ip($cpcarp);
-							if (is_ipaddr($carpip))
-							$cpiplist[] = $carpip;
-						}
-					}
-					$cpiplist[] = $cpipm;
-				}
-			}
-		}
-		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-			$cpinterface = implode(" ", $cpiflist);
-			$cpaddresses = implode(" ", $cpiplist);
-			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
-		}
-	}
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
 	# BEGIN OF firewall rules
-	$ipfrules .= "anchor \"firewallrules\"\n";
 	/* default block logging? */
 	if(!isset($config['syslog']['nologdefaultblock']))
 		$log = "log";
@@ -2100,16 +2069,6 @@ EOD;
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
 
-# package manager early specific hook
-anchor "packageearly"
-
-EOD;
-
-	$ipfrules .= <<<EOD
-
-# carp
-anchor "carp"
-
 EOD;
 
 	$ipfrules .= filter_process_carp_rules();
@@ -2124,14 +2083,64 @@ EOD;
 			$sshport = $config['system']['ssh']['port'];
 		else
 			$sshport = 22;
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
+		if($sshport)
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
 	}
+
+	$ipfrules .= "\n# webConfigurator lockout\n";
+	if(!$config['system']['webgui']['port']) {
+		if($config['system']['webgui']['protocol'] == "http") 
+			$webConfiguratorlockoutport = "80";
+		else
+			$webConfiguratorlockoutport = "443";
+	} else {
+		$webConfiguratorlockoutport = $config['system']['webgui']['port'];
+	}
+	if($webConfiguratorlockoutport)
+		$ipfrules .= "block in log quick proto tcp from <webConfiguratorlockout> to any port {$webConfiguratorlockoutport} label \"webConfiguratorlockout\"\n";
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate
 	 * Useful for protecting against sudden outburts, etc.
 	 */
 	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
+
+	/* if captive portal is enabled, ensure that access to this port
+	 * is allowed on a locked down interface
+	 */
+	if(isset($config['captiveportal']['enable'])) {
+		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
+		$cpiflist = array();
+		$cpiplist = array();
+		foreach ($cpinterfaces as $cpifgrp) {
+			if(!isset($FilterIflist[$cpifgrp]))
+				continue;
+			$tmpif = get_real_interface($cpifgrp);
+			if(!empty($tmpif)) {
+				$cpiflist[] = "{$tmpif}";
+				$cpipm = get_interface_ip($cpifgrp);
+				if(is_ipaddr($cpipm)) {
+					$carpif = link_ip_to_carp_interface($cpipm);
+					if (!empty($carpif)) {
+						$cpiflist[] = $carpif;
+						$carpsif = explode(" ", $carpif);
+						foreach ($carpsif as $cpcarp) {
+							$carpip = find_interface_ip($cpcarp);
+							if (is_ipaddr($carpip))
+							$cpiplist[] = $carpip;
+						}
+					}
+					$cpiplist[] = $cpipm;
+				}
+			}
+		}
+		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+			$cpinterface = implode(" ", $cpiflist);
+			$cpaddresses = implode(" ", $cpiplist);
+			$ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
+			$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any port { 8000 8001 80 } to any flags any keep state(sloppy)\n";
+		}
+	}
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
@@ -2144,7 +2153,6 @@ EOD;
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-anchor "{$on}bogons"
 block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon networks from {$oc['descr']}"
 
 EOD;
@@ -2177,11 +2185,8 @@ EOD;
 		}
 		switch ($oc['type']) {
 		case "pptp":
-				/* XXX: The proto gre rules should really be removed when the pptp patch is guaranted to work */
 				$ipfrules .= <<<EOD
 # allow PPTP client
-anchor "pptpclient"
-pass in on \${$oc['descr']} proto gre from any to any modulate state label "allow PPTP client"
 pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
 
 EOD;
@@ -2190,7 +2195,6 @@ EOD;
 		case "carpdev-dhcp":
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-anchor "{$on}dhcp"
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
@@ -2208,7 +2212,6 @@ EOD;
 				$ipfrules .= <<<EOD
 
 # allow access to DHCP server on {$oc['descr']}
-anchor "dhcpserver{$oc['descr']}"
 pass in on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
@@ -2238,16 +2241,12 @@ EOD;
 	 *		rules before them.
 	 */
 	$ipfrules .= <<<EOD
-anchor "spoofing"
 
 # loopback
-anchor "loopback"
 pass in on \$loopback all label "pass loopback"
 pass out on \$loopback all label "pass loopback"
 pass in on \$loopback inet6 all label "pass loopback"
 pass out on \$loopback inet6 all label "pass loopback"
-
-anchor "firewallout"
 
 EOD;
 
@@ -2302,7 +2301,6 @@ EOD;
 				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-anchor "anti-lockout"
 pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
@@ -2311,7 +2309,6 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-anchor "anti-lockout"
 pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
 
 EOD;
@@ -2326,8 +2323,6 @@ EOD;
 		if(is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
 			$ipfrules .= <<<EOD
 # PPTPd rules
-anchor "pptp"
-pass in on \${$FilterIflist['wan']['descr']} proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
 pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;
@@ -2391,7 +2386,6 @@ EOD;
 	 *  topologies
 	 */
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
@@ -2436,12 +2430,7 @@ EOD;
 	$ipfrules .= filter_generate_ipsec_rules();
 
 	$ipfrules .= <<<EOD
-# package manager late specific hook
-anchor "packagelate"
-
 anchor "tftp-proxy/*"
-
-anchor "limitingesr"
 
 # uPnPd
 anchor "miniupnpd"
@@ -2885,7 +2874,5 @@ function discover_pkg_rules($ruletype) {
 	}
 	return $rules;
 }
-
-// vim: ts=4 sw=4 noexpandtab
 
 ?>

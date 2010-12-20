@@ -397,11 +397,8 @@ function step8_stepsubmitphpaction() {
 	clear_subsystem_dirty('shaper');
 
 	update_filter_reload_status("Initializing");
-}
-
-function step9_stepsubmitphpaction() {
-	global $g, $config;
-	header("status_filter_reload.php");
+	header("Location: status_filter_reload.php");
+	exit;
 }
 
 function apply_all_choosen_items() {
@@ -520,8 +517,8 @@ function apply_all_choosen_items() {
 
 		$remainbw = round($remainbw / $upbw * 100, 2);
 		if ($remainbw > 0 && $remainbw > 30) {
-			$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
+			$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$savemsg}");
 			exit;
 		} else {
 			$remainbw = 100 - $remainbw;
@@ -910,8 +907,8 @@ function apply_all_choosen_items() {
 		}	
 		$remainbw = round($remainbw / $lanbw * 100, 2);
 		if ($remainbw > 0 && $remainbw > 30) {
-			$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
+			$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$savemsg}");
 			exit;
 		} else {
 			$remainbw = 100 - $remainbw;
@@ -1351,7 +1348,7 @@ function apply_all_choosen_items() {
 		write_config();
 }
 
-function wizard_get_bandwidthtype_scale($type) {
+function wizard_get_bandwidthtype_scale($type = "b") {
 	switch ($type) {
 		case "Gb":
 	        $factor = 1000 * 1000 * 1000;
@@ -1367,7 +1364,7 @@ function wizard_get_bandwidthtype_scale($type) {
 	        $factor = 1;
 			break;
 	}
-	return floatval($factor);
+	return intval($factor);
 }
 
 ?>

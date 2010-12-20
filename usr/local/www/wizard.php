@@ -894,7 +894,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
  */
 
 function fixup_string($string) {
-	global $config, $myurl;
+	global $config, $g, $myurl, $title;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	switch($config['system']['webgui']['protocol']) {
@@ -918,7 +918,26 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$myurl = $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . "/";
+	$http_host = explode(":", $_SERVER['HTTP_HOST']);
+	$http_host = $http_host[0];
+	$urlhost = $http_host;
+	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
+	if($title == "Reload in progress") {
+		if (is_ipaddr($urlhost)) {
+			$host_if = find_ip_interface($urlhost);
+			if ($host_if) {
+				$host_if = convert_real_interface_to_friendly_interface_name($host_if);
+				if ($host_if && is_ipaddr($config['interfaces'][$host_if]['ipaddr']))
+					$urlhost = $config['interfaces'][$host_if]['ipaddr'];
+			}
+		} else if ($urlhost == $config['system']['hostname'])
+			$urlhost = $config['wizardtemp']['system']['hostname'];
+		else if ($urlhost == $config['system']['hostname'] . '.' . $config['system']['domain'])
+			$urlhost = $config['wizardtemp']['system']['hostname'] . '.' . $config['wizardtemp']['system']['domain'];
+	}
+	if($urlhost != $http_host)
+		file_put_contents("{$g['tmp_path']}/setupwizard_lastreferrer", $proto . "://" . $http_host . $urlport . $_SERVER['REQUEST_URI']);
+	$myurl = $proto . "://" . $urlhost . $urlport . "/";
 
 	if (strstr($newstring, "\$myurl"))
 		$newstring = str_replace("\$myurl", $myurl, $newstring);

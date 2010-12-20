@@ -1156,11 +1156,11 @@ function interface_ppps_configure($interface) {
 	to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
 	*/
 	foreach($ports as $pid => $port){
-		pfSense_ngctl_attach(".", $port);
 		switch ($ppp['type']) {
 			case "pppoe": 
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
+				pfSense_ngctl_attach(".", $port);
 				break;
 			case "pptp":
 			case "l2tp":
@@ -1191,6 +1191,7 @@ function interface_ppps_configure($interface) {
 					log_error("Could not get a PPTP/L2TP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
 					return 0;
 				}
+				pfSense_ngctl_attach(".", $port);
 				break;
 			case "ppp":
 				if (!file_exists("{$port}")) {

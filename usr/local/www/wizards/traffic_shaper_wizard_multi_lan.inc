@@ -1351,13 +1351,13 @@ function apply_all_choosen_items() {
 function wizard_get_bandwidthtype_scale($type = "b") {
 	switch ($type) {
 		case "Gb":
-	        $factor = 1000 * 1000 * 1000;
+	        $factor = 1024 * 1024 * 1024;
 			break;
 		case "Mb":
-	        $factor = 1000 * 1000;
+	        $factor = 1024 * 1024;
 			break;
 		case "Kb":
-	        $factor = 1000;
+	        $factor = 1024;
 			break;
 		case "b":
 		default:

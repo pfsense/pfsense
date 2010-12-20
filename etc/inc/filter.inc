@@ -1998,7 +1998,7 @@ function filter_rules_generate() {
 			$cpinterface = implode(" ", $cpiflist);
 			$cpaddresses = implode(" ", $cpiplist);
 			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
+			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any port { 8000 8001 80 } to any flags any keep state(sloppy)\n";
 		}
 	}
 	/* relayd */

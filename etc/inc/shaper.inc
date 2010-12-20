@@ -2943,12 +2943,12 @@ class dnpipe_class extends dummynet_class {
 
         function build_form() { 
 		$form = "<tr><td valign=\"center\" class=\"vncellreq\"><br>";
-                $form .= "Enable/Disable";
+                $form .= "Enable";
                 $form .= "</td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its children</span>";
+                $form .= " ><span class=\"vexpl\"> Enable limiter and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";

@@ -69,6 +69,9 @@ if (isset($_POST['id']))
 if (isset($id) && $a_laggs[$id]) {
 	$pconfig['laggif'] = $a_laggs[$id]['laggif'];
 	$pconfig['members'] = $a_laggs[$id]['members'];
+	$laggiflist = explode(",", $a_laggs[$id]['members']);
+	foreach ($laggiflist as $tmpif)
+		unset($realifchecklist[get_real_interface($tmpif)]);
 	$pconfig['proto'] = $a_laggs[$id]['proto'];
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }

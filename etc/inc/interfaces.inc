@@ -118,10 +118,13 @@ function interface_netgraph_needed($interface = "wan") {
 	}
 
 	$realif = get_real_interface($interface);
-	if ($found == true)
-		pfSense_ngctl_attach(".", $realif);
-	else
+	if ($found == false)
 		pfSense_ngctl_detach("{$realif}:", $realif);
+	/* NOTE: We make sure for this on interface_ppps_configure()
+	 *	no need to do it here agan.
+	 *	else
+	 *		pfSense_ngctl_attach(".", $realif);
+	 */
 }
 
 function interfaces_loopback_configure() {
@@ -1153,6 +1156,7 @@ function interface_ppps_configure($interface) {
 	to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
 	*/
 	foreach($ports as $pid => $port){
+		pfSense_ngctl_attach(".", $port);
 		switch ($ppp['type']) {
 			case "pppoe": 
 				/* Bring the parent interface up */
@@ -1482,7 +1486,7 @@ EOD;
 			conf_mount_ro();
 		}
 	}
-		
+
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/{$ppp['type']}_{$interface}.pid -s ppp {$ppp['type']}client");
 

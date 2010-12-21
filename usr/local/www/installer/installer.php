@@ -767,9 +767,24 @@ function installer_custom() {
 								disksseen++;
 							}
 						}
-					}
 					\$('disktotals').value = tmp_sizedisks;
 					\$('disktotals').disabled = 1;
+					\$('disktotals').setStyle({color:'#000000'});
+					var remaining = parseInt(\$('disktotals').value) - parseInt(\$('totalsize').value);
+						if(remaining == 1) {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#00FF00',
+									color:'#000000'
+								});
+						} else {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#FFFFFF',
+									color:'#000000'
+								});
+						}
+					}
 				}
 			}
 		</script>
@@ -919,8 +934,8 @@ EOF;
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size='8' id='totalsize' name='totalsize'></td></tr>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk capacity total:</td><td><input size='8' id='disktotals' name='disktotals'></td></tr>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='totalsize' name='totalsize'></td></tr>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk capacity total:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='disktotals' name='disktotals'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}

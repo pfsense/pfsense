@@ -117,9 +117,10 @@ function interface_netgraph_needed($interface = "wan") {
 		}
 	}
 
-	$realif = get_real_interface($interface);
-	if ($found == false)
+	if ($found == false) {
+		$realif = get_real_interface($interface);
 		pfSense_ngctl_detach("{$realif}:", $realif);
+	}
 	/* NOTE: We make sure for this on interface_ppps_configure()
 	 *	no need to do it here agan.
 	 *	else

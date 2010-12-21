@@ -705,13 +705,27 @@ function installer_custom() {
 	global $select_txt, $custom_disks;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
+	$disks = installer_find_all_disks();
+	// Pass size of disks down to javascript.
+	$disk_sizes_js_txt = "var disk_sizes = new Array();\n";
+	foreach($disks as $disk) 
+		$disk_sizes_js_txt .= "disk_sizes['{$disk['disk']}'] = '{$disk['size']}';\n";
 	head_html();
 	body_html();
 	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
+			Array.prototype.in_array = function(p_val) {
+				for(var i = 0, l = this.length; i < l; i++) {
+					if(this[i] == p_val) {
+						return true;
+					}
+				}
+				return false;
+			}
 			function row_helper_dynamic_custom() {
 				var totalsize = 0;
+				{$disk_sizes_js_txt}
 				// Run through all rows and process data
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('fstype' + x)) {
@@ -740,6 +754,22 @@ function installer_custom() {
 						\$('totalsize').value = totalsize;
 					}
 					\$('totalsize').disabled = 1;
+				}
+				if(\$('disktotals')) {
+					var disks_seen = new Array();
+					var tmp_sizedisks = 0;
+					var disksseen = 0;
+					for(var xx = 0; xx<99; xx++) {
+						if(\$('disk' + xx)) {
+							if(!disks_seen.in_array(\$('disk' + xx).value)) {
+								tmp_sizedisks += parseInt(disk_sizes[\$('disk' + xx).value]);
+								disks_seen[disksseen] = \$('disk' + xx).value;
+								disksseen++;
+							}
+						}
+					}
+					\$('disktotals').value = tmp_sizedisks;
+					\$('disktotals').disabled = 1;
 				}
 			}
 		</script>
@@ -797,7 +827,6 @@ function installer_custom() {
 												</div>
 EOF;
 	ob_flush();
-	$disks = installer_find_all_disks();
 	if(file_exists("/tmp/webInstaller_disk_bootmanager.txt"))
 		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 	if($bootmanager == "none") 
@@ -890,7 +919,8 @@ EOF;
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size=\"8\" id='totalsize' name='totalsize'></td></tr>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size='8' id='totalsize' name='totalsize'></td></tr>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk capacity total:</td><td><input size='8' id='disktotals' name='disktotals'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}

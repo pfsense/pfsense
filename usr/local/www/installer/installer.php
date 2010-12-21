@@ -771,7 +771,7 @@ function installer_custom() {
 					\$('disktotals').disabled = 1;
 					\$('disktotals').setStyle({color:'#000000'});
 					var remaining = parseInt(\$('disktotals').value) - parseInt(\$('totalsize').value);
-						if(remaining == 1) {
+						if(remaining == disksseen) {
 							if(\$('totalsize'))
 								\$('totalsize').setStyle({
 									background:'#00FF00',

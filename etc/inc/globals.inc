@@ -110,7 +110,7 @@ $g = array(
 
 // Loop through and set vlan_long_frame VLAN_MTU
 $vlan_native_supp = get_nics_with_capabilities("vlanmtu");
-$g['vlan_long_frame'] = array_merge(array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg"), $vlan_native_support);
+$g['vlan_long_frame'] = array_merge(array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg"), $vlan_native_supp);
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");

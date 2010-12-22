@@ -824,7 +824,7 @@ include("head.inc");
 					?>
 				<tr>
 				<td>
-					<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld" id="number<?php echo $counter; ?>" size="10" value="<?=htmlspecialchars($number);?>" />
+					<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld unknown" id="number<?php echo $counter; ?>" size="10" value="<?=htmlspecialchars($number);?>" />
 				</td>
 				<td>
 					<select name="itemtype<?php echo $counter; ?>" class="formselect" id="itemtype<?php echo $counter; ?>">
@@ -838,7 +838,7 @@ include("head.inc");
 					</select>
 				</td>
 				<td>
-					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="40" value="<?=htmlspecialchars($value);?>" />
+					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld unknown" id="value<?php echo $counter; ?>" size="40" value="<?=htmlspecialchars($value);?>" />
 				</td>
 				<td>
 					<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>

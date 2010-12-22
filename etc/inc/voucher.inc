@@ -34,6 +34,8 @@
 */
 
 /* include all configuration functions */
+if(!function_exists('captiveportal_syslog'))
+	require_once("captiveportal.inc");
 
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config;

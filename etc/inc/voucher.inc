@@ -168,7 +168,7 @@ function voucher_auth($voucher_received, $test = 0) {
                     $mask = 1 << ($nr % 8);
                     if (ord($bitstring[$roll][$pos]) & $mask) {
                         $test_result[] = "$voucher ($roll/$nr) already used and expired";
-						log_error("$voucher ($roll/$nr) already used and expired");
+						captiveportal_syslog("$voucher ($roll/$nr) already used and expired");
                         $total_minutes = -1;    // voucher expired
                         $error++;
                     } else {
@@ -180,12 +180,12 @@ function voucher_auth($voucher_received, $test = 0) {
                 }
             } else {
                 $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
-				log_error("$voucher ($roll/$nr): not found on any registererd Roll");
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
             }
         } else {
             // hmm, thats weird ... not what I expected
             $test_result[] = "$voucher invalid: $result !!";
-			log_error("$voucher invalid: $result !!");
+			captiveportal_syslog("$voucher invalid: $result !!");
             $error++;
         }
     }
@@ -278,7 +278,7 @@ function voucher_configure() {
         $pubkey = base64_decode($config['voucher']['publickey']);
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
         if (!$fd) {
-            log_error("Voucher error: cannot write voucher.public\n");
+            captiveportal_syslog("Voucher error: cannot write voucher.public\n");
 	   		unlock($voucherlck);
             return 1;
         }

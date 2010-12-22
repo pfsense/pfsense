@@ -1,6 +1,8 @@
 <?php
 /*
-    Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
+	Copyright (C) 2010 Ermal Luci <ermal.luci@gmail.com>
+	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -140,7 +142,7 @@ function voucher_auth($voucher_received, $test = 0) {
         list($status, $roll, $nr) = explode(" ", $result);
         if ($status == "OK") {
             if (!$first_voucher) {
-		// store first voucher. Thats the one we give the timecredit
+				// store first voucher. Thats the one we give the timecredit
                 $first_voucher = $voucher;
                 $first_voucher_roll = $roll;
             }
@@ -455,7 +457,7 @@ function voucher_save_db_to_config() {
         $rollent['used'] = base64_encode($bitmask);
         $active_vouchers = voucher_read_active_db($roll);
         $db = array();
-	$dbi = 1;
+		$dbi = 1;
         foreach($active_vouchers as $voucher => $line) {
             list($timestamp,$minutes) = explode(",", $line);
             $activent['voucher'] = $voucher;

@@ -1,6 +1,6 @@
 <?php
 /*
-	installer.php (pfSense installer)
+	installer.php (pfSense webInstaller)
 	part of pfSense (http://www.pfsense.com/)
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
@@ -82,6 +82,8 @@ function easy_install($fstype = "UFS+S") {
 	$tmp_array['mountpoint'] = "/";
 	$tmp_array['fstype'] = $fstype;
 	$disk_setup[] = $tmp_array;
+	unset($tmp_array);
+	$tmp_array = array();
 	// Build the disk layout for SWAP
 	$tmp_array['disk'] = $first_disk;
 	$tmp_array['size'] = $swap_size;
@@ -99,11 +101,11 @@ function easy_install($fstype = "UFS+S") {
 function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 	$diskareas = "";
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
-	if(!$fd) {
+	if(!$fd) 
 		return true;
-	}
 	if($bootmanager == "") 
 	 	$bootmanager = "none";
+	// Yes, -1.  We ++ early in loop.
 	$numdisks = -1;
 	$lastdisk = "";
 	$diskdefs = "";
@@ -347,7 +349,7 @@ function update_installer_status_win($status) {
 	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
 	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
-	echo "</script>";
+	echo "</script>\n";
 }
 
 function begin_install() {
@@ -630,6 +632,7 @@ EOFAMBASDF;
 	page_table_end();
 	end_html();
 	write_out_pc_sysinstaller_config($disks, $bootmanager);
+	// Serialize layout to disk so it can be read in later.
 	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disks));
 	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
 }
@@ -902,13 +905,13 @@ function installer_custom() {
 												</div>
 EOF;
 	ob_flush();
+	// Read bootmanager setting from disk if found
 	if(file_exists("/tmp/webInstaller_disk_bootmanager.txt"))
 		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 	if($bootmanager == "none") 
 		$noneselected = " SELECTED";
 	if($bootmanager == "bsd") 
 		$bsdeselected = " SELECTED";
-
 	if(!$disks)  {
 		$custom_txt = gettext("ERROR: Could not find any suitable disks for installation.");
 	} else {

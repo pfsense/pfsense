@@ -240,7 +240,7 @@ function get_dates($curperiod, $graph) {
 					break;
 			}
 			$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
-			if(($offset != 0) {
+			if($offset != 0) {
 				$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
 			}
 			break;

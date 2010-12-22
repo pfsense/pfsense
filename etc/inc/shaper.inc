@@ -122,20 +122,20 @@ function get_bandwidthtype_scale($type)
 {
         switch ($type) {
         case "Gb":
-                $factor = 1000 * 1000 * 1000;
+                $factor = 1024 * 1024 * 1024;
         	break;
         case "Mb":
-                $factor = 1000 * 1000;
+                $factor = 1024 * 1024;
         	break;
         case "Kb":
-                $factor = 1000;
+                $factor = 1024;
         	break;
         case "b":
         default:
                 $factor = 1;
         	break;
         }
-        return floatval($factor);
+        return intval($factor);
 }
 
 function get_hfsc_bandwidth($object, $bw) 

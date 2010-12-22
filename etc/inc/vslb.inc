@@ -288,9 +288,6 @@ function relayd_configure() {
 
 }
 
-<<<<<<< HEAD
-?>
-=======
 function get_lb_redirects() {
 /*
 # relayctl show summary

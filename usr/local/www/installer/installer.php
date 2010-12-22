@@ -794,6 +794,7 @@ function installer_custom() {
 								});							
 						}
 						if(\$('availalloc')) {
+							\$('availalloc').disabled = 1;
 							\$('availalloc').value = remaining;
 								\$('availalloc').setStyle({
 									background:'#FFFFFF',

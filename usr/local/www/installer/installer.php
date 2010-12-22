@@ -54,8 +54,46 @@ switch ($_REQUEST['state']) {
 	case "verify_before_install":
 		verify_before_install();
 		exit;
+	case "easy_install_ufs":
+		easy_install("UFS+S");
+		exit;
+	case "easy_install_ufs":
+		easy_install("ZFS");
+		exit;
+
 	default:
 		installer_main();	
+}
+
+function easy_install($fstype = "UFS+S") {
+	// Calculate swap and disk sizes
+	$disks = installer_find_all_disks();
+	$memory = get_memory();
+	$swap_size = $memory[0] * 2;
+	$first_disk = trim(installer_find_first_disk());
+	$disk_info = pcsysinstall_get_disk_info($first_disk);
+	$size = $disk_info['size'];
+	$first_disk_size = $size - $swap_size;
+	$disk_setup = array();
+	$tmp_array = array();
+	// Build the disk layout for /
+	$tmp_array['disk'] = $first_disk;
+	$tmp_array['size'] = $first_disk_size;
+	$tmp_array['mountpoint'] = "/";
+	$tmp_array['fstype'] = $fstype;
+	$disk_setup[] = $tmp_array;
+	// Build the disk layout for SWAP
+	$tmp_array['disk'] = $first_disk;
+	$tmp_array['size'] = $swap_size;
+	$tmp_array['mountpoint'] = "none";
+	$tmp_array['fstype'] = "SWAP";
+	$disk_setup[] = $tmp_array;
+	unset($tmp_array);
+	$bootmanager = "bsd";
+	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disk_setup));
+	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
+	Header("Location: installer.php?state=verify_before_install");
+	exit;
 }
 
 function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
@@ -452,13 +490,14 @@ function verify_before_install() {
 		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 		$restored_layout_from_file = true;
 		$restored_layout_txt = "The previous disk layout was restored from disk";
+	} else {
+		$disks = array();
 	}
 	if(!$bootmanager) 
 		$bootmanager = $_REQUEST['bootmanager'];
 	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	$disks = array();
 	// Loop through posted items and create an array
 	for($x=0; $x<99; $x++) { // XXX: Make this more optimal
 		if(!$_REQUEST['fstype' . $x])
@@ -1034,8 +1073,8 @@ function installer_main() {
 	body_html();
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
-	//	if(file_exists("/boot/gptzfsboot")) 
-	//		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype0=ZFS&size=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+	if(file_exists("/boot/gptzfsboot")) 
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=easy_install_zfs\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">
@@ -1068,9 +1107,7 @@ EOF;
 
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-<!--
-															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
--->
+															<a href="installer.php?state=easy_install_ufs">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">

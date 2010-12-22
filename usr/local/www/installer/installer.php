@@ -78,10 +78,11 @@ function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 		if($disk <> $lastdisk) {
 			$lastdisk = $disk;
 			$numdisks++;
+			$diskdefs .= "# disk {$disk}\n";
 			$diskdefs .= "disk{$numdisks}={$disk}\n";
 			$diskdefs .= "partition=all\n";
 			$diskdefs .= "bootManager={$bootmanager}\n";
-			$diskdefs .= "commitDiskPart\n";
+			$diskdefs .= "commitDiskPart\n\n";
 		}
 		$diskareas .= "disk{$numdisks}-part={$fstype} {$size} {$mountpoint} \n";
 		if($encpass)

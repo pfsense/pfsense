@@ -177,6 +177,7 @@ function pcsysinstall_get_disk_info($diskname) {
 				if($di_s[0])
 					$tmp_array[$di_s[0]] = $di_s[1];
 			}
+			$tmp_array['size']--;
 			$tmp_array['disk'] = trim($disks_info[0]);
 			$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
 			return $tmp_array;
@@ -200,6 +201,7 @@ function installer_find_all_disks() {
 			if($di_s[0])
 				$tmp_array[$di_s[0]] = $di_s[1];
 		}
+		$tmp_array['size']--;
 		$tmp_array['disk'] = trim($disks_info[0]);
 		$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
 		$disks_array[] = $tmp_array;
@@ -771,7 +773,7 @@ function installer_custom() {
 					\$('disktotals').disabled = 1;
 					\$('disktotals').setStyle({color:'#000000'});
 					var remaining = parseInt(\$('disktotals').value) - parseInt(\$('totalsize').value);
-						if(remaining == disksseen) {
+						if(remaining == 0) {
 							if(\$('totalsize'))
 								\$('totalsize').setStyle({
 									background:'#00FF00',
@@ -788,6 +790,13 @@ function installer_custom() {
 							if(\$('totalsize'))
 								\$('totalsize').setStyle({
 									background:'#FF0000',
+									color:'#000000'
+								});							
+						}
+						if(\$('availalloc')) {
+							\$('availalloc').value = remaining;
+								\$('availalloc').setStyle({
+									background:'#FFFFFF',
 									color:'#000000'
 								});							
 						}
@@ -912,8 +921,6 @@ EOF;
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];
 		$first_disk_size = $size - $swap_size;
-		// Decreate by 1 megabyte as some disks will fail
-		$first_disk_size--;
 
 		// Debugging
 		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
@@ -941,6 +948,7 @@ EOF;
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
+		// Total allocation box
 		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='totalsize' name='totalsize'></td>";
 		// Add row button
 		$custom_txt .= "</td><td>&nbsp;</td><td>";
@@ -949,9 +957,10 @@ EOF;
 		$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
 		$custom_txt .= "</div>";
 		$custom_txt .= "</td></tr>";	
-
-
+		// Disk capacity box
 		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk(s) capacity total:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='disktotals' name='disktotals'></td></tr>";
+		// Remaining allocation box
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Available space for allocation:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='availalloc' name='availalloc'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}
@@ -991,7 +1000,6 @@ EOF;
 									<br/>* Sizes are in megabytes.
 									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
 									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
-									<br/>* Leave at least one megabyte <strong>unallocated on each disk</strong> to avoid errors
 									{$restored_layout_txt}
 								</span>
 								</strong>

@@ -731,6 +731,8 @@ function installer_custom() {
 				// Run through all rows and process data
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('fstype' + x)) {
+						if(\$('size' + x).value == '')
+							\$('size' + x).value = disk_sizes[\$('disk' + x).value];
 						var fstype = \$F('fstype' + x);
 						if(fstype.substring(fstype.length - 4) == ".eli") {
 							\$('encpass' + x).disabled = 0;

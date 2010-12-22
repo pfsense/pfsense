@@ -39,29 +39,20 @@ function setup_routed() {
 	if (isset($config['installedpackages']['routed']['config'][0]['enable']) &&
 		$config['installedpackages']['routed']['config'][0]['enable'] == "on") {
 		/* if user selected individual interfaces */
-		$ifdescrs = get_configured_interface_with_descr();
 		$ifarr = explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']);
-                if (count($ifarr) != 0) {
-			foreach($ifdescrs as $ifdescr => $ifname) {
-				if (in_array($ifname, $ifarr)) {
-					$gw .= setup_etc_gateways($ifdescr, 'enable');
-				} else {
-					$gw .= setup_etc_gateways($ifdescr, 'disable');
-				}
+                if (!empty($ifarr)) {
+			foreach($ifarr as $ifname) {
+				$gw .= setup_etc_gateways($ifname, 'enable');
 			}
-		} else {
+		} else
 			/* setup for all interfaces */
 			$gw = setup_etc_gateways();
-		}
 		conf_mount_rw();
-		$fd = fopen("/etc/gateways", "w");
-		fwrite($fd, $gw);
-		fclose($fd);
+		file_put_contents("/etc/gateways", $gw);
 		conf_mount_ro();
 		restart_routed();
-	} else {
+	} else
 		stop_routed();
-	}
 }
 
 function setup_etc_gateways($iface="", $mode="") {
@@ -70,7 +61,7 @@ function setup_etc_gateways($iface="", $mode="") {
 	$ret = "";
 	if ($iface != "") {
 		$realif=convert_friendly_interface_to_real_interface_name($iface);
-		if ($realif)
+		if (!empty($realif))
 			$ret = "if={$realif} ";
 	}
 
@@ -98,12 +89,11 @@ function setup_etc_gateways($iface="", $mode="") {
 }
 
 function start_routed() {
-	mwexec("/sbin/routed");
+	mwexec_bg("/sbin/routed");
 }
 
 function stop_routed() {
-	if(isvalidproc("routed"))
-		mwexec("killall routed");
+	killbyname("routed");
 }
 
 function restart_routed() {

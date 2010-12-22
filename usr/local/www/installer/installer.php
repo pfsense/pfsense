@@ -934,8 +934,17 @@ EOF;
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='totalsize' name='totalsize'></td></tr>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk capacity total:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='disktotals' name='disktotals'></td></tr>";
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='totalsize' name='totalsize'></td>";
+		// Add row button
+		$custom_txt .= "</td><td>&nbsp;</td><td>";
+		$custom_txt .= "<div id=\"addrowbutton\">";
+		$custom_txt .= "<a onclick=\"javascript:addRowTo('maintable', 'formfldalias'); return false;\" href=\"#\">";
+		$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
+		$custom_txt .= "</div>";
+		$custom_txt .= "</td></tr>";	
+
+
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk(s) capacity total:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='disktotals' name='disktotals'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}
@@ -1134,14 +1143,8 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		$custom_txt .= "</td>";
 	
 		// Add Rowhelper + button
-		if($rownum == 1) {
-			$custom_txt .= "<td>";
-			$custom_txt .= "<div id=\"addrowbutton\">";
-			$custom_txt .= "<a onclick=\"javascript:addRowTo('maintable', 'formfldalias'); return false;\" href=\"#\">";
-			$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
-			$custom_txt .= "</div>";
-			$custom_txt .= "</td>";	
-		}
+		if($rownum > 0) 
+			$custom_txt .= "<td><a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" alt=\"\" title=\"remove this entry\"/></a></td>";
 
 		$custom_txt .= "</tr>";	
 		return $custom_txt;

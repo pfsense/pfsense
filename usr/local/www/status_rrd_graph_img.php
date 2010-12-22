@@ -78,7 +78,7 @@ if (is_numeric($_GET['end'])) {
 
 /* this should never happen */
 if($end < $start) {
-	log_error("start $start is smaller than end $end")
+	log_error("start $start is smaller than end $end");
         $end = $now;
 }
 

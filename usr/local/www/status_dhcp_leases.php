@@ -354,7 +354,7 @@ foreach ($leases as $data) {
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
                 if ($data['online'] != "online") {
-                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
+                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\" onclick=\"return confirm('" . gettext("Send Wake on LAN packet to this MAC address?") . "')\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
                 } else {
                 	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
                 }

@@ -681,75 +681,69 @@ function apply_all_choosen_items() {
 			$voip = true;
 			$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
 			$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
-			if ($sched != "HFSC") {
-				if ($voipbwunit == "%") 
-					$factor =  $upbw/100;
-				else
-					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
-				$remainbw += $voipbw * $factor;
-			} else
-				$remainbw += 32000; /* 32Kbit/s forHFSC linksharing */
-				//echo "<br/>" .$remainbw . " : hmmm " .intval($config['ezshaper']['step3']["conn{$i}upload"]) ."/". $factor;
-			}
-			if ($config['ezshaper']['step4']['enable']) {
-				$penalty = true;
-				$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-				$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-				if ($penaltybwunit == "%")
+			if ($voipbwunit == "%") 
+				$factor =  $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($voipbwunit);
+			$remainbw += $voipbw * $factor;
+		}
+		if ($config['ezshaper']['step4']['enable']) {
+			$penalty = true;
+			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
+			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+			if ($penaltybwunit == "%")
+				$factor = $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
+			$remainbw += $penaltybw * $factor;
+		} else {
+			$penalty = false;
+			$penaltybw = 0;
+		}
+		if ($config['ezshaper']['step5']['enable']) {
+			$p2p = true;
+			if ($config['ezshaper']['step5']['p2pcatchall']) {
+				$p2pcatchall = true;
+				$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
+				$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+				if ($p2pcatchbwunit == "%")
 					$factor = $upbw/100;
 				else
-					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
-				$remainbw += $penaltybw * $factor;
-				//echo "<br/>".$remainbw . " : hmmm " . ($config['ezshaper']['step4']['bandwidth']) . " / " .$factor;
+					$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
+				$remainbw += $p2pcatchbw * $factor;
 			} else {
-				$penalty = false;
-				$penaltybw = 0;
-			}
-			if ($config['ezshaper']['step5']['enable']) {
-				$p2p = true;
-				if ($config['ezshaper']['step5']['p2pcatchall']) {
-					$p2pcatchall = true;
-					$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-					$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-					if ($p2pcatchbwunit == "%")
-						$factor = $upbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
-					$remainbw += $p2pcatchbw * $factor;
-					//echo "<br/>".$remainbw . " : hmmm " . floatval($config['ezshaper']['step5']['bandwidth']) ."/".$factor;
-				} else {
-					$p2pcatchall = false;
-					$p2pcatchbw = 0;
-				}
-			} else {
-				$p2p = false;
 				$p2pcatchall = false;
 				$p2pcatchbw = 0;
 			}
-			if ($config['ezshaper']['step6']['enable']) {
-				$games = true;
-			} else {
-				$games = false;
-			}
+		} else {
+			$p2p = false;
+			$p2pcatchall = false;
+			$p2pcatchbw = 0;
+		}
+		if ($config['ezshaper']['step6']['enable']) {
+			$games = true;
+		} else {
+			$games = false;
+		}
 			
-			if ($config['ezshaper']['step7']['enable']) {
-				$otherpriority = true;
-			} else  {
-				$otherpriority = false;
-			}	
+		if ($config['ezshaper']['step7']['enable']) {
+			$otherpriority = true;
+		} else  {
+			$otherpriority = false;
+		}	
 
-			$remainbw = round($remainbw / $upbw * 100, 2);
+		$remainbw = round($remainbw / $upbw * 100, 2);
 
-			if (intval($remainbw) > 0 && intval($remainbw) > 30) {
-				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
-				exit;
-			} else {
-				$remainbw = 100 - $remainbw;
-			}
+		if (intval($remainbw) > 0 && intval($remainbw) > 30) {
+			$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
+			exit;
+		} else {
+			$remainbw = 100 - $remainbw;
+		}
 
-                        if ($sched != "PRIQ") {
-                        if ($sched == "CBQ")
+                if ($sched != "PRIQ") {
+                   if ($sched == "CBQ")
                                 $q =& new cbq_queue();
                         else if ($sched == "HFSC")
                                 $q =& new hfsc_queue();

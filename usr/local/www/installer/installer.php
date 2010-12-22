@@ -79,6 +79,9 @@ function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 			$lastdisk = $disk;
 			$numdisks++;
 			$diskdefs .= "disk{$numdisks}={$disk}\n";
+			$diskdefs .= "partition=all\n";
+			$diskdefs .= "bootManager={$bootmanager}\n";
+			$diskdefs .= "commitDiskPart\n";
 		}
 		$diskareas .= "disk{$numdisks}-part={$fstype} {$size} {$mountpoint} \n";
 		if($encpass)
@@ -96,9 +99,6 @@ installMedium=LiveCD
 
 # Set the disk parameters
 {$diskdefs}
-partition=all
-bootManager={$bootmanager}
-commitDiskPart
 
 # Setup the disk label
 # All sizes are expressed in MB

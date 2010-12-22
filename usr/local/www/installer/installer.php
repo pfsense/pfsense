@@ -942,7 +942,7 @@ EOF;
 			}
 		} else {		
 			// Construct the default rows that outline the disks configuration.
-			$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
+			$custom_txt .= return_rowhelper_row("0", "/", "UFS+S", $first_disk, "{$first_disk_size}", "");
 			$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "$swap_size", "");
 		}
 

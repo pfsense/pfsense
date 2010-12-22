@@ -239,7 +239,8 @@ function captiveportal_configure() {
 		$croninterval = $config['captiveportal']['croninterval'] ? $config['captiveportal']['croninterval'] : 60;
 
 		/* double check if the $croninterval is numeric and at least 10 seconds. If not we set it to 60 to avoid problems */
-		if ((!is_numeric($croninterval)) || ($croninterval < 10)) { $croninterval = 60; }
+		if ((!is_numeric($croninterval)) || ($croninterval < 10))
+			$croninterval = 60;
 
 		/* write portal page */
 		if ($config['captiveportal']['page']['htmltext'])
@@ -706,31 +707,32 @@ EOD;
 	return $cprules;
 }
 
-/* remove clients that have been around for longer than the specified amount of time */
-/* db file structure:
-timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time */
-
-/* (password is in Base64 and only saved when reauthentication is enabled) */
+/* remove clients that have been around for longer than the specified amount of time
+ * db file structure:
+ * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time
+ * (password is in Base64 and only saved when reauthentication is enabled)
+ */
 function captiveportal_prune_old() {
-
     global $g, $config;
 
     /* check for expired entries */
-    if ($config['captiveportal']['timeout'])
-        $timeout = $config['captiveportal']['timeout'] * 60;
-    else
+    if (empty($config['captiveportal']['timeout']) ||
+	!is_numeric($config['captiveportal']['timeout']))
         $timeout = 0;
-
-    if ($config['captiveportal']['idletimeout'])
-        $idletimeout = $config['captiveportal']['idletimeout'] * 60;
     else
+        $timeout = $config['captiveportal']['timeout'] * 60;
+
+    if (empty($config['captiveportal']['idletimeout']) ||
+	!is_numeric($config['captiveportal']['idletimeout']))
         $idletimeout = 0;
+    else
+        $idletimeout = $config['captiveportal']['idletimeout'] * 60;
 
     if (!$timeout && !$idletimeout && !isset($config['captiveportal']['reauthenticate']) && 
-		!isset($config['captiveportal']['radiussession_timeout']) && !isset($config['voucher']['enable']))
+	!isset($config['captiveportal']['radiussession_timeout']) && !isset($config['voucher']['enable']))
         return;
 
-    $captiveportallck = lock('captiveportal');
+    $captiveportallck = lock('captiveportal', LOCK_EX);
 
     /* read database */
     $cpdb = captiveportal_read_db();
@@ -766,19 +768,19 @@ function captiveportal_prune_old() {
         }
 
         /* check if the radius idle_timeout attribute has been set and if its set change the idletimeout to this value */
-        $idletimeout = (is_numeric($cpdb[$i][8])) ? $cpdb[$i][8] : $idletimeout;
+        $uidletimeout = (is_numeric($cpdb[$i][8])) ? $cpdb[$i][8] : $idletimeout;
         /* if an idle timeout is specified, get last activity timestamp from ipfw */
-        if (!$timedout && $idletimeout) {
-            $lastact = captiveportal_get_last_activity($cpdb[$i][2]);
-			/*  If the user has logged on but not sent any traffic they will never be logged out.
-			 *  We "fix" this by setting lastact to the login timestamp. 
-			 */
-			$lastact = $lastact ? $lastact : $cpdb[$i][0];
-            if ($lastact && ((time() - $lastact) >= $idletimeout)) {
-                $timedout = true;
-                $term_cause = 4; // Idle-Timeout
-                $stop_time = $lastact; // Entry added to comply with WISPr
-            }
+        if (!$timedout && $uidletimeout) {
+		$lastact = captiveportal_get_last_activity($cpdb[$i][2]);
+		/*  If the user has logged on but not sent any traffic they will never be logged out.
+		 *  We "fix" this by setting lastact to the login timestamp. 
+		 */
+		$lastact = $lastact ? $lastact : $cpdb[$i][0];
+		if ($lastact && ((time() - $lastact) >= $uidletimeout)) {
+			$timedout = true;
+			$term_cause = 4; // Idle-Timeout
+			$stop_time = $lastact; // Entry added to comply with WISPr
+		}
         }
 
 	/* if vouchers are configured, activate session timeouts */
@@ -804,9 +806,7 @@ function captiveportal_prune_old() {
         }
 
         /* do periodic RADIUS reauthentication? */
-        if (!$timedout && isset($config['captiveportal']['reauthenticate']) &&
-            !empty($radiusservers)) {
-
+        if (!$timedout && !empty($radiusservers)) {
             if (isset($config['captiveportal']['radacct_enable'])) {
                 if ($config['captiveportal']['reauthenticateacct'] == "stopstart") {
                     /* stop and restart accounting */
@@ -840,18 +840,20 @@ function captiveportal_prune_old() {
             }
 
             /* check this user against RADIUS again */
-            $auth_list = RADIUS_AUTHENTICATION($cpdb[$i][4], // username
-                                          base64_decode($cpdb[$i][6]), // password
+	    if (isset($config['captiveportal']['reauthenticate'])) {
+		    $auth_list = RADIUS_AUTHENTICATION($cpdb[$i][4], // username
+					  base64_decode($cpdb[$i][6]), // password
                                             $radiusservers,
                                           $cpdb[$i][2], // clientip
                                           $cpdb[$i][3], // clientmac
                                           $cpdb[$i][1]); // ruleno
 
-            if ($auth_list['auth_val'] == 3) {
-                captiveportal_disconnect($cpdb[$i], $radiusservers, 17);
-                captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
-	        $unsetindexes[$i] = $i;
-            }
+		    if ($auth_list['auth_val'] == 3) {
+			captiveportal_disconnect($cpdb[$i], $radiusservers, 17);
+			captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
+			$unsetindexes[$i] = $i;
+		    }
+	    }
         }
     }
     /* This is a kludge to overcome some php weirdness */
@@ -911,7 +913,7 @@ function captiveportal_disconnect_client($id,$term_cause = 1) {
 
 	global $g, $config;
 
-	$captiveportallck = lock('captiveportal');
+	$captiveportallck = lock('captiveportal', LOCK_EX);
 
 	/* read database */
 	$cpdb = captiveportal_read_db();

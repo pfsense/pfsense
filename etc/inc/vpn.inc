@@ -968,7 +968,9 @@ function vpn_netgraph_support() {
 	foreach ($iflist as $iface) {
 		$realif = get_real_interface($iface);
 		/* Get support for netgraph(4) from the nic */
-                pfSense_ngctl_attach(".", $realif);
+		$ifinfo = pfSense_get_interface_addresses($realif);
+		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge")))
+                	pfSense_ngctl_attach(".", $realif);
 	}
 }
 

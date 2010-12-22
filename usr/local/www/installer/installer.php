@@ -784,6 +784,13 @@ function installer_custom() {
 									color:'#000000'
 								});
 						}
+						if(parseInt(\$('totalsize').value) > parseInt(\$('disktotals').value)) {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#FF0000',
+									color:'#000000'
+								});							
+						}
 					}
 				}
 			}

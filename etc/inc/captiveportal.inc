@@ -1132,11 +1132,11 @@ function captiveportal_get_radius_servers() {
                         }
 		}
 
-		unlock('captiveportalradius');
+		unlock($cprdsrvlck);
 		return $radiusservers;
         }
 
-	unlock('captiveportalradius');
+	unlock($cprdsrvlck);
         return false;
 }
 

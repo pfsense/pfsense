@@ -309,6 +309,7 @@ function uninstall_package($pkg_name) {
 		$static_output .= "\tBacking up libraries... ";
 		update_output_window($static_output);
 		exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+		$static_output .= "\n";
 	}
 
 	$id = get_pkg_id($pkg_name);

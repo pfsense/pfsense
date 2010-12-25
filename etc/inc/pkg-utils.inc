@@ -505,7 +505,7 @@ function install_package($package, $pkg_info = "") {
 			if($pkg_interface == "console")
 				print "\nERROR! Unable to fetch package configuration file. Aborting package installation.\n";
 			else {
-				$static_output .= "failed!\n\nInstallation aborted.";
+				$static_output .= "failed!\n\nInstallation aborted.\n";
 				update_output_window($static_output);
 				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
 			}

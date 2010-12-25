@@ -829,7 +829,7 @@ function delete_package_xml($pkg) {
 	conf_mount_rw();
 
 	// Back up /usr/local/lib libraries first
-	$static_output .= "Backing up libraries... ";
+	$static_output .= "\tBacking up libraries... ";
 	update_output_window($static_output);
 	exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
 

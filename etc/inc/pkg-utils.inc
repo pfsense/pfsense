@@ -427,7 +427,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$base_url = substr($base_url, 0, -1);
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
-	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
+	$static_output .= "\n\t" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
 		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
 			$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
@@ -620,7 +620,7 @@ function install_package_xml($pkg) {
 	}
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "\nLoading package configuration... ";
+		$static_output .= "\n\tLoading package configuration... ";
 		update_output_window($static_output);
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
 		$static_output .= "done.\n";
@@ -690,7 +690,7 @@ function install_package_xml($pkg) {
 		 */
 		$missing_include = false;
 		if($pkg_config['include_file'] <> "") {
-			$static_output .= "Loading package instructions...\n";
+			$static_output .= "\tLoading package instructions...\n";
 			update_output_window($static_output);
 			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file']))
@@ -772,7 +772,7 @@ function install_package_xml($pkg) {
 			}
 		}
 	} else {
-		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
+		$static_output .= "\tLoading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);
 		pkg_debug("Unable to load package configuration. Installation aborted.\n");
 		if($pkg_interface <> "console") {
@@ -923,7 +923,7 @@ function delete_package_xml($pkg) {
 		 */
 		$missing_include = false;
 		if($pkg_config['include_file'] <> "") {
-			$static_output .= "Loading package instructions...\n";
+			$static_output .= "\tLoading package instructions...\n";
 			update_output_window($static_output);
 			pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
 			if (file_exists($pkg_config['include_file']))

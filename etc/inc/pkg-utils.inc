@@ -304,6 +304,13 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 function uninstall_package($pkg_name) {
 	global $config, $static_output;
 
+	// Back up /usr/local/lib libraries first
+	if(!file_exists("/tmp/pkg_libs.tgz")) {
+		$static_output .= "\tBacking up libraries... ";
+		update_output_window($static_output);
+		exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+	}
+
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
 		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
@@ -315,6 +322,12 @@ function uninstall_package($pkg_name) {
 		}
 	}
 	delete_package_xml($pkg_name);
+
+	// Restore libraries that we backed up
+	$static_output .= "\tCleaning up... ";
+	update_output_window($static_output);
+	exec("/usr/bin/tar xzPf /tmp/pkg_libs.tgz -C /");
+	@unlink("/tmp/pkg_libs.tgz");	
 }
 
 function force_remove_package($pkg_name) {
@@ -828,13 +841,6 @@ function delete_package_xml($pkg) {
 
 	conf_mount_rw();
 
-	if(!file_exists("/tmp/pkg_libs.tgz")) {
-		// Back up /usr/local/lib libraries first
-		$static_output .= "\tBacking up libraries... ";
-		update_output_window($static_output);
-		exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
-	}
-
 	$pkgid = get_pkg_id($pkg);
 	if ($pkgid == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
@@ -1008,12 +1014,6 @@ function delete_package_xml($pkg) {
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 	}
-
-	// Restore libraries that we backed up
-	$static_output .= "\tCleaning up... ";
-	update_output_window($static_output);
-	exec("/usr/bin/tar xzPf /tmp/pkg_libs.tgz -C /");
-	@unlink("/tmp/pkg_libs.tgz");	
 	
 	conf_mount_ro();
 	/* remove config.xml entries */

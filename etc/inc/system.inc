@@ -306,6 +306,9 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
+	/* configure gif interfaces for ipv6 tunnels */
+	interfaces_gif_configure();
+
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;

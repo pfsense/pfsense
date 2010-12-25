@@ -325,7 +325,7 @@ function uninstall_package($pkg_name) {
 	delete_package_xml($pkg_name);
 
 	// Restore libraries that we backed up
-	$static_output .= "\tCleaning up... ";
+	$static_output .= "Cleaning up... ";
 	update_output_window($static_output);
 	exec("/usr/bin/tar xzPf /tmp/pkg_libs.tgz -C /");
 	@unlink("/tmp/pkg_libs.tgz");	
@@ -440,7 +440,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	if (substr($base_url, -1) == "/")
 		$base_url = substr($base_url, 0, -1);
 	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
-	$static_output .= "\n\t" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
+	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
 		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
 			$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
@@ -633,18 +633,18 @@ function install_package_xml($pkg) {
 	}
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "\n\tLoading package configuration... ";
+		$static_output .= "\nLoading package configuration... ";
 		update_output_window($static_output);
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
 		$static_output .= "done.\n";
 		update_output_window($static_output);
-		$static_output .= "\tConfiguring package components...\n";
+		$static_output .= "Configuring package components...\n";
 		if (!empty($pkg_config['filter_rules_needed']))
 			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] = $pkg_config['filter_rules_needed'];
 		update_output_window($static_output);
 		/* modify system files */
 		if(is_array($pkg_config['modify_system']) && is_array($pkg_config['modify_system']['item'])) {
-			$static_output .= "\tSystem files... ";
+			$static_output .= "System files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['modify_system']['item'] as $ms) {
 				if($ms['textneeded']) {
@@ -656,7 +656,7 @@ function install_package_xml($pkg) {
 		}
 		/* download additional files */
 		if(is_array($pkg_config['additional_files_needed'])) {
-			$static_output .= "\tAdditional files... ";
+			$static_output .= "Additional files... ";
 			$static_orig = $static_output;
 			update_output_window($static_output);
 			foreach($pkg_config['additional_files_needed'] as $afn) {
@@ -703,14 +703,14 @@ function install_package_xml($pkg) {
 		 */
 		$missing_include = false;
 		if($pkg_config['include_file'] <> "") {
-			$static_output .= "\tLoading package instructions...\n";
+			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
 			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			else {
 				$missing_include = true;
-				$static_output .= "\tInclude " . basename($pkg_config['include_file']) . " is missing!\n";
+				$static_output .= "Include " . basename($pkg_config['include_file']) . " is missing!\n";
 				update_output_window($static_output);
 				/* XXX: Should undo the steps before this?! */
 				return false;
@@ -718,7 +718,7 @@ function install_package_xml($pkg) {
 		}
 		/* sidebar items */
 		if(is_array($pkg_config['menu'])) {
-			$static_output .= "\tMenu items... ";
+			$static_output .= "Menu items... ";
 			update_output_window($static_output);
 			foreach($pkg_config['menu'] as $menu) {
 				if(is_array($config['installedpackages']['menu']))
@@ -732,7 +732,7 @@ function install_package_xml($pkg) {
 		}
 		/* integrated tab items */
 		if(is_array($pkg_config['tabs']['tab'])) {
-			$static_output .= "\tIntegrated Tab items... ";
+			$static_output .= "Integrated Tab items... ";
 			update_output_window($static_output);
 			foreach($pkg_config['tabs']['tab'] as $tab) {
 				if(is_array($config['installedpackages']['tab']))
@@ -746,7 +746,7 @@ function install_package_xml($pkg) {
 		}
 		/* services */
 		if(is_array($pkg_config['service'])) {
-			$static_output .= "\tServices... ";
+			$static_output .= "Services... ";
 			update_output_window($static_output);
 			foreach($pkg_config['service'] as $service) {
 				if(is_array($config['installedpackages']['service']))
@@ -763,21 +763,21 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		if ($missing_include == false) {
 			if($pkg_config['custom_php_global_functions'] <> "") {
-				$static_output .= "\tExecuting custom_php_global_functions()...";
+				$static_output .= "Executing custom_php_global_functions()...";
 				update_output_window($static_output);
 				eval_once($pkg_config['custom_php_global_functions']);
 				$static_output .= "done.\n";
 				update_output_window($static_output);
 			}
 			if($pkg_config['custom_php_install_command']) {
-				$static_output .= "\tExecuting custom_php_install_command()...";
+				$static_output .= "Executing custom_php_install_command()...";
 				update_output_window($static_output);
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= "done.\n";
 				update_output_window($static_output);
 			}
 			if($pkg_config['custom_php_resync_config_command'] <> "") {
-				$static_output .= "\tExecuting custom_php_resync_config_command()...";
+				$static_output .= "Executing custom_php_resync_config_command()...";
 				update_output_window($static_output);
 				eval_once($pkg_config['custom_php_resync_config_command']);
 				$static_output .= "done.\n";
@@ -785,7 +785,7 @@ function install_package_xml($pkg) {
 			}
 		}
 	} else {
-		$static_output .= "\tLoading package configuration... failed!\n\nInstallation aborted.";
+		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);
 		pkg_debug("Unable to load package configuration. Installation aborted.\n");
 		if($pkg_interface <> "console") {
@@ -815,12 +815,12 @@ function delete_package($pkg) {
 
 
 	if (file_exists("{$vardb}/{$pkg}/+REQUIRED_BY") && count(file("{$vardb}/{$pkg}/+REQUIRED_BY")) > 0) {
-		$static_output .= "\tSkipping package deletion for {$pkg} because it is required by other packages.\n";
+		$static_output .= "Skipping package deletion for {$pkg} because it is required by other packages.\n";
 		update_output_window($static_output);
 		return;
 	} else {
 		if($pkg)
-			$static_output .= "\tStarting package deletion for {$pkg}...";
+			$static_output .= "Starting package deletion for {$pkg}...";
 		update_output_window($static_output);
 	}
 	$info = "";
@@ -855,7 +855,7 @@ function delete_package_xml($pkg) {
 		return;
 	}
 	pkg_debug("Removing {$pkg} package... ");
-	$static_output .= "\tRemoving {$pkg} components...\n";
+	$static_output .= "Removing {$pkg} components...\n";
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
@@ -867,7 +867,7 @@ function delete_package_xml($pkg) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove tab items */
 		if(is_array($pkg_config['tabs'])) {
-			$static_output .= "\tTabs items... ";
+			$static_output .= "Tabs items... ";
 			update_output_window($static_output);
 			if(is_array($pkg_config['tabs']['tab']) && is_array($tabs)) {
 				foreach($pkg_config['tabs']['tab'] as $tab) {
@@ -884,7 +884,7 @@ function delete_package_xml($pkg) {
 		}
 		/* remove menu items */
 		if(is_array($pkg_config['menu'])) {
-			$static_output .= "\tMenu items... ";
+			$static_output .= "Menu items... ";
 			update_output_window($static_output);
 			if (is_array($pkg_config['menu']) && is_array($menus)) {
 				foreach($pkg_config['menu'] as $menu) {
@@ -901,7 +901,7 @@ function delete_package_xml($pkg) {
 		}
 		/* remove services */
 		if(is_array($pkg_config['service'])) {
-			$static_output .= "\tServices... ";
+			$static_output .= "Services... ";
 			update_output_window($static_output);
 			if (is_array($pkg_config['service']) && is_array($services)) {
 				foreach($pkg_config['service'] as $service) {
@@ -929,7 +929,7 @@ function delete_package_xml($pkg) {
 		 */
 		$missing_include = false;
 		if($pkg_config['include_file'] <> "") {
-			$static_output .= "\tLoading package instructions...\n";
+			$static_output .= "Loading package instructions...\n";
 			update_output_window($static_output);
 			pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
 			if (file_exists($pkg_config['include_file']))
@@ -937,7 +937,7 @@ function delete_package_xml($pkg) {
 			else {
 				$missing_include = true;
 				update_output_window($static_output);
-				$static_output .= "\tInclude file " . basename($pkg_config['include_file']) . " could not be found for inclusion.\n";
+				$static_output .= "Include file " . basename($pkg_config['include_file']) . " could not be found for inclusion.\n";
 			}
 		}
 		/* ermal
@@ -953,7 +953,7 @@ function delete_package_xml($pkg) {
 		}
 		/* system files */
 		if(is_array($pkg_config['modify_system']) && is_array($pkg_config['modify_system']['item'])) {
-			$static_output .= "\tSystem files... ";
+			$static_output .= "System files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['modify_system']['item'] as $ms)
 				if($ms['textneeded']) remove_text_from_file($ms['modifyfilename'], $ms['textneeded']);
@@ -963,17 +963,17 @@ function delete_package_xml($pkg) {
 		}
 		/* deinstall commands */
 		if($pkg_config['custom_php_deinstall_command'] <> "") {
-			$static_output .= "\tDeinstall commands... ";
+			$static_output .= "Deinstall commands... ";
 			update_output_window($static_output);
 			if ($missing_include == false) {
 				eval_once($pkg_config['custom_php_deinstall_command']);
 				$static_output .= "done.\n";
 			} else
-				$static_output .= "\n\tNot executing custom deinstall hook because an include is missing.\n";
+				$static_output .= "\nNot executing custom deinstall hook because an include is missing.\n";
 			update_output_window($static_output);
 		}
 		if($pkg_config['include_file'] <> "") {
-                        $static_output .= "\tRemoving package instructions...";
+                        $static_output .= "Removing package instructions...";
                         update_output_window($static_output);
                         pkg_debug("Remove '{$pkg_config['include_file']}'\n");
                         unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
@@ -983,7 +983,7 @@ function delete_package_xml($pkg) {
                 }
 		/* remove all additional files */
 		if(is_array($pkg_config['additional_files_needed'])) {
-			$static_output .= "\tAuxiliary files... ";
+			$static_output .= "Auxiliary files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['additional_files_needed'] as $afn) {
 				$filename = get_filename_from_url($afn['item'][0]);
@@ -998,7 +998,7 @@ function delete_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		/* package XML file */
-		$static_output .= "\tPackage XML... ";
+		$static_output .= "Package XML... ";
 		update_output_window($static_output);
 		unlink_if_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile']);
 		$static_output .= "done.\n";
@@ -1006,7 +1006,7 @@ function delete_package_xml($pkg) {
 	}
 	/* syslog */
 	if(is_array($pkg_info['logging']) && $pkg_info['logging']['logfile_name'] <> "") {
-		$static_output .= "\tSyslog entries... ";
+		$static_output .= "Syslog entries... ";
 		update_output_window($static_output);
 		remove_text_from_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t\t" . $pkg_info['logging']['logfilename']);
 		system_syslogd_start();
@@ -1017,7 +1017,7 @@ function delete_package_xml($pkg) {
 	
 	conf_mount_ro();
 	/* remove config.xml entries */
-	$static_output .= "\tConfiguration... ";
+	$static_output .= "Configuration... ";
 	update_output_window($static_output);
 	unset($config['installedpackages']['package'][$pkgid]);
 	$static_output .= "done.\n";

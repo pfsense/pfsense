@@ -141,10 +141,10 @@ if ($_POST) {
 
 	if (!is_specialnet($_POST['srctype'])) {
                 if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
-                        $input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
+                        $input_errors[] = sprintf(gettext("%s is not a valid internal IP address or alias."), $_POST['src']);
                 }
                 if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
-                        $input_errors[] = gettext("A valid source bit count must be specified.");
+                        $input_errors[] = gettext("A valid internal bit count must be specified.");
                 }
         }
         if (!is_specialnet($_POST['dsttype'])) {
@@ -309,12 +309,12 @@ function typesel_change() {
                   <td width="78%" class="vtable"> 
                     <input name="external" type="text" class="formfldalias" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
                     <br/>
-                    <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  The subnet mask from the source address below will be applied to this IP address."); ?><br>
+                    <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  The subnet mask from the internal address below will be applied to this IP address."); ?><br>
                     <?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?></span>
 			</td>
                 </tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Source"); ?></td>
+                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Internal IP"); ?></td>
                         <td width="78%" class="vtable">
                                 <input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
                                 <strong><?=gettext("not"); ?></strong>

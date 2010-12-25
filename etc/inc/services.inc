@@ -714,12 +714,12 @@ EOD;
 
 	/* fire up dhcpd in a chroot */
 	if(count($dhcpdifs) > 0) {
-		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
+		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group dhcpd -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
 			join(" ", $dhcpdifs));
 	}
 
 	if(count($dhcpdv6ifs) > 0) {
-		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf " .
+		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group dhcpd -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf " .
 			join(" ", $dhcpdv6ifs));
 		mwexec("/usr/sbin/rtadvd " . join(" ", $dhcpdv6ifs));
 	}

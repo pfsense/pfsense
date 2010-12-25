@@ -330,7 +330,7 @@ function typesel_change() {
 <?php
                                                                 $sel = is_specialnet($pconfig['src']); ?>
                                                                 <option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>><?=gettext("any"); ?></option>
-                                                                <option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host"); ?></option>
+                                                                <option value="single"  <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host"); ?></option>
                                                                 <option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
                                                                 <?php if(have_ruleint_access("pptp")): ?>
                                                                 <option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>

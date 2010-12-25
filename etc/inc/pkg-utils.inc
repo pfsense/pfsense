@@ -306,7 +306,7 @@ function uninstall_package($pkg_name) {
 
 	// Back up /usr/local/lib libraries first
 	if(!file_exists("/tmp/pkg_libs.tgz")) {
-		$static_output .= "\tBacking up libraries... ";
+		$static_output .= "Backing up libraries... ";
 		update_output_window($static_output);
 		exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
 		$static_output .= "\n";
@@ -439,7 +439,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$base_url = $priv_url;
 	if (substr($base_url, -1) == "/")
 		$base_url = substr($base_url, 0, -1);
-	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
 	$static_output .= "\n\t" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
@@ -856,7 +855,7 @@ function delete_package_xml($pkg) {
 		return;
 	}
 	pkg_debug("Removing {$pkg} package... ");
-	$static_output .= "Removing {$pkg} components...\n";
+	$static_output .= "\tRemoving {$pkg} components...\n";
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];

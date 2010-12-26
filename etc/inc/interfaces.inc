@@ -3349,7 +3349,7 @@ function find_interface_ipv6($interface, $flush = false)
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
-				if(! stristr("fe80::", $parts[1])) {
+				if(! preg_match("/fe80::/", $parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
 					$ifinfo['subnetbitsv6'] = $parts[3];
 				}

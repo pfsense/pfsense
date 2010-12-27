@@ -47,11 +47,7 @@ else
 if (count($wolcomputers) > 0) {
 	foreach($wolcomputers as $wolent) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
-		$wolifname = $config['interfaces'][$wolent['interface']]['descr'];
-		if ( empty( $wolifname ) ){
-			$wolifname = strtoupper($wolent['interface']);
-		}
-		echo '<td class="listr">' . $wolifname . '</td>' . "\n";
+		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
 		
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		if($is_active == 1) {

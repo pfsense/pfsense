@@ -49,7 +49,7 @@ if (count($wolcomputers) > 0) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		$wolifname = $config['interfaces'][$wolent['interface']]['descr'];
 		if ( empty( $wolifname ) ){
-			$wolifname = ucase($wolent['interface']);
+			$wolifname = strtoupper($wolent['interface']);
 		}
 		echo '<td class="listr">' . $wolifname . '</td>' . "\n";
 		

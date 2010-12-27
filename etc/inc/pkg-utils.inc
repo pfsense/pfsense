@@ -541,7 +541,8 @@ function install_package($package, $pkg_info = "") {
 		$changedesc = "Overwrote previous installation of {$pkg_info['name']}.";
 		$to_output = "overwrite!\n";
 	}
-	/* XXX: Fix inclusion of config.inc that causes data loss! */
+	if(file_exists('/conf/needs_package_sync'))
+		@unlink('/conf/needs_package_sync');
 	conf_mount_ro();
 	write_config();
 	$static_output .= $to_output;

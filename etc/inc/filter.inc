@@ -2068,7 +2068,7 @@ EOD;
 			$cpinterface = implode(" ", $cpiflist);
 			$cpaddresses = implode(" ", $cpiplist);
 			$ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-			$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any port { 8000 8001 80 } to any flags any keep state(sloppy)\n";
+			$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
 		}
 	}
 

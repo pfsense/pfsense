@@ -232,7 +232,7 @@ function get_dates($curperiod, $graph) {
 				$starthour = 0;
 
 			switch($offset) {
-				case 0;
+				case 0:
 					$houroffset = $starthour;
 					break;
 				default:
@@ -251,7 +251,7 @@ function get_dates($curperiod, $graph) {
 			break;
 		case "week":
 			switch($offset) {
-				case 0;
+				case 0:
 					$weekoffset = 0;
 					break;
 				default:

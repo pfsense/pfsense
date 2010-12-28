@@ -696,9 +696,9 @@ function openvpn_resync_all($interface = "") {
 	}
 */
 	if ($interface <> "")
-		log_error("Resyncing openvpn instances configurations for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
+		log_error("Resyncing OpenVPN instances for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
 	else
-		log_error("Resyncing openvpn instances configurations."); 
+		log_error("Resyncing OpenVPN instances."); 
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {

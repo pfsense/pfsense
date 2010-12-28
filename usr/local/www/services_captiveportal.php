@@ -239,6 +239,8 @@ if ($_POST) {
 		
 		if (is_array($_POST['cinterface']))
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
+
+		filter_configure();
 	}
 }
 include("head.inc");

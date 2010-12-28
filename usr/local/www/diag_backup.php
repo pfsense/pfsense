@@ -451,6 +451,13 @@ if ($_POST) {
 									header("Location: interfaces_assign.php");
 									exit;
 								}
+								if (is_interface_vlan_mismatch() == true) {
+									touch("/var/run/interface_mismatch_reboot_needed");
+									clear_subsystem_dirty("restore");
+									convert_config();
+									header("Location: interfaces_assign.php");
+									exit;
+								}
 							} else {
 								$input_errors[] = gettext("The configuration could not be restored.");
 							}

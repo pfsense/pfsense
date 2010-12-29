@@ -54,6 +54,10 @@ if (!is_array($config['nat']['advancedoutbound']['rule'])) {
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
 
+if (!is_array($config['aliases']['alias']))
+	$config['aliases']['alias'] = array();
+$a_aliases = &$config['aliases']['alias'];
+
 $id = $_GET['id'];
 if (isset($_POST['id'])) {
 	$id = $_POST['id'];
@@ -75,6 +79,7 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
+	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
 	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
@@ -149,8 +154,21 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['target'] && !is_ipaddr($_POST['target']) && !isset($_POST['nonat'])) {
+	if ($_POST['target'] && !is_ipaddr($_POST['target']) && !is_subnet($_POST['target']) && !is_alias($_POST['target']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("A valid target IP address must be specified.");
+	}
+
+	/* Verify Pool Options */
+	$poolopts = "";
+	if ($_POST['poolopts']) {
+		if (is_subnet($_POST['target']))
+			$poolopts = $_POST['poolopts'];
+		elseif (is_alias($_POST['target'])) {
+			if (substr($_POST['poolopts'], 0, 11) == "round-robin")
+				$poolopts = $_POST['poolopts'];
+			else
+				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+		}
 	}
 
 	/* if user has selected any as source, set it here */
@@ -184,6 +202,7 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['target'] = (!isset($_POST['nonat'])) ? $_POST['target'] : "";
 		$natent['interface'] = $_POST['interface'];
+		$natent['poolopts'] = $poolopts;
 
 		/* static-port */
 		if(isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
@@ -318,6 +337,16 @@ function proto_change() {
 		document.getElementById("tport_tr").style.display = 'none';
 		document.getElementById("tporttext_tr").style.display = 'none';
 		document.getElementById("tportstatic_tr").style.display = 'none';
+	}
+}
+function poolopts_change() {
+	if ($('target').options[$('target').selectedIndex].text.substring(0,4) == "Host") {
+		$('poolopts_tr').style.display = '';
+	} else if ($('target').options[$('target').selectedIndex].text.substring(0,6) == "Subnet") {
+		$('poolopts_tr').style.display = '';
+	} else {
+		$('poolopts').selectedIndex = 0;
+		$('poolopts_tr').style.display = 'none';
 	}
 }
 //-->
@@ -467,7 +496,7 @@ any)");?></td>
 			<table border="0" cellspacing="1" cellpadding="1">
 			<tr>
 			  <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-			  <td><select name="target" class="formselect">
+			  <td><select name="target" class="formselect" id="target" onChange="poolopts_change();">
 				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>><?=gettext("Interface address");?></option>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
@@ -476,9 +505,9 @@ any)");?></td>
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-				$len = $end - $start;
-
-				for ($i = 0; $i <= $len; $i++):
+				$len = $end - $start; ?>
+				<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?></option>
+			<?php	for ($i = 0; $i <= $len; $i++):
 					$snip = long2ip32($start+$i);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
@@ -487,7 +516,11 @@ any)");?></td>
 				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
 <?php 		endif; endforeach;
 	endif;
-?>
+	foreach ($a_aliases as $alias):
+		if ($alias['type'] != "host")
+			continue; ?>
+				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
+<?php	endforeach; ?>
 				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>><?=gettext("any");?></option>
 			  </select>
 			  </td>
@@ -497,8 +530,30 @@ any)");?></td>
 			<?=gettext("If you want this rule to apply to another IP address than the IP address of the interface chosen above, ".
 			"select it here (you need to define");?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP");?></a> <?=gettext("addresses on the first).");?>
 			 <?=gettext("Also note that if you are trying to redirect connections on the LAN select the \"any\" option.");?>
-			</span>
+			</span><br/>
 			</td></tr>
+			<tr id="poolopts_tr">
+				<td valign="top">Pool Options</td>
+				<td>
+				<select name="poolopts" id="poolopts">
+					<option value=""                           <?php if ($pconfig['poolopts'] == ""                          ) echo "selected"; ?>><?=htmlspecialchars("Default"                        );?></option>
+					<option value="round-robin"                <?php if ($pconfig['poolopts'] == "round-robin"               ) echo "selected"; ?>><?=htmlspecialchars("Round Robin"                    );?></option>
+					<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo "selected"; ?>><?=htmlspecialchars("Round Robin with Sticky Address");?></option>
+					<option value="random"                     <?php if ($pconfig['poolopts'] == "random"                    ) echo "selected"; ?>><?=htmlspecialchars("Random"                         );?></option>
+					<option value="random sticky-address"      <?php if ($pconfig['poolopts'] == "random sticky-address"     ) echo "selected"; ?>><?=htmlspecialchars("Random with Sticky Address"     );?></option>
+					<option value="source-hash"                <?php if ($pconfig['poolopts'] == "source-hash"               ) echo "selected"; ?>><?=htmlspecialchars("Source Hash"                    );?></option>
+					<option value="bitmask"                    <?php if ($pconfig['poolopts'] == "bitmask"                   ) echo "selected"; ?>><?=htmlspecialchars("Bitmask"                        );?></option>
+				</select><br/>
+				<span class="vexpl">
+					<?=gettext("Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.");?><br/>
+					* <?=gettext("Round Robin: Loops through the translation addresses.");?><br/>
+					* <?=gettext("Random: Selects an address from the translation address pool at random.");?><br/>
+					* <?=gettext("Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.");?><br/>
+					* <?=gettext("Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.");?><br/>
+					* <?=gettext("Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.");?><br/>
+				</span><br/>
+				</td>
+			</tr>
 			<tr name="tport_tr" id="tport_tr">
                           <td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
@@ -545,6 +600,7 @@ typesel_change();
 staticportchange();
 nonat_change();
 proto_change();
+poolopts_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>

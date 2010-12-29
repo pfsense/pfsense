@@ -42,6 +42,8 @@
 ##|*MATCH=system_firmware_auto.php*
 ##|-PRIV
 
+$nocsrf = true;
+
 require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 

@@ -1241,7 +1241,8 @@ function filter_nat_rules_generate() {
 				else
 					$natif = $obent['interface'];
 
-				$poolopts = (is_subnet($obent['target']) || is_alias($obent['target'])) ? $obent['poolopts'] : "";
+				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
+				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
 				if (!isset($FilterIflist[$natif]))
 					continue;
@@ -1251,7 +1252,7 @@ function filter_nat_rules_generate() {
 					$obent['sourceport'],
 					$dst,
 					$obent['dstport'],
-					$obent['target'],
+					$obtarget,
 					$obent['natport'],
 					isset($obent['nonat']),
 					isset($obent['staticnatport']),

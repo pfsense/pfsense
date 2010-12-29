@@ -79,6 +79,8 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
+	$pconfig['targetip'] = $a_out[$id]['targetip'];
+	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
 	if (!$pconfig['interface']) {
@@ -154,14 +156,23 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['target'] && !is_ipaddr($_POST['target']) && !is_subnet($_POST['target']) && !is_alias($_POST['target']) && !isset($_POST['nonat'])) {
+	if ($_POST['target'] && !is_ipaddr($_POST['target']) && !is_subnet($_POST['target']) && !is_alias($_POST['target']) && !isset($_POST['nonat']) && !($_POST['target'] == "other-subnet")) {
 		$input_errors[] = gettext("A valid target IP address must be specified.");
+	}
+
+	if ($_POST['target'] == "other-subnet") {
+		if (!is_ipaddr($_POST['targetip'])) {
+			$input_errors[] = gettext("A valid target IP must be specified when using the 'Other Subnet' type.");
+		}
+		if (!is_numericint($_POST['targetip_subnet'])) {
+			$input_errors[] = gettext("A valid target bit count must be specified when using the 'Other Subnet' type.");
+		}
 	}
 
 	/* Verify Pool Options */
 	$poolopts = "";
 	if ($_POST['poolopts']) {
-		if (is_subnet($_POST['target']))
+		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet"))
 			$poolopts = $_POST['poolopts'];
 		elseif (is_alias($_POST['target'])) {
 			if (substr($_POST['poolopts'], 0, 11) == "round-robin")
@@ -201,6 +212,8 @@ if ($_POST) {
 		$natent['sourceport'] = ($protocol_uses_ports) ? $_POST['sourceport'] : "";
 		$natent['descr'] = $_POST['descr'];
 		$natent['target'] = (!isset($_POST['nonat'])) ? $_POST['target'] : "";
+		$natent['targetip'] = (!isset($_POST['nonat'])) ? $_POST['targetip'] : "";
+		$natent['targetip_subnet'] = (!isset($_POST['nonat'])) ? $_POST['targetip_subnet'] : "";
 		$natent['interface'] = $_POST['interface'];
 		$natent['poolopts'] = $poolopts;
 
@@ -342,11 +355,19 @@ function proto_change() {
 function poolopts_change() {
 	if ($('target').options[$('target').selectedIndex].text.substring(0,4) == "Host") {
 		$('poolopts_tr').style.display = '';
+		$('target_network').style.display = 'none';
 	} else if ($('target').options[$('target').selectedIndex].text.substring(0,6) == "Subnet") {
 		$('poolopts_tr').style.display = '';
+		$('target_network').style.display = 'none';
+	} else if ($('target').options[$('target').selectedIndex].text.substring(0,5) == "Other") {
+		$('poolopts_tr').style.display = '';
+		$('target_network').style.display = '';
 	} else {
 		$('poolopts').selectedIndex = 0;
 		$('poolopts_tr').style.display = 'none';
+		$('target_network').style.display = 'none';
+		$('targetip').value = '';
+		$('targetip_subnet').value = '0';
 	}
 }
 //-->
@@ -521,10 +542,23 @@ any)");?></td>
 			continue; ?>
 				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
 <?php	endforeach; ?>
+				<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected"; ?>><?=gettext("Other Subnet (Enter Below)");?></option>
 				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>><?=gettext("any");?></option>
 			  </select>
 			  </td>
 			</tr>
+
+			<tr id="target_network">
+				<td><?=gettext("Other Subnet:");?>&nbsp;&nbsp;</td>
+				<td>
+					<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=htmlspecialchars($pconfig['targetip']);?>">/<select name="targetip_subnet" class="formfld" id="targetip_subnet">
+<?php for ($i = 32; $i >= 0; $i--): ?>
+					<option value="<?=$i;?>"<?php if ($i == $pconfig['targetip_subnet']) echo " selected"; ?>><?=$i;?></option>
+<?php endfor; ?>
+					</select>
+				</td>
+			</tr>
+
 			<tr><td>&nbsp;</td><td>
                      <span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br>
 			<?=gettext("If you want this rule to apply to another IP address than the IP address of the interface chosen above, ".

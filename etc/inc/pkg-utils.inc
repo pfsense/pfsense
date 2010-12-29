@@ -634,7 +634,7 @@ function install_package_xml($pkg) {
 	}
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "\nLoading package configuration... ";
+		$static_output .= "Loading package configuration... ";
 		update_output_window($static_output);
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
 		$static_output .= "done.\n";

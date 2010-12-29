@@ -100,7 +100,7 @@ include("head.inc");
 							<!-- status box -->
 							<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 							<!-- command output box -->
-							<textarea cols="80" rows="25" name="output" id="output" wrap="hard"></textarea>
+							<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 						</center>
 					</td>
 				</tr>

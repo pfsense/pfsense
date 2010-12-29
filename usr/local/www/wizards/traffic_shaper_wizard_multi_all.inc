@@ -39,7 +39,7 @@ function step1_submitphpaction() {
 		$stepid--;
 		return;
 	}			
-	if (intval($_POST['numberofconnections']) < 1) {
+	if (intval($_POST['numberoflocalinterfaces']) < 1) {
 		$savemsg=gettext("The number of connections should be greater than 1.");
 		$stepid--;
 		return;
@@ -67,7 +67,7 @@ function step2_stepbeforeformdisplay() {
 	}
 
 	$numberoflocalinterfaces = intval($config['ezshaper']['step1']['numberoflocalinterfaces']);
-	if ($numberoflocalinterfaces > $numberofinterfaces) {
+	if ($numberoflocalinterfaces > ($numberofinterfaces - $numberofconnections)) {
 		$savemsg=gettext("You have less interfaces than number of connections!");
 		$stepid--;
 		return;
@@ -527,19 +527,21 @@ function step3_stepsubmitphpaction() {
 		}
 		if ($_POST["local{$i}downloadspeed"] == "%") {
 			if (intval($_POST["local{$i}download"]) > 80) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
 				$stepid--;
 				return;
 			}
 		} else {
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
-			$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
-			$input_bw = $factor * floatval($_POST["local{$i}download"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
+			for ($j = 0; $j < $steps; $j++) {
+				$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$j}downloadspeed"]);
+				$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$j}download"]);	
+				$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
+				$input_bw = $factor * floatval($_POST["local{$i}download"]);
+				if ((0.8 * $ifbw) < $input_bw) {
+					$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$j} higher than 80% of the connection.");
+					$stepid--;
+					return;
+				}
 			}
 		}
 	}

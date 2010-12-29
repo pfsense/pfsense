@@ -153,7 +153,7 @@ switch($_GET['mode']) {
 			update_output_window($static_output);
 			filter_configure();
 		}
-		file_put_contents("/tmp{$_GET['pkg']}.info", $static_output);
+		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
 		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
 		break;
 	case "installedinfo":

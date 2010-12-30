@@ -112,9 +112,9 @@ if (!is_array($config['widgets'])) {
 	if(file_exists('/conf/needs_package_sync')) {
 		if($config['installedpackages'] <> '') {
 			conf_mount_rw();
+			@unlink('/conf/needs_package_sync');
 			conf_mount_ro();
 			if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
-				@unlink('/conf/needs_package_sync');
 				header('Location: pkg_mgr_install.php?mode=reinstallall');
 				exit;
 			}

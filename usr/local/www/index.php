@@ -110,14 +110,15 @@ if (!is_array($config['widgets'])) {
 	## User recently restored his config.
 	## If packages are installed lets resync
 	if(file_exists('/conf/needs_package_sync')) {
-		if($config['installedpackages'] <> '') {
-			conf_mount_rw();
-			@unlink('/conf/needs_package_sync');
-			conf_mount_ro();
+		if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
 			if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
 				header('Location: pkg_mgr_install.php?mode=reinstallall');
 				exit;
 			}
+		} else {
+			conf_mount_rw();
+			@unlink('/conf/needs_package_sync');
+			conf_mount_ro();
 		}
 	}
 

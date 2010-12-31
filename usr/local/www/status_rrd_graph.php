@@ -228,7 +228,7 @@ function get_dates($curperiod, $graph) {
 				$starthour = 16;
 			if($curhour < 16)
 				$starthour = 8;
-			if($starthour < 8)                                  
+			if($curhour < 8)                                  
 				$starthour = 0;
 
 			switch($offset) {

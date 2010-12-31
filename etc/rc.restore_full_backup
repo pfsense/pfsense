@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo -n "Checking..."
+if [ `tar tzPf $1 /etc/rc 2>/dev/null` ]; then
+	echo " Backup file looks OK."
+	echo "One moment, restoring ${1}..."
+	tar xzPfU $1 -C / 2>/var/etc/restore_log.txt
+	echo "Restore of $1 complete."
+else
+	echo " Error."
+	echo "File not found or invalid backup file. Available backups:"
+	ls -lah /root | grep backup | more
+fi

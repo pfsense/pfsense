@@ -66,7 +66,11 @@ if ($_GET['cat']) {
 if ($_GET['period']) {
 	$curperiod = $_GET['period'];
 } else {
-	$curperiod = "current";
+	if(! empty($config['rrd']['period'])) {
+		$curperiod = $config['rrd']['period'];
+	} else {
+		$curperiod = "absolute";
+	}
 }
 
 if ($_GET['option']) {
@@ -200,88 +204,102 @@ $custom_databases = array_merge($dbheader_custom, $databases);
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
 $graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
-$periods = array("current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
+$periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
+$graph_length = array(
+	"8hour" => 28800,
+	"day" => 86400,
+	"week" => 604800,
+	"month" => 2764800,
+	"quarter" => 8035200,
+	"year" => 31622400,
+	"4year" => 126489600);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 include("head.inc");
 
 function get_dates($curperiod, $graph) {
+	global $graph_length;
 	$now = time();
 	$end = $now;
-	$curyear = date('Y', $now);
-	$curmonth = date('m', $now);
-	$curweek = date('W', $now);
-	$curweekday = date('N', $now) - 1; // We want to start on monday
-	$curday = date('d', $now);
-	$curhour = date('G', $now);
 
-	switch($curperiod) {
-		case "previous":
-			$offset = -1;
-			break;
-		default:
-			$offset = 0;
-	}
-	switch($graph) {
-		case "8hour":
-			if($curhour < 24)
-				$starthour = 16;
-			if($curhour < 16)
-				$starthour = 8;
-			if($curhour < 8)                                  
-				$starthour = 0;
+	if($curperiod == "absolute") {
+		$start = $end - $graph_length[$graph];
+	} else {
+		$curyear = date('Y', $now);
+		$curmonth = date('m', $now);
+		$curweek = date('W', $now);
+		$curweekday = date('N', $now) - 1; // We want to start on monday
+		$curday = date('d', $now);
+		$curhour = date('G', $now);
 
-			switch($offset) {
-				case 0:
-					$houroffset = $starthour;
-					break;
-				default:
-					$houroffset = $starthour + ($offset * 8);
-					break;
-			}
-			$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
-			if($offset != 0) {
-				$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
-			}
-			break;
-		case "day":
-			$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
-			if($offset != 0)
-				$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
-			break;
-		case "week":
-			switch($offset) {
-				case 0:
-					$weekoffset = 0;
-					break;
-				default:
-					$weekoffset = ($offset * 7) - 7;
-					break;
-			}
-			$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
-			if($offset != 0)
-				$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
-			break;
-		case "month":
-			$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
-			if($offset != 0)
-				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
-			break;
-		case "quarter":
-			$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
-			if($offset != 0)
-				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
-			break;
-		case "year":
-			$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
-			if($offset != 0)
-				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
-			break;
-		case "4year": 
-			$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
-			if($offset != 0)
-				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
-			break;
+		switch($curperiod) {
+			case "previous":
+				$offset = -1;
+				break;
+			default:
+				$offset = 0;
+		}
+		switch($graph) {
+			case "8hour":
+				if($curhour < 24)
+					$starthour = 16;
+				if($curhour < 16)
+					$starthour = 8;
+				if($curhour < 8)
+					$starthour = 0;
+
+				switch($offset) {
+					case 0:
+						$houroffset = $starthour;
+						break;
+					default:
+						$houroffset = $starthour + ($offset * 8);
+						break;
+				}
+				$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
+				if($offset != 0) {
+					$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
+				}
+				break;
+			case "day":
+				$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
+				if($offset != 0)
+					$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
+				break;
+			case "week":
+				switch($offset) {
+					case 0:
+						$weekoffset = 0;
+						break;
+					default:
+						$weekoffset = ($offset * 7) - 7;
+						break;
+				}
+				$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
+				if($offset != 0)
+					$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
+				break;
+			case "month":
+				$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
+				if($offset != 0)
+					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				break;
+			case "quarter":
+				$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
+				if($offset != 0)
+					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				break;
+			case "year":
+				$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
+				if($offset != 0)
+					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				break;
+			case "4year":
+				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
+				if($offset != 0)
+					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				break;
+		}
 	}
 	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
 	$dates = array();

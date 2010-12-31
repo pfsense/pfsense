@@ -1238,7 +1238,7 @@ include("head.inc");
 					}
 ?>
 					</select>
-					<p><strong><?=gettext("Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.");?></strong></p>
+					<p><?=gettext("Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.");?></p>
 				</div>
 			</td>
 		</tr>

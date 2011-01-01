@@ -131,22 +131,25 @@ if ($_POST) {
                 $_POST['dsttype'] = "single";
         }
 
-	if (($_POST['external'] && !is_ipaddroralias($_POST['external'])))
+	/* For external, user can enter only ip's */
+	if (($_POST['external'] && !is_ipaddr($_POST['external'])))
 		$input_errors[] = gettext("A valid external subnet must be specified.");
 
-	/* if user enters an alias and selects "network" then disallow. */
-        if( ($_POST['srctype'] == "network" && is_alias($_POST['src']) )
-         || ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) ) )
+	/* For dst, if user enters an alias and selects "network" then disallow. */
+        if ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) ) 
                 $input_errors[] = gettext("You must specify single host or alias for alias entries.");
 
+	/* For src, user can enter only ip's or networks */
 	if (!is_specialnet($_POST['srctype'])) {
-                if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
-                        $input_errors[] = sprintf(gettext("%s is not a valid internal IP address or alias."), $_POST['src']);
+                if (($_POST['src'] && !is_ipaddr($_POST['src']))) {
+                        $input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
                 }
                 if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
                         $input_errors[] = gettext("A valid internal bit count must be specified.");
                 }
         }
+
+	/* For dst, user can enter ip's, networks or aliases */
         if (!is_specialnet($_POST['dsttype'])) {
                 if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
                         $input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
@@ -481,9 +484,7 @@ if($config['aliases']['alias'] <> "")
 <!--
         var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 
-        var oTextbox1 = new AutoSuggestControl(document.getElementById("external"), new StateSuggestions(addressarray));
-        var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
-        var oTextbox3 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
+        var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
 //-->
 </script>
 <?php include("fend.inc"); ?>

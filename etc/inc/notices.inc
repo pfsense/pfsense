@@ -307,7 +307,7 @@ function notify_via_smtp($message) {
 	if($config['notifications']['smtp']['username'] && 
 	   $config['notifications']['smtp']['password']) {
 		$smtp->authentication_mechanism = "PLAIN";
-		$smtp->username = $config['notifications']['smtp']['username'];
+		$smtp->user = $config['notifications']['smtp']['username'];
 		$smtp->password = $config['notifications']['smtp']['password'];
 	}
 

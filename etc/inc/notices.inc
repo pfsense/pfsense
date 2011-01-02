@@ -283,6 +283,7 @@ function notify_via_smtp($message) {
 			return;
 	}
 
+	require_once("sasl.inc");
 	require_once("smtp.inc");
 
 	$smtp = new smtp_class;

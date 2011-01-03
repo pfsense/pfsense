@@ -103,18 +103,30 @@ function interface_netgraph_needed($interface = "wan") {
 				break;
 		}
 	}
-	if ($found == false && !empty($config['interfaces'][$interface])) {
-		switch ($config['interfaces'][$interface]['ipaddr']) {
-		case "ppp":
-		case "pppoe":
-		case "l2tp":
-		case "pptp":
-			$found = true;
-			break;
-		default:
-			$found = false;
-			break;
-		}
+	if ($found == false) {
+		if (!empty($config['interfaces'][$interface])) {
+			switch ($config['interfaces'][$interface]['ipaddr']) {
+			case "ppp":
+			case "pppoe":
+			case "l2tp":
+			case "pptp":
+				$found = true;
+				break;
+			default:
+				$found = false;
+				break;
+			}
+		} else {
+			$realif = get_real_interface($interface);
+			if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+					if ($realif == $ppp['if']) {
+						$found = true;
+						break;
+					}
+				}
+                        }
+                }
 	}
 
 	if ($found == false) {

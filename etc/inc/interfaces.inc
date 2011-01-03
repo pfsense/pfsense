@@ -2459,7 +2459,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			case 'l2tp':
 			case 'pptp':
 			case 'ppp':
-				interface_bring_down($interface, true);
 				break;
 			default:
 				interface_bring_down($interface);

@@ -7,5 +7,5 @@
 /bin/echo $4 > /tmp/$1_router
 /usr/bin/touch /tmp/$1up
 # reload filter 
-/usr/local/sbin/pfSctl -c 'filter reload'
+/usr/local/sbin/pfSctl -c "interface newip $1"
 exit 0

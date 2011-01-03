@@ -86,12 +86,6 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
-		return 1;
-	}
-
 	$resolvconf = "domain {$syscfg['domain']}\n";
 
 	$havedns = false;
@@ -120,6 +114,12 @@ function system_resolvconf_generate($dynupdate = false) {
 				$havedns = true;
 			}
 		}
+	}
+
+	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+		return 1;
 	}
 
 	fwrite($fd, $resolvconf);
@@ -158,7 +158,7 @@ function get_searchdomains() {
 	$master_list = array();
 	
 	// Read in dhclient nameservers
-	$search_list = split("\n", `/bin/cat /var/etc/searchdomain_* 2>/dev/null`);
+	$search_list = glob("/var/etc/searchdomain_*");
 	if (is_array($search_lists)) {
 		foreach($search_lists as $dns) {
 			if(is_hostname($dns)) 
@@ -174,7 +174,7 @@ function get_nameservers() {
 	$master_list = array();
 	
 	// Read in dhclient nameservers
-	$dns_lists = split("\n", `/bin/cat /var/etc/nameserver_* 2>/dev/null`);
+	$dns_lists = glob("/var/etc/nameserver_*");
 	if (is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {
 			if(is_ipaddr($dns)) 
@@ -185,10 +185,12 @@ function get_nameservers() {
 	// Read in any extra nameservers
 	if(file_exists("/var/etc/nameservers.conf")) {
 		$dns_lists = split("\n", `/bin/cat /var/etc/nameservers.conf`);
-		if(is_array($dns_s))
+		$dns_lists = file("/var/etc/nameservers.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if(is_array($dns_s)) {
 			foreach($dns_s as $dns)
 				if (is_ipaddr($dns))
 					$master_list[] = $dns;
+		}
 	}
 
 	return $master_list;

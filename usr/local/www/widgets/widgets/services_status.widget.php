@@ -29,6 +29,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+$nocsrf = true;
+
 require_once("guiconfig.inc");
 require_once("captiveportal.inc");
 require_once("service-utils.inc");

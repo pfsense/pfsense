@@ -683,7 +683,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
 			<td class="vtable">
 				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> <?= gettext("Enable Dial-on-Demand mode"); ?> 
-				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. " .  
+				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode. Do NOT enable if you want your link to be always up. " .  
 				"The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?> </span>
 			</td>
 		</tr>

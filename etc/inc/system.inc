@@ -184,8 +184,7 @@ function get_nameservers() {
 
 	// Read in any extra nameservers
 	if(file_exists("/var/etc/nameservers.conf")) {
-		$dns_lists = split("\n", `/bin/cat /var/etc/nameservers.conf`);
-		$dns_lists = file("/var/etc/nameservers.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$dns_s = file("/var/etc/nameservers.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if(is_array($dns_s)) {
 			foreach($dns_s as $dns)
 				if (is_ipaddr($dns))

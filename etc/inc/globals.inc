@@ -3,7 +3,7 @@
 /*
     globals.inc
     part of pfSense (www.pfsense.com)
-    Copyright (C) 2004-2006 Scott Ullrich
+    Copyright (C) 2004-2010 Scott Ullrich
 
     Originally Part of m0n0wall
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -159,7 +159,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.log_debug" => "0", 
 	"net.inet.tcp.tso" => "1", 
 	"net.inet.icmp.icmplim" => "0",
-	"vfs.read_max" => "32"
+	"vfs.read_max" => "32",
+	"kern.ipc.maxsockbuf" => "4262144"
 );
 
 $config_parsed = false;

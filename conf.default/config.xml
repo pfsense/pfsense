@@ -135,6 +135,11 @@
 			<tunable>net.inet.tcp.tso</tunable>
 			<value>default</value>
 		</item>
+		<item>
+			<descr>Maximum socket buffer size</descr>
+			<tunable>kern.ipc.maxsockbuf</tunable>
+			<value>default</value>
+		</item>
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

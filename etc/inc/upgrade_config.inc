@@ -713,9 +713,9 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
 		$config['sysctl']['item'][20]['value'] =   "default";
 
-		$config['sysctl']['item'][20]['tunable'] = "kern.ipc.maxsockbuf";
-		$config['sysctl']['item'][20]['descr'] =    "Maximum socket buffer size";
-		$config['sysctl']['item'][20]['value'] =   "default";
+		$config['sysctl']['item'][21]['tunable'] = "kern.ipc.maxsockbuf";
+		$config['sysctl']['item'][21]['descr'] =    "Maximum socket buffer size";
+		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
 }

@@ -583,7 +583,7 @@ EOD;
         <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
-        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option>
+<!--        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option> -->
 		<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
         <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
       </select>

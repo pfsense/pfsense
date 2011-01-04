@@ -160,9 +160,14 @@ function get_searchdomains() {
 	// Read in dhclient nameservers
 	$search_list = glob("/var/etc/searchdomain_*");
 	if (is_array($search_lists)) {
-		foreach($search_lists as $dns) {
-			if(is_hostname($dns)) 
-				$master_list[] = $dns;
+		foreach($search_lists as $fdns) {
+			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (!is_array($contents))
+				continue;
+			foreach ($contents as $dns) {
+				if(is_hostname($dns)) 
+					$master_list[] = $dns;
+			}
 		}
 	}
 
@@ -176,9 +181,14 @@ function get_nameservers() {
 	// Read in dhclient nameservers
 	$dns_lists = glob("/var/etc/nameserver_*");
 	if (is_array($dns_lists)) {
-		foreach($dns_lists as $dns) {
-			if(is_ipaddr($dns)) 
-				$master_list[] = $dns;
+		foreach($dns_lists as $fdns) {
+			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (!is_array($contents))
+				continue;
+			foreach ($contents as $dns) {
+				if(is_ipaddr($dns)) 
+					$master_list[] = $dns;
+			}
 		}
 	}
 

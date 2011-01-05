@@ -2,11 +2,6 @@
 
 /etc/rc.conf_mount_rw
 
-# Stop any packages prior to upgrade
-for FILE in /usr/local/etc/rc.d/*.sh; do
-	$FILE stop
-done
-
 # Record the previous version
 PRIOR_VERSION=`uname -r | cut -d'.' -f1`
 echo $PRIOR_VERSION > /tmp/pre_upgrade_version

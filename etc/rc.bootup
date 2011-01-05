@@ -381,6 +381,16 @@ activate_powerd();
 if (file_exists("/sbin/shutdown.old"))
 	@unlink("/sbin/shutdown.old");
 
+/* Resync / Reinstall packages if need be */
+if(file_exists('/conf/needs_package_sync')) {
+	if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
+		if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+			pkg_reinstall_all();
+			unlink('/conf/needs_package_sync');
+		}
+	}
+}
+
 /* done */
 unset($g['booting']);
 

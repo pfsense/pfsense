@@ -205,12 +205,12 @@ if ($sigchk == 1) {
 
 if ($exitstatus) {
         update_status($sig_warning);
-        update_output_window(gettext("Update cannot continue"));
+        update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
 		require("fend.inc");
         exit;
 } else if ($sigchk == 2) {
         update_status("Upgrade in progress...");
-        update_output_window("\n" . gettext("Image has no signature but the system configured to allow unsigned images.") . "\n");
+        update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
 }
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {

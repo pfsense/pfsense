@@ -880,7 +880,9 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			/* XXX: This seems to not work in ipsec-tools 0.7.3 but a HUP signal is equivalent. */
+			//mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			mwexec("/bin/pkill -HUP -x racoon");
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {

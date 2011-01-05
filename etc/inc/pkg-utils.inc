@@ -1100,8 +1100,6 @@ function pkg_reinstall_all() {
 	global $g, $config;
 	$pkg_id = 0;
 	$todo = array();
-	if ($config['installedpackages']['package'])
-		exec("rm -rf /var/db/pkg/*");
 	if (is_array($config['installedpackages']['package']))
 		foreach($config['installedpackages']['package'] as $package)
 			$todo[] = array('name' => $package['name'], 'version' => $package['version']);

@@ -166,8 +166,6 @@ switch($_GET['mode']) {
 			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
 		break;
 	case "reinstallall":
-		if ($config['installedpackages']['package'])
-			exec("rm -rf /var/db/pkg/*");
 		if (is_array($config['installedpackages']['package']))
 			foreach($config['installedpackages']['package'] as $package)
 				$todo[] = array('name' => $package['name'], 'version' => $package['version']);

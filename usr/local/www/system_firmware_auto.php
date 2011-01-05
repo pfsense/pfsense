@@ -206,10 +206,12 @@ if ($sigchk == 1) {
 if ($exitstatus) {
         update_status($sig_warning);
         update_output_window(gettext("Update cannot continue"));
-	require("fend.inc");
+		require("fend.inc");
         exit;
-} else if ($sigchk == 2)
+} else if ($sigchk == 2) {
+        update_status("Upgrade in progress...");
         update_output_window("\n" . gettext("Image has no signature but the system configured to allow unsigned images.") . "\n");
+}
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 	update_status(gettext("The image file is corrupt."));

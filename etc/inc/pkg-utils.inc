@@ -98,7 +98,7 @@ conf_mount_ro();
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	exec("/usr/sbin/pkg_delete -x {$packagestring}");
+	exec("/usr/sbin/pkg_delete -x {$packagestring} 2>>/tmp/pkg_delete_errors.txt");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -222,6 +222,8 @@ function resync_all_package_configs($show_message = false) {
  *				package is installed.
  */
 function is_freebsd_pkg_installed($pkg) {
+	if(!$pkg) 
+		return;
 	$output = "";
 	exec("/usr/sbin/pkg_info -E \"{$pkg}*\"", $output, $retval);
 
@@ -825,6 +827,9 @@ function does_package_depend($pkg) {
 
 function delete_package($pkg) {
 	global $config, $g, $static_output, $vardb;
+
+	if(!$pkg) 
+		return;
 
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 

@@ -814,7 +814,6 @@ function delete_package($pkg) {
 
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 
-
 	if (file_exists("{$vardb}/{$pkg}/+REQUIRED_BY") && count(file("{$vardb}/{$pkg}/+REQUIRED_BY")) > 0) {
 		$static_output .= "Skipping package deletion for {$pkg} because it is required by other packages.\n";
 		update_output_window($static_output);

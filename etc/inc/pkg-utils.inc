@@ -191,28 +191,34 @@ function get_pkg_sizes($pkgs = 'all') {
  * This function may also print output to the terminal indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	global $config, $pkg_interface;
+	global $config, $pkg_interface, $bootup;
 
 	log_error("Resyncing configuration for all packages.");
+
 	if (!is_array($config['installedpackages']['package']))
 		return;
+
 	if($show_message == true)
 		echo "Syncing packages:";
 
 	conf_mount_rw();
+
 	foreach($config['installedpackages']['package'] as $idx => $package) {
 		if (empty($package['name']))
 			continue;
 		if($show_message == true)
 			echo " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
-		stop_service($package['name']);
+		if($bootup != true)
+			stop_service($package['name']);
 		sync_package($idx, true, true);
 		if($pkg_interface == "console") 
 			echo "\nSyncing packages:";
 	}
+
 	if($show_message == true)
 		echo " done.\n";
+
 	@unlink("/conf/needs_package_sync");
 	conf_mount_ro();
 }
@@ -835,7 +841,7 @@ function delete_package($pkg) {
 
 	// If package has dependencies then skip it
 	if(does_package_depend($pkg)) {
-		$static_output .= "Skipping package deletion for {$pkg} because it is required by other packages.\n";
+		$static_output .= "Skipping package deletion for {$pkg} because it is a dependency.\n";
 		update_output_window($static_output);
 		return;		
 	} else {
@@ -860,7 +866,7 @@ function delete_package($pkg) {
 }
 
 function delete_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface;
+	global $g, $config, $static_output, $pkg_interface, $bootup;
 
 	conf_mount_rw();
 
@@ -930,7 +936,8 @@ function delete_package_xml($pkg) {
 				foreach($pkg_config['service'] as $service) {
 					foreach($services as $key => $instservice) {
 						if($instservice['name'] == $service['name']) {
-							stop_service($service['name']);
+							if($bootup != true)
+								stop_service($service['name']);
 							unset($services[$key]);
 						}
 					}

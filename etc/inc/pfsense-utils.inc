@@ -1469,7 +1469,7 @@ function read_body($ch, $string) {
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
 					if($pkg_interface == "console") {
-						if(substr($downloadProgress,2,1) == "0") {
+						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
                         	$tostatus = $static_status . $downloadProgress . "%";
                         	update_status($tostatus);
 						}
@@ -1479,7 +1479,7 @@ function read_body($ch, $string) {
 					}
                 } else {
 					if($pkg_interface == "console") {
-						if(substr($downloadProgress,2,1) == "0") {
+						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
                         	$tooutput = $static_output . $downloadProgress . "%";
                         	update_output_window($tooutput);
 						}

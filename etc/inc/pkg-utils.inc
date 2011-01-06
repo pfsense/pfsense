@@ -451,7 +451,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			update_output_window($static_output);
 			return false;
 		} else {
-			$static_output .= " downloaded from {$osname} repository instead of provided one.\n";
+			$static_output .= " [{$osname} repository]\n";
 			update_output_window($static_output);
 		}
 	}

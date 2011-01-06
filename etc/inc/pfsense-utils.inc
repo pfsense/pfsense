@@ -1458,6 +1458,7 @@ function read_header($ch, $string) {
 
 function read_body($ch, $string) {
         global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
+		global $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
         if($file_size > 0) {
@@ -1467,11 +1468,25 @@ function read_body($ch, $string) {
                 $downloadProgress = 0;
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
+					if($pkg_interface == "console") {
+						if(substr($downloadProgress,2,1) == "0") {
+                        	$tostatus = $static_status . $downloadProgress . "%";
+                        	update_status($tostatus);
+						}
+					} else {
                         $tostatus = $static_status . $downloadProgress . "%";
-                        update_status($tostatus);
+                        update_status($tostatus);						
+					}
                 } else {
+					if($pkg_interface == "console") {
+						if(substr($downloadProgress,2,1) == "0") {
+                        	$tooutput = $static_output . $downloadProgress . "%";
+                        	update_output_window($tooutput);
+						}
+					} else {
                         $tooutput = $static_output . $downloadProgress . "%";
                         update_output_window($tooutput);
+					}
                 }
                 update_progress_bar($downloadProgress);
                 $lastseen = $downloadProgress;

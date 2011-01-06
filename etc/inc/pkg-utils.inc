@@ -829,7 +829,7 @@ function delete_package($pkg) {
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	foreach($info as $line) {
-		$depend = trim(str_replace("@pkgdep", "", $line), " \n");
+		$depend = trim(str_replace("@pkgdep ", "", $line), " \n");
 		delete_package($depend);
 	}
 

@@ -809,20 +809,36 @@ function install_package_xml($pkg) {
 	return true;
 }
 
+function does_package_depend($pkg) {
+	// Should not happen, but just in case.
+	if(!$pkg)
+		return;
+	$pkg_var_db_dir = glob("/var/db/pkg/{$pkg}*");
+	// If this package has dependency then return true
+	foreach($pkg_var_db_dir as $pvdd) {
+		if (file_exists("{$vardb}/{$pvdd}/+REQUIRED_BY") && count(file("{$vardb}/{$pvdd}/+REQUIRED_BY")) > 0) 
+			return true;
+	}	
+	// Did not find a record of dependencies, so return false.
+	return false;
+}
+
 function delete_package($pkg) {
 	global $config, $g, $static_output, $vardb;
 
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 
-	if (file_exists("{$vardb}/{$pkg}/+REQUIRED_BY") && count(file("{$vardb}/{$pkg}/+REQUIRED_BY")) > 0) {
+	// If package has dependencies then skip it
+	if(does_package_depend($pkg)) {
 		$static_output .= "Skipping package deletion for {$pkg} because it is required by other packages.\n";
 		update_output_window($static_output);
-		return;
+		return;		
 	} else {
 		if($pkg)
 			$static_output .= "Starting package deletion for {$pkg}...";
-		update_output_window($static_output);
+		update_output_window($static_output);		
 	}
+
 	$info = "";
 	exec("/usr/sbin/pkg_info -qrx {$pkg}", $info);
 	remove_freebsd_package($pkg);
@@ -830,7 +846,9 @@ function delete_package($pkg) {
 	update_output_window($static_output);
 	foreach($info as $line) {
 		$depend = trim(str_replace("@pkgdep ", "", $line), " \n");
-		delete_package($depend);
+		// If package has dependencies then skip it
+		if(!does_package_depend($depend)) 			
+			delete_package($depend);
 	}
 
 	return;

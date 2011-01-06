@@ -473,7 +473,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 					return false;
 			} else {
 				//$dependlevel++;
-				$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " already installed.";
+				//$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " already installed.";
 				pkg_debug($working_depend[1] . "\n");
 			}
 		}

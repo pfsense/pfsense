@@ -142,7 +142,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
-		$qinqentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$qinqentry['descr'] = $_POST['descr'];
 		$qinqentry['vlanif'] = "{$_POST['if']}_{$_POST['tag']}";
 		$nmembers = explode(" ", $members);
 
@@ -200,7 +200,7 @@ if ($_POST) {
 		header("Location: interfaces_qinq.php");
 		exit;
 	} else {
-		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['tag'] = $_POST['tag'];
 		$pconfig['members'] = $members;
 	}

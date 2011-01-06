@@ -284,7 +284,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$alias['address'] = is_array($address) ? implode(" ", $address) : $address;
-		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$alias['descr'] = $_POST['descr'];
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = implode("||", $final_address_details);
 
@@ -342,7 +342,7 @@ if ($_POST) {
 	else
 	{
 		$pconfig['name'] = $_POST['name'];
-		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = implode(" ", $address);
 		$pconfig['type'] = $_POST['type'];
 		$pconfig['detail'] = implode("||", $final_address_details);

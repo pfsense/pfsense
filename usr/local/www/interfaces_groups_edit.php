@@ -93,7 +93,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ifgroupentry = array();
 		$ifgroupentry['members'] = $members;
-		$ifgroupentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$ifgroupentry['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_ifgroups[$id] && $_POST['ifname'] != $a_ifgroups[$id]['ifname']) {
 			if (!empty($config['filter']) && is_array($config['filter']['rule'])) {
@@ -156,7 +156,7 @@ if ($_POST) {
 		header("Location: interfaces_groups.php");
 		exit;
 	} else {
-		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['members'] = $members;
 	}
 }

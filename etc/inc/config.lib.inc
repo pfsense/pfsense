@@ -756,7 +756,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 		foreach($tocache as $version => $versioninfo) {
 			if(!in_array($version, array_keys($newcache))) {
 				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-				if($g['booting']) print " " . $tocheck . "d";
+				//if($g['booting']) print " " . $tocheck . "d";
 			}
 		}
 		$tocache = $newcache;

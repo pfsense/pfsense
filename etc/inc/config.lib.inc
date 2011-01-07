@@ -346,6 +346,9 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	if($g['booting'])
+		return;
+
 	if (refcount_unreference(1000) > 0)
 		return;
 

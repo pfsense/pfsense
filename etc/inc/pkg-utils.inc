@@ -335,7 +335,7 @@ function uninstall_package($pkg_name) {
 	// Restore libraries that we backed up
 	$static_output .= "Cleaning up... ";
 	update_output_window($static_output);
-	exec("/usr/bin/tar xzPf /tmp/pkg_libs.tgz -C /");
+	exec("/usr/bin/tar xzPfU /tmp/pkg_libs.tgz -C /");
 	@unlink("/tmp/pkg_libs.tgz");	
 }
 
@@ -480,8 +480,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				if (pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url) == false)
 					return false;
 			} else {
-				//$dependlevel++;
-				//$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " already installed.";
 				pkg_debug($working_depend[1] . "\n");
 			}
 		}
@@ -683,7 +681,7 @@ function install_package_xml($pkg) {
 				if(!is_dir($prefix)) 
 					safe_mkdir($prefix);
  				$static_output .= $filename . " ";
-                                update_output_window($static_output);
+				update_output_window($static_output);
 				if (download_file_with_progress_bar($afn['item'][0], $prefix . $filename) !== true) {
 					$static_output .= "failed.\n";
 					update_output_window($static_output);
@@ -1003,14 +1001,13 @@ function delete_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		if($pkg_config['include_file'] <> "") {
-                        $static_output .= "Removing package instructions...";
-                        update_output_window($static_output);
-                        pkg_debug("Remove '{$pkg_config['include_file']}'\n");
-                        unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
+			$static_output .= "Removing package instructions...";
+			update_output_window($static_output);
+			pkg_debug("Remove '{$pkg_config['include_file']}'\n");
+			unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
 			$static_output .= "done.\n";
-                        update_output_window($static_output);
-			
-                }
+			update_output_window($static_output);
+		}
 		/* remove all additional files */
 		if(is_array($pkg_config['additional_files_needed'])) {
 			$static_output .= "Auxiliary files... ";
@@ -1021,7 +1018,6 @@ function delete_package_xml($pkg) {
 					$prefix = $afn['prefix'];
 				else
 					$prefix = "/usr/local/pkg/";
-
 				unlink_if_exists($prefix . $filename);
 			}
 			$static_output .= "done.\n";

@@ -307,13 +307,15 @@ function cert_get_subject($str_crt, $decode = true) {
 	if (!is_array($components))
 		return "unknown";
 
+	ksort($components);
 	foreach ($components as $a => $v) {
-		if (is_array($v))
+		if (is_array($v)) {
+			ksort($v);
 			foreach ($v as $w) {
 				$asubject = "{$a}={$w}";
 				$subject = (strlen($subject)) ? "{$asubject}, {$subject}" : $asubject;
 			}
-		else {
+		} else {
 			$asubject = "{$a}={$v}";
 			$subject = (strlen($subject)) ? "{$asubject}, {$subject}" : $asubject;
 		}

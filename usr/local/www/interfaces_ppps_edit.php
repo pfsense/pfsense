@@ -779,7 +779,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						<br> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections.");?> MRRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
-				</table
+				</table>
 			</td>
 		</tr><?php endfor; ?>
 		<tr>

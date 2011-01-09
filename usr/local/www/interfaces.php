@@ -1963,7 +1963,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?>>
 								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
-								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
+								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
 						</tr>
 						<tr>

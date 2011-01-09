@@ -96,7 +96,7 @@ $updateavailable = false;
 							<b>Update Available!</b></div><div style="float:left">							
 							Current: <?php echo $latest_package; ?><br/>
 						    Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
-					    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"</a>
+					    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"/></a>
 					    </div>				    
 					    <?php	$y++;				    
 					}

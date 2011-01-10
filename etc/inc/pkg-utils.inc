@@ -860,6 +860,9 @@ function delete_package($pkg) {
 			delete_package($depend);
 	}
 
+	/* Rescan directories for what has been left and avoid fooling other programs. */
+	mwexec("/sbin/ldconfig");
+
 	return;
 }
 

@@ -2285,4 +2285,9 @@ function upgrade_074_to_075() {
 		rename_field($config['crl'], 'name', 'descr');
 }
 
+function upgrade_075_to_076() {
+	require_once("services.inc");
+	install_cron_job("/usr/bin/nice -n20 /etc/rc.update_urltables", true, "30", "12");
+}
+
 ?>

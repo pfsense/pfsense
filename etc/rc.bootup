@@ -255,8 +255,7 @@ setup_gateways_monitor();
 echo "done.\n";
 
 echo "Synchronizing user settings...";
-if (empty($config['system']['webgui']['backend']))
-	local_sync_accounts();
+local_sync_accounts();
 echo "done.\n";
 
 if($avail > 0 and $avail < 65) {

@@ -87,7 +87,7 @@ include("head.inc");
 								foreach($config['installedpackages']['package'] as $instpkg) {
 									$instpkgs[] = $instpkg['name'];
 								}
-								asort($instpkgs);
+								natcasesort($instpkgs);
 
 								foreach ($instpkgs as $index => $pkgname):
 

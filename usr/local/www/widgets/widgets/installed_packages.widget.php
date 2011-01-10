@@ -60,7 +60,7 @@ $updateavailable = false;
 		$instpkgs = array();
 		foreach($config['installedpackages']['package'] as $instpkg)
 			$instpkgs[] = $instpkg['name'];
-		asort($instpkgs);
+		natcasesort($instpkgs);
 		$y=1;
 		foreach ($instpkgs as $index => $pkgname){
 

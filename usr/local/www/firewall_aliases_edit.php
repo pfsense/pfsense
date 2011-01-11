@@ -333,7 +333,6 @@ if ($_POST) {
 		$a_aliases = msort($a_aliases, "name");
 
 		write_config();
-		filter_configure();
 
 		header("Location: firewall_aliases.php");
 		exit;		

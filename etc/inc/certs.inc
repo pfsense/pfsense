@@ -286,6 +286,7 @@ function csr_get_subject($str_crt, $decode = true) {
 	if (!is_array($components))
 		return "unknown";
 
+	ksort($components);
 	foreach ($components as $a => $v) {
 		if (!strlen($subject))
 			$subject = "{$a}={$v}";

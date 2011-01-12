@@ -1132,6 +1132,15 @@ function pkg_reinstall_all() {
 		foreach($config['installedpackages']['package'] as $package)
 			$todo[] = array('name' => $package['name'], 'version' => $package['version']);
 	echo "One moment please, reinstalling packages...\n";
+	echo " >>> Trying to fetch package info...";
+	$pkg_info = get_pkg_info();
+	if ($pkg_info) {
+		echo " Done.\n";
+	} else {
+		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+		echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+		return;
+	}
 	if(is_array($todo)) {
 		foreach($todo as $pkgtodo) {
 			$static_output = "";

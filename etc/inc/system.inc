@@ -1070,7 +1070,7 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-		if($ca <> "") {
+		if(!(empty($ca) || (strlen(trim($ca)) == 0))) {
 			$fd = fopen("{$g['varetc_path']}/{$ca_location}", "w");
 			if (!$fd) {
 				printf("Error: cannot open ca.pem in system_webgui_start().\n");
@@ -1084,7 +1084,7 @@ EOD;
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-		if($ca <> "")
+		if(!(empty($ca) || (strlen(trim($ca)) == 0))) {
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
 

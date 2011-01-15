@@ -514,7 +514,7 @@ function openvpn_reconfigure($mode,& $settings) {
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {
-				if (stristr($settings['mode'], "server"))
+				if ($mode == "server") 
 					$tlsopt = 0;
 				else
 					$tlsopt = 1;

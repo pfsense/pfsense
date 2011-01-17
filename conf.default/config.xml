@@ -6,6 +6,11 @@
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
+			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
+			<tunable>debug.pfftpproxy</tunable>
+			<value>default</value>
+		</item>
+		<item>
 			<descr><![CDATA[Increase UFS read-ahead speeds to match current state of hard drives and NCQ. More information here: http://ivoras.sharanet.org/blog/tree/2010-11-19.ufs-read-ahead.html]]></descr>
 			<tunable>vfs.read_max</tunable>
 			<value>default</value>

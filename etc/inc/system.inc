@@ -376,7 +376,7 @@ function system_routing_configure($interface = "") {
 				$action = "change";
 			}
 			log_error("ROUTING: $action default route to $gatewayip");
-			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+			mwexec("/sbin/route {$action} -inet default " . escapeshellarg($gatewayip));
 		}
 	}
 
@@ -399,10 +399,10 @@ function system_routing_configure($interface = "") {
 				$action = "change";
 
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}

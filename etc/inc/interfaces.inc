@@ -116,17 +116,18 @@ function interface_netgraph_needed($interface = "wan") {
 				$found = false;
 				break;
 			}
-		} else {
-			$realif = get_real_interface($interface);
-			if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-					if ($realif == $ppp['if']) {
-						$found = true;
-						break;
-					}
+		}
+	}
+	if ($found == false) {
+		$realif = get_real_interface($interface);
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($realif == $ppp['if']) {
+					$found = true;
+					break;
 				}
-                        }
-                }
+			}
+		}
 	}
 
 	if ($found == false) {

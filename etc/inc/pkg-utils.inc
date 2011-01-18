@@ -550,7 +550,7 @@ function install_package($package, $pkg_info = "") {
 	if(file_exists('/conf/needs_package_sync'))
 		@unlink('/conf/needs_package_sync');
 	conf_mount_ro();
-	write_config();
+	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
 	$static_output .= $to_output;
 	update_output_window($static_output);
 	/* install other package components */
@@ -951,7 +951,7 @@ function delete_package_xml($pkg) {
 		 * XXX: Otherwise inclusion of config.inc again invalidates actions taken.
 		 * 	Same is done during installation.
 		 */
-		write_config();
+		write_config("Intermediate config write during package removal for {$pkg}.");
 
 		/*
 		 * If a require exists, include it.  this will

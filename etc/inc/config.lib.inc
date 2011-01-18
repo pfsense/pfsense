@@ -482,6 +482,8 @@ function write_config($desc="Unknown", $backup = true) {
 	if($g['booting'])
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 
+	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
+
 	if($backup)
 		backup_config();
 
@@ -495,8 +497,8 @@ function write_config($desc="Unknown", $backup = true) {
 	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
-	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
-	$config['revision']['username'] = $_SESSION["Username"];
+	$config['revision']['description'] = "{$username}: " . $desc;
+	$config['revision']['username'] = $username;
 
 	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);

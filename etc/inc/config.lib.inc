@@ -479,7 +479,7 @@ function write_config($desc="Unknown", $backup = true) {
 	 *       for now, since it was preventing config saving. */
 	// $config = parse_config(true, false, false);
 	
-	if($g['bootup']) 
+	if($g['booting'])
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 
 	if($backup)

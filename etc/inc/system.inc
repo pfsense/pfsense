@@ -451,22 +451,15 @@ function system_routing_configure($interface = "") {
 				$action = "change";
 
 			if(is_ipaddrv6($gatewayip)) {
-				$inet6 = "-inet6";
+				$inetfamily = "-inet6";
 			} else {
-				$inet6 = "";
+				$inetfamily = "-inet";
 			}
 			if (is_ipaddr($gatewayip)) {
-<<<<<<< HEAD
-				mwexec("/sbin/route {$action} {$inet6} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} {$inetfamily} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} {$inet6} " . escapeshellarg($rtent['network']) .
-=======
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($gatewayip));
-			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
->>>>>>> upstream/master
+				mwexec("/sbin/route {$action} {$inetfamily} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}

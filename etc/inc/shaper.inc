@@ -122,20 +122,20 @@ function get_bandwidthtype_scale($type)
 {
         switch ($type) {
         case "Gb":
-                $factor = 1000 * 1000 * 1000;
+                $factor = 1024 * 1024 * 1024;
         	break;
         case "Mb":
-                $factor = 1000 * 1000;
+                $factor = 1024 * 1024;
         	break;
         case "Kb":
-                $factor = 1000;
+                $factor = 1024;
         	break;
         case "b":
         default:
                 $factor = 1;
         	break;
         }
-        return floatval($factor);
+        return intval($factor);
 }
 
 function get_hfsc_bandwidth($object, $bw) 
@@ -2943,12 +2943,12 @@ class dnpipe_class extends dummynet_class {
 
         function build_form() { 
 		$form = "<tr><td valign=\"center\" class=\"vncellreq\"><br>";
-                $form .= "Enable/Disable";
+                $form .= "Enable";
                 $form .= "</td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its children</span>";
+                $form .= " ><span class=\"vexpl\"> Enable limiter and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";

@@ -284,7 +284,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$alias['address'] = is_array($address) ? implode(" ", $address) : $address;
-		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$alias['descr'] = $_POST['descr'];
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = implode("||", $final_address_details);
 
@@ -333,7 +333,6 @@ if ($_POST) {
 		$a_aliases = msort($a_aliases, "name");
 
 		write_config();
-		filter_configure();
 
 		header("Location: firewall_aliases.php");
 		exit;		
@@ -342,7 +341,7 @@ if ($_POST) {
 	else
 	{
 		$pconfig['name'] = $_POST['name'];
-		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = implode(" ", $address);
 		$pconfig['type'] = $_POST['type'];
 		$pconfig['detail'] = implode("||", $final_address_details);
@@ -583,7 +582,7 @@ EOD;
         <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
-        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option>
+<!--        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option> -->
 		<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
         <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
       </select>

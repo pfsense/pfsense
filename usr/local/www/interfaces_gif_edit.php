@@ -111,6 +111,10 @@ if ($_POST) {
 
                         write_config();
 
+			$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
+                        if ($confif <> "")
+                                interface_configure($confif);
+
 			header("Location: interfaces_gif.php");
 			exit;
 		}

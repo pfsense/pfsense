@@ -32,10 +32,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$nocsrf = true;
+
 require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
+require_once("captiveportal.inc");
 
 ?>
 
@@ -55,7 +58,7 @@ function clientcmp($a, $b) {
 
 $cpdb = array();
 if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
-	$captiveportallck = lock('captiveportal');
+	$captiveportallck = lock('captiveportaldb');
         $cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	unlock($captiveportallck);
 } else

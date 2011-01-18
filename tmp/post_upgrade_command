@@ -1,6 +1,5 @@
 #!/bin/sh
 
-touch /var/run/config.lock
 /etc/rc.conf_mount_rw
 
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`

@@ -80,15 +80,11 @@ include("head.inc");
 	<tr>
 		<td>
 		<?php
-			$version = file_get_contents("/etc/version");
-			$dash = strpos($version, ".");
-			$hyphen = strpos($version, "-");
-			$major = substr($version, 0, $dash);
-			$minor = substr($version, $dash + 1, $hyphen - $dash - 1);
-			$testing_version = substr($version, $hyphen + 1, strlen($version) - $hyphen);
+			$version = rtrim(file_get_contents("/etc/version"));
 
 			$tab_array = array();
-			$tab_array[] = array($version . gettext("packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
+			$tab_array[] = array(gettext("Available Packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
+//			$tab_array[] = array($version . gettext("packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
 //			$tab_array[] = array("Packages for any platform", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
 //			$tab_array[] = array("Packages with a different version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 			$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
@@ -112,9 +108,6 @@ include("head.inc");
 						if(!$pkg_info) {
 							echo "<tr><td colspan=\"5\"><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 						} else {
-							$installed_pfsense_version = rtrim(file_get_contents("/etc/version"));
-							$dash = strpos($installed_pfsense_version, "-");
-							$installed_pfsense_version = substr($installed_pfsense_version, 0, $dash);
 							$pkgs = array();
 							$instpkgs = array();
 							if($config['installedpackages']['package'] != "")
@@ -133,30 +126,28 @@ include("head.inc");
 									if($g['platform'] == "nanobsd")
 										if($index['noembedded']) 
 											continue;
-									$dash = strpos($index['required_version'], "-");
-									$index['major_version'] = substr($index['required_version'], 0, $dash);
+									/* If we are on not on HEAD, and the package wants it, skip */
 									if ($version <> "HEAD" &&
 										$index['required_version'] == "HEAD" &&
 										$requested_version <> "other")
 										continue;
+									/* If there is no required version, and the requested package 
+										version is not 'none', then skip */
 									if (empty($index['required_version']) &&
 										$requested_version <> "none")
 										continue;
-									if($index['major_version'] > $major &&
-										$requested_version <> "other")
+									/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
+									if($requested_version <> "other" &&
+										(pfs_version_compare("", $version, $index['required_version']) < 0))
 										continue;
-									if(isset($index['major_version']) &&
-										$requested_version == "none")
+									/* If the requestion version is 'other' and we are on the version requested, skip. */
+									if($requested_version == "other" &&
+										(pfs_version_compare("", $version, $index['required_version']) == 0))
 										continue;
-									if($index['major_version'] == $major &&
-										$requested_version == "other")
+									/* Package is only for an older version, lets skip */
+									if($index['maximum_version'] &&
+										(pfs_version_compare("", $version, $index['maximum_version']) > 0))
 										continue;
-									/* Package is for a newer version, lets skip */
-									if($installed_pfsense_version < $index['required_version'])
-										continue;
-									if($index['maximum_version'])
-										if($installed_pfsense_version > $index['maximum_version'])
-											continue;
 					?>
 					<tr valign="top">
 						<td class="listlr">

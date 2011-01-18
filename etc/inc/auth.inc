@@ -130,6 +130,10 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 						break;
 					}
 				}
+				if($referrer_host == "127.0.0.1" || $referrer_host == "localhost") {
+					// allow SSH port forwarded connections and links from localhost
+					$found_host = true;
+				}
 			}
 		}
 		if($found_host == false) {

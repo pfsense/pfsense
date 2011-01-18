@@ -191,6 +191,12 @@ if ($_POST['apply']) {
 		}
 	}
 
+	if (is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if (does_interface_exist($vlan['if']) == false)
+				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['tag']} cannot be created please fix the issue before continuing.";
+		}
+	}
 
 	if (!$input_errors) {
 		/* No errors detected, so update the config */

@@ -1,6 +1,6 @@
 <?php
 /*
-	installer.php (pfSense installer)
+	installer.php (pfSense webInstaller)
 	part of pfSense (http://www.pfsense.com/)
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
@@ -54,18 +54,58 @@ switch ($_REQUEST['state']) {
 	case "verify_before_install":
 		verify_before_install();
 		exit;
+	case "easy_install_ufs":
+		easy_install("UFS+S");
+		exit;
+	case "easy_install_ufs":
+		easy_install("ZFS");
+		exit;
+
 	default:
 		installer_main();	
+}
+
+function easy_install($fstype = "UFS+S") {
+	// Calculate swap and disk sizes
+	$disks = installer_find_all_disks();
+	$memory = get_memory();
+	$swap_size = $memory[0] * 2;
+	$first_disk = trim(installer_find_first_disk());
+	$disk_info = pcsysinstall_get_disk_info($first_disk);
+	$size = $disk_info['size'];
+	$first_disk_size = $size - $swap_size;
+	$disk_setup = array();
+	$tmp_array = array();
+	// Build the disk layout for /
+	$tmp_array['disk'] = $first_disk;
+	$tmp_array['size'] = $first_disk_size;
+	$tmp_array['mountpoint'] = "/";
+	$tmp_array['fstype'] = $fstype;
+	$disk_setup[] = $tmp_array;
+	unset($tmp_array);
+	$tmp_array = array();
+	// Build the disk layout for SWAP
+	$tmp_array['disk'] = $first_disk;
+	$tmp_array['size'] = $swap_size;
+	$tmp_array['mountpoint'] = "none";
+	$tmp_array['fstype'] = "SWAP";
+	$disk_setup[] = $tmp_array;
+	unset($tmp_array);
+	$bootmanager = "bsd";
+	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disk_setup));
+	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
+	Header("Location: installer.php?state=verify_before_install");
+	exit;
 }
 
 function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 	$diskareas = "";
 	$fd = fopen("/usr/sbin/pc-sysinstall/examples/pfSense-install.cfg", "w");
-	if(!$fd) {
+	if(!$fd) 
 		return true;
-	}
 	if($bootmanager == "") 
 	 	$bootmanager = "none";
+	// Yes, -1.  We ++ early in loop.
 	$numdisks = -1;
 	$lastdisk = "";
 	$diskdefs = "";
@@ -78,7 +118,11 @@ function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {
 		if($disk <> $lastdisk) {
 			$lastdisk = $disk;
 			$numdisks++;
+			$diskdefs .= "# disk {$disk}\n";
 			$diskdefs .= "disk{$numdisks}={$disk}\n";
+			$diskdefs .= "partition=all\n";
+			$diskdefs .= "bootManager={$bootmanager}\n";
+			$diskdefs .= "commitDiskPart\n\n";
 		}
 		$diskareas .= "disk{$numdisks}-part={$fstype} {$size} {$mountpoint} \n";
 		if($encpass)
@@ -96,9 +140,6 @@ installMedium=LiveCD
 
 # Set the disk parameters
 {$diskdefs}
-partition=all
-bootManager={$bootmanager}
-commitDiskPart
 
 # Setup the disk label
 # All sizes are expressed in MB
@@ -177,6 +218,7 @@ function pcsysinstall_get_disk_info($diskname) {
 				if($di_s[0])
 					$tmp_array[$di_s[0]] = $di_s[1];
 			}
+			$tmp_array['size']--;
 			$tmp_array['disk'] = trim($disks_info[0]);
 			$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
 			return $tmp_array;
@@ -200,6 +242,7 @@ function installer_find_all_disks() {
 			if($di_s[0])
 				$tmp_array[$di_s[0]] = $di_s[1];
 		}
+		$tmp_array['size']--;
 		$tmp_array['disk'] = trim($disks_info[0]);
 		$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
 		$disks_array[] = $tmp_array;
@@ -306,7 +349,7 @@ function update_installer_status_win($status) {
 	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
 	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
-	echo "</script>";
+	echo "</script>\n";
 }
 
 function begin_install() {
@@ -449,13 +492,14 @@ function verify_before_install() {
 		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 		$restored_layout_from_file = true;
 		$restored_layout_txt = "The previous disk layout was restored from disk";
+	} else {
+		$disks = array();
 	}
 	if(!$bootmanager) 
 		$bootmanager = $_REQUEST['bootmanager'];
 	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
-	$disks = array();
 	// Loop through posted items and create an array
 	for($x=0; $x<99; $x++) { // XXX: Make this more optimal
 		if(!$_REQUEST['fstype' . $x])
@@ -588,6 +632,7 @@ EOFAMBASDF;
 	page_table_end();
 	end_html();
 	write_out_pc_sysinstaller_config($disks, $bootmanager);
+	// Serialize layout to disk so it can be read in later.
 	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disks));
 	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
 }
@@ -705,16 +750,32 @@ function installer_custom() {
 	global $select_txt, $custom_disks;
 	if(file_exists("/tmp/.pc-sysinstall/pc-sysinstall.log")) 
 		unlink("/tmp/.pc-sysinstall/pc-sysinstall.log");
+	$disks = installer_find_all_disks();
+	// Pass size of disks down to javascript.
+	$disk_sizes_js_txt = "var disk_sizes = new Array();\n";
+	foreach($disks as $disk) 
+		$disk_sizes_js_txt .= "disk_sizes['{$disk['disk']}'] = '{$disk['size']}';\n";
 	head_html();
 	body_html();
 	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
+			Array.prototype.in_array = function(p_val) {
+				for(var i = 0, l = this.length; i < l; i++) {
+					if(this[i] == p_val) {
+						return true;
+					}
+				}
+				return false;
+			}
 			function row_helper_dynamic_custom() {
 				var totalsize = 0;
+				{$disk_sizes_js_txt}
 				// Run through all rows and process data
 				for(var x = 0; x<99; x++) { //optimize me better
 					if(\$('fstype' + x)) {
+						if(\$('size' + x).value == '')
+							\$('size' + x).value = disk_sizes[\$('disk' + x).value];
 						var fstype = \$F('fstype' + x);
 						if(fstype.substring(fstype.length - 4) == ".eli") {
 							\$('encpass' + x).disabled = 0;
@@ -741,6 +802,52 @@ function installer_custom() {
 					}
 					\$('totalsize').disabled = 1;
 				}
+				if(\$('disktotals')) {
+					var disks_seen = new Array();
+					var tmp_sizedisks = 0;
+					var disksseen = 0;
+					for(var xx = 0; xx<99; xx++) {
+						if(\$('disk' + xx)) {
+							if(!disks_seen.in_array(\$('disk' + xx).value)) {
+								tmp_sizedisks += parseInt(disk_sizes[\$('disk' + xx).value]);
+								disks_seen[disksseen] = \$('disk' + xx).value;
+								disksseen++;
+							}
+						}
+					\$('disktotals').value = tmp_sizedisks;
+					\$('disktotals').disabled = 1;
+					\$('disktotals').setStyle({color:'#000000'});
+					var remaining = parseInt(\$('disktotals').value) - parseInt(\$('totalsize').value);
+						if(remaining == 0) {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#00FF00',
+									color:'#000000'
+								});
+						} else {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#FFFFFF',
+									color:'#000000'
+								});
+						}
+						if(parseInt(\$('totalsize').value) > parseInt(\$('disktotals').value)) {
+							if(\$('totalsize'))
+								\$('totalsize').setStyle({
+									background:'#FF0000',
+									color:'#000000'
+								});							
+						}
+						if(\$('availalloc')) {
+							\$('availalloc').disabled = 1;
+							\$('availalloc').value = remaining;
+								\$('availalloc').setStyle({
+									background:'#FFFFFF',
+									color:'#000000'
+								});							
+						}
+					}
+				}
 			}
 		</script>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
@@ -765,8 +872,9 @@ function installer_custom() {
 			rows = 1;
 			totalrows = 1;
 			loaded = 1;
-			rowhelper_onChange = " onChange='javascript:row_helper_dynamic_custom()' ";
-			rowhelper_onAdd = 'row_helper_dynamic_custom();';
+			rowhelper_onChange = 	" onChange='javascript:row_helper_dynamic_custom()' ";
+			rowhelper_onDelete = 	"row_helper_dynamic_custom(); ";
+			rowhelper_onAdd = 		"row_helper_dynamic_custom();";
 		</script>
 		<form action="installer.php" method="post">
 			<input type="hidden" name="state" value="verify_before_install">
@@ -797,14 +905,13 @@ function installer_custom() {
 												</div>
 EOF;
 	ob_flush();
-	$disks = installer_find_all_disks();
+	// Read bootmanager setting from disk if found
 	if(file_exists("/tmp/webInstaller_disk_bootmanager.txt"))
 		$bootmanager = unserialize(file_get_contents("/tmp/webInstaller_disk_bootmanager.txt"));
 	if($bootmanager == "none") 
 		$noneselected = " SELECTED";
 	if($bootmanager == "bsd") 
 		$bsdeselected = " SELECTED";
-
 	if(!$disks)  {
 		$custom_txt = gettext("ERROR: Could not find any suitable disks for installation.");
 	} else {
@@ -861,8 +968,6 @@ EOF;
 		$disk_info = pcsysinstall_get_disk_info($first_disk);
 		$size = $disk_info['size'];
 		$first_disk_size = $size - $swap_size;
-		// Decreate by 1 megabyte as some disks will fail
-		$first_disk_size--;
 
 		// Debugging
 		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
@@ -883,14 +988,26 @@ EOF;
 			}
 		} else {		
 			// Construct the default rows that outline the disks configuration.
-			$custom_txt .= return_rowhelper_row("0", "/", "UFS", $first_disk, "{$first_disk_size}", "");
+			$custom_txt .= return_rowhelper_row("0", "/", "UFS+S", $first_disk, "{$first_disk_size}", "");
 			$custom_txt .= return_rowhelper_row("1", "none", "SWAP", $first_disk, "$swap_size", "");
 		}
 
 		// tfoot and tbody are used by rowhelper
 		$custom_txt .= "</tr>";
 		$custom_txt .= "<tfoot></tfoot></tbody>";
-		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input size=\"8\" id='totalsize' name='totalsize'></td></tr>";
+		// Total allocation box
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Total allocated:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='totalsize' name='totalsize'></td>";
+		// Add row button
+		$custom_txt .= "</td><td>&nbsp;</td><td>";
+		$custom_txt .= "<div id=\"addrowbutton\">";
+		$custom_txt .= "<a onclick=\"javascript:addRowTo('maintable', 'formfldalias'); return false;\" href=\"#\">";
+		$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
+		$custom_txt .= "</div>";
+		$custom_txt .= "</td></tr>";	
+		// Disk capacity box
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Disk(s) capacity total:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='disktotals' name='disktotals'></td></tr>";
+		// Remaining allocation box
+		$custom_txt .= "<tr><td></td><td></td><td align='right'>Available space for allocation:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='availalloc' name='availalloc'></td></tr>";
 		$custom_txt .= "</table>";
 		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
 	}
@@ -928,9 +1045,7 @@ EOF;
 										</strong>
 									</span>
 									<br/>* Sizes are in megabytes.
-									<br/>* Encryption password field should only be used if a encrypted filesystem (.eli) was chosen
 									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
-									<br/>* Leave at least one megabyte unallocated to avoid errors
 									{$restored_layout_txt}
 								</span>
 								</strong>
@@ -961,8 +1076,8 @@ function installer_main() {
 	body_html();
 	$disk = installer_find_first_disk();
 	// Only enable ZFS if this exists.  The install will fail otherwise.
-	//	if(file_exists("/boot/gptzfsboot")) 
-	//		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=verify_before_install&fstype0=ZFS&size=200M\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
+	if(file_exists("/boot/gptzfsboot")) 
+		$zfs_enabled = "<tr bgcolor=\"#9A9A9A\"><td align=\"center\"><a href=\"installer.php?state=easy_install_zfs\">Easy installation of {$g['product_name']} using the ZFS filesystem on disk {$disk}</a></td></tr>";
 	page_table_start();
 	echo <<<EOF
 		<form action="installer.php" method="post" state="step1_post">
@@ -995,9 +1110,7 @@ EOF;
 
 													<table cellspacing="5" cellpadding="5" style="border: 1px dashed;">
 														<tr bgcolor="#CECECE"><td align="center">
-<!--
-															<a href="installer.php?state=verify_before_install&disk={$disk}&fstype=UFS&swapsize=200M">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
--->
+															<a href="installer.php?state=easy_install_ufs">Easy installation of {$g['product_name']} using the UFS filesystem on disk {$disk}</a>
 														</td></tr>
 													 	{$zfs_enabled}
 														<tr bgcolor="#AAAAAA"><td align="center">
@@ -1089,14 +1202,8 @@ function return_rowhelper_row($rownum, $mountpoint, $fstype, $disk, $size, $encp
 		$custom_txt .= "</td>";
 	
 		// Add Rowhelper + button
-		if($rownum == 1) {
-			$custom_txt .= "<td>";
-			$custom_txt .= "<div id=\"addrowbutton\">";
-			$custom_txt .= "<a onclick=\"javascript:addRowTo('maintable', 'formfldalias'); return false;\" href=\"#\">";
-			$custom_txt .= "<img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" alt=\"\" title=\"add another entry\" /></a>";
-			$custom_txt .= "</div>";
-			$custom_txt .= "</td>";	
-		}
+		if($rownum > 0) 
+			$custom_txt .= "<td><a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" alt=\"\" title=\"remove this entry\"/></a></td>";
 
 		$custom_txt .= "</tr>";	
 		return $custom_txt;

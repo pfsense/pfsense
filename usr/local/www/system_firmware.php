@@ -43,6 +43,8 @@
 ##|-PRIV
 
 $d_isfwfile = 1;
+$nocsrf = true;
+
 require_once("globals.inc");
 require_once("guiconfig.inc");
 
@@ -101,7 +103,7 @@ if(is_subsystem_dirty('firmwarelock')) {
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
 	echo "<div>\n";
-	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
 	echo "</div>\n";
 	include("fend.inc");
 	echo "</body>";

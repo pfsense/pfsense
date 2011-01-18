@@ -514,7 +514,7 @@ function openvpn_reconfigure($mode,& $settings) {
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {
-				if (stristr($settings['mode'], "server"))
+				if ($mode == "server") 
 					$tlsopt = 0;
 				else
 					$tlsopt = 1;
@@ -696,9 +696,9 @@ function openvpn_resync_all($interface = "") {
 	}
 */
 	if ($interface <> "")
-		log_error("Resyncing openvpn instances configurations for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
+		log_error("Resyncing OpenVPN instances for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
 	else
-		log_error("Resyncing openvpn instances configurations."); 
+		log_error("Resyncing OpenVPN instances."); 
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {

@@ -3,7 +3,7 @@
 /*
     globals.inc
     part of pfSense (www.pfsense.com)
-    Copyright (C) 2004-2006 Scott Ullrich
+    Copyright (C) 2004-2010 Scott Ullrich
 
     Originally Part of m0n0wall
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -89,7 +89,7 @@ $g = array(
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"debug" => false,
-	"latest_config" => "7.5",
+	"latest_config" => "7.6",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "105",
 	"minimum_ram_warning_text" => "128 MB",
@@ -110,10 +110,7 @@ $g = array(
 
 // Loop through and set vlan_long_frame VLAN_MTU
 $vlan_native_supp = get_nics_with_capabilities("vlanmtu");
-if(count($vlan_native_supp) > 0)
-	$g['vlan_long_frame'] = $vlan_native_supp;
-else 
-	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
+$g['vlan_long_frame'] = array_merge(array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg"), (array)$vlan_native_supp);
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");
@@ -162,7 +159,9 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.log_debug" => "0", 
 	"net.inet.tcp.tso" => "1", 
 	"net.inet.icmp.icmplim" => "0",
-	"vfs.read_max" => "32"
+	"vfs.read_max" => "32",
+	"kern.ipc.maxsockbuf" => "4262144",
+	"debug.pfftpproxy" => "0"
 );
 
 $config_parsed = false;

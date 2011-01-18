@@ -98,7 +98,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$igmpentry['address'] = $address;
-		$igmpentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$igmpentry['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_igmpproxy[$id])
 			$a_igmpproxy[$id] = $igmpentry;
@@ -114,7 +114,7 @@ if ($_POST) {
 	//we received input errors, copy data to prevent retype
 	else
 	{
-		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
+		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['address'] = $address;
 		$pconfig['type'] = $_POST['type'];
 	}

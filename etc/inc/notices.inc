@@ -283,6 +283,7 @@ function notify_via_smtp($message) {
 			return;
 	}
 
+	require_once("sasl.inc");
 	require_once("smtp.inc");
 
 	$smtp = new smtp_class;
@@ -306,7 +307,7 @@ function notify_via_smtp($message) {
 	if($config['notifications']['smtp']['username'] && 
 	   $config['notifications']['smtp']['password']) {
 		$smtp->authentication_mechanism = "PLAIN";
-		$smtp->username = $config['notifications']['smtp']['username'];
+		$smtp->user = $config['notifications']['smtp']['username'];
 		$smtp->password = $config['notifications']['smtp']['password'];
 	}
 

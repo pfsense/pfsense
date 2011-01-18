@@ -636,11 +636,12 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						/* Do not print localid in some cases, such as a pure-psk or psk/xauth mobile tunnel */
+						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 						if (($localid_type == "none") ||
 							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
 							($ph1ent['authentication_method'] == "pre_shared_key"))
-							&& isset($ph1ent['mobile']))
+							&& isset($ph1ent['mobile'])
+							&& (ipsec_get_number_of_phase2($ikeid)==1))
 							$localid_spec = " ";
 						else {
 							if ($localid_type != "address") {
@@ -879,7 +880,9 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			/* XXX: This seems to not work in ipsec-tools 0.7.3 but a HUP signal is equivalent. */
+			//mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			sigkillbypid("{$g['varrun_path']}/racoon.pid", "HUP");
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {
@@ -968,7 +971,9 @@ function vpn_netgraph_support() {
 	foreach ($iflist as $iface) {
 		$realif = get_real_interface($iface);
 		/* Get support for netgraph(4) from the nic */
-                pfSense_ngctl_attach(".", $realif);
+		$ifinfo = pfSense_get_interface_addresses($realif);
+		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge")))
+                	pfSense_ngctl_attach(".", $realif);
 	}
 }
 
@@ -1300,8 +1305,14 @@ EOD;
 			}
 
 			if (isset ($pppoecfg['radius']['server']['enable'])) {
+				$radiusport = "";
+				$radiusacctport = "";
+				if (isset($pppoecfg['radius']['server']['port']))
+					$radiusport = $pppoecfg['radius']['server']['port'];
+				if (isset($pppoecfg['radius']['server']['acctport']))
+					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
 				$mpdconf .=<<<EOD
-	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}"
+	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']} {$radiusport} {$radiusacctport}" 
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth

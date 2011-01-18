@@ -1473,6 +1473,7 @@ function read_header($ch, $string) {
 
 function read_body($ch, $string) {
         global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
+		global $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
         if($file_size > 0) {
@@ -1482,11 +1483,25 @@ function read_body($ch, $string) {
                 $downloadProgress = 0;
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
+					if($pkg_interface == "console") {
+						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+                        	$tostatus = $static_status . $downloadProgress . "%";
+                        	update_status($tostatus);
+						}
+					} else {
                         $tostatus = $static_status . $downloadProgress . "%";
-                        update_status($tostatus);
+                        update_status($tostatus);						
+					}
                 } else {
+					if($pkg_interface == "console") {
+						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+                        	$tooutput = $static_output . $downloadProgress . "%";
+                        	update_output_window($tooutput);
+						}
+					} else {
                         $tooutput = $static_output . $downloadProgress . "%";
                         update_output_window($tooutput);
+					}
                 }
                 update_progress_bar($downloadProgress);
                 $lastseen = $downloadProgress;
@@ -1504,7 +1519,9 @@ function update_output_window($text) {
         global $pkg_interface;
         $log = ereg_replace("\n", "\\n", $text);
         if($pkg_interface != "console") {
-                echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+                echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
+				echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";	
+				echo "</script>";
         }
         /* ensure that contents are written out */
         ob_flush();

@@ -60,10 +60,11 @@ include("head.inc");
 				<?php
 					$version = file_get_contents("/etc/version");
 					$tab_array = array();
-					$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+					$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
+//					$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
 //					$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //					$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
-					$tab_array[] = array(gettext("Installed packages"), true, "pkg_mgr_installed.php");
+					$tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -86,7 +87,7 @@ include("head.inc");
 								foreach($config['installedpackages']['package'] as $instpkg) {
 									$instpkgs[] = $instpkg['name'];
 								}
-								asort($instpkgs);
+								natcasesort($instpkgs);
 
 								foreach ($instpkgs as $index => $pkgname):
 

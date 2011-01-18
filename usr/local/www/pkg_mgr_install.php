@@ -98,9 +98,9 @@ include("head.inc");
 							</table>
 							<br>
 							<!-- status box -->
-							<textarea cols="60" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
+							<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 							<!-- command output box -->
-							<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+							<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 						</center>
 					</td>
 				</tr>
@@ -153,7 +153,7 @@ switch($_GET['mode']) {
 			update_output_window($static_output);
 			filter_configure();
 		}
-		file_put_contents("/tmp{$_GET['pkg']}.info", $static_output);
+		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
 		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
 		break;
 	case "installedinfo":
@@ -166,8 +166,6 @@ switch($_GET['mode']) {
 			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
 		break;
 	case "reinstallall":
-		if ($config['installedpackages']['package'])
-			exec("rm -rf /var/db/pkg/*");
 		if (is_array($config['installedpackages']['package']))
 			foreach($config['installedpackages']['package'] as $package)
 				$todo[] = array('name' => $package['name'], 'version' => $package['version']);

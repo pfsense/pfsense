@@ -820,6 +820,7 @@
 			<name>nbtenable</name>
 			<type>checkbox</type>
 			<displayname>NetBIOS Options</displayname>
+			<bindstofield>ovpnserver->step10->nbtenable</bindstofield>
 			<description>Enable NetBIOS over TCP/IP. &lt;br/&gt;If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled. </description>
 		</field>
 		<field>

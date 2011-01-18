@@ -162,6 +162,8 @@ if ($_POST) {
 					gettext("Descriptive name"),
 					gettext("Certificate data"),
 					gettext("Key data"));
+			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
+				$input_errors[] = gettext("This certificate does not appear to be valid.");
 		}
 
 		if ($pconfig['method'] == "internal") {

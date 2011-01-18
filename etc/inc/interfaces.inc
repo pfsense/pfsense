@@ -103,23 +103,37 @@ function interface_netgraph_needed($interface = "wan") {
 				break;
 		}
 	}
-	if ($found == false && !empty($config['interfaces'][$interface])) {
-		switch ($config['interfaces'][$interface]['ipaddr']) {
-		case "ppp":
-		case "pppoe":
-		case "l2tp":
-		case "pptp":
-			$found = true;
-			break;
-		default:
-			$found = false;
-			break;
+	if ($found == false) {
+		if (!empty($config['interfaces'][$interface])) {
+			switch ($config['interfaces'][$interface]['ipaddr']) {
+			case "ppp":
+			case "pppoe":
+			case "l2tp":
+			case "pptp":
+				$found = true;
+				break;
+			default:
+				$found = false;
+				break;
+			}
+		}
+	}
+	if ($found == false) {
+		$realif = get_real_interface($interface);
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($realif == $ppp['if']) {
+					$found = true;
+					break;
+				}
+			}
 		}
 	}
 
-	$realif = get_real_interface($interface);
-	if ($found == false)
+	if ($found == false) {
+		$realif = get_real_interface($interface);
 		pfSense_ngctl_detach("{$realif}:", $realif);
+	}
 	/* NOTE: We make sure for this on interface_ppps_configure()
 	 *	no need to do it here agan.
 	 *	else
@@ -920,13 +934,15 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($realif == $ppp['if']) {
-					if (file_exists("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid")) {
-						killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
-						sleep(5);
+					if (isset($ppp['ondemand']) && !$destroy){
+						send_event("interface reconfigure {$interface}");
+						break;
+					}
+					if (file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid")) {
+						killbypid("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid");
+						sleep(2);
 					}
 					unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-					if (isset($ppp['ondemand']) && !$destroy)
-						send_event("interface reconfigure {$interface}");
 					break;
 				}
 			}
@@ -1808,13 +1824,17 @@ function interface_carp_configure(&$vip) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
+	$advbase = "";
+	if (!empty($vip['advbase']))
+		$advbase = "advbase {$vip['advbase']}";
+
 	if(is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$advbase} {$password}");
 	}
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$advbase} {$password}");
 	}
 
 	interfaces_bring_up($vipif);
@@ -2476,7 +2496,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			case 'l2tp':
 			case 'pptp':
 			case 'ppp':
-				interface_bring_down($interface, true);
 				break;
 			default:
 				interface_bring_down($interface);

@@ -392,6 +392,8 @@ include("head.inc");
                     <?php
                       if (!$natent['target'])
                           echo "*";
+                      elseif ($natent['target'] == "other-subnet")
+                          echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
                       else
                           echo $natent['target'];
                     ?>

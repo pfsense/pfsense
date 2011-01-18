@@ -458,45 +458,42 @@ function apply_all_choosen_items() {
         $upbw = floatval($config['ezshaper']['step2']["conndownload"]) * $upfactor;
 
 		if ($config['ezshaper']['step3']['enable']) {
-				$voip = true;
-				$voipbw = $config['ezshaper']['step3']["conndownload"];
-				$voipbwunit = $config['ezshaper']['step3']["conndownloadspeed"];
-				if ($sched != "HFSC") {
-					if ($voipbwunit == "%") 
-						$factor =  $upbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($voipbwunit);
-					$remainbw += $voipbw * $factor;
-				} else
-					$remainbw += 32000; /* 32Kbit/s forHFSC linksharing */
+			$voip = true;
+			$voipbw = $config['ezshaper']['step3']["conndownload"];
+			$voipbwunit = $config['ezshaper']['step3']["conndownloadspeed"];
+			if ($voipbwunit == "%") 
+				$factor =  $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($voipbwunit);
+			$remainbw += $voipbw * $factor;
 		}
 		if ($config['ezshaper']['step4']['enable']) {
-				$penalty = true;
-				$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-				$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-				if ($penaltybwunit == "%")
-					$factor = $upbw/100;
-				else
-					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
-				$remainbw += $penaltybw * $factor;
+			$penalty = true;
+			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
+			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+			if ($penaltybwunit == "%")
+				$factor = $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
+			$remainbw += $penaltybw * $factor;
 		} else {
-				$penalty = false;
-				$penaltybw = 0;
+			$penalty = false;
+			$penaltybw = 0;
 		}
 		if ($config['ezshaper']['step5']['enable']) {
 			$p2p = true;
 			if ($config['ezshaper']['step5']['p2pcatchall']) {
-					$p2pcatchall = true;
-					$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-					$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-					if ($p2pcatchbwunit == "%")
-						$factor = $upbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
-					$remainbw += $p2pcatchbw * $factor;
+				$p2pcatchall = true;
+				$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
+				$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+				if ($p2pcatchbwunit == "%")
+					$factor = $upbw/100;
+				else
+					$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
+				$remainbw += $p2pcatchbw * $factor;
 			} else {
-					$p2pcatchall = false;
-					$p2pcatchbw = 0;
+				$p2pcatchall = false;
+				$p2pcatchbw = 0;
 			}
 		} else {
 			$p2p = false;
@@ -1350,19 +1347,19 @@ function apply_all_choosen_items() {
 
 function wizard_get_bandwidthtype_scale($type = "b") {
 	switch ($type) {
-		case "Gb":
-	        $factor = 1000 * 1000 * 1000;
-			break;
-		case "Mb":
-	        $factor = 1000 * 1000;
-			break;
-		case "Kb":
-	        $factor = 1000;
-			break;
-		case "b":
-		default:
+	case "Gb":
+	        $factor = 1024 * 1024 * 1024;
+		break;
+	case "Mb":
+	        $factor = 1024 * 1024;
+		break;
+	case "Kb":
+	        $factor = 1024;
+		break;
+	case "b":
+	default:
 	        $factor = 1;
-			break;
+		break;
 	}
 	return intval($factor);
 }

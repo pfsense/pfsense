@@ -229,7 +229,7 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= str_repeat("\t", $indent);
 						if((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
-						} else if (substr($ent, 0, 5) == "descr") {
+						} else if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail")) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -253,7 +253,7 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if (substr($ent, 0, 5) == "descr")
+				if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail"))
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				else
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

@@ -374,7 +374,7 @@ function prot_change() {
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is protected against HTTP_REFERER redirection attempts. " .
 									"Check this box to disable this protection if you find that it interferes with " .
-									"webConfigurator access in certain corner cases such as using 3rd party scripts to interact with pfSense. More information on HTTP_REFERER is available from <a target='_new' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
+									"webConfigurator access in certain corner cases such as using external scripts to interact with this system. More information on HTTP_REFERER is available from <a target='_new' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -422,7 +422,7 @@ function prot_change() {
 									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> />
 									<strong><?=gettext("This will enable the first serial port with 9600/8/N/1"); ?></strong>
 									<br>
-									<span class="vexpl"><?=gettext("Note:  This will disable the internal video card/keyboard"); ?></span>
+									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
 								</td>
 							</tr>
 							<tr>

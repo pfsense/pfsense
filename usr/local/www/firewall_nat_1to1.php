@@ -102,7 +102,7 @@ include("head.inc");
                 <tr>
 		  <td width="10%" class="listhdrr"><?=gettext("Interface"); ?></td>
                   <td width="20%" class="listhdrr"><?=gettext("External IP"); ?></td>
-                  <td width="15%" class="listhdrr"><?=gettext("Source IP"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Internal IP"); ?></td>
                   <td width="15%" class="listhdrr"><?=gettext("Destination IP"); ?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">

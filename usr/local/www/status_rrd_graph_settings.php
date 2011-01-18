@@ -47,6 +47,7 @@ require_once("rrd.inc");
 $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
 $pconfig['style'] = $config['rrd']['style'];
+$pconfig['period'] = $config['rrd']['period'];
 
 $curcat = "settings";
 $categories = array('system' => gettext("System"),
@@ -56,6 +57,9 @@ $categories = array('system' => gettext("System"),
 		'queues' => gettext("Queues"));
 $styles = array('inverse' => gettext("Inverse"),
 		'absolute' => gettext("Absolute"));
+$periods = array("absolute" => gettext("Absolute Timespans"),
+		"current" => gettext("Current Period"),
+		"previous" => gettext("Previous Period"));
 
 if ($_POST) {
 
@@ -69,6 +73,7 @@ if ($_POST) {
                 $config['rrd']['enable'] = $_POST['enable'] ? true : false;
                 $config['rrd']['category'] = $_POST['category'];
                 $config['rrd']['style'] = $_POST['style'];
+                $config['rrd']['period'] = $_POST['period'];
                 write_config();
 
                 $retval = 0;
@@ -186,6 +191,21 @@ include("head.inc");
 					?>
 					</select>
 					<b><?=gettext("This selects the default style.");?></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vtable"><?=gettext("Default period");?></td>
+				<td width="78%" class="vtable">
+					<select name="period" class="formselect" style="z-index: -10;" >
+					<?php
+					foreach ($periods as $period => $periodd) {
+						echo "<option value=\"$period\"";
+						if ($period == $pconfig['period']) echo " selected";
+						echo ">" . htmlspecialchars($periodd) . "</option>\n";
+					}
+					?>
+					</select>
+					<b><?=gettext("This selects the default period.");?></b>
 				</td>
 			</tr>
 			<tr>

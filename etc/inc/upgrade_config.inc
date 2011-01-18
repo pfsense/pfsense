@@ -709,9 +709,13 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
 		$config['sysctl']['item'][19]['value'] =   "default";
 
-		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot ";
+		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot";
 		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
 		$config['sysctl']['item'][20]['value'] =   "default";
+
+		$config['sysctl']['item'][21]['tunable'] = "kern.ipc.maxsockbuf";
+		$config['sysctl']['item'][21]['descr'] =    "Maximum socket buffer size";
+		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
 }
@@ -817,8 +821,7 @@ function upgrade_044_to_045() {
 	$iflist = get_configured_interface_list(false, true);
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {
-			$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
-			$config['vlans']['vlan'][$id] = $vlan;
+			$config['vlans']['vlan'][$id]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 			/* Make sure to update the interfaces section with the right name */
 			foreach($iflist as $ifname) {
 				if($config['interfaces'][$ifname]['if'] == "vlan{$id}") {
@@ -1083,8 +1086,8 @@ function upgrade_047_to_048() {
 			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
 			$tempdyn['type'] = $config['dyndns'][0]['type'];
 			$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
-			$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
-			$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
+			$tempdyn['username'] = $config['dyndns'][0]['username'];
+			$tempdyn['password'] = $config['dyndns'][0]['password'];
 			$tempdyn['host'] = $config['dyndns'][0]['host'];
 			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
 			$tempdyn['interface'] = "wan";
@@ -2280,6 +2283,11 @@ function upgrade_074_to_075() {
 		rename_field($config['cert'], 'name', 'descr');
 	if (is_array($config['crl']))
 		rename_field($config['crl'], 'name', 'descr');
+}
+
+function upgrade_075_to_076() {
+	require_once("services.inc");
+	install_cron_job("/usr/bin/nice -n20 /etc/rc.update_urltables", true, "30", "12");
 }
 
 ?>

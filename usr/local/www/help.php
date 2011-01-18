@@ -302,6 +302,7 @@ $helppages = array(
 	'siproxdusers.xml' => 'http://doc.pfsense.org/index.php/Siproxd_package',
 	'open-vm-tools.xml' => 'http://doc.pfsense.org/index.php/Open_VM_Tools_package',
 	'arping.xml' => 'http://doc.pfsense.org/index.php/Arping_package',
+	'unbound.xml' => 'http://doc.pfsense.org/index.php/Unbound_package',
 
 );
 

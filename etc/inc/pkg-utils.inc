@@ -191,7 +191,7 @@ function get_pkg_sizes($pkgs = 'all') {
  * This function may also print output to the terminal indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	global $config, $pkg_interface, $bootup;
+	global $config, $pkg_interface, $g;
 
 	log_error("Resyncing configuration for all packages.");
 
@@ -209,7 +209,7 @@ function resync_all_package_configs($show_message = false) {
 		if($show_message == true)
 			echo " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
-		if($bootup != true)
+		if($g['booting'] != true)
 			stop_service($package['name']);
 		sync_package($idx, true, true);
 		if($pkg_interface == "console") 
@@ -867,7 +867,7 @@ function delete_package($pkg) {
 }
 
 function delete_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface, $bootup;
+	global $g, $config, $static_output, $pkg_interface;
 
 	conf_mount_rw();
 
@@ -937,7 +937,7 @@ function delete_package_xml($pkg) {
 				foreach($pkg_config['service'] as $service) {
 					foreach($services as $key => $instservice) {
 						if($instservice['name'] == $service['name']) {
-							if($bootup != true)
+							if($g['booting'] != true)
 								stop_service($service['name']);
 							unset($services[$key]);
 						}

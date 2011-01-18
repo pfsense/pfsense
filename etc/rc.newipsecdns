@@ -36,6 +36,7 @@
 	require_once("shaper.inc");	
 	require_once("ipsec.inc");
 	require_once("vpn.inc");
+	require_once("util.inc");
 
 	/* make sure to wait until the boot scripts have finished */
 	while (file_exists("{$g['varrun_path']}/booting")) {

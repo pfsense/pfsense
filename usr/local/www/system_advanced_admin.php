@@ -346,12 +346,12 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("DNS Rebind Check"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked"; ?> />
-									<strong><?=gettext("Disable webConfigurator DNS Rebinding Checks"); ?></strong>
+									<strong><?=gettext("Disable DNS Rebinding Checks"); ?></strong>
 									<br/>
-									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
+									<?php echo gettext("When this is unchecked, your system " .
 									"is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. " .
-									"Check this box to disable this protection if you find that it interferes with " .
-									"webConfigurator access in certain corner cases. "); ?>
+									"This blocks private IP responses from your configured DNS servers. Check this box to disable this protection if it interferes with " .
+									"webConfigurator access or name resolution in your environment. "); ?>
 								</td>
 							</tr>
 							<tr>

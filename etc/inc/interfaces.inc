@@ -952,7 +952,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	case "dhcp":
 		$pid = find_dhclient_process($realif);
 		if($pid)
-			mwexec("kill {$pid}");
+			mwexec("/bin/kill {$pid}");
 		sleep(1);
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
@@ -2451,7 +2451,7 @@ function find_dhclient_process($interface) {
 	else
 		$pid = 0;
 
-	return $pid;
+	return intval($pid);
 }
 
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {

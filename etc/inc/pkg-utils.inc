@@ -313,7 +313,8 @@ function uninstall_package($pkg_name) {
 	global $config, $static_output;
 	global $builder_package_install;
 
-	// Back up /usr/local/lib libraries first
+	// Back up /usr/local/lib libraries first if
+	// not running from the builder code.
 	if(!$builder_package_install) {
 		if(!file_exists("/tmp/pkg_libs.tgz")) {
 			$static_output .= "Backing up libraries... ";
@@ -335,7 +336,8 @@ function uninstall_package($pkg_name) {
 	}
 	delete_package_xml($pkg_name);
 
-	// Restore libraries that we backed up
+	// Restore libraries that we backed up if not 
+	// running from the builder code.
 	if(!$builder_package_install) {
 		$static_output .= "Cleaning up... ";
 		update_output_window($static_output);
@@ -355,6 +357,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config, $config_parsed;
 	global $builder_package_install;
 	
+	// If this code is being called by pfspkg_installer 
+	// which the builder system uses then return (ignore).
 	if($builder_package_install)
 		return;
 	

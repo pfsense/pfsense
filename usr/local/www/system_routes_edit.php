@@ -173,7 +173,7 @@ include("head.inc");
                     <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
                     <select name="network_subnet" class="formselect" id="network_subnet">
-                      <?php for ($i = 32; $i >= 1; $i--): ?>
+                      <?php for ($i = 128; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

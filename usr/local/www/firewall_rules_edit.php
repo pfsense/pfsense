@@ -837,7 +837,7 @@ include("head.inc");
 						<td>
 							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
 							<select <?=$edit_disabled;?> name="srcmask" class="formselect" id="srcmask">
-<?php						for ($i = 31; $i > 0; $i--): ?>
+<?php						for ($i = 127; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
 							</select>
@@ -932,7 +932,8 @@ include("head.inc");
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
 <?php
-							for ($i = 31; $i > 0; $i--): ?>
+							for ($i = 127; $i > 0; 
+$i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
 <?php						endfor; ?>
 							</select>

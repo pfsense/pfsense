@@ -126,6 +126,7 @@ if($_GET['act']=="edit"){
 		} else
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
+		$pconfig['engine'] = $a_server[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
@@ -324,6 +325,7 @@ if ($_POST) {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 		$server['crypto'] = $pconfig['crypto'];
+		$server['engine'] = $pconfig['engine'];
 
 		$server['tunnel_network'] = $pconfig['tunnel_network'];
 		$server['remote_network'] = $pconfig['remote_network'];
@@ -863,6 +865,24 @@ if ($savemsg)
 									foreach ($cipherlist as $name => $desc):
 									$selected = '';
 									if ($name == $pconfig['crypto'])
+										$selected = ' selected';
+								?>
+								<option value="<?=$name;?>"<?=$selected?>>
+									<?=htmlspecialchars($desc);?>
+								</option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr id="engine">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Hardware Crypto"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="engine" class="formselect">
+								<?php
+									$engines = openvpn_get_engines();
+									foreach ($engines as $name => $desc):
+									$selected = '';
+									if ($name == $pconfig['engine'])
 										$selected = ' selected';
 								?>
 								<option value="<?=$name;?>"<?=$selected?>>

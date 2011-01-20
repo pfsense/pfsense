@@ -692,6 +692,19 @@
 			<description>&lt;br/&gt;The method used to encrypt traffic between endpoints. This setting must match on the client and server side, but is otherwise set however you like. Certain algorithms will perform better on different hardware, depending on the availability of supported VPN accelerator chips.</description>
 		</field>
 		<field>
+			<name>engine</name>
+			<type>select</type>
+			<displayname>Hardware Crypto</displayname>
+			<bindstofield>ovpnserver->step10->engine</bindstofield>
+			<options>
+				<option>
+					<name>dummy</name>
+					<value>dummy</value>
+				</option>
+			</options>
+			<description>&lt;br/&gt;The hardware cryptographic accelerator to use for this VPN connection, if any.</description>
+		</field>
+		<field>
 			<type>listtopic</type>
 			<name>Tunnel Settings</name>
 		</field>

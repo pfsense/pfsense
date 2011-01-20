@@ -431,6 +431,8 @@ function openvpn_reconfigure($mode,& $settings) {
 					$conf .= "client-to-client\n";
 				break;
 		}
+		if (isset($settings['duplicate_cn']))
+			$conf .= "duplicate-cn\n";
 	}
 
 	// client specific settings

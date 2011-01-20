@@ -176,6 +176,8 @@ if($_GET['act']=="edit"){
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
+
+		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 	}
 }
 
@@ -364,7 +366,10 @@ if ($_POST) {
 			if ($pconfig['dns_server_enable'])
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
-	
+
+		if ($_POST['duplicate_cn'] == "yes")
+			$server['duplicate_cn'] = true;
+
 		if (isset($id) && $a_server[$id])
 			$a_server[$id] = $server;
 		else
@@ -1006,6 +1011,24 @@ if ($savemsg)
 									<td>
 										<span class="vexpl">
 											<?=gettext("Allow communication between clients connected to this server"); ?>
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="duplicate_cn">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Duplicate Connections"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['duplicate_cn'],$chk); ?>
+										<input name="duplicate_cn" type="checkbox" value="yes" <?=$chk;?>/>
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Allow multiple concurrent connections from clients using the same Common Name.<br/>NOTE: This is not generally recommended, but may be needed for some scenarios."); ?>
 										</span>
 									</td>
 								</tr>

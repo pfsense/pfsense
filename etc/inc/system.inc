@@ -331,6 +331,8 @@ function system_routing_configure($interface = "") {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']))) {
+				if(strstr($gateway['gateway'], ":"))
+					break;
 				if ($gateway['gateway'] == "dynamic")
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				$gatewayip = $gateway['gateway'];
@@ -442,7 +444,7 @@ function system_routing_configure($interface = "") {
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
-			if ($interface == $gateway['friendlyiface'])
+			if ($interface != $gateway['friendlyiface'])
 				continue;
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];

@@ -47,11 +47,6 @@ if(!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-/*  Fix failover DHCP problem
- *  http://article.gmane.org/gmane.comp.security.firewalls.pfsense.support/18749
- */
-ini_set("memory_limit","64M");
-
 /* This function will remove entries from dhcpd.leases that would otherwise
  * overlap with static DHCP reservations. If we don't clean these out,
  * then DHCP will print a warning in the logs about a duplicate lease

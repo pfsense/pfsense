@@ -402,6 +402,9 @@ EOPP;
 		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
 		$subnetmask = gen_subnet_mask($ifcfgsn);
 
+		if (!is_ipaddr($subnet))
+			continue;
+
 		if($is_olsr_enabled == true)
 			if($dhcpifconf['netmask'])
 				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
@@ -431,7 +434,7 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
 
-		$dhcpdconf .= "subnet $subnet netmask $subnetmask {\n";
+		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 		$dhcpdconf .= "	pool {\n";
 
 		/* is failover dns setup? */

@@ -106,8 +106,7 @@ if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 }
 
 if ($_POST['logout_id']) {
-    disconnect_client($_POST['logout_id']);
-    echo <<<EOD
+	echo <<<EOD
 <HTML>
 <HEAD><TITLE>Disconnecting...</TITLE></HEAD>
 <BODY BGCOLOR="#435370">
@@ -123,7 +122,8 @@ setTimeout('window.close();',5000) ;
 </HTML>
 
 EOD;
-exit;
+	disconnect_client($_POST['logout_id']);
+	exit;
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */
     exit;

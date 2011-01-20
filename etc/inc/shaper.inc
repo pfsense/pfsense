@@ -2867,16 +2867,28 @@ class dnpipe_class extends dummynet_class {
 		}
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
               		$this->SetQlimit($q['qlimit']);
+		else
+              		$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
               		$this->SetMask($q['mask']);
+		else
+              		$this->SetMask("");
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
+		else
+              		$this->SetBuckets("");
             	if (isset($q['plr']) && $q['plr'] <> "")
             		$this->SetPlr($q['plr']);
+		else
+            		$this->SetPlr("");
 		if (isset($q['delay']) && $q['delay'] <> "")
             		$this->SetDelay($q['delay']);
+		else
+			$this->SetDelay(0);
             	if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
+		else
+			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
 
         }
@@ -3137,12 +3149,20 @@ class dnqueue_class extends dummynet_class {
 		$this->SetNumber($q['number']);
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
        		       	$this->SetQlimit($q['qlimit']);
+		else
+       		       	$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
               		$this->SetMask($q['mask']);
+		else
+              		$this->SetMask("");
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
+		else
+            		$this->SetWeight("");
             	if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
+		else
+			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
         }
 

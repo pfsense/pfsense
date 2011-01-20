@@ -2286,8 +2286,16 @@ function upgrade_074_to_075() {
 }
 
 function upgrade_075_to_076() {
-	require_once("services.inc");
-	install_cron_job("/usr/bin/nice -n20 /etc/rc.update_urltables", true, "30", "12");
+	global $config;
+	$cron_item = array();
+	$cron_item['minute'] = "30";
+	$cron_item['hour'] = "12";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.update_urltables";
+	$config['cron']['item'][] = $cron_item;
 }
 
 ?>

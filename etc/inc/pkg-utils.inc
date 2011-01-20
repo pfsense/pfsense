@@ -311,13 +311,16 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 
 function uninstall_package($pkg_name) {
 	global $config, $static_output;
+	global $builder_package_install;
 
 	// Back up /usr/local/lib libraries first
-	if(!file_exists("/tmp/pkg_libs.tgz")) {
-		$static_output .= "Backing up libraries... ";
-		update_output_window($static_output);
-		exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
-		$static_output .= "\n";
+	if(!$builder_package_install) {
+		if(!file_exists("/tmp/pkg_libs.tgz")) {
+			$static_output .= "Backing up libraries... ";
+			update_output_window($static_output);
+			exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+			$static_output .= "\n";
+		}
 	}
 
 	$id = get_pkg_id($pkg_name);
@@ -333,10 +336,12 @@ function uninstall_package($pkg_name) {
 	delete_package_xml($pkg_name);
 
 	// Restore libraries that we backed up
-	$static_output .= "Cleaning up... ";
-	update_output_window($static_output);
-	exec("/usr/bin/tar xzPfU /tmp/pkg_libs.tgz -C /");
-	@unlink("/tmp/pkg_libs.tgz");	
+	if(!$builder_package_install) {
+		$static_output .= "Cleaning up... ";
+		update_output_window($static_output);
+		exec("/usr/bin/tar xzPfU /tmp/pkg_libs.tgz -C /");
+		@unlink("/tmp/pkg_libs.tgz");	
+	}
 }
 
 function force_remove_package($pkg_name) {
@@ -348,6 +353,10 @@ function force_remove_package($pkg_name) {
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config, $config_parsed;
+	global $builder_package_install;
+	
+	if($builder_package_install)
+		return;
 	
 	if(empty($config['installedpackages']['package']))
 		return;

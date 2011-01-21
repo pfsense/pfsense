@@ -444,8 +444,6 @@ function system_routing_configure($interface = "") {
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
-			if ($interface != $gateway['friendlyiface'])
-				continue;
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 			$action = "add";

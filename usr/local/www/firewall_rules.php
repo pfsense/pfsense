@@ -826,9 +826,6 @@ if($_REQUEST['undodrag']) {
   "to the rule order. Everything that isn't explicitly passed is blocked " .
   "by default. ");?>
 </li>
-<li>
-  <?=gettext("You may drag and drop rules using your mouse to reorder the rule ordering.");?>
-</li>
 </ul>
 		 </td>
 	        </tr>

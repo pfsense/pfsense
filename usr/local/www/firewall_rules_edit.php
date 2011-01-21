@@ -1287,7 +1287,7 @@ include("head.inc");
 ?>
 				</select>
 				<br />
-				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have selected In too.")."<br/>".gettext("The Out selection is applied to traffic going out the interface the rule is created, In is the incoming one.")."<br/>".gettext("If you are creating a rule on the Floating tab if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing and if you do not select any direction use only the In since the Out selection does not make sense in there to prevent oddities.");?></span>
+				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have also selected In.")."<br/>".gettext("The Out selection is applied to traffic leaving the interface where the rule is created, In is applied to traffic coming into the chosen interface.")."<br/>".gettext("If you are creating a floating rule, if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing.");?></span>
 				</div>
 			</td>
 		</tr>

@@ -310,7 +310,7 @@ function typesel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="external" type="text" class="formfldalias" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
+                    <input name="external" type="text" class="formfld" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>"> 
                     <br/>
                     <span class="vexpl"><?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  The subnet mask from the internal address below will be applied to this IP address."); ?><br>
                     <?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?></span>
@@ -358,7 +358,7 @@ function typesel_change() {
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+                                                        <input name="src" type="text" class="formfld" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 31; $i > 0; $i--): ?>
                                                         <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
@@ -413,7 +413,7 @@ function typesel_change() {
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+                                                        <input name="dst" type="text" class="formfld" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                                                         /
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php

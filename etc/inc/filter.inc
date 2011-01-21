@@ -1228,6 +1228,35 @@ function filter_nat_rules_generate() {
 			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
+
+	/* Add binat rules for Network Prefix translation */
+	if(is_array($config['nat']['npt'])) {
+		foreach ($config['nat']['npt'] as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+
+			if (!$rule['interface'])
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
+			if (!isset($FilterIflist[$natif]))
+                                continue;
+
+			$srcaddr = filter_generate_address($rule, 'source');
+                        $dstaddr = filter_generate_address($rule, 'destination');
+
+			$srcaddr = trim($srcaddr);
+			$dstaddr = trim($dstaddr);
+
+			$natif = $FilterIflist[$natif]['descr'];
+
+			$natrules .= "binat on \${$natif} from {$srcaddr} to any -> {$dstaddr}\n";
+			$natrules .= "binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
+
+		}
+	}
+
+
 	$natrules .= "\n# Outbound NAT rules\n";
 	/* outbound rules - advanced or standard */
 	if(isset($config['nat']['advancedoutbound']['enable'])) {

@@ -381,8 +381,8 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'vouchers';
 		if (count($sections) > 0) {
 			if (!carp_check_version($synchronizetoip, $carp['password'], $port)) {
-				update_filter_reload_status("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
-				log_error("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
+				update_filter_reload_status("The other member is on older configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
+				log_error("The other member is on older configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
 				break;
 			}
 				

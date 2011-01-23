@@ -126,6 +126,13 @@ function interface_netgraph_needed($interface = "wan") {
 					$found = true;
 					break;
 				}
+				$ports = explode(',',$ppp['ports']);
+				foreach($ports as $pid => $port){
+					if ($realif == $port) {
+						$found = true;
+						break;
+					}
+				}
 			}
 		}
 	}

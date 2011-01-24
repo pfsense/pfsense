@@ -40,6 +40,19 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+/* if upgrade in progress, alert user */
+if(is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	include("head.inc");
+	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
+	include("fbegin.inc");
+	echo "Please wait while packages are reinstalled in the background.";
+	include("fend.inc");
+	echo "</body>";
+	echo "</html>";
+	exit;
+}
+
 if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];

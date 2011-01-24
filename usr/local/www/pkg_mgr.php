@@ -44,6 +44,19 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+/* if upgrade in progress, alert user */
+if(is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	include("head.inc");
+	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
+	include("fbegin.inc");
+	echo "Please wait while packages are reinstalled in the background.";
+	include("fend.inc");
+	echo "</body>";
+	echo "</html>";
+	exit;
+}
+
 $pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "supportedbybsdperimeter"));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");

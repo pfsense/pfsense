@@ -418,6 +418,7 @@ class altq_root_queue {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
 		}
 
@@ -1335,6 +1336,7 @@ class hfsc_queue extends priq_queue {
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
 		}
 
@@ -2038,6 +2040,7 @@ class cbq_queue extends priq_queue {
 		$q->ReadConfig($qname);
                 $q->validate_input($qname, $input_errors);
                 if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
                         return $q;
                 }
                 switch ($q->GetBwscale()) {
@@ -2813,8 +2816,10 @@ class dnpipe_class extends dummynet_class {
 		$q->SetParent(&$this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
-		if (count($input_errors))
+		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
+		}
 		$this->subqueues[$q->GetQname()] = &$q;
             
 		return $q;

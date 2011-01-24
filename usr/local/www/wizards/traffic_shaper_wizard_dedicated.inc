@@ -246,7 +246,7 @@ function step2_stepsubmitphpaction() {
 	/* Input Validation */
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
-		for ($j = $i + 1; $j < $steps; $j++) {
+		for ($j = $i + 1; $j <= $steps; $j++) {
 			if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"] || $_POST["conn{$i}interface"] == $_POST["local{$j}interface"]) {
 				$savemsg=gettext("You cannot select the same interface for connections {$i} and {$j}.");
 				$stepid--;

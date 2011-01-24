@@ -223,7 +223,7 @@ function step2_stepsubmitphpaction() {
 	/* Input Validation */
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
-		for ($j = $i + 1; $j < $steps; $j++) {
+		for ($j = $i + 1; $j <= $steps; $j++) {
 			$wannum = $i+1;
 			if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
 				$savemsg=gettext("You cannot select the same interface for WAN# {$wannum} and WAN #{$j}.");

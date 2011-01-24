@@ -1347,6 +1347,8 @@ function filter_nat_rules_generate() {
 		}
 		if($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
+				if (substr($ifcfg['if'], 0, 4) == "ovpn")
+					continue;
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 				if(interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];

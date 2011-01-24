@@ -515,8 +515,9 @@ class altq_root_queue {
 	 *      foreach ($queues as $qkey => $queue)
 	 *              this->queues[$qkey]->build_rule();
 	 */
-	function build_rules() {
+	function build_rules($default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
+			$default = false;
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
@@ -539,9 +540,14 @@ class altq_root_queue {
 				}
 				$rules .= " } \n";
 				foreach ($this->queues as $q) {
-					$rules .= $q->build_rules();
+					$rules .= $q->build_rules(&$default);
 				}
 			}
+			if ($default == false) {
+				log_error("SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.");
+				return "\n";
+			} 
+			$frule .= $rules;
 		}
 		$rules .= " \n";
 		return $rules;
@@ -1025,7 +1031,7 @@ class priq_queue {
 	/* Should return something like:
 	 * queue $qname on $qinterface bandwidth ....
 	 */
-	function build_rules() {
+	function build_rules($default = false) {
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -1061,6 +1067,7 @@ class priq_queue {
 				if ($comma)
 					$pfq_rule .= " ,";
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$pfq_rule .= " ) ";
 		}
@@ -1674,7 +1681,7 @@ class hfsc_queue extends priq_queue {
 	}
 
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules($default = false) {
 
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
@@ -1713,6 +1720,7 @@ class hfsc_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 
 			if ($this->GetRealtime() <> "")  {
@@ -2215,7 +2223,7 @@ class cbq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules($default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -2254,6 +2262,7 @@ class cbq_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$tmpvalue = trim($this->GetBorrow());
 			if (!empty($tmpvalue)) {
@@ -2275,7 +2284,7 @@ class cbq_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
+				$pfq_rule .= $q->build_rules(&$default);
 		}
 
 		$pfq_rule .= " \n";
@@ -2489,7 +2498,7 @@ class fairq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules($default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -2529,6 +2538,7 @@ class fairq_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$tmpvalue = trim($this->GetBuckets());
 			if (!empty($tmpvalue)) {

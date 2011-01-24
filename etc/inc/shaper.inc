@@ -31,6 +31,8 @@
 /* XXX: needs some reducing on include. */
 /* include all configuration functions. */
 require_once("functions.inc");
+require_once("util.inc");
+require_once("notices.inc");
 
 /*
  * I admit :) this is derived from xmplparse.inc StartElement()
@@ -544,7 +546,9 @@ class altq_root_queue {
 				}
 			}
 			if ($default == false) {
-				log_error("SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.");
+				$error = "SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.";
+				file_notice("Shaper", $error, "Error occurred", "");
+				unset($error);
 				return "\n";
 			} 
 			$frule .= $rules;

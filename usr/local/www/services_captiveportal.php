@@ -82,7 +82,7 @@ $pconfig['radmac_secret'] = $config['captiveportal']['radmac_secret'];
 $pconfig['reauthenticate'] = isset($config['captiveportal']['reauthenticate']);
 $pconfig['reauthenticateacct'] = $config['captiveportal']['reauthenticateacct'];
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
-$pconfig['httpsname'] = strtolower($config['captiveportal']['httpsname']);
+$pconfig['preauthurl'] = strtolower($config['captiveportal']['preauthurl']);
 $pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
 $pconfig['cacert'] = base64_decode($config['captiveportal']['cacertificate']);
 $pconfig['key'] = base64_decode($config['captiveportal']['private-key']);
@@ -198,6 +198,7 @@ if ($_POST) {
 		$config['captiveportal']['reauthenticateacct'] = $_POST['reauthenticateacct'];
 		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
 		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
+		$config['captiveportal']['preauthurl'] = $_POST['preauthurl'];
 		$config['captiveportal']['peruserbw'] = $_POST['peruserbw'] ? true : false;
 		$config['captiveportal']['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$config['captiveportal']['bwdefaultup'] = $_POST['bwdefaultup'];
@@ -731,6 +732,13 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br>
 		  &lt;/form&gt;</tt></td>
 	</tr>
+	<tr>
+      <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
+      <td class="vtable">
+        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="30" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
+		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
+	  </td>
+	  </tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?><br>
 		<?=gettext("error page"); ?><br>

@@ -67,9 +67,9 @@ include("head.inc");
 				<tr>
 					<td>
 						<?php
-							$version = file_get_contents("/etc/version");
+//							$version = file_get_contents("/etc/version");
 							$tab_array = array();
-							$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+							$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 //							$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //							$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 							$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");

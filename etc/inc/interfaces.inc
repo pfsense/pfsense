@@ -2849,7 +2849,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                         return $if;
 
                 $int = get_parent_interface($if);
-                if ($int == $interface)
+                if ($int[0] == $interface)
                         return $ifname;
         }
         return NULL;

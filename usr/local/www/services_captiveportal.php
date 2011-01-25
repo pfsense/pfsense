@@ -407,6 +407,13 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 "to access after they've authenticated."); ?></td>
 	</tr>
 	<tr>
+      <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
+      <td class="vtable">
+        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="65" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
+		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
+	  </td>
+	</tr>
+	<tr>
       <td valign="top" class="vncell"><?=gettext("Concurrent user logins"); ?></td>
       <td class="vtable">
 	<input name="noconcurrentlogins" type="checkbox" class="formfld" id="noconcurrentlogins" value="yes" <?php if ($pconfig['noconcurrentlogins']) echo "checked"; ?>>
@@ -732,13 +739,6 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br>
 		  &lt;/form&gt;</tt></td>
 	</tr>
-	<tr>
-      <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
-      <td class="vtable">
-        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="65" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
-		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
-	  </td>
-	  </tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?><br>
 		<?=gettext("error page"); ?><br>

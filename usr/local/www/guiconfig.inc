@@ -899,10 +899,12 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		if ($tab_array_indent == '') {
 			$tab_array_indent = 0;
 		}
+
 		if ($tab_array_space == '') {
 			$tab_array_space = 1;
 		}
-		if ($tab_array_char_limit == '' && !$no_drop_down) {
+
+		if ($tab_array_char_limit == '') {
 			$tab_array_char_limit = 82;
 		}
 
@@ -953,6 +955,11 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
         foreach ($tab_array as $ta)
                 $tabcharcount = $tabcharcount + strlen($ta[0]);
 
+		if($no_drop_down == true) {
+			$tabcharcount = 0;
+			unset($tab_array_char_limit);
+		}
+
         // If the character count of the tab names is > 670
         // then show a select item dropdown menubox.
          if($tabcharcount > $tab_array_char_limit) {
@@ -972,7 +979,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
                 echo " function tabs_will_go(obj){ document.location = obj.value; }";
                 echo "</script>";
         }  else {
-		//////>>>
                 echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
                 echo "<!-- Tabbed bar code-->\n";
 				echo "<ul class=\"newtabmenu\">\n";
@@ -986,7 +992,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
                         $tabscounter++;
                 }
                 echo "</ul>\n</div>\n";
-		////////>>>>
         }
 }
 

@@ -97,7 +97,7 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
 	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
-	$tab_array[] = array(gettext("Allowed IP Addresses"), true, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php");
 	$tab_array[] = array(gettext("Allowed Hostnames"), true, "services_captiveportal_hostname.php");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
@@ -114,13 +114,13 @@ include("head.inc");
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_hostname_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>
 	</tr>
   <?php $i = 0; foreach ($a_allowedhostnames as $ip): ?>
-	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
+	<tr ondblclick="document.location='services_captiveportal_hostname_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
 		<?php
 		if($ip['dir'] == "to") {
@@ -129,11 +129,7 @@ include("head.inc");
 		if($ip['dir'] == "both") {
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">   ";
 		}
-		echo strtolower($ip['ip']);
-		if($ip['sn'] != "32" && is_numeric($ip['sn'])) {
-			$sn = $ip['sn'];
-			echo "/$sn";	
-		}
+		echo strtolower($ip['hostname']);
 		if($ip['dir'] == "from") {
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
 		}
@@ -143,7 +139,7 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
+	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_hostname_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
 		 &nbsp;<a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
@@ -153,7 +149,7 @@ include("head.inc");
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_hostnam_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>
@@ -162,7 +158,7 @@ include("head.inc");
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
 	  <?=gettext("Note:"); ?><br>
 	  </strong></span>
-	  <?=gettext("Adding allowed Hostnamees will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal."); ?></p>
+	  <?=gettext("Adding allowed Hostnames will allow a DNS hostname access to/from access through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal."); ?></p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>

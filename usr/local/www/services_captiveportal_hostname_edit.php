@@ -38,7 +38,7 @@
 ##|*IDENT=page-services-captiveportal-editallowedhostnames
 ##|*NAME=Services: Captive portal: Edit Allowed IPs page
 ##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.
-##|*MATCH=services_captiveportal_ip_edit.php*
+##|*MATCH=services_captiveportal_hostname_edit.php*
 ##|-PRIV
 
 function allowedhostnamescmp($a, $b) {
@@ -46,9 +46,8 @@ function allowedhostnamescmp($a, $b) {
 }
 
 function allowedhostnames_sort() {
-        global $g, $config;
-
-        usort($config['captiveportal']['allowedhostname'],"allowedhostnamescmp");
+	global $g, $config;
+	usort($config['captiveportal']['allowedhostname'],"allowedhostname");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -86,18 +85,18 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ip");
+	$reqdfields = explode(" ", "hostname");
 	$reqdfieldsn = array(gettext("Allowed Hostname"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
+	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) 
 		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
-	}
+
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
-                $input_errors[] = gettext("Upload speed needs to be an integer");
-        if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
-                $input_errors[] = gettext("Download speed needs to be an integer");
+		$input_errors[] = gettext("Upload speed needs to be an integer");
+	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+		$input_errors[] = gettext("Download speed needs to be an integer");
 
 	foreach ($a_allowedhostnames as $ipent) {
 		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent))
@@ -148,7 +147,7 @@ if ($_POST) {
 			@unlink("{$g['tmp_path']}/allowedhostname_tmp{$id}");
 		}
 		
-		header("Location: services_captiveportal_ip.php");
+		header("Location: services_captiveportal_hostname.php");
 		exit;
 	}
 }
@@ -159,7 +158,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-		<form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
+		<form action="services_captiveportal_hostname_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
@@ -180,7 +179,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
 			<td width="78%" class="vtable"> 
-				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>">
 			<br> 
 			<span class="vexpl"><?=gettext("Hostname");?>.</span></td>
 		</tr>

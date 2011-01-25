@@ -380,7 +380,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array(gettext("Allowed Hostnames"), true, "services_captiveportal_hostname.php");
 	$tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
-	display_top_tabs($tab_array);
+	display_top_tabs($tab_array, true);
 ?> 
 			</ul>
 		</td>

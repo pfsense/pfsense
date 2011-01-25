@@ -881,7 +881,7 @@ function echo_array($array,$return_me=false){
  * RESULT
  *   null
  ******/
-function display_top_tabs(& $tab_array) {
+function display_top_tabs(& $tab_array, $no_drop_down = false) {
         global $HTTP_SERVER_VARS;
         global $config;
         global $g;
@@ -896,16 +896,13 @@ function display_top_tabs(& $tab_array) {
          */
 		 
 		/* empty string code */ 
-		if ($tab_array_indent == '')
-		{
+		if ($tab_array_indent == '') {
 			$tab_array_indent = 0;
 		}
-		if ($tab_array_space == '')
-		{
+		if ($tab_array_space == '') {
 			$tab_array_space = 1;
 		}
-		if ($tab_array_char_limit == '')
-		{
+		if ($tab_array_char_limit == '' && !$no_drop_down) {
 			$tab_array_char_limit = 82;
 		}
 

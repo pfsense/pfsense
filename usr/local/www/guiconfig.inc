@@ -290,7 +290,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	if($nifty_background == "")
 		$nifty_background = "#FFF";
 
-	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
+	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		if($_POST['if']) 

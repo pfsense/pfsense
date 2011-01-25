@@ -2848,9 +2848,13 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
                         return $if;
 
+		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
+		//      Not to be replaced with get_real_interface - causes slow interface listings here because of recursion!
+		/*
                 $int = get_parent_interface($if);
                 if ($int[0] == $interface)
                         return $ifname;
+		*/
         }
         return NULL;
 }

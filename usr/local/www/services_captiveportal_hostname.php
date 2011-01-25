@@ -79,7 +79,7 @@ if ($_GET['act'] == "del") {
 			
 		unset($a_allowedhostnames[$_GET['id']]);
 		write_config();
-		header("Location: services_captiveportal_ip.php");
+		header("Location: services_captiveportal_hostname.php");
 		exit;
 	}
 }

@@ -2912,7 +2912,7 @@ function get_parent_interface($interface) {
 
 	if (empty($config['interfaces'][$interface]))
 		return $interface;
-
+	
 	$tmpif = $config['interfaces'][$interface];
 	switch ($tmpif['ipaddr']) {
 	case "ppp":
@@ -3482,7 +3482,7 @@ function get_wireless_modes($interface) {
 
 	$wlif = get_real_interface($interface);
 
-	if(is_interface_wireless($wlif)) {
+	if($wlif != NULL && is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
@@ -3528,7 +3528,7 @@ function get_wireless_channel_info($interface) {
 
 	$wlif = get_real_interface($interface);
 
-	if(is_interface_wireless($wlif)) {
+	if($wlif != NULL && is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list txpower";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";

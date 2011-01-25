@@ -1041,6 +1041,37 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	return $rules;
 }
 
+/* 
+	Adds a dnsfilter entry and watches for hostname changes.
+	A change results in reloading the ruleset.
+*/
+function setup_dnsfilter_entries($hostname) {
+	$cp_filterdns_filename = "{$g['varetc_path']}/filterdns-captiveportal.conf";
+	$fd = fopen($cp_filterdns_filename, "w");
+	if (is_array($config['captiveportal']['allowedhostname'])) 
+		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) 
+			fwrite($fd, $hostnameent . "\n");
+	fclose($fd);
+	killbypid("{$g['tmp_path']}/dnswatch-cpah.pid");
+	mwexec("/usr/local/sbin/dnswatch {$g['tmp_path']}/dnswatch-cpah.pid 300 '/etc/rc.filter_configure_sync' {$g['varetc_path']}/dnswatch-captiveportal.conf");
+}
+
+function captiveportal_allowedhostname_configure_entry($ipent) {
+
+}
+
+function captiveportal_allowedhostname_configure() {
+	global $config, $g;
+
+	$rules = "";
+	setup_dnsfilter_entries();
+	if (is_array($config['captiveportal']['allowedhostname'])) 
+		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) 
+			$rules .= captiveportal_allowedip_configure_entry($hostnameent);
+
+	return $rules;
+}
+
 function captiveportal_allowedip_configure() {
 	global $config, $g;
 

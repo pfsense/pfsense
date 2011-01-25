@@ -110,8 +110,8 @@ elif [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
 else
-    SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-    /sbin/swapon -a 2>/dev/null >/dev/null
+	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
+	/sbin/swapon -a 2>/dev/null >/dev/null
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

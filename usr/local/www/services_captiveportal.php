@@ -409,7 +409,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 	<tr>
       <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
       <td class="vtable">
-        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="65" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
+        <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
 		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
 	  </td>
 	</tr>

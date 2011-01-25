@@ -216,6 +216,12 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	else
 		$htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
 
+	/* substitute the PORTAL_REDIRURL variable */
+	if ($config['captiveportal']['preauthurl']) {
+		$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$config['captiveportal']['preauthurl']}", $htmltext);
+		$htmltext = str_replace("#PORTAL_REDIRURL#", "{$config['captiveportal']['preauthurl']}", $htmltext);
+	}
+
 	/* substitute other variables */
 	if (isset($config['captiveportal']['httpslogin'])) {
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);

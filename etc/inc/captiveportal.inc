@@ -979,9 +979,13 @@ function captiveportal_passthrumac_findbyname($username) {
  */
 function captiveportal_allowedip_configure_entry($ipent) {
 
+	/* This function can deal with hostname or ipaddress */
 	if($ipent['ip']) 	
 		$ipaddress = $ipent['ip'];
 
+	/*  Instead of copying this entire function for something
+	 *  easy such as hostname vs ip address add this check
+	 */
 	if($ipent['hostname']) {
 		$ipaddress = gethostbyname($ipent['hostname']);
 		if(!is_ipaddr($ipaddress)) 
@@ -996,7 +1000,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	$tablein = array();
 	$tableout = array();
 
-	if ($enBwup or $enBwdown)
+	if (intval($enBwup) > 0 or intval($enBwdown) > 0)
 		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
 	else
 		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, false);

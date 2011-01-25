@@ -1071,6 +1071,8 @@ function setup_dnsfilter_entries() {
 			fwrite($fd, $hostnameent['hostname'] . "\n");
 	fclose($fd);
 	killbypid("{$g['tmp_path']}/dnswatch-cpah.pid");
+	// For some reason the killbypid() is not working.  Brute force if needed.
+	exec("/bin/ps awux | grep -v /usr/bin/grep | grep dnswatch-cpah.pid | /usr/bin/awk '{ print \$2 }' | /usr/bin/xargs kill");
 	mwexec("/usr/local/sbin/dnswatch {$g['tmp_path']}/dnswatch-cpah.pid 300 '/etc/rc.captiveportal_configure' {$cp_filterdns_filename}");
 }
 

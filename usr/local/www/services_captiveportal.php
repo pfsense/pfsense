@@ -399,7 +399,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 	  <?=gettext("If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs."); ?></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell"><?=gettext("Redirection URL"); ?></td>
+	  <td valign="top" class="vncell"><?=gettext("After authentication Redirection URL"); ?></td>
 	  <td class="vtable">
 		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>">
 		<br>
@@ -735,7 +735,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
       <td class="vtable">
-        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="30" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
+        <input name="preauthurl" type="text" class="formfld unknown" id="preauthurl" size="65" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
 		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
 	  </td>
 	  </tr>

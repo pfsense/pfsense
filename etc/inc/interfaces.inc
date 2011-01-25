@@ -2468,7 +2468,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$wancfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
-	$realhwif = interface_translate_type_to_real($interface);
+	$realhwif = get_parent_interface($interface);
 
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
@@ -2831,7 +2831,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
                         return $if;
 
-                $int = interface_translate_type_to_real($if);
+                $int = get_parent_interface($if);
                 if ($int == $interface)
                         return $ifname;
         }
@@ -2903,16 +2903,18 @@ function convert_real_interface_to_friendly_descr($interface) {
 }
 
 /*
- *  interface_translate_type_to_real($interface):
- *              returns the real hardware interface name for a friendly interface.  ie: wan
+ *  get_parent_interface($interface):
+ *			returns the real parent interface for a given interface description (i.e. wan)
+ *			or a virtual interface (i.e. vlan1 or pppoe0 etc.)
  */
-function interface_translate_type_to_real($interface) {
-        global $config;
+function get_parent_interface($interface) {
+	global $config;
 
 	if (empty($config['interfaces'][$interface]))
 		return $interface;
+
 	$tmpif = $config['interfaces'][$interface];
-	switch ($tmpif['type']) {
+	switch ($tmpif['ipaddr']) {
 	case "ppp":
 	case "pppoe":
 	case "pptp":
@@ -3478,7 +3480,7 @@ function get_wireless_modes($interface) {
 	/* return wireless modes and channels */
 	$wireless_modes = array();
 
-	$wlif = interface_translate_type_to_real($interface);
+	$wlif = get_real_interface($interface);
 
 	if(is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
@@ -3524,7 +3526,7 @@ function get_wireless_modes($interface) {
 function get_wireless_channel_info($interface) {
 	$wireless_channels = array();
 
-	$wlif = interface_translate_type_to_real($interface);
+	$wlif = get_real_interface($interface);
 
 	if(is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);

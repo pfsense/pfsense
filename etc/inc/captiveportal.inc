@@ -1068,10 +1068,10 @@ function setup_dnsfilter_entries() {
 	$fd = fopen($cp_filterdns_filename, "w");
 	if (is_array($config['captiveportal']['allowedhostname'])) 
 		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) 
-			fwrite($fd, $hostnameent . "\n");
+			fwrite($fd, $hostnameent['hostname'] . "\n");
 	fclose($fd);
 	killbypid("{$g['tmp_path']}/dnswatch-cpah.pid");
-	mwexec("/usr/local/sbin/dnswatch {$g['tmp_path']}/dnswatch-cpah.pid 300 '/etc/rc.captiveportal_configure' {$g['varetc_path']}/dnswatch-captiveportal.conf");
+	mwexec("/usr/local/sbin/dnswatch {$g['tmp_path']}/dnswatch-cpah.pid 300 '/etc/rc.captiveportal_configure' {$cp_filterdns_filename}");
 }
 
 function captiveportal_allowedhostname_configure() {

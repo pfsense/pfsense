@@ -664,7 +664,7 @@ EOD;
 
 	file_put_contents("{$g['tmp_path']}/ipfw.cp.rules", $cprules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules", true);
-	@unlink("{$g['tmp_path']}/ipfw.cp.rules");
+	//@unlink("{$g['tmp_path']}/ipfw.cp.rules");
 
 	if ($reinit == false)
 		unlock($captiveportallck);
@@ -979,15 +979,24 @@ function captiveportal_passthrumac_findbyname($username) {
  */
 function captiveportal_allowedip_configure_entry($ipent) {
 
+	if($ipent['ip']) 	
+		$ipaddress = $ipent['ip'];
+
+	if($ipent['hostname']) {
+		$ipaddress = gethostbyname($ipent['hostname']);
+		if(!is_ipaddr($ipaddress)) 
+			return;
+	}
+
 	$rules = "";
-	$enBwup = isset($ipent['bw_up']);
-	$enBwdown = isset($ipent['bw_down']);
+	$enBwup = intval($ipent['bw_up']);
+	$enBwdown = intval($ipent['bw_down']);
 	$bw_up = "";
 	$bw_down = "";
 	$tablein = array();
 	$tableout = array();
 
-	if ($enBwup && $enBwdown)
+	if ($enBwup or $enBwdown)
 		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
 	else
 		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, false);
@@ -1034,13 +1043,13 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	if (!empty($ipent['sn']))
 		$subnet = "/{$ipent['sn']}";
 	foreach ($tablein as $table)
-		$rules .= "table {$table} add {$ipent['ip']}{$subnet} {$bw_up}\n";
+		$rules .= "table {$table} add {$ipaddress}{$subnet} {$bw_up}\n";
 	if ($enBwdown) {
 		$bw_down = $ruleno + 20001;
 		$rules .= "pipe {$bw_down} config bw {$ipent['bw_down']}Kbit/s queue 100\n";
 	}
 	foreach ($tableout as $table)
-		$rules .= "table {$table} add {$ipent['ip']}{$subnet} {$bw_down}\n";
+		$rules .= "table {$table} add {$ipaddress}{$subnet} {$bw_down}\n";
 
 	return $rules;
 }
@@ -1049,7 +1058,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	Adds a dnsfilter entry and watches for hostname changes.
 	A change results in reloading the ruleset.
 */
-function setup_dnsfilter_entries($hostname) {
+function setup_dnsfilter_entries() {
 	global $g, $config;
 	$cp_filterdns_filename = "{$g['varetc_path']}/filterdns-captiveportal.conf";
 	$fd = fopen($cp_filterdns_filename, "w");
@@ -1064,14 +1073,11 @@ function setup_dnsfilter_entries($hostname) {
 function captiveportal_allowedhostname_configure() {
 	global $config, $g;
 
-	$rules = "";
+	$rules = "\n# captiveportal_allowedhostname_configure()\n";
 	setup_dnsfilter_entries();
 	if (is_array($config['captiveportal']['allowedhostname'])) {
-		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) {
-			$ipaddress = gethostbyname($hostnameent);
-			if(is_ipaddr($ipaddress)) 
-				$rules .= captiveportal_allowedip_configure_entry($ipaddress);
-		}
+		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) 
+			$rules .= captiveportal_allowedip_configure_entry($hostnameent);
 	}
 	return $rules;
 }

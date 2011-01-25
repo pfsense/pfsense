@@ -2848,7 +2848,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
                         return $if;
 
-                $int = get_real_interface($if);
+                $int = get_parent_interface($if);
                 if ($int == $interface)
                         return $ifname;
         }

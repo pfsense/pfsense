@@ -259,6 +259,10 @@ function captiveportal_configure() {
 			$htmltext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $htmltext);
 			$htmltext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $htmltext);
 			$htmltext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $htmltext);
+			if($config['captiveportal']['preauthurl']) {
+				$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$config['captiveportal']['preauthurl']}", $htmltext);
+				$htmltext = str_replace("#PORTAL_REDIRURL#", "{$config['captiveportal']['preauthurl']}", $htmltext);
+			}
 			fwrite($fd, $htmltext);
 			fclose($fd);
 		}
@@ -355,6 +359,10 @@ EOD;
 			$errtext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $errtext);
 			$errtext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $errtext);
 			$errtext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $errtext);
+			if($config['captiveportal']['preauthurl']) {
+				$errtext = str_replace("\$PORTAL_REDIRURL\$", "{$config['captiveportal']['preauthurl']}", $errtext);
+				$errtext = str_replace("#PORTAL_REDIRURL#", "{$config['captiveportal']['preauthurl']}", $errtext);
+			}
 			fwrite($fd, $errtext);
 			fclose($fd);
 		}

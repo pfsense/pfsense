@@ -122,13 +122,28 @@ function interface_netgraph_needed($interface = "wan") {
 		$realif = get_real_interface($interface);
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+
+/* This if block doesn't do anything. It can be deleted.
+PPP interfaces are found above in the previous if ($found == false) block.
+This block of code is only entered for OPTx interfaces that are configured for PPPoE modem access, so $realif != $ppp['if']
+
 				if ($realif == $ppp['if']) {
 					$found = true;
 					break;
 				}
+*/			
 				$ports = explode(',',$ppp['ports']);
 				foreach($ports as $pid => $port){
+					$port = get_real_interface($port);
 					if ($realif == $port) {
+						$found = true;
+						break;
+					}
+					/* Find the parent interfaces of the vlans in the MLPPP configs 
+					* there should be only one element in the array here 
+					* -- this could be better . . . */
+					$parent_if = get_parent_interface($port);
+					if ($realif == $parent_if[0]) {
 						$found = true;
 						break;
 					}
@@ -136,7 +151,7 @@ function interface_netgraph_needed($interface = "wan") {
 			}
 		}
 	}
-
+	
 	if ($found == false) {
 		$realif = get_real_interface($interface);
 		pfSense_ngctl_detach("{$realif}:", $realif);
@@ -2468,7 +2483,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$wancfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
-	$realhwif = get_parent_interface($interface);
+	$realhwif_array = get_parent_interface($interface);
+	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
+	$realhwif = $realhwif_array[0];
 
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
@@ -2904,38 +2921,62 @@ function convert_real_interface_to_friendly_descr($interface) {
 
 /*
  *  get_parent_interface($interface):
- *			returns the real parent interface for a given interface description (i.e. wan)
- *			or a virtual interface (i.e. vlan1 or pppoe0 etc.)
+ *			--returns the (real or virtual) parent interface(s) array for a given interface friendly name (i.e. wan)
+ *				or virtual interface (i.e. vlan)
+ *				(We need array because MLPPP and bridge interfaces have more than one parent.)
+ *			-- returns $interface passed in if $interface parent is not found
+ *			-- returns empty array if an invalid interface is passed
+ *	(Only handles ppps and vlans now.)
  */
 function get_parent_interface($interface) {
 	global $config;
 
-	if (empty($config['interfaces'][$interface]))
-		return $interface;
-	
-	$tmpif = $config['interfaces'][$interface];
-	switch ($tmpif['ipaddr']) {
-	case "ppp":
-	case "pppoe":
-	case "pptp":
-	case "l2tp":
-		if (is_array($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-				if ($tmpif['if'] == $ppp['if']) {
-					$interface = $ppp['ports'];
-					break;
-				}
-			}
-		}
-		break;
-	case "dhcp":
-	case "static":
-	default:
-		$interface = $tmpif['if'];
-		break;
-	}
+	$parents = array();
+	//Check that we got a valid interface passed
+	$realif = get_real_interface($interface);
+	if ($realif == NULL)
+		return $parents;
 
-	return $interface;
+	// If we got a real interface, find it's friendly assigned name
+	$interface = convert_real_interface_to_friendly_interface_name($interface);
+		
+	if (!empty($interface) && isset($config['interfaces'][$interface])) {
+		$ifcfg = $config['interfaces'][$interface];
+		switch ($ifcfg['ipaddr']) {
+			case "ppp":
+			case "pppoe":
+			case "pptp":
+			case "l2tp":
+				if (empty($parents))
+					if (is_array($config['ppps']['ppp']))
+						foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+							if ($ppp_if == $ppp['if']) {
+								$ports = explode(',', $ppp['ports']);
+								foreach ($ports as $pid => $parent_if) 
+									$parents[$pid] = get_real_interface($parent_if);
+								break;
+							}
+						}
+				break;
+			case "dhcp":
+			case "static":
+			default:
+				// Handle _vlans
+				if (strstr($realif,"_vlan"))
+					if (is_array($config['vlans']['vlan'])) 
+						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan)
+							if ($ifcfg['if'] == $vlan['vlanif']){
+								$parents[0] = $vlan['if'];
+								break;
+							}
+				break;
+		}
+	}
+	
+	if (empty($parents))
+		$parents[0] = $realif;
+	
+	return $parents;
 }
 
 function interface_is_wireless_clone($wlif) {

@@ -602,7 +602,7 @@ function enable_rrd_graphing() {
 
 		/* SPAMD, set up the spamd rrd file */
 		if (isset($config['installedpackages']['spamdsettings']) &&
-			 isset ($config['installedpackages']['spamdsettings']['config'][0]['enablerrd'])) {
+			 $config['installedpackages']['spamdsettings']['config'][0]['enablerrd']) {
 			/* set up the spamd rrd file */
 			if (!file_exists("$rrddbpath$ifname$spamd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$spamd --step $rrdspamdinterval ";

@@ -2087,6 +2087,11 @@ block out $log inet all label "Default deny rule IPv4"
 block in $log inet6 all label "Default deny rule IPv6"
 block out $log inet6 all label "Default deny rule IPv6"
 
+# IPv6 ICMP is not auxilary, it is required for operation
+#pass out quick proto ipv6-icmp from any to any keep state
+# Allow only bare essential icmpv6 packets (NS, NA, and RA)
+pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
+
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any
 block quick inet proto { tcp, udp } from any to any port = 0
@@ -2297,11 +2302,6 @@ EOD;
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out inet all keep state allow-opts label "let out anything IPv4 from firewall host itself"
 pass out inet6 all keep state allow-opts label "let out anything IPv6 from firewall host itself"
-
-# IPv6 ICMP is not auxilary, it is required for operation
-#pass out quick proto ipv6-icmp from any to any keep state
-# Allow only bare essential icmpv6 packets (NS, NA, and RA)
-pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
 
 EOD;
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {

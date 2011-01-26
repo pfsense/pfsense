@@ -28,6 +28,15 @@ if [ ! -f /tmp/bogons ]; then
 	exit
 fi
 
+/usr/bin/fetch -q -o /tmp/bogonsv6 "http://files.pfsense.org/mirrors/fullbogons-ipv6.txt"
+if [ ! -f /tmp/bogonsv6 ]; then
+	echo "Could not download http://files.pfsense.org/mirrors/fullbogons-ipv6.txt" | logger
+	# Relaunch and sleep
+	sh /etc/rc.update_bogons.sh & 
+	exit
+fi
+
+
 BOGON_MD5=`/usr/bin/fetch -q -o - "http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt.md5" | awk '{ print $4 }'`
 ON_DISK_MD5=`md5 /tmp/bogons | awk '{ print $4 }'`
 if [ "$BOGON_MD5" = "$ON_DISK_MD5" ]; then
@@ -38,6 +47,20 @@ if [ "$BOGON_MD5" = "$ON_DISK_MD5" ]; then
 	echo "Bogons file downloaded:  $RESULT" | logger
 else
 	echo "Could not download http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt.md5 (md5 mismatch)" | logger
+	# Relaunch and sleep
+	sh /etc/rc.update_bogons.sh & 	
+fi
+
+BOGON_MD5=`/usr/bin/fetch -q -o - "http://files.pfsense.org/mirrors/fullbogons-ipv6.txt.md5" | awk '{ print $4 }'`
+ON_DISK_MD5=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
+if [ "$BOGON_MD5" = "$ON_DISK_MD5" ]; then
+	egrep -v "^#" /tmp/bogonsv6 > /etc/bogonsv6
+	/etc/rc.conf_mount_ro
+	RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
+	rm /tmp/bogons
+	echo "Bogons files downloaded:  $RESULT" | logger
+else
+	echo "Could not download http://files.pfsense.org/mirrors/fullbogons-ipv6.txt.md5 (md5 mismatch)" | logger
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh & 	
 fi

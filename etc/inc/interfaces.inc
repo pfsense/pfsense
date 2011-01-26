@@ -1852,11 +1852,11 @@ function interface_carp_configure(&$vip) {
 
 	if(is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 
 	interfaces_bring_up($vipif);

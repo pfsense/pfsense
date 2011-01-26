@@ -2082,14 +2082,16 @@ function filter_rules_generate() {
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------
-block in $log all label "Default deny rule"
-block out $log all label "Default deny rule"
+block in $log inet all label "Default deny rule IPv4"
+block out $log inet all label "Default deny rule IPv4"
 block in $log inet6 all label "Default deny rule IPv6"
 block out $log inet6 all label "Default deny rule IPv6"
 
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any
 block quick inet proto { tcp, udp } from any to any port = 0
+block quick inet6 proto { tcp, udp } from any port = 0 to any
+block quick inet6 proto { tcp, udp } from any to any port = 0
 
 
 EOD;

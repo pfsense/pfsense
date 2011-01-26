@@ -1072,16 +1072,20 @@ function captiveportal_allowedip_configure_entry($ipent) {
 */
 function setup_dnsfilter_entries() {
 	global $g, $config;
+
 	$cp_filterdns_filename = "{$g['varetc_path']}/filterdns-captiveportal.conf";
-	$fd = fopen($cp_filterdns_filename, "w");
-	if (is_array($config['captiveportal']['allowedhostname'])) 
-		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent) 
-			fwrite($fd, $hostnameent['hostname'] . "\n");
-	fclose($fd);
+	$cp_filterdns_conf = "";
+	if (is_array($config['captiveportal']['allowedhostname'])) {
+		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent)  {
+			$cp_filterdns_conf .= "ipfw $hostnameent 3 /etc/rc.captiveportal_configure\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 4 /etc/rc.captiveportal_configure\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 7 /etc/rc.captiveportal_configure\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 8 /etc/rc.captiveportal_configure\n";
+		}
+	}
+	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);
 	killbypid("{$g['tmp_path']}/dnswatch-cpah.pid");
-	// For some reason the killbypid() is not working.  Brute force if needed.
-	exec("/bin/ps awux | grep -v /usr/bin/grep | grep dnswatch-cpah.pid | /usr/bin/awk '{ print \$2 }' | /usr/bin/xargs kill");
-	mwexec("/usr/local/sbin/dnswatch {$g['tmp_path']}/dnswatch-cpah.pid 300 /etc/rc.captiveportal_configure {$cp_filterdns_filename}");
+	mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/dnswatch-cpah.pid -i 300 -c {$cp_filterdns_filename} -d 1");
 }
 
 function captiveportal_allowedhostname_configure() {

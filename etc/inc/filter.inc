@@ -2189,10 +2189,13 @@ EOD;
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
 			if($bogontableinstalled == 0)
 				$ipfrules .= "table <bogons> persist file \"/etc/bogons\"\n";
+				$ipfrules .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon networks from {$oc['descr']}"
+# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
+block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
 			$bogontableinstalled++;

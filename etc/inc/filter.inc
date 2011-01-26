@@ -2222,7 +2222,6 @@ block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block pri
 block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
 block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
 block in $log quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
-block in $log quick on \${$oc['descr']} from fec0::/10 to any label "Block ULA networks from {$oc['descr']} block fec0::/10"
 
 EOD;
 			}

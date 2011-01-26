@@ -692,6 +692,19 @@
 			<description>&lt;br/&gt;The method used to encrypt traffic between endpoints. This setting must match on the client and server side, but is otherwise set however you like. Certain algorithms will perform better on different hardware, depending on the availability of supported VPN accelerator chips.</description>
 		</field>
 		<field>
+			<name>engine</name>
+			<type>select</type>
+			<displayname>Hardware Crypto</displayname>
+			<bindstofield>ovpnserver->step10->engine</bindstofield>
+			<options>
+				<option>
+					<name>dummy</name>
+					<value>dummy</value>
+				</option>
+			</options>
+			<description>&lt;br/&gt;The hardware cryptographic accelerator to use for this VPN connection, if any.</description>
+		</field>
+		<field>
 			<type>listtopic</type>
 			<name>Tunnel Settings</name>
 		</field>
@@ -746,6 +759,13 @@
 			<type>checkbox</type>
 			<description>Allow communication between clients connected to this server.</description>
 			<bindstofield>ovpnserver->step10->interclient</bindstofield>
+		</field>
+		<field>
+			<displayname>Duplicate Connections</displayname>
+			<name>duplicate_cn</name>
+			<type>checkbox</type>
+			<description>Allow multiple concurrent connections from clients using the same Common Name.&lt;br/&gt;NOTE: This is not generally recommended, but may be needed for some scenarios.</description>
+			<bindstofield>ovpnserver->step10->duplicate_cn</bindstofield>
 		</field>
 		<field>
 			<type>listtopic</type>

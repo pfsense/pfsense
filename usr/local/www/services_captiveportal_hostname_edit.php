@@ -1,10 +1,10 @@
 <?php 
 /*
-	services_captiveportal_ip_edit.php
+	services_captiveportal_hostname_edit.php
 	Copyright (C) 2011 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
-	Originally part of m0n0wall (http://m0n0.ch/wall)	
+	Originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
 	
@@ -31,24 +31,23 @@
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ipfw
-	pfSense_MODULE: captiveportal
+	pfSense_MODULE:	captiveportal
 */
 
 ##|+PRIV
-##|*IDENT=page-services-captiveportal-editallowedips
+##|*IDENT=page-services-captiveportal-editallowedhostnames
 ##|*NAME=Services: Captive portal: Edit Allowed IPs page
 ##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.
-##|*MATCH=services_captiveportal_ip_edit.php*
+##|*MATCH=services_captiveportal_hostname_edit.php*
 ##|-PRIV
 
-function allowedipscmp($a, $b) {
-	return strcmp($a['ip'], $b['ip']);
+function allowedhostnamescmp($a, $b) {
+	return strcmp($a['hostname'], $b['hostname']);
 }
 
-function allowedips_sort() {
+function allowedhostnames_sort() {
 	global $g, $config;
-
-	usort($config['captiveportal']['allowedip'],"allowedipscmp");
+	usort($config['captiveportal']['allowedhostname'],"allowedhostname");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -60,24 +59,24 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed IP address"));
+$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
 
-if (!is_array($config['captiveportal']['allowedip']))
-	$config['captiveportal']['allowedip'] = array();
+if (!is_array($config['captiveportal']['allowedhostname']))
+	$config['captiveportal']['allowedhostname'] = array();
 
-$a_allowedips = &$config['captiveportal']['allowedip'];
+$a_allowedhostnames = &$config['captiveportal']['allowedhostname'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($id) && $a_allowedips[$id]) {
-	$pconfig['ip'] = $a_allowedips[$id]['ip'];
-	$pconfig['sn'] = $a_allowedips[$id]['sn'];
-	$pconfig['dir'] = $a_allowedips[$id]['dir'];
-	$pconfig['bw_up'] = $a_allowedips[$id]['bw_up'];
-	$pconfig['bw_down'] = $a_allowedips[$id]['bw_down'];
-	$pconfig['descr'] = $a_allowedips[$id]['descr'];
+if (isset($id) && $a_allowedhostnames[$id]) {
+	$pconfig['hostname'] = $a_allowedhostnames[$id]['hostname'];
+	$pconfig['sn'] = $a_allowedhostnames[$id]['sn'];
+	$pconfig['dir'] = $a_allowedhostnames[$id]['dir'];
+	$pconfig['bw_up'] = $a_allowedhostnames[$id]['bw_up'];
+	$pconfig['bw_down'] = $a_allowedhostnames[$id]['bw_down'];
+	$pconfig['descr'] = $a_allowedhostnames[$id]['descr'];
 }
 
 if ($_POST) {
@@ -86,33 +85,32 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ip");
-	$reqdfieldsn = array(gettext("Allowed IP address"));
+	$reqdfields = explode(" ", "hostname");
+	$reqdfieldsn = array(gettext("Allowed Hostname"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
-		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);
-	
+	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) 
+		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);
+
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
-
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
 		$input_errors[] = gettext("Download speed needs to be an integer");
 
-	foreach ($a_allowedips as $ipent) {
-		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent))
+	foreach ($a_allowedhostnames as $ipent) {
+		if (isset($id) && ($a_allowedhostnames[$id]) && ($a_allowedhostnames[$id] === $ipent))
 			continue;
 		
-		if ($ipent['ip'] == $_POST['ip']){
-			$input_errors[] = sprintf("[%s] %s.", $_POST['ip'], gettext("already allowed")) ;
+		if ($ipent['hostname'] == $_POST['hostname']){
+			$input_errors[] = sprintf("[%s] %s.", $_POST['hostname'], gettext("already allowed")) ;
 			break ;
 		}	
 	}
 
 	if (!$input_errors) {
 		$ip = array();
-		$ip['ip'] = $_POST['ip'];
+		$ip['hostname'] = $_POST['hostname'];
 		$ip['sn'] = $_POST['sn'];
 		$ip['dir'] = $_POST['dir'];
 		$ip['descr'] = $_POST['descr'];
@@ -120,32 +118,36 @@ if ($_POST) {
 			$ip['bw_up'] = $_POST['bw_up'];
 		if ($_POST['bw_down'])
 			$ip['bw_down'] = $_POST['bw_down'];
-		if (isset($id) && $a_allowedips[$id]) {
-			$oldip = $a_allowedips[$id]['ip'];
-			if (!empty($a_allowedips[$id]['sn']))
-				$oldip .= "/{$a_allowedips[$id]['sn']}";
-			$a_allowedips[$id] = $ip;
+		if (isset($id) && $a_allowedhostnames[$id]) {
+			$oldip = $a_allowedhostnames[$id]['hostname'];
+			if (!empty($a_allowedhostnames[$id]['sn']))
+				$oldip .= "/{$a_allowedhostnames[$id]['sn']}";
+			$a_allowedhostnames[$id] = $ip;
 		} else {
-			$oldip = $ip['ip'];
-			if (!empty($ip['sn']))
-				$oldip .= "/{$ip['sn']}";
-			$a_allowedips[] = $ip;
+			$oldip = $ip['hostname'];
+			if (!empty($$ip['sn']))
+				$oldip .= "/{$$ip['sn']}";
+			$a_allowedhostnames[] = $ip;
 		}
-		allowedips_sort();
+		allowedhostnames_sort();
 		
 		write_config();
 
 		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
-			for ($i = 3; $i < 10; $i++)
-				$rules .= "table {$i} delete {$oldip}\n";
-			$rules .= captiveportal_allowedip_configure_entry($ip);
-			file_put_contents("{$g['tmp_path']}/allowedip_tmp{$id}", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedip_tmp{$id}");
-			@unlink("{$g['tmp_path']}/allowedip_tmp{$id}");
+			$hostname = gethostbyname($oldip);
+			if($hostname)
+				for ($i = 3; $i < 10; $i++)
+					$rules .= "table {$i} delete {$hostname}\n";
+			$hostname = gethostbyname($ip);
+			if(is_ipaddr($hostname))
+				$rules .= captiveportal_allowedip_configure_entry($hostname);
+			file_put_contents("{$g['tmp_path']}/allowedhostname_tmp{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedhostname_tmp{$id}");
+			@unlink("{$g['tmp_path']}/allowedhostname_tmp{$id}");
 		}
 		
-		header("Location: services_captiveportal_ip.php");
+		header("Location: services_captiveportal_hostname.php");
 		exit;
 	}
 }
@@ -156,7 +158,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-		<form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
+		<form action="services_captiveportal_hostname_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
@@ -164,61 +166,51 @@ include("head.inc");
 			<select name="dir" class="formfld">
 		<?php 
 			$dirs = array(gettext("Both"),gettext("From"),gettext("To")) ;
-			foreach ($dirs as $dir): 
-		?>
+			foreach ($dirs as $dir): ?>
 				<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected";?> >
 				<?=htmlspecialchars($dir);?>
 				</option>
 		<?php endforeach; ?>
 			</select>
 			<br> 
-			<span class="vexpl"><?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an IP address through the captive portal (without authentication)"); ?>. 
-			<?=gettext("Use"); ?> <em><?=gettext("To"); ?></em> <?=gettext("to allow access from all clients (even non-authenticated ones) behind the portal to this IP address"); ?>.</span></td>
+			<span class="vexpl"><?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an Hostname through the captive portal (without authentication)"); ?>. 
+				<?=gettext("Use"); ?> <em><?=gettext("To"); ?></em> <?=gettext("to allow access from all clients (even non-authenticated ones) behind the portal to this Hostname"); ?>.</span></td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
 			<td width="78%" class="vtable"> 
-				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
-				/<select name='sn' class="formselect" id='sn'>
-				<?php for ($i = 32; $i >= 1; $i--): ?>
-					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected"; ?>><?=$i;?></option>
-				<?php endfor; ?>
-				</select>
-				<br> 
-				<span class="vexpl"><?=gettext("IP address and subnet mask. Use /32 for a single IP");?>.</span>
-			</td>
+				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+			<br> 
+			<span class="vexpl"><?=gettext("Hostname");?>.</span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable"> 
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
-			</td>
-		</tr>
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+			<br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
+			</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
 			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
-			<br> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this IP address in Kbit/s"); ?></span>
-		</td>
+			<br> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this Hostname in Kbit/s"); ?></span></td>
 		</tr>
 		<tr>
-		 <td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
-		 <td width="78%" class="vtable">
+			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
+			<td width="78%" class="vtable">
 			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
-			<br> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this IP address in Kbit/s"); ?></span>
-		</td>
+			<br> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this Hostname in Kbit/s"); ?></span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-				<?php if (isset($id) && $a_allowedips[$id]): ?>
+				<?php if (isset($id) && $a_allowedhostnames[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>
-	  </table>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

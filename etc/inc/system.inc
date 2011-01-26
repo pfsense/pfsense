@@ -444,6 +444,9 @@ function system_routing_configure($interface = "") {
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
+			if (!empty($interface) && $interface != $gateway['friendlyiface'])
+				continue;
+
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 			$action = "add";
@@ -840,7 +843,7 @@ function system_generate_lighty_config($filename,
 	if($captive_portal == true)  {
 		$captiveportal = ",\"mod_rewrite\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
-		$captive_portal_module = "\"mod_accesslog\", ";
+		$captive_portal_module = "";
 		$maxprocperip = $config['captiveportal']['maxprocperip'];
 		if(!$maxprocperip and $maxprocperip > 0)
 			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";

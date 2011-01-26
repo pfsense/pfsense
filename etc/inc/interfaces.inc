@@ -122,14 +122,36 @@ function interface_netgraph_needed($interface = "wan") {
 		$realif = get_real_interface($interface);
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+
+/* This if block doesn't do anything. It can be deleted.
+PPP interfaces are found above in the previous if ($found == false) block.
+This block of code is only entered for OPTx interfaces that are configured for PPPoE modem access, so $realif != $ppp['if']
+
 				if ($realif == $ppp['if']) {
 					$found = true;
 					break;
 				}
+*/			
+				$ports = explode(',',$ppp['ports']);
+				foreach($ports as $pid => $port){
+					$port = get_real_interface($port);
+					if ($realif == $port) {
+						$found = true;
+						break;
+					}
+					/* Find the parent interfaces of the vlans in the MLPPP configs 
+					* there should be only one element in the array here 
+					* -- this could be better . . . */
+					$parent_if = get_parent_interface($port);
+					if ($realif == $parent_if[0]) {
+						$found = true;
+						break;
+					}
+				}
 			}
 		}
 	}
-
+	
 	if ($found == false) {
 		$realif = get_real_interface($interface);
 		pfSense_ngctl_detach("{$realif}:", $realif);
@@ -2484,7 +2506,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$wancfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
-	$realhwif = interface_translate_type_to_real($interface);
+	$realhwif_array = get_parent_interface($interface);
+	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
+	$realhwif = $realhwif_array[0];
 
 	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
@@ -2862,9 +2886,13 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                 if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
                         return $if;
 
-                $int = interface_translate_type_to_real($if);
-                if ($int == $interface)
+		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
+		//      Not to be replaced with get_real_interface - causes slow interface listings here because of recursion!
+		/*
+                $int = get_parent_interface($if);
+                if ($int[0] == $interface)
                         return $ifname;
+		*/
         }
         return NULL;
 }
@@ -2934,37 +2962,63 @@ function convert_real_interface_to_friendly_descr($interface) {
 }
 
 /*
- *  interface_translate_type_to_real($interface):
- *              returns the real hardware interface name for a friendly interface.  ie: wan
+ *  get_parent_interface($interface):
+ *			--returns the (real or virtual) parent interface(s) array for a given interface friendly name (i.e. wan)
+ *				or virtual interface (i.e. vlan)
+ *				(We need array because MLPPP and bridge interfaces have more than one parent.)
+ *			-- returns $interface passed in if $interface parent is not found
+ *			-- returns empty array if an invalid interface is passed
+ *	(Only handles ppps and vlans now.)
  */
-function interface_translate_type_to_real($interface) {
-        global $config;
+function get_parent_interface($interface) {
+	global $config;
 
-	if (empty($config['interfaces'][$interface]))
-		return $interface;
-	$tmpif = $config['interfaces'][$interface];
-	switch ($tmpif['type']) {
-	case "ppp":
-	case "pppoe":
-	case "pptp":
-	case "l2tp":
-		if (is_array($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-				if ($tmpif['if'] == $ppp['if']) {
-					$interface = $ppp['ports'];
-					break;
-				}
-			}
+	$parents = array();
+	//Check that we got a valid interface passed
+	$realif = get_real_interface($interface);
+	if ($realif == NULL)
+		return $parents;
+
+	// If we got a real interface, find it's friendly assigned name
+	$interface = convert_real_interface_to_friendly_interface_name($interface);
+		
+	if (!empty($interface) && isset($config['interfaces'][$interface])) {
+		$ifcfg = $config['interfaces'][$interface];
+		switch ($ifcfg['ipaddr']) {
+			case "ppp":
+			case "pppoe":
+			case "pptp":
+			case "l2tp":
+				if (empty($parents))
+					if (is_array($config['ppps']['ppp']))
+						foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+							if ($ppp_if == $ppp['if']) {
+								$ports = explode(',', $ppp['ports']);
+								foreach ($ports as $pid => $parent_if) 
+									$parents[$pid] = get_real_interface($parent_if);
+								break;
+							}
+						}
+				break;
+			case "dhcp":
+			case "static":
+			default:
+				// Handle _vlans
+				if (strstr($realif,"_vlan"))
+					if (is_array($config['vlans']['vlan'])) 
+						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan)
+							if ($ifcfg['if'] == $vlan['vlanif']){
+								$parents[0] = $vlan['if'];
+								break;
+							}
+				break;
 		}
-		break;
-	case "dhcp":
-	case "static":
-	default:
-		$interface = $tmpif['if'];
-		break;
 	}
-
-	return $interface;
+	
+	if (empty($parents))
+		$parents[0] = $realif;
+	
+	return $parents;
 }
 
 function interface_is_wireless_clone($wlif) {
@@ -3628,10 +3682,9 @@ function get_wireless_modes($interface) {
 	/* return wireless modes and channels */
 	$wireless_modes = array();
 
-	$wlif = interface_translate_type_to_real($interface);
+	$cloned_interface = get_real_interface($interface);
 
-	if(is_interface_wireless($wlif)) {
-		$cloned_interface = get_real_interface($interface);
+	if($cloned_interface && is_interface_wireless($cloned_interface)) {
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
@@ -3674,10 +3727,9 @@ function get_wireless_modes($interface) {
 function get_wireless_channel_info($interface) {
 	$wireless_channels = array();
 
-	$wlif = interface_translate_type_to_real($interface);
+	$cloned_interface = get_real_interface($interface);
 
-	if(is_interface_wireless($wlif)) {
-		$cloned_interface = get_real_interface($interface);
+	if($cloned_interface && is_interface_wireless($cloned_interface)) {
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list txpower";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$1 \",\" \$3 \" \" \$4 \",\" \$5 \",\" \$7}'";

@@ -172,6 +172,23 @@ function openvpn_get_cipherlist() {
 	return $ciphers;
 }
 
+function openvpn_get_engines() {
+	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
+	exec("/usr/bin/openssl engine", $openssl_engine_output);
+	foreach ($openssl_engine_output as $oeo) {
+		$linematch = array();
+		preg_match("/\((.*)\)\s(.*)/", $oeo, $linematch);
+		if ($linematch[1] != "dynamic")
+			$openssl_engines[$linematch[1]] = $linematch[2];
+	}
+	return $openssl_engines;
+}
+
+function openvpn_validate_engine($engine) {
+	$engines = openvpn_get_engines();
+	return array_key_exists($engine, $engines);
+}
+
 function openvpn_validate_host($value, $name) {
 	$value = trim($value);
 	if (empty($value) || (!is_domain($value) && !is_ipaddr($value)))
@@ -343,6 +360,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		$conf .= "local {$iface_ip}\n";	
 	}
 
+	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))
+		$conf .= "engine {$settings['engine']}\n";
+
 	// server specific settings
 	if ($mode == 'server') {
 
@@ -431,6 +451,8 @@ function openvpn_reconfigure($mode,& $settings) {
 					$conf .= "client-to-client\n";
 				break;
 		}
+		if (isset($settings['duplicate_cn']))
+			$conf .= "duplicate-cn\n";
 	}
 
 	// client specific settings

@@ -426,5 +426,10 @@ function add_to_menu($url, $name) {
 <br />
 
 <?php
+/* if upgrade in progress, alert user */
+if(is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	print_info_box(gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+}
 	$pgtitle_output = true;
 ?>

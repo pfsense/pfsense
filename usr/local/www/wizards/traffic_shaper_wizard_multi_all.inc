@@ -254,7 +254,7 @@ function step2_stepsubmitphpaction() {
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	$localint = intval($config['ezshaper']['step1']['numberoflocalinterfaces']);
 	for ($i = 0; $i < $steps; $i++) {
-		for ($j = $i + 1; $j < $steps; $j++) {
+		for ($j = $i + 1; $j <= $steps; $j++) {
 			if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
 				$savemsg=gettext("You cannot select the same interface for connections {$i} and {$j}.");
 				$stepid--;
@@ -480,6 +480,9 @@ function step3_stepsubmitphpaction() {
 	global $config;
 	global $stepid, $savemsg;
 
+        if (!$_POST['enable'])
+                return;
+
 	if($_POST['address']) {
 		if(!is_ipaddroralias($_POST['address'])) {
 			/* item is not an ip or alias.  error out */
@@ -491,8 +494,7 @@ function step3_stepsubmitphpaction() {
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
-		if ($_POST["conn{$i}upload"]) {
-			if (!is_numeric($_POST["conn{$i}upload"])) {
+		if (!is_numeric($_POST["conn{$i}upload"])) {
 				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
 				$stepid--;
 				return;
@@ -505,27 +507,24 @@ function step3_stepsubmitphpaction() {
 				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				$stepid--;
 				return;
-			}	
-		}
+		}	
 	}
 
 	$localint = intval($config['ezshaper']['step1']['numberoflocalinterfaces']);
 	for ($i = 0; $i < $localint; $i++) {
-		if ($_POST["local{$i}download"]) {
-			if (!is_numeric($_POST["local{$i}download"])) {
-				$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
-				$stepid--;
-				return;
-			}
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
-			$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
-			$input_bw = $factor * floatval($_POST["local{$i}download"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
-			}	
+		if (!is_numeric($_POST["local{$i}download"])) {
+			$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
+			$stepid--;
+			return;
+		}
+		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+		$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
+		$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
+		$input_bw = $factor * floatval($_POST["local{$i}download"]);
+		if ((0.8 * $ifbw) < $input_bw) {
+		$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
+		$stepid--;
+			return;
 		}
 	}
 
@@ -570,14 +569,14 @@ function step4_stepsubmitphpaction() {
 			/* item is not an ip or alias.  error out */
 			$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
 			$stepid--;
-		}	
+		}
 	}
 }
 
 function step5_stepsubmitphpaction() {
 	global $stepid, $savemsg;
 	if ( $_POST['enable'] ) {
-		if (isset($_POST['bandwidth']) && $_POST['bandwidth'] <> "") {
+		if ($_POST['p2pcatchall']) {
 			if(!is_numeric($_POST['bandwidth'])) {
 				$savemsg="Posted value is not a valid bandwidth.";
 				$stepid--;

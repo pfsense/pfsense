@@ -1077,10 +1077,10 @@ function setup_dnsfilter_entries() {
 	$cp_filterdns_conf = "";
 	if (is_array($config['captiveportal']['allowedhostname'])) {
 		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent)  {
-			$cp_filterdns_conf .= "ipfw $hostnameent 3 /etc/rc.captiveportal_configure\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 4 /etc/rc.captiveportal_configure\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 7 /etc/rc.captiveportal_configure\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 8 /etc/rc.captiveportal_configure\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 3 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 4 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 7 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw $hostnameent 8 '/etc/rc.captiveportal_configure'\n";
 		}
 	}
 	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);

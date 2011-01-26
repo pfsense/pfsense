@@ -2214,10 +2214,12 @@ EOD;
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
 antispoof for \${$oc['descr']}
-block in $log quick on \${$oc['descr']} from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
-block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
-block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
-block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
+block in $log quick on \${$oc['descr']} from 10.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 10/8"
+block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 127/8"
+block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
+block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
+block in $log quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
+block in $log quick on \${$oc['descr']} from fec0::/10 to any label "Block ULA networks from {$oc['descr']} block fec0::/10"
 
 EOD;
 			}

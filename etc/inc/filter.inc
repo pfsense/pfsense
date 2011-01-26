@@ -2280,10 +2280,10 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # loopback
-pass in on \$loopback all label "pass loopback"
-pass out on \$loopback all label "pass loopback"
-pass in on \$loopback inet6 all label "pass loopback"
-pass out on \$loopback inet6 all label "pass loopback"
+pass in on \$loopback inet all label "pass IPv4 loopback"
+pass out on \$loopback inet all label "pass IPv4 loopback"
+pass in on \$loopback inet6 all label "pass IPv6 loopback"
+pass out on \$loopback inet6 all label "pass IPv6 loopback"
 
 EOD;
 

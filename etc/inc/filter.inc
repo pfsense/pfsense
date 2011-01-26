@@ -2289,7 +2289,7 @@ EOD;
 
 	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out all keep state allow-opts label "let out anything IPv4 from firewall host itself"
+pass out inet all keep state allow-opts label "let out anything IPv4 from firewall host itself"
 pass out inet6 all keep state allow-opts label "let out anything IPv6 from firewall host itself"
 
 # IPv6 ICMP is not auxilary, it is required for operation

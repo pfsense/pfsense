@@ -278,7 +278,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
 
-function openvpn_reconfigure($mode,& $settings) {
+function openvpn_reconfigure($mode, $settings) {
 	global $g, $config;
 
 	if (empty($settings))
@@ -571,7 +571,7 @@ function openvpn_reconfigure($mode,& $settings) {
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
 }
 
-function openvpn_restart($mode, & $settings) {
+function openvpn_restart($mode, $settings) {
 	global $g, $config;
 
 	$vpnid = $settings['vpnid'];
@@ -683,7 +683,7 @@ function openvpn_delete_csc(& $settings) {
 }
 
 // Resync the configuration and restart the VPN
-function openvpn_resync($mode, & $settings) {
+function openvpn_resync($mode, $settings) {
 	openvpn_reconfigure($mode, $settings);
 	openvpn_restart($mode, $settings);
 }

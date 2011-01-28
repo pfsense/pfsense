@@ -44,28 +44,28 @@ fi
 # Calculate APC SHM size according 
 # to detected memory values
 if [ "$AVAILMEM" -lt "65" ]; then
-	APCSHMEMSIZE="1"
+	APCSHMEMSIZE="1M"
 fi
 if [ "$AVAILMEM" -lt "96" ]; then
-	APCSHMEMSIZE="5"
+	APCSHMEMSIZE="5M"
 fi
 if [ "$AVAILMEM" -lt "128" ]; then
-	APCSHMEMSIZE="10"
+	APCSHMEMSIZE="10M"
 fi
 if [ "$AVAILMEM" -gt "128" ]; then
-	APCSHMEMSIZE="15"
+	APCSHMEMSIZE="15M"
 fi
 if [ "$AVAILMEM" -gt "256" ]; then
-	APCSHMEMSIZE="20"
+	APCSHMEMSIZE="20M"
 fi
 if [ "$AVAILMEM" -gt "384" ]; then
-	APCSHMEMSIZE="25"
+	APCSHMEMSIZE="25M"
 fi
 if [ "$AVAILMEM" -gt "512" ]; then
-	APCSHMEMSIZE="30"
+	APCSHMEMSIZE="30M"
 fi
 if [ "$AVAILMEM" -gt "784" ]; then
-	APCSHMEMSIZE="35"
+	APCSHMEMSIZE="35M"
 fi
 
 # Set upload directory

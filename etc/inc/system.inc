@@ -86,12 +86,6 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
-		return 1;
-	}
-
 	$resolvconf = "domain {$syscfg['domain']}\n";
 
 	$havedns = false;
@@ -120,6 +114,12 @@ function system_resolvconf_generate($dynupdate = false) {
 				$havedns = true;
 			}
 		}
+	}
+
+	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+		return 1;
 	}
 
 	fwrite($fd, $resolvconf);
@@ -158,11 +158,16 @@ function get_searchdomains() {
 	$master_list = array();
 	
 	// Read in dhclient nameservers
-	$search_list = split("\n", `/bin/cat /var/etc/searchdomain_* 2>/dev/null`);
+	$search_list = glob("/var/etc/searchdomain_*");
 	if (is_array($search_lists)) {
-		foreach($search_lists as $dns) {
-			if(is_hostname($dns)) 
-				$master_list[] = $dns;
+		foreach($search_lists as $fdns) {
+			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (!is_array($contents))
+				continue;
+			foreach ($contents as $dns) {
+				if(is_hostname($dns)) 
+					$master_list[] = $dns;
+			}
 		}
 	}
 
@@ -174,21 +179,27 @@ function get_nameservers() {
 	$master_list = array();
 	
 	// Read in dhclient nameservers
-	$dns_lists = split("\n", `/bin/cat /var/etc/nameserver_* 2>/dev/null`);
+	$dns_lists = glob("/var/etc/nameserver_*");
 	if (is_array($dns_lists)) {
-		foreach($dns_lists as $dns) {
-			if(is_ipaddr($dns)) 
-				$master_list[] = $dns;
+		foreach($dns_lists as $fdns) {
+			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (!is_array($contents))
+				continue;
+			foreach ($contents as $dns) {
+				if(is_ipaddr($dns)) 
+					$master_list[] = $dns;
+			}
 		}
 	}
 
 	// Read in any extra nameservers
 	if(file_exists("/var/etc/nameservers.conf")) {
-		$dns_lists = split("\n", `/bin/cat /var/etc/nameservers.conf`);
-		if(is_array($dns_s))
+		$dns_s = file("/var/etc/nameservers.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if(is_array($dns_s)) {
 			foreach($dns_s as $dns)
 				if (is_ipaddr($dns))
 					$master_list[] = $dns;
+		}
 	}
 
 	return $master_list;
@@ -314,6 +325,8 @@ function system_routing_configure($interface = "") {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {
+				if(strstr($gateway['gateway'], ":"))
+					break;
 				if ($gateway['gateway'] == "dynamic")
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				$gatewayip = $gateway['gateway'];
@@ -365,7 +378,7 @@ function system_routing_configure($interface = "") {
 				$action = "change";
 			}
 			log_error("ROUTING: $action default route to $gatewayip");
-			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+			mwexec("/sbin/route {$action} -inet default " . escapeshellarg($gatewayip));
 		}
 	}
 
@@ -379,7 +392,7 @@ function system_routing_configure($interface = "") {
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
-			if ($interface == $gateway['friendlyiface'])
+			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
@@ -388,10 +401,10 @@ function system_routing_configure($interface = "") {
 				$action = "change";
 
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}
@@ -613,9 +626,14 @@ EOD;
 }
 		fwrite($fd, $syslogconf);
 		fclose($fd);
+
+		// Ensure that the log directory exists
+		if(!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
+			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
+
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -c c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 		else
 			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
@@ -689,7 +707,7 @@ function system_webgui_start() {
 			if (!is_array($config['cert']))
 				$config['cert'] = array();
 			$a_cert =& $config['cert'];
-			echo "Creating SSL Certificate... ";
+			log_error("Creating SSL Certificate for this host");
 			$cert = array();
 			$cert['refid'] = uniqid();
 			$cert['descr'] = "webConfigurator default";
@@ -765,7 +783,7 @@ function system_generate_lighty_config($filename,
 	if($captive_portal == true)  {
 		$captiveportal = ",\"mod_rewrite\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
-		$captive_portal_module = "\"mod_accesslog\", ";
+		$captive_portal_module = "";
 		$maxprocperip = $config['captiveportal']['maxprocperip'];
 		if(!$maxprocperip and $maxprocperip > 0)
 			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
@@ -1054,7 +1072,7 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-		if($ca <> "") {
+		if(!(empty($ca) || (strlen(trim($ca)) == 0))) {
 			$fd = fopen("{$g['varetc_path']}/{$ca_location}", "w");
 			if (!$fd) {
 				printf("Error: cannot open ca.pem in system_webgui_start().\n");
@@ -1068,7 +1086,7 @@ EOD;
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-		if($ca <> "")
+		if(!(empty($ca) || (strlen(trim($ca)) == 0)))
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
 

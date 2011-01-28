@@ -491,7 +491,6 @@ pfSenseupgrade)
 	if [ -f /tmp/no_upgrade_reboot_required ]; then
 		rm /tmp/no_upgrade_reboot_required
 	else
-		rm -f /var/run/config.lock
 		sh /etc/rc.reboot
 	fi
 

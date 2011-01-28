@@ -103,7 +103,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     // Default attributes
     $rauth->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
     $rauth->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
-    $rauth->putAttribute(RADIUS_NAS_PORT, $nas_port);
+    $rauth->putAttribute(RADIUS_NAS_PORT, $nas_port, 'integer');
 
     // Extra data to identify the client and nas
     $rauth->putAttribute(RADIUS_FRAMED_IP_ADDRESS, $clientip, addr);

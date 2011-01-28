@@ -191,12 +191,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="3%" class="list">&nbsp;</td>
 		  <td width="5%" class="listhdrr"><?=gettext("If");?></td>
 		  <td width="5%" class="listhdrr"><?=gettext("Proto");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("Src. addr");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("Src. ports");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("Dest. addr");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("Dest. ports");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("NAT IP");?></td>
-		  <td width="11%" class="listhdrr"><?=gettext("NAT Ports");?></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("Src. addr");?></nobr></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("Src. ports");?></nobr></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("Dest. addr");?></nobr></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("Dest. ports");?></nobr></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("NAT IP");?></nobr></td>
+		  <td width="11%" class="listhdrr"><nobr><?=gettext("NAT Ports");?></nobr></td>
 		  <td width="11%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="5%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

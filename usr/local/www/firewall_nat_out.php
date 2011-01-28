@@ -363,6 +363,7 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
+			echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
                       if (!$natent['sourceport'])
                           echo "*";
                       else
@@ -382,6 +383,7 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
+			echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
                       if (!$natent['dstport'])
                           echo "*";
                       else
@@ -392,6 +394,8 @@ include("head.inc");
                     <?php
                       if (!$natent['target'])
                           echo "*";
+                      elseif ($natent['target'] == "other-subnet")
+                          echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
                       else
                           echo $natent['target'];
                     ?>

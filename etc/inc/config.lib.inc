@@ -53,30 +53,33 @@
  ******/
 function encrypted_configxml() {
 	global $g, $config;
-	if(file_exists($g['conf_path'] . "/config.xml")) {
-		if($g['booting']) {
-			$configtxt = file_get_contents($g['conf_path'] . "/config.xml");			
-			if(tagfile_deformat($configtxt, $configtxt, "config.xml")) {
-				$fp = fopen('php://stdin', 'r');
+
+	if (!file_exists($g['conf_path'] . "/config.xml"))
+		return;
+
+	if (!$g['booting'])
+		return;
+
+	$configtxt = file_get_contents($g['conf_path'] . "/config.xml");			
+	if(tagfile_deformat($configtxt, $configtxt, "config.xml")) {
+		$fp = fopen('php://stdin', 'r');
+		$data = "";
+		echo "\n\n*** Encrypted config.xml detected ***\n";
+		while($data == "") {
+			echo "\nEnter the password to decrypt config.xml: ";
+			$decrypt_password = chop(fgets($fp));
+			$data = decrypt_data($configtxt, $decrypt_password);
+			if(!strstr($data, "<pfsense>"))
 				$data = "";
-				echo "\n\n*** Encrypted config.xml detected ***\n";
-				while($data == "") {
-					echo "\nEnter the password to decrypt config.xml: ";
-					$decrypt_password = chop(fgets($fp));
-					$data = decrypt_data($configtxt, $decrypt_password);
-					if(!strstr($data, "<pfsense>"))
-						$data = "";
-					if($data) {
-						$fd = fopen($g['conf_path'] . "/config.xml.tmp", "w");
-						fwrite($fd, $data);
-						fclose($fd);
-						exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
-						echo "\nConfig.xml unlocked.\n";
-						fclose($fp);
-					} else {
-						echo "\nInvalid password entered.  Please try again.\n";
-					}
-				}
+			if($data) {
+				$fd = fopen($g['conf_path'] . "/config.xml.tmp", "w");
+				fwrite($fd, $data);
+				fclose($fd);
+				exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
+				echo "\nConfig.xml unlocked.\n";
+				fclose($fp);
+			} else {
+				echo "\nInvalid password entered.  Please try again.\n";
 			}
 		}
 	}
@@ -92,9 +95,10 @@ function encrypted_configxml() {
  ******/
 function parse_config($parse = false) {
 	global $g, $config_parsed, $config_extra;
-	
+
 	$lockkey = lock('config');
 	$config_parsed = false;
+
 	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
@@ -106,37 +110,25 @@ function parse_config($parse = false) {
 			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
 		}
 	}
-	if($g['booting']) echo ".";
+
+	if($g['booting'])
+		echo ".";
+
 	// Check for encrypted config.xml
 	encrypted_configxml();
+
 	if(!$parse) {
-		if(file_exists($g['tmp_path'] . '/config.cache')) {
+		if (file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
-			if(is_null($config)) {
-				unlock($lockkey);
-				parse_config(true);
-				$lockkey = lock('config');
-			}
-		} else {
-			if(!file_exists($g['conf_path'] . "/config.xml")) {
-				log_error("No config.xml found, attempting last known config restore.");
-				file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
-				$last_backup = discover_last_backup();
-				if ($last_backup)
-					restore_backup("/cf/conf/backup/{$last_backup}");
-				else {
-					log_error("Could not restore config.xml.");
-					unlock($lockkey);
-					die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
-				}
-			}
-			unlock($lockkey);
-			$config = parse_config(true);
-			$lockkey = lock('config');
-		}
-	} else {
+			if (is_null($config))
+				$parse = true;
+		} else
+			$parse = true;
+	}
+	if ($parse == true) {
 		if(!file_exists($g['conf_path'] . "/config.xml")) {
-			if($g['booting']) echo ".";
+			if($g['booting'])
+				echo ".";
 			log_error("No config.xml found, attempting last known config restore.");
 			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 			$last_backup = discover_last_backup();
@@ -149,7 +141,7 @@ function parse_config($parse = false) {
 			}
 		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', array($g['xml_rootobj'], 'pfsense'));
-		if($config == "-1") {
+		if($config == -1) {
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
@@ -161,10 +153,14 @@ function parse_config($parse = false) {
 		}
 		generate_config_cache($config);
 	}
-	if($g['booting']) echo ".";
-	alias_make_table($config);
+
+	if($g['booting'])
+		echo ".";
+
 	$config_parsed = true;
 	unlock($lockkey);
+
+	alias_make_table($config);
 
 	return $config;
 }
@@ -226,7 +222,8 @@ function restore_backup($file) {
 function parse_config_bootup() {
 	global $config, $g;
 
-	if($g['booting']) echo ".";
+	if($g['booting'])
+		echo ".";
 
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml")) {
@@ -250,6 +247,7 @@ function parse_config_bootup() {
 				}
 				if(!file_exists("{$g['conf_path']}/config.xml")) {
 					echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
+					unlock($lockkey);
 					mwexec("/sbin/halt");
 					exit;
 				}
@@ -348,6 +346,9 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	if($g['booting'])
+		return;
+
 	if (refcount_unreference(1000) > 0)
 		return;
 
@@ -412,9 +413,6 @@ function convert_config() {
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
-
-	if($g['booting'])
-		echo "Loading new configuration...";
 }
 
 /****f* config/safe_write_file
@@ -481,11 +479,16 @@ function write_config($desc="Unknown", $backup = true) {
 	 *       for now, since it was preventing config saving. */
 	// $config = parse_config(true, false, false);
 	
-	if($g['bootup']) 
+	if($g['booting'])
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
+
+	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
 
 	if($backup)
 		backup_config();
+
+	if (!is_array($config['revision']))
+		$config['revision'] = array();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
 		$config['revision']['time'] = time();
@@ -494,8 +497,8 @@ function write_config($desc="Unknown", $backup = true) {
 	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
-	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
-	$config['revision']['username'] = $_SESSION["Username"];
+	$config['revision']['description'] = "{$username}: " . $desc;
+	$config['revision']['username'] = $username;
 
 	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
@@ -755,7 +758,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 		foreach($tocache as $version => $versioninfo) {
 			if(!in_array($version, array_keys($newcache))) {
 				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-				if($g['booting']) print " " . $tocheck . "d";
+				//if($g['booting']) print " " . $tocheck . "d";
 			}
 		}
 		$tocache = $newcache;

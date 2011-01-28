@@ -126,6 +126,7 @@ if($_GET['act']=="edit"){
 		} else
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
+		$pconfig['engine'] = $a_server[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
@@ -176,6 +177,8 @@ if($_GET['act']=="edit"){
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
+
+		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 	}
 }
 
@@ -322,6 +325,7 @@ if ($_POST) {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 		$server['crypto'] = $pconfig['crypto'];
+		$server['engine'] = $pconfig['engine'];
 
 		$server['tunnel_network'] = $pconfig['tunnel_network'];
 		$server['remote_network'] = $pconfig['remote_network'];
@@ -364,7 +368,10 @@ if ($_POST) {
 			if ($pconfig['dns_server_enable'])
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
-	
+
+		if ($_POST['duplicate_cn'] == "yes")
+			$server['duplicate_cn'] = true;
+
 		if (isset($id) && $a_server[$id])
 			$a_server[$id] = $server;
 		else
@@ -867,6 +874,24 @@ if ($savemsg)
 							</select>
 						</td>
 					</tr>
+					<tr id="engine">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Hardware Crypto"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="engine" class="formselect">
+								<?php
+									$engines = openvpn_get_engines();
+									foreach ($engines as $name => $desc):
+									$selected = '';
+									if ($name == $pconfig['engine'])
+										$selected = ' selected';
+								?>
+								<option value="<?=$name;?>"<?=$selected?>>
+									<?=htmlspecialchars($desc);?>
+								</option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
 					<tr id="strictusercn">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Strict User/CN Matching"); ?></td>
 						<td width="78%" class="vtable">
@@ -1006,6 +1031,24 @@ if ($savemsg)
 									<td>
 										<span class="vexpl">
 											<?=gettext("Allow communication between clients connected to this server"); ?>
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="duplicate_cn">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Duplicate Connections"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['duplicate_cn'],$chk); ?>
+										<input name="duplicate_cn" type="checkbox" value="yes" <?=$chk;?>/>
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Allow multiple concurrent connections from clients using the same Common Name.<br/>NOTE: This is not generally recommended, but may be needed for some scenarios."); ?>
 										</span>
 									</td>
 								</tr>

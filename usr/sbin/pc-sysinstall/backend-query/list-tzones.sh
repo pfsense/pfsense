@@ -23,21 +23,12 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/list-tzones.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
-
-rm ${TMPDIR}/.tzonetmp >/dev/null 2>/dev/null
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/list-tzones.sh,v 1.3 2010/10/19 15:18:40 emaste Exp $
 
 # Backend script which lists all the available timezones for front-ends to display
-while read line
-do
-  echo "$line" | grep "^#" >/dev/null 2>/dev/null
-  if [ "$?" != "0" ]
-  then
-    echo "$line" |  tr -s "\t" ":" | cut -d ":" -f 3-4 >>${TMPDIR}/.tzonetmp
-  fi
-done < /usr/share/zoneinfo/zone.tab
-
-sort ${TMPDIR}/.tzonetmp
-rm -f ${TMPDIR}/.tzonetmp >/dev/null 2>/dev/null
+egrep -v '^#' /usr/share/zoneinfo/zone.tab |\
+  tr -s "\t" ":" |\
+  cut -d ":" -f 3-4 |\
+  sort
 
 exit 0

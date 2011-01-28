@@ -244,7 +244,7 @@ function csrf_get_tokens() {
  */
 function csrf_callback($tokens) {
     header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Please enable cookies.<br />Debug: ".$tokens."</body></html>
+    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Either your session has expired, this page has been inactive too long, or you need to enable cookies.<br />Debug: ".$tokens."</body></html>
 ";
 }
 

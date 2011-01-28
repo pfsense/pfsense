@@ -47,15 +47,20 @@ require_once("rrd.inc");
 $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
 $pconfig['style'] = $config['rrd']['style'];
+$pconfig['period'] = $config['rrd']['period'];
 
 $curcat = "settings";
 $categories = array('system' => gettext("System"),
 		'traffic' => gettext("Traffic"),
 		'packets' => gettext("Packets"),
 		'quality' => gettext("Quality"),
-		'queues' => gettext("Queues"));
+		'queues' => gettext("Queues"),
+		'captiveportal' => gettext("Captive Portal"));
 $styles = array('inverse' => gettext("Inverse"),
 		'absolute' => gettext("Absolute"));
+$periods = array("absolute" => gettext("Absolute Timespans"),
+		"current" => gettext("Current Period"),
+		"previous" => gettext("Previous Period"));
 
 if ($_POST) {
 
@@ -69,6 +74,7 @@ if ($_POST) {
                 $config['rrd']['enable'] = $_POST['enable'] ? true : false;
                 $config['rrd']['category'] = $_POST['category'];
                 $config['rrd']['style'] = $_POST['style'];
+                $config['rrd']['period'] = $_POST['period'];
                 write_config();
 
                 $retval = 0;
@@ -95,6 +101,9 @@ foreach($databases as $database) {
 	}
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
+	}
+	if(stristr($database, "captiveportal-") && isset($config['captiveportal']['enable'])) {
+		$captiveportal = true;
 	}
 }
 
@@ -137,6 +146,10 @@ include("head.inc");
 				if($vpnusers) {
 					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
 						$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
+				}
+				if($captiveportal) {
+					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
@@ -186,6 +199,21 @@ include("head.inc");
 					?>
 					</select>
 					<b><?=gettext("This selects the default style.");?></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vtable"><?=gettext("Default period");?></td>
+				<td width="78%" class="vtable">
+					<select name="period" class="formselect" style="z-index: -10;" >
+					<?php
+					foreach ($periods as $period => $periodd) {
+						echo "<option value=\"$period\"";
+						if ($period == $pconfig['period']) echo " selected";
+						echo ">" . htmlspecialchars($periodd) . "</option>\n";
+					}
+					?>
+					</select>
+					<b><?=gettext("This selects the default period.");?></b>
 				</td>
 			</tr>
 			<tr>

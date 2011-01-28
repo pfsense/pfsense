@@ -23,18 +23,11 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/test-live.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/test-live.sh,v 1.3 2010/10/22 00:11:55 imp Exp $
 
 # Script which checks if we are running from install media, or real system
 #############################################################################
 
-dmesg | grep "md0: Preloaded image" >/dev/null 2>/dev/null
-if [ "$?" = "0" ]
-then
-  echo "INSTALL-MEDIA"
-  exit 0
-else
-  echo "REAL-DISK"
-  exit 1
-fi
+dmesg | grep -q 'md0: Preloaded image' || { echo 'REAL-DISK'; exit 1; }
 
+echo 'INSTALL-MEDIA'

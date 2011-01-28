@@ -139,6 +139,7 @@
 
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
+	$config['interfaces'][$interface]['enable'] = true;
 	
 	if($g['services_dhcp_server_enable'])
 		$yn = prompt_for_enable_dhcp_server();

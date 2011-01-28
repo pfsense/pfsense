@@ -46,6 +46,10 @@ if (!is_array($config['bridges']['bridged']))
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
+foreach ($ifacelist as $bif => $bdescr) {
+	if (substr(get_real_interface($bif), 0, 3) == "gre")
+		unset($ifacelist[$bif]);
+}
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

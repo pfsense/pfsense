@@ -77,7 +77,7 @@ if (!isset($config['voucher']['rollbits']))
 if (!isset($config['voucher']['ticketbits'])) 
 	$config['voucher']['ticketbits'] = 10;
 if (!isset($config['voucher']['saveinterval'])) 
-	$config['voucher']['saveinterval'] = 300;
+	$config['voucher']['saveinterval'] = 5;
 if (!isset($config['voucher']['checksumbits'])) 
 	$config['voucher']['checksumbits'] = 5;
 if (!isset($config['voucher']['magic'])) 
@@ -377,9 +377,10 @@ function enable_change(enable_change) {
 	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
 	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php");
 	$tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
-	display_top_tabs($tab_array);
+	display_top_tabs($tab_array, true);
 ?> 
 			</ul>
 		</td>

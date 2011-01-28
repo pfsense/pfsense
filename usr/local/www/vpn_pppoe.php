@@ -99,7 +99,7 @@ include("head.inc");
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
-  <td width="10%" class="listhdrr"><?=gettext("Local ip");?></td>
+  <td width="10%" class="listhdrr"><?=gettext("Local IP");?></td>
   <td width="25%" class="listhdrr"><?=gettext("Number of users");?></td>
   <td width="25%" class="listhdr"><?=gettext("Description");?></td>
   <td width="5%" class="list">

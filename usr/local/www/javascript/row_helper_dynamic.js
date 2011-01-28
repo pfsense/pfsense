@@ -1,14 +1,20 @@
 // Global Variables
-var rowname = new Array(99);
-var rowtype = new Array(99);
-var newrow  = new Array(99);
-var rowsize  = new Array(99);
+var rowname				= new Array(99);
+var rowtype				= new Array(99);
+var newrow 				= new Array(99);
+var rowsize  			= new Array(99);
+
+// Global variables.  Set to javascript code
+// that will be eval() after change, add & delete.
+var rowhelper_onChange 	= '';
+var rowhelper_onAdd		= '';
+var rowhelper_onDelete	= '';
 
 for (i = 0; i < 99; i++) {
 	rowname[i] = '';
 	rowtype[i] = '';
-	 newrow[i] = '';
-	 rowsize[i] = '25';
+	newrow[i] = '';
+	rowsize[i] = '25';
 }
 
 var field_counter_js = 0;
@@ -30,17 +36,17 @@ var addRowTo = (function() {
 		if(typeof(rowtype[i]) == 'function') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], objectSize, totalrows) + " ";
 		} else if(rowtype[i] == 'textbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + objectSize + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input class='formfld unknown' size='" + objectSize + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " class='formfld unknown' size='" + objectSize + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		}
 		tr.appendChild(td);
 	}
@@ -49,6 +55,8 @@ var addRowTo = (function() {
 	td.innerHTML = '<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
 	tr.appendChild(td);
 	tbody.appendChild(tr);
+	if(rowhelper_onAdd != '') 
+		eval(rowhelper_onAdd);
     });
 })();
 
@@ -61,6 +69,8 @@ function removeRow(el) {
 	cel = el.getElementsByTagName("td").item(0);
 	el.parentNode.removeChild(el);
     }
+	if(rowhelper_onDelete != '') 
+		eval(rowhelper_onDelete);
 }
 
 function find_unique_field_name(field_name) {

@@ -40,6 +40,19 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+/* if upgrade in progress, alert user */
+if(is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	include("head.inc");
+	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
+	include("fbegin.inc");
+	echo "Please wait while packages are reinstalled in the background.";
+	include("fend.inc");
+	echo "</body>";
+	echo "</html>";
+	exit;
+}
+
 if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
@@ -60,10 +73,11 @@ include("head.inc");
 				<?php
 					$version = file_get_contents("/etc/version");
 					$tab_array = array();
-					$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+					$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
+//					$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
 //					$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //					$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
-					$tab_array[] = array(gettext("Installed packages"), true, "pkg_mgr_installed.php");
+					$tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -86,7 +100,7 @@ include("head.inc");
 								foreach($config['installedpackages']['package'] as $instpkg) {
 									$instpkgs[] = $instpkg['name'];
 								}
-								asort($instpkgs);
+								natcasesort($instpkgs);
 
 								foreach ($instpkgs as $index => $pkgname):
 

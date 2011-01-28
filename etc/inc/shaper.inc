@@ -31,6 +31,8 @@
 /* XXX: needs some reducing on include. */
 /* include all configuration functions. */
 require_once("functions.inc");
+require_once("util.inc");
+require_once("notices.inc");
 
 /*
  * I admit :) this is derived from xmplparse.inc StartElement()
@@ -122,20 +124,20 @@ function get_bandwidthtype_scale($type)
 {
         switch ($type) {
         case "Gb":
-                $factor = 1000 * 1000 * 1000;
+                $factor = 1024 * 1024 * 1024;
         	break;
         case "Mb":
-                $factor = 1000 * 1000;
+                $factor = 1024 * 1024;
         	break;
         case "Kb":
-                $factor = 1000;
+                $factor = 1024;
         	break;
         case "b":
         default:
                 $factor = 1;
         	break;
         }
-        return floatval($factor);
+        return intval($factor);
 }
 
 function get_hfsc_bandwidth($object, $bw) 
@@ -418,6 +420,7 @@ class altq_root_queue {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
 		}
 
@@ -514,8 +517,9 @@ class altq_root_queue {
 	 *      foreach ($queues as $qkey => $queue)
 	 *              this->queues[$qkey]->build_rule();
 	 */
-	function build_rules() {
+	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
+			$default = false;
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
@@ -538,9 +542,16 @@ class altq_root_queue {
 				}
 				$rules .= " } \n";
 				foreach ($this->queues as $q) {
-					$rules .= $q->build_rules();
+					$rules .= $q->build_rules($default);
 				}
 			}
+			if ($default == false) {
+				$error = "SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.";
+				file_notice("Shaper", $error, "Error occurred", "");
+				unset($error);
+				return "\n";
+			} 
+			$frule .= $rules;
 		}
 		$rules .= " \n";
 		return $rules;
@@ -1024,7 +1035,7 @@ class priq_queue {
 	/* Should return something like:
 	 * queue $qname on $qinterface bandwidth ....
 	 */
-	function build_rules() {
+	function build_rules(&$default = false) {
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -1060,6 +1071,7 @@ class priq_queue {
 				if ($comma)
 					$pfq_rule .= " ,";
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$pfq_rule .= " ) ";
 		}
@@ -1335,6 +1347,7 @@ class hfsc_queue extends priq_queue {
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
 		}
 
@@ -1672,7 +1685,7 @@ class hfsc_queue extends priq_queue {
 	}
 
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules(&$default = false) {
 
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
@@ -1711,6 +1724,7 @@ class hfsc_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 
 			if ($this->GetRealtime() <> "")  {
@@ -1753,7 +1767,7 @@ class hfsc_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
+				$pfq_rule .= $q->build_rules(&$default);
 		}
 
 		 $pfq_rule .= " \n";
@@ -2038,6 +2052,7 @@ class cbq_queue extends priq_queue {
 		$q->ReadConfig($qname);
                 $q->validate_input($qname, $input_errors);
                 if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
                         return $q;
                 }
                 switch ($q->GetBwscale()) {
@@ -2212,7 +2227,7 @@ class cbq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -2251,6 +2266,7 @@ class cbq_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$tmpvalue = trim($this->GetBorrow());
 			if (!empty($tmpvalue)) {
@@ -2272,7 +2288,7 @@ class cbq_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
+				$pfq_rule .= $q->build_rules($default);
 		}
 
 		$pfq_rule .= " \n";
@@ -2486,7 +2502,7 @@ class fairq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules() {
+	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -2526,6 +2542,7 @@ class fairq_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " default ";
+				$default = true;
 			}
 			$tmpvalue = trim($this->GetBuckets());
 			if (!empty($tmpvalue)) {
@@ -2813,8 +2830,10 @@ class dnpipe_class extends dummynet_class {
 		$q->SetParent(&$this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
-		if (count($input_errors))
+		if (count($input_errors)) {
+			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
+		}
 		$this->subqueues[$q->GetQname()] = &$q;
             
 		return $q;
@@ -2867,16 +2886,28 @@ class dnpipe_class extends dummynet_class {
 		}
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
               		$this->SetQlimit($q['qlimit']);
+		else
+              		$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
               		$this->SetMask($q['mask']);
+		else
+              		$this->SetMask("");
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
+		else
+              		$this->SetBuckets("");
             	if (isset($q['plr']) && $q['plr'] <> "")
             		$this->SetPlr($q['plr']);
+		else
+            		$this->SetPlr("");
 		if (isset($q['delay']) && $q['delay'] <> "")
             		$this->SetDelay($q['delay']);
+		else
+			$this->SetDelay(0);
             	if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
+		else
+			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
 
         }
@@ -2943,12 +2974,12 @@ class dnpipe_class extends dummynet_class {
 
         function build_form() { 
 		$form = "<tr><td valign=\"center\" class=\"vncellreq\"><br>";
-                $form .= "Enable/Disable";
+                $form .= "Enable";
                 $form .= "</td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its children</span>";
+                $form .= " ><span class=\"vexpl\"> Enable limiter and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3137,12 +3168,20 @@ class dnqueue_class extends dummynet_class {
 		$this->SetNumber($q['number']);
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
        		       	$this->SetQlimit($q['qlimit']);
+		else
+       		       	$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
               		$this->SetMask($q['mask']);
+		else
+              		$this->SetMask("");
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
+		else
+            		$this->SetWeight("");
             	if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
+		else
+			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
         }
 

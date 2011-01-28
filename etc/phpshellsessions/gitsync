@@ -313,6 +313,8 @@ function post_cvssync_commands() {
 	fwrite($fd, "sleep 5\n");
 	fwrite($fd, "killall php\n");
 	fwrite($fd, "/usr/local/sbin/pfSctl -c 'service restart webgui'\n");
+	if(file_exists("/var/etc/lighty-CaptivePortal.conf"))
+		fwrite($fd, "/usr/local/sbin/lighttpd -f /var/etc/lighty-CaptivePortal.conf\n");
 	fclose($fd);
 	mwexec_bg("sh /tmp/restart_lighty");
 	echo "\n";

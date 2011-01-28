@@ -67,9 +67,9 @@ include("head.inc");
 				<tr>
 					<td>
 						<?php
-							$version = file_get_contents("/etc/version");
+//							$version = file_get_contents("/etc/version");
 							$tab_array = array();
-							$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
+							$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
 //							$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //							$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 							$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
@@ -98,9 +98,9 @@ include("head.inc");
 							</table>
 							<br>
 							<!-- status box -->
-							<textarea cols="60" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
+							<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 							<!-- command output box -->
-							<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+							<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 						</center>
 					</td>
 				</tr>
@@ -153,6 +153,8 @@ switch($_GET['mode']) {
 			update_output_window($static_output);
 			filter_configure();
 		}
+		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
 		break;
 	case "installedinfo":
 		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
@@ -164,8 +166,6 @@ switch($_GET['mode']) {
 			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
 		break;
 	case "reinstallall":
-		if ($config['installedpackages']['package'])
-			exec("rm -rf /var/db/pkg/*");
 		if (is_array($config['installedpackages']['package']))
 			foreach($config['installedpackages']['package'] as $package)
 				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
@@ -191,8 +191,6 @@ switch($_GET['mode']) {
 			$static_output .= "\n" . gettext("Installation halted.");
 			update_output_window($static_output);
 		} else {
-			$filename = escapeshellcmd("/tmp/" . $_GET['id']  . ".info");
-			$fd = fopen($filename, "w");
 			$status_a = gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("completed.");
 			update_status($status_a);
 			$status = get_after_install_info($_GET['id']);
@@ -200,9 +198,8 @@ switch($_GET['mode']) {
 				$static_output .= "\n" . gettext("Installation completed.") . "\n{$_GET['id']} " . gettext("setup instructions") . ":\n{$status}";
 			else
 				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
-			fwrite($fd, $status_a . "\n". $static_output);
-			fclose($fd);
-			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
+		file_put_contents("/tmp/{$_GET['id']}.info", $static_output);
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
 		}
 		filter_configure();
 		break;

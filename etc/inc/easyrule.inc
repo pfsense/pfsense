@@ -166,7 +166,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		/* Create a new alias with all the proper information */
 	 	$alias['name']    = $blockaliasname . strtoupper($int);
 	 	$alias['type']    = 'network';
-	 	$alias['descr']   = mb_convert_encoding("Hosts blocked from Firewall Log view","HTML-ENTITIES","auto");
+		$alias['descr']   = "Hosts blocked from Firewall Log view";
 
 		$alias['address'] = $host . '/32';
 	 	$alias['detail']  = 'Entry added ' . date('r') . '||';

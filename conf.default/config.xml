@@ -1,138 +1,148 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>6.8</version>
+	<version>7.6</version>
 	<lastchange></lastchange>
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
-			<descr>Increase UFS read-ahead speeds to match current state of hard drives and NCQ. More information here: http://ivoras.sharanet.org/blog/tree/2010-11-19.ufs-read-ahead.html</descr>
+			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
+			<tunable>debug.pfftpproxy</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[Increase UFS read-ahead speeds to match current state of hard drives and NCQ. More information here: http://ivoras.sharanet.org/blog/tree/2010-11-19.ufs-read-ahead.html]]></descr>
 			<tunable>vfs.read_max</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Set the ephemeral port range to be lower.</descr>
+			<descr><![CDATA[Set the ephemeral port range to be lower.]]></descr>
 			<tunable>net.inet.ip.portrange.first</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Drop packets to closed TCP ports without returning a RST</descr>
+			<descr><![CDATA[Drop packets to closed TCP ports without returning a RST]]></descr>
 			<tunable>net.inet.tcp.blackhole</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Do not send ICMP port unreachable messages for closed UDP ports</descr>
+			<descr><![CDATA[Do not send ICMP port unreachable messages for closed UDP ports]]></descr>
 			<tunable>net.inet.udp.blackhole</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Randomize the ID field in IP packets (default is 0: sequential IP IDs)</descr>
+			<descr><![CDATA[Randomize the ID field in IP packets (default is 0: sequential IP IDs)]]></descr>
 			<tunable>net.inet.ip.random_id</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)</descr>
+			<descr><![CDATA[Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)]]></descr>
 			<tunable>net.inet.tcp.drop_synfin</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Enable sending IPv4 redirects</descr>
+			<descr><![CDATA[Enable sending IPv4 redirects]]></descr>
 			<tunable>net.inet.ip.redirect</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Enable sending IPv6 redirects</descr>
+			<descr><![CDATA[Enable sending IPv6 redirects]]></descr>
 			<tunable>net.inet6.ip6.redirect</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Generate SYN cookies for outbound SYN-ACK packets</descr>
+			<descr><![CDATA[Generate SYN cookies for outbound SYN-ACK packets]]></descr>
 			<tunable>net.inet.tcp.syncookies</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Maximum incoming/outgoing TCP datagram size (receive)</descr>
+			<descr><![CDATA[Maximum incoming/outgoing TCP datagram size (receive)]]></descr>
 			<tunable>net.inet.tcp.recvspace</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Maximum incoming/outgoing TCP datagram size (send)</descr>
+			<descr><![CDATA[Maximum incoming/outgoing TCP datagram size (send)]]></descr>
 			<tunable>net.inet.tcp.sendspace</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>IP Fastforwarding</descr>
+			<descr><![CDATA[IP Fastforwarding]]></descr>
 			<tunable>net.inet.ip.fastforwarding</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Do not delay ACK to try and piggyback it onto a data packet</descr>
+			<descr><![CDATA[Do not delay ACK to try and piggyback it onto a data packet]]></descr>
 			<tunable>net.inet.tcp.delayed_ack</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Maximum outgoing UDP datagram size</descr>
+			<descr><![CDATA[Maximum outgoing UDP datagram size]]></descr>
 			<tunable>net.inet.udp.maxdgram</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Handling of non-IP packets which are not passed to pfil (see if_bridge(4))</descr>
+			<descr><![CDATA[Handling of non-IP packets which are not passed to pfil (see if_bridge(4))]]></descr>
 			<tunable>net.link.bridge.pfil_onlyip</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</descr>
+			<descr><![CDATA[Set to 0 to disable filtering on the incoming and outgoing member interfaces.]]></descr>
 			<tunable>net.link.bridge.pfil_member</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Set to 1 to enable filtering on the bridge interface</descr>
+			<descr><![CDATA[Set to 1 to enable filtering on the bridge interface]]></descr>
 			<tunable>net.link.bridge.pfil_bridge</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Allow unprivileged access to tap(4) device nodes</descr>
+			<descr><![CDATA[Allow unprivileged access to tap(4) device nodes]]></descr>
 			<tunable>net.link.tap.user_open</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Verbosity of the rndtest driver (0: do not display results on console)</descr>
+			<descr><![CDATA[Verbosity of the rndtest driver (0: do not display results on console)]]></descr>
 			<tunable>kern.rndtest.verbose</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())</descr>
+			<descr><![CDATA[Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())]]></descr>
 			<tunable>kern.randompid</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Maximum size of the IP input queue</descr>
+			<descr><![CDATA[Maximum size of the IP input queue]]></descr>
 			<tunable>net.inet.ip.intr_queue_maxlen</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Disable CTRL+ALT+Delete reboot from keyboard.</descr>
+			<descr><![CDATA[Disable CTRL+ALT+Delete reboot from keyboard.]]></descr>
 			<tunable>hw.syscons.kbd_reboot</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Enable TCP Inflight mode</descr>
+			<descr><![CDATA[Enable TCP Inflight mode]]></descr>
 			<tunable>net.inet.tcp.inflight.enable</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Enable TCP extended debugging</descr>
+			<descr><![CDATA[Enable TCP extended debugging]]></descr>
 			<tunable>net.inet.tcp.log_debug</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>Set ICMP Limits</descr>
+			<descr><![CDATA[Set ICMP Limits]]></descr>
 			<tunable>net.inet.icmp.icmplim</tunable>
 			<value>default</value>
 		</item>
 		<item>
-			<descr>TCP Offload Engine</descr>
+			<descr><![CDATA[TCP Offload Engine]]></descr>
 			<tunable>net.inet.tcp.tso</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[Maximum socket buffer size]]></descr>
+			<tunable>kern.ipc.maxsockbuf</tunable>
 			<value>default</value>
 		</item>
 	</sysctl>
@@ -140,18 +150,18 @@
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
 		<domain>localdomain</domain>
-		<dnsserver></dnsserver>
+		<dnsserver/>
 		<dnsallowoverride/>
 		<group>
 			<name>all</name>
-			<description>All Users</description>
+			<description><![CDATA[All Users]]></description>
 			<scope>system</scope>
 			<gid>1998</gid>
 			<member>0</member>
 		</group>
 		<group>
 			<name>admins</name>
-			<description>System Administrators</description>
+			<description><![CDATA[System Administrators]]></description>
 			<scope>system</scope>
 			<gid>1999</gid>
 			<member>0</member>
@@ -159,7 +169,7 @@
 		</group>
 		<user>
 			<name>admin</name>
-			<descr>System Administrator</descr>
+			<descr><![CDATA[System Administrator]]></descr>
 			<scope>system</scope>
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
@@ -294,9 +304,9 @@
 	</dhcpd>
 	<pptpd>
 		<mode><!-- off *or* server *or* redir --></mode>
-		<redir></redir>
-		<localip></localip>
-		<remoteip></remoteip>
+		<redir/>
+		<localip/>
+		<remoteip/>
 		<!-- <accounting/> -->
 		<!--
 		<user>
@@ -305,51 +315,6 @@
 		</user>
 		-->
 	</pptpd>
-	<ovpn>
-		<!--
-		<server>
-			<enable/>
-			<ca_cert></ca_cert>
-			<srv_cert></srv_cert>
-			<srv_key></srv_key>
-			<dh_param></dh_param>
-			<verb></verb>
-			<tun_iface></tun_iface>
-			<port></port>
-			<bind_iface></bind_iface>
-			<cli2cli/>
-			<maxcli></maxcli>
-			<prefix></prefix>
-			<ipblock></ipblock>
-			<crypto></crypto>
-			<dupcn/>
-			<psh_options>
-				<redir></redir>
-				<redir_loc></redir_loc>
-				<rte_delay></rte_delay>
-				<ping></ping>
-				<pingrst></pingrst>
-				<pingexit></pingexit>
-				<inact></inact>
-			</psh_options>
-		</server>
-		<client>
-			<tunnel></tunnel>
-			<ca_cert></ca_cert>
-			<cli_cert></cli_cert>
-			<cli_key></cli_key>
-			<type></type>
-			<tunnel>
-				<if></if>
-				<proto></proto>
-				<cport></cport>
-				<saddr></saddr>
-				<sport></sport>
-				<crypto></crypto>
-			</tunnel>
-		</client>
-		-->
-	</ovpn>
 	<dnsmasq>
 		<enable/>
 		<!--
@@ -363,14 +328,14 @@
 	</dnsmasq>
 	<snmpd>
 		<!-- <enable/> -->
-		<syslocation></syslocation>
-		<syscontact></syscontact>
+		<syslocation/>
+		<syscontact/>
 		<rocommunity>public</rocommunity>
 	</snmpd>
 	<diag>
 		<ipv6nat>
 			<!-- <enable/> -->
-			<ipaddr></ipaddr>
+			<ipaddr/>
 		</ipv6nat>
 	</diag>
 	<bridge>
@@ -462,7 +427,7 @@
 		<!-- <tcpidletimeout></tcpidletimeout> -->
 		<rule>
 			<type>pass</type>
-			<descr>Default allow LAN to any rule</descr>
+			<descr><![CDATA[Default allow LAN to any rule]]></descr>
 			<interface>lan</interface>
 			<source>
 				<network>lan</network>
@@ -693,13 +658,13 @@
 			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 virusprot</command>
 		</item>
 		<item>
-			<minute>*/5</minute>
-			<hour>*</hour>
+			<minute>30</minute>
+			<hour>12</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/usr/bin/nice -n20 /usr/local/bin/checkreload.sh</command>
+			<command>/usr/bin/nice -n20 /etc/rc.update_urltables</command>
 		</item>
 	</cron>
 	<wol>
@@ -718,21 +683,19 @@
 		<monitor_type>
 			<name>ICMP</name>
 			<type>icmp</type>
-			<descr>ICMP</descr>
-			<options>
-			</options>
+			<descr><![CDATA[ICMP]]></descr>
+			<options/>
 		</monitor_type>
 		<monitor_type>
 			<name>TCP</name>
 			<type>tcp</type>
-			<descr>Generic TCP</descr>
-			<options>
-			</options>
+			<descr><![CDATA[Generic TCP]]></descr>
+			<options/>
 		</monitor_type>
 		<monitor_type>
 			<name>HTTP</name>
 			<type>http</type>
-			<descr>Generic HTTP</descr>
+			<descr><![CDATA[Generic HTTP]]></descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -742,7 +705,7 @@
 		<monitor_type>
 			<name>HTTPS</name>
 			<type>https</type>
-			<descr>Generic HTTPS</descr>
+			<descr><![CDATA[Generic HTTPS]]></descr>
 			<options>
 				<path>/</path>
 				<host/>
@@ -752,7 +715,7 @@
 		<monitor_type>
 			<name>SMTP</name>
 			<type>send</type>
-			<descr>Generic SMTP</descr>
+			<descr><![CDATA[Generic SMTP]]></descr>
 			<options>
 				<send>EHLO nosuchhost</send>
 				<expect>250-</expect>

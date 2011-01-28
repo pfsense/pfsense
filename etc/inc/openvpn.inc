@@ -172,6 +172,23 @@ function openvpn_get_cipherlist() {
 	return $ciphers;
 }
 
+function openvpn_get_engines() {
+	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
+	exec("/usr/bin/openssl engine", $openssl_engine_output);
+	foreach ($openssl_engine_output as $oeo) {
+		$linematch = array();
+		preg_match("/\((.*)\)\s(.*)/", $oeo, $linematch);
+		if ($linematch[1] != "dynamic")
+			$openssl_engines[$linematch[1]] = $linematch[2];
+	}
+	return $openssl_engines;
+}
+
+function openvpn_validate_engine($engine) {
+	$engines = openvpn_get_engines();
+	return array_key_exists($engine, $engines);
+}
+
 function openvpn_validate_host($value, $name) {
 	$value = trim($value);
 	if (empty($value) || (!is_domain($value) && !is_ipaddr($value)))
@@ -261,7 +278,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
 
-function openvpn_reconfigure($mode,& $settings) {
+function openvpn_reconfigure($mode, $settings) {
 	global $g, $config;
 
 	if (empty($settings))
@@ -342,6 +359,9 @@ function openvpn_reconfigure($mode,& $settings) {
 	if (!empty($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	
 	}
+
+	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))
+		$conf .= "engine {$settings['engine']}\n";
 
 	// server specific settings
 	if ($mode == 'server') {
@@ -431,6 +451,8 @@ function openvpn_reconfigure($mode,& $settings) {
 					$conf .= "client-to-client\n";
 				break;
 		}
+		if (isset($settings['duplicate_cn']))
+			$conf .= "duplicate-cn\n";
 	}
 
 	// client specific settings
@@ -514,7 +536,7 @@ function openvpn_reconfigure($mode,& $settings) {
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {
-				if (stristr($settings['mode'], "server"))
+				if ($mode == "server") 
 					$tlsopt = 0;
 				else
 					$tlsopt = 1;
@@ -549,7 +571,7 @@ function openvpn_reconfigure($mode,& $settings) {
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
 }
 
-function openvpn_restart($mode, & $settings) {
+function openvpn_restart($mode, $settings) {
 	global $g, $config;
 
 	$vpnid = $settings['vpnid'];
@@ -661,7 +683,7 @@ function openvpn_delete_csc(& $settings) {
 }
 
 // Resync the configuration and restart the VPN
-function openvpn_resync($mode, & $settings) {
+function openvpn_resync($mode, $settings) {
 	openvpn_reconfigure($mode, $settings);
 	openvpn_restart($mode, $settings);
 }
@@ -696,9 +718,9 @@ function openvpn_resync_all($interface = "") {
 	}
 */
 	if ($interface <> "")
-		log_error("Resyncing openvpn instances configurations for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
+		log_error("Resyncing OpenVPN instances for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
 	else
-		log_error("Resyncing openvpn instances configurations."); 
+		log_error("Resyncing OpenVPN instances."); 
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {

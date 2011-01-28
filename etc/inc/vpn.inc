@@ -37,7 +37,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/usr/bin/netstat	/sbin/route	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dnswatch	/usr/local/sbin/mpd4	
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4	
 	pfSense_MODULE:	vpn
 */
 
@@ -103,7 +103,7 @@ function vpn_ipsec_configure($ipchg = false)
 		/* kill racoon */
 		if(is_process_running("racoon"))
 			mwexec("/usr/bin/killall racoon", true);
-		killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
+		killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 
 		/* wait for racoon process to die */
 		sleep(2);
@@ -133,7 +133,7 @@ function vpn_ipsec_configure($ipchg = false)
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
 		$rgmap = array();
-		$dnswatch_list = array();
+		$filterdns_list = array();
 		if (is_array($a_phase1) && count($a_phase1)) {
 
 			/* step through each phase1 entry */
@@ -149,7 +149,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$ipmap[] = $ep;
 
 				/* see if this tunnel has a hostname for the remote-gateway. If so,
-				   try to resolve it now and add it to the list for dnswatch */
+				   try to resolve it now and add it to the list for filterdns */
 
 				if (isset ($ph1ent['mobile']))
 					continue;
@@ -157,7 +157,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rg = $ph1ent['remote-gateway'];
 
 				if (!is_ipaddr($rg)) {
-					$dnswatch_list[] = "{$rg}=value";
+					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
 					$rg = resolve_retry($rg);
 					if (!$rg)
@@ -636,11 +636,12 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						/* Do not print localid in some cases, such as a pure-psk or psk/xauth mobile tunnel */
+						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 						if (($localid_type == "none") ||
 							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
 							($ph1ent['authentication_method'] == "pre_shared_key"))
-							&& isset($ph1ent['mobile']))
+							&& isset($ph1ent['mobile'])
+							&& (ipsec_get_number_of_phase2($ikeid)==1))
 							$localid_spec = " ";
 						else {
 							if ($localid_type != "address") {
@@ -879,7 +880,9 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			/* XXX: This seems to not work in ipsec-tools 0.7.3 but a HUP signal is equivalent. */
+			//mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
+			sigkillbypid("{$g['varrun_path']}/racoon.pid", "HUP");
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {
@@ -894,19 +897,20 @@ EOD;
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 
-			/* start dnswatch, if necessary */
-			if (count($dnswatch_list) > 0) {
+			/* start filterdns, if necessary */
+			if (count($filterdns_list) > 0) {
 				$interval = 60;
 				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
 					$interval = $ipseccfg['dns-interval'];
 
 				$hostnames = "";
-				array_unique($dnswatch_list);
-				$hostnames = implode("\n", $dnswatch_list);
-				file_put_contents("{$g['varetc_path']}/dnswatch-ipsec.hosts", $hostnames);
+				array_unique($filterdns_list);
+				foreach ($hostname as $filterdns_list)
+					$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+				file_put_contents("{$g['varetc_path']}/filternds-ipsec.hosts", $hostnames);
 
-				killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
-				mwexec("/usr/local/sbin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval /etc/rc.newipsecdns {$g['varetc_path']}/dnswatch-ipsec.hosts");
+				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns_ipsec.hosts -d 1");
 			}
 		}
 	
@@ -961,6 +965,17 @@ function vpn_setup() {
 
 	/* setup l2tp */
 	vpn_l2tp_configure();
+}
+
+function vpn_netgraph_support() {
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $iface) {
+		$realif = get_real_interface($iface);
+		/* Get support for netgraph(4) from the nic */
+		$ifinfo = pfSense_get_interface_addresses($realif);
+		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge")))
+                	pfSense_ngctl_attach(".", $realif);
+	}
 }
 
 function vpn_pptpd_configure() {
@@ -1153,6 +1168,8 @@ EOD;
 			fclose($fd);
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
+			vpn_netgraph_support();
+
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptps pptps");
 
@@ -1289,8 +1306,14 @@ EOD;
 			}
 
 			if (isset ($pppoecfg['radius']['server']['enable'])) {
+				$radiusport = "";
+				$radiusacctport = "";
+				if (isset($pppoecfg['radius']['server']['port']))
+					$radiusport = $pppoecfg['radius']['server']['port'];
+				if (isset($pppoecfg['radius']['server']['acctport']))
+					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
 				$mpdconf .=<<<EOD
-	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}"
+	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']} {$radiusport} {$radiusacctport}" 
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
@@ -1356,6 +1379,8 @@ EOD;
 				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
 
+			/* Get support for netgraph(4) from the nic */
+			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
@@ -1537,6 +1562,8 @@ EOD;
 			fclose($fd);
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
+			vpn_netgraph_support();
+
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
@@ -1648,7 +1675,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
-	 * try to resolve it now and add it to the list for dnswatch */
+	 * try to resolve it now and add it to the list for filterdns */
 	if (!is_ipaddr($phase1['remote-gateway'])) {
 		$rgip = resolve_retry($phase1['remote-gateway']);
 		add_hostname_to_watch($phase1['remote-gateway']);

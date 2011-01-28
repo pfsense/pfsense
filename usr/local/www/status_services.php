@@ -334,9 +334,15 @@ foreach (array('server', 'client') as $mode) {
 		}
 	}
 }
- 
- 
+
+function service_name_compare($a, $b) {
+	if (strtolower($a['name']) == strtolower($b['name']))
+		return 0;
+	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
+}
+
 if (count($services) > 0) {
+	uasort($services, "service_name_compare");
 	foreach($services as $service) {
 		if (empty($service['name']))
 			continue;

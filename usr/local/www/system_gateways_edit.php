@@ -130,7 +130,7 @@ if ($_POST) {
 		foreach ($a_gateways as $gateway) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
 				if ($gateway['name'] != $_POST['name'])
-					$input_errors[] = gettext("Changing name on a gateway is not allowed because it can leave stale gateways around.");
+					$input_errors[] = gettext("Changing name on a gateway is not allowed.");
 				continue;
 			}
 			if($_POST['name'] <> "") {

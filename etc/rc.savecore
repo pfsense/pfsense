@@ -1,0 +1,22 @@
+#!/bin/sh
+# Based on:
+# FreeBSD: src/etc/rc.d/savecore,v 1.16.2.2.4.1 2010/06/14 02:09:06 kensmith Exp
+
+dumpdev=`/bin/realpath /dev/dumpdev`
+dumpdir='/var/crash'
+
+if [ ! -c "${dumpdev}" ]; then
+	echo "Dump device does not exist.  Savecore not run."
+	exit
+fi
+
+if [ ! -d "${dumpdir}" ]; then
+	echo "Dump directory does not exist.  Savecore not run."
+	exit
+fi
+
+if savecore -C "${dumpdir}" "${dumpdev}" >/dev/null; then
+	savecore ${dumpdir} ${dumpdev}
+else
+	echo 'No core dumps found.'
+fi

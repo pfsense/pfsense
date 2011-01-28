@@ -94,46 +94,45 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
 		return;
 
-	$params = array(
-                XML_RPC_encode($password)
-        );
+		$params = array(
+			XML_RPC_encode($password)
+		);
 
-        $numberofruns = 0;
-        while ($numberofruns < 2) {
-                $msg = new XML_RPC_Message($method, $params);
-                $cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-                $username = $config['system']['user'][0]['name'];
-                $cli->setCredentials($username, $password);
-                if($numberofruns > 1)
-                        $cli->setDebug(1);
-                /* send our XMLRPC message and timeout after 240 seconds */
-                $resp = $cli->send($msg, "240");
+		$numberofruns = 0;
+		while ($numberofruns < 2) {
+		$msg = new XML_RPC_Message($method, $params);
+		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+		$username = $config['system']['user'][0]['name'];
+		$cli->setCredentials($username, $password);
+		if($numberofruns > 1)
+			$cli->setDebug(1);
+		/* send our XMLRPC message and timeout after 240 seconds */
+		$resp = $cli->send($msg, "240");
 		if(!is_object($resp)) {
-                        $error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
-                } elseif($resp->faultCode()) {
-                        $error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-                } else {
-			$parsed_response =  XML_RPC_decode($resp->value());
-			if(!is_array($parsed_response)) {
-				if (trim($parsed_response) == "Authentication failed") {
-					$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
-					log_error($error);
-					file_notice("sync_settings", $error, "Settings Sync", "");
-					exit;
+			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+		} elseif($resp->faultCode()) {
+			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		} else {
+				$parsed_response =  XML_RPC_decode($resp->value());
+				if(!is_array($parsed_response)) {
+					if (trim($parsed_response) == "Authentication failed") {
+						$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
+						log_error($error);
+						file_notice("sync_settings", $error, "Settings Sync", "");
+						exit;
+					}
+				} else {
+					if (!isset($parsed_response['config_version']) ||
+					  $parsed_response['config_version'] < $config['version'])
+						return false;
+					else
+						return true;
 				}
-			} else {
-				if (!isset($parsed_response['config_version']) ||
-				    $parsed_response['config_version'] < $config['version'])
-					return false;
-				else
-					return true;
 			}
+			log_error($error);
+			file_notice("sync_settings", $error, "Settings Sync", "");
+			$numberofruns++;
 		}
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-                $numberofruns++;
-        }
-
 	return false;
 }
 
@@ -382,8 +381,8 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'vouchers';
 		if (count($sections) > 0) {
 			if (!carp_check_version($synchronizetoip, $carp['password'], $port)) {
-				update_filter_reload_status("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
-				log_error("The other member is on older version of {$g['product']}. Sync will not be done to prevent problems!");
+				update_filter_reload_status("The other member is on older configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
+				log_error("The other member is on older configuration version of {$g['product_name']}. Sync will not be done to prevent problems!");
 				break;
 			}
 				

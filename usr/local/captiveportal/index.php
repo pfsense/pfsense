@@ -106,8 +106,7 @@ if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 }
 
 if ($_POST['logout_id']) {
-    disconnect_client($_POST['logout_id']);
-    echo <<<EOD
+	echo <<<EOD
 <HTML>
 <HEAD><TITLE>Disconnecting...</TITLE></HEAD>
 <BODY BGCOLOR="#435370">
@@ -123,7 +122,8 @@ setTimeout('window.close();',5000) ;
 </HTML>
 
 EOD;
-exit;
+	disconnect_client($_POST['logout_id']);
+	exit;
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */
     exit;
@@ -216,6 +216,12 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	else
 		$htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
 
+	/* substitute the PORTAL_REDIRURL variable */
+	if ($config['captiveportal']['preauthurl']) {
+		$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$config['captiveportal']['preauthurl']}", $htmltext);
+		$htmltext = str_replace("#PORTAL_REDIRURL#", "{$config['captiveportal']['preauthurl']}", $htmltext);
+	}
+
 	/* substitute other variables */
 	if (isset($config['captiveportal']['httpslogin'])) {
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
@@ -268,20 +274,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 	global $redirurl, $g, $config, $type, $passthrumac, $_POST;
 
-	/* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
-	$captiveshouldunlock = false;
-	if ($ruleno == null) {
-		$cplock = lock('captiveportal');
-		$captiveshouldunlock = true;
+	/* See if a ruleno is passed, if not start sessions because this means there isn't one atm */
+	if ($ruleno == null)
 		$ruleno = captiveportal_get_next_ipfw_ruleno();
-	}
 
 	/* if the pool is empty, return appropriate message and exit */
 	if (is_null($ruleno)) {
 		portal_reply_page($redirurl, "error", "System reached maximum login capacity");
 		log_error("WARNING!  Captive portal has reached maximum login capacity");
-		if ($captiveshouldunlock == true)
-		unlock($cplock);
 		exit;
 	}
 
@@ -367,13 +367,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		}
 	}
 
-	if ($attributes['voucher'] && $remaining_time <= 0) {
-		unlock($cplock);
+	if ($attributes['voucher'] && $remaining_time <= 0)
 		return 0;       // voucher already used and no time left
-	}
 
 	if (!isset($sessionid)) {
-
 		/* generate unique session ID */
 		$tod = gettimeofday();
 		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
@@ -405,7 +402,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
 			$writecfg = true;
 		} else {
-
 			if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
 				$bw_up_pipeno = $ruleno + 20000;
 				//$bw_up /= 1000; // Scale to Kbit/s
@@ -448,7 +444,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
 				$acct_val = RADIUS_ACCOUNTING_START($ruleno,
                                 		$username, $sessionid, $radiusservers, $clientip, $clientmac);
-
 				if ($acct_val == 1)
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}
@@ -457,9 +452,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			captiveportal_write_db($cpdb);
 		}
 	}
-
-	if ($captiveshouldunlock == true)
-		unlock($cplock);
 
 	if ($writecfg == true)
 		write_config();
@@ -502,13 +494,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 
 /* remove a single client by session ID
-   by Dinesh Nair
+ *  by Dinesh Nair
  */
 function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1) {
-
     global $g, $config;
 
-    $cplock = lock('captiveportal');
     /* read database */
     $cpdb = captiveportal_read_db();
 
@@ -527,8 +517,6 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
 
     /* write database */
     captiveportal_write_db($cpdb);
-
-    unlock($cplock);
 }
 
 /*
@@ -555,8 +543,6 @@ function portal_consume_passthrough_credit($clientmac) {
 
 	$updatetimeouts = isset($config['captiveportal']['freelogins_updatetimeouts']);
 
-	$cplock = lock('captiveportal');
-
 	/*
 	 * Read database of used MACs.  Lines are a comma-separated list
 	 * of the time, MAC, then the count of pass-through credits remaining.
@@ -578,7 +564,6 @@ function portal_consume_passthrough_credit($clientmac) {
 						captiveportal_write_usedmacs_db($usedmacs);
 					}
 
-					unlock($cplock);
 					return false;
 				} else {
 					$usedmac[2] -= 1;
@@ -600,13 +585,13 @@ function portal_consume_passthrough_credit($clientmac) {
 	}
 
 	captiveportal_write_usedmacs_db($usedmacs);
-	unlock($cplock);
 	return true;
 }
 
 function captiveportal_read_usedmacs_db() {
 	global $g;
 
+	$cpumaclck = lock('captiveusedmacs');
 	if (file_exists("{$g['vardb_path']}/captiveportal_usedmacs.db")) {
 		$usedmacs = file("{$g['vardb_path']}/captiveportal_usedmacs.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if (!usedmacs)
@@ -614,13 +599,16 @@ function captiveportal_read_usedmacs_db() {
 	} else
 		$usedmacs = array();
 
+	unlock($cpumaclck);
 	return $usedmacs;
 }
 
 function captiveportal_write_usedmacs_db($usedmacs) {
 	global $g;
 
-	file_put_contents("{$g['vardb_path']}/captiveportal_usedmacs.db", implode("\n", $usedmacs));
+	$cpumaclck = lock('captiveusedmacs', LOCK_EX);
+	@file_put_contents("{$g['vardb_path']}/captiveportal_usedmacs.db", implode("\n", $usedmacs));
+	unlock($cpumaclck);
 }
 
 ?>

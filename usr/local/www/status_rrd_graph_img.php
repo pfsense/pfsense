@@ -209,6 +209,7 @@ if(file_exists($rrdcolors)) {
 	$colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066'); 
 	$colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
 	$colorvpnusers = array('990000');
+	$colorcaptiveportalusers = array('990000');
 }
 
 switch ($curstyle) {
@@ -909,6 +910,44 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-signal2:LAST:%7.2lf dBm\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+}
+elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for online Captive Portal users stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
+	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-loggedinusers=$rrddbpath$curdatabase:loggedinusers:AVERAGE\" ";
+	$graphcmd .= "LINE2:\"$curif-loggedinusers#{$colorcaptiveportalusers[0]}:$curif-loggedinusers\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Users Online\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-loggedinusers:LAST:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-loggedinusers:AVERAGE:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-loggedinusers:MAX:%7.2lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+}
+elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for online Captive Portal users stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
+	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-concurrentusers=$rrddbpath$curdatabase:concurrentusers:AVERAGE\" ";
+	$graphcmd .= "LINE2:\"$curif-concurrentusers#{$colorcaptiveportalusers[0]}:$curif-concurrentusers\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Users Online\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%7.2lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }
 else {
 	$data = false;

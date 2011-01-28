@@ -175,6 +175,8 @@ function enable_rrd_graphing() {
 	$mem = "-memory.rrd";
 	$cellular = "-cellular.rrd";
 	$vpnusers = "-vpnusers.rrd";
+	$captiveportalconcurrent = "-concurrent.rrd";
+	$captiveportalloggedin = "-loggedin.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -186,6 +188,7 @@ function enable_rrd_graphing() {
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
+	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
 
 	$rrdtrafficinterval = 60;
 	$rrdwirelessinterval = 60;
@@ -199,6 +202,7 @@ function enable_rrd_graphing() {
 	$rrdmeminterval = 60;
 	$rrdcellularinterval = 60;
 	$rrdvpninterval = 60;
+	$rrdcaptiveportalinterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -212,6 +216,7 @@ function enable_rrd_graphing() {
 	$memvalid = $rrdmeminterval * 2;
 	$cellularvalid = $rrdcellularinterval * 2;
 	$vpnvalid = $rrdvpninterval * 2;
+	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 
 	/* Asume GigE for now */
 	$downstream = 125000000;
@@ -660,6 +665,78 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "else $rrdtool update $rrddbpath$ifname$cellular N:U:U; fi\n";
 		}
 
+		/* Captive Portal statistics, set up the rrd file */
+		if(isset($config['captiveportal']['enable'])) {
+			$ifname= "captiveportal";
+			if (!file_exists("$rrddbpath$ifname$captiveportal")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportalconcurrent --step $rrdcaptiveportalinterval ";
+				$rrdcreate .= "DS:concurrentusers:GAUGE:$captiveportalvalid:0:10000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
+				$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
+
+				create_new_rrd($rrdcreate);
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if($g['booting']) {
+				mwexec("$rrdtool update $rrddbpath$ifname$captiveportalconcurrent N:U");
+			}
+			
+			/* the Captive Portal stats gathering function. */
+			$rrdupdatesh .= "\n";
+			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalconcurrent \\\n";
+			$rrdupdatesh .= "`$php -q $captiveportal_gather concurrent`\n";
+			
+			$ifname= "captiveportal";
+			if (!file_exists("$rrddbpath$ifname$captiveportal")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportalloggedin --step $rrdcaptiveportalinterval ";
+				$rrdcreate .= "DS:loggedinusers:GAUGE:$captiveportalvalid:0:10000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
+				$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
+				$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
+
+				create_new_rrd($rrdcreate);
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if($g['booting']) {
+				mwexec("$rrdtool update $rrddbpath$ifname$captiveportalloggedin N:U");
+			}
+
+			/* the Captive Portal stats gathering function. */
+			$rrdupdatesh .= "\n";
+			$rrdupdatesh .= "# polling Captive Portal for number of logged in users and concurrent users\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalloggedin \\\n";
+			$rrdupdatesh .= "`$php -q $captiveportal_gather loggedin`\n";
+		}
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";

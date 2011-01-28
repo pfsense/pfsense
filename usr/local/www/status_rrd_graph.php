@@ -122,6 +122,9 @@ if ($_GET['option']) {
 					continue 2;
 				}
 			}
+		case "captiveportal":
+			$curoption = "allgraphs";
+			break;
 		default:
 			$curoption = "wan";
 			break;
@@ -173,6 +176,7 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-wireless.rrd",
 		"allgraphs-cellular.rrd",
 		"allgraphs-vpnusers.rrd",
+		"captiveportal-allgraphs.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -195,6 +199,9 @@ foreach($databases as $database) {
 	}
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
+	}
+	if(stristr($database, "captiveportal-") && isset($config['captiveportal']['enable'])) {
+		$captiveportal = true;
 	}
 }
 /* append the existing array to the header */
@@ -344,6 +351,10 @@ function get_dates($curperiod, $graph) {
 					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array("VPN", $tabactive, "status_rrd_graph.php?cat=vpnusers");
 				}
+				if($captiveportal) {
+					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("Captive Portal", $tabactive, "status_rrd_graph.php?cat=captiveportal");
+				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
@@ -387,6 +398,11 @@ function get_dates($curperiod, $graph) {
 						$replace = array(" :: ", "", $friendly);
 
 						switch($curcat) {
+							case "captiveportal":
+								$optionc = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optionc\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+								break;
 							case "system":
 								$optionc = str_replace($search, $replace, $optionc[1]);
 								echo "<option value=\"$optionc\"";

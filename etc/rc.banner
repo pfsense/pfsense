@@ -45,7 +45,7 @@
 	if(!$hideplatform) 
 		$platformbanner = "-{$platform}";
 	
-	print "\n*** Welcome to {$product} {$version}{$platformbanner} ({$machine}) on {$hostname} ***\n";
+	print "*** Welcome to {$product} {$version}{$platformbanner} ({$machine}) on {$hostname} ***\n";
 
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach($iflist as $ifname => $friendly) {

@@ -96,6 +96,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		if (isset($id) && $a_vlans[$id]) {
+			if ($a_vlans[$id]['if'] != $_POST['if'])
+				// Destroy previous vlan
+				pfSense_interface_destroy($a_vlans[$id]['if']);
+		}
 		$vlan = array();
 		$vlan['if'] = $_POST['if'];
 		$vlan['tag'] = $_POST['tag'];

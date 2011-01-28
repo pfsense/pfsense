@@ -827,10 +827,7 @@
 			log_error("DynDns: Current WAN IP: {$wan_ip}");
 
 			if (file_exists($this->_cacheFile)) {
-				if(file_exists($this->_cacheFile))
-					$contents = file_get_contents($this->_cacheFile);
-				else
-					$contents = "";
+				$contents = file_get_contents($this->_cacheFile);
 				list($cacheIP,$cacheTime) = split(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;

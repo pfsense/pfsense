@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-installcomponents.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-installcomponents.sh,v 1.4 2010/09/08 20:10:24 imp Exp $
 
 # Functions which check and load any optional modules specified in the config
 
@@ -52,23 +52,27 @@ copy_component()
     CFILEMD5="`echo $line | cut -d ':' -f 2`"
     CFILE2MD5="`echo $line | cut -d ':' -f 3`"
 
-
     case ${INSTALLMEDIUM} in
-   dvd|usb) # On both dvd / usb, we can just copy the file
-            cp ${CDMNT}/${COMPFILEDIR}/${SUBDIR}/${CFILE} \
-		 ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
+      dvd|usb)
+        # On both dvd / usb, we can just copy the file
+        cp ${CDMNT}/${COMPFILEDIR}/${SUBDIR}/${CFILE} \
+		  ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
 	    RESULT="$?"
-            ;;
-       ftp) get_value_from_cfg ftpPath
-            if [ -z "$VAL" ]
-            then
-              exit_err "ERROR: Install medium was set to ftp, but no ftpPath was provided!"
-            fi
-            FTPPATH="${VAL}" 
+        ;;
 
-            fetch_file "${FTPPATH}/${COMPFILEDIR}/${SUBDIR}/${CFILE}" "${FSMNT}/${COMPTMPDIR}/${CFILE}" "0"
-	    RESULT="$?"
-            ;;
+      ftp)
+        get_value_from_cfg ftpPath
+        if [ -z "$VAL" ]
+        then
+          exit_err "ERROR: Install medium was set to ftp, but no ftpPath was provided!"
+        fi
+        FTPPATH="${VAL}" 
+
+        fetch_file "${FTPPATH}/${COMPFILEDIR}/${SUBDIR}/${CFILE}" "${FSMNT}/${COMPTMPDIR}/${CFILE}" "0"
+        RESULT="$?"
+       ;;
+
+      sftp) ;;
     esac
 
     if [ "${RESULT}" != "0" ]
@@ -120,47 +124,44 @@ export CFILE
 sh ${COMPTMPDIR}/install.sh
 
 " >${FSMNT}/.componentwrapper.sh
-   chmod 755 ${FSMNT}/.componentwrapper.sh
+  chmod 755 ${FSMNT}/.componentwrapper.sh
    
-   # Copy over the install script for this component
-   cp ${COMPDIR}/${COMPONENT}/install.sh ${FSMNT}/${COMPTMPDIR}/
+  # Copy over the install script for this component
+  cp ${COMPDIR}/${COMPONENT}/install.sh ${FSMNT}/${COMPTMPDIR}/
 
-   echo_log "INSTALL COMPONENT: ${i}"
-   chroot ${FSMNT} /.componentwrapper.sh >>${LOGOUT} 2>>${LOGOUT}
-   rm ${FSMNT}/.componentwrapper.sh
-
+  echo_log "INSTALL COMPONENT: ${i}"
+  chroot ${FSMNT} /.componentwrapper.sh >>${LOGOUT} 2>>${LOGOUT}
+  rm ${FSMNT}/.componentwrapper.sh
 
 };
 
 # Check for any modules specified, and begin loading them
 install_components()
 {
-   # First, lets check and see if we even have any optional modules
-   get_value_from_cfg installComponents
-   if [ ! -z "${VAL}" ]
-   then
-      # Lets start by cleaning up the string and getting it ready to parse
-      strip_white_space ${VAL}
-      COMPONENTS=`echo ${VAL} | sed -e "s|,| |g"`
-      for i in $COMPONENTS
-      do
-        if [ ! -e "${COMPDIR}/${i}/install.sh" -o ! -e "${COMPDIR}/${i}/distfiles" ]
-        then
-	  echo_log "WARNING: Component ${i} doesn't seem to exist"
-        else
+  # First, lets check and see if we even have any optional modules
+  get_value_from_cfg installComponents
+  if [ ! -z "${VAL}" ]
+  then
+    # Lets start by cleaning up the string and getting it ready to parse
+    strip_white_space ${VAL}
+    COMPONENTS=`echo ${VAL} | sed -e "s|,| |g"`
+    for i in $COMPONENTS
+    do
+      if [ ! -e "${COMPDIR}/${i}/install.sh" -o ! -e "${COMPDIR}/${i}/distfiles" ]
+      then
+        echo_log "WARNING: Component ${i} doesn't seem to exist"
+      else
 
-          # Make the tmpdir on the disk
-          mkdir -p ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
+        # Make the tmpdir on the disk
+        mkdir -p ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
 
-          # Start by grabbing the component files
-          copy_component ${i}
+        # Start by grabbing the component files
+        copy_component ${i}
 
-          # Remove the tmpdir now
-          rm -rf ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
-
-        fi
-      done
-
-   fi
+        # Remove the tmpdir now
+        rm -rf ${FSMNT}/${COMPTMPDIR} >>${LOGOUT} 2>>${LOGOUT}
+      fi
+    done
+  fi
 
 };

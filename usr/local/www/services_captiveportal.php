@@ -82,7 +82,7 @@ $pconfig['radmac_secret'] = $config['captiveportal']['radmac_secret'];
 $pconfig['reauthenticate'] = isset($config['captiveportal']['reauthenticate']);
 $pconfig['reauthenticateacct'] = $config['captiveportal']['reauthenticateacct'];
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
-$pconfig['httpsname'] = strtolower($config['captiveportal']['httpsname']);
+$pconfig['preauthurl'] = strtolower($config['captiveportal']['preauthurl']);
 $pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
 $pconfig['cacert'] = base64_decode($config['captiveportal']['cacertificate']);
 $pconfig['key'] = base64_decode($config['captiveportal']['private-key']);
@@ -198,6 +198,7 @@ if ($_POST) {
 		$config['captiveportal']['reauthenticateacct'] = $_POST['reauthenticateacct'];
 		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
 		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
+		$config['captiveportal']['preauthurl'] = $_POST['preauthurl'];
 		$config['captiveportal']['peruserbw'] = $_POST['peruserbw'] ? true : false;
 		$config['captiveportal']['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$config['captiveportal']['bwdefaultup'] = $_POST['bwdefaultup'];
@@ -239,6 +240,8 @@ if ($_POST) {
 		
 		if (is_array($_POST['cinterface']))
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
+
+		filter_configure();
 	}
 }
 include("head.inc");
@@ -312,9 +315,10 @@ function enable_change(enable_change) {
 	$tab_array[] = array(gettext("Captive portal"), true, "services_captiveportal.php");
 	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php");	
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
-	display_top_tabs($tab_array);
+	display_top_tabs($tab_array, true);
 ?>    </td></tr>
   <tr>
   <td class="tabcont">
@@ -395,7 +399,14 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 	  <?=gettext("If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs."); ?></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell"><?=gettext("Redirection URL"); ?></td>
+      <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
+      <td class="vtable">
+        <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
+		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top" class="vncell"><?=gettext("After authentication Redirection URL"); ?></td>
 	  <td class="vtable">
 		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>">
 		<br>

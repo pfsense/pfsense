@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/enable-net.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/enable-net.sh,v 1.3 2010/08/24 06:11:46 imp Exp $
 
 # Script which enables networking with specified options
 ###########################################################################
@@ -60,6 +60,6 @@ else
 fi
 
 case ${MIRRORFETCH} in
-   ON|on|yes|YES) fetch -o /tmp/mirrors-list.txt ${MIRRORLIST} >/dev/null 2>/dev/null;;
-   *) ;;
+  ON|on|yes|YES) fetch -o /tmp/mirrors-list.txt ${MIRRORLIST} >/dev/null 2>/dev/null;;
+  *) ;;
 esac

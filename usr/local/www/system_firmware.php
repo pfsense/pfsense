@@ -43,6 +43,8 @@
 ##|-PRIV
 
 $d_isfwfile = 1;
+$nocsrf = true;
+
 require_once("globals.inc");
 require_once("guiconfig.inc");
 
@@ -101,7 +103,7 @@ if(is_subsystem_dirty('firmwarelock')) {
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
 	echo "<div>\n";
-	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
 	echo "</div>\n";
 	include("fend.inc");
 	echo "</body>";
@@ -145,7 +147,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
 				if (file_is_for_platform($_FILES['ulfile']['tmp_name'], $_FILES['ulfile']['name']) == false && !$_POST['sig_override'])
-					$input_errors[] = gettext("The uploaded image file is not for this platform") . " ({$g['platform']})";
+					$input_errors[] = gettext("The uploaded image file is not for this platform.");
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */
 					$input_errors[] = gettext("Image upload failed (out of memory?)");

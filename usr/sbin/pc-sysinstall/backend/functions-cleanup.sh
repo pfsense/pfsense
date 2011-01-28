@@ -23,7 +23,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-cleanup.sh,v 1.3 2010/07/31 19:25:51 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend/functions-cleanup.sh,v 1.5 2010/10/21 17:14:44 imp Exp $
 
 # Functions which perform the final cleanup after an install
 
@@ -99,9 +99,9 @@ zfs_cleanup_unmount()
       do
         if [ "${ZMNT}" != "/" ]
         then
-          #rc_halt "/sbin/zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
-          #rc_halt "/sbin/zfs unmount ${ZPOOLNAME}${ZMNT}"
-          #sleep 2
+          rc_halt "zfs set mountpoint=${ZMNT} ${ZPOOLNAME}${ZMNT}"
+          rc_halt "zfs unmount ${ZPOOLNAME}${ZMNT}"
+          sleep 2
         fi
       done
     fi
@@ -166,8 +166,8 @@ setup_fstab()
     # Set mount options for file-systems
     case $PARTFS in
       UFS+J) MNTOPTS="rw,noatime,async" ;;
-       SWAP) MNTOPTS="sw" ;;
-          *) MNTOPTS="rw,noatime" ;;
+      SWAP) MNTOPTS="sw" ;;
+      *) MNTOPTS="rw,noatime" ;;
     esac
 
 
@@ -296,7 +296,7 @@ setup_geli_loading()
 
      # If we have a passphrase, set it up now
      if [ -e "${PARTDIR}-enc/${PART}-encpass" ] ; then
-       cat ${PARTDIR}-enc/${PART}-encpass | geli setkey -S -n 0 -p -k ${KEYFILE} -K ${KEYFILE} ${PART}
+       geli setkey -J ${PARTDIR}-enc/${PART}-encpass -n 0 -p -k ${KEYFILE} -K ${KEYFILE} ${PART}
        geli configure -b ${PART}
      fi
 
@@ -349,9 +349,9 @@ setup_hostname()
   mv ${FSMNT}/etc/rc.conf.new ${FSMNT}/etc/rc.conf
 
   # Set the hostname now
-#  echo_log "Setting hostname: ${HOSTNAME}"
-#  echo "hostname=\"${HOSTNAME}\"" >> ${FSMNT}/etc/rc.conf
-#  sed -i -e "s|my.domain|${HOSTNAME} ${HOSTNAME}|g" ${FSMNT}/etc/hosts
+  echo_log "Setting hostname: ${HOSTNAME}"
+  echo "hostname=\"${HOSTNAME}\"" >> ${FSMNT}/etc/rc.conf
+  sed -i -e "s|my.domain|${HOSTNAME} ${HOSTNAME}|g" ${FSMNT}/etc/hosts
 
 };
 
@@ -391,30 +391,28 @@ set_root_pw()
 
 run_final_cleanup()
 {
+  # Check if we need to run any gmirror setup
+  ls ${MIRRORCFGDIR}/* >/dev/null 2>/dev/null
+  if [ "$?" = "0" ]
+  then
+    # Lets setup gmirror now
+    setup_gmirror
+  fi
 
- # Check if we need to run any gmirror setup
- ls ${MIRRORCFGDIR}/* >/dev/null 2>/dev/null
- if [ "$?" = "0" ]
- then
-   # Lets setup gmirror now
-   setup_gmirror
- fi
+  # Check if we need to save any geli keys
+  ls ${GELIKEYDIR}/* >/dev/null 2>/dev/null
+  if [ "$?" = "0" ]
+  then
+    # Lets setup geli loading
+    setup_geli_loading
+  fi
 
- # Check if we need to save any geli keys
- ls ${GELIKEYDIR}/* >/dev/null 2>/dev/null
- if [ "$?" = "0" ]
- then
-   # Lets setup geli loading
-   setup_geli_loading
- fi
+  # Set a hostname on the install system
+  setup_hostname
 
- # Set a hostname on the install system
- setup_hostname
+  # Set the root_pw if it is specified
+  set_root_pw
 
- # Set the root_pw if it is specified
- set_root_pw
-
- # Generate the fstab for the installed system
- setup_fstab
-
+  # Generate the fstab for the installed system
+  setup_fstab
 };

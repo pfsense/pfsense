@@ -85,8 +85,8 @@
 
 		$body_pos = $btag_pos + $btag_len;
 		$body_len = strlen($in);
-		$body_len -= strlen($btag_len);
-		$body_len -= strlen($etag_len);
+		$body_len -= $btag_len;
+		$body_len -= $etag_len + 1;
 
 		$out = substr($in, $body_pos, $body_len);
 

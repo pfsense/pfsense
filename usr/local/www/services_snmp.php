@@ -162,6 +162,12 @@ include("head.inc");
 ?>
 <script language="JavaScript">
 <!--
+function check_deps() {
+	if ($('hostres').checked == true) {
+		$('mibii').checked = true;
+	}
+}
+
 function enable_change(whichone) {
 
 	if( whichone.name == "trapenable" )
@@ -369,13 +375,13 @@ function enable_change(whichone) {
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("SNMP Modules");?></td>
 		  <td width="78%" class="vtable">
-		    <input name="mibii" type="checkbox" id="mibii" value="yes" <?php if ($pconfig['mibii']) echo "checked"; ?> ><?=gettext("MibII"); ?>
+		    <input name="mibii" type="checkbox" id="mibii" value="yes" onClick="check_deps()" <?php if ($pconfig['mibii']) echo "checked"; ?> ><?=gettext("MibII"); ?>
 		    <br />
 		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> ><?=gettext("Netgraph"); ?>
 		    <br />
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> ><?=gettext("PF"); ?>
 		    <br />
-		    <input name="hostres" type="checkbox" id="hostres" value="yes" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources");?>
+		    <input name="hostres" type="checkbox" id="hostres" value="yes" onClick="check_deps()" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources (Requires MibII)");?>
 		  </td>
 		</tr>
 <?php if(!$config['interfaces']['lan']): ?>

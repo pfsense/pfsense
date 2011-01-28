@@ -223,7 +223,7 @@ if ($_POST) {
 				 *  Backup RRD Data
 				 */
 				if(!$_POST['donotbackuprrd']) {
-					$data = str_replace("</pfsense>", "\t<rrddata>", $data);
+					$data = str_replace("</" . $g['xml_rootobj'] . ">", "\t<rrddata>", $data);
 					$rrd_files_var_db_rrd = split("\n",`cd /var/db/rrd && ls *.rrd`);
 					foreach($rrd_files_var_db_rrd as $rrd) {
 						if($rrd) {
@@ -237,7 +237,7 @@ if ($_POST) {
 						}
 					}
 					$data .= "\t</rrddata>\n";
-					$data .= "</pfsense>\n";
+					$data .= "</" . $g['xml_rootobj'] . ">\n";
 				}
 
 				$size = strlen($data);
@@ -315,7 +315,7 @@ if ($_POST) {
 								if(file_exists("{$g['tmp_path']}/config.cache"))
 									unlink("{$g['tmp_path']}/config.cache");
 								$config = parse_config(true);
-								/* extract out rrd items, unset from $confgi when done */
+								/* extract out rrd items, unset from $config when done */
 								if($config['rrddata']) {
 									foreach($config['rrddata']['rrddatafile'] as $rrd) {
 										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
@@ -445,6 +445,13 @@ if ($_POST) {
 								}
 								setup_serial_port();
 								if(is_interface_mismatch() == true) {
+									touch("/var/run/interface_mismatch_reboot_needed");
+									clear_subsystem_dirty("restore");
+									convert_config();
+									header("Location: interfaces_assign.php");
+									exit;
+								}
+								if (is_interface_vlan_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");
 									convert_config();

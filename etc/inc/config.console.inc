@@ -319,6 +319,8 @@ EOD;
 
 	if (in_array($key, array('y', 'Y'))) {
 		if($lanif) {
+			if (!is_array($config['interfaces']['lan']))
+				$config['interfaces']['lan'] = array();
 			$config['interfaces']['lan']['if'] = $lanif;
 			$config['interfaces']['lan']['enable'] = true;
 		} elseif (!$g['booting'] && !$auto_assign) {
@@ -332,7 +334,7 @@ unload the interface now? [y|n]?
 EODD;
 
 				if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-					if($config['interfaces']['lan']['if'])
+					if(isset($config['interfaces']['lan']) && $config['interfaces']['lan']['if'])
 						mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 				}
 				if(isset($config['interfaces']['lan']))
@@ -372,9 +374,12 @@ EODD;
 				(!is_array($config['interfaces']['lan']['wireless'])))
 				$config['interfaces']['lan']['wireless'] = array();
 		} else {
-			unset($config['interfaces']['lan']['wireless']);
+			if (isset($config['interfaces']['lan']))
+				unset($config['interfaces']['lan']['wireless']);
 		}
 
+		if (!is_array($config['interfaces']['wan']))
+			$config['interfaces']['wan'] = array();
 		$config['interfaces']['wan']['if'] = $wanif;
 		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
@@ -382,7 +387,8 @@ EODD;
 				(!is_array($config['interfaces']['wan']['wireless'])))
 				$config['interfaces']['wan']['wireless'] = array();
 		} else {
-			unset($config['interfaces']['wan']['wireless']);
+			if (isset($config['interfaces']['wan']))
+				unset($config['interfaces']['wan']['wireless']);
 		}
 
 		for ($i = 0; $i < count($optif); $i++) {
@@ -420,13 +426,7 @@ EODD;
 
 		$g['booting'] = false;
 
-		/* XXX: ermal - disable it for now this is used during bootup at best so shouldn't be needed.
-		 * 		For now just comment it out and later remove it completely.
-		 * resync everything 
-			reload_all_sync();
-		 */
-
-		echo " " . gettext("done!") . "\n";
+		echo gettext(" done!") . "\n";
 
 		touch("{$g['tmp_path']}/assign_complete");
 

@@ -36,6 +36,7 @@
 	require_once("shaper.inc");	
 	require_once("ipsec.inc");
 	require_once("vpn.inc");
+	require_once("util.inc");
 
 	/* make sure to wait until the boot scripts have finished */
 	while (file_exists("{$g['varrun_path']}/booting")) {
@@ -44,7 +45,7 @@
 	
 	log_error("IPSEC: One or more IPSEC tunnel endpoints has changed IP. Refreshing.");
 	/* We will walk the list of hostnames found in the ipsec tunnel
-	 * configuration. Since we are already triggered by dnswatch
+	 * configuration. Since we are already triggered by filterdns
 	 * that a hostname has changed we can proceed to compare the 
 	 * new IP address with the old address from the DNS cache.
 	 */

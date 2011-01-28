@@ -42,6 +42,8 @@
 ##|*MATCH=system_firmware_auto.php*
 ##|-PRIV
 
+$nocsrf = true;
+
 require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
@@ -105,9 +107,9 @@ include("head.inc");
 						</table>
 						<br>
 						<!-- status box -->
-						<textarea cols="60" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+						<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
 						<!-- command output box -->
-						<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+						<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
 					</center>
 					</td>
 				</tr>
@@ -203,11 +205,13 @@ if ($sigchk == 1) {
 
 if ($exitstatus) {
         update_status($sig_warning);
-        update_output_window(gettext("Update cannot continue"));
-	require("fend.inc");
+        update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
+		require("fend.inc");
         exit;
-} else if ($sigchk == 2)
-        update_output_window("\n" . gettext("Image has no signature but the system configured to allow unsigned images.") . "\n");
+} else if ($sigchk == 2) {
+        update_status("Upgrade in progress...");
+        update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
+}
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 	update_status(gettext("The image file is corrupt."));

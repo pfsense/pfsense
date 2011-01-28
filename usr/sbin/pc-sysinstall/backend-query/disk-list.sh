@@ -23,10 +23,40 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/disk-list.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/disk-list.sh,v 1.5 2010/09/08 20:10:24 imp Exp $
+
+ARGS=$1
+FLAGS_MD=""
+FLAGS_CD=""
+FLAGS_VERBOSE=""
+
+shift
+while [ -n "$1" ]
+do
+  case "$1" in
+    -m)
+      FLAGS_MD=1
+      ;;
+    -v)
+      FLAGS_VERBOSE=1
+      ;;
+    -c)
+      FLAGS_CD=1
+      ;;
+  esac
+  shift
+done
 
 # Create our device listing
 SYSDISK=$(sysctl -n kern.disks)
+if [ -n "${FLAGS_MD}" ]
+then
+  MDS=`mdconfig -l`
+  if [ -n "${MDS}" ]
+  then
+    SYSDISK="${SYSDISK} ${MDS}"
+  fi
+fi
 
 # Now loop through these devices, and list the disk drives
 for i in ${SYSDISK}
@@ -36,14 +66,27 @@ do
   DEV="${i}"
 
   # Make sure we don't find any cd devices
-  case "${DEV}" in
-     acd[0-9]*|cd[0-9]*|scd[0-9]*) continue ;;
-  esac
+  if [ -z "${FLAGS_CD}" ]
+  then
+    case "${DEV}" in
+      acd[0-9]*|cd[0-9]*|scd[0-9]*) continue ;;
+    esac
+  fi
 
   # Check the dmesg output for some more info about this device
   NEWLINE=$(dmesg | sed -n "s/^$DEV: .*<\(.*\)>.*$/ <\1>/p" | head -n 1)
   if [ -z "$NEWLINE" ]; then
     NEWLINE=" <Unknown Device>"
+  fi
+
+  if [ -n "${FLAGS_MD}" ] && echo "${DEV}" | grep -E '^md[0-9]+' >/dev/null 2>/dev/null
+  then
+	NEWLINE=" <Memory Disk>"
+  fi
+
+  if [ -n "${FLAGS_VERBOSE}" ]
+  then
+	:
   fi
 
   # Save the disk list

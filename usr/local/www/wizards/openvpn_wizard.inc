@@ -321,6 +321,15 @@ function step10_stepbeforeformdisplay() {
 				$opt['value'] = $name;
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
+		} else if ($field['name'] == "engine") {
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
+			$engines = openvpn_get_engines();
+			foreach ($engines as $name => $desc) {
+				$opt = array();
+				$opt['name'] = $desc;
+				$opt['value'] = $name;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
 		} else if ($field['name'] == "nbttype") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			foreach ($netbios_nodetypes as $type => $name) {
@@ -550,6 +559,8 @@ function step12_submitphpaction() {
 		$server['passtos'] = $pconfig['step10']['tos'];
 	if (isset($pconfig['step10']['interclient']))
 		$server['client2client'] = $pconfig['step10']['interclient'];
+	if (isset($pconfig['step10']['duplicate_cn']))
+		$server['duplicate_cn'] = $pconfig['step10']['duplicate_cn'];
 	if (isset($pconfig['step10']['dynip']))
 		$server['dynamic_ip'] = $pconfig['step10']['dynip'];
 	if (isset($pconfig['step10']['addrpool']))
@@ -579,6 +590,7 @@ function step12_submitphpaction() {
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 	$server['crypto'] = $pconfig['step10']['crypto'];
+	$server['engine'] = $pconfig['step10']['engine'];
 
 	if (isset($pconfig['step11']['ovpnrule'])) {
 		$rule = array();

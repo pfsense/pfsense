@@ -130,6 +130,10 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 						break;
 					}
 				}
+				if($referrer_host == "127.0.0.1" || $referrer_host == "localhost") {
+					// allow SSH port forwarded connections and links from localhost
+					$found_host = true;
+				}
 			}
 		}
 		if($found_host == false) {
@@ -406,7 +410,7 @@ function local_user_set(& $user) {
 	/* create user directory if required */
 	if (!is_dir($user_home)) {
 		mkdir($user_home, 0700);
-		mwexec("cp /root/.* {$home_base}/");
+		mwexec("/bin/cp /root/.* {$home_base}/", true);
 	}
 	chown($user_home, $user_name);
 	chgrp($user_home, $user_group);

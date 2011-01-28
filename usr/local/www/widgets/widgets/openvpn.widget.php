@@ -1,4 +1,7 @@
 <?php
+
+$nocsrf = true;
+
 require_once("openvpn.inc");
 
 /* Handle AJAX */

@@ -25,6 +25,12 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+# Setup dumpdev/ddb/savecore"
+echo "Configuring crash dumps..."
+if [ "$PLATFORM" = "pfSense" ]; then
+	/etc/rc.dumpon
+fi
+
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
@@ -110,11 +116,13 @@ elif [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
 else
-    SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-    /sbin/swapon -a 2>/dev/null >/dev/null
+	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
+	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
+	echo -n "Mounting unionfs directories..."
 	/bin/mkdir /tmp/unionfs
 	/bin/mkdir /tmp/unionfs/usr
 	/bin/mkdir /tmp/unionfs/root
@@ -122,21 +130,13 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	/bin/mkdir /tmp/unionfs/bin
 	/bin/mkdir /tmp/unionfs/boot
 	/bin/mkdir /tmp/unionfs/confdefault
-	echo -n "Mounting unionfs directories:"
-	echo -n " usr"
 	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
-	echo -n " root"
 	/sbin/mount_unionfs /tmp/unionfs/root /root/
-	echo -n " bin"
 	/sbin/mount_unionfs /tmp/unionfs/bin /bin/		
-	echo -n " sbin"
 	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/	
-	echo -n " boot"
 	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
-	echo -n " conf.default"
 	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
-	echo -n " installer"
-	echo "... done."
+	echo "done."
 fi
 
 echo -n "Creating symlinks..."

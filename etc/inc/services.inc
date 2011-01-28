@@ -72,7 +72,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");	
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");
@@ -228,6 +228,9 @@ EOPP;
 		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
 		$subnetmask = gen_subnet_mask($ifcfgsn);
 
+		if (!is_ipaddr($subnet))
+			continue;
+
 		if($is_olsr_enabled == true)
 			if($dhcpifconf['netmask'])
 				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
@@ -257,7 +260,7 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
 
-		$dhcpdconf .= "subnet $subnet netmask $subnetmask {\n";
+		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 		$dhcpdconf .= "	pool {\n";
 
 		/* is failover dns setup? */

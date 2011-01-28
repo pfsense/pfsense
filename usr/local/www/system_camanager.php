@@ -138,6 +138,8 @@ if ($_POST) {
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
 				gettext("Certificate data"));
+		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
+			$input_errors[] = gettext("This certificate does not appear to be valid.");
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",

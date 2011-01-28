@@ -23,9 +23,6 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/sys-mem.sh,v 1.2 2010/06/27 16:46:11 imp Exp $
+# $FreeBSD: src/usr.sbin/pc-sysinstall/backend-query/sys-mem.sh,v 1.3 2010/10/19 15:12:16 emaste Exp $
 
-MEM=`sysctl hw.realmem | sed "s|hw.realmem: ||g"`
-MEM=`expr $MEM / 1024`
-MEM=`expr $MEM / 1024`
-echo $MEM
+expr $(sysctl -n hw.realmem) / 1048576

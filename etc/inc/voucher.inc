@@ -1,6 +1,8 @@
 <?php
 /*
-    Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
+	Copyright (C) 2010 Ermal Luci <ermal.luci@gmail.com>
+	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -32,6 +34,8 @@
 */
 
 /* include all configuration functions */
+if(!function_exists('captiveportal_syslog'))
+	require_once("captiveportal.inc");
 
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config;
@@ -63,14 +67,12 @@ EOF;
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
-	if(!$resp) {
+	if(!is_object($resp)) {
 		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
 		return array("timeleft" => "0");
 	} elseif($resp->faultCode()) {
-		$cli->setDebug(1);
-		$resp = $cli->send($msg, "250");
 		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
@@ -84,25 +86,24 @@ EOF;
 		write_config("Captive Portal Voucher database synchronized with {$url}");
 		voucher_configure();
 	}
-    return $toreturn['timeleft'];
+
+	return $toreturn['timeleft'];
 }
 
 /* 
- *Authenticate a voucher and return the remaining time credit in minutes
+ * Authenticate a voucher and return the remaining time credit in minutes
  * if $test is set, don't mark the voucher as used nor add it to the list
  * of active vouchers
+ * If $test is set, simply test the voucher. Don't change anything
+ * but return a more verbose error and result message back
  */
 function voucher_auth($voucher_received, $test = 0) {
-
     global $g, $config;
-
-    // if $test is set, simply test the voucher. Don't change anything
-    // but return a more verbose error and result message back
 
     $voucherlck = lock('voucher');
 
 	// XMLRPC Call over to the master Voucher node
-    $a_voucher = &$config['voucher'];
+	$a_voucher = &$config['voucher'];
 	if($a_voucher['vouchersyncdbip']) {
 		$syncip   = $a_voucher['vouchersyncdbip'];
 		$syncport = $a_voucher['vouchersyncport'];
@@ -111,12 +112,16 @@ function voucher_auth($voucher_received, $test = 0) {
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
-    // read rolls into assoc array with rollid as key and minutes as value
-    $a_roll = &$config['voucher']['roll'];
-    foreach ($a_roll as $rollent) {
-        $tickets_per_roll[$rollent['number']] = $rollent['count'];
-        $minutes_per_roll[$rollent['number']] = $rollent['minutes'];
-    }
+	// read rolls into assoc array with rollid as key and minutes as value
+	$tickets_per_roll = array();
+	$minutes_per_roll = array();
+	if (is_array($config['voucher']['roll'])) {
+		$a_roll = &$config['voucher']['roll'];
+		foreach ($a_roll as $rollent) {
+			$tickets_per_roll[$rollent['number']] = $rollent['count'];
+			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
+		}
+	}
 
     // split into an array. Useful for multiple vouchers given
     $a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
@@ -138,9 +143,9 @@ function voucher_auth($voucher_received, $test = 0) {
         $result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
         list($status, $roll, $nr) = explode(" ", $result);
         if ($status == "OK") {
-            if (!$first_voucher) 
-            {
-                $first_voucher = $voucher;  // store first voucher. Thats the one we give the timecredit
+            if (!$first_voucher) {
+				// store first voucher. Thats the one we give the timecredit
+                $first_voucher = $voucher;
                 $first_voucher_roll = $roll;
             }
             // check if we have this ticket on a registered roll for this ticket 
@@ -165,6 +170,7 @@ function voucher_auth($voucher_received, $test = 0) {
                     $mask = 1 << ($nr % 8);
                     if (ord($bitstring[$roll][$pos]) & $mask) {
                         $test_result[] = sprintf(gettext('%1$s (%2$s/%3$s) already used and expired'), $voucher, $roll, $nr);
+						captiveportal_syslog(sprintf(gettext('%1$s (%2$s/%3$s) already used and expired'), $voucher, $roll, $nr));
                         $total_minutes = -1;    // voucher expired
                         $error++;
                     } else {
@@ -176,10 +182,12 @@ function voucher_auth($voucher_received, $test = 0) {
                 }
             } else {
                 $test_result[] = sprintf(gettext('%1$s (%2$s/%3$s): not found on any registererd Roll'), $voucher, $roll, $nr);
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
             }
         } else {
             // hmm, thats weird ... not what I expected
             $test_result[] = "$voucher " . gettext("invalid:") . " $result !!";
+			captiveportal_syslog("$voucher " . gettext("invalid:") . " $result !!");
             $error++;
         }
     }
@@ -240,9 +248,6 @@ function voucher_auth($voucher_received, $test = 0) {
     $active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
     voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
 
-    // mark the DB's as dirty.
-    mark_subsystem_dirty('voucher');
-
     unlock($voucherlck);
 
     return $total_minutes;
@@ -250,15 +255,15 @@ function voucher_auth($voucher_received, $test = 0) {
 
 function voucher_configure() {
     global $config, $g;
-    
-    /* kill any running minicron */
-    killbypid("{$g['varrun_path']}/vouchercron.pid");
 
-    if (isset($config['voucher']['enable'])) {
+	/* kill any running minicron */
+	killbypid("{$g['varrun_path']}/vouchercron.pid");
 
-        if ($g['booting']) {
+	if (!isset($config['voucher']['enable']))
+		return 0;
+
+        if ($g['booting'])
             echo gettext("Enabling voucher support... ");
-        }
 
         // start cron if we're asked to save runtime DB periodically
         // to XML config if it changed
@@ -269,18 +274,19 @@ function voucher_configure() {
                     "/etc/rc.savevoucher");
         }
 
-	$voucherlck = lock('voucher');
+	$voucherlck = lock('voucher', LOCK_EX);
+
         /* write public key used to verify vouchers */
         $pubkey = base64_decode($config['voucher']['publickey']);
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
         if (!$fd) {
-            printf(gettext("Error: cannot write voucher.public") . "\n");
-	    unlock($voucherlck);
+            captiveportal_syslog(gettext("Voucher error: cannot write voucher.public") . "\n");
+	   		unlock($voucherlck);
             return 1;
         }
-        chmod("{$g['varetc_path']}/voucher.public", 0600);
         fwrite($fd, $pubkey);
         fclose($fd);
+        @chmod("{$g['varetc_path']}/voucher.public", 0600);
 
         /* write config file used by voucher binary to decode vouchers */
         $fd = fopen("{$g['varetc_path']}/voucher.cfg", "w");
@@ -289,16 +295,16 @@ function voucher_configure() {
 	    unlock($voucherlck);
             return 1;
         }
-        chmod("{$g['varetc_path']}/voucher.cfg", 0600);
         fwrite($fd, "{$config['voucher']['rollbits']},{$config['voucher']['ticketbits']},{$config['voucher']['checksumbits']},{$config['voucher']['magic']},{$config['voucher']['charset']}\n");
         fclose($fd);
-	unlock($voucherlck);
+        @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
+		unlock($voucherlck);
 
-        if ($g['booting']) {
+        if ($g['booting'] && is_array($config['voucher']['roll'])) {
 
             // create active and used DB per roll on ramdisk from config
             $a_roll = &$config['voucher']['roll'];
-	    $voucherlck = lock('voucher');
+			$voucherlck = lock('voucher');
 
             foreach ($a_roll as $rollent) {
 
@@ -320,64 +326,59 @@ function voucher_configure() {
                 voucher_write_active_db($roll, $active_vouchers);
             }
 		
-	    unlock($voucherlck);
+			unlock($voucherlck);
             echo gettext("done") . "\n";
         }
-    }
-    return 0;
+
+	return 0;
 }
 
 /* write bitstring of used vouchers to ramdisk. 
  * Bitstring must already be base64_encoded!
  */
 function voucher_write_used_db($roll, $vdb) {
+	global $g;
 
-    global $g;
-
-    $fd = fopen("{$g['vardb_path']}/voucher_used_$roll.db", "w");
-    if ($fd) {
-        fwrite($fd, $vdb . "\n");
-        fclose($fd);
-    } else {
-        voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
-    }
+	$fd = fopen("{$g['vardb_path']}/voucher_used_$roll.db", "w");
+	if ($fd) {
+		fwrite($fd, $vdb . "\n");
+		fclose($fd);
+	} else
+        	voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
 }
 
 /* return assoc array of active vouchers with activation timestamp
  * voucher is index. 
  */
 function voucher_read_active_db($roll) {
+	global $g;
 
-    global $g;
-
-    $active = array();
-    $dirty = 0;
-    $file = "{$g['vardb_path']}/voucher_active_$roll.db";
-    if (file_exists($file)) {
-        $fd = fopen($file, "r");
-        if ($fd) {
-            while (!feof($fd)) {
-                $line = trim(fgets($fd));
-                if ($line) {
-                    list($voucher,$timestamp,$minutes) = explode(",", $line); // voucher,timestamp
-                    if ((($timestamp + 60*$minutes) - time()) > 0) {
-                        $active[$voucher] = "$timestamp,$minutes";
-                    } else {
-                        $dirty=1;
-                    }
-                }
-            }
-            fclose($fd);
-            if ($dirty) // if we found expired entries, lets save our snapshot
-                voucher_write_active_db($roll, $active);
-        }
-    }
-    return $active;
+	$active = array();
+	$dirty = 0;
+	$file = "{$g['vardb_path']}/voucher_active_$roll.db";
+	if (file_exists($file)) {
+		$fd = fopen($file, "r");
+		if ($fd) {
+			while (!feof($fd)) {
+				$line = trim(fgets($fd));
+				if ($line) {
+					list($voucher,$timestamp,$minutes) = explode(",", $line); // voucher,timestamp
+					if ((($timestamp + 60*$minutes) - time()) > 0)
+						$active[$voucher] = "$timestamp,$minutes";
+					else
+						$dirty=1;
+				}
+			}
+			fclose($fd);
+			if ($dirty) // if we found expired entries, lets save our snapshot
+				voucher_write_active_db($roll, $active);
+		}
+	}
+	return $active;
 }
 
 /* store array of active vouchers back to DB */
 function voucher_write_active_db($roll, $active) {
-
     global $g;
 
     $fd = fopen("{$g['vardb_path']}/voucher_active_$roll.db", "w");
@@ -390,7 +391,6 @@ function voucher_write_active_db($roll, $active) {
 
 /* return how many vouchers are marked used on a roll */
 function voucher_used_count($roll) {
-
     global $g;
 
     $bitstring = voucher_read_used_db($roll);
@@ -407,7 +407,6 @@ function voucher_used_count($roll) {
 }
 
 function voucher_read_used_db($roll) {
-
     global $g;
 
     $vdb = "";
@@ -425,10 +424,9 @@ function voucher_read_used_db($roll) {
 }
 
 function voucher_unlink_db($roll) {
-
     global $g;
-    unlink("{$g['vardb_path']}/voucher_used_$roll.db");
-    unlink("{$g['vardb_path']}/voucher_active_$roll.db");
+    @unlink("{$g['vardb_path']}/voucher_used_$roll.db");
+    @unlink("{$g['vardb_path']}/voucher_active_$roll.db");
 }
 
 /* we share the log with captiveportal for now */
@@ -445,20 +443,15 @@ function voucher_log($priority, $message) {
  * Called during reboot -> system_reboot_cleanup() and minicron
  */
 function voucher_save_db_to_config() {
-
     global $config, $g;
     
     if (!isset($config['voucher']['enable']) || $config['voucher']['saveinterval'] == 0) 
         return;   // no vouchers or don't want to save DB's
 
-    if (!is_subsystem_dirty('voucher'))
-        return;     // nothing changed.
-
-    $voucherlck = lock('voucher');
+    $voucherlck = lock('voucher', LOCK_EX);
 
     // walk all active rolls and save runtime DB's to flash
     $a_roll = &$config['voucher']['roll'];
-//    foreach ($a_roll as $rollent) {
     while (list($key, $value) = each($a_roll)) {
         $rollent = &$a_roll[$key];
         $roll = $rollent['number'];
@@ -466,7 +459,7 @@ function voucher_save_db_to_config() {
         $rollent['used'] = base64_encode($bitmask);
         $active_vouchers = voucher_read_active_db($roll);
         $db = array();
-	$dbi = 1;
+		$dbi = 1;
         foreach($active_vouchers as $voucher => $line) {
             list($timestamp,$minutes) = explode(",", $line);
             $activent['voucher'] = $voucher;
@@ -477,8 +470,9 @@ function voucher_save_db_to_config() {
         }
         $rollent['active'] = $db;
     }
-    clear_subsystem_dirty('voucher');
+
     unlock($voucherlck);
+
     write_config();
     return;
 }

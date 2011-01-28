@@ -39,6 +39,7 @@
 */
 
 /* DISABLE_PHP_LINT_CHECKING */
+// vim: ts=4 sw=4 noexpandtab
 
 /* include all configuration functions */
 
@@ -184,9 +185,8 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
-	/* Use filter lock to not allow recursion and config lock to prevent changes during this run. */
+	/* Use filter lock to not allow concurrent filter reloads during this run. */
 	$filterlck = lock('filter', LOCK_EX);
-	$configlck = lock('config');
 
 
 	filter_pflog_start();
@@ -241,7 +241,6 @@ function filter_configure_sync() {
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
 		if($g['booting'] == true)
 			echo gettext("done.") . "\n";
-		unlock($configlck);
 		unlock($filterlck);
 		return;
 	}
@@ -298,8 +297,7 @@ function filter_configure_sync() {
 	$rules .= discover_pkg_rules("filter");
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
-		log_error(gettext("WARNING: Could not write new rules!"));
-		unlock($configlck);
+		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);
 		return;
 	}
@@ -335,11 +333,9 @@ function filter_configure_sync() {
 		if(is_array($line_split))
 			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
 		if($line_error and $line_number) {
-			$error_msg = sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error);
-			file_notice("filter_load", $error_msg, "Filter Reload", "");
-			log_error($error_msg);
-			update_filter_reload_status($error_msg);
-			unlock($configlck);
+			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error), "Filter Reload", "");
+			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
+			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error));
 			unlock($filterlck);
 			return;
 		}
@@ -387,8 +383,6 @@ function filter_configure_sync() {
 
 		fclose($fda);
 	}
-
-	unlock($configlck);
 
 	if(file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
@@ -479,7 +473,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if(!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
-				$filterdns .= "{$address} = {$name}\n";
+				$filterdns .= "pf {$address} {$name}\n";
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;
@@ -1094,13 +1088,18 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 }
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
-function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "") {
+function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
 	global $config, $FilterIflist;
 	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
 		return "# src incorrectly specified\n";
 	if($natip != "") {
-		$tgt = "{$natip}/32";
+		if (is_subnet($natip))
+			$tgt = $natip;
+		elseif (is_alias($natip))
+			$tgt = "\${$natip}";
+		else
+			$tgt = "{$natip}/32";
 	} else {
 		$natip = get_interface_ip($if);
 		if(is_ipaddr($natip))
@@ -1132,18 +1131,17 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	if($dstport != "")
 		$dst .= " port {$dstport}";
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
+	$staticnatport_txt = "";
 	if($staticnatport)
-		$staticnatport_txt = " static-port";
-	else
-		if(!$natport)
-			$staticnatport_txt = " port 1024:65535"; // set source port range
-		else
-			$staticnatport_txt = "";
+		$staticnatport_txt = "static-port";
+	elseif(!$natport)
+		$tgt .= " port 1024:65535"; // set source port range
 	/* Allow for negating NAT entries */
 	if($nonat) {
 		$nat = "no nat";
 		$target = "";
 		$staticnatport_txt = "";
+		$poolopts = "";
 	} else {
 		$nat = "nat";
 		$target = "-> {$tgt}";
@@ -1151,7 +1149,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	$if_friendly = $FilterIflist[$if]['descr'];
 	/* Put all the pieces together */
 	if($if_friendly)
-		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
+		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target} {$poolopts} {$staticnatport_txt}\n";
 	else
 		$natrule .= "# Could not convert {$if} to friendly name(alias)\n";
 	return $natrule;
@@ -1244,6 +1242,9 @@ function filter_nat_rules_generate() {
 				else
 					$natif = $obent['interface'];
 
+				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
+				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
+
 				if (!isset($FilterIflist[$natif]))
 					continue;
 
@@ -1252,11 +1253,12 @@ function filter_nat_rules_generate() {
 					$obent['sourceport'],
 					$dst,
 					$obent['dstport'],
-					$obent['target'],
+					$obtarget,
 					$obent['natport'],
 					isset($obent['nonat']),
 					isset($obent['staticnatport']),
-					$obent['protocol']
+					$obent['protocol'],
+					$poolopts
 				);
 			}
 		}
@@ -1346,6 +1348,8 @@ function filter_nat_rules_generate() {
 		}
 		if($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
+				if (substr($ifcfg['if'], 0, 4) == "ovpn")
+					continue;
 				update_filter_reload_status(sprintf(gettext('Creating outbound rules %1$s - (%2$s)'), $if, $ifcfg['descr']));
 				if(interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
@@ -1543,7 +1547,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', substr($rule['descr'], 0, 63)) . "\"";
+		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', substr($rule['descr'], 0, 52)) . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
 
@@ -1972,42 +1976,6 @@ function filter_rules_generate() {
 	$ipfrules = "";
 	//$ipfrules .= discover_pkg_rules("filter");
 
-	/* if captive portal is enabled, ensure that access to this port
-	 * is allowed on a locked down interface
-	 */
-	if(isset($config['captiveportal']['enable'])) {
-		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
-		$cpiflist = array();
-		$cpiplist = array();
-		foreach ($cpinterfaces as $cpifgrp) {
-			if(!isset($FilterIflist[$cpifgrp]))
-				continue;
-			$tmpif = get_real_interface($cpifgrp);
-			if(!empty($tmpif)) {
-				$cpiflist[] = "{$tmpif}";
-				$cpipm = get_interface_ip($cpifgrp);
-				if(is_ipaddr($cpipm)) {
-					$carpif = link_ip_to_carp_interface($cpipm);
-					if (!empty($carpif)) {
-						$cpiflist[] = $carpif;
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp) {
-							$carpip = find_interface_ip($cpcarp);
-							if (is_ipaddr($carpip))
-							$cpiplist[] = $carpip;
-						}
-					}
-					$cpiplist[] = $cpipm;
-				}
-			}
-		}
-		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-			$cpinterface = implode(" ", $cpiflist);
-			$cpaddresses = implode(" ", $cpiplist);
-			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
-		}
-	}
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
 	# BEGIN OF firewall rules
@@ -2077,6 +2045,43 @@ EOD;
 	 * Useful for protecting against sudden outburts, etc.
 	 */
 	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
+
+	/* if captive portal is enabled, ensure that access to this port
+	 * is allowed on a locked down interface
+	 */
+	if(isset($config['captiveportal']['enable'])) {
+		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
+		$cpiflist = array();
+		$cpiplist = array();
+		foreach ($cpinterfaces as $cpifgrp) {
+			if(!isset($FilterIflist[$cpifgrp]))
+				continue;
+			$tmpif = get_real_interface($cpifgrp);
+			if(!empty($tmpif)) {
+				$cpiflist[] = "{$tmpif}";
+				$cpipm = get_interface_ip($cpifgrp);
+				if(is_ipaddr($cpipm)) {
+					$carpif = link_ip_to_carp_interface($cpipm);
+					if (!empty($carpif)) {
+						$cpiflist[] = $carpif;
+						$carpsif = explode(" ", $carpif);
+						foreach ($carpsif as $cpcarp) {
+							$carpip = find_interface_ip($cpcarp);
+							if (is_ipaddr($carpip))
+							$cpiplist[] = $carpip;
+						}
+					}
+					$cpiplist[] = $cpipm;
+				}
+			}
+		}
+		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+			$cpinterface = implode(" ", $cpiflist);
+			$cpaddresses = implode(" ", $cpiplist);
+			$ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
+			$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+		}
+	}
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
@@ -2166,7 +2171,6 @@ EOD;
 # loopback
 pass in on \$loopback all label "pass loopback"
 pass out on \$loopback all label "pass loopback"
-
 
 EOD;
 
@@ -2765,7 +2769,5 @@ function discover_pkg_rules($ruletype) {
 	}
 	return $rules;
 }
-
-// vim: ts=4 sw=4 noexpandtab
 
 ?>

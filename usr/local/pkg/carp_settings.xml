@@ -117,7 +117,7 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Synchronize nat</fielddescr>
+			<fielddescr>Synchronize NAT</fielddescr>
 			<fieldname>synchronizenat</fieldname>
 			<description>When this option is enabled, this system will automatically sync the NAT rules over to the other CARP host when changes are made.</description>
 			<type>checkbox</type>

@@ -73,8 +73,12 @@ echo " 4) Reset to factory defaults         12) ${product} Developer Shell"
 echo " 5) Reboot system                     13) Upgrade from console"
 echo " 6) Halt system                       ${sshd_option}"
 echo " 7) Ping host                         ${option98}"
-/bin/echo "${option99}"
 
+if [ "${option99}" != "" ]; then
+	/bin/echo "${option99}"
+fi
+
+echo
 read -p "Enter an option: " opmode
 echo
 

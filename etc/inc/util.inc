@@ -1237,6 +1237,19 @@ function start_devd() {
         sleep(1);
 }
 
+function is_interface_vlan_mismatch() {
+        global $config, $g;
+
+        if (is_array($config['vlans']['vlan'])) {
+                foreach ($config['vlans']['vlan'] as $vlan) {
+                        if (does_interface_exist($vlan['if']) == false)
+				return true;
+                }
+        }
+
+	return false;
+}
+
 function is_interface_mismatch() {
         global $config, $g;
 

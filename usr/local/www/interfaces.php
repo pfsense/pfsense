@@ -759,15 +759,15 @@ function handle_wireless_post() {
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
 		unset($config['wireless']['interfaces'][$wlanbaseif]);
-	if (isset($_POST['diversity']) && $_POST['diversity'] != "")
+	if (isset($_POST['diversity']) && is_numeric($_POST['diversity']))
 		$wancfg['wireless']['diversity'] = $_POST['diversity'];
 	else if (isset($wancfg['wireless']['diversity']))
 		unset($wancfg['wireless']['diversity']);
-	if (isset($_POST['txantenna']) && $_POST['txantenna'] != "")
+	if (isset($_POST['txantenna']) && is_numeric($_POST['txantenna']))
 		$wancfg['wireless']['txantenna'] = $_POST['txantenna'];
 	else if (isset($wancfg['wireless']['txantenna']))
 		unset($wancfg['wireless']['txantenna']);
-	if (isset($_POST['rxantenna']) && $_POST['rxantenna'] != "")
+	if (isset($_POST['rxantenna']) && is_numeric($_POST['rxantenna']))
 		$wancfg['wireless']['rxantenna'] = $_POST['rxantenna'];
 	else if (isset($wancfg['wireless']['rxantenna']))
 		unset($wancfg['wireless']['rxantenna']);
@@ -1653,9 +1653,9 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Diversity"); ?><br/>
 											<select name="diversity" class="formselect" id="diversity">
-												<option <?php if (empty($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['diversity'] == '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
-												<option <?php if ($pconfig['diversity'] == '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
+												<option <?php if (!isset($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['diversity'] === '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
+												<option <?php if ($pconfig['diversity'] === '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -1664,10 +1664,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Transmit antenna"); ?><br/>
 											<select name="txantenna" class="formselect" id="txantenna">
-												<option <?php if (empty($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['txantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['txantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['txantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (!isset($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -1676,10 +1676,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 										<td>
 											<?=gettext("Receive antenna"); ?><br/>
 											<select name="rxantenna" class="formselect" id="rxantenna">
-												<option <?php if (empty($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] == '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] == '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] == '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (!isset($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<?php endif; ?>
@@ -1963,7 +1963,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?>>
 								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
-								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
+								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
 						</tr>
 						<tr>

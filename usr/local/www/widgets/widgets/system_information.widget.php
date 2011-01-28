@@ -31,10 +31,11 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+$nocsrf = true;
+
 require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
-
 
 if($_REQUEST['getupdatestatus']) {
 	if(isset($curcfg['alturl']['enable']))

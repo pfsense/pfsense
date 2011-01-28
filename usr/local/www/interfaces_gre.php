@@ -110,7 +110,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_gres as $gre): ?>
-                <tr  ondblclick="document.location='interfaces_vlan_gre.php?id=<?=$i;?>'">
+                <tr  ondblclick="document.location='interfaces_gre_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']));?>
                   </td>

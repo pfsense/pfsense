@@ -255,8 +255,7 @@ setup_gateways_monitor();
 echo "done.\n";
 
 echo "Synchronizing user settings...";
-if (empty($config['system']['webgui']['backend']))
-	local_sync_accounts();
+local_sync_accounts();
 echo "done.\n";
 
 if($avail > 0 and $avail < 65) {
@@ -380,6 +379,18 @@ activate_powerd();
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
 	@unlink("/sbin/shutdown.old");
+
+/* Resync / Reinstall packages if need be */
+if(file_exists('/conf/needs_package_sync')) {
+	if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
+		require_once("pkg-utils.inc");
+		if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+			mark_subsystem_dirty('packagelock');
+			pkg_reinstall_all();
+			clear_subsystem_dirty('packagelock');
+		}
+	}
+}
 
 /* done */
 unset($g['booting']);

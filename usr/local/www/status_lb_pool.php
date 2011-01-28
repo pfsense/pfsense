@@ -43,6 +43,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("vslb.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -61,21 +62,7 @@ $year = date("Y");
 $pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Pool"));
 include("head.inc");
 
-$relayctl=split("\n", shell_exec("/usr/local/sbin/relayctl show summary"));
-$relay_hosts=Array();
-foreach( (array) $relayctl as $line) {
-	$t=split("\t", $line);
-	switch (trim($t[1])) {
-		case "table":
-			$curpool=trim($t[2]);
-		break;
-		case "host":
-			$curhost=trim($t[2]);
-			$relay_hosts[$curpool][$curhost]['avail']=trim($t[3]);
-			$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
-		break;
-	}
-}
+$relay_hosts = get_lb_summary();
 
 if ($_POST) {
 	if ($_POST['apply']) {

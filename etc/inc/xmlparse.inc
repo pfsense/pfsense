@@ -36,9 +36,9 @@ function listtags() {
    * I know it's a pain, but it's a pain to find stuff too if it's not
    */
 	$ret = explode(" ",
-		"alias aliasurl allowedip authserver bridged ca cacert cert crl clone config ".
-		"container columnitem build_port_path depends_on_package disk dnsserver dnsupdate ".
-		"domainoverrides dyndns earlyshellcmd element encryption-algorithm-option ".
+		"alias aliasurl allowedip allowedhostname authserver bridged ca cacert cert crl ".
+		"clone config container columnitem build_port_path depends_on_package disk dnsserver  ".
+		"dnsupdate domainoverrides dyndns earlyshellcmd element encryption-algorithm-option ".
 		"field fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
 		"group hosts member ifgroupentry igmpentry interface_array item key lagg " .
 		"lbaction lbpool l7rules lbprotocol ".
@@ -47,7 +47,7 @@ function listtags() {
 		"option package passthrumac phase1 phase2 ppp pppoe priv proxyarpnet qinqentry queue ".
 		"pages pipe roll route row rrddatafile rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
-		"tunnel user vip virtual_server vlan winsserver wolentry widget"
+		"tunnel user vip virtual_server vlan winsserver wolentry widget npt"
 		);
 	return $ret;
 }
@@ -229,7 +229,7 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= str_repeat("\t", $indent);
 						if((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
-						} else if (substr($ent, 0, 5) == "descr") {
+						} else if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail")) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -253,7 +253,7 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if (substr($ent, 0, 5) == "descr")
+				if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail"))
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				else
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

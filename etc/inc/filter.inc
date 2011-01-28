@@ -1380,8 +1380,6 @@ function filter_nat_rules_generate() {
 		}
 		if($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
-				if (substr($ifcfg['if'], 0, 4) == "ovpn")
-					continue;
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 				if(interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
@@ -2090,9 +2088,22 @@ block in $log inet6 all label "Default deny rule IPv6"
 block out $log inet6 all label "Default deny rule IPv6"
 
 # IPv6 ICMP is not auxilary, it is required for operation
-#pass out quick proto ipv6-icmp from any to any keep state
-# Allow only bare essential icmpv6 packets (NS, NA, and RA)
-pass quick inet6 proto ipv6-icmp from any to any icmp6-type {neighbradv,neighbrsol,routeradv}
+# See man icmp6(4)
+# 1    unreach         Destination unreachable
+# 2    toobig          Packet too big
+# 128  echoreq         Echo service request
+# 129  echorep         Echo service reply
+# 133  routersol       Router solicitation
+# 134  routeradv       Router advertisement
+# 135  neighbrsol      Neighbor solicitation
+# 136  neighbradv      Neighbor advertisement
+pass quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,128,129,135,136} keep state
+
+# Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
 
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any

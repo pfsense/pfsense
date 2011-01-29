@@ -910,7 +910,7 @@ EOD;
 				file_put_contents("{$g['varetc_path']}/filternds-ipsec.hosts", $hostnames);
 
 				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
-				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns_ipsec.hosts -d 1");
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
 			}
 		}
 	

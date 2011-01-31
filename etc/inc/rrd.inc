@@ -278,6 +278,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:outpass:COUNTER:$trafficvalid:0:$upstream ";
 				$rrdcreate .= "DS:inblock:COUNTER:$trafficvalid:0:$downstream ";
 				$rrdcreate .= "DS:outblock:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass6:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass6:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock6:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock6:COUNTER:$trafficvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -288,14 +292,16 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
+			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
 			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'`\\\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Pass|Out6\/Pass/ {printf \$6 \":\"}'`\\\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -304,6 +310,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:outpass:COUNTER:$packetsvalid:0:$upstream ";
 				$rrdcreate .= "DS:inblock:COUNTER:$packetsvalid:0:$downstream ";
 				$rrdcreate .= "DS:outblock:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass6:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass6:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock6:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock6:COUNTER:$packetsvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -314,14 +324,16 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
 			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'`\\\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Pass|Out6\/Pass/ {printf \$4 \":\"}'`\\\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {

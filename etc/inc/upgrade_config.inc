@@ -1748,7 +1748,7 @@ function upgrade_054_to_055() {
 		$xmldumpnew = "{$database}.new.xml";
 
 		if ($g['booting'])
-			echo "Migrate RRD database {$database} to new format \n";
+			echo "Migrate RRD database {$database} to new format for IPv6 \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -2296,6 +2296,88 @@ function upgrade_075_to_076() {
 	$cron_item['who'] = "root";
 	$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.update_urltables";
 	$config['cron']['item'][] = $cron_item;
+}
+
+function upgrade_076_to_077() {
+	global $config;
+	global $g;
+
+	/* RRD files changed for quality, traffic and packets graphs */
+	/* convert traffic RRD file */
+	global $parsedcfg, $listtags;
+	$listtags = array("ds", "v", "rra", "row");
+
+	$rrddbpath = "/var/db/rrd/";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	$rrdinterval = 60;
+	$valid = $rrdinterval * 2;
+
+	/* Asume GigE for now */
+	$downstream = 125000000;
+	$upstream = 125000000;
+
+	/* build a list of traffic and packets databases */
+	$databases = array();
+	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	rsort($databases);
+	foreach($databases as $database) {
+		$databasetmp = "{$database}.tmp";
+		$xmldump = "{$database}.old.xml";
+		$xmldumptmp = "{$database}.tmp.xml";
+		$xmldumpnew = "{$database}.new.xml";
+
+		if ($g['booting'])
+			echo "Migrate RRD database {$database} to new format.\n";
+
+		/* dump contents to xml and move database out of the way */
+		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
+
+		/* create new rrd database file */
+		$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
+		$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "DS:inblock:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outblock:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "DS:inpass6:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outpass6:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "DS:inblock6:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outblock6:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+
+		create_new_rrd("$rrdcreate");
+		/* create temporary xml from new RRD */
+		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
+
+		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = $rrdold['rrd'];
+
+		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
+		$rrdnew = xml2array($rrdnewxml, 1, "tag");
+		$rrdnew = $rrdnew['rrd'];
+
+		/* remove any MAX RRA's. Not needed for traffic. */
+		$i = 0;
+		foreach ($rrdold['rra'] as $rra) {
+			if(trim($rra['cf']) == "MAX") {
+				unset($rrdold['rra'][$i]);
+			}
+			$i++;
+		}
+
+		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
+		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+
+	}
+	enable_rrd_graphing();
+	if ($g['booting'])
+		echo "Updating configuration...";
 }
 
 ?>

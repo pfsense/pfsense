@@ -75,7 +75,7 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre>' + transport.responseText  + '</pre></font>';
+		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>';
 		setTimeout('getcpuactivity()', 2000);		
 	}
 	setTimeout('getcpuactivity()', 5000);	

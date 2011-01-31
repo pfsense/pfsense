@@ -905,7 +905,7 @@ EOD;
 
 				$hostnames = "";
 				array_unique($filterdns_list);
-				foreach ($hostname as $filterdns_list)
+				foreach ($filterdns_list as $hostname)
 					$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
 				file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 

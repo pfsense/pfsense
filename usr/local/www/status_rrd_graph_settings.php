@@ -54,7 +54,8 @@ $categories = array('system' => gettext("System"),
 		'traffic' => gettext("Traffic"),
 		'packets' => gettext("Packets"),
 		'quality' => gettext("Quality"),
-		'queues' => gettext("Queues"));
+		'queues' => gettext("Queues"),
+		'captiveportal' => gettext("Captive Portal"));
 $styles = array('inverse' => gettext("Inverse"),
 		'absolute' => gettext("Absolute"));
 $periods = array("absolute" => gettext("Absolute Timespans"),
@@ -101,6 +102,9 @@ foreach($databases as $database) {
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
+	if(stristr($database, "captiveportal-") && isset($config['captiveportal']['enable'])) {
+		$captiveportal = true;
+	}
 }
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
@@ -142,6 +146,10 @@ include("head.inc");
 				if($vpnusers) {
 					if($curcat == "vpnusers") { $tabactive = True; } else { $tabactive = False; }
 						$tab_array[] = array(gettext("VPN"), $tabactive, "status_rrd_graph.php?cat=vpnusers");
+				}
+				if($captiveportal) {
+					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
+						$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");

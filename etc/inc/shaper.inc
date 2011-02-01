@@ -517,7 +517,7 @@ class altq_root_queue {
 	 *      foreach ($queues as $qkey => $queue)
 	 *              this->queues[$qkey]->build_rule();
 	 */
-	function build_rules($default = false) {
+	function build_rules(&$default = false) {
 		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
 			$default = false;
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
@@ -542,7 +542,7 @@ class altq_root_queue {
 				}
 				$rules .= " } \n";
 				foreach ($this->queues as $q) {
-					$rules .= $q->build_rules(&$default);
+					$rules .= $q->build_rules($default);
 				}
 			}
 			if ($default == false) {
@@ -1035,7 +1035,7 @@ class priq_queue {
 	/* Should return something like:
 	 * queue $qname on $qinterface bandwidth ....
 	 */
-	function build_rules($default = false) {
+	function build_rules(&$default = false) {
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -1685,7 +1685,7 @@ class hfsc_queue extends priq_queue {
 	}
 
 	/* Even this should take children into consideration */
-	function build_rules($default = false) {
+	function build_rules(&$default = false) {
 
 		$pfq_rule = " queue ". $this->qname;
 		if ($this->GetInterface())
@@ -1767,7 +1767,7 @@ class hfsc_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
+				$pfq_rule .= $q->build_rules(&$default);
 		}
 
 		 $pfq_rule .= " \n";
@@ -2227,7 +2227,7 @@ class cbq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules($default = false) {
+	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
@@ -2288,7 +2288,7 @@ class cbq_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules(&$default);
+				$pfq_rule .= $q->build_rules($default);
 		}
 
 		$pfq_rule .= " \n";
@@ -2502,7 +2502,7 @@ class fairq_queue extends priq_queue {
 	}
 		
 	/* Even this should take children into consideration */
-	function build_rules($default = false) {
+	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());

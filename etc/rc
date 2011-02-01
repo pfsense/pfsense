@@ -25,6 +25,12 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+# Setup dumpdev/ddb/savecore"
+echo "Configuring crash dumps..."
+if [ "$PLATFORM" = "pfSense" ]; then
+	/etc/rc.dumpon
+fi
+
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
@@ -110,9 +116,9 @@ elif [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
 else
-	/etc/rc.dumpon
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

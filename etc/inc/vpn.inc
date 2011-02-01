@@ -37,7 +37,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/usr/bin/netstat	/sbin/route	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dnswatch	/usr/local/sbin/mpd4	
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4	
 	pfSense_MODULE:	vpn
 */
 
@@ -103,7 +103,7 @@ function vpn_ipsec_configure($ipchg = false)
 		/* kill racoon */
 		if(is_process_running("racoon"))
 			mwexec("/usr/bin/killall racoon", true);
-		killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
+		killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 
 		/* wait for racoon process to die */
 		sleep(2);
@@ -133,7 +133,7 @@ function vpn_ipsec_configure($ipchg = false)
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
 		$rgmap = array();
-		$dnswatch_list = array();
+		$filterdns_list = array();
 		if (is_array($a_phase1) && count($a_phase1)) {
 
 			/* step through each phase1 entry */
@@ -149,7 +149,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$ipmap[] = $ep;
 
 				/* see if this tunnel has a hostname for the remote-gateway. If so,
-				   try to resolve it now and add it to the list for dnswatch */
+				   try to resolve it now and add it to the list for filterdns */
 
 				if (isset ($ph1ent['mobile']))
 					continue;
@@ -157,7 +157,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rg = $ph1ent['remote-gateway'];
 
 				if (!is_ipaddr($rg)) {
-					$dnswatch_list[] = "{$rg}=value";
+					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
 					$rg = resolve_retry($rg);
 					if (!$rg)
@@ -897,19 +897,20 @@ EOD;
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 
-			/* start dnswatch, if necessary */
-			if (count($dnswatch_list) > 0) {
+			/* start filterdns, if necessary */
+			if (count($filterdns_list) > 0) {
 				$interval = 60;
 				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
 					$interval = $ipseccfg['dns-interval'];
 
 				$hostnames = "";
-				array_unique($dnswatch_list);
-				$hostnames = implode("\n", $dnswatch_list);
-				file_put_contents("{$g['varetc_path']}/dnswatch-ipsec.hosts", $hostnames);
+				array_unique($filterdns_list);
+				foreach ($filterdns_list as $hostname)
+					$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+				file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
-				killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
-				mwexec("/usr/local/sbin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval /etc/rc.newipsecdns {$g['varetc_path']}/dnswatch-ipsec.hosts");
+				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
 			}
 		}
 	
@@ -1674,7 +1675,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
-	 * try to resolve it now and add it to the list for dnswatch */
+	 * try to resolve it now and add it to the list for filterdns */
 	if (!is_ipaddr($phase1['remote-gateway'])) {
 		$rgip = resolve_retry($phase1['remote-gateway']);
 		add_hostname_to_watch($phase1['remote-gateway']);

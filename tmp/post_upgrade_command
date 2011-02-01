@@ -5,24 +5,24 @@
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
 if [ $KERNELTYPE = "wrap" ]; then
 	if [ -f /kernels/kernel_wrap.gz ]; then 
-		tar xzpf /kernels/kernel_wrap.gz -C /boot/
+		tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
 		cp /etc/ttys_wrap /etc/ttys
 	fi
 fi
 if [ $KERNELTYPE = "Developers" ]; then
 	if [ -f /kernels/kernel_Dev.gz ]; then 
-		tar xzpf /kernels/kernel_Dev.gz -C /boot/
+		tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/
 		cp  /boot/kernel/kernel.gz
 	fi
 fi
 if [ $KERNELTYPE = "SMP" ]; then
 	if [ -f /kernels/kernel_SMP.gz ]; then 
-		tar xzpf /kernels/kernel_SMP.gz -C /boot/
+		tar xzpf /kernels/kernel_SMP.gz --exclude loader.conf -C /boot/
 	fi
 fi
 if [ $KERNELTYPE = "UP" ]; then
 	if [ -f /kernels/kernel_SMP.gz ]; then 
-		tar xzpf /kernels/kernel_uniprocessor.gz -C /boot/
+		tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
 	fi
 fi
 

@@ -2104,6 +2104,7 @@ pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128
 pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
 pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
 pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe02::/16 icmp6-type {129,133,134,135,136} keep state
 
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any

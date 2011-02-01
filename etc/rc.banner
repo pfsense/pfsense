@@ -78,7 +78,7 @@
 
 		$ipaddr ? $ipaddr : "NONE";
 
-		printf("\n  %-18s -> %-8s -> %s/%s %s/%s %s",
+		printf("\n  %-18s -> %-10s -> %s/%s %s/%s %s",
 			$tobanner,
 			$realif,
 			$ipaddr,

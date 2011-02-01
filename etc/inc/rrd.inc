@@ -298,10 +298,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Pass|Out6\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In6\/Pass|Out6\/Pass|In4\/Block|Out4\/Block|In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -330,10 +327,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Pass|Out6\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In6\/Pass|Out6\/Pass|In4\/Block|Out4\/Block|In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {

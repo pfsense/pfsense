@@ -3424,7 +3424,10 @@ function find_interface_ipv6($interface, $flush = false)
 				$parts = explode(" ", $line);
 				if(! preg_match("/fe80::/", $parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
-					$ifinfo['subnetbitsv6'] = $parts[3];
+					if($parts[2] == "-->")
+						$ifinfo['subnetbitsv6'] = $parts[5];
+					else
+						$ifinfo['subnetbitsv6'] = $parts[3];
 				}
 			}
 		}
@@ -3464,6 +3467,19 @@ function find_interface_subnetv6($interface, $flush = false)
 
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
+		exec("/sbin/ifconfig {$interface} inet6", $output);
+		foreach($output as $line) {
+			if(preg_match("/inet6/", $line)) {
+				$parts = explode(" ", $line);
+				if(! preg_match("/fe80::/", $parts[1])) {
+					$ifinfo['ipaddrv6'] = $parts[1];
+					if($parts[2] == "-->")
+						$ifinfo['subnetbitsv6'] = $parts[5];
+					else
+						$ifinfo['subnetbitsv6'] = $parts[3];
+				}
+			}
+		}
 		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
 		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
         }

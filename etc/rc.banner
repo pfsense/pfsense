@@ -76,7 +76,7 @@
 		$realif = get_real_interface($ifname);
 		$tobanner = "{$friendly} ({$ifname})";
 
-		printf("\n %-15s -> %-10s -> %s/%s %s/%s %s",
+		printf("\n %-15s -> %-10s -> %s/%s\t%s/%s %s",
 			$tobanner,
 			$realif,
 			$ipaddr ? $ipaddr : "NONE",

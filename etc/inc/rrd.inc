@@ -698,6 +698,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
+	mwexec("killall rrdtool", true);
+	sleep(1);
 	mwexec("/bin/pkill -f updaterrd.sh", true);
 }
 

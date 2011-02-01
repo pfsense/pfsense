@@ -76,15 +76,13 @@
 		$realif = get_real_interface($ifname);
 		$tobanner = "{$friendly} ({$ifname})";
 
-		$ipaddr ? $ipaddr : "NONE";
-
-		printf("\n  %-18s -> %-10s -> %s/%s %s/%s %s",
+		printf("\n %-15s -> %-10s -> %s/%s %s/%s %s",
 			$tobanner,
 			$realif,
-			$ipaddr,
-			$subnet,
-			$ipaddr6,
-			$subnet6,
+			$ipaddr ? $ipaddr : "NONE",
+			$subnet ? $subnet : "NONE",
+			$ipaddr6 ? $ipaddr6 : "NONE",
+			$subnet6 ? $subnet6 : "NONE",
 			$class
 		);
 	}

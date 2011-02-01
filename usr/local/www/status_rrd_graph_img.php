@@ -352,6 +352,8 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "AREA:\"$curif-in_bits_pass#{$colortrafficdown[0]}:$curif-in-pass:STACK\" ";
 	$graphcmd .= "AREA:\"$curif-in6_bits_block#{$colortrafficdown[3]}:$curif-in6-block:STACK\" ";
 	$graphcmd .= "AREA:\"$curif-in6_bits_pass#{$colortrafficdown[2]}:$curif-in6-pass:STACK\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_block_neg#{$colortrafficup[1]}:$curif-out-block\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-pass:STACK\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out6_bits_block_neg#{$colortrafficup[3]}:$curif-out6-block:STACK\" ";
@@ -381,6 +383,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"$curif-out_bits_block:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_out_t_block:AVERAGE:%7.2lf %sB o\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"IPv6 in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in6_bits_pass:MAX:%7.2lf %sb/s\" ";
@@ -602,7 +605,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "AREA:\"$curif-in_pps_pass#{$colorpacketsdown[0]}:$curif-in-pass:STACK\" ";
 	$graphcmd .= "AREA:\"$curif-in6_pps_block#{$colorpacketsdown[3]}:$curif-in6-block:STACK\" ";
 	$graphcmd .= "AREA:\"$curif-in6_pps_pass#{$colorpacketsdown[2]}:$curif-in6-pass:STACK\" ";
-
+	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_block_neg#{$colorpacketsup[1]}:$curif-out-block\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_pass_neg#{$colorpacketsup[0]}:$curif-out-pass:STACK\" ";
 	$graphcmd .= "$AREA:\"$curif-out6_pps_block_neg#{$colorpacketsup[3]}:$curif-out6-block:STACK\" ";
@@ -633,6 +636,8 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:AVERAGE:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_out_t_block:AVERAGE:%7.2lf %s pkts\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass6\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in6_pps_pass:MAX:%7.2lf %s pps\" ";

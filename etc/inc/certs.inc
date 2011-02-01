@@ -90,12 +90,12 @@ function & lookup_crl($refid) {
 function ca_chain_array(& $cert) {
 	if($cert['caref']) {
 		$chain = array();
-		$crt =& lookup_ca($cert['caref']);
+		$crt = lookup_ca($cert['caref']);
 		$chain[] = $crt;
 		while ($crt) {
 			$caref = $crt['caref'];
 			if($caref)
-				$crt =& lookup_ca($caref);
+				$crt = lookup_ca($caref);
 			else
 				$crt = false;
 			if($crt)

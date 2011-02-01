@@ -2328,7 +2328,7 @@ function upgrade_076_to_077() {
 		$xmldumpnew = "{$database}.new.xml";
 
 		if ($g['booting'])
-			echo "Migrate RRD database {$database} to new format.\n";
+			echo "Migrate RRD database {$database} to new format for IPv6.\n";
 
 		/* dump contents to xml and move database out of the way */
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");

@@ -252,7 +252,7 @@ function enable_rrd_graphing() {
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
-		$rrdupdatesh .= "export TERM=dumb\n";
+		$rrdupdatesh .= "export TERM=serial\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
 		$rrdupdatesh .= "do\n";
@@ -568,11 +568,12 @@ function enable_rrd_graphing() {
 		}
 
 		/* the CPU stats gathering function. */
-		$rrdupdatesh .= "`$top -d 2 -s 1 0 | tail -n7 | $awk '{gsub(/%/, \"\")} BEGIN { \\\n";
-		$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } \\\n";
+		$rrdupdatesh .= "$top -d 2 -s 1 0 | tail -n7 > /tmp/top_output.txt\n";
+		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$proc N:\\\n";
+		$rrdupdatesh .= "`$awk < /tmp/top_output.txt '{gsub(/%/, \"\")} \\\n";
 		$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { processes = \$1; } \\\n";
 		$rrdupdatesh .= "else if ( \$1 == \"CPU:\" ) { user = \$2; nice = \$4; sys = \$6; interrupt = \$8; } \\\n";
-		$rrdupdatesh .= "} END { printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes }'`\n\n";
+		$rrdupdatesh .= "} END { printf user\":\"nice\":\"sys\":\"interrupt\":\"processes }'`\n\n";
 
 		/* End CPU statistics */
 
@@ -776,8 +777,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
+	mwexec("killall top", true);
 	mwexec("killall rrdtool", true);
-	sleep(1);
 	mwexec("/bin/pkill -f updaterrd.sh", true);
 }
 

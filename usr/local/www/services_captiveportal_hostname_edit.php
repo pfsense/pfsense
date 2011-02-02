@@ -134,7 +134,7 @@ if ($_POST) {
 		write_config();
 
 		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) 
-			captiveportal_init_rules(true);
+			captiveportal_init_rules();
 		
 		header("Location: services_captiveportal_hostname.php");
 		exit;

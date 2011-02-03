@@ -32,10 +32,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-haltsystem
-##|*NAME=Diagnostics: Halt system page
-##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
-##|*MATCH=halt.php*
+##|*IDENT=page-diagnostics-crash-reporter
+##|*NAME=Crash reporter
+##|*DESCR=Uploads crash reports to pfSense and or deletes crash reports.
+##|*MATCH=crash_reporter.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -61,20 +61,21 @@ function upload_crash_report($files) {
 	}
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
     $response = curl_exec($ch);
+	return $response;
 }
 
 function output_crash_reporter_html($crash_reports) {
-		echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
-		echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
-		echo "<p>Contents of crash reports:<br/>";
-		echo "	<textarea name='crashreports'>";
-		echo "		{$crash_reports}";
-		echo "	</textarea>";
-		echo "<p/>";
-		echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  ">";
-		echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  ">";
-		echo "</p>";
-		echo "</form>";
+	echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
+	echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
+	echo "<p>Contents of crash reports:<br/>";
+	echo "	<textarea name='crashreports'>";
+	echo "		{$crash_reports}";
+	echo "	</textarea>";
+	echo "<p/>";
+	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  ">";
+	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  ">";
+	echo "</p>";
+	echo "</form>";
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));

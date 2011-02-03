@@ -68,9 +68,7 @@ function output_crash_reporter_html($crash_reports) {
 	echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
 	echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
 	echo "<p>Contents of crash reports:<br/>";
-	echo "	<textarea name='crashreports'>";
-	echo "		{$crash_reports}";
-	echo "	</textarea>";
+	echo "<textarea name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  ">";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  ">";

@@ -133,19 +133,8 @@ if ($_POST) {
 		
 		write_config();
 
-		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
-			$rules = "";
-			$hostname = gethostbyname($oldip);
-			if($hostname)
-				for ($i = 3; $i < 10; $i++)
-					$rules .= "table {$i} delete {$hostname}\n";
-			$hostname = gethostbyname($ip);
-			if(is_ipaddr($hostname))
-				$rules .= captiveportal_allowedip_configure_entry($hostname);
-			file_put_contents("{$g['tmp_path']}/allowedhostname_tmp{$id}", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedhostname_tmp{$id}");
-			@unlink("{$g['tmp_path']}/allowedhostname_tmp{$id}");
-		}
+		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) 
+			captiveportal_init_rules();
 		
 		header("Location: services_captiveportal_hostname.php");
 		exit;

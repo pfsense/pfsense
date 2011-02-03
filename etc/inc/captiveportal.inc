@@ -498,6 +498,7 @@ function captiveportal_init_webgui() {
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
 }
 
+/* reinit will disconnect all users, be careful! */
 function captiveportal_init_rules($reinit = false) {
 	global $config, $g;
 
@@ -1077,10 +1078,10 @@ function setup_dnsfilter_entries() {
 	$cp_filterdns_conf = "";
 	if (is_array($config['captiveportal']['allowedhostname'])) {
 		foreach ($config['captiveportal']['allowedhostname'] as $hostnameent)  {
-			$cp_filterdns_conf .= "ipfw $hostnameent 3 '/etc/rc.captiveportal_configure'\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 4 '/etc/rc.captiveportal_configure'\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 7 '/etc/rc.captiveportal_configure'\n";
-			$cp_filterdns_conf .= "ipfw $hostnameent 8 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 3 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 4 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 7 '/etc/rc.captiveportal_configure'\n";
+			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 8 '/etc/rc.captiveportal_configure'\n";
 		}
 	}
 	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);

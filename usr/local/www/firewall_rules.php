@@ -162,9 +162,11 @@ if ($config['pptpd']['mode'] == "server")
 	if(have_ruleint_access("pptp")) 
 		$iflist['pptp'] = "PPTP VPN";
 
-foreach ($config['pppoes']['pppoe'] as $pppoes)
-	if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe"))
-		$iflist['pppoe'] = "PPPoE Server";
+if (is_array($config['pppoes']['pppoe'])) {
+	foreach ($config['pppoes']['pppoe'] as $pppoes)
+		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe"))
+			$iflist['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))

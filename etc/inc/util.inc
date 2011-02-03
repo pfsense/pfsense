@@ -226,7 +226,10 @@ function gen_subnet($ipaddr, $bits) {
 function gen_subnetv6($ipaddr, $bits) {
 	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
 		return "";
-	return Net_IPv6::getNetmask($ipaddr, $bits);
+
+	$address = Net_IPv6::getNetmask($ipaddr, $bits);
+	$address = Net_IPv6::Compress($address);
+	return $address;
 }
 
 /* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */

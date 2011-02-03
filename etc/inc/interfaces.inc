@@ -3425,7 +3425,7 @@ function find_interface_ipv6($interface, $flush = false)
 				if(! preg_match("/fe80::/", $parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
 					if($parts[2] == "-->") {
-						$parts[5] = "127";
+						$parts[5] = "126";
 						$ifinfo['subnetbitsv6'] = $parts[5];
 					} else {
 						$ifinfo['subnetbitsv6'] = $parts[3];
@@ -3476,7 +3476,7 @@ function find_interface_subnetv6($interface, $flush = false)
 				if(! preg_match("/fe80::/", $parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
 					if($parts[2] == "-->") {
-						$parts[5] = "127";
+						$parts[5] = "126";
 						$ifinfo['subnetbitsv6'] = $parts[5];
 					} else {
 						$ifinfo['subnetbitsv6'] = $parts[3];

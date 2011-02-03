@@ -67,7 +67,8 @@ function upload_crash_report($files) {
 function output_crash_reporter_html($crash_reports) {
 	echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
 	echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
-	echo "<p>Contents of crash reports:<br/>";
+	echo "<p>";
+	echo gettext("Contents of crash reports") . ":<br/>";
 	echo "<textarea name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  ">";
@@ -89,7 +90,7 @@ include('head.inc');
 		<p>
 
 <?php
-	if ($_POST['Submit'] == "Yes") {
+	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
@@ -104,7 +105,7 @@ include('head.inc');
 		} else {
 			echo "Could not find any crash files.";
 		}
-	} else if($_POST['Submit'] == "No") {
+	} else if(gettext($_POST['Submit']) == "No") {
 		exec("rm /var/crash/*");
 		Header("Location: /");
 		exit;

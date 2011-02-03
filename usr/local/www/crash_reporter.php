@@ -76,7 +76,7 @@ function output_crash_reporter_html($crash_reports) {
 	echo "</form>";
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
+$pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
 include('head.inc');
 
 ?>
@@ -85,7 +85,7 @@ include('head.inc');
 
 <?php include("fbegin.inc"); ?>
 
-	<form action="halt.php" method="post">
+	<form action="crash_reporter.php" method="post">
 		<p>
 
 <?php

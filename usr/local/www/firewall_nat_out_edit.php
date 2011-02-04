@@ -72,6 +72,8 @@ if (isset($_GET['dup']))  {
 if (isset($id) && $a_out[$id]) {
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
+	if (!is_numeric($pconfig['source_subnet']))
+		$pconfig['source_subnet'] = 32;
 	$pconfig['sourceport'] = $a_out[$id]['sourceport'];
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 		$pconfig['destination_subnet'], $pconfig['destination_not'],

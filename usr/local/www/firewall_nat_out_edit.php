@@ -132,7 +132,7 @@ if ($_POST) {
 		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
-		if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
+		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {
 			$input_errors[] = gettext("A valid source must be specified.");
 		}
 	}
@@ -140,7 +140,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
 	if ($_POST['destination_type'] != "any") {
-        	if ($_POST['destination'] && !is_ipaddr($_POST['destination'])) {
+        	if ($_POST['destination'] && !is_ipaddroralias($_POST['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");
 		}
 	}
@@ -182,6 +182,8 @@ if ($_POST) {
 	/* if user has selected any as source, set it here */
 	if($_POST['source_type'] == "any") {
 		$osn = "any";
+	} else if(is_alias($_POST['source'])) {
+		$osn = $_POST['source'];
 	} else {
 		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
 	}
@@ -189,6 +191,8 @@ if ($_POST) {
 	/* check for existing entries */
 	if ($_POST['destination_type'] == "any") {
 		$ext = "any";
+	} else if(is_alias($_POST['destination'])) {
+		$ext = $_POST['destination'];
 	} else {
 		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
 	}

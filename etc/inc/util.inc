@@ -228,7 +228,6 @@ function gen_subnetv6($ipaddr, $bits) {
 		return "";
 
 	$address = Net_IPv6::getNetmask($ipaddr, $bits);
-	$address = Net_IPv6::Compress($address);
 	return $address;
 }
 

@@ -390,6 +390,7 @@ if(file_exists('/conf/needs_package_sync')) {
 			clear_subsystem_dirty('packagelock');
 		}
 	}
+	@unlink('/conf/needs_package_sync');
 }
 
 /* done */

@@ -139,9 +139,6 @@ if ($_POST) {
 	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
-	if ($protocol_uses_ports && $_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
-		$input_errors[] = gettext("A valid source port must be specified.");
-	}
 	if ($_POST['destination_type'] != "any") {
         	if ($_POST['destination'] && !is_ipaddr($_POST['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");

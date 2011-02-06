@@ -77,6 +77,12 @@ function output_crash_reporter_html($crash_reports) {
 $pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
 include('head.inc');
 
+$crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
+$crash_report_header .= php_uname("m") . "\n";
+$crash_report_header .= php_uname("r") . "\n";
+$crash_report_header .= php_uname("v") . "\n";
+$crash_report_header .= "\nCrash report details:\n\n";
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -88,6 +94,7 @@ include('head.inc');
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
+		file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
@@ -108,7 +115,8 @@ include('head.inc');
 		exit;
 	} else {
 		$crash_files = glob("/var/crash/*");
-		if(is_array($crash_files))			
+		$crash_reports .= $crash_report_header;
+		if(is_array($crash_files))	
 			foreach($crash_files as $cf) 
 				$crash_reports .= file_get_contents($cf);
 		else 

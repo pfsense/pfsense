@@ -1339,6 +1339,9 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
+										<td colspan="2" valign="top">&nbsp;</td>
+									</tr>
+									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IPv6 configuration"); ?></td>
 									</tr>
 									<tr>

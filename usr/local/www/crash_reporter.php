@@ -106,7 +106,7 @@ $crash_report_header .= "\nCrash report details:\n\n";
 			print_r($resp);
 			exec("rm /var/crash/*");
 			echo gettext("Crash files have been submitted for inspection.");
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>";
+			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files.");
 		} else {
 			echo "Could not find any crash files.";
 		}

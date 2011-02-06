@@ -228,9 +228,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
 
 	if (!empty($settings['ntp_server1']))
-		$conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
+		$conf .= "push \"dhcp-option NTP {$settings['ntp_server1']}\"\n";
 	if (!empty($settings['ntp_server2']))
-		$conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
+		$conf .= "push \"dhcp-option NTP {$settings['ntp_server2']}\"\n";
 
 	if ($settings['netbios_enable']) {
 

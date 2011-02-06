@@ -31,6 +31,7 @@
 */
 
 	/* parse the configuration and include all functions used below */
+	require_once("config.inc");
 	require_once("functions.inc");
 	require_once("filter.inc");	
 	require_once("shaper.inc");	
@@ -43,7 +44,7 @@
 		sleep(1);
 	}
 	
-	log_error("IPSEC: One or more IPSEC tunnel endpoints has changed IP. Refreshing.");
+	log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
 	/* We will walk the list of hostnames found in the ipsec tunnel
 	 * configuration. Since we are already triggered by filterdns
 	 * that a hostname has changed we can proceed to compare the 

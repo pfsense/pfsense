@@ -42,6 +42,24 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
+$crash = glob("/var/crash/*");
+$x = 0;
+if(is_array($crash)) {
+	foreach($crash as $c) {
+		if($c == ".")
+			continue;
+		if($c == "..")
+			continue;
+		if($c == "")
+			continue;
+		$x++;
+	}
+	if($x > 0) {
+		Header("Location: /crash_reporter.php");
+		exit;
+	}
+}
+
 // Turn off csrf for the dashboard
 $nocsrf = true; 
 

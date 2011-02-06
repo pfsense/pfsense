@@ -563,7 +563,12 @@ if ($_POST['apply']) {
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
 				unset($a_ppps[$pppid]);
+			} else if ($wancfg['type'] == "dhcp") {
+				$pid = find_dhclient_process($realif);
+				if($pid)
+					posix_kill($pid, SIGTERM);
 			}
+				
 		}
 		$ppp = array();
 		if ($wancfg['ipaddr'] != "ppp")

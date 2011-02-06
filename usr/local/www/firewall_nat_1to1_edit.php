@@ -413,7 +413,7 @@ function typesel_change() {
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="dst" type="text" class="formfld" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+                                                        <input name="dst" type="text" autocomplete="off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                                                         /
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php

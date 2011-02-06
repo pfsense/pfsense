@@ -108,7 +108,7 @@ for TOPING in $PINGHOSTS ; do
 		fi
 	fi
 	# Wan ping time threshold
-	WANTIME=`rrdtool fetch /var/db/rrd/wan-quality.rrd AVERAGE -r 120 -s -1min -e -1min | grep ":" | cut -f3 -d" " | cut -d"e" -f1`
+	#WANTIME=`rrdtool fetch /var/db/rrd/wan-quality.rrd AVERAGE -r 120 -s -1min -e -1min | grep ":" | cut -f3 -d" " | cut -d"e" -f1`
 	echo "Checking wan ping time $WANTIME"
 	echo $WANTIME > /var/db/wanaverage
 	if [ "$WANTHRESHOLD" != "" ]; then

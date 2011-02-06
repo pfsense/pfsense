@@ -66,7 +66,6 @@ function backup_vip_config_section() {
 		}
 		if($section['advbase'] <> "") {
 			$section_val = intval($section['advbase']);
-			$section_val=$section_val+1;
 			if($section_val > 255)
 				$section_val = 255;
 			$section['advbase'] = $section_val;

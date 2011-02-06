@@ -1264,11 +1264,14 @@ function filter_nat_rules_generate() {
 		if(is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
 				update_filter_reload_status("Creating advanced outbound rule {$obent['descr']}");
-				$src = $obent['source']['network'];
-				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
-					$dst = "!" . $obent['destination']['address'];
-				else
+				$src = alias_expand($obent['source']['network']);
+				if(!$src)
+					$src = $obent['source']['network'];
+				$dst = alias_expand($obent['destination']['address']);
+				if(!$dst)
 					$dst = $obent['destination']['address'];
+				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
+					$dst = "!" . $dst;
 				if(!$obent['interface'])
 					$natif = "wan";
 				else

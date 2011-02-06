@@ -56,10 +56,8 @@ if(is_array($crash)) {
 			continue;
 		$x++;
 	}
-	if($x > 0) {
-		Header("Location: /crash_reporter.php");
-		exit;
-	}
+	if($x > 0) 
+		$savemsg = "We have dedicated a crash report.  Click <a href='crash_reporter.php'>here</a> to submit and or delete.";
 }
 
 // Turn off csrf for the dashboard
@@ -471,6 +469,10 @@ include("fbegin.inc");
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
+
+if ($savemsg) 
+	print_info_box($savemsg); 
+
 ?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php

@@ -46,6 +46,8 @@ $crash = glob("/var/crash/*");
 $x = 0;
 if(is_array($crash)) {
 	foreach($crash as $c) {
+		if($c == "minfree")
+			continue;
 		if($c == ".")
 			continue;
 		if($c == "..")

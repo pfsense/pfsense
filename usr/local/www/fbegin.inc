@@ -213,7 +213,7 @@ if(! $g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array("About this Page", $helpurl);
 	if($g['product_name'] == "pfSense") 
-		$help_menu[] = array("Bug Database", "http://rcs.pfsense.org/j.php?jumpto=redmine");
+		$help_menu[] = array("Bug Database", "http://www.pfsense.org/j.php?jumpto=redmine");
 	$help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
 	$help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
 	$help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");

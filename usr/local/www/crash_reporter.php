@@ -43,22 +43,19 @@ require("functions.inc");
 require("captiveportal.inc");
 
 function upload_crash_report($files) {
+	$post = array();
+	$counter = 0;
+	foreach($files as $file) {
+		$post["file{$counter}"] = "@{$file}";
+		$counter++;
+	}
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_VERBOSE, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, "crashreporter.pfsense.org/submit.php");
+    curl_setopt($ch, CURLOPT_URL, "http://crashreporter.pfsense.org/crash_reporter.php");
     curl_setopt($ch, CURLOPT_POST, true);
-    // same as <input type="file" name="file_box">
-	$post = array();
-	$counter = 0;
-	foreach($files as $file) {
-		$tmp = array();
-		$tmp["file{$counter}"] = "@{$file}";
-		$post[] = $tmp;
-		$counter++;
-	}
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
     $response = curl_exec($ch);
 	return $response;
@@ -87,7 +84,6 @@ include('head.inc');
 <?php include("fbegin.inc"); ?>
 
 	<form action="crash_reporter.php" method="post">
-		<p>
 
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
@@ -98,7 +94,8 @@ include('head.inc');
 		echo gettext("Uploading...");
 		echo "<p/>";
 		if(is_array($files_to_upload)) {
-			upload_crash_report($files_to_upload);
+			$resp = upload_crash_report($files_to_upload);
+			print_r($resp);
 			exec("rm /var/crash/*");
 			echo gettext("Crash files have been submitted for inspection.");
 			echo "<p/><a href='/'>" . gettext("Continue") . "</a>";

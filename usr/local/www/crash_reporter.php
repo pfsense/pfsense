@@ -66,7 +66,7 @@ function output_crash_reporter_html($crash_reports) {
 	echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
 	echo "<p>";
 	echo gettext("Contents of crash reports") . ":<br/>";
-	echo "<textarea rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
+	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">";

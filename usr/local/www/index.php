@@ -43,8 +43,18 @@
 ##|-PRIV
 
 $crash = glob("/var/crash/*");
+$x = 0;
 if(is_array($crash)) {
-	if(count($crash) > 0) {
+	foreach($crash as $c) {
+		if($c == ".")
+			continue;
+		if($c == "..")
+			continue;
+		if($c == "")
+			continue;
+		$x++;
+	}
+	if($x > 0) {
 		Header("Location: /crash_reporter.php");
 		exit;
 	}

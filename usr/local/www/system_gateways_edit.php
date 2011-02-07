@@ -238,10 +238,18 @@ if ($_POST) {
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 			$i = 0;
+			/* remove the default gateway bits for all gateways with the same address family */
 			foreach($a_gateway_item as $gw) {
-				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-				if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
-					$reloadif = $gw['interface'];
+				if(is_ipaddrv4($gateway['gateway']) && is_ipaddrv4($gw['gateway'])) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+						$reloadif = $gw['interface'];
+				}
+				if(is_ipaddrv6($gateway['gateway']) && is_ipaddrv6($gw['gateway'])) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+						$reloadif = $gw['interface'];
+				}
 				$i++;
 			}
 			$gateway['defaultgw'] = true;

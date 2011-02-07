@@ -42,24 +42,6 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
-$crash = glob("/var/crash/*");
-$x = 0;
-if(is_array($crash)) {
-	foreach($crash as $c) {
-		if($c == "minfree")
-			continue;
-		if($c == ".")
-			continue;
-		if($c == "..")
-			continue;
-		if($c == "")
-			continue;
-		$x++;
-	}
-	if($x > 0) 
-		$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
-}
-
 // Turn off csrf for the dashboard
 $nocsrf = true; 
 
@@ -73,6 +55,21 @@ ob_start(null, "1000");
 require_once('functions.inc');
 require_once('guiconfig.inc');
 require_once('notices.inc');
+
+// Check to see if we have a crash report
+$crash = glob("/var/crash/*");
+$x = 0;
+$skip_files = array(".", "..", "minfree", "");
+if(is_array($crash)) {
+	foreach($crash as $c) {
+		foreach($skip_files as $sf) 
+			if($sf == $c)
+				continue;
+		$x++;
+	}
+	if($x > 0) 
+		$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
+}
 
 ##build list of widgets
 $directory = "/usr/local/www/widgets/widgets/";

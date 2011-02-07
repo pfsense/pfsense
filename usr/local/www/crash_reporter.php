@@ -82,7 +82,7 @@ $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n
 $crash_report_header .= php_uname("m") . "\n";
 $crash_report_header .= php_uname("r") . "\n";
 $crash_report_header .= php_uname("v") . "\n";
-$crash_report_header .= "\nCrash report details:\n\n";
+$crash_report_header .= "\nCrash report details:\n";
 
 ?>
 
@@ -119,7 +119,7 @@ $crash_report_header .= "\nCrash report details:\n\n";
 		$crash_reports .= $crash_report_header;
 		if(is_array($crash_files))	{
 			foreach($crash_files as $cf) {
-				$crash_reports .= "Filename: {$cf}\n";
+				$crash_reports .= "\nFilename: {$cf}\n";
 				$crash_reports .= file_get_contents($cf);
 			}
 		} else { 

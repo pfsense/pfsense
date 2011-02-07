@@ -102,12 +102,11 @@ $crash_report_header .= "\nCrash report details:\n";
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
 		echo gettext("Uploading...");
-		echo "<p/>";
 		if(is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
-			print_r($resp);
 			exec("rm /var/crash/*");
-			echo gettext("Crash files have been submitted for inspection.");
+			echo "<p/>";
+			print_r($resp);
 			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files.");
 		} else {
 			echo "Could not find any crash files.";

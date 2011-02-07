@@ -107,7 +107,7 @@ $crash_report_header .= "\nCrash report details:\n";
 			exec("rm /var/crash/*");
 			echo "<p/>";
 			print_r($resp);
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files.");
+			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.");
 		} else {
 			echo "Could not find any crash files.";
 		}

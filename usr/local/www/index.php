@@ -62,10 +62,8 @@ $x = 0;
 $skip_files = array(".", "..", "minfree", "");
 if(is_array($crash)) {
 	foreach($crash as $c) {
-		foreach($skip_files as $sf) 
-			if($sf == $c)
-				continue;
-		$x++;
+		if (!in_array(basename($c), $skip_files))
+			$x++;
 	}
 	if($x > 0) 
 		$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";

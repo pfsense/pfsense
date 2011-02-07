@@ -57,7 +57,7 @@ if(is_array($crash)) {
 		$x++;
 	}
 	if($x > 0) 
-		$savemsg = "We have detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
+		$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
 }
 
 // Turn off csrf for the dashboard

@@ -63,10 +63,13 @@ function upload_crash_report($files) {
 
 function output_crash_reporter_html($crash_reports) {
 	echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
-	echo "<strong>" . gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</strong></p>";
+	echo "If you are unfamiliar with kernel panics wikipedia has information <a target='_new' href='http://en.wikipedia.org/wiki/Kernel_panic'>here</a>.<p/>"; 
+	echo gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</p>";
+	echo "<p>";
+	echo "<i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i><br/>";
 	echo "<p>";
 	echo gettext("Contents of crash reports") . ":<br/>";
-	echo "<textarea rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
+	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">";
@@ -76,6 +79,12 @@ function output_crash_reporter_html($crash_reports) {
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
 include('head.inc');
+
+$crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
+$crash_report_header .= php_uname("m") . "\n";
+$crash_report_header .= php_uname("r") . "\n";
+$crash_report_header .= php_uname("v") . "\n";
+$crash_report_header .= "\nCrash report details:\n";
 
 ?>
 
@@ -88,6 +97,7 @@ include('head.inc');
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
+		file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
@@ -98,7 +108,7 @@ include('head.inc');
 			print_r($resp);
 			exec("rm /var/crash/*");
 			echo gettext("Crash files have been submitted for inspection.");
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>";
+			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files.");
 		} else {
 			echo "Could not find any crash files.";
 		}
@@ -108,11 +118,15 @@ include('head.inc');
 		exit;
 	} else {
 		$crash_files = glob("/var/crash/*");
-		if(is_array($crash_files))			
-			foreach($crash_files as $cf) 
+		$crash_reports .= $crash_report_header;
+		if(is_array($crash_files))	{
+			foreach($crash_files as $cf) {
+				$crash_reports .= "\nFilename: {$cf}\n";
 				$crash_reports .= file_get_contents($cf);
-		else 
+			}
+		} else { 
 			echo "Could not locate any crash data.";
+		}
 		output_crash_reporter_html($crash_reports);
 	}
 ?>

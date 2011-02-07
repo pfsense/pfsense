@@ -117,11 +117,14 @@ $crash_report_header .= "\nCrash report details:\n\n";
 	} else {
 		$crash_files = glob("/var/crash/*");
 		$crash_reports .= $crash_report_header;
-		if(is_array($crash_files))	
-			foreach($crash_files as $cf) 
+		if(is_array($crash_files))	{
+			foreach($crash_files as $cf) {
+				$crash_reports .= "Filename: {$cf}\n";
 				$crash_reports .= file_get_contents($cf);
-		else 
+			}
+		} else { 
 			echo "Could not locate any crash data.";
+		}
 		output_crash_reporter_html($crash_reports);
 	}
 ?>

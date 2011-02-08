@@ -295,6 +295,8 @@ if ($_POST) {
 			// Firewall rules
 			update_alias_names_upon_change('filter', 'rule', 'source', 'address', $_POST['name'], $origname);
 			update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $_POST['name'], $origname);
+			update_alias_names_upon_change('filter', 'rule', 'source', 'port', $_POST['name'], $origname);
+			update_alias_names_upon_change('filter', 'rule', 'destination', 'port', $_POST['name'], $origname);
 			// NAT Rules
 			update_alias_names_upon_change('nat', 'rule', 'source', 'address', $_POST['name'], $origname);
 			update_alias_names_upon_change('nat', 'rule', 'source', 'port', $_POST['name'], $origname);

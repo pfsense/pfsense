@@ -38,7 +38,7 @@ require_once("guiconfig.inc");
 require_once('notices.inc');
 
 if($_REQUEST['getupdatestatus']) {
-	if(isset($curcfg['alturl']['enable']))
+	if(isset($config['system']['firmware']['alturl']['enable']))
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
 		$updater_url = $g['update_url'];

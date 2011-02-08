@@ -632,12 +632,6 @@ EOD;
 		if ($dhcpv6ifconf['maxleasetime'])
 			$dhcpdv6conf .= "	max-lease-time {$dhcpv6ifconf['maxleasetime']};\n";
 
-		// netbios-name*
-		if (is_array($dhcpv6ifconf['winsserver']) && $dhcpv6ifconf['winsserver'][0]) {
-			$dhcpdv6conf .= "	option netbios-name-servers " . join(",", $dhcpv6ifconf['winsserver']) . ";\n";
-			$dhcpdv6conf .= "	option netbios-node-type 8;\n";
-		}
-
 		// ntp-servers
 		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0])
 			$dhcpdv6conf .= "	option ntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";

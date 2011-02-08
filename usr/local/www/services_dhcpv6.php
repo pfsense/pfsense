@@ -143,8 +143,6 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['gateway'] = $config['dhcpdv6'][$if]['gateway'];
 	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
-	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
-	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['denyunknown'] = isset($config['dhcpdv6'][$if]['denyunknown']);
 	$pconfig['staticarp'] = isset($config['dhcpdv6'][$if]['staticarp']);
@@ -223,8 +221,6 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway'])))
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
-		if (($_POST['wins1'] && !is_ipaddrv6($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv6($_POST['wins2'])))
-			$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary WINS servers.");
 		if (($_POST['dns1'] && !is_ipaddrv6($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])))
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
 
@@ -320,10 +316,6 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 
 		unset($config['dhcpdv6'][$if]['winsserver']);
-		if ($_POST['wins1'])
-			$config['dhcpdv6'][$if]['winsserver'][] = $_POST['wins1'];
-		if ($_POST['wins2'])
-			$config['dhcpdv6'][$if]['winsserver'][] = $_POST['wins2'];
 
 		unset($config['dhcpdv6'][$if]['dnsserver']);
 		if ($_POST['dns1'])
@@ -426,8 +418,6 @@ include("head.inc");
 		endis = !(document.iform.enable.checked || enable_over);
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
-		document.iform.wins1.disabled = endis;
-		document.iform.wins2.disabled = endis;
 		document.iform.dns1.disabled = endis;
 		document.iform.dns2.disabled = endis;
 		document.iform.deftime.disabled = endis;
@@ -604,13 +594,6 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
-			</td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("WINS servers");?></td>
-			<td width="78%" class="vtable">
-				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
-				<input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
 			</td>
 			</tr>
 			<tr>

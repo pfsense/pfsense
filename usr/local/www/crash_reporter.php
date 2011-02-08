@@ -72,7 +72,7 @@ function output_crash_reporter_html($crash_reports) {
 	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
 	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">" . gettext(" - Submit this to the developers for inspection");
-	echo "<p/><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">" . gettext(" - Just delete the crash reporter and take me back to the Dashboard");
+	echo "<p/><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">" . gettext(" - Just delete the crash report and take me back to the Dashboard");
 	echo "<p/>";
 	echo "</form>";
 }

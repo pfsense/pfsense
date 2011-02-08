@@ -82,6 +82,7 @@ $pconfig['radmac_secret'] = $config['captiveportal']['radmac_secret'];
 $pconfig['reauthenticate'] = isset($config['captiveportal']['reauthenticate']);
 $pconfig['reauthenticateacct'] = $config['captiveportal']['reauthenticateacct'];
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
+$pconfig['httpsname'] = $config['captiveportal']['httpsname'];
 $pconfig['preauthurl'] = strtolower($config['captiveportal']['preauthurl']);
 $pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
 $pconfig['cacert'] = base64_decode($config['captiveportal']['cacertificate']);

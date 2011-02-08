@@ -121,8 +121,10 @@ $crash_report_header .= "\nCrash report details:\n";
 		$crash_reports .= $crash_report_header;
 		if(is_array($crash_files))	{
 			foreach($crash_files as $cf) {
-				$crash_reports .= "\nFilename: {$cf}\n";
-				$crash_reports .= file_get_contents($cf);
+				if(filesize($cf) < 150000) {
+					$crash_reports .= "\nFilename: {$cf}\n";
+					$crash_reports .= file_get_contents($cf);
+				}
 			}
 		} else { 
 			echo "Could not locate any crash data.";

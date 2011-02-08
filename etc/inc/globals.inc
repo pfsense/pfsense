@@ -88,6 +88,7 @@ $g = array(
 	"disablethemeselection" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
+	"disablecrashreporter" => false,
 	"debug" => false,
 	"latest_config" => "7.6",
 	"nopkg_platforms" => array("cdrom"),

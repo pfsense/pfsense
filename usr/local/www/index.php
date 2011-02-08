@@ -56,17 +56,19 @@ require_once('functions.inc');
 require_once('guiconfig.inc');
 require_once('notices.inc');
 
-// Check to see if we have a crash report
-$crash = glob("/var/crash/*");
-$x = 0;
-$skip_files = array(".", "..", "minfree", "");
-if(is_array($crash)) {
-	foreach($crash as $c) {
-		if (!in_array(basename($c), $skip_files))
-			$x++;
+if($g['disablecrashreporter'] != true) {
+	// Check to see if we have a crash report
+	$crash = glob("/var/crash/*");
+	$x = 0;
+	$skip_files = array(".", "..", "minfree", "");
+	if(is_array($crash)) {
+		foreach($crash as $c) {
+			if (!in_array(basename($c), $skip_files))
+				$x++;
+		}
+		if($x > 0) 
+			$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
 	}
-	if($x > 0) 
-		$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
 }
 
 ##build list of widgets

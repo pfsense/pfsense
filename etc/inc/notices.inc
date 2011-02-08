@@ -78,7 +78,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	}
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	log_error(printf(gettext("New alert found: %s"), $notice));
+	log_error("New alert found: $notice");
 	/* soekris */
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 1 > /dev/led/error");

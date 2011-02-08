@@ -258,7 +258,7 @@ EOD;
 				$i1 = $i + 1;
 		
 				if($config['interfaces']['opt' . $i1]['descr'])
-					printf(gettext("%sOptional interface %s description found: %s"), "\n", $config['interfaces']['opt' . $i1]['descr']);
+					printf(gettext("%sOptional interface %s description found: %s"), "\n", $i1, $config['interfaces']['opt' . $i1]['descr']);
 	
 				printf(gettext("%sEnter the Optional %s{$i1} interface name or 'a' for auto-detection%s" .
 					"(or nothing if finished):%s"), "\n", $i1, "\n", " ");

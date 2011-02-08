@@ -54,7 +54,7 @@ function upload_crash_report($files) {
     curl_setopt($ch, CURLOPT_VERBOSE, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, "http://crashreporter.pfsense.org/crash_reporter.php");
+    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
     $response = curl_exec($ch);

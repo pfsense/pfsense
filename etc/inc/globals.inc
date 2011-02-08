@@ -89,6 +89,7 @@ $g = array(
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
+	"crashreporterurl" => "http://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
 	"latest_config" => "7.6",
 	"nopkg_platforms" => array("cdrom"),

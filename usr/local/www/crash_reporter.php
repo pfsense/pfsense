@@ -43,6 +43,7 @@ require("functions.inc");
 require("captiveportal.inc");
 
 function upload_crash_report($files) {
+	global $g;
 	$post = array();
 	$counter = 0;
 	foreach($files as $file) {

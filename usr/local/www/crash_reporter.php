@@ -42,7 +42,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-define("FILE_SIZE", 150000);
+define("FILE_SIZE", 450000);
 
 function upload_crash_report($files) {
 	global $g;

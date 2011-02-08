@@ -583,7 +583,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
 
 			<tr>
-				<td class="vncell" valign="top"><?=gettext("Radius ip attribute"); ?></td>
+				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
 				<td>
 				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
 				<?php $iflist = get_configured_interface_with_descr();

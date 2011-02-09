@@ -2877,7 +2877,13 @@ class dnpipe_class extends dummynet_class {
 		}
 
 	function ReadConfig(&$q) {
-           	$this->SetQname($q['name']);
+		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
+			$this->SetQname($q['newname']);
+		} else if (!empty($q['newname'])) {
+			$this->SetQname($q['newname']);
+		} else {
+			$this->SetQname($q['name']);
+		}
 		$this->SetNumber($q['number']);
 		if (isset($q['bandwidth']) && $q['bandwidth'] <> "") { 
 			$this->SetBandwidth($q['bandwidth']);
@@ -2983,7 +2989,9 @@ class dnpipe_class extends dummynet_class {
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"name\" name=\"name\" value=\"";
+		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
+		$form .= $this->GetQname()."\">";
+		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">Bandwidth";
@@ -3164,7 +3172,13 @@ class dnqueue_class extends dummynet_class {
         }		
 
 	function ReadConfig(&$q) {
-          	$this->SetQname($q['name']);
+		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
+			$this->SetQname($q['newname']);
+		} else if (!empty($q['newname'])) {
+			$this->SetQname($q['newname']);
+		} else {
+			$this->SetQname($q['name']);
+		}
 		$this->SetNumber($q['number']);
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
        		       	$this->SetQlimit($q['qlimit']);
@@ -3236,7 +3250,9 @@ class dnqueue_class extends dummynet_class {
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"name\" name=\"name\" value=\"";
+		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
+		$form .= $this->GetQname()."\">";
+		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">Mask</td>";

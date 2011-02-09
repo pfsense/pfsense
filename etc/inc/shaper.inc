@@ -967,8 +967,12 @@ class priq_queue {
 	}
 
 	function ReadConfig(&$q) {
-		if (isset($q['name']))
-				$this->SetQname($q['name']);
+		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
+			$this->SetQname($q['newname']);
+		} else if (!empty($q['newname'])) {
+			$this->SetQname($q['newname']);
+		} else if (isset($q['name']))
+			$this->SetQname($q['name']);
 		if (isset($q['interface']))
 				$this->SetInterface($q['interface']);
 		$this->SetBandwidth($q['bandwidth']);
@@ -1100,7 +1104,10 @@ class priq_queue {
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncellreq\">";
 		$form .= "Queue Name</td><td width=\"78%\" class=\"vtable\">";
-		$form .= "<input name=\"name\" type=\"text\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
+		$form .= "<input name=\"newname\" type=\"text\" id=\"newname\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
+		$form .= htmlspecialchars($this->GetQname());
+		$form .= "\">";
+		$form .= "<input name=\"name\" type=\"hidden\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
 		$form .= htmlspecialchars($this->GetQname());
 		$form .= "\">";
 		$form .= "<br /> <span class=\"vexpl\">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.";

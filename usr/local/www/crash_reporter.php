@@ -49,10 +49,8 @@ function upload_crash_report($files) {
 	$post = array();
 	$counter = 0;
 	foreach($files as $file) {
-		if(filesize($cf) < FILE_SIZE) {
-			$post["file{$counter}"] = "@{$file}";
-			$counter++;
-		}
+		$post["file{$counter}"] = "@{$file}";
+		$counter++;
 	}
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -122,7 +120,7 @@ $crash_report_header .= "\nCrash report details:\n";
 		exit;
 	} else {
 		$crash_files = glob("/var/crash/*");
-		$crash_reports .= $crash_report_header;
+		$crash_reports = $crash_report_header;
 		if(is_array($crash_files))	{
 			foreach($crash_files as $cf) {
 				if(filesize($cf) < FILE_SIZE) {

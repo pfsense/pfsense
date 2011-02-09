@@ -226,7 +226,7 @@ function captiveportal_configure() {
 		touch("{$g['vardb_path']}/captiveportal.db");
 
 		/* kill any running minicron */
-		killbypid("{$g['varrun_path']}/minicron.pid");
+		killbypid("{$g['varrun_path']}/cp_prunedb.pid");
 
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
@@ -417,8 +417,12 @@ EOD;
 		/* start up the webserving daemon */
 		captiveportal_init_webgui();
 
+		/* Kill any existing prunecaptiveportal processes */
+		if(file_exists("{$g['varrun_path']}/cp_prunedb.pid"))
+			killbypid("{$g['varrun_path']}/cp_prunedb.pid");
+
 		/* start pruning process (interval defaults to 60 seconds) */
-		mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/minicron.pid " .
+		mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/cp_prunedb.pid " .
 			"/etc/rc.prunecaptiveportal");
 
 		/* generate radius server database */
@@ -429,7 +433,7 @@ EOD;
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/minicron.pid");
+		killbypid("{$g['varrun_path']}/cp_prunedb.pid");
 
 		captiveportal_radius_stop_all();
 

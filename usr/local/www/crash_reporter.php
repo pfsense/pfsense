@@ -42,19 +42,24 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
+define("FILE_SIZE", 450000);
+
 function upload_crash_report($files) {
+	global $g;
 	$post = array();
 	$counter = 0;
 	foreach($files as $file) {
-		$post["file{$counter}"] = "@{$file}";
-		$counter++;
+		if(filesize($cf) < FILE_SIZE) {
+			$post["file{$counter}"] = "@{$file}";
+			$counter++;
+		}
 	}
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_VERBOSE, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, "http://crashreporter.pfsense.org/crash_reporter.php");
+    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
     $response = curl_exec($ch);
@@ -71,8 +76,8 @@ function output_crash_reporter_html($crash_reports) {
 	echo gettext("Contents of crash reports") . ":<br/>";
 	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
 	echo "<p/>";
-	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">";
-	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">";
+	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">" . gettext(" - Submit this to the developers for inspection");
+	echo "<p/><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">" . gettext(" - Just delete the crash report and take me back to the Dashboard");
 	echo "<p/>";
 	echo "</form>";
 }
@@ -102,13 +107,12 @@ $crash_report_header .= "\nCrash report details:\n";
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
 		echo gettext("Uploading...");
-		echo "<p/>";
 		if(is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
-			print_r($resp);
 			exec("rm /var/crash/*");
-			echo gettext("Crash files have been submitted for inspection.");
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files.");
+			echo "<p/>";
+			print_r($resp);
+			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.");
 		} else {
 			echo "Could not find any crash files.";
 		}
@@ -121,8 +125,10 @@ $crash_report_header .= "\nCrash report details:\n";
 		$crash_reports .= $crash_report_header;
 		if(is_array($crash_files))	{
 			foreach($crash_files as $cf) {
-				$crash_reports .= "\nFilename: {$cf}\n";
-				$crash_reports .= file_get_contents($cf);
+				if(filesize($cf) < FILE_SIZE) {
+					$crash_reports .= "\nFilename: {$cf}\n";
+					$crash_reports .= file_get_contents($cf);
+				}
 			}
 		} else { 
 			echo "Could not locate any crash data.";

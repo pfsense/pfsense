@@ -1689,9 +1689,9 @@ function version_compare_dates($a, $b) {
 	if ((!$a_time) || (!$b_time)) {
 		return FALSE;
 	} else {
-		if ($a < $b)
+		if ($a_time < $b_time)
 			return -1;
-		elseif ($a == $b)
+		elseif ($$a_time == $b_time)
 			return 0;
 		else
 			return 1;
@@ -1750,7 +1750,7 @@ function version_compare_numeric($a, $b) {
 }
 function pfs_version_compare($cur_time, $cur_text, $remote) {
 	// First try date compare
-	$v = version_compare_dates($cur_time, $b);
+	$v = version_compare_dates($cur_time, $remote);
 	if ($v === FALSE) {
 		// If that fails, try to compare by string
 		// Before anything else, simply test if the strings are equal

@@ -46,7 +46,7 @@ function easyrule_find_rule_interface($int) {
 	if ($config['pptpd']['mode'] == "server")
 		$iflist['pptp'] = "PPTP VPN";
 
-	if ($config['pppoe']['mode'] == "server")
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
 		$iflist['pppoe'] = "PPPoE VPN";
 
 	if ($config['l2tp']['mode'] == "server")

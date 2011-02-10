@@ -145,22 +145,24 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 						}
 					}
 					/* PPPoE subnet */
-					if($config['pppoe']['mode'] == "server") {
-						if (is_ipaddr($config['pppoe']['localip'])) {
-							if($config['pppoe']['pppoe_subnet'] <> "")
-								$ossubnet = $config['pppoe']['pppoe_subnet'];
-							else
-								$ossubnet = "32";
-							$osn = gen_subnet($config['pppoe']['localip'], $ossubnet);
-							$natent = array();
-							$natent['source']['network'] = "{$osn}/{$ossubnet}";
-							$natent['sourceport'] = "";
-							$natent['descr'] = gettext("Auto created rule for PPPoE server");
-							$natent['target'] = "";
-							$natent['interface'] = $if2;
-							$natent['destination']['any'] = true;
-							$natent['natport'] = "";
-							$a_out[] = $natent;
+					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+						foreach ($config['pppoes']['pppoe'] as $pppoes) {
+							if (($pppoes['mode'] == "server") && is_ipaddr($pppoes['localip'])) {
+								if($pppoes['pppoe_subnet'] <> "")
+									$ossubnet = $pppoes['pppoe_subnet'];
+								else
+									$ossubnet = "32";
+								$osn = gen_subnet($pppoes['localip'], $ossubnet);
+								$natent = array();
+								$natent['source']['network'] = "{$osn}/{$ossubnet}";
+								$natent['sourceport'] = "";
+								$natent['descr'] = gettext("Auto created rule for PPPoE server");
+								$natent['target'] = "";
+								$natent['interface'] = $if2;
+								$natent['destination']['any'] = true;
+								$natent['natport'] = "";
+								$a_out[] = $natent;
+							}
 						}
 					}
 					/* L2TP subnet */

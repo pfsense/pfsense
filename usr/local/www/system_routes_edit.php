@@ -107,7 +107,7 @@ if ($_POST) {
 	if(is_ipaddrv6($_POST['network'])) {
 		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
 	}
-	if(is_ipaddrv4($POST['network'])) {
+	if(is_ipaddrv4($_POST['network'])) {
 		$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
 	}
 	foreach ($a_routes as $route) {

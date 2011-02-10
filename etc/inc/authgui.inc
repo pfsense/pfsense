@@ -227,7 +227,7 @@ if($config['virtualip'])
 					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
 			?>
-			<form id="iform" name="login_iform" method="post" autocomplete="off" action="<?=$_SERVER['SCRIPT_NAME'];?>">
+			<form id="iform" name="login_iform" method="post" action="<?=$_SERVER['SCRIPT_NAME'];?>">
 				<h1></h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>

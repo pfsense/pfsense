@@ -1706,7 +1706,7 @@ function filter_generate_user_rule($rule) {
 	}
 	update_filter_reload_status("Setting up pass/block rules");
 	$type = $rule['type'];
-	if($type != "pass" && $type != "block" && $type != "reject") {
+	if($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {
 		/* default (for older rules) is pass */
 		$type = "pass ";
 	}

@@ -115,7 +115,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 				$parsed_response =  XML_RPC_decode($resp->value());
 				if(!is_array($parsed_response)) {
 					if (trim($parsed_response) == "Authentication failed") {
-						$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
+						$error = "An authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
 						log_error($error);
 						file_notice("sync_settings", $error, "Settings Sync", "");
 						exit;
@@ -250,7 +250,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		} else {
 			$parsed_response =  XML_RPC_decode($resp->value());
 			if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
-				$error = "A authentication failure occurred while trying to access {$url}:{$port} ($method).";
+				$error = "An authentication failure occurred while trying to access {$url}:{$port} ($method).";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");
 				exit;

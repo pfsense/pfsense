@@ -690,9 +690,8 @@ include("head.inc");
 						if(have_ruleint_access("pptp")) 
 							$interfaces['pptp'] = "PPTP VPN";
 					
-					if ($config['pppoe']['mode'] == "server")
-						if(have_ruleint_access("pppoe")) 
-							$interfaces['pppoe'] = "PPPoE VPN";
+					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+						$interfaces['pppoe'] = "PPPoE VPN";
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 						if(have_ruleint_access("enc0")) 

@@ -1050,6 +1050,22 @@ function is_dhcp_server_enabled()
 	return $dhcpdenable;
 }
 
+/* Any PPPoE servers enabled? */
+function is_pppoe_server_enabled() {
+	global $config;
+
+	$pppoeenable = false;
+
+	if (!is_array($config['pppoes']) || !is_array($config['pppoes']['pppoe']))
+		return false;
+
+	foreach ($config['pppoes']['pppoe'] as $pppoes)
+		if ($pppoes['mode'] == 'server')
+			$pppoeenable = true;
+
+	return $pppoeenable;
+}
+
 function convert_seconds_to_hms($sec){
 	$min=$hrs=0;
 	if ($sec != 0){

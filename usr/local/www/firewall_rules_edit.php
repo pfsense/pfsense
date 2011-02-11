@@ -196,6 +196,9 @@ if ($_POST) {
 	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
 		$input_errors[] = gettext("Reject type rules only works when the protocol is set to TCP.");
 
+	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
+		$input_errors[] = gettext("Queue type rules only work with queues.");
+
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
@@ -602,6 +605,9 @@ include("head.inc");
 					<?=htmlspecialchars($type);?>
 					</option>
 					<?php endforeach; ?>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected"; ?>>Queue</option>
+<?php endif; ?>
 				</select>
 				<br/>
 				<span class="vexpl">

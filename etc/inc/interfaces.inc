@@ -1303,6 +1303,7 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
+	set bundle enable ipv6cp
 	set iface name {$pppif}
 
 EOD;

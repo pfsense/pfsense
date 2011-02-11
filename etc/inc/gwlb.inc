@@ -210,7 +210,7 @@ EOD;
 		 * not strictly necessary but is a added level of protection.
 		 */
 		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor']. $gateway['gateway']));
+			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 			mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']), true);
 			mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 				" " . escapeshellarg($gateway['gateway']), true);

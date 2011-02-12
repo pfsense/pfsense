@@ -949,6 +949,7 @@ function apply_all_choosen_items() {
 			if ($penalty) {
 				if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 				    $rule = array();
+				    $rule['type'] = "match";
 				    $rule['descr'] = gettext("Penalty Box");
 				    $rule['direction'] = "out";
 				    $rule['source']['any'] = TRUE;
@@ -968,6 +969,7 @@ function apply_all_choosen_items() {
 				if( is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
 					/* create VOIP rules */
 					$rule = array();
+				        $rule['type'] = "match";
 					$rule['descr'] = gettext("VOIP Adapter");
 					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
@@ -982,6 +984,7 @@ function apply_all_choosen_items() {
 				} elseif( $config['ezshaper']['step3']['provider'] == "Generic" ) {
 					/* create VOIP rules */
 					$rule = array();
+					    $rule['type'] = "match";
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
 					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
@@ -997,6 +1000,7 @@ function apply_all_choosen_items() {
 				} else {
 					/* loop through voiplist[] */
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
+						$rule = array();
 						$rule = array();
 						$rule['defaultqueue'] = 'qVoIP';
 						$rule['direction'] = "out";
@@ -1021,6 +1025,7 @@ function apply_all_choosen_items() {
 						continue;
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
+						$rule = array();
 						$rule['defaultqueue'] = 'qP2P';
 						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;		
@@ -1042,6 +1047,7 @@ function apply_all_choosen_items() {
 					if (!is_array($gamesplist[$key]))
 										continue;
 					foreach ($gamesplist[$key] as $Gameclient) {
+						$rule = array();
 						$rule = array();
 						$rule['defaultqueue'] = 'qGames';
 						if ($Gameclient[1] == "tcp")
@@ -1067,6 +1073,7 @@ function apply_all_choosen_items() {
 					if (!is_array($othersplist[$key]))
 						continue;
 					foreach ($othersplist[$key] as $otherclient) {
+						$rule = array();
 						$rule = array();
 						switch ($val) {
 						case "H":

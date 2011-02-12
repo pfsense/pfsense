@@ -456,15 +456,24 @@ function step3_stepsubmitphpaction() {
 			$stepid--;
 			return;
 		}
-		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-		$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
-		$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
-		$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
-		if ((0.8 * $ifbw) < $input_bw) {
-			$friendly_interface = $i+1;
-			$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
-			$stepid--;
-			return;
+		if ($_POST["conn{$i}uploadspeed"] == "%") {
+			if (intval($_POST["conn{$i}upload"]) > 80) {
+				$friendly_interface = $i+1;
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
+		} else {
+			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
+			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
+			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
+			if ((0.8 * $ifbw) < $input_bw) {
+				$friendly_interface = $i+1;
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
 		}	
 	}
 

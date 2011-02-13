@@ -1121,14 +1121,22 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	if($src == "")
 		$src = "any";
 	/* Match on this source port */
-	if($srcport != "")
-		$src .= " port {$srcport}";
+	if($srcport != "") {
+		$srcportexpand = alias_expand($srcport);
+		if(!$srcportexpand)
+			$srcportexpand = $srcport;
+		$src .= " port {$srcportexpand}";
+	}
 	/* sometimes this gets called with "" instead of a value */
 	if($dst == "")
 		$dst = "any";
 	/* Match on this dest port */
-	if($dstport != "")
-		$dst .= " port {$dstport}";
+	if($dstport != "") {
+		$dstportexpand = alias_expand($dstport);
+		if(!$dstportexpand)
+			$dstportexpand = $dstport;
+		$dst .= " port {$dstportexpand}";
+	}
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
 	$staticnatport_txt = "";
 	if($staticnatport)

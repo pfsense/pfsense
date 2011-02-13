@@ -124,14 +124,14 @@ if ($_POST) {
 
 	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
 
-	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
-		$input_errors[] = gettext("You must supply either a valid port for the source port entry.");
+	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_portoralias($_POST['sourceport']))
+		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
 
-	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_port($_POST['dstport']))
-		$input_errors[] = gettext("You must supply either a valid port for the destination port entry.");
+	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_portoralias($_POST['dstport']))
+		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 
 	if($protocol_uses_ports and $_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
-		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
+		$input_errors[] = gettext("You must supply a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {
@@ -470,7 +470,7 @@ function poolopts_change() {
                       </tr>
                       <tr name="sport_tr" id="sport_tr">
                         <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" class="formfld unknown" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
+                        <td><input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
 blank for any)");?></td>
                       </tr>
                     </table></td>
@@ -509,7 +509,7 @@ blank for any)");?></td>
                       </tr>
                       <tr name="dport_tr" id="dport_tr">
                         <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
+                        <td><input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
 any)");?></td>
                       </tr>
                     </table>
@@ -671,7 +671,9 @@ poolopts_change();
 	var customarray=new Array(<?php echo $portaliases; ?>);
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
-	var oTextbox2 = new AutoSuggestControl(document.getElementById("destination"), new StateSuggestions(addressarray));
+	var oTextbox2 = new AutoSuggestControl(document.getElementById("sourceport"), new StateSuggestions(customarray));
+	var oTextbox3 = new AutoSuggestControl(document.getElementById("destination"), new StateSuggestions(addressarray));
+	var oTextbox4 = new AutoSuggestControl(document.getElementById("dstport"), new StateSuggestions(customarray));
 //-->
 </script>
 <?php include("fend.inc"); ?>

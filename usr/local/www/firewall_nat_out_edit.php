@@ -288,6 +288,8 @@ include("head.inc");
 
 ?>
 
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script language="JavaScript">
 <!--
 var portsenabled = 1;
@@ -456,7 +458,7 @@ function poolopts_change() {
                             </select>
 			</td></tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="source" type="text" class="formfld unknown" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
+                        <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
@@ -492,7 +494,7 @@ blank for any)");?></td>
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="destination" type="text" class="formfld unknown" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
+                        <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
@@ -637,6 +639,39 @@ staticportchange();
 nonat_change();
 proto_change();
 poolopts_change();
+
+<?php
+	$isfirst = 0;
+	$aliases = "";
+	$addrisfirst = 0;
+	$aliasesaddr = "";
+	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+		foreach($config['aliases']['alias'] as $alias_name) {
+			switch ($alias_name['type']) {
+			case "port":
+				if($isfirst == 1) $portaliases .= ",";
+				$portaliases .= "'" . $alias_name['name'] . "'";
+				$isfirst = 1;
+				break;
+			case "host":
+			case "network":
+			case "openvpn":
+			case "urltable":
+				if($addrisfirst == 1) $aliasesaddr .= ",";
+				$aliasesaddr .= "'" . $alias_name['name'] . "'";
+				$addrisfirst = 1;
+				break;
+			default:
+				break;
+			}
+		}
+?>
+
+	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	var customarray=new Array(<?php echo $portaliases; ?>);
+
+	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
+	var oTextbox2 = new AutoSuggestControl(document.getElementById("destination"), new StateSuggestions(addressarray));
 //-->
 </script>
 <?php include("fend.inc"); ?>

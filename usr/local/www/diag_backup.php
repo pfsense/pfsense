@@ -355,17 +355,14 @@ if ($_POST) {
 												// Firewall rules
 												$origname = $config['interfaces'][$iface]['descr'];
 												$newname  = $config['interfaces'][$iface]['descr'] . "Alias";
-												update_alias_names_upon_change('filter', 'rule', 'source', 'address', $newname, $origname);
-												update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $newname, $origname);
+												update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $newname, $origname);
+												update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $newname, $origname);
 												// NAT Rules
-												update_alias_names_upon_change('nat', 'rule', 'source', 'address', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'source', 'port', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'destination', 'address', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'destination', 'port', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'target', '', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'local-port', '', $newname, $origname);
+												update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $newname, $origname);
+												update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $newname, $origname);
+												update_alias_names_upon_change(array('nat', 'rule'), array('target'), $newname, $origname);
 												// Alias in an alias
-												update_alias_names_upon_change('aliases', 'alias', 'address', '', $newname, $origname);
+												update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $newname, $origname);
 											}
 										}
 									}

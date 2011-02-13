@@ -1564,29 +1564,39 @@ if(!function_exists("split")) {
 	}
 }
 
-function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name, $origname) {
+function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
 	if(!$origname) 
 		return;
 
+	$sectionref = &$config;
+	foreach($section as $sectionname) {
+		if(is_array($sectionref) && isset($sectionref[$sectionname]))
+			$sectionref = &$sectionref[$sectionname];
+		else
+			return;
+	}
+
 	if($debug) $fd = fopen("{$g['tmp_path']}/print_r", "a");
 	if($debug) fwrite($fd, print_r($pconfig, true));
 
-	if($fieldb) {
-		if($debug) fwrite($fd, "fieldb exists\n");
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($debug) fwrite($fd, "$i\n");
-			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
-				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
-				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
+	if(is_array($sectionref)) {
+		foreach($sectionref as $itemkey => $item) {
+			if($debug) fwrite($fd, "$itemkey\n");
+
+			$fieldfound = true;
+			$fieldref = &$sectionref[$itemkey];
+			foreach($field as $fieldname) {
+				if(is_array($fieldref) && isset($fieldref[$fieldname]))
+					$fieldref = &$fieldref[$fieldname];
+				else {
+					$fieldfound = false;
+					break;
+				}
 			}
-		}	
-	} else {
-		if($debug) fwrite($fd, "fieldb does not exist\n");
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
-				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
+			if($fieldfound && $fieldref == $origname) {
 				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+				$fieldref = $new_alias_name;
 			}
 		}
 	}

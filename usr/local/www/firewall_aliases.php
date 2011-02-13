@@ -75,80 +75,20 @@ if ($_GET['act'] == "del") {
 		$is_alias_referenced = false;
 		$referenced_by = false;
 		$alias_name = $a_aliases[$_GET['id']]['name'];
-		if(is_array($config['nat']['rule'])) {
-			foreach($config['nat']['rule'] as $rule) {
-				if($rule['localip'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}
-			}
-		}
-		if($is_alias_referenced == false) {
-			if(is_array($config['filter']['rule'])) {
-				foreach($config['filter']['rule'] as $rule) {
-					if($rule['source']) {
-						if($rule['source']['address'] && $rule['source']['address'] == $alias_name) {
-							$is_alias_referenced = true;
-							$referenced_by = $rule['descr'];
-							break;
-						}
-						if($rule['source']['port'] && $rule['source']['port'] == $alias_name) {
-							$is_alias_referenced = true;
-							$referenced_by = $rule['descr'];
-							break;
-						}
-						if($rule['destination']['address'] && $rule['destination']['address'] == $alias_name) {
-							$is_alias_referenced = true;
-							$referenced_by = $rule['descr'];
-							break;
-						}
-					}
-					if($rule['destination'])
-						if($rule['destination']['port'] && $rule['destination']['port'] == $alias_name) {
-							$is_alias_referenced = true;
-							$referenced_by = $rule['descr'];
-							break;
-						}
-				}
-			}
-		}
-		if($is_alias_referenced == false) {
-			if(is_array($config['nat']['rule'])) {
-				foreach($config['nat']['rule'] as $rule) {
-					if($rule['source']['address'] && $rule['source']['address'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['source']['port'] && $rule['source']['port'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['destination']['address'] && $rule['destination']['address'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['destination']['port'] && $rule['destination']['port'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['target'] && $rule['target'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['local-port'] && $rule['local-port'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-				}
-			}
-		}
+		// Firewall rules
+		find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('filter', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('filter', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('filter', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
+		// NAT Rules
+		find_alias_reference(array('nat', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'rule'), array('source', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'rule'), array('destination', 'port'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('nat', 'rule'), array('local-port'), $alias_name, $is_alias_referenced, $referenced_by);
+		// Alias in an alias
+		find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
 		if($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
@@ -158,6 +98,41 @@ if ($_GET['act'] == "del") {
 			mark_subsystem_dirty('aliases');
 			header("Location: firewall_aliases.php");
 			exit;
+		}
+	}
+}
+
+function find_alias_reference($section, $field, $origname, &$is_alias_referenced, &$referenced_by) {
+	global $config;
+	if(!$origname || $is_alias_referenced)
+		return;
+
+	$sectionref = &$config;
+	foreach($section as $sectionname) {
+		if(is_array($sectionref) && isset($sectionref[$sectionname]))
+			$sectionref = &$sectionref[$sectionname];
+		else
+			return;
+	}
+
+	if(is_array($sectionref)) {
+		foreach($sectionref as $itemkey => $item) {
+			$fieldfound = true;
+			$fieldref = &$sectionref[$itemkey];
+			foreach($field as $fieldname) {
+				if(is_array($fieldref) && isset($fieldref[$fieldname]))
+					$fieldref = &$fieldref[$fieldname];
+				else {
+					$fieldfound = false;
+					break;
+				}
+			}
+			if($fieldfound && $fieldref == $origname) {
+				$is_alias_referenced = true;
+				if(is_array($item))
+					$referenced_by = $item['descr'];
+				break;
+			}
 		}
 	}
 }

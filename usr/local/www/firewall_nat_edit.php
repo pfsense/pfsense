@@ -669,7 +669,7 @@ include("fbegin.inc"); ?>
 					<tr>
 						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input autocomplete='off' name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
 							<select name="dstmask" class="formselect" id="dstmask">
 <?php

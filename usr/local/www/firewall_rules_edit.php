@@ -910,7 +910,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
 <?php

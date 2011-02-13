@@ -1429,7 +1429,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body') {
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
         global $ch, $fout, $file_size, $downloaded;
         $file_size  = 1;
         $downloaded = 1;
@@ -1449,8 +1449,8 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '60');
-        curl_setopt($ch, CURLOPT_TIMEOUT, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 
         curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

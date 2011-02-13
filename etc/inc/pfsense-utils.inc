@@ -1452,7 +1452,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 
-        curl_exec($ch);
+        @curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if($fout)
                 fclose($fout);

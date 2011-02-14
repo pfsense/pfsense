@@ -521,8 +521,9 @@ function filter_generate_aliases() {
 	$aliases .= "table <sshlockout> persist\n";
 	$aliases .= "table <webConfiguratorlockout> persist\n";
 
-	$aliases .= "#Snort2C table\n";
-	$aliases .= "table <snort2c>\n";
+	$aliases .= "#pfSnortSam tables\n";
+	$aliases .= "table <pfSnortSamout>\n";
+	$aliases .= "table <pfSnortSamin>\n";
 
 	$aliases .= "\ntable <virusprot>\n";
 
@@ -2016,9 +2017,9 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
-# snort2c
-block quick from <snort2c> to any label "Block snort2c hosts"
-block quick from any to <snort2c> label "Block snort2c hosts"
+# pfSnortSam
+block quick from <pfSnortSamout> to any label "Block pfSnortSamOut hosts"
+block quick from any to <pfSnortSamin> label "Block pfSnortSamIn hosts"
 
 EOD;
 

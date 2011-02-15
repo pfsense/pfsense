@@ -419,7 +419,7 @@ function print_info_box($msg) {
 function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
 
-	return "The changes have been applied successfully.  You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
+	return "The changes have been applied successfully.<br/>You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
 }
 
 function pprint_address($adr) {

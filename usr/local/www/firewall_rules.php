@@ -194,7 +194,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background. You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br/>You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 

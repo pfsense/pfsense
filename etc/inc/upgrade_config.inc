@@ -2206,18 +2206,16 @@ function upgrade_069_to_070() {
 
 	/* Convert NAT 1:1 rules */
 	if (is_array($config['nat']['onetoone'])) {
-		$a_nat = &$config['nat']['onetoone'];
-
-		foreach ($a_nat as &$natent) {
+		foreach ($config['nat']['onetoone'] as $nidx => $natent) {
 			if ($natent['subnet'] == 32)
-				$natent['source'] = array("address" => $natent['internal']);
+				$config['nat']['onetoone'][$nidx]['source'] = array("address" => $natent['internal']);
 			else
-				$natent['source'] = array("address" => $natent['internal'] . "/" . $natent['subnet']);
+				$config['nat']['onetoone'][$nidx]['source'] = array("address" => $natent['internal'] . "/" . $natent['subnet']);
 
-			$natent['destination'] = array("any" => true);
+			$config['nat']['onetoone'][$nidx]['destination'] = array("any" => true);
 
-			unset($natent['internal']);
-			unset($natent['subnet']);
+			unset($config['nat']['onetoone'][$nidx]['internal']);
+			unset($config['nat']['onetoone'][$nidx]['subnet']);
 		}
 
 		unset($natent);

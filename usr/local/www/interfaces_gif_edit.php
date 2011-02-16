@@ -184,7 +184,7 @@ include("head.inc");
                                         ?>
                     </select>					
                     <br/>
-                    <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for the determinig the network that is tunneled."); ?></span></td>
+                    <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for determining the network that is tunnelled."); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route caching  "); ?></td>

@@ -157,11 +157,11 @@ function enable_altfirmwareurl(enable_over) {
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Updates"); ?></td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Not signed images."); ?></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Unsigned images"); ?></td>
 		<td width="78%" class="vtable">
 			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
 			<br />
-			<?=gettext("Allow updating the system with auto-updater and images with no signature."); ?>
+			<?=gettext("Allow auto-update firmware images with a missing or invalid digital signature to be used."); ?>
 		</td>
 	</tr>
 <?php if(file_exists("/usr/local/bin/git")): ?>

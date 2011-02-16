@@ -2294,6 +2294,15 @@ pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 6
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
+				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
+					$ipfrules .= <<<EOD
+# allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 label "allow access to DHCP failover"
+
+EOD;
+				}
+
 			}
 			if(isset($config['dhcpdv6'][$on]['enable'])) {
 				$ipfrules .= <<<EOD

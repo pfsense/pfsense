@@ -117,8 +117,18 @@ include("fbegin.inc");
 				<select name="interface">
 <?php 
 					$interfaces = get_configured_interface_with_descr();
-					foreach ($interfaces as $iface => $ifacename): 
-?>
+					if (isset($config['ipsec']['enable']))
+						$interfaces['ipsec'] = "IPsec";
+					foreach (array('server', 'client') as $mode) {
+						if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+							foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+								if (!isset($setting['disable'])) {
+									$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+								}
+							}
+						}
+					}
+					foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
                       <?php echo $ifacename;?>
                       </option>

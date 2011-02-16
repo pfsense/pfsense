@@ -479,8 +479,12 @@ function write_config($desc="Unknown", $backup = true) {
 	 *       for now, since it was preventing config saving. */
 	// $config = parse_config(true, false, false);
 	
+	/* Comment this check out for now. There aren't any current issues that
+	 *   make this problematic, and it makes users think there is a problem
+	 *   when one doesn't really exist.
 	if($g['booting'])
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
+	*/
 
 	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
 

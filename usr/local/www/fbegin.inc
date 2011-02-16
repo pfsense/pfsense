@@ -390,7 +390,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		$notices = get_notices();
 		if(!$notices) {
 			$need_alert_display = true;
-			$display_text = print_notices() . "<br>";
+			$display_text = print_notices($notices) . "<br>";
 		}
 	}
 	if($need_alert_display == true) {

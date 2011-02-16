@@ -456,15 +456,24 @@ function step3_stepsubmitphpaction() {
 			$stepid--;
 			return;
 		}
-		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-		$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
-		$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
-		$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
-		if ((0.8 * $ifbw) < $input_bw) {
-			$friendly_interface = $i+1;
-			$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
-			$stepid--;
-			return;
+		if ($_POST["conn{$i}uploadspeed"] == "%") {
+			if (intval($_POST["conn{$i}upload"]) > 80) {
+				$friendly_interface = $i+1;
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
+		} else {
+			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
+			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
+			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
+			if ((0.8 * $ifbw) < $input_bw) {
+				$friendly_interface = $i+1;
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN #{$friendly_interface} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
 		}	
 	}
 
@@ -1001,7 +1010,7 @@ function apply_all_choosen_items() {
 					/* loop through voiplist[] */
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 						$rule = array();
-						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qVoIP';
 						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
@@ -1025,7 +1034,7 @@ function apply_all_choosen_items() {
 						continue;
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
-						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qP2P';
 						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;		
@@ -1048,7 +1057,7 @@ function apply_all_choosen_items() {
 										continue;
 					foreach ($gamesplist[$key] as $Gameclient) {
 						$rule = array();
-						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qGames';
 						if ($Gameclient[1] == "tcp")
 							$rule['ackqueue'] = 'qACK';
@@ -1074,7 +1083,7 @@ function apply_all_choosen_items() {
 						continue;
 					foreach ($othersplist[$key] as $otherclient) {
 						$rule = array();
-						$rule = array();
+						$rule['type'] = "match";
 						switch ($val) {
 						case "H":
 							$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */

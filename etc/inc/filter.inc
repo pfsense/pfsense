@@ -521,8 +521,10 @@ function filter_generate_aliases() {
 	$aliases .= "table <sshlockout> persist\n";
 	$aliases .= "table <webConfiguratorlockout> persist\n";
 
-	$aliases .= "#Snort2C table\n";
+	$aliases .= "#pfSnortSam tables\n";
 	$aliases .= "table <snort2c>\n";
+	$aliases .= "table <pfSnortSamout>\n";
+	$aliases .= "table <pfSnortSamin>\n";
 
 	$aliases .= "\ntable <virusprot>\n";
 
@@ -1125,14 +1127,22 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	if($src == "")
 		$src = "any";
 	/* Match on this source port */
-	if($srcport != "")
-		$src .= " port {$srcport}";
+	if($srcport != "") {
+		$srcportexpand = alias_expand($srcport);
+		if(!$srcportexpand)
+			$srcportexpand = $srcport;
+		$src .= " port {$srcportexpand}";
+	}
 	/* sometimes this gets called with "" instead of a value */
 	if($dst == "")
 		$dst = "any";
 	/* Match on this dest port */
-	if($dstport != "")
-		$dst .= " port {$dstport}";
+	if($dstport != "") {
+		$dstportexpand = alias_expand($dstport);
+		if(!$dstportexpand)
+			$dstportexpand = $dstport;
+		$dst .= " port {$dstportexpand}";
+	}
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
 	$staticnatport_txt = "";
 	if($staticnatport)
@@ -2126,9 +2136,11 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
-# snort2c
+# pfSnortSam
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+block quick from <pfSnortSamout> to any label "Block pfSnortSamOut hosts"
+block quick from any to <pfSnortSamin> label "Block pfSnortSamIn hosts"
 
 EOD;
 

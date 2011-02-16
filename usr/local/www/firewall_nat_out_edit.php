@@ -124,14 +124,14 @@ if ($_POST) {
 
 	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
 
-	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
-		$input_errors[] = gettext("You must supply either a valid port for the source port entry.");
+	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_portoralias($_POST['sourceport']))
+		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
 
-	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_port($_POST['dstport']))
-		$input_errors[] = gettext("You must supply either a valid port for the destination port entry.");
+	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_portoralias($_POST['dstport']))
+		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 
 	if($protocol_uses_ports and $_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
-		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
+		$input_errors[] = gettext("You must supply a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {
@@ -288,6 +288,8 @@ include("head.inc");
 
 ?>
 
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script language="JavaScript">
 <!--
 var portsenabled = 1;
@@ -456,7 +458,7 @@ function poolopts_change() {
                             </select>
 			</td></tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="source" type="text" class="formfld unknown" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
+                        <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
@@ -468,7 +470,7 @@ function poolopts_change() {
                       </tr>
                       <tr name="sport_tr" id="sport_tr">
                         <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" class="formfld unknown" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
+                        <td><input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
 blank for any)");?></td>
                       </tr>
                     </table></td>
@@ -492,7 +494,7 @@ blank for any)");?></td>
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="destination" type="text" class="formfld unknown" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
+                        <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
@@ -507,7 +509,7 @@ blank for any)");?></td>
                       </tr>
                       <tr name="dport_tr" id="dport_tr">
                         <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
+                        <td><input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
 any)");?></td>
                       </tr>
                     </table>
@@ -637,6 +639,41 @@ staticportchange();
 nonat_change();
 proto_change();
 poolopts_change();
+
+<?php
+	$isfirst = 0;
+	$aliases = "";
+	$addrisfirst = 0;
+	$aliasesaddr = "";
+	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+		foreach($config['aliases']['alias'] as $alias_name) {
+			switch ($alias_name['type']) {
+			case "port":
+				if($isfirst == 1) $portaliases .= ",";
+				$portaliases .= "'" . $alias_name['name'] . "'";
+				$isfirst = 1;
+				break;
+			case "host":
+			case "network":
+			case "openvpn":
+			case "urltable":
+				if($addrisfirst == 1) $aliasesaddr .= ",";
+				$aliasesaddr .= "'" . $alias_name['name'] . "'";
+				$addrisfirst = 1;
+				break;
+			default:
+				break;
+			}
+		}
+?>
+
+	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	var customarray=new Array(<?php echo $portaliases; ?>);
+
+	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
+	var oTextbox2 = new AutoSuggestControl(document.getElementById("sourceport"), new StateSuggestions(customarray));
+	var oTextbox3 = new AutoSuggestControl(document.getElementById("destination"), new StateSuggestions(addressarray));
+	var oTextbox4 = new AutoSuggestControl(document.getElementById("dstport"), new StateSuggestions(customarray));
 //-->
 </script>
 <?php include("fend.inc"); ?>

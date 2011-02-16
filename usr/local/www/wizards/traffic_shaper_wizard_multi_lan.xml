@@ -124,7 +124,8 @@
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>
 			<field>
-				<name>Download Speed</name>
+				<displayname>Upload Speed</displayname>
+				<name>connupload</name>
 				<type>input</type>
 				<bindstofield>ezshaper-&gt;step3-&gt;connupload</bindstofield>
 				<combinefieldsbegin>true</combinefieldsbegin>
@@ -134,7 +135,7 @@
 				<dontdisplayname>true</dontdisplayname>
 				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
-               			<name>Download Speed Unit</name>
+               			<name>connuploadspeed</name>
 				<description>The limit you want to apply.</description>
                                 <type>select</type>
 				<options>
@@ -158,7 +159,8 @@
                     		<bindstofield>ezshaper->step3->connuploadspeed</bindstofield>
               </field>
 			<field>
-				<name>Upload Speed</name>
+				<displayname>Download Speed</displayname>
+				<name>conndownload</name>
 				<type>input</type>
 				<bindstofield>ezshaper-&gt;step3-&gt;conndownload</bindstofield>
 				<combinefieldsbegin>true</combinefieldsbegin>
@@ -168,14 +170,14 @@
 				<dontdisplayname>true</dontdisplayname>
 				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
-               <name>Upload Speed Unit</name>
+			       <name>conndownloadspeed</name>
 				<description>The limit you want to apply.</description>
                                 <type>select</type>
 				<options>
 				<option>
-                    <name>%</name>
-                    <value>%</value>
-                </option>
+			    <name>%</name>
+			    <value>%</value>
+				</option>
 				<option>
 					<name>Kilobit/s</name>
 					<value>Kb</value>
@@ -189,7 +191,7 @@
 					<value>Gb</value>
 				</option>
 				</options>
-                    <bindstofield>ezshaper->step3->conndownloadspeed</bindstofield>
+			    <bindstofield>ezshaper->step3->conndownloadspeed</bindstofield>
               </field>
 			<field>
 				<name>Next</name>

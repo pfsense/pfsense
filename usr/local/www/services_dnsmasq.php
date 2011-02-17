@@ -174,7 +174,8 @@ function enable_change(enable_over) {
                 </tr>
         </table>
         &nbsp;<br>
-        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+		<thead>
                 <tr>
                   <td width="20%" class="listhdrr"><?=gettext("Host");?></td>
                   <td width="25%" class="listhdrr"><?=gettext("Domain");?></td>
@@ -189,6 +190,8 @@ function enable_change(enable_over) {
                     </table>
 		  </td>
 		</tr>
+		</thead>
+		<tbody>
 			  <?php $i = 0; foreach ($a_hosts as $hostent): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
@@ -212,6 +215,8 @@ function enable_change(enable_over) {
                    </table>
                 </tr>
 		<?php $i++; endforeach; ?>
+		</tbody>
+		<tfoot>
                 <tr>
                   <td class="list" colspan="4"></td>
                   <td class="list">
@@ -222,6 +227,8 @@ function enable_change(enable_over) {
                       </tr>
                     </table>
 		   </td>
+		</tr>
+		</tfoot>
 	</table>
 <!-- update to enable domain overrides -->
         <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -232,7 +239,8 @@ function enable_change(enable_over) {
                </tr>
         </table>
 	&nbsp;<br>
-        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+		<thead>
                <tr>
                  <td width="35%" class="listhdrr"><?=gettext("Domain");?></td>
                  <td width="20%" class="listhdrr"><?=gettext("IP");?></td>
@@ -246,6 +254,8 @@ function enable_change(enable_over) {
 			</table>
 		 </td>
                               </tr>
+		</thead>
+		<tbody>
                         <?php $i = 0; foreach ($a_domainOverrides as $doment): ?>
                <tr>
                  <td class="listlr">
@@ -261,6 +271,8 @@ function enable_change(enable_over) {
                     &nbsp;<a href="services_dnsmasq.php?act=del&type=doverride&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                               </tr>
                         <?php $i++; endforeach; ?>
+		</tbody>
+		<tfoot>
                <tr>
                  <td class="list" colspan="3"></td>
                  <td class="list">
@@ -271,7 +283,8 @@ function enable_change(enable_over) {
 			    </tr>
 			</table>
 		 </td>
-	       </tr>
+		</tr>
+		</tfoot>
         </table>
         </form>
 <script language="JavaScript">

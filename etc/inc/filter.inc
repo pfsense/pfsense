@@ -1756,7 +1756,7 @@ function filter_generate_user_rule($rule) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
 		else
-			log_error("The gateway: {$rule['gateway']} is invalid/unkown not using it.");
+			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
 	if(isset($rule['protocol'])) {

@@ -211,6 +211,8 @@ function captiveportal_configure() {
 
 		if ($g['booting'])
 			echo "Starting captive portal... ";
+		else
+			captiveportal_syslog("Restarting captive portal.");
 
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");

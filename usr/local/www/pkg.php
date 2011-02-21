@@ -239,7 +239,7 @@ if ($pkg['tabs'] <> "") {
 					$tmpcount = 0;
 					$tmppp = 0;
 					if(is_array($evaledvar)) {
-				    	foreach ($evaledvar as $ipa) {
+						foreach ($evaledvar as $ipa) {
 							if($tmpcount == $display_maximum_rows) {
 								$page++;
 								$tmpcount = 0;

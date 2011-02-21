@@ -3480,7 +3480,7 @@ function is_altq_capable($int) {
          * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+7.2-current&format=html
          * Only the following drivers have ALTQ support
          */
-	$capable = array("age", "ale", "an", "ath", "aue", "awi", "bce",
+	$capable = array("age", "alc", "ale", "an", "ath", "aue", "awi", "bce",
 			"bfe", "bge", "dc", "de", "ed", "em", "ep", "fxp", "gem",
 			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",

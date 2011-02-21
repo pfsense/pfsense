@@ -814,7 +814,7 @@ EOD;
 					continue;
 
 				$rgip = $rgmap[$ph1ent['remote-gateway']];
-				if(!$rgip)
+				if(!is_ipaddr($rgip))
 					continue;
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
@@ -847,7 +847,7 @@ EOD;
 				else
 					$parentinterface = $ph1ent['interface'];
 
-				if ($parentinterface <> "wan") {
+				if (($parentinterface <> "wan") && (is_ipaddr($rgip))) {
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
@@ -865,7 +865,7 @@ EOD;
 							}
 						}
 					}
-				} else {
+				} elseif(is_ipaddr($rgip)) {
 					if(stristr($route_str, "{$rgip}")) {
 						mwexec("/sbin/route delete -host {$rgip}", true);
 					}
@@ -1687,7 +1687,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		} else {
 			add_hostname_to_watch($phase1['remote-gateway']);
 		}
-		if (!$rgip) {
+		if (!is_ipaddr($rgip)) {
 			log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 			return false;
 		}

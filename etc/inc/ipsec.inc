@@ -143,6 +143,7 @@ function ipsec_get_phase1_src(& $ph1ent) {
  * Return phase1 local address
  */
 function ipsec_get_phase1_dst(& $ph1ent) {
+	global $g;
 
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {

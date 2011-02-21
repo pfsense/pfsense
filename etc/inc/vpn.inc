@@ -813,6 +813,8 @@ EOD;
 					continue;
 
 				$rgip = $rgmap[$ph1ent['remote-gateway']];
+				if(!$rgip)
+					continue;
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);

@@ -1676,6 +1676,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for filterdns */
+	$rgip = "";
 	if (!is_ipaddr($phase1['remote-gateway'])) {
 		if(! $g['booting']) {
 			$rgip = resolve_retry($phase1['remote-gateway']);

@@ -521,8 +521,10 @@ function filter_generate_aliases() {
 	$aliases .= "table <sshlockout> persist\n";
 	$aliases .= "table <webConfiguratorlockout> persist\n";
 
-	$aliases .= "#Snort2C table\n";
+	$aliases .= "#pfSnortSam tables\n";
 	$aliases .= "table <snort2c>\n";
+	$aliases .= "table <pfSnortSamout>\n";
+	$aliases .= "table <pfSnortSamin>\n";
 
 	$aliases .= "\ntable <virusprot>\n";
 
@@ -1738,7 +1740,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($rule['disablereplyto'])) {
 		$rg = get_interface_gateway($rule['interface']);
 		if(is_ipaddr($rg)) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
@@ -1754,7 +1756,7 @@ function filter_generate_user_rule($rule) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
 		else
-			log_error("The gateway: {$rule['gateway']} is invalid/unkown not using it.");
+			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
 	if(isset($rule['protocol'])) {
@@ -2016,9 +2018,11 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
-# snort2c
+# pfSnortSam
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+block quick from <pfSnortSamout> to any label "Block pfSnortSamOut hosts"
+block quick from any to <pfSnortSamin> label "Block pfSnortSamIn hosts"
 
 EOD;
 
@@ -2167,6 +2171,15 @@ pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 6
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
+				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
+					$ipfrules .= <<<EOD
+# allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 label "allow access to DHCP failover"
+
+EOD;
+				}
+
 			}
 			break;
 		}

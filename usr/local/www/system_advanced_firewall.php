@@ -56,6 +56,7 @@ $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
+$pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 if (!isset($config['system']['enablebinatreflection']))
 	$pconfig['disablebinatreflection'] = "yes";
@@ -123,6 +124,11 @@ if ($_POST) {
 			unset($config['system']['enablebinatreflection']);
 		else
 			$config['system']['enablebinatreflection'] = "yes";
+
+		if($_POST['disablereplyto'] == "yes")
+                        $config['system']['disablereplyto'] = $_POST['disablereplyto'];
+                else
+                        unset($config['system']['disablereplyto']);
 
 		if($_POST['enablenatreflectionhelper'] == "yes")
 			$config['system']['enablenatreflectionhelper'] = "yes";
@@ -361,6 +367,17 @@ function update_description(itemnum) {
 									<?=gettext("Currently only applies to 1:1 NAT rules.  Required for full functionality of NAT Reflection for 1:1 NAT.");?>
 								</td>
 							</tr>
+ 							<tr>
+                                                                <td width="22%" valign="top" class="vncell">Disable reply-to</td>
+                                                                <td width="78%" class="vtable">
+                                                                        <input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked"; ?> />
+                                                                        <strong><?=gettext("Disable reply-to on WAN rules");?></strong>
+                                                                        <br />
+                                                                        <?=gettext("With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default." .
+                                                                        "When using bridging, you must disable this behavior if the WAN gateway IP is different from the gateway IP of the hosts behind the bridged interface.");?>
+                                                                        <br />
+                                                                </td>
+                                                        </tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("TFTP Proxy");?></td>
 								<td width="78%" class="vtable">

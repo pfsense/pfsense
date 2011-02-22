@@ -417,7 +417,8 @@ function is_ipsec_cert($certref) {
 
 function is_webgui_cert($certref) {
 	global $config;
-	if ($config['system']['webgui']['ssl-certref'] == $certref)
+	if (($config['system']['webgui']['ssl-certref'] == $certref)
+		&& ($config['system']['webgui']['protocol'] != "http"))
 		return true;
 }
 

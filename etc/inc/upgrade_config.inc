@@ -820,15 +820,16 @@ function upgrade_044_to_045() {
 	global $config;
 	$iflist = get_configured_interface_list(false, true);
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		$i = 0;
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {
-			$config['vlans']['vlan'][$id]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 			/* Make sure to update the interfaces section with the right name */
 			foreach($iflist as $ifname) {
-				if($config['interfaces'][$ifname]['if'] == "vlan{$id}") {
+				if($config['interfaces'][$ifname]['if'] == "vlan{$i}") {
 					$config['interfaces'][$ifname]['if'] = $vlan['vlanif'];
 				}
 			}
-			
+			$i++;			
 		}
 	}
 }
@@ -917,6 +918,11 @@ function upgrade_046_to_047() {
 				if (isset($tunnel['disabled']))
 					$ph1ent['disabled'] = $tunnel['disabled'];
 
+				/* convert to the new vip[$vhid] name */
+				if(preg_match("/^carp/", $tunnel['interface'])) {
+					$carpid = substr($tunnel['interface'], 5);
+					$tunnel['interface'] = "vip" . $config['virtualip']['vip'][$carpid]['vhid'];
+				}
 				$ph1ent['interface'] = $tunnel['interface'];
 				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
 				$ph1ent['descr'] = $tunnel['descr'];
@@ -1681,7 +1687,7 @@ function upgrade_053_to_054() {
 					} else {
 						$i = 1;
 					}
-					$gateway_group['item'][] = "$interface|$i";
+					$gateway_group['item'][] = "$static_name|$i";
 				}
 				$gateway_group_arr[] = $gateway_group;
 			} else {

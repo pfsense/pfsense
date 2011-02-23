@@ -77,8 +77,8 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	
-	if($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap")
-		$_POST['username'] = "not_required"; 
+	if(($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "")
+		$_POST['username'] = "none"; 
 
 	/* input validation */
 	$reqdfields = array();
@@ -104,6 +104,9 @@ if ($_POST) {
 		$dyndns['enable'] = $_POST['enable'] ? false : true;
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
+		
+		if($dyndns['username'] == "none")
+			$dyndns['username'] = "";
 
 		if (isset($id) && $a_dyndns[$id])
 			$a_dyndns[$id] = $dyndns;

@@ -159,8 +159,9 @@ function vpn_ipsec_configure($ipchg = false)
 				if (!is_ipaddr($rg)) {
 					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
-					$rg = resolve_retry($rg);
-					if (!$rg)
+					if(! $g['booting'])
+						$rg = resolve_retry($rg);
+					if (!is_ipaddr($rg))
 						continue;
 				}
 
@@ -813,6 +814,8 @@ EOD;
 					continue;
 
 				$rgip = $rgmap[$ph1ent['remote-gateway']];
+				if(!is_ipaddr($rgip))
+					continue;
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
@@ -844,7 +847,7 @@ EOD;
 				else
 					$parentinterface = $ph1ent['interface'];
 
-				if ($parentinterface <> "wan") {
+				if (($parentinterface <> "wan") && (is_ipaddr($rgip))) {
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
@@ -862,7 +865,7 @@ EOD;
 							}
 						}
 					}
-				} else {
+				} elseif(is_ipaddr($rgip)) {
 					if(stristr($route_str, "{$rgip}")) {
 						mwexec("/sbin/route delete -host {$rgip}", true);
 					}
@@ -1676,10 +1679,15 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for filterdns */
+	$rgip = "";
 	if (!is_ipaddr($phase1['remote-gateway'])) {
-		$rgip = resolve_retry($phase1['remote-gateway']);
-		add_hostname_to_watch($phase1['remote-gateway']);
-		if (!$rgip) {
+		if(! $g['booting']) {
+			$rgip = resolve_retry($phase1['remote-gateway']);
+			add_hostname_to_watch($phase1['remote-gateway']);
+		} else {
+			add_hostname_to_watch($phase1['remote-gateway']);
+		}
+		if (!is_ipaddr($rgip)) {
 			log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 			return false;
 		}

@@ -960,7 +960,6 @@ function apply_all_choosen_items() {
 				    $rule = array();
 				    $rule['type'] = "match";
 				    $rule['descr'] = gettext("Penalty Box");
-				    $rule['direction'] = "out";
 				    $rule['source']['any'] = TRUE;
 				    $rule['defaultqueue'] = "qOthersLow";
 				    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
@@ -980,7 +979,6 @@ function apply_all_choosen_items() {
 					$rule = array();
 				        $rule['type'] = "match";
 					$rule['descr'] = gettext("VOIP Adapter");
-					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['address'] = $config['ezshaper']['step3']['address'];
@@ -995,7 +993,6 @@ function apply_all_choosen_items() {
 					$rule = array();
 					    $rule['type'] = "match";
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
-					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -1012,7 +1009,6 @@ function apply_all_choosen_items() {
 						$rule = array();
 						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qVoIP';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_voip {$voip[0]} outbound";
@@ -1036,7 +1032,6 @@ function apply_all_choosen_items() {
 						$rule = array();
 						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qP2P';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
@@ -1061,7 +1056,6 @@ function apply_all_choosen_items() {
 						$rule['defaultqueue'] = 'qGames';
 						if ($Gameclient[1] == "tcp")
 							$rule['ackqueue'] = 'qACK';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['floating'] = "yes";
@@ -1110,7 +1104,6 @@ function apply_all_choosen_items() {
 							$loop = 1;
 						}
 						if (!$loop) {
-							$rule['direction'] = "out";
 							$rule['source']['any'] = TRUE;
 							$rule['destination']['any'] = TRUE;
 							$rule['floating'] = "yes";

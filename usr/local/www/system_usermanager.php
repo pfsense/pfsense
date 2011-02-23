@@ -205,6 +205,9 @@ if (isAllowedPage("system_usermanager")) {
 		if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
 			$input_errors[] = gettext("The username contains invalid characters.");
 
+		if (strlen($_POST['usernamefld']) > 16)
+			$input_errors[] = gettext("The username is longer than 16 characters.");
+
 		if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
 			$input_errors[] = gettext("The passwords do not match.");
 
@@ -478,7 +481,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
 							<td width="78%" class="vtable">
-								<input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" <?=$ro;?>/>
+								<input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" maxlength="16" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" <?=$ro;?>/>
 								<input name="oldusername" type="hidden" id="oldusername" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
 							</td>
 						</tr>

@@ -298,7 +298,7 @@ if ($_GET['act'] == "del") {
 		 * then ensure that we are not running DHCP on the wan which
 		 * will make a lot of ISP's unhappy.
 		 */
-		if($config['interfaces']['lan']) {
+		if($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
 			unset($config['dhcpd']['wan']);		
 		}
 

@@ -1151,7 +1151,7 @@ $i--): ?>
 			<br/><center>
 			<input onClick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked"; ?>><strong><?=gettext("Any flags.");?></strong><br/></center>
 			<br/>
-			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must". 
+			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must ". 
 			"be set or cleared for this rule to match.");?></span>
 			</div>
 			</td>

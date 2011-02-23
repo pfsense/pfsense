@@ -1820,7 +1820,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($rule['disablereplyto'])) {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
 		if($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if(is_ipaddrv6($rg)) {
@@ -1847,7 +1847,7 @@ function filter_generate_user_rule($rule) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
 		else
-			log_error("The gateway: {$rule['gateway']} is invalid/unkown not using it.");
+			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
 	if(isset($rule['protocol'])) {

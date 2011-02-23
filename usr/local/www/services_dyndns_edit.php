@@ -76,6 +76,10 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+	if($pconfig['type'] == "freedns") { 
+		$_POST['username'] = "free"; 
+		$_POST['password'] = "dns";
+	}
 
 	/* input validation */
 	$reqdfields = array();
@@ -106,6 +110,11 @@ if ($_POST) {
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
 
+		if($dyndns['type'] == "freedns") { 
+			$dyndns['username'] = "";
+			$dyndns['password'] = "";
+		}
+		
 		if (isset($id) && $a_dyndns[$id])
 			$a_dyndns[$id] = $dyndns;
 		else
@@ -187,6 +196,8 @@ include("head.inc");
 				    <span class="red"><strong><?=gettext("Note:");?><br></strong>
 				    </span>
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?>
+					<br/>
+					<?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
 				    </span>
 		          </td>
 				</tr>

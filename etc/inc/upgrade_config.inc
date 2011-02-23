@@ -918,6 +918,11 @@ function upgrade_046_to_047() {
 				if (isset($tunnel['disabled']))
 					$ph1ent['disabled'] = $tunnel['disabled'];
 
+				/* convert to the new vip[$vhid] name */
+				if(preg_match("/^carp/", $tunnel['interface'])) {
+					$carpid = substr($tunnel['interface'], 5);
+					$tunnel['interface'] = "vip" . $config['virtualip'][$carpid]['vhid'];
+				}
 				$ph1ent['interface'] = $tunnel['interface'];
 				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
 				$ph1ent['descr'] = $tunnel['descr'];

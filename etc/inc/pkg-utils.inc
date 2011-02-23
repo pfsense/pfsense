@@ -498,8 +498,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			}
 		}
 	}
+	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded"))
+		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 	$pkgaddout = "";
-	exec("/usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
+	exec("{$pkgtmpdir}/usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
 	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npkg_add successfully completed.\n");
 
 	return true;

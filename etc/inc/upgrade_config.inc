@@ -921,7 +921,7 @@ function upgrade_046_to_047() {
 				/* convert to the new vip[$vhid] name */
 				if(preg_match("/^carp/", $tunnel['interface'])) {
 					$carpid = substr($tunnel['interface'], 5);
-					$tunnel['interface'] = "vip" . $config['virtualip'][$carpid]['vhid'];
+					$tunnel['interface'] = "vip" . $config['virtualip']['vip'][$carpid]['vhid'];
 				}
 				$ph1ent['interface'] = $tunnel['interface'];
 				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];

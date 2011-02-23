@@ -49,10 +49,12 @@ if [ "$PLATFORM" = "cdrom" ]; then
 fi
 
 if [ "$PLATFORM" = "embedded" ]; then
+	export PKG_TMPDIR=/root/
 	/etc/rc.embedded
 fi
 
 if [ "$PLATFORM" = "nanobsd" ]; then
+	export PKG_TMPDIR=/root/
 	/etc/rc.embedded
 fi
 

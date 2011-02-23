@@ -76,16 +76,15 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+	
+	if($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap")
+		$_POST['username'] = "not_required"; 
 
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
-	$reqdfields = array("host", "password", "type");
-	$reqdfieldsn = array(gettext("Hostname"),gettext("Password"),gettext("Service type"));
-	if ($pconfig['type'] != "namecheap") {
-		$reqdfields[] = "username";
-		$reqdfieldsn[] = gettext("Username");
-	}
+	$reqdfields = array("host", "username", "password", "type");
+	$reqdfieldsn = array(gettext("Hostname"),gettext("Username"),gettext("Password"),gettext("Service type"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -217,6 +216,8 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
                     <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                    <br/>
+                    <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
                   </td>
                 </tr>
                 <tr>

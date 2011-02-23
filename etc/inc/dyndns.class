@@ -350,7 +350,7 @@
 					break;
 				case 'freedns':
 					$needIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);

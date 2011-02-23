@@ -820,15 +820,16 @@ function upgrade_044_to_045() {
 	global $config;
 	$iflist = get_configured_interface_list(false, true);
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		$i = 0;
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {
-			$config['vlans']['vlan'][$id]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 			/* Make sure to update the interfaces section with the right name */
 			foreach($iflist as $ifname) {
-				if($config['interfaces'][$ifname]['if'] == "vlan{$id}") {
+				if($config['interfaces'][$ifname]['if'] == "vlan{$i}") {
 					$config['interfaces'][$ifname]['if'] = $vlan['vlanif'];
 				}
 			}
-			
+			$i++;			
 		}
 	}
 }

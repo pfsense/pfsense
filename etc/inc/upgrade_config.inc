@@ -1681,7 +1681,7 @@ function upgrade_053_to_054() {
 					} else {
 						$i = 1;
 					}
-					$gateway_group['item'][] = "$interface|$i";
+					$gateway_group['item'][] = "$static_name|$i";
 				}
 				$gateway_group_arr[] = $gateway_group;
 			} else {

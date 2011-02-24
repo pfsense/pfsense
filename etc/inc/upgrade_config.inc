@@ -872,8 +872,8 @@ function upgrade_045_to_046() {
 	if(count($config['load_balancer']) == 0) {
 		unset($config['load_balancer']);
 	}
-	mwexec('pw groupadd -n _relayd -g 913');
-	mwexec('pw useradd -n _relayd -c "Relay Daemon" -d /var/empty -s /usr/sbin/nologin -u 913 -g 913');
+	mwexec('/usr/sbin/pw groupadd -n _relayd -g 913');
+	mwexec('/usr/sbin/pw useradd -n _relayd -c "Relay Daemon" -d /var/empty -s /usr/sbin/nologin -u 913 -g 913');
 }
 
 

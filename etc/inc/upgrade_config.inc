@@ -822,13 +822,15 @@ function upgrade_044_to_045() {
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		$i = 0;
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {
-			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 			/* Make sure to update the interfaces section with the right name */
+			$vlan_name = "{$vlan['if']}_vlan{$vlan['tag']}";
 			foreach($iflist as $ifname) {
 				if($config['interfaces'][$ifname]['if'] == "vlan{$i}") {
-					$config['interfaces'][$ifname]['if'] = $vlan['vlanif'];
+					$config['interfaces'][$ifname]['if'] = $vlan_name;
+					continue;
 				}
 			}
+			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan_name}";
 			$i++;			
 		}
 	}

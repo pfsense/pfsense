@@ -141,7 +141,7 @@ if ($_POST) {
 		}
 	}
 
-/* TODO : Validate enabled phase2's are not duplicates */
+	/* TODO : Validate enabled phase2's are not duplicates */
 
 	$ealgos = pconfig_to_ealgos($pconfig);
 
@@ -184,6 +184,7 @@ if ($_POST) {
 		if(is_array($ph2ent)) {
 			ipsec_lookup_phase1($ph2ent, $ph1ent);
 			$old_ph1ent = $ph1ent;
+			$old_ph1ent['remote-gateway'] = resolve_retry($old_ph1ent['remote-gateway']);
 			reload_tunnel_spd_policy ($ph1ent, $ph2ent, $old_ph1ent, $old_ph2ent);
 		}
 

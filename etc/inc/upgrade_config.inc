@@ -584,7 +584,7 @@ function upgrade_039_to_040() {
 		$config['system']['group'][0]['name'] = "admins";
 		$config['system']['group'][0]['description'] = "System Administrators";
 		$config['system']['group'][0]['scope'] = "system";
-		$config['system']['group'][0]['pages'] = "ANY";
+		$config['system']['group'][0]['priv'] = "page-all";
 		$config['system']['group'][0]['home'] = "index.php";
 		$config['system']['group'][0]['gid'] = "110";
 

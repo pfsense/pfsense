@@ -1858,7 +1858,7 @@ function portal_consume_passthrough_credit($clientmac) {
 	else
 		return false;
 
-	if ($freeloginscount < 1 || $resettimeout <= 0 || !clientmac)
+	if ($freeloginscount < 1 || $resettimeout <= 0 || !$clientmac)
 		return false;
 
 	$updatetimeouts = isset($config['captiveportal']['freelogins_updatetimeouts']);

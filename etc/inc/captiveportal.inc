@@ -1914,7 +1914,7 @@ function captiveportal_read_usedmacs_db() {
 	$cpumaclck = lock('captiveusedmacs');
 	if (file_exists("{$g['vardb_path']}/captiveportal_usedmacs.db")) {
 		$usedmacs = file("{$g['vardb_path']}/captiveportal_usedmacs.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if (!usedmacs)
+		if (!$usedmacs)
 			$usedmacs = array();
 	} else
 		$usedmacs = array();

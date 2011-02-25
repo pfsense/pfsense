@@ -27,7 +27,11 @@ unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching...";
-    system("pkg_add -r git");
+	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
+		$pkgstaging = "-t /root/tmp/instmp.XXXXXX";
+	}
+	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r git");
 }
 
 # Remove mainline if exists (older)

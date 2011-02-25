@@ -1858,7 +1858,7 @@ function portal_consume_passthrough_credit($clientmac) {
 	else
 		return false;
 
-	if ($freeloginscount < 1 || $resettimeout <= 0 || !clientmac)
+	if ($freeloginscount < 1 || $resettimeout <= 0 || !$clientmac)
 		return false;
 
 	$updatetimeouts = isset($config['captiveportal']['freelogins_updatetimeouts']);
@@ -1914,7 +1914,7 @@ function captiveportal_read_usedmacs_db() {
 	$cpumaclck = lock('captiveusedmacs');
 	if (file_exists("{$g['vardb_path']}/captiveportal_usedmacs.db")) {
 		$usedmacs = file("{$g['vardb_path']}/captiveportal_usedmacs.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if (!usedmacs)
+		if (!$usedmacs)
 			$usedmacs = array();
 	} else
 		$usedmacs = array();
@@ -1930,7 +1930,5 @@ function captiveportal_write_usedmacs_db($usedmacs) {
 	@file_put_contents("{$g['vardb_path']}/captiveportal_usedmacs.db", implode("\n", $usedmacs));
 	unlock($cpumaclck);
 }
-
-
 
 ?>

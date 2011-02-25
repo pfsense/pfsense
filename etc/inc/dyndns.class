@@ -43,7 +43,7 @@
 	 *  ZoneEdit       - Last Tested: NEVER
 	 *  Dyns           - Last Tested: NEVER
 	 *  ODS            - Last Tested: 02 August 2005
-	 *  FreeDNS        - Last Tested: NEVER
+	 *  FreeDNS        - Last Tested: 23 Feb 2011
 	 *  Loopia         - Last Tested: NEVER
 	 *  StaticCling    - Last Tested: 27 April 2006
 	 *  DNSexit	   - Last Tested: 20 July 2008
@@ -350,7 +350,7 @@
 					break;
 				case 'freedns':
 					$needIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);

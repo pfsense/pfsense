@@ -282,7 +282,7 @@ if ($_POST) {
 		/* the vpn_ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-				mwexec("/sbin/route delete -host {$oldph1ent['remote-gateway']}");
+				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']}");
 			}
 		}
 

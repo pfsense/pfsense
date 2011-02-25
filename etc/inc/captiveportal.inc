@@ -1931,6 +1931,4 @@ function captiveportal_write_usedmacs_db($usedmacs) {
 	unlock($cpumaclck);
 }
 
-
-
 ?>

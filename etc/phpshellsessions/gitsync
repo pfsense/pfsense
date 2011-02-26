@@ -16,6 +16,7 @@ conf_mount_rw();
 $GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
 $CODIR =  "/root/pfsense/";
 
+global $g;
 global $argv;
 global $command_split;
 

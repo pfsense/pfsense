@@ -29,7 +29,10 @@ if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching...";
 	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
 		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
-		$pkgstaging = "-t /root/tmp/instmp.XXXXXX";
+		$pkgstagingdir = "/root/tmp";
+		if (!is_dir($pkgstagingdir))
+			mkdir($pkgstagingdir);
+		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
 	}
 	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r git");
 }

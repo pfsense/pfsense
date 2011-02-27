@@ -105,6 +105,8 @@ $crash_report_header .= "\nCrash report details:\n";
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
 		echo gettext("Uploading...");
+		ob_flush();
+		flush();
 		if(is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
 			exec("rm /var/crash/*");

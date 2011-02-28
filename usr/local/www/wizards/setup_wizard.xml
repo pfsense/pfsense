@@ -256,7 +256,7 @@
 		</field>
 		<field>
 			<name>Gateway</name>
-			<bindstofield>interfaces->wan->gateway</bindstofield>
+			<bindstofield>wizardtemp->wangateway</bindstofield>
 			<type>input</type>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
 			<message>Gateway IP Address field is invalid</message>
@@ -387,6 +387,11 @@
 	<stepbeforeformdisplay>
 		<![CDATA[
 		$config['interfaces']['tmp'] = array();
+
+		if (is_array($config['gateways']['gateway_item']))
+			foreach ($config['gateways']['gateway_item'] as $gw)
+				if ($gw['name'] == 'WANGW')
+					$config['wizardtemp']['wangateway'] = $gw['gateway'];
 		]]>
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
@@ -554,12 +559,37 @@
 	<description>A reload is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
 	&lt;meta http-equiv="refresh" content="60; url=$myurl" &gt;</description>
 	<stepafterformdisplay>
+		<![CDATA[
 		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
 		$config['system']['domain'] = $config['wizardtemp']['system']['domain'];
+		if (!empty($config['wizardtemp']['wangateway'])) {
+			if (!is_array($config['gateways']['gateway_item']))
+				$config['gateways']['gateway_item'] = array();
+			$found = false;
+			foreach ($config['gateways']['gateway_item'] as & $gw) {
+				if ($gw['name'] == 'WANGW') {
+					$found = true;
+					$gw['gateway'] = $config['wizardtemp']['wangateway'];
+				}
+			}
+			if (!$found) {
+				$newgw = array();
+				$newgw['interface'] = "wan";
+				$newgw['gateway'] = $config['wizardtemp']['wangateway'];
+				$newgw['name'] = "WANGW";
+				$newgw['weight'] = 1;
+				$newgw['descr'] = "WAN Gateway";
+				$newgw['defaultgw'] = true;
+				$config['gateways']['gateway_item'][] = $newgw;
+			}
+			$config['interfaces']['wan']['gateway'] = "WANGW";
+		}
 		unset($config['wizardtemp']);
 		write_config();
 		reload_all();
-                mwexec_bg("/etc/rc.update_bogons.sh now");
+		setup_gateways_monitor();
+		mwexec_bg("/etc/rc.update_bogons.sh now");
+		]]>
 	</stepafterformdisplay>
 </step>
 </pfsensewizard>

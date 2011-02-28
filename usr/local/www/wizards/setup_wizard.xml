@@ -585,6 +585,7 @@
 		unset($config['wizardtemp']);
 		write_config();
 		reload_all();
+		setup_gateways_monitor();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		]]>
 	</stepafterformdisplay>

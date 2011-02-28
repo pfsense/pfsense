@@ -164,7 +164,7 @@ function enable_altfirmwareurl(enable_over) {
 			<?=gettext("Allow auto-update firmware images with a missing or invalid digital signature to be used."); ?>
 		</td>
 	</tr>
-<?php if(file_exists("/usr/local/bin/git")): ?>
+<?php if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense"): ?>
 	<tr>
 		<td colspan="2" class="list" height="12">&nbsp;</td>
 	</tr>

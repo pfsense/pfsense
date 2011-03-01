@@ -50,7 +50,7 @@ function isvalidpid($pid) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -x {$process}", $output, $retval);
+	exec("/bin/pgrep -ax {$process}", $output, $retval);
 
         return (intval($retval) == 0);
 }

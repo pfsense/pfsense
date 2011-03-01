@@ -73,15 +73,6 @@
 	function before_form_miniupnpd($pkg) {
 		global $config;
 
-		/* if shaper connection speed defined hide fields */
-		if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
-			$i=0;
-			foreach ($pkg['fields']['field'] as $field) {
-				if ($field['fieldname'] == 'download' || $field['fieldname'] == 'upload')
-					unset($pkg['fields']['field'][$i]);
-				$i++;
-			}
-		}
 	}
 
 	function validate_form_miniupnpd($post, $input_errors) {

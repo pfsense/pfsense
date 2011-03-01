@@ -396,7 +396,7 @@ function typesel_change() {
 			for(i=0; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
 				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "32";';
+				comd = 'document.iform.address_subnet' + i + '.value = "128";';
 				eval(comd);
 			}
 			break;
@@ -453,7 +453,7 @@ $url_str = gettext("URL");
 $urltable_str = gettext("URL Table");
 $update_freq_str = gettext("Update Freq.");
 
-$networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single host, /24 specifies 255.255.255.0, etc. Hostnames (FQDNs) may also be specified, using a /32 mask. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
+$networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address.");
 $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by seperating with a colon.");
 $url_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."), $g['product_name']);

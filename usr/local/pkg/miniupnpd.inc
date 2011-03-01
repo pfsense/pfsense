@@ -26,7 +26,7 @@
 
 	function upnp_uuid() {
 		/* md5 hash of wan mac */
-		$uuid = md5(exec('arp -an -i '.get_real_interface().' | /usr/bin/cut -d " " -f4'));
+		$uuid = md5(get_interface_mac(get_real_interface("wan")));
 		/* put uuid in correct format 8-4-4-4-12 */
 		return substr($uuid,0,8).'-'.substr($uuid,9,4).'-'.substr($uuid,13,4).'-'.substr($uuid,17,4).'-'.substr($uuid,21,12);
 	}

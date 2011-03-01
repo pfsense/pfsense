@@ -124,7 +124,7 @@ if ($_POST) {
 
 include("head.inc");
 
-$pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
+$pgtitle = array(gettext("System"),gettext("Advanced: System Tunables"));
 include("head.inc");
 
 ?>

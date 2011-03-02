@@ -1319,7 +1319,10 @@ include("head.inc");
 					$qselected = 1;
 					echo " SELECTED";
 				}
-				echo ">{$q}</option>"; 
+				if (isset($ifdisp[$q]))
+					echo ">{$ifdisp[$q]}</option>";
+				else
+					echo ">{$q}</option>"; 
 			}
 ?>
 				</select> / 			
@@ -1337,7 +1340,10 @@ include("head.inc");
 					$qselected = 1;
 					echo " SELECTED";
 				}
-				echo ">{$q}</option>"; 
+				if (isset($ifdisp[$q]))
+					echo ">{$ifdisp[$q]}</option>";
+				else
+					echo ">{$q}</option>"; 
 			}
 ?>
 				</select>

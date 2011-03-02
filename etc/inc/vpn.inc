@@ -164,7 +164,10 @@ function vpn_ipsec_configure($ipchg = false)
 					if (!is_ipaddr($rg))
 						continue;
 				}
-
+				if(array_search($rg, $rgmap)) {
+					log_error("The remote gateway {$rg} already exists on another phase 1 entry");
+					continue;
+				}
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
 				/* step through each phase2 entry */

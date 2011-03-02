@@ -1321,21 +1321,16 @@ function upnp_action ($action) {
 }
 
 function upnp_start() {
-	global $config, $g;
+	global $config;
 
 	if(!isset($config['installedpackages']['miniupnpd']['config']))
 		return;
 
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-		if($g['booting']) {
-			echo "Starting UPnP service... ";
-			require_once('/usr/local/pkg/miniupnpd.inc');
-			sync_package_miniupnpd();
-			echo "done.\n";
-		}
-		else {
-			upnp_action('start');
-		}
+		echo "Starting UPnP service... ";
+		require_once('/usr/local/pkg/miniupnpd.inc');
+		sync_package_miniupnpd();
+		echo "done.\n";
 	}
 }
 

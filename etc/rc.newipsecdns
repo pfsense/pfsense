@@ -43,6 +43,10 @@
 	while (file_exists("{$g['varrun_path']}/booting")) {
 		sleep(1);
 	}
+	while(stristr(shell_exec("/bin/ps auxww"), "rc.newipsecdns")) {
+		// log_error("There is an existing rc.newipsecdns running, sleeping 1 second");
+		sleep(1);
+	}
 	
 	log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
 	/* We will walk the list of hostnames found in the ipsec tunnel

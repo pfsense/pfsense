@@ -1216,7 +1216,9 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
-			log_auth("Successful webConfigurator login for user '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
+			if(! isset($config['system']['webgui']['quietlogin'])) {
+				log_auth("Successful webConfigurator login for user '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
+			}
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;

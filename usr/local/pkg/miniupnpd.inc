@@ -19,7 +19,7 @@
 		$handle = fopen($file, 'w');
 		if(!$handle) {
 			upnp_warn("Could not open {$file} for writing.");
-			exit;
+			return;
 		}
 		fwrite($handle, $text);
 		fclose($handle);

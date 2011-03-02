@@ -62,7 +62,7 @@ $pagetitle = gentitle( $pgtitle );
 	 *	Coded by: Erik Kristensen
 	 */
 
-	$dir  = trim(basename($_SERVER["SCRIPT_FILENAME"]), '.php');
+	$dir  = trim(basename($_SERVER["SCRIPT_FILENAME"], '.php'));
 	$path = "{$g['www_path']}/javascript/" . $dir . "/";
 	if (is_dir($path)) {
 		if ($dh = opendir($path)) {

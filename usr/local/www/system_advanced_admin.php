@@ -62,6 +62,7 @@ $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
+$pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
 
 $a_cert =& $config['cert'];
 
@@ -116,6 +117,11 @@ if ($_POST) {
 		} else {
 			unset($config['system']['webgui']['disablehttpredirect']);
 			$restart_webgui = true;
+		}
+		if ($_POST['quietlogin'] == "yes") {
+			$config['system']['webgui']['quietlogin'] = true;
+		} else {
+			unset($config['system']['webgui']['quietlogin']);
 		}
 
 		if($_POST['disableconsolemenu'] == "yes") {
@@ -315,9 +321,20 @@ function prot_change() {
 									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked"; ?> />
 									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
 									<br/>
-									<?php gettext("When this is unchecked, access to the webConfigurator " .
+									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is always permitted even on port 80, regardless of the listening port configured." .
 									"Check this box to disable this automatically added redirect rule. ");
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI login messages"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator successful logins"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
+									"will not be logged.");
 									?>
 								</td>
 							</tr>

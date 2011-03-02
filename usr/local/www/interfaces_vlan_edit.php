@@ -128,7 +128,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("VLAN"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"),gettext("VLAN"),gettext("Edit"));
 include("head.inc");
 
 ?>

@@ -34,7 +34,7 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/bin/pkill /bin/pgrep /bin/sh /usr/bin/killall
+	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
 	pfSense_MODULE:	utils
 */
 

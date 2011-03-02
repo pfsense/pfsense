@@ -124,7 +124,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("GRE"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 include("head.inc");
 
 ?>

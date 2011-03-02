@@ -142,7 +142,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Wireless"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
 include("head.inc");
 
 ?>

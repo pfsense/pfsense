@@ -43,7 +43,8 @@
 	}
 
 	function upnp_validate_ip($ip, $check_cdir) {
-		/* validate cdir */	
+		/* validate cidr */	
+		$ip_array = array();
 		if($check_cdir)	{
 			$ip_array = explode('/', $ip);
 			if(count($ip_array) == 2) {
@@ -56,11 +57,8 @@
 			$ip_array[] = $ip;
 
 		/* validate ip */
-		if(!eregi('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$', $ip_array[0]))
+		if (!is_ipaddr($ip_array[0]))
 			return false;
-		foreach(explode('.', $ip_array[0]) as $sub)
-			if($sub < 0 || $sub > 256)
-				return false;
 		return true;
 	}
 

@@ -1,18 +1,19 @@
 <?php
+	require_once("util.inc");
 	require_once("config.inc");
 	require_once("functions.inc");
 	require_once("shaper.inc");
 
 	/* MiniUPnPd */
 
-	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); }
-	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); }
+	function upnp_notice ($msg) { log_error("miniupnpd: {$msg}"); }
+	function upnp_warn ($msg) { log_error("miniupnpd: {$msg}"); }
 
 	function upnp_running () {
-		if((int)exec('pgrep miniupnpd | wc -l') > 0)
+		if((int)exec('/bin/pgrep -a miniupnpd | /usr/bin/wc -l') > 0)
 			return true;
 		return false;
-	}	
+	}
 
 	function upnp_write_config($file, $text) {
 		$handle = fopen($file, 'w');
@@ -161,17 +162,11 @@
 				if($upnp_config['overridewanip'])
 					$config_text .= "ext_ip={$upnp_config['overridewanip']}\n";
 
-				/* if shaper connection speed defined use those values */
-				if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
-					$download = $config['ezshaper']['step2']['download']*1000;
-					$upload = $config['ezshaper']['step2']['upload']*1000;
-				} else {
-					$download = $upnp_config['download']*1000;
-					$upload = $upnp_config['upload']*1000;
-				}
+				$download = $upnp_config['download']*1000;
+				$upload = $upnp_config['upload']*1000;
 
 				/* set upload and download bitrates */
-				if($download && $upload) {
+				if(!empty($download) && !empty($upload)) {
 					$config_text .= "bitrate_down={$download}\n";
 					$config_text .= "bitrate_up={$upload}\n";
 				}
@@ -185,9 +180,9 @@
 					$config_text .= "system_uptime=yes\n";
 
 				/* set webgui url */
-				if($config['system']['webgui']['protocol']) {
+				if(!empty($config['system']['webgui']['protocol'])) {
 					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
-					if($config['system']['webgui']['port'])
+					if(!empty($config['system']['webgui']['port']))
 						$config_text .= ":{$config['system']['webgui']['port']}";
 					$config_text .= "/\n";
 				}
@@ -197,7 +192,7 @@
 				$config_text .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
 
 				/* set model number */
-				$config_text .= "model_number=".exec("/bin/cat /etc/version")."\n";
+				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
 	
 				/* upnp access restrictions */
 				for($i=1; $i<=4; $i++) {

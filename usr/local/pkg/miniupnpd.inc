@@ -130,34 +130,29 @@
 		$ifaces_active = '';
 
 		/* since config is written before this file invoked we don't need to read post data */
-		if($upnp_config['enable'] && $upnp_config['iface_array'])
+		if($upnp_config['enable'] && !empty($upnp_config['iface_array'])) {
 			$iface_array = explode(',', $upnp_config['iface_array']);
 
-		if($iface_array) {
 			foreach($iface_array as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);
 				/* above function returns iface if fail */
 				if($if!=$iface) {
 					$addr = find_interface_ip($if);
-					/* non enabled interfaces are displayed in list on miniupnpd settings page */
 					/* check that the interface has an ip address before adding parameters */
-					if($addr) {
+					if (is_ipaddr($addr)) {
 						$config_text .= "listening_ip={$addr}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;
-						} else {
+						} else
 							$ifaces_active .= ", {$iface}";
-						}
-					} else {
+					} else
 						upnp_warn("Interface {$iface} has no ip address, ignoring");
-					}
-				} else {
+				} else
 					upnp_warn("Could not resolve real interface for {$iface}");
-				}
 			}
 
-			if($ifaces_active) {
+			if (!empty($ifaces_active)) {
 				/* override wan ip address, common for carp, etc */
 				if($upnp_config['overridewanip'])
 					$config_text .= "ext_ip={$upnp_config['overridewanip']}\n";
@@ -224,25 +219,23 @@
 					upnp_action('start');	
 				}
 				/* or restart miniupnpd if settings were changed */
-				elseif($_POST['iface_array']) {
+				else {
 					upnp_notice("Restarting service on interface: {$ifaces_active}");
 					upnp_action('restart');
 				}
 			}
-		}
-
-		if(!$iface_array || !$ifaces_active) {
-			/* no parameters user does not want miniupnpd running */
+		} else {
+			/* user does not want miniupnpd running */
 			/* lets stop the service and remove the rc file */
 
-			if(file_exists($config_file)) {
+			if (file_exists($config_file)) {
 				if(!$upnp_config['enable'])
 					upnp_notice('Stopping service: miniupnpd disabled');
 				else
 					upnp_notice('Stopping service: no interfaces selected');				
 
 				upnp_action('stop');
-				unlink($config_file);
+				@unlink($config_file);
 			}
 		}
 	}

@@ -2306,4 +2306,11 @@ function upgrade_075_to_076() {
 	$config['cron']['item'][] = $cron_item;
 }
 
+function upgrade_076_to_077() {
+	global $config;
+	foreach($config['filter']['rule'] as & $rule) {
+		$rule['protocol'] = strtolower($rule['protocol']);
+	}
+}
+
 ?>

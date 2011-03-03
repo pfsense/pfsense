@@ -848,7 +848,7 @@ include("head.inc");
 			<?=htmlspecialchars($mapent['mac']);?>
 		</td>
 		<td class="listr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
+			<?=htmlspecialchars($mapent['ipaddrv6']);?>&nbsp;
 		</td>
 		<td class="listr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['hostname']);?>&nbsp;

@@ -835,7 +835,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
 			<td valign="middle" width="17"></td>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+			<td valign="middle"><a href="services_dhcpv6_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 			</tr>
 			</table>
 			</td>
@@ -844,22 +844,22 @@ include("head.inc");
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
 			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
 		<tr>
-		<td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
+		<td class="listlr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['mac']);?>
 		</td>
-		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['hostname']);?>&nbsp;
 		</td>
-		<td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
+		<td class="listbg" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+			<td valign="middle"><a href="services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
 			<td valign="middle"><a href="services_dhcp.php?if=<?=$if;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 			</tr>
 			</table>
@@ -874,7 +874,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
 			<td valign="middle" width="17"></td>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+			<td valign="middle"><a href="services_dhcpv6_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 			</tr>
 			</table>
 		</td>

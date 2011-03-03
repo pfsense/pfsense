@@ -1631,6 +1631,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
+	$rule['protocol'] = strtolower($rule['protocol']);
 	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 		if($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);

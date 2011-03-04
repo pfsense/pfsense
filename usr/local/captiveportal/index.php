@@ -122,7 +122,7 @@ setTimeout('window.close();',5000) ;
 </HTML>
 
 EOD;
-	disconnect_client($_POST['logout_id']);
+	captiveportal_disconnect_client($_POST['logout_id']);
 	exit;
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */

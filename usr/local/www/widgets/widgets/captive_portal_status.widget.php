@@ -68,9 +68,10 @@ $concurrent = count($cpcontents);
 
 foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);
+	$sessionid = $cpent[5];
 	if ($_GET['showact'])
 		$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-	$cpdb[] = $cpent;
+	$cpdb[$sessionid] = $cpent;
 }
 
 if ($_GET['order']) {
@@ -97,7 +98,7 @@ if ($_GET['order']) {
     <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>"><?=gettext("Last activity");?></a></td>
 	<?php endif; ?>
   </tr>
-<?php foreach ($cpdb as $cpent): ?>
+<?php foreach ($cpdb as $sid => $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
@@ -107,7 +108,7 @@ if ($_GET['order']) {
     <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$sid;?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
   </tr>
 <?php endforeach; ?>
 </table>

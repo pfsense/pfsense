@@ -715,10 +715,10 @@ function captiveportal_prune_old() {
 	!isset($config['captiveportal']['radiussession_timeout']) && !isset($config['voucher']['enable']))
 		return;
 
+	$radiusservers = captiveportal_get_radius_servers();
+
 	/* read database */
 	$cpdb = captiveportal_read_db();
-
-	$radiusservers = captiveportal_get_radius_servers();
 
 	/*	To make sure we iterate over ALL accounts on every run the count($cpdb) is moved
 	 *	outside of the loop. Otherwise the loop would evaluate count() on every iteration
@@ -783,7 +783,7 @@ function captiveportal_prune_old() {
 		if ($timedout) {
 			captiveportal_disconnect($cpdb[$i], $radiusservers,$term_cause,$stop_time);
 			captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "TIMEOUT");
-			$unsetindexes[$i] = $i;
+			$unsetindexes[] = $cpdb[$i][5];
 		}
 
 		/* do periodic RADIUS reauthentication? */
@@ -831,17 +831,14 @@ function captiveportal_prune_old() {
 				if ($auth_list['auth_val'] == 3) {
 					captiveportal_disconnect($cpdb[$i], $radiusservers, 17);
 					captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
-					$unsetindexes[$i] = $i;
+					$unsetindexes[] = $cpdb[$i][5];
 				}
 			}
 		}
 	}
-	/* This is a kludge to overcome some php weirdness */
-	foreach($unsetindexes as $unsetindex)
-	unset($cpdb[$unsetindex]);
 
 	/* write database */
-	captiveportal_write_db($cpdb);
+	captiveportal_write_db($cpdb, false, $unsetindexes);
 }
 
 /* remove a single client according to the DB entry */
@@ -885,26 +882,29 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 
 }
 
-/* remove a single client by ipfw rule number */
-function captiveportal_disconnect_client($id,$term_cause = 1) {
+/* remove a single client by sessionid */
+function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutReason = "LOGOUT") {
 	global $g, $config;
 
-	/* read database */
-	$cpdb = captiveportal_read_db();
 	$radiusservers = captiveportal_get_radius_servers();
+	$unsetindex = array();
+
+	$cpdblck = lock('captiveportaldb', LOCK_EX);
+
+	/* read database */
+	$cpdb = captiveportal_read_db(true);
 
 	/* find entry */
-	foreach ($cpdb as $i => $cpentry) {
-		if ($cpentry[1] == $id) {
-			captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
-			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
-			unset($cpdb[$i]);
-			break;
-		}
-	}		
+	if (isset($cpdb[$sessionid])) {
+		$cpentry = $cpdb[$sessionid];
+		/* write database */
+		$unsetindex[] = $sessionid;
+		captiveportal_write_db($cpdb, true, $unsetindex);
+		unlock($cpdblck);
 
-	/* write database */
-	captiveportal_write_db($cpdb);
+		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
+	}		
 }
 
 /* send RADIUS acct stop for all current clients */
@@ -1261,38 +1261,51 @@ function radius($username,$password,$clientip,$clientmac,$type) {
 }
 
 /* read captive portal DB into array */
-function captiveportal_read_db() {
-		global $g;
+function captiveportal_read_db($locked = false) {
+	global $g;
 
-		$cpdb = array();
+	$cpdb = array();
 
+	if ($locked == false)
 		$cpdblck = lock('captiveportaldb');
-		$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "r");
-		if ($fd) {
-			while (!feof($fd)) {
-				$line = trim(fgets($fd));
-				if ($line) 
-						$cpdb[] = explode(",", $line);
+	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "r");
+	if ($fd) {
+		while (!feof($fd)) {
+			$line = trim(fgets($fd));
+			if ($line) {
+				$cpe = explode(",", $line);
+				/* Hash by session id */
+				$cpdb[$cpe[5]] = $cpe;
 			}
-			fclose($fd);
 		}
+		fclose($fd);
+	}
+	if ($locked == false)
 		unlock($cpdblck);
-		return $cpdb;
+	return $cpdb;
 }
 
 /* write captive portal DB */
-function captiveportal_write_db($cpdb) {
-		global $g;
+function captiveportal_write_db($cpdb, $locked = false, $remove = array()) {
+	global $g;
 
+	if ($locked == false)
 		$cpdblck = lock('captiveportaldb', LOCK_EX);
-		$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
-		if ($fd) {
-			foreach ($cpdb as $cpent) {
-					fwrite($fd, join(",", $cpent) . "\n");
-			}
-			fclose($fd);
+
+	if (!empty($remove)) {
+		$cpdb = captiveportal_read_db(true);
+		foreach ($remove as $key => $entr)
+			unset($cpdb[$key]);
+	}
+	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
+	if ($fd) {
+		foreach ($cpdb as $cpent) {
+			fwrite($fd, join(",", $cpent) . "\n");
 		}
-	unlock($cpdblck);
+		fclose($fd);
+	}
+	if ($locked == false)
+		unlock($cpdblck);
 }
 
 function captiveportal_write_elements() {
@@ -1609,10 +1622,15 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	if (!is_array($attributes))
 		$attributes = array();
 
-	/* read in client database */
-	$cpdb = captiveportal_read_db();
-
 	$radiusservers = captiveportal_get_radius_servers();
+
+	/* Do not allow concurrent login execution. */
+	$cpdblck = lock('captiveportaldb', LOCK_EX);
+
+	unset($sessionid);
+
+	/* read in client database */
+	$cpdb = captiveportal_read_db(true);
 
 	if ($attributes['voucher'])
 		$remaining_time = $attributes['session_timeout'];
@@ -1654,33 +1672,32 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		}
 	}
 
-	$nousers = count($cpdb);
-	for ($i = 0; $i < $nousers; $i++) {
+	foreach ($cpdb as $sid => $cpentry) {
 		/* on the same ip */
-		if($cpdb[$i][2] == $clientip) {
-			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
-			$sessionid = $cpdb[$i][5];
+		if($cpentry[2] == $clientip) {
+			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
+			$sessionid = $sid;
 			break;
 		}
-		elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpdb[$i][4] == $username)) {
+		elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpentry[4] == $username)) {
 			// user logged in with an active voucher. Check for how long and calculate 
 			// how much time we can give him (voucher credit - used time)
-			$remaining_time = $cpdb[$i][0] + $cpdb[$i][7] - time();
+			$remaining_time = $cpentry[0] + $cpentry[7] - time();
 			if ($remaining_time < 0)    // just in case. 
 				$remaining_time = 0;
 
 			/* This user was already logged in so we disconnect the old one */
-			captiveportal_disconnect($cpdb[$i],$radiusservers,13);
-			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
-			unset($cpdb[$i]);
+			captiveportal_disconnect($cpentry,$radiusservers,13);
+			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
+			unset($cpdb[$sessionid]);
 			break;
 		}
 		elseif ((isset($config['captiveportal']['noconcurrentlogins'])) && ($username != 'unauthenticated')) {
 			/* on the same username */
-			if (strcasecmp($cpdb[$i][4], $username) == 0) {
+			if (strcasecmp($cpentry[4], $username) == 0) {
 				/* This user was already logged in so we disconnect the old one */
-				captiveportal_disconnect($cpdb[$i],$radiusservers,13);
-				captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
+				captiveportal_disconnect($cpentry,$radiusservers,13);
+				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 				unset($cpdb[$i]);
 				break;
 			}
@@ -1717,6 +1734,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			if (!is_array($config['captiveportal']['passthrumac']))
 				$config['captiveportal']['passthrumac'] = array();
 			$config['captiveportal']['passthrumac'][] = $mac;
+			unlock($cpdblck);
 			$macrules = captiveportal_passthrumac_configure_entry($mac);
 			file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
@@ -1761,17 +1779,19 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$cpdb[] = array(time(), $ruleno, $clientip, $clientmac, $username, $sessionid, $bpassword,
 				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time']);
 
+			/* rewrite information to database */
+			captiveportal_write_db($cpdb, true);
+			unlock($cpdblck);
+
 			if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
 				$acct_val = RADIUS_ACCOUNTING_START($ruleno,
                                 		$username, $sessionid, $radiusservers, $clientip, $clientmac);
 				if ($acct_val == 1)
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}
-
-			/* rewrite information to database */
-			captiveportal_write_db($cpdb);
 		}
-	}
+	} else
+		unlock($cpdblck);
 
 	if ($writecfg == true)
 		write_config();
@@ -1811,33 +1831,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	return $sessionid;
 }
 
-
-
-/* remove a single client by session ID
- *  by Dinesh Nair
- */
-function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1) {
-    global $g, $config;
-
-    /* read database */
-    $cpdb = captiveportal_read_db();
-
-    $radiusservers = captiveportal_get_radius_servers();
-
-    /* find entry */
-    $dbcount = count($cpdb);
-    for ($i = 0; $i < $dbcount; $i++) {
-        if ($cpdb[$i][5] == $sessionid) {
-            captiveportal_disconnect($cpdb[$i],$radiusservers, $term_cause);
-            captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],$logoutReason);
-            unset($cpdb[$i]);
-            break;
-        }
-    }
-
-    /* write database */
-    captiveportal_write_db($cpdb);
-}
 
 /*
  * Used for when pass-through credits are enabled.

@@ -1294,7 +1294,7 @@ function captiveportal_write_db($cpdb, $locked = false, $remove = array()) {
 
 	if (!empty($remove)) {
 		$cpdb = captiveportal_read_db(true);
-		foreach ($remove as $key => $entr)
+		foreach ($remove as $key)
 			unset($cpdb[$key]);
 	}
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");

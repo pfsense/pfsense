@@ -2309,7 +2309,8 @@ function upgrade_075_to_076() {
 function upgrade_076_to_077() {
 	global $config;
 	foreach($config['filter']['rule'] as & $rule) {
-		$rule['protocol'] = strtolower($rule['protocol']);
+		if (isset($rule['protocol']) && !empty($rule['protocol']))
+			$rule['protocol'] = strtolower($rule['protocol']);
 	}
 }
 

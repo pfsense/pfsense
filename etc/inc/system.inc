@@ -355,7 +355,7 @@ function system_routing_configure($interface = "") {
 				if (!empty($interfacegwv6)) {
 					$defaultifv6 = get_real_interface($gateway['interface']);
 					if ($defaultifv6)
-						@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgwv6", $gatewayipv6);
+						@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gatewayipv6);
 				}
 				$foundgwv6 = true;
 				break;
@@ -373,7 +373,7 @@ function system_routing_configure($interface = "") {
 		$interfacegwv6 = "wan";
 		$gatewayipv6 = get_interface_gateway_v6("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");
-	}	
+	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd']) {
@@ -422,7 +422,7 @@ function system_routing_configure($interface = "") {
 	}
 
 	if ($dont_add_route == false ) {
-		if (!empty($interface) && $interface != $interfacegw)
+		if (!empty($interface) && $interface != $interfacegwv6)
 			;
 		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
 			$action = "add";

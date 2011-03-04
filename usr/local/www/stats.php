@@ -28,6 +28,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-cpuutilization
+##|*NAME=Diagnostics: CPU Utilization page
+##|*DESCR=Allow access to the 'Diagnostics: CPU Utilization' page.
+##|*MATCH=stats.php*
+##|-PRIV
+
 require("includes/functions.inc.php");
 
 $cpu = cpu_usage();

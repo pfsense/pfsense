@@ -325,6 +325,12 @@ $priv_list['page-status-systemlogs-ppp']['match'] = array();
 $priv_list['page-status-systemlogs-ppp']['match'][] = "diag_logs_ppp.php*";
 
 $priv_list['page-diagnostics-nanobsd'] = array();
+$priv_list['page-diagnostics-nanobsd']['name'] = "WebCfg - Diagnostics: Edit file";
+$priv_list['page-diagnostics-nanobsd']['descr'] = "Allow access to the 'Diagnostics: Edit File' page.";
+$priv_list['page-diagnostics-nanobsd']['match'] = array();
+$priv_list['page-diagnostics-nanobsd']['match'][] = "edit.php*";
+
+$priv_list['page-diagnostics-nanobsd'] = array();
 $priv_list['page-diagnostics-nanobsd']['name'] = "WebCfg - Diagnostics: NanoBSD";
 $priv_list['page-diagnostics-nanobsd']['descr'] = "Allow access to the 'Diagnostics: NanoBSD' page.";
 $priv_list['page-diagnostics-nanobsd']['match'] = array();
@@ -341,6 +347,12 @@ $priv_list['page-diagnostics-cpuutilization']['name'] = "WebCfg - Diagnostics: C
 $priv_list['page-diagnostics-cpuutilization']['descr'] = "Allow access to the 'Diagnostics: CPU Utilization' page.";
 $priv_list['page-diagnostics-cpuutilization']['match'] = array();
 $priv_list['page-diagnostics-cpuutilization']['match'][] = "graph_cpu.php*";
+
+$priv_list['page-diagnostics-cpuutilization'] = array();
+$priv_list['page-diagnostics-cpuutilization']['name'] = "WebCfg - XMLRPC CPU Utilization page";
+$priv_list['page-diagnostics-cpuutilization']['descr'] = "Allow access to the 'XMLRPC CPU Utilization' page.";
+$priv_list['page-diagnostics-cpuutilization']['match'] = array();
+$priv_list['page-diagnostics-cpuutilization']['match'][] = "stats.php*";
 
 $priv_list['page-diagnostics-haltsystem'] = array();
 $priv_list['page-diagnostics-haltsystem']['name'] = "WebCfg - Diagnostics: Halt system page";

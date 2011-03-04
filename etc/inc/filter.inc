@@ -1760,7 +1760,7 @@ function filter_generate_user_rule($rule) {
 			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
-	if(isset($rule['protocol'])) {
+	if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 		if($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
 		elseif($rule['protocol'] == "icmp")

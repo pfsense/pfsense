@@ -735,7 +735,10 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 	if (isset($gre['link1']) && $gre['link1'])
 		mwexec("/sbin/route add {$gre['tunnel-remote-addr']}/{$gre['tunnel-remote-net']} {$gre['tunnel-local-addr']}");
-	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
+	if(is_ipaddrv4($gre['tunnel-remote-addr']))
+		file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
+	if(is_ipaddrv6($gre['tunnel-remote-addr']))
+		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr']);
 
 	return $greif;
 }
@@ -794,7 +797,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 
 	/* XXX: Needed?! Let them use the defined gateways instead */
 	//mwexec("/sbin/route add {$gif['tunnel-remote-addr']}/{$gif['tunnel-remote-net']} -iface {$gifif}");
-	file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
+
+	if(is_ipaddrv4($gif['tunnel-remote-addr']))
+		file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
+	if(is_ipaddrv6($gif['tunnel-remote-addr']))
+		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6", $gif['tunnel-remote-addr']);
 
 	return $gifif;
 }

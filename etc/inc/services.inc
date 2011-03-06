@@ -693,7 +693,13 @@ EOD;
 			}
 		}
 
-		$dhcpdv6ifs[] = get_real_interface($dhcpv6if);
+		
+		$realif = escapeshellcmd(get_real_interface($dhcpv6if));
+		$dhcpdv6ifs[] = $realif;
+		/* Create link local address for bridges */
+		if(stristr("$realif", "bridge")) {
+			mwexec("$ifconfig {$realif} inet6 fe80::/64 eui64");
+		}
 	}
 
 	fwrite($fd, $dhcpdconf);

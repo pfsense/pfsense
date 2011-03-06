@@ -28,7 +28,15 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("includes/functions.inc.php");
+##|+PRIV
+##|*IDENT=page-diagnostics-cpuutilization
+##|*NAME=Diagnostics: CPU Utilization page
+##|*DESCR=Allow access to the 'Diagnostics: CPU Utilization' page.
+##|*MATCH=stats.php*
+##|-PRIV
+
+require_once("guiconfig.inc");
+require_once("includes/functions.inc.php");
 
 $cpu = cpu_usage();
 

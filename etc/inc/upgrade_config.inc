@@ -2386,6 +2386,10 @@ function upgrade_076_to_077() {
 	enable_rrd_graphing();
 	if ($g['booting'])
 		echo "Updating configuration...";
+	foreach($config['filter']['rule'] as & $rule) {
+		if (isset($rule['protocol']) && !empty($rule['protocol']))
+			$rule['protocol'] = strtolower($rule['protocol']);
+	}
 }
 
 ?>

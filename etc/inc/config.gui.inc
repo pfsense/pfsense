@@ -41,10 +41,6 @@
 	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
-/*
- * XXX: Hack around the cvs syntax checks. 
- * DISABLE_PHP_LINT_CHECKING
- */
 
 require_once("globals.inc");
 

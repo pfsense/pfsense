@@ -1152,6 +1152,8 @@ function squash_from_bytes($size, $round = "") {
 
 function pkg_reinstall_all() {
 	global $g, $config;
+
+	@unlink('/conf/needs_package_sync');
 	$pkg_id = 0;
 	$todo = array();
 	if (is_array($config['installedpackages']['package']))

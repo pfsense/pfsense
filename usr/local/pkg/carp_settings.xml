@@ -99,6 +99,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize Certificates</fielddescr>
+			<fieldname>synchronizecerts</fieldname>
+			<description>When this option is enabled, this system will automatically sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Synchronize rules</fielddescr>
 			<fieldname>synchronizerules</fieldname>
 			<description>When this option is enabled, this system will automatically sync the firewall rules to the other CARP host when changes are made..</description>
@@ -131,7 +137,7 @@
 		<field>
 			<fielddescr>Synchronize OpenVPN</fielddescr>
 			<fieldname>synchronizeopenvpn</fieldname>
-			<description>When this option is enabled, this system will automatically sync the OpenVPN configuration to the other CARP host when changes are made.</description>
+			<description>When this option is enabled, this system will automatically sync the OpenVPN configuration to the other CARP host when changes are made. Using this option implies "Synchronize Certificates" as they are required for OpenVPN.</description>
 			<type>checkbox</type>
 		</field>
 		<field>

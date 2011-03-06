@@ -1700,6 +1700,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
+	$rule['protocol'] = strtolower($rule['protocol']);
 	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 		if($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);
@@ -1850,7 +1851,7 @@ function filter_generate_user_rule($rule) {
 			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
-	if(isset($rule['protocol'])) {
+	if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 		if($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
 		elseif(($rule['protocol'] == "icmp") && ($rule['ipprotocol'] == "inet6"))

@@ -903,21 +903,21 @@ EOD;
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 
-			/* start filterdns, if necessary */
-			if (count($filterdns_list) > 0) {
-				$interval = 60;
-				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
-					$interval = $ipseccfg['dns-interval'];
+		}
+		/* start filterdns, if necessary */
+		if (count($filterdns_list) > 0) {
+			$interval = 60;
+			if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
+				$interval = $ipseccfg['dns-interval'];
 
-				$hostnames = "";
-				array_unique($filterdns_list);
-				foreach ($filterdns_list as $hostname)
-					$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
-				file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
+			$hostnames = "";
+			array_unique($filterdns_list);
+			foreach ($filterdns_list as $hostname)
+				$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+			file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
-				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
-				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
-			}
+			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
 		}
 	
 		vpn_ipsec_failover_configure();

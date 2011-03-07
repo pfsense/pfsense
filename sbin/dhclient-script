@@ -189,7 +189,7 @@ add_new_routes() {
 	if [ -f "/tmp/${interface}_defaultgw" -o $EXISTSGW -eq 0 ]; then
 		$ROUTE delete default
 		for router in $new_routers; do
-			if [ "$new_ip_address" = "$router" ]; then
+			if [ "$new_ip_address" = "$router" -o "$router" = "255.255.255.255" ]; then
 				$ROUTE add default -iface $interface
 				echo $ROUTE add default -iface $interface | $LOGGER
 				echo $router > /tmp/${interface}_router

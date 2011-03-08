@@ -726,37 +726,36 @@ function captiveportal_prune_old() {
 	 *	had a chance to iterate over all accounts.
 	 */
 	$unsetindexes = array();
-	$no_users = count($cpdb);
-	for ($i = 0; $i < $no_users; $i++) {
+	foreach ($cpdb as $cpentry) {
 
 		$timedout = false;
 		$term_cause = 1;
 
 		/* hard timeout? */
 		if ($timeout) {
-			if ((time() - $cpdb[$i][0]) >= $timeout) {
+			if ((time() - $cpentry[0]) >= $timeout) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 			}
 		}
 
 		/* Session-Terminate-Time */
-		if (!$timedout && !empty($cpdb[$i][9])) {
-			if (time() >= $cpdb[$i][9]) {
+		if (!$timedout && !empty($cpentry[9])) {
+			if (time() >= $cpentry[9]) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 			}
 		}
 
 		/* check if the radius idle_timeout attribute has been set and if its set change the idletimeout to this value */
-		$uidletimeout = (is_numeric($cpdb[$i][8])) ? $cpdb[$i][8] : $idletimeout;
+		$uidletimeout = (is_numeric($cpentry[8])) ? $cpentry[8] : $idletimeout;
 		/* if an idle timeout is specified, get last activity timestamp from ipfw */
 		if (!$timedout && $uidletimeout) {
-			$lastact = captiveportal_get_last_activity($cpdb[$i][2]);
+			$lastact = captiveportal_get_last_activity($cpentry[2]);
 			/*	If the user has logged on but not sent any traffic they will never be logged out.
 			 *	We "fix" this by setting lastact to the login timestamp. 
 			 */
-			$lastact = $lastact ? $lastact : $cpdb[$i][0];
+			$lastact = $lastact ? $lastact : $cpentry[0];
 			if ($lastact && ((time() - $lastact) >= $uidletimeout)) {
 				$timedout = true;
 				$term_cause = 4; // Idle-Timeout
@@ -765,25 +764,25 @@ function captiveportal_prune_old() {
 		}
 
 		/* if vouchers are configured, activate session timeouts */
-		if (!$timedout && isset($config['voucher']['enable']) && !empty($cpdb[$i][7])) {
-			if (time() >= ($cpdb[$i][0] + $cpdb[$i][7])) {
+		if (!$timedout && isset($config['voucher']['enable']) && !empty($cpentry[7])) {
+			if (time() >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 			}
 		}
 
 		/* if radius session_timeout is enabled and the session_timeout is not null, then check if the user should be logged out */
-		if (!$timedout && isset($config['captiveportal']['radiussession_timeout']) && !empty($cpdb[$i][7])) {
-			if (time() >= ($cpdb[$i][0] + $cpdb[$i][7])) {
+		if (!$timedout && isset($config['captiveportal']['radiussession_timeout']) && !empty($cpentry[7])) {
+			if (time() >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
 			}
 		}
 
 		if ($timedout) {
-			captiveportal_disconnect($cpdb[$i], $radiusservers,$term_cause,$stop_time);
-			captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "TIMEOUT");
-			$unsetindexes[] = $cpdb[$i][5];
+			captiveportal_disconnect($cpentry, $radiusservers,$term_cause,$stop_time);
+			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "TIMEOUT");
+			$unsetindexes[] = $cpentry[5];
 		}
 
 		/* do periodic RADIUS reauthentication? */
@@ -791,30 +790,30 @@ function captiveportal_prune_old() {
 			if (isset($config['captiveportal']['radacct_enable'])) {
 				if ($config['captiveportal']['reauthenticateacct'] == "stopstart") {
 					/* stop and restart accounting */
-					RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
-						$cpdb[$i][4], // username
-						$cpdb[$i][5], // sessionid
-						$cpdb[$i][0], // start time
+					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[5], // sessionid
+						$cpentry[0], // start time
 						$radiusservers,
-						$cpdb[$i][2], // clientip
-						$cpdb[$i][3], // clientmac
+						$cpentry[2], // clientip
+						$cpentry[3], // clientmac
 						10); // NAS Request
-					exec("/sbin/ipfw table 1 entryzerostats {$cpdb[$i][2]}");
-					exec("/sbin/ipfw table 2 entryzerostats {$cpdb[$i][2]}");
-					RADIUS_ACCOUNTING_START($cpdb[$i][1], // ruleno
-						$cpdb[$i][4], // username
-						$cpdb[$i][5], // sessionid
+					exec("/sbin/ipfw table 1 entryzerostats {$cpentry[2]}");
+					exec("/sbin/ipfw table 2 entryzerostats {$cpentry[2]}");
+					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[5], // sessionid
 						$radiusservers,
-						$cpdb[$i][2], // clientip
-						$cpdb[$i][3]); // clientmac
+						$cpentry[2], // clientip
+						$cpentry[3]); // clientmac
 				} else if ($config['captiveportal']['reauthenticateacct'] == "interimupdate") {
-					RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
-						$cpdb[$i][4], // username
-						$cpdb[$i][5], // sessionid
-						$cpdb[$i][0], // start time
+					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[5], // sessionid
+						$cpentry[0], // start time
 						$radiusservers,
-						$cpdb[$i][2], // clientip
-						$cpdb[$i][3], // clientmac
+						$cpentry[2], // clientip
+						$cpentry[3], // clientmac
 						10, // NAS Request
 						true); // Interim Updates
 				}
@@ -822,16 +821,16 @@ function captiveportal_prune_old() {
 
 			/* check this user against RADIUS again */
 			if (isset($config['captiveportal']['reauthenticate'])) {
-				$auth_list = RADIUS_AUTHENTICATION($cpdb[$i][4], // username
-					base64_decode($cpdb[$i][6]), // password
+				$auth_list = RADIUS_AUTHENTICATION($cpentry[4], // username
+					base64_decode($cpentry[6]), // password
 					$radiusservers,
-					$cpdb[$i][2], // clientip
-					$cpdb[$i][3], // clientmac
-					$cpdb[$i][1]); // ruleno
+					$cpentry[2], // clientip
+					$cpentry[3], // clientmac
+					$cpentry[1]); // ruleno
 				if ($auth_list['auth_val'] == 3) {
-					captiveportal_disconnect($cpdb[$i], $radiusservers, 17);
-					captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
-					$unsetindexes[] = $cpdb[$i][5];
+					captiveportal_disconnect($cpentry, $radiusservers, 17);
+					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
+					$unsetindexes[] = $cpentry[5];
 				}
 			}
 		}

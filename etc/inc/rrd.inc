@@ -332,8 +332,16 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
+<<<<<<< HEAD
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
 			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In6\/Pass|Out6\/Pass|In4\/Block|Out4\/Block|In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+=======
+			$rrdupdatesh .= "unset PACKETS \n";
+			$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
+			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\$PACKETS\n";
+			$rrdupdatesh .= "rm \$TMPFILE \n";
+>>>>>>> upstream/master
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {

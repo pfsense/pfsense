@@ -386,7 +386,7 @@ function login_banner_change() {
 										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a vitual IP address to clients"); ?><br>
+										<?=gettext("Provide a virtual IP address to clients"); ?><br>
 									</td>
 								</tr>
 							</table>

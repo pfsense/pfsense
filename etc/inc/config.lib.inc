@@ -311,23 +311,23 @@ function conf_mount_rw() {
 	if (refcount_reference(1000) > 1)
 		return;
 
-	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])
 			echo "Disk is dirty.  Running fsck -y\n";
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
          */
-	$status = mwexec("/sbin/mount -u -w /");
+	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	/* we could not mount this correctly.  kick off fsck */
 	if($status <> 0) {
 		log_error("File system is dirty.  Launching FSCK for /");
 		mwexec("/sbin/fsck -y /");
-		$status = mwexec("/sbin/mount -u -w /");
+		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
 	
 	mark_subsystem_dirty('mount');
@@ -355,8 +355,8 @@ function conf_mount_ro() {
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
 	pfSense_sync();
-	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
-	mwexec("/sbin/mount -u -r -f /");
+	mwexec("/sbin/mount -u -r -f -o sync,noatime {$g['cf_path']}");
+	mwexec("/sbin/mount -u -r -f -o sync,noatime /");
 }
 
 /****f* config/convert_config

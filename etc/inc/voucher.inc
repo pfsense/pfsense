@@ -100,11 +100,11 @@ EOF;
 function voucher_auth($voucher_received, $test = 0) {
     global $g, $config;
 
-    $voucherlck = lock('voucher');
+    $voucherlck = lock('voucher', LOCK_EX);
 
 	// XMLRPC Call over to the master Voucher node
 	$a_voucher = &$config['voucher'];
-	if($a_voucher['vouchersyncdbip']) {
+	if(!empty($a_voucher['vouchersyncdbip'])) {
 		$syncip   = $a_voucher['vouchersyncdbip'];
 		$syncport = $a_voucher['vouchersyncport'];
 		$syncpass = $a_voucher['vouchersyncpass'];
@@ -154,10 +154,10 @@ function voucher_auth($voucher_received, $test = 0) {
                 if (!isset($active_vouchers[$roll]))
                     $active_vouchers[$roll] = voucher_read_active_db($roll);
                 // valid voucher. Store roll# and ticket#
-                if ($line = $active_vouchers[$roll][$voucher]) {
-                    list($timestamp,$minutes) = explode(",", $line);
+                if (!empty($active_vouchers[$roll][$voucher])) {
+                    list($timestamp,$minutes) = explode(",", $active_vouchers[$roll][$voucher]);
                     // we have an already active voucher here.
-                    $remaining = intval((($timestamp + 60*$minutes) - time())/60);
+                    $remaining = intval((($timestamp + (60*$minutes)) - time())/60);
                     $test_result[] = "$voucher ($roll/$nr) active and good for $remaining Minutes";
                     $total_minutes += $remaining;
                 } else {
@@ -215,7 +215,7 @@ function voucher_auth($voucher_received, $test = 0) {
     }
 
 	// If we did a XMLRPC sync earlier check the timeleft
-	if($a_voucher['vouchersyncdbip']) 
+	if(!empty($a_voucher['vouchersyncdbip'])) 
 		if($remote_time_used['timeleft'] < $total_minutes) 
 			$total_minutes = $remote_time_used['timeleft'];
 
@@ -238,8 +238,8 @@ function voucher_auth($voucher_received, $test = 0) {
     // log in later using just the first voucher. It also keeps username limited
     // to one voucher and that voucher shows the correct time credit in 'active vouchers'
 
-    if ($line = $active_vouchers[$first_voucher_roll][$first_voucher]) {
-        list($timestamp, $minutes) = explode(",", $line);
+    if (!empty($active_vouchers[$first_voucher_roll][$first_voucher])) {
+        list($timestamp, $minutes) = explode(",", $active_vouchers[$first_voucher_roll][$first_voucher]);
     } else {
         $timestamp = time();    // new voucher
         $minutes = $total_minutes;
@@ -298,13 +298,13 @@ function voucher_configure() {
         fwrite($fd, "{$config['voucher']['rollbits']},{$config['voucher']['ticketbits']},{$config['voucher']['checksumbits']},{$config['voucher']['magic']},{$config['voucher']['charset']}\n");
         fclose($fd);
         @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
-		unlock($voucherlck);
+	unlock($voucherlck);
 
         if ($g['booting'] && is_array($config['voucher']['roll'])) {
 
             // create active and used DB per roll on ramdisk from config
             $a_roll = &$config['voucher']['roll'];
-			$voucherlck = lock('voucher');
+		$voucherlck = lock('voucher', LOCK_EX);
 
             foreach ($a_roll as $rollent) {
 
@@ -325,8 +325,8 @@ function voucher_configure() {
                 }
                 voucher_write_active_db($roll, $active_vouchers);
             }
-		
-			unlock($voucherlck);
+
+		unlock($voucherlck);
             echo "done\n";
         }
 
@@ -363,7 +363,7 @@ function voucher_read_active_db($roll) {
 				$line = trim(fgets($fd));
 				if ($line) {
 					list($voucher,$timestamp,$minutes) = explode(",", $line); // voucher,timestamp
-					if ((($timestamp + 60*$minutes) - time()) > 0)
+					if ((($timestamp + (60*$minutes)) - time()) > 0)
 						$active[$voucher] = "$timestamp,$minutes";
 					else
 						$dirty=1;

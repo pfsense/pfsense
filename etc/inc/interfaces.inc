@@ -3666,7 +3666,7 @@ function is_altq_capable($int) {
          * Only the following drivers have ALTQ support
          */
 	$capable = array("age", "alc", "ale", "an", "ath", "aue", "awi", "bce",
-			"bfe", "bge", "bridge", "dc", "de", "ed", "em", "ep", "fxp", "gem",
+			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "fxp", "gem",
 			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",

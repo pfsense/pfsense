@@ -104,7 +104,7 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	// XMLRPC Call over to the master Voucher node
 	$a_voucher = &$config['voucher'];
-	if($a_voucher['vouchersyncdbip']) {
+	if(!empty($a_voucher['vouchersyncdbip'])) {
 		$syncip   = $a_voucher['vouchersyncdbip'];
 		$syncport = $a_voucher['vouchersyncport'];
 		$syncpass = $a_voucher['vouchersyncpass'];
@@ -215,7 +215,7 @@ function voucher_auth($voucher_received, $test = 0) {
     }
 
 	// If we did a XMLRPC sync earlier check the timeleft
-	if($a_voucher['vouchersyncdbip']) 
+	if(!empty($a_voucher['vouchersyncdbip'])) 
 		if($remote_time_used['timeleft'] < $total_minutes) 
 			$total_minutes = $remote_time_used['timeleft'];
 

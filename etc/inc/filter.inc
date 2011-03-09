@@ -1540,6 +1540,16 @@ function filter_nat_rules_generate() {
 		else
 			sigkillbypid("/var/run/inetd.pid", "HUP");
 	}
+
+	if (isset($config['pptpd']['mode']) && ($config['pptpd']['mode'] != "off")) {
+		if ($config['pptpd']['mode'] == "redir") {
+			$pptpdtarget = $config['pptpd']['redir'];
+			$natrules .= "# PPTP\n";
+			$natrules .= "rdr on \$WAN proto gre from any to any -> {$pptpdtarget}\n";
+			$natrules .= "rdr on \$WAN proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
+		}
+	}
+
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();

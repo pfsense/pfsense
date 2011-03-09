@@ -79,11 +79,12 @@ function easyrule_block_rule_exists($int = 'wan') {
 	}
 
 	/* Search through the rules for one referencing our alias */
-	foreach ($config['filter']['rule'] as $rule)
+	foreach ($config['filter']['rule'] as $rule) {
 		if (!is_array($rule) || !is_array($rule['source']))
 			continue;
 		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int))
 			return true;
+	}
 	return false;
 }
 

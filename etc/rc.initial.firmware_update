@@ -15,6 +15,25 @@ echo ".";
 
 $g['booting'] = false;
 
+if(isset($config['system']['firmware']['alturl']['enable']))
+	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
+else
+	$updater_url = $g['update_url'];
+
+$nanosize = "";
+if ($g['platform'] == "nanobsd") {
+	if (file_exists("/etc/nano_use_vga.txt"))
+		$nanosize = "-nanobsd-vga-";
+	else
+		$nanosize = "-nanobsd-";
+
+	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+	$update_filename = "latest{$nanosize}.img.gz";
+} else {
+	$update_filename = "latest.tgz";
+}
+$autoupdateurl = "{$updater_url}/{$update_filename}";
+
 $fp = fopen('php://stdin', 'r');
 
 echo ".\n\n";
@@ -37,11 +56,14 @@ switch ($command) {
 		die;
 	break;
 	case "1":
-		echo "\nEnter the URL to the .tgz or .img.gz update file:\n> ";
+		echo "\nEnter the URL to the .tgz or .img.gz update file. \nType 'auto' to use {$autoupdateurl}\n> ";
 		$url = chop(fgets($fp));
 		if(!$url) { 
 			fclose($fp);
 			die;
+		}
+		if($url == "auto") {
+			$url = $autoupdateurl;
 		}
 		$status = does_url_exist($url);
 		if($status) {

@@ -1545,8 +1545,8 @@ function filter_nat_rules_generate() {
 		if ($config['pptpd']['mode'] == "redir") {
 			$pptpdtarget = $config['pptpd']['redir'];
 			$natrules .= "# PPTP\n";
-			$natrules .= "rdr on \$WAN proto gre from any to any -> {$pptpdtarget}\n";
-			$natrules .= "rdr on \$WAN proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> {$pptpdtarget}\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
 		}
 	}
 

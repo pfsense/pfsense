@@ -114,7 +114,7 @@ function easyrule_block_rule_create($int = 'wan') {
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = "Easy Rule: Blocked from Firewall Log View";
 
-	$a_filter[] = $filterent;
+	array_splice($a_filter, 0, 0, array($filterent));
 
 	return true;
 }

@@ -346,14 +346,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "CDEF:\"$curif-bytes_t_block=$curif-bytes_in_t_block,$curif-bytes_out_t_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_in_t_pass,$curif-bytes_out_t_block,+\" ";
 
-<<<<<<< HEAD
 	$graphcmd .= "CDEF:\"$curif-bytes_t_pass6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t_block6=$curif-bytes_in6_t_block,$curif-bytes_out6_t_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_block,+\" ";
-=======
 	$graphcmd .= "VDEF:\"$curif-in_bits_95=$curif-in_bits,95,PERCENT\" ";
 	$graphcmd .= "VDEF:\"$curif-out_bits_95=$curif-out_bits,95,PERCENT\" ";
->>>>>>> upstream/master
 
 	$graphcmd .= "AREA:\"$curif-in_bits_block#{$colortrafficdown[1]}:$curif-in-block\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits_pass#{$colortrafficdown[0]}:$curif-in-pass:STACK\" ";
@@ -363,21 +360,13 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_block_neg#{$colortrafficup[1]}:$curif-out-block\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-pass:STACK\" ";
-<<<<<<< HEAD
 	$graphcmd .= "{$AREA}:\"$curif-out6_bits_block_neg#{$colortrafficup[3]}:$curif-out6-block:STACK\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out6_bits_pass_neg#{$colortrafficup[2]}:$curif-out6-pass:STACK\" ";
-	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
-	$graphcmd .= "COMMENT:\"IPv4 in-pass\t\" ";
-=======
 	$graphcmd .= "HRULE:\"$curif-in_bits_95#{$colortraffic95[1]}:$curif-in (95%)\" ";
 	$graphcmd .= "HRULE:\"$curif-out_bits_95#{$colortraffic95[0]}:$curif-out (95%)\" ";
-
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period        95th percentile\\n\" ";
-
-	$graphcmd .= "COMMENT:\"in-pass\t\" ";
->>>>>>> upstream/master
+	$graphcmd .= "COMMENT:\"IPv4 in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:LAST:%7.2lf %Sb/s\" ";

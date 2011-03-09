@@ -2513,10 +2513,37 @@ EOD;
 	$ipfrules .= <<<EOD
 anchor "tftp-proxy/*"
 
+EOD;
+
+	update_filter_reload_status("Creating uPNP rules...");
+	if(isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+
+	$ipfrules .= <<<EOD
 # uPnPd
 anchor "miniupnpd"
 
 EOD;
+	
+		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd']['config']['iface_array']);
+		foreach($upnp_interfaces as $upnp_if) {
+			if(is_array($FilterIflist[$upnp_if])) {
+				$oc = $FilterIflist[$upnp_if];
+				if($oc['ip']) {
+					$sa = $oc['sa'];
+					$sn = $oc['sn'];
+					$if = $oc['if'];
+				}
+				if($sa) {
+					$ipfrules .= <<<EOD
+
+pass in quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 flags any keep state label "pass multicast traffic to miniupnpd"
+
+EOD;
+				}
+			}
+		}
+	}
+
 
 	return $ipfrules;
 }

@@ -2308,6 +2308,14 @@ function upgrade_075_to_076() {
 
 function upgrade_076_to_077() {
 	global $config;
+	foreach($config['filter']['rule'] as & $rule) {
+	if (isset($rule['protocol']) && !empty($rule['protocol']))
+		$rule['protocol'] = strtolower($rule['protocol']);
+	}
+}
+
+function upgrade_077_to_078() {
+	global $config;
 	global $g;
 
 	/* RRD files changed for quality, traffic and packets graphs */

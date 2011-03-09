@@ -1384,6 +1384,7 @@ function filter_nat_rules_generate() {
 			}
 		}
 		$natrules .= "\n# Subnets to NAT \n";
+		$tonathosts .= "127.0.0.0/8 ";
 		if($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
 			$macroortable = "<tonatsubnets>";

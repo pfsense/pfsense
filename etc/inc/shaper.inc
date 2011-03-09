@@ -560,16 +560,16 @@ class altq_root_queue {
 	function build_javascript() {
 		$javascript = "<script type=\"text/javascript\">";
 		$javascript .= "function mySuspend() {";
-		$javascript .= "if (document.layers && document.layers['shaperarea'] != null);";
-		$javascript .= "document.layers['shaperarea'].visibility = 'hidden';";
+		$javascript .= "if (document.layers && document.layers['shaperarea'] != null) ";
+		$javascript .= "document.layers['shaperarea'].visibility = 'hidden'; ";
 		$javascript .= "else if (document.all)";
 		$javascript .= "document.all['shaperarea'].style.visibility = 'hidden';";
 		$javascript .= "}";
 
 		$javascript .= "function myResume() {";
-		$javascript .= "if (document.layers && document.layers['shaperarea'] != null)";
+		$javascript .= "if (document.layers && document.layers['shaperarea'] != null) ";
 		$javascript .= "document.layers['shaperarea'].visibility = 'visible';";
-		$javascript .= "else if (document.all)";
+		$javascript .= "else if (document.all) ";
 		$javascript .= "document.all['shaperarea'].style.visibility = 'visible';";
 		$javascript .= "}";
 		$javascript .= "</script>";
@@ -858,7 +858,7 @@ class priq_queue {
 	function build_javascript() {
 		$javascript = "<script type=\"text/javascript\">";
 		$javascript .= "function mySuspend() { \n";
-		$javascript .= "if (document.layers && document.layers['shaperarea'] != null);\n";
+		$javascript .= "if (document.layers && document.layers['shaperarea'] != null)\n";
 		$javascript .= "document.layers['shaperarea'].visibility = 'hidden';\n";
 		$javascript .= "else if (document.all)\n";
 		$javascript .= "document.all['shaperarea'].style.visibility = 'hidden';\n";

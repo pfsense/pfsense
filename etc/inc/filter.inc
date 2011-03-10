@@ -2373,7 +2373,7 @@ anchor "miniupnpd"
 
 EOD;
 	
-		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd']['config']['iface_array']);
+		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
 		foreach($upnp_interfaces as $upnp_if) {
 			if(is_array($FilterIflist[$upnp_if])) {
 				$oc = $FilterIflist[$upnp_if];

@@ -2632,16 +2632,11 @@ function filter_setup_logging_interfaces() {
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
-	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		/*
-		 * XXX: This should be cleared out after a discussion
-		 * between pf(4) devs is cleared out. This breaks
-		 * compatibility with OpenBSD.
-		 */
-		if(isset($ifcfg['virtual']))
-			continue;
+	if (isset($FilterIflist['lan']))
 		$rules .= "set loginterface {$ifcfg['if']}\n";
-	}
+	else if (isset($FilterIflist['wan']))
+		$rules .= "set loginterface {$ifcfg['if']}\n";
+
 	return $rules;
 }
 

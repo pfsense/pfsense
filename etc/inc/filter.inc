@@ -2633,9 +2633,9 @@ function filter_setup_logging_interfaces() {
 	}
 	$rules = "";
 	if (isset($FilterIflist['lan']))
-		$rules .= "set loginterface {$ifcfg['if']}\n";
+		$rules .= "set loginterface {$FilterIflist['lan']['if']}\n";
 	else if (isset($FilterIflist['wan']))
-		$rules .= "set loginterface {$ifcfg['if']}\n";
+		$rules .= "set loginterface {$FilterIflist['wan']['if']}\n";
 
 	return $rules;
 }

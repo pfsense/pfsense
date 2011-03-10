@@ -2385,7 +2385,7 @@ EOD;
 				if($sa) {
 					$ipfrules .= <<<EOD
 
-pass in quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
+pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
 				}

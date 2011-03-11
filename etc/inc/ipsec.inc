@@ -82,7 +82,8 @@ $p1_authentication_methods = array(
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
 $p2_modes = array(
-	'tunnel' => 'Tunnel',
+	'tunnel' => 'Tunnel v4',
+	'tunnel6' => 'Tunnel v6',
 	'transport' => 'Transport');
 
 $p2_protos = array(

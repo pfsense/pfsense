@@ -456,8 +456,8 @@ include("head.inc");
 			"automatically generated and only the mappings you specify on this page " .
 			"will be used. <br/><br/> " .
 			"If a target address other than a WAN-type interface's IP address is used, " .
-			"then depending on the way the WAN connection is setup, a " .
-			"need a "); ?><a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>
+			"then depending on the way the WAN connection is setup, a "); ?>
+			<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>
 			<?= gettext(" may also be required.") ?></span><br>
                     </td>
                 </tr>

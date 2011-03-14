@@ -966,10 +966,10 @@ server.network-backend 	= "writev"
 
 ## modules to load
 server.modules              =   (
-									{$captive_portal_module}
-									"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
-									{$module}{$captiveportal}
-								)
+	{$captive_portal_module}
+	"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
+	{$module}{$captiveportal}
+)
 
 ## Unused modules
 #                               "mod_setenv",
@@ -1082,9 +1082,8 @@ EOD;
 	if($captive_portal == true) {
 		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
 		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"127.0.0.1:443\" { }\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:443\" { \n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:443\" { \n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"127.0.0.1:{$lighty_port}\" { }\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:{$lighty_port}\" { \n";
 		if($cert <> "" and $key <> "") {
 			$lighty_config .= "\n";
 			$lighty_config .= "## ssl configuration\n";
@@ -1097,8 +1096,8 @@ EOD;
 	} else {
 		$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
 		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:443\" { }\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:443\" { \n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:{$lighty_port}\" { \n";
 		if($cert <> "" and $key <> "") {
 			$lighty_config .= "\n";
 			$lighty_config .= "## ssl configuration\n";

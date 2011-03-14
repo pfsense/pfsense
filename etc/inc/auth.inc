@@ -57,14 +57,21 @@ $security_passed = true;
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
+
 	if(strstr($_SERVER['HTTP_HOST'], ":")) {
 		$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
-		$http_host = $http_host_port[0];
+		/* v6 address has more parts, drop the last part */
+		if(count($http_host_port) > 1) {
+			array_pop($http_host_port);
+			$http_host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
+		} else {
+			$http_host = $http_host_port[0];
+		}
 	} else {
 		$http_host = $_SERVER['HTTP_HOST'];
 	}
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-			strcasecmp($http_host, "localhost") == 0)
+			strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1")
 		$found_host = true;
 	if(strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
 			strcasecmp($http_host, $config['system']['hostname']) == 0)

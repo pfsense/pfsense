@@ -127,14 +127,21 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	if ($ph1ent['interface']) {
 		if (!is_ipaddr($ph1ent['interface'])) {
 			$if = $ph1ent['interface'];
-			$interfaceip = get_interface_ip($if);
+			if($ph1ent['protocol'] == "inet6") {
+				$interfaceip = get_interface_ipv6($if);
+			} else {
+				$interfaceip = get_interface_ip($if);
+			}
 		} else {
 			$interfaceip=$ph1ent['interface'];
 		}
-	}
-	else {
+	} else {
 		$if = "wan";
-		$interfaceip = get_interface_ip($if);
+		if($ph1ent['protocol'] == "inet6") {
+			$interfaceip = get_interface_ipv6($if);
+		} else {
+			$interfaceip = get_interface_ip($if);
+		}
 	}
 
 	return $interfaceip;

@@ -80,6 +80,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
 
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
+	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
@@ -113,6 +114,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	if($config['interfaces']['lan']) 
 		$pconfig['localnet'] = "lan";
 	$pconfig['mode'] = "aggressive";
+	$pconfig['protocol'] = "inet";
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
@@ -292,6 +294,7 @@ if ($_POST) {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
 
 		$ph1ent['mode'] = $pconfig['mode'];
+		$ph1ent['protocol'] = $pconfig['protocol'];
 
 		$ph1ent['myid_type'] = $pconfig['myid_type'];
 		$ph1ent['myid_data'] = $pconfig['myid_data'];
@@ -507,6 +510,21 @@ function dpdchkbox_change() {
 								<?=gettext("Set this option to disable this phase1 without " .
 								"removing it from the list"); ?>.
 							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Internet Protocol"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="protocol" class="formselect">
+							<?php
+								$protocols = array("inet" => "IPv4", "inet6" => "IPv6");
+								foreach ($protocols as $protocol => $name):
+							?>
+								<option value="<?=$protocol;?>" <?php if ($protocol == $pconfig['protocol']) echo "selected"; ?>>
+									<?=htmlspecialchars($name);?>
+								</option>
+							<?php endforeach; ?>
+							</select> <br> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
 						</td>
 					</tr>
 					<tr>

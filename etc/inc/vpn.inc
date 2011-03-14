@@ -142,7 +142,7 @@ function vpn_ipsec_configure($ipchg = false)
 					continue;
 
 				$ep = ipsec_get_phase1_src($ph1ent);
-				if (!$ep)
+				if (!is_ipaddr($ep))
 					continue;
 
 				if(!in_array($ep,$ipmap))
@@ -186,16 +186,30 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ph2ent['pinghost']) {
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
-							$interface_ip = get_interface_ip($ifent);
-							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-							if (ip_in_subnet($interface_ip, $local_subnet)) {
-								$srcip = $interface_ip;
-								break;
+							if(is_ipaddrv6($ph1ent['src'])) {
+								$interface_ip = get_interface_ipv6($ifent);
+								$local_subnetv6 = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+								if (ip_in_subnetv6($interface_ip, $local_subnet)) {
+									$srcip = $interface_ip;
+									break;
+								}
+							} else {
+								$interface_ip = get_interface_ip($ifent);
+								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+								if (ip_in_subnet($interface_ip, $local_subnet)) {
+									$srcip = $interface_ip;
+									break;
+								}
 							}
 						}
 						$dstip = $ph2ent['pinghost'];
+						if(is_ipaddrv6($srcip)) {
+							$family = "inet6";
+						} else {
+							$family = "inet";
+						}
 						if (is_ipaddr($srcip))
-							$ipsecpinghosts .= "{$srcip}|{$dstip}|3\n";
+							$ipsecpinghosts .= "{$srcip}|{$dstip}|3|{$family}\n";
 					}
 				}
 				$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "w");

@@ -153,6 +153,7 @@ $status_menu[] = array("CARP (failover)", "/carp_status.php");
 $status_menu[] = array("Dashboard", "/index.php");
 $status_menu[] = array("Gateways", "/status_gateways.php");
 $status_menu[] = array("DHCP Leases", "/status_dhcp_leases.php");
+$status_menu[] = array("DHCPv6 Leases", "/status_dhcpv6_leases.php");
 $status_menu[] = array("Filter Reload", "/status_filter_reload.php");
 $status_menu[] = array("Interfaces", "/status_interfaces.php");
 $status_menu[] = array("IPsec", "/diag_ipsec.php");

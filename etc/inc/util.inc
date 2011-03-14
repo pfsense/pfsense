@@ -1102,6 +1102,7 @@ function resolve_retry($hostname, $retries = 5) {
                return $hostname;
 
        for ($i = 0; $i < $retries; $i++) {
+		// FIXME: gethostbyname does not work for AAAA hostnames, boo, hiss
                $ip = gethostbyname($hostname);
 
                if ($ip && $ip != $hostname) {

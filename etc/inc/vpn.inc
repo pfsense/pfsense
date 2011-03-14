@@ -436,7 +436,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						case "dyn_dns":
 							$myid_type = "address";
-							$myid_data = gethostbyname($ph1ent['myid_data']);
+							$myid_data = resolve_retry($ph1ent['myid_data']);
 							break;
 
 						case "address";

@@ -2400,4 +2400,10 @@ function upgrade_077_to_078() {
 	}
 }
 
+function upgrade_078_to_079() {
+	global $config;
+	/* enable the allow IPv6 toggle */
+	$config['system']['ipv6allow'] = true;
+}
+
 ?>

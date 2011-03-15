@@ -150,7 +150,7 @@ include("head.inc");
 			  <?php
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
-			  if(is_ipaddrv6($filterent['srcip']))
+			  if(is_ipaddrv6($filterent['srcip'])) {
 				$ipproto = "inet6";
 			  } else {
 			        $ipproto = "inet";

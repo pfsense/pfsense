@@ -82,8 +82,8 @@ $p1_authentication_methods = array(
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
 $p2_modes = array(
-	'tunnel' => 'Tunnel v4',
-	'tunnel6' => 'Tunnel v6',
+	'tunnel' => 'Tunnel IPv4',
+	'tunnel6' => 'Tunnel IPv6',
 	'transport' => 'Transport');
 
 $p2_protos = array(
@@ -173,21 +173,33 @@ function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
 	switch ($idinfo['type'])
 	{
 		case "address":
-			if ($addrbits)
-				return $idinfo['address']."/32";
-			else
+			if ($addrbits) {
+				if($idinfo['mode'] == "tunnel6") {
+					return $idinfo['address']."/128";
+				} else {
+					return $idinfo['address']."/32";
+				}
+			} else {
 				return $idinfo['address'];
+			}
 		case "network":
 			return $idinfo['address']."/".$idinfo['netbits'];
 		case "none":
 		case "mobile":
 			return "0.0.0.0/0";
 		default:
-			$address = get_interface_ip($idinfo['type']);
-			$netbits = get_interface_subnet($idinfo['type']);
-			$address = gen_subnet($address,$netbits);
-			return $address."/".$netbits;
-    }
+			if($idinfo['mode'] == "tunnel6") {
+				$address = get_interface_ipv6($idinfo['type']);
+				$netbits = get_interface_subnetv6($idinfo['type']);
+				$address = gen_subnetv6($address,$netbits);
+				return $address."/".$netbits;
+			} else {
+				$address = get_interface_ip($idinfo['type']);
+				$netbits = get_interface_subnet($idinfo['type']);
+				$address = gen_subnet($address,$netbits);
+				return $address."/".$netbits;
+			}
+	}
 }
 
 /*
@@ -199,22 +211,33 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 	switch ($idinfo['type'])
 	{
 		case "address":
-			if ($addrbits)
-				return $idinfo['address']."/255.255.255.255";
-			else
+			if ($addrbits) {
+				if($idinfo['mode'] == "tunnel6") {
+					return $idinfo['address']."/128";
+				} else {
+					return $idinfo['address']."/255.255.255.255";
+				}
+			} else {
 				return $idinfo['address'];
+			}
 		case "none":
 		case "network":
 			return $idinfo['address']."/".gen_subnet_mask($idinfo['netbits']);
 		case "mobile":
 			return "0.0.0.0/0";
 		default:
-			$address = get_interface_ip($idinfo['type']);
-			$netbits = get_interface_subnet($idinfo['type']);
-			$address = gen_subnet($address,$netbits);
-			$netbits = gen_subnet_mask($netbits);
-			return $address."/".netbits;
-    }
+			if($idinfo['mode'] == "tunnel6") {
+				$address = get_interface_ipv6($idinfo['type']);
+				$netbits = get_interface_subnetv6($idinfo['type']);
+				$address = gen_subnetv6($address,$netbits);
+				return $address."/".$netbits;
+			} else {
+				$address = get_interface_ip($idinfo['type']);
+				$netbits = get_interface_subnet($idinfo['type']);
+				$address = gen_subnet($address,$netbits);
+				return $address."/".$netbits;
+			}
+	}
 }
 
 /*

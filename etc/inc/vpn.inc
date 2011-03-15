@@ -650,9 +650,10 @@ EOD;
 					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
-					if ($ph2ent['mode'] == 'tunnel') {
+					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 
 						$localid_type = $ph2ent['localid']['type'];
+						$ph2ent['localid']['mode'] = $ph2ent['mode'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
 						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 						if (($localid_type == "none") ||
@@ -804,11 +805,18 @@ EOD;
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
-				if (!empty($lanip) && is_ipaddr($lanip)) {
+				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
 					$lansa = gen_subnet($lanip, $lansn);
-					$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
-					$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+					$spdconf .= "spdadd -4 {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+					$spdconf .= "spdadd -4 {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+				}
+				$lanipv6 = get_interface_ipv6("lan");
+				if (!empty($lanipv6) && is_ipaddrv6($lanipv6)) {
+					$lansnv6 = get_interface_subnetv6("lan");
+					$lansav6 = gen_subnetv6($lanipv6, $lansnv6);
+					$spdconf .= "spdadd -6 {$lanipv6}/128 {$lansav6}/{$lansnv6} any -P out none;\n";
+					$spdconf .= "spdadd -6 {$lansav6}/{$lansnv6} {$lanipv6}/128 any -P in none;\n";
 				}
 			}
 
@@ -834,15 +842,20 @@ EOD;
 				if(!is_ipaddr($rgip))
 					continue;
 
+				$ph2ent['localid']['mode'] = $ph2ent['mode'];
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
 
-				if($ph2ent['mode'] == "tunnel") {
+				if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == 'tunnel6')) {
+					if($ph2ent['mode'] == "tunnel6")
+						$family = "-6";
+					else
+						$family = "-4";
 
-					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
+					$spdconf .= "spdadd {$family} {$localid} {$remoteid} any -P out ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
 
-					$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
+					$spdconf .= "spdadd {$family} {$remoteid} {$localid} any -P in ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
 
 				} else {
@@ -1682,6 +1695,8 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$sad_arr = ipsec_dump_sad();
 
 	$ep = ipsec_get_phase1_src($phase1);
+	$phase2['localid']['mode'] = $phase2['mode'];
+	echo "phase2 mode {$phase2['mode']}\n";
 	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
 	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
 
@@ -1689,6 +1704,8 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$old_gw = trim($old_phase1['remote-gateway']);
 
 	$old_ep = ipsec_get_phase1_src($old_phase1);
+	$old_phase2['localid']['mode'] = $old_phase2['mode'];
+	echo "old_phase2 mode {$old_phase2['mode']}\n";
 	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid']);
 	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 
@@ -1724,11 +1741,16 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$spdconf = "";
 	/* Delete old SPD policies if there are changes between the old and new */
 	if(($phase1 != $old_phase1) || ($phase2 != $old_phase2)) {
-		$spdconf .= "spddelete {$old_local_subnet} " .
+		if($old_phase2['mode'] == "tunnel6")
+			$family = "-6";
+		else
+			$family = "-4";
+
+		$spdconf .= "spddelete {$family} {$old_local_subnet} " .
 			"{$old_remote_subnet} any -P out ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_ep}-" .
 			"{$old_gw}/unique;\n";
-		$spdconf .= "spddelete {$old_remote_subnet} " .
+		$spdconf .= "spddelete {$family} {$old_remote_subnet} " .
 			"{$old_local_subnet} any -P in ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_gw}-" .
 			"{$old_ep}/unique;\n";
@@ -1736,30 +1758,35 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		/* zap any existing SA entries */
 		foreach($sad_arr as $sad) {
 			if(($sad['dst'] == $old_ep) && ($sad['src'] == $old_gw)) {
-				$spdconf .= "delete {$old_ep} {$old_gw} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
+				$spdconf .= "delete {$family} {$old_ep} {$old_gw} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
 			if(($sad['src'] == $oldep) && ($sad['dst'] == $old_gw)) {
-				$spdconf .= "delete {$old_gw} {$old_ep} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
+				$spdconf .= "delete {$family} {$old_gw} {$old_ep} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
 		}
 	}
+
+	if($phase2['mode'] == "tunnel6")
+		$family = "-6";
+	else
+		$family = "-4";
 
 	/* Create new SPD entries for the new configuration */
 	/* zap any existing SA entries beforehand */
 	foreach($sad_arr as $sad) {
 		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
-			$spdconf .= "delete {$rgip} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$family} {$rgip} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
-			$spdconf .= "delete {$ep} {$rgip} {$phase2['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$family} {$ep} {$rgip} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 	}
 	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$local_subnet} " .
+	$spdconf .= "spdadd {$family} {$local_subnet} " .
 		"{$remote_subnet} any -P out ipsec " .
 		"{$phase2['protocol']}/tunnel/{$ep}-" .
 		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$remote_subnet} " .
+	$spdconf .= "spdadd {$family} {$remote_subnet} " .
 		"{$local_subnet} any -P in ipsec " .
 		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";

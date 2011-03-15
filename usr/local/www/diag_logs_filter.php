@@ -152,6 +152,9 @@ include("head.inc");
 			  $proto = strtolower($filterent['proto']);
 			  if(is_ipaddrv6($filterent['srcip']))
 				$ipproto = "inet6";
+			  } else {
+			        $ipproto = "inet";
+			  }
 
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);

@@ -1143,7 +1143,14 @@ function handle_pppoe_reset($post_array) {
 
 function interface_ppps_configure($interface) {
 	global $config, $g;
-	
+
+	/* Return for unassigned interfaces. This is a minimum requirement. */
+	if (empty($config['interfaces'][$interface]))
+		return 0;
+	$ifcfg = $config['interfaces'][$interface];
+	if (!isset($ifcfg['enable']))
+		return 0;
+
 	// mpd5 requires a /var/spool/lock directory for PPP modem links.
 	if(!is_dir("/var/spool/lock")) {
 		exec("/bin/mkdir -p /var/spool/lock");
@@ -1152,10 +1159,7 @@ function interface_ppps_configure($interface) {
 	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files	
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
 		mwexec("/bin/ln -s /usr/local/sbin/mpd.script {$g['varetc_path']}/.");
-		
-	$ifcfg = $config['interfaces'][$interface];
-	if (!isset($ifcfg['enable']))
-		return 0;
+
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 			if ($ifcfg['if'] == $ppp['if'])
@@ -1172,7 +1176,7 @@ function interface_ppps_configure($interface) {
 	else
 		$type = $ppp['type'];
 	$upper_type = strtoupper($ppp['type']);	
-	
+
 	if($g['booting']) {
 		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
 		echo "starting {$pppif} link...";
@@ -1180,7 +1184,7 @@ function interface_ppps_configure($interface) {
 		if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;
 	}
-	
+
 	$ports = explode(',',$ppp['ports']);
 	if ($type != "modem") {
 		foreach ($ports as $pid => $port)
@@ -1189,10 +1193,10 @@ function interface_ppps_configure($interface) {
 	$localips = explode(',',$ppp['localip']);
 	$gateways = explode(',',$ppp['gateway']);
 	$subnets = explode(',',$ppp['subnet']);
-	
+
 	/* We bring up the parent interface first because if DHCP is configured on the parent we need
-	to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
-	*/
+	 * to obtain an address first so we can write it in the mpd .conf file for PPTP and L2TP configs
+	 */
 	foreach($ports as $pid => $port){
 		switch ($ppp['type']) {
 			case "pppoe": 

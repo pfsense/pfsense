@@ -54,8 +54,9 @@ if (!is_array($config['ppps']['ppp']))
 
 $a_ppps = &$config['ppps']['ppp'];
 
+$iflist = get_configured_interface_with_descr();
 $portlist = get_interface_list();
-$portlist = array_merge($portlist, get_configured_interface_with_descr());
+$portlist = array_merge($portlist, $iflist);
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -355,24 +356,18 @@ if ($_POST) {
 		must be able to clear the config data in the <cron> section of config.xml if it exists
 		*/
 		handle_pppoe_reset($_POST);
-		
-        $iflist = get_configured_interface_list();
-        foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['if'] == $ppp['if']){
-				$thisif = $if;
-				break;
-			}
-		}
+
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
 		else
 			$a_ppps[] = $ppp;
-			
+
 		write_config();
 		configure_cron();
-		
-		if (isset($thisif)){
-			interface_ppps_configure($thisif);
+
+		foreach ($iflist as $pppif => $ifdescr) {
+			if ($config['interfaces'][$if]['if'] == $ppp['if'])
+				interface_ppps_configure($pppif);
 		}
 		header("Location: interfaces_ppps.php");
 		exit;

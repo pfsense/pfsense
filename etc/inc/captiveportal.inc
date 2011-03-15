@@ -860,12 +860,15 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 			false,
 			$stop_time);
 	}
-	/* Delete client's ip entry from tables 3 and 4. */
-	mwexec("/sbin/ipfw table 1 delete {$dbent[2]}");
-	mwexec("/sbin/ipfw table 2 delete {$dbent[2]}");
-
-	/* Release the ruleno so it can be reallocated to new clients. */
-	captiveportal_free_ipfw_ruleno($dbent[1]);
+	
+	if (is_ipaddr($dbent[2])) {
+		/* Delete client's ip entry from tables 3 and 4. */
+		mwexec("/sbin/ipfw table 1 delete {$dbent[2]}");
+		mwexec("/sbin/ipfw table 2 delete {$dbent[2]}");
+		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
+		mwexec("pfctl -k {$dbent[2]}");
+		mwexec("pfctl -K {$dbent[2]}");
+	}
 
 	/* 
 	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
@@ -876,10 +879,8 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 		mwexec("/sbin/ipfw pipe " . ($dbent[1]+20001) . " delete");
 	}
 
-	/* XXX: Redundant?! Ensure all pf(4) states are killed. */
-	mwexec("pfctl -k {$dbent[2]}");
-	mwexec("pfctl -K {$dbent[2]}");
-
+	/* Release the ruleno so it can be reallocated to new clients. */
+	captiveportal_free_ipfw_ruleno($dbent[1]);
 }
 
 /* remove a single client by sessionid */

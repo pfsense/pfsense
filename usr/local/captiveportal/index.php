@@ -29,7 +29,6 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw	
 	pfSense_MODULE:	captiveportal
 */
 

@@ -403,6 +403,4 @@ echo "Bootup complete"
 # Reset the cache.  read-only requires this.
 /bin/rm /tmp/config.cache
 
-/etc/rc.conf_mount_ro
-
 exit 0

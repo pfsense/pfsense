@@ -79,11 +79,12 @@ function easyrule_block_rule_exists($int = 'wan') {
 	}
 
 	/* Search through the rules for one referencing our alias */
-	foreach ($config['filter']['rule'] as $rule)
+	foreach ($config['filter']['rule'] as $rule) {
 		if (!is_array($rule) || !is_array($rule['source']))
 			continue;
 		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int))
 			return true;
+	}
 	return false;
 }
 
@@ -114,7 +115,7 @@ function easyrule_block_rule_create($int = 'wan') {
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = "Easy Rule: Blocked from Firewall Log View";
 
-	$a_filter[] = $filterent;
+	array_splice($a_filter, 0, 0, array($filterent));
 
 	return true;
 }

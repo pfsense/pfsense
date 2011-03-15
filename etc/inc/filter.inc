@@ -1571,6 +1571,16 @@ function filter_nat_rules_generate() {
 		else
 			sigkillbypid("/var/run/inetd.pid", "HUP");
 	}
+
+	if (isset($config['pptpd']['mode']) && ($config['pptpd']['mode'] != "off")) {
+		if ($config['pptpd']['mode'] == "redir") {
+			$pptpdtarget = $config['pptpd']['redir'];
+			$natrules .= "# PPTP\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> {$pptpdtarget}\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
+		}
+	}
+
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
@@ -2525,7 +2535,7 @@ anchor "miniupnpd"
 
 EOD;
 	
-		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd']['config']['iface_array']);
+		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
 		foreach($upnp_interfaces as $upnp_if) {
 			if(is_array($FilterIflist[$upnp_if])) {
 				$oc = $FilterIflist[$upnp_if];
@@ -2537,7 +2547,7 @@ EOD;
 				if($sa) {
 					$ipfrules .= <<<EOD
 
-pass in quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 flags any keep state label "pass multicast traffic to miniupnpd"
+pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
 				}
@@ -2784,16 +2794,11 @@ function filter_setup_logging_interfaces() {
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
-	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		/*
-		 * XXX: This should be cleared out after a discussion
-		 * between pf(4) devs is cleared out. This breaks
-		 * compatibility with OpenBSD.
-		 */
-		if(isset($ifcfg['virtual']))
-			continue;
-		$rules .= "set loginterface {$ifcfg['if']}\n";
-	}
+	if (isset($FilterIflist['lan']))
+		$rules .= "set loginterface {$FilterIflist['lan']['if']}\n";
+	else if (isset($FilterIflist['wan']))
+		$rules .= "set loginterface {$FilterIflist['wan']['if']}\n";
+
 	return $rules;
 }
 

@@ -54,15 +54,15 @@ if($_GET['wakeall'] <> "") {
 		$mac = $wolent['mac'];
 		$if = $wolent['interface'];
 		$description = $wolent['descr'];
-		$bcip = gen_subnet_max(get_interface_ip($if),
-			get_interface_subnet($if));
+		$ipaddr = get_interface_ip($if);
+		if (!is_ipaddr($ipaddr))
+			continue;
+		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 		/* Execute wol command and check return code. */
-		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
+		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}"))
 			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'),$mac, $description, ".<br>");
-		}
-		else {
+		else
 			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'),'<a href="/diag_logs.php">','</a>',$description,$mac,".<br>");
-		}
 	}
 }
 
@@ -89,14 +89,16 @@ if ($_POST || $_GET['mac']) {
 
 	if (!$input_errors) {
 		/* determine broadcast address */
-		$bcip = gen_subnet_max(get_interface_ip($if),
-			get_interface_subnet($if));
-		/* Execute wol command and check return code. */
-		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
-			$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
-		}
+		$ipaddr = get_interface_ip($if);
+		if (!is_ipaddr($ipaddr))
+			$input_errors[] = gettext("A valid ip could not be found!");
 		else {
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br>");
+			$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
+			/* Execute wol command and check return code. */
+			if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}"))
+				$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
+			else
+				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br>");
 		}
 	}
 }

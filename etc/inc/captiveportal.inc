@@ -837,7 +837,8 @@ function captiveportal_prune_old() {
 	}
 
 	/* write database */
-	captiveportal_write_db($cpdb, false, $unsetindexes);
+	if (!empty($unsetindexes))
+		captiveportal_write_db($cpdb, false, $unsetindexes);
 }
 
 /* remove a single client according to the DB entry */
@@ -1285,16 +1286,19 @@ function captiveportal_read_db($locked = false) {
 }
 
 /* write captive portal DB */
-function captiveportal_write_db($cpdb, $locked = false, $remove = array()) {
+function captiveportal_write_db($cpdb, $locked = false, $remove = false) {
 	global $g;
 
 	if ($locked == false)
 		$cpdblck = lock('captiveportaldb', LOCK_EX);
 
-	if (!empty($remove)) {
-		$cpdb = captiveportal_read_db(true);
-		foreach ($remove as $key)
-			unset($cpdb[$key]);
+	if (is_array($remove)) {
+		if (!empty($remove)) {
+			$cpdb = captiveportal_read_db(true);
+			foreach ($remove as $key)
+				unset($cpdb[$key]);
+		} else
+			return; //This makes sure no record removal calls
 	}
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
 	if ($fd) {

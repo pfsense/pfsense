@@ -71,7 +71,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				?>
 				</td>
 				<td width="60%"  class="listr">
-	                 		<table>
+	                 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 		                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
 							<td>

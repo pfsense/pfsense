@@ -545,7 +545,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-in_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_in_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"out-pass\t\" ";
+	$graphcmd .= "COMMENT:\"out-block\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:MAX:%7.2lf %s pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:AVERAGE:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:LAST:%7.2lf %S pps\" ";

@@ -295,7 +295,7 @@ function notify_via_smtp($message) {
 	$smtp->host_port = empty($config['notifications']['smtp']['port']) ? 25 : $config['notifications']['smtp']['port'];
 
 	$smtp->direct_delivery = 0;
-	$smtp->ssl = 0;
+	$smtp->ssl = ($config['notifications']['smtp']['ssl'] == "checked") ? 1 : 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];

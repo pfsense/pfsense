@@ -62,6 +62,8 @@ if($config['notifications']['smtp']['ipaddress'])
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
 if($config['notifications']['smtp']['port'])
 	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
+if($config['notifications']['smtp']['ssl'])
+	$pconfig['smtpssl'] = $config['notifications']['smtp']['ssl'];
 if($config['notifications']['smtp']['notifyemailaddress']) 
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
 if($config['notifications']['smtp']['username']) 
@@ -100,6 +102,7 @@ if ($_POST) {
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
+		$config['notifications']['smtp']['ssl'] = isset($_POST['smtpssl']) ? 'checked' : 'unchecked';
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
@@ -208,8 +211,9 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("SMTP Port of E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpport' value='<?php echo $pconfig['smtpport']; ?>'><br/>
-								<?=gettext("This is the port of the SMTP E-Mail server, typically 25 or 587 (submission)."); ?>
+								<input name='smtpport' value='<?php echo $pconfig['smtpport']; ?>'>
+								<input type='checkbox' name='smtpssl' <?php echo $pconfig['smtpssl']; ?>>Enable SSL/TLS Authentication<br/>
+								<?=gettext("This is the port of the SMTP E-Mail server, typically 25, 587 (submission) or 465 (smtps, tick ssl/tls checkbox)"); ?>
 							</td>
 						</tr>
 						<tr>

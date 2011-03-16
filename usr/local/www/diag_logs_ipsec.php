@@ -56,13 +56,17 @@ if(is_array($config['ipsec']['phase1']))
 		$gateway = ipsec_get_phase1_dst($ph1ent);
 		if(!is_ipaddr($gateway))
 			continue;
-		$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
+		$search[] = "/(racoon: )(INFO[:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
+		$search[] = "/(racoon: )(\[{$gateway}\]|{$gateway})(.*)/i";
+		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
 		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
 	}
 /* collect all our own ip addresses */
-exec("/sbin/ifconfig | /usr/bin/awk '/inet / {print $2}'", $ip_address_list);
+exec("/sbin/ifconfig | /usr/bin/awk '/inet/ {print $2}'", $ip_address_list);
 foreach($ip_address_list as $address) {
-	$search[] = "/(racoon: )([A-Z:].*?)({$address}\[[0-9].+\])(.*isakmp.*)/i";
+	$search[] = "/(racoon: )(INFO[:].*?)({$address}\[[0-9].+\])/i";
+	$search[] = "/(racoon: )(\[{$address}\]|{$address})(.*)/i";
+	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
 	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
 }
 

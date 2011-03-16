@@ -70,6 +70,15 @@ foreach($ip_address_list as $address) {
 	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
 }
 
+$search[] = "/(time up waiting for phase1)/i";
+$search[] = "/(failed to pre-process ph1 packet)/i";
+$search[] = "/(failed to pre-process ph2 packet)/i";
+$search[] = "/(no proposal chosen)/i";
+$replace[] = "$1 <strong>[Remote Side not responding]</strong>";
+$replace[] = "$1 <strong>[Check Phase 1 settings, lifetime, algorithm]</strong>";
+$replace[] = "$1 <strong>[Check Phase 2 settings, networks]</strong>";
+$replace[] = "$1 <strong>[Check Phase 2 settings, algorithm]</strong>";
+
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;

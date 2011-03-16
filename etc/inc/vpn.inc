@@ -214,7 +214,7 @@ function vpn_ipsec_configure($ipchg = false)
 							$family = "inet";
 						}
 						if (is_ipaddr($srcip))
-							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|{$family}|\n";
+							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
 
 					}
 				}

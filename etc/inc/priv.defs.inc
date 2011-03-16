@@ -186,11 +186,11 @@ $priv_list['page-diag-system-activity']['descr'] = "Allows access to the 'Diagno
 $priv_list['page-diag-system-activity']['match'] = array();
 $priv_list['page-diag-system-activity']['match'][] = "diag_system_activity*";
 
-$priv_list['page-diag-system-activity'] = array();
-$priv_list['page-diag-system-activity']['name'] = "WebCfg - Diagnostics: System Activity";
-$priv_list['page-diag-system-activity']['descr'] = "Allows access to the 'Diagnostics: System Activity' page";
-$priv_list['page-diag-system-activity']['match'] = array();
-$priv_list['page-diag-system-activity']['match'][] = "diag_system_pftop*";
+$priv_list['page-diag-system-pftop'] = array();
+$priv_list['page-diag-system-pftop']['name'] = "WebCfg - Diagnostics: pfTop";
+$priv_list['page-diag-system-pftop']['descr'] = "Allows access to the 'Diagnostics: pfTop' page";
+$priv_list['page-diag-system-pftop']['match'] = array();
+$priv_list['page-diag-system-pftop']['match'][] = "diag_system_pftop*";
 
 $priv_list['page-diagnostics-traceroute'] = array();
 $priv_list['page-diagnostics-traceroute']['name'] = "WebCfg - Diagnostics: Traceroute page";
@@ -1112,7 +1112,7 @@ $priv_list['page-system-groupmanager']['match'] = array();
 $priv_list['page-system-groupmanager']['match'][] = "system_groupmanager.php*";
 
 $priv_list['page-diag-showbogons'] = array();
-$priv_list['page-diag-showbogons']['name'] = "WebCfg - Diagnostics: System Activity";
+$priv_list['page-diag-showbogons']['name'] = "WebCfg - Diagnostics: Show Bogonsity";
 $priv_list['page-diag-showbogons']['descr'] = "Allows access to the 'Diagnostics: Show Bogons' page";
 $priv_list['page-diag-showbogons']['match'] = array();
 $priv_list['page-diag-showbogons']['match'][] = "diag_showbogons.php";

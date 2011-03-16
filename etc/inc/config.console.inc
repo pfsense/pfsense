@@ -190,10 +190,10 @@ EOD;
 	
 		echo <<<EOD
 	
-*NOTE*  {$g['product_name']} requires {$g['minimum_nic_count_text']} assigned interfaces to function.
+*NOTE*  {$g['product_name']} requires {$g['minimum_nic_count_text']} assigned interface(s) to function.
         If you do not have {$g['minimum_nic_count_text']} interfaces you CANNOT continue. 
 
-        If you do not have at least {$g['minimum_nic_count']} *REAL* network interface cards
+        If you do not have at least {$g['minimum_nic_count']} *REAL* network interface card(s)
         or one interface with multiple VLANs then {$g['product_name']}
         *WILL NOT* function correctly.
 

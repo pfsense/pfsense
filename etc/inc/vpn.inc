@@ -136,6 +136,7 @@ function vpn_ipsec_configure($ipchg = false)
 		$filterdns_list = array();
 		if (is_array($a_phase1) && count($a_phase1)) {
 
+			$ipsecpinghosts = "";
 			/* step through each phase1 entry */
 			$ipsecpinghosts = "";
 			foreach ($a_phase1 as $ph1ent) {

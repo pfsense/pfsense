@@ -354,7 +354,7 @@ function show_advanced_gateway() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
                     <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
@@ -374,7 +374,7 @@ function show_advanced_gateway() {
 				else
 					$monitor = htmlspecialchars($pconfig['monitor']);
 			?>
-			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
+			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" size="28" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
 			<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .

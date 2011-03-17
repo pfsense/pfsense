@@ -1914,7 +1914,7 @@ function filter_generate_user_rule($rule) {
 						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					}
 					if(!empty($aline['divert']))
-						$aline['flags'] .= "max-packets 5 ";
+						$aline['flags'] .= "max-packets 10 ";
 
 					$aline['flags'] .= " ) ";
 				}

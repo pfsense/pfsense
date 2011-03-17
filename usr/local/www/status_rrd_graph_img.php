@@ -960,6 +960,28 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }
+elseif((strstr($curdatabase, "-totalusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for online Captive Portal users stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
+	$graphcmd .= "--vertical-label \"Total Captive Portal Users\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--base=1000 ";
+	$graphcmd .= "--lower-limit=0 ";
+	$graphcmd .= "--slope-mode ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-totalusers=$rrddbpath$curdatabase:totalusers:AVERAGE\" ";
+	$graphcmd .= "AREA:\"$curif-totalusers#{$colorcaptiveportalusers[0]}:$curif-totalusers\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Users Online\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:LAST:%8.0lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:AVERAGE:%8.0lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+}
 else {
 	$data = false;
 	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));

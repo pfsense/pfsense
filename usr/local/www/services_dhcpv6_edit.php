@@ -212,21 +212,21 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("IPv6 address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="20" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
+                    <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
                     <br>
                     <?=gettext("If no IPv6 address is given, one will be dynamically allocated  from the pool.");?></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+                    <input name="hostname" type="text" class="formfld unknown" id="hostname" size="28" value="<?=htmlspecialchars($pconfig['hostname']);?>">
                     <br> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
                 </tr>				
                 <?php if($netboot_enabled) { ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Netboot filename</td>
 		  <td width="78%" class="vtable">
-		    <input name="netbootfile" type="text" class="formfld unknown" id="netbootfile" size="20" value="<?=htmlspecialchars($pconfig['netbootfile']);?>">
+		    <input name="netbootfile" type="text" class="formfld unknown" id="netbootfile" size="28" value="<?=htmlspecialchars($pconfig['netbootfile']);?>">
 		    <br> <span class="vexpl">Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.</span></td>
 		</tr>
 		<?php } ?>

@@ -668,6 +668,9 @@ EOD;
 EOD;
 
 		/* add static mappings */
+		/* Does not work for IPv6
+		/* You can not use a hardware parameter for DHCPv6 hosts
+		/* Needs to be figured out
 		if (is_array($dhcpv6ifconf['staticmap'])) {
 
 			$i = 0;
@@ -692,7 +695,7 @@ EOD;
 				$i++;
 			}
 		}
-
+		*/
 		
 		$realif = escapeshellcmd(get_real_interface($dhcpv6if));
 		$dhcpdv6ifs[] = $realif;

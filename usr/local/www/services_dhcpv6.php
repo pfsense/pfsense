@@ -577,8 +577,8 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="netmask" class="formselect" id="netmask">
 				<?php
-				for ($i = 32; $i > 0; $i--) {
-					if($i <> 31) {
+				for ($i = 128; $i > 0; $i--) {
+					if($i <> 127) {
 						echo "<option value=\"{$i}\" ";
 						if ($i == $pconfig['netmask']) echo "selected";
 						echo ">" . $i . "</option>";
@@ -592,36 +592,36 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Range");?></td>
 			<td width="78%" class="vtable">
-				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
-				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
+				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="28" value="<?=htmlspecialchars($pconfig['range_from']);?>">
+				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="28" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
-				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
+				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="28" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
+				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="28" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
-				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
+				<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
 			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">
-				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
+				<input name="domain" type="text" class="formfld unknown" id="domain" size="28" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
 				 <?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
 			 </td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
-				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
+				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
 				<?=gettext("The DHCP server can optionally provide a domain search list.");?>
 			</td>
 			</tr>
@@ -648,7 +648,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="28" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
 			</tr>
@@ -681,7 +681,7 @@ include("head.inc");
 					<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
 					<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
 					<p>
-					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
+					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="28" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
 				</div>
@@ -694,8 +694,8 @@ include("head.inc");
 					<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show NTP configuration");?></a>
 				</div>
 				<div id="showntp" style="display:none">
-					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
-					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
+					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="28" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
+					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="28" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
 				</div>
 			</td>
 			</tr>
@@ -734,9 +734,9 @@ include("head.inc");
 					<b><?=gettext("Enables network booting.");?></b>
 					<p>
 					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
+					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="28" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
 					<?=gettext("and the filename");?>
-					<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+					<input name="filename" type="text" class="formfld unknown" id="filename" size="28" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<p>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>

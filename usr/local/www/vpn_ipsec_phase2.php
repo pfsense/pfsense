@@ -385,7 +385,7 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
+										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
 										/
 										<select name="localid_netbits" class="formselect" id="localid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--): ?>
@@ -420,7 +420,7 @@ function change_protocol() {
 									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
+										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
 										/
 										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--) { 
@@ -576,7 +576,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Automatically ping host"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="28" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
 							<?=gettext("IP address"); ?>
 						</td>
 					</tr>

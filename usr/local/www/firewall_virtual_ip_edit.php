@@ -464,7 +464,7 @@ function typesel_change() {
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
+                        <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 128; $i >= 1; $i--): ?>
                             <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['subnet']) && $i == 32)) echo "selected"; ?>>
@@ -484,9 +484,9 @@ function typesel_change() {
 		      /*
                         <tr>
                          <td>Range:&nbsp;&nbsp;</td>
-                          <td><input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range']['from']);?>">
+                          <td><input name="range_from" type="text" class="formfld unknown" id="range_from" size="28" value="<?=htmlspecialchars($pconfig['range']['from']);?>">
 -
-                          <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range']['to']);?>">
+                          <input name="range_to" type="text" class="formfld unknown" id="range_to" size="28" value="<?=htmlspecialchars($pconfig['range']['to']);?>">
                           </td>
 			 </tr>
   		       */

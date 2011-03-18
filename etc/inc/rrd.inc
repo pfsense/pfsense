@@ -186,7 +186,7 @@ function enable_rrd_graphing() {
 	$pfctl = "/sbin/pfctl";
 	$sysctl = "/sbin/sysctl";
 	$php = "/usr/local/bin/php";
-	$top = "/usr/bin/top";
+	$cpustats = "/usr/local/sbin/cpustats";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
 	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
@@ -356,8 +356,8 @@ function enable_rrd_graphing() {
 
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling wireless for interface $ifname $realif \n";
-				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$wireless N:\\\n";
-				$rrdupdatesh .= "`$ifconfig {$realif} list sta| $awk 'gsub(\"M\", \"\") {getline 2;print substr(\$5, 0, length(\$5)-2) \":\" $4 \":\" $3}'`\n";
+				$rrdupdatesh .= "WIFI=`$ifconfig {$realif} list sta| $awk 'gsub(\"M\", \"\") {getline 2;print substr(\$5, 0, length(\$5)-2) \":\" $4 \":\" $3}'`\n";
+				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$wireless N:${WIFI}\n";
 			}
 
 			/* OpenVPN, set up the rrd file */
@@ -394,8 +394,8 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= " sleep 0.2\n";
 				$rrdupdatesh .= " echo \"quit\"\n";
 				$rrdupdatesh .= "}\n";
-				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$vpnusers N:\\\n";
-				$rrdupdatesh .= "`list_current_users | nc -U {$g['varetc_path']}/openvpn/server{$vpnid}.sock | awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | wc -l | awk '{print $1}'` &\n";
+				$rrdupdatesh .= "OVPN=`list_current_users | nc -U {$g['varetc_path']}/openvpn/server{$vpnid}.sock | awk -F\",\" '/^CLIENT_LIST/ {print \$2}' | wc -l | awk '{print $1}'` &\n";
+				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$vpnusers N:\${OVPN}\n";
 			}
 
 			/* QUEUES, set up the queues databases */
@@ -567,11 +567,10 @@ function enable_rrd_graphing() {
 		}
 
 		/* the CPU stats gathering function. */
-		$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { \\\n";
-		$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } \\\n";
-		$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { processes = \$1; } \\\n";
-		$rrdupdatesh .= "else if ( \$1 == \"CPU:\" ) { user = \$2; nice = \$4; sys = \$6; interrupt = \$8; } \\\n";
-		$rrdupdatesh .= "} END { printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes }'`\n\n";
+		$rrdupdatesh .= "CPU=`$cpustats | cut -f1-4 -d':'`\n";
+		/* Using ps uxaH will count all processes including system threads. Top was undercounting. */
+		$rrdupdatesh .= "PROCS=`ps uxaH | wc -l | awk '{print \$1;}'`\n";
+		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$proc N:\${CPU}:\${PROCS}\n";
 
 		/* End CPU statistics */
 
@@ -605,9 +604,10 @@ function enable_rrd_graphing() {
 		}
 
 		/* the Memory stats gathering function. */
-		$rrdupdatesh .= "`$sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
-		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf \"$rrdtool update $rrddbpath$ifname$mem N:\"";
-		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n\n";
+		$rrdupdatesh .= "MEM=`$sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
+		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
+		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
+		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
 		
 		/* End Memory statistics */
 
@@ -705,8 +705,8 @@ function enable_rrd_graphing() {
 			/* the Captive Portal stats gathering function. */
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalconcurrent \\\n";
-			$rrdupdatesh .= "`$php -q $captiveportal_gather concurrent`\n";
+			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather concurrent`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalconcurrent \${CP}\n";
 			
 			$ifname= "captiveportal";
 			if (!file_exists("$rrddbpath$ifname$captiveportalloggedin")) {
@@ -740,8 +740,8 @@ function enable_rrd_graphing() {
 			/* the Captive Portal stats gathering function. */
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling Captive Portal for number of logged in users\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalloggedin \\\n";
-			$rrdupdatesh .= "`$php -q $captiveportal_gather loggedin`\n";
+			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather loggedin`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalloggedin \${CP}\n";
 			
 			$ifname= "captiveportal";
 			if (!file_exists("$rrddbpath$ifname$captiveportaltotalusers")) {
@@ -775,8 +775,8 @@ function enable_rrd_graphing() {
 			/* the Captive Portal stats gathering function. */
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportaltotalusers \\\n";
-			$rrdupdatesh .= "`$php -q $captiveportal_gather total`\n";
+			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather total`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportaltotalusers \${CP}\n";
 			
 		}
 

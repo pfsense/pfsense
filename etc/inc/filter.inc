@@ -1839,16 +1839,16 @@ function filter_generate_user_rule($rule) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
 			} else {
 				if($rule['interface'] <> "pptp") {
-					log_error("Could not find gateway for interface({$rule['interface']}).");
+					log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
 				}
 			}
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
-			if(is_ipaddr($rg)) {
+			if(is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
 			} else {
 				if($rule['interface'] <> "pptp") {
-					log_error("Could not find gateway for interface({$rule['interface']}).");
+					log_error("Could not find IPv4 gateway for interface({$rule['interface']}).");
 				}
 			}
 		}
@@ -1904,10 +1904,10 @@ function filter_generate_user_rule($rule) {
 		$l7_structures = $l7rule->get_unique_structures();
 		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
 	}
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'])
+	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
-	if(($rule['protocol'] == "icmp6") && $rule['icmptype'])
-		$aline['icmp6-type'] = "icmp-type {$rule['icmptype']} ";
+	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
+		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
 	if(!empty($rule['tag']))
 		$aline['tag'] = " tag " .$rule['tag']. " ";
 	if(!empty($rule['tagged']))

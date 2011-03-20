@@ -701,7 +701,9 @@ EOD;
 		$dhcpdv6ifs[] = $realif;
 		/* Create link local address for bridges */
 		if(stristr("$realif", "bridge")) {
-			mwexec("$ifconfig {$realif} inet6 fe80::/64 eui64");
+			exec("ifconfig {$realif}|awk '/ether/ {print \$NF}'", $mac);
+			$autoaddress = generate_ipv6_from_mac($mac);
+			mwexec("$ifconfig {$realif} inet6 fe80::{autoaddress}/64");
 		}
 	}
 

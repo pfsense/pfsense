@@ -75,6 +75,19 @@ function services_rtadvd_configure() {
 	/* raflags, managed=64, stateful=128, both=192 */
 
 	$rtadvdconf = "# Automatically Generated, do not edit\n";
+	$rtadvdconf = <<<EOD
+
+#
+# common definitions.
+#
+default:\
+        :raflags#0:rltime#3600:\
+        :pinfoflags#64:vltime#360000:pltime#360000:mtu#1500:
+ether:\
+        :mtu#1280:tc=default:
+
+EOD;
+
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		$rtadvdnum++;
@@ -98,17 +111,18 @@ function services_rtadvd_configure() {
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 		switch($dhcpv6ifconf['mode']) {
 			case "managed":
-				$rtadvdconf .= "\t:raflags#64:\n";
+				$rtadvdconf .= "\t:raflags#64:\\\n";
 				break;
 			case "assist":
-				$rtadvdconf .= "\t:raflags#192:\n";
+				$rtadvdconf .= "\t:raflags#192:\\\n";
 				break;
 			default:
-				$rtadvdconf .= "\t:raflags#0:\n";
+				$rtadvdconf .= "\t:raflags#0:\\\n";
 				break;				
 
 		}
-		$rtadvdconf .= "\n";
+		$rtadvdconf .= "\t\":tc=ether:\n";
+		$rtadvdconf .= "\n\n";
 
 	}
 

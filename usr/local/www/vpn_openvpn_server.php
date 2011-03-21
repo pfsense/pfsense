@@ -671,9 +671,14 @@ if ($savemsg)
 							<select name="device_mode" class="formselect">
                                                         <?php
                                                                 foreach ($openvpn_dev_mode as $device):
-                                                                        $selected = "";
-                                                                        if ($pconfig['device_mode'] == $device)
-                                                                                $selected = "selected";
+                                                                       $selected = "";
+                                                                       if (! empty($pconfig['device_mode'])) {
+                                                                               if ($pconfig['device_mode'] == $device)
+                                                                                       $selected = "selected";
+                                                                       } else {
+                                                                               if ($device == "tun")
+                                                                                       $selected = "selected";
+                                                                       }
                                                         ?>
                                                                 <option value="<?=$device;?>" <?=$selected;?>><?=$device;?></option>
                                                         <?php endforeach; ?>

@@ -91,6 +91,7 @@ if($_GET['act']=="new"){
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['dh_length'] = 1024;
+	$pconfig['device_mode'] = "tun";
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
@@ -104,6 +105,7 @@ if($_GET['act']=="edit"){
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
 		$pconfig['authmode'] = $a_server[$id]['authmode'];
+		$pconfig['device_mode'] = $a_server[$id]['device_mode'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
 		if (!empty($a_server[$id]['ipaddr'])) {
 			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_server[$id]['ipaddr'];
@@ -304,6 +306,7 @@ if ($_POST) {
 		if (!empty($pconfig['authmode']))
 			$server['authmode'] = implode(",", $pconfig['authmode']);
 		$server['protocol'] = $pconfig['protocol'];
+		$server['device_mode'] = $pconfig['device_mode'];
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
@@ -662,6 +665,21 @@ if ($savemsg)
 							</select>
 							</td>
 					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Device Mode"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="device_mode" class="formselect">
+                                                        <?php
+                                                                foreach ($openvpn_dev_mode as $device):
+                                                                        $selected = "";
+                                                                        if ($pconfig['device_mode'] == $device)
+                                                                                $selected = "selected";
+                                                        ?>
+                                                                <option value="<?=$device;?>" <?=$selected;?>><?=$device;?></option>
+                                                        <?php endforeach; ?>
+                                                        </select>
+                                                        </td>
+                                        </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">

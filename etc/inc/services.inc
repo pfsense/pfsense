@@ -96,7 +96,18 @@ function services_rtadvd_configure() {
 		$rtadvdconf .= "{$realif}:\\\n";
 		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
-		$rtadvdconf .= "\t:raflags#192:\n";
+		switch($dhcpv6ifconf['mode']) {
+			case "managed":
+				$rtadvdconf .= "\t:raflags#64:\n";
+				break;
+			case "assist":
+				$rtadvdconf .= "\t:raflags#192:\n";
+				break;
+			default:
+				$rtadvdconf .= "\t:raflags#0:\n";
+				break;				
+
+		}
 		$rtadvdconf .= "\n";
 
 	}
@@ -697,13 +708,13 @@ EOD;
 		}
 		*/
 		
-		$realif = escapeshellcmd(get_real_interface($dhcpv6if));
-		$dhcpdv6ifs[] = $realif;
-		/* Create link local address for bridges */
-		if(stristr("$realif", "bridge")) {
-			exec("ifconfig {$realif}|awk '/ether/ {print \$2}'", $mac);
-			$autoaddress = generate_ipv6_from_mac(trim($mac[0]));
-			mwexec("$ifconfig {$realif} inet6 fe80::{autoaddress}/64");
+		if($config['dhcpdv6'][$dhcpv6if]['mode'] <> "unmanaged") {
+			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
+			$dhcpdv6ifs[] = $realif;
+			/* Create link local address for bridges */
+			if(stristr("$realif", "bridge")) {
+				mwexec("$ifconfig {$realif} inet6 fe80::/64 eui64");
+			}
 		}
 	}
 

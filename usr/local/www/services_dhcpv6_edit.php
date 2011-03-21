@@ -48,7 +48,7 @@ function staticmapcmp($a, $b) {
 function staticmaps_sort($ifgui) {
         global $g, $config;
 
-        usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
+        usort($config['dhcpdv6'][$ifgui]['staticmap'], "staticmapcmp");
 }
 
 require_once('globals.inc');

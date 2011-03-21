@@ -138,6 +138,7 @@ if (is_array($config['dhcpdv6'][$if])){
 		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
 		$pconfig['range_to'] = $config['dhcpdv6'][$if]['range']['to'];
 	}
+	$pconfig['mode'] = $config['dhcpdv6'][$if]['mode'];
 	$pconfig['deftime'] = $config['dhcpdv6'][$if]['defaultleasetime'];
 	$pconfig['maxtime'] = $config['dhcpdv6'][$if]['maxleasetime'];
 	$pconfig['gateway'] = $config['dhcpdv6'][$if]['gateway'];
@@ -189,6 +190,8 @@ function is_inrange($test, $start, $end) {
 	else
 		return false;
 }
+
+$modes = array("unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
 
 if ($_POST) {
 
@@ -304,6 +307,7 @@ if ($_POST) {
 		if (!is_array($config['dhcpdv6'][$if]['range']))
 			$config['dhcpdv6'][$if]['range'] = array();
 
+		$config['dhcpdv6'][$if]['mode'] = $_POST['mode'];
 		$config['dhcpdv6'][$if]['range']['from'] = $_POST['range_from'];
 		$config['dhcpdv6'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpdv6'][$if]['defaultleasetime'] = $_POST['deftime'];
@@ -415,7 +419,7 @@ include("head.inc");
 <script type="text/javascript" language="JavaScript">
 	function enable_change(enable_over) {
 		var endis;
-		endis = !(document.iform.enable.checked || enable_over);
+		endis = !(document.iform.enable.checked || enable_over || (document.iform.mode.select == "unmanaged"));
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
 		document.iform.dns1.disabled = endis;
@@ -534,6 +538,15 @@ include("head.inc");
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
+			</tr>
+			<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Operating Mode");?></td>
+			<td width="78%" class="vtable">
+				<select name="mode" id="mode">
+					<?php foreach($modes as $name => $value) { ?>
+					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
+					<?php } ?>
+			<strong><?php printf(gettext("Select the Operating Mode. Use Unmanaged for Router Advertising only, Managed for DHCPv6 only, Assisted for Combined"));?></strong></td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>

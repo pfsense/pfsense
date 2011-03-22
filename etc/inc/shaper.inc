@@ -961,7 +961,9 @@ class priq_queue {
 				$input_errors[] = "Queue limit must be an integer";
 		if ($data['qlimit'] < 0)
 				$input_errors[] = "Queue limit must be positive";
-		if (!preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
+		if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['newname']))
+			 $input_errors[] = "Queue names must be alphanumeric and _ or - only.";
+		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
 			 $input_errors[] = "Queue names must be alphanumeric and _ or - only.";
 		
 	}

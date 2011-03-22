@@ -2217,7 +2217,6 @@ function generate_ipv6_from_mac($mac) {
 		
 		$i++;
 	}	
-	return $ip
-v6;
+	return $ipÃv6;
 }
 ?>

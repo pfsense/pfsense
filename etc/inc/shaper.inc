@@ -2770,10 +2770,8 @@ class dummynet_class {
 		$reqdfieldsn[] = "Bandwidth";
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
-		if (!empty($data['newname'])) {
-			$reqdfields[] = "newname";
-			$reqdfieldsn[] = "Name";
-		}
+		$reqdfields[] = "newname";
+		$reqdfieldsn[] = "Name";
 	
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -2785,7 +2783,9 @@ class dummynet_class {
             		$input_errors[] = "Buckets must be an integer between 16 and 65535.";
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
             		$input_errors[] = "Queue limit must be an integer";
-        	if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
+        	if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['newname']))
+			$input_errors[] = "Queue names must be alphanumeric and _ or - only.";
+        	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = "Queue names must be alphanumeric and _ or - only.";
 	}
 }
@@ -3255,7 +3255,7 @@ class dnqueue_class extends dummynet_class {
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its children</span>";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable queue</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";

@@ -2770,8 +2770,10 @@ class dummynet_class {
 		$reqdfieldsn[] = "Bandwidth";
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
-		$reqdfields[] = "name";
-		$reqdfieldsn[] = "Name";
+		if (!empty($data['newname'])) {
+			$reqdfields[] = "newname";
+			$reqdfieldsn[] = "Name";
+		}
 	
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 

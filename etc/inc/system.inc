@@ -1147,22 +1147,13 @@ function system_timezone_configure() {
 function system_ntp_configure() {
 	global $config, $g;
 
-	$syscfg =& $config['system'];
-
-	/* open configuration for wrting or bail */
-	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
-	if(!$fd) {
-		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
-		return;
-	}
-
-	fwrite($fd, "# \n");
-	fwrite($fd, "# pfSense OpenNTPD configuration file \n");
-	fwrite($fd, "# \n\n");
+	$ntpcfg = "# \n";
+	$ntpcfg .= "# pfSense OpenNTPD configuration file \n";
+	$ntpcfg .= "# \n\n";
 
 	/* foreach through servers and write out to ntpd.conf */
-	foreach (explode(' ', $syscfg['timeservers']) as $ts)
-		fwrite($fd, "servers {$ts}\n");
+	foreach (explode(' ', $config['system']['timeservers']) as $ts)
+		$ntpcfg .= "servers {$ts}\n";
 
 	/* Setup listener(s) if the user has configured one */
         if ($config['installedpackages']['openntpd']) {
@@ -1175,12 +1166,19 @@ function system_ntp_configure() {
 			$ips = array_map('find_interface_ip', $ifaces);
 			foreach ($ips as $ip) {
 				if (is_ipaddr($ip))
-					fwrite($fd, "listen on $ip\n");
+					$ntpdcfg .= "listen on $ip\n";
 			}
 		}
 	}
+	$ntpdcfg .= "\n";
 
-	fwrite($fd, "\n");
+	/* open configuration for wrting or bail */
+	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
+	if(!$fd) {
+		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
+		return;
+	}
+	fwrite($fd, $ntpcfg);
 
 	/* slurp! */
 	fclose($fd);
@@ -1208,13 +1206,11 @@ function system_ntp_configure() {
 function sync_system_time() {
 	global $config, $g;
 
-	$syscfg = $config['system'];
-
 	if ($g['booting'])
 		echo "Syncing system time before startup...";
 
 	/* foreach through servers and write out to ntpd.conf */
-	foreach (explode(' ', $syscfg['timeservers']) as $ts) {
+	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
 		mwexec("/usr/sbin/ntpdate -s $ts");
 	}
 	

@@ -614,7 +614,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 					}
 				?>
 				</select><br/>
-				<?=gettext("Choose the ip to use for calling station attribute."); ?>
+				<?=gettext("Choose the IP to use for calling station attribute."); ?>
 				</td>
 			</tr>
 

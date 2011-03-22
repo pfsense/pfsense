@@ -1304,10 +1304,13 @@ function configure_cron() {
 function upnp_action ($action) {
 	switch($action) {
 		case "start":
-			if(file_exists('/var/etc/miniupnpd.conf'))
-				mwexec_bg('/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf');
+			if (file_exists('/var/etc/miniupnpd.conf')) {
+				@unlink("{$g['varrun_path']}/miniupnpd.pid");
+				mwexec_bg("/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf -P {$g['varrun_path']}/miniupnpd.pid");
+			}
 			break;
 		case "stop":
+			killbypid("{$g['varrun_path']}/miniupnpd.pid");
 			while((int)exec("/bin/pgrep -a miniupnpd | wc -l") > 0)
 				mwexec('killall miniupnpd 2>/dev/null', true);
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');

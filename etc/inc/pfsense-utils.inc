@@ -1121,13 +1121,13 @@ function get_interface_info($ifdescr) {
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
-	$ifinfo['ipaddrv6'] = get_interface_ipv6($ifdescr);;
-	$ifinfo['subnetv6'] = get_interface_subnetv6($ifdescr);;
+	$ifinfo['ipaddrv6'] = get_interface_ipv6($ifdescr);
+	$ifinfo['subnetv6'] = get_interface_subnetv6($ifdescr);
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
 	$ifinfotmp = pfSense_get_interface_stats($chkif);
-        $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
-        $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
+        // $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
+        // $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
         $ifinfo['inerrs'] = $ifinfotmp['inerrs'];
         $ifinfo['outerrs'] = $ifinfotmp['outerrs'];
         $ifinfo['collisions'] = $ifinfotmp['collisions'];
@@ -1137,31 +1137,43 @@ function get_interface_info($ifdescr) {
 	exec("/sbin/pfctl -vvsI -i {$chkif}", $pfctlstats);
 	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
 	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
+	$pf_in6_pass = preg_split("/ +/ ", $pfctlstats[7]);
+	$pf_out6_pass = preg_split("/ +/", $pfctlstats[9]);
 	$in4_pass = $pf_in4_pass[5];
 	$out4_pass = $pf_out4_pass[5];
 	$in4_pass_packets = $pf_in4_pass[3];
 	$out4_pass_packets = $pf_out4_pass[3];
-	$ifinfo['inbytespass'] = $in4_pass;
-	$ifinfo['outbytespass'] = $out4_pass;
-	$ifinfo['inpktspass'] = $in4_pass_packets;
-	$ifinfo['outpktspass'] = $out4_pass_packets;
+	$in6_pass = $pf_in6_pass[5];
+	$out6_pass = $pf_out6_pass[5];
+	$in6_pass_packets = $pf_in6_pass[3];
+	$out6_pass_packets = $pf_out6_pass[3];
+	$ifinfo['inbytespass'] = $in4_pass + $in6_pass;
+	$ifinfo['outbytespass'] = $out4_pass + $out6_pass;
+	$ifinfo['inpktspass'] = $in4_pass_packets + $in6_pass_packets;
+	$ifinfo['outpktspass'] = $out4_pass_packets + $in6_pass_packets;
 
 	/* Block */
 	$pf_in4_block = preg_split("/ +/", $pfctlstats[4]);
 	$pf_out4_block = preg_split("/ +/", $pfctlstats[6]);
+	$pf_in6_block = preg_split("/ +/", $pfctlstats[8]);
+	$pf_out6_block = preg_split("/ +/", $pfctlstats[10]);
 	$in4_block = $pf_in4_block[5];
 	$out4_block = $pf_out4_block[5];
 	$in4_block_packets = $pf_in4_block[3];
 	$out4_block_packets = $pf_out4_block[3];
-	$ifinfo['inbytesblock'] = $in4_block;
-	$ifinfo['outbytesblock'] = $out4_block;
-	$ifinfo['inpktsblock'] = $in4_block_packets;
-	$ifinfo['outpktsblock'] = $out4_block_packets;
+	$in6_block = $pf_in6_block[5];
+	$out6_block = $pf_out6_block[5];
+	$in6_block_packets = $pf_in6_block[3];
+	$out6_block_packets = $pf_out6_block[3];
+	$ifinfo['inbytesblock'] = $in4_block + $in6_block;
+	$ifinfo['outbytesblock'] = $out4_block + $out6_block;
+	$ifinfo['inpktsblock'] = $in4_block_packets + $in6_block_packets;
+	$ifinfo['outpktsblock'] = $out4_block_packets + $out6_block_packets;
 
-	$ifinfo['inbytes'] = $in4_pass + $in4_block;
-	$ifinfo['outbytes'] = $out4_pass + $out4_block;
-	$ifinfo['inpkts'] = $in4_pass_packets + $in4_block_packets;
-	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
+	$ifinfo['inbytes'] = $in4_pass + $in6_pass;
+	$ifinfo['outbytes'] = $out4_pass + $out6_pass;
+	$ifinfo['inpkts'] = $in4_pass_packets + $in6_pass_packets;
+	$ifinfo['outpkts'] = $in4_pass_packets + $out6_pass_packets;
 		
 	$ifconfiginfo = "";
 	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];
@@ -2205,6 +2217,7 @@ function generate_ipv6_from_mac($mac) {
 		
 		$i++;
 	}	
-	return $ipv6;
+	return $ip
+v6;
 }
 ?>

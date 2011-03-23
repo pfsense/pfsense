@@ -1215,8 +1215,8 @@ function interface_ppps_configure($interface) {
 					$localips[$pid] = get_interface_ip($port); // try to get the interface IP from the port
 				
 				if(!is_ipaddr($localips[$pid])){
-					log_error("Could not get a Local IP address for PPTP/L2TP link on {$port} in interfaces_ppps_configure.");
-					return 0;
+					log_error("Could not get a Local IP address for PPTP/L2TP link on {$port} in interfaces_ppps_configure. Using 0.0.0.0 ip!");
+					$localips[$pid] = "0.0.0.0";
 				}
 				/* XXX: This needs to go away soon! [It's commented out!] */
 				/* Configure the gateway (remote IP ) */
@@ -1492,7 +1492,6 @@ EOD;
 			$mpdconf .= <<<EOD
 	set {$type} self {$localips[$pid]}
 	set {$type} peer {$gateways[$pid]}
-	set {$type} disable windowing
 
 EOD;
 		}

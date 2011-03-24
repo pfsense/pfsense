@@ -1389,7 +1389,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_rang
 				 * and the out pipe ruleno + 1. This removes limitation that where present in 
 				 * previous version of the peruserbw.
 				 */
-				if (isset($config['captiveportal']['peruserbw']))
+				if (isset($config['captiveportal']['peruserbw']) || $usebw == true)
 					$ridx++;
 				continue;
 			}

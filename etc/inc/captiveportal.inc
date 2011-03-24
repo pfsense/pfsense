@@ -684,7 +684,7 @@ EOD;
 	if ($reinit == false)
 		unlock($captiveportallck);
 
-	/* filter on layer2 as well so we can check MAC addresses */
+	/* activate ipfw(4) so CP can work */
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 
 	return $cprules;

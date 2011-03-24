@@ -301,11 +301,14 @@ EOD;
  *   null
  ******/
 /* mount flash card read/write */
-function conf_mount_rw() {
+function conf_mount_rw($nobootcheck = false) {
 	global $g;
 
 	/* do not mount on cdrom platform */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
+		return;
+
+	if($g['booting'] && !$nobootcheck)
 		return;
 
 	if (refcount_reference(1000) > 1)
@@ -321,7 +324,7 @@ function conf_mount_rw() {
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
-         */
+	 */
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	/* we could not mount this correctly.  kick off fsck */
 	if($status <> 0) {
@@ -339,14 +342,14 @@ function conf_mount_rw() {
  * RESULT
  *   null
  ******/
-function conf_mount_ro() {
+function conf_mount_ro($nobootcheck = false) {
 	global $g;
 
 	/* do not umount on cdrom or pfSense platforms */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	if($g['booting'])
+	if($g['booting'] && !$nobootcheck)
 		return;
 
 	if (refcount_unreference(1000) > 0)

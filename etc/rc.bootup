@@ -129,7 +129,7 @@ $memory = get_memory();
 $avail = $memory[0];
 echo " done.\n";
 
-conf_mount_rw();
+conf_mount_rw(true);
 
 /* save dmesg output to file */
 system_dmesg_save();
@@ -400,6 +400,6 @@ unset($g['booting']);
 
 led_normalize();
 
-conf_mount_ro();
+conf_mount_ro(true);
 
 ?>

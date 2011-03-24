@@ -159,7 +159,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 			}
 		}// End force pppoe reset at specific time
 	}// End if type == pppoe
-	else if ($a_ppps[$pppid]['type'] == "pptp"){
+	else if ($a_ppps[$pppid]['type'] == "pptp" || $a_ppps[$pppid]['type'] == "l2tp"){
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['pptp_local'] = explode(",",$a_ppps[$pppid]['localip']);
@@ -175,6 +175,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
+$pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
 
@@ -196,6 +197,7 @@ switch($wancfg['ipaddr']) {
 		break;
 	case "pppoe":
 	case "pptp":
+	case "l2tp":
 	case "ppp":
 		$pconfig['type'] = $wancfg['ipaddr'];
 		break;
@@ -452,6 +454,16 @@ if ($_POST['apply']) {
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
+		case "l2tp":
+			if ($_POST['pptp_dialondemand']) {
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote pptp_dialondemand pptp_idletimeout");
+				$reqdfieldsn = array(gettext("L2TP username"),gettext("L2TP password"),gettext("L2TP remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
+			} else {
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote");
+				$reqdfieldsn = array(gettext("L2TP username"),gettext("L2TP password"),gettext("L2TP remote IP address"));
+			}
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
 	}
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
@@ -500,7 +512,7 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("A valid PPTP local IP address must be specified.");
 	if (($_POST['pptp_subnet'] && !is_numeric($_POST['pptp_subnet'])))
 		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
-	if (($_POST['pptp_remote'] && !is_ipaddr($_POST['pptp_remote'])))
+	if (($_POST['pptp_remote'] && !is_ipaddr($_POST['pptp_remote']) && !is_hostname($_POST['gateway'][$iface])))
 		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout']))
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -656,6 +668,7 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -725,6 +738,7 @@ if ($_POST['apply']) {
 
 				break;
 			case "pptp":
+			case "l2tp":
 				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
 				$a_ppps[$pppid]['type'] = $_POST['type'];
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
@@ -965,7 +979,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "staticv6" => gettext("Static IPv6"), "staticv4v6" => gettext("Static IPv4 + IPv6"), "dhcp" => gettext("DHCP"), "dhcpv6" => gettext("DHCPv6"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP") /* , "carpdev-dhcp" => "CarpDev"*/);
+$types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "staticv6" => gettext("Static IPv6"), "staticv4v6" => gettext("Static IPv4 + IPv6"), "dhcp" => gettext("DHCP"), "dhcpv6" => gettext("DHCPv6"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
 
 ?>
 
@@ -1012,12 +1026,15 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 				$('none','staticv4','staticv6','dhcp','dhcpv6','pptp', 'ppp').invoke('hide');
 				break;
 			}
+			case "l2tp":
 			case "pptp": {
 				$('none','staticv4','staticv6','dhcp','dhcpv6','pppoe', 'ppp').invoke('hide');
+				$('pptp').show();
 				break;
 			}
 		}
-		$(t).show();
+		if (t != "l2tp" && t != "pptp")
+			$(t).show();
 	}
 
 	function show_allcfg(obj) {
@@ -1447,6 +1464,17 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCPv4 client configuration"); ?></td>
 									</tr>
+									<!-- Uncomment to expose DHCP+ in GUI
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Enable DHCP+"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp_plus" type="checkbox" value="yes" <?php if ($pconfig['dhcp_plus'] == true) echo "checked"; ?> >
+										<strong><?=gettext("Enable DHCP+L2TP or DHCP+PPTP."); ?></strong>
+										<br/>
+										<?=gettext("Status changes on this interface will trigger reconfiguration (if necessary) of the associated PPTP/L2TP link."); ?>
+										</td>
+									</tr>
+									-->
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
@@ -1476,6 +1504,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 											"DHCP client."); ?>
 										</td>
 									</tr>
+									
 								</table>
 							</td>
 						</tr>
@@ -1705,7 +1734,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPTP configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPTP/L2TP configuration"); ?></td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>

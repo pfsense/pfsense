@@ -338,7 +338,7 @@ if ($_POST['apply']) {
 					if(is_ipaddrv6($values['ipaddrv6'])) {
 						$realif = get_real_interface("$ifapply");
 						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
-						mwexec("/sbin/ifconfig {realif} inet6 {$values['ipaddrv6']} -alias");
+						mwexec("/sbin/ifconfig {$realif} inet6 {$values['ipaddrv6']} -alias");
 					}
 					interface_configure($ifapply, true);
 				} else {

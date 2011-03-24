@@ -85,6 +85,7 @@ if (!is_array($config['gateways']['gateway_item']))
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
+$old_wancfg = $wancfg;
 // Populate page descr if it does not exist.
 if ($if == "wan" && !$wancfg['descr'])
 	$wancfg['descr'] = "WAN";
@@ -221,12 +222,12 @@ switch($wancfg['ipaddrv6']) {
 		break;
 	default:
 		/* if we have dual stack we need a combined type */
-		if(is_ipaddr($wancfg['ipaddrv6'])) {
+		if(is_ipaddrv6($wancfg['ipaddrv6'])) {
 			$pconfig['type'] = "staticv6";
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
-			if((is_ipaddr($wancfg['ipaddrv6'])) && (is_ipaddr($wancfg['ipaddr']))) {
+			if((is_ipaddrv6($wancfg['ipaddrv6'])) && (is_ipaddr($wancfg['ipaddr']))) {
 				$pconfig['type'] = "staticv4v6";
 			}
 		}
@@ -331,11 +332,18 @@ if ($_POST['apply']) {
 
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-			foreach ($toapplylist as $ifapply) {
-				if (isset($config['interfaces'][$ifapply]['enable']))
+			foreach ($toapplylist as $ifapply => $values) {
+				if (isset($config['interfaces'][$ifapply]['enable'])) {
+					/* check if any old addresses need purging */
+					if(is_ipaddrv6($values['ipaddrv6'])) {
+						$realif = get_real_interface("$ifapply");
+						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
+						mwexec("/sbin/ifconfig {realif} inet6 {$values['ipaddrv6']} -alias");
+					}
 					interface_configure($ifapply, true);
-				else
+				} else {
 					interface_bring_down($ifapply);
+				}
 			}
 		}
 		/* restart snmp so that it binds to correct address */
@@ -359,11 +367,16 @@ if ($_POST['apply']) {
 		interface_sync_wireless_clones($wancfg, false);
 	write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
 	mark_subsystem_dirty('interfaces');
-	if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
+	if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-	else
+	} else {
 		$toapplylist = array();
-	$toapplylist[$if] = $if; 
+	}
+	$toapplylist[$if] = array();
+	/* we need to be able remove IP aliases for IPv6 */
+	if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
+		$toapplylist[$if]['ipaddrv6'] = "{$old_wancfg['ipaddrv6']}";
+	}
 	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 	header("Location: interfaces.php?if={$if}");
 	exit;
@@ -795,11 +808,17 @@ if ($_POST['apply']) {
 		conf_mount_ro();
 		write_config();
 
-		if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
+		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-		else
+		} else {
 			$toapplylist = array();
-		$toapplylist[$if] = $if; 
+		}
+		$toapplylist[$if] = array();
+		/* we need to be able remove IP aliases for IPv6 */
+		if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
+			$toapplylist[$if]['ipaddrv6'] = $old_wancfg['ipaddrv6'];
+		}
+		
 		file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 
 		mark_subsystem_dirty('interfaces');

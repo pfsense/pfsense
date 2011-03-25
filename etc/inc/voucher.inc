@@ -41,9 +41,9 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	global $g, $config;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
-		$url = "https://{$syncip}:{$port}";
+		$url = "https://{$syncip}";
 	else 
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';

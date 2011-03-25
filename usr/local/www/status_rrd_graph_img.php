@@ -545,7 +545,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-in_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_in_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"out-pass\t\" ";
+	$graphcmd .= "COMMENT:\"out-block\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:MAX:%7.2lf %s pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:AVERAGE:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:LAST:%7.2lf %S pps\" ";
@@ -957,6 +957,28 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%7.2lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%7.2lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+}
+elseif((strstr($curdatabase, "-totalusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for online Captive Portal users stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end ";
+	$graphcmd .= "--vertical-label \"Total Captive Portal Users\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--base=1000 ";
+	$graphcmd .= "--lower-limit=0 ";
+	$graphcmd .= "--slope-mode ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-totalusers=$rrddbpath$curdatabase:totalusers:AVERAGE\" ";
+	$graphcmd .= "AREA:\"$curif-totalusers#{$colorcaptiveportalusers[0]}:$curif-totalusers\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Users Online\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:LAST:%8.0lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:AVERAGE:%8.0lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }

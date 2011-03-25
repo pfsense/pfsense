@@ -295,11 +295,11 @@ function openvpn_reconfigure($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	if (isset($settings['dev_mode']))
-		$tunname = "{$settings['dev_mode']}{$vpnid}";
+	if (isset($settings['device_mode']))
+		$tunname = "{$settings['device_mode']}{$vpnid}";
 	else {	/* defaults to tun */
 		$tunname = "tun{$vpnid}";
-		$settings['dev_mode'] = "tun";
+		$settings['device_mode'] = "tun";
 	}
 
 	if ($mode == "server")
@@ -323,6 +323,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
 	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
+	$device_mode = $settings['device_mode'];
 	$cipher = $settings['crypto'];
 
 	$interface = $settings['interface'];
@@ -340,7 +341,7 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	$conf  = "dev {$devname}\n";
-	$conf .= "dev-type {$settings['dev_mode']}\n";
+	$conf .= "dev-type {$settings['device_mode']}\n";
 	$conf .= "dev-node /dev/{$tunname}\n";
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";

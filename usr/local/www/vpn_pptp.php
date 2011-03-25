@@ -342,7 +342,7 @@ function enable_change(enable_over) {
 								}
 							?>
 						</select>
-						<br><?=gettext("Hint: 10 is TEN pptp clients"); ?>
+						<br><?=gettext("Hint: 10 is ten PPTP clients"); ?>
 					</td>
 				</tr>
                 <tr> 

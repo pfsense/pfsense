@@ -961,7 +961,9 @@ class priq_queue {
 				$input_errors[] = gettext("Queue limit must be an integer");
 		if ($data['qlimit'] < 0)
 				$input_errors[] = gettext("Queue limit must be positive");
-		if (!preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
+		if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['newname']))
+			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
 			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 		
 	}
@@ -2770,7 +2772,7 @@ class dummynet_class {
 		$reqdfieldsn[] = gettext("Bandwidth");
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
-		$reqdfields[] = "name";
+		$reqdfields[] = "newname";
 		$reqdfieldsn[] = gettext("Name");
 	
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -2782,8 +2784,10 @@ class dummynet_class {
 			($data['buckets'] < 1 && $data['buckets'] > 100)) 
 				$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
-			$input_errors[] = gettext("Queue limit must be an integer");
-		if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
+            		$input_errors[] = gettext("Queue limit must be an integer");
+        	if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['newname']))
+			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+        	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 	}
 }
@@ -3252,7 +3256,7 @@ class dnqueue_class extends dummynet_class {
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
+                $form .= " ><span class=\"vexpl\"> " . gettext("Enable/Disable queue") . "</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\"><br><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";

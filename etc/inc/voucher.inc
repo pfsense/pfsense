@@ -37,6 +37,54 @@
 if(!function_exists('captiveportal_syslog'))
 	require_once("captiveportal.inc");
 
+function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = "1", $stop_time = null) {
+	global $g, $config;
+	require_once("xmlrpc.inc");
+	if($port == "443") 
+		$url = "https://{$syncip}:{$port}";
+	else 
+		$url = "http://{$syncip}:{$port}";
+
+	/* Construct code that is run on remote machine */
+	$method = 'pfsense.exec_php';
+	$execcmd  = <<<EOF
+	require_once('/etc/inc/captiveportal.inc');
+	require_once('/etc/inc/voucher.inc');
+	\$radiusservers = captiveportal_get_radius_servers();
+	captiveportal_disconnect(\$dbent, \$radiusservers, \$term_cause, \$stop_time);
+
+EOF;
+
+	/* assemble xmlrpc payload */
+	$params = array(
+		XML_RPC_encode($password),
+		XML_RPC_encode($execcmd)
+	);
+
+	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	$msg = new XML_RPC_Message($method, $params);
+	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+	$cli->setCredentials($username, $password);
+	$resp = $cli->send($msg, "250");
+	if(!is_object($resp)) {
+		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
+		return false;
+	} elseif($resp->faultCode()) {
+		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
+		return false;
+	} else {
+		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+	}
+
+	$toreturn =  XML_RPC_Decode($resp->value());
+
+	return $toreturn;
+}
+
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config;
 	require_once("xmlrpc.inc");

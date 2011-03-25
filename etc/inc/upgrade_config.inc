@@ -790,6 +790,7 @@ function upgrade_043_to_044() {
 	$gateways = return_gateways_array(true);
 	$i = 0;
 	if (is_array($config['staticroutes']['route'])) {
+		$gwmap = array();
 		foreach ($config['staticroutes']['route'] as $idx => $sroute) {
 			$found = false;
 			foreach ($gateways as $gwname => $gw) {
@@ -799,9 +800,15 @@ function upgrade_043_to_044() {
 					break;
 				}
 			}
+			if($gwmap[$sroute['gateway']]) {
+				/* We already added a gateway name for this IP */
+				$config['staticroutes']['route'][$idx]['gateway'] = "{$gwmap[$sroute['gateway']]}";
+				$found = true;
+			}			
 			if ($found == false) {
 				$gateway = array();
-				$gateway['name'] = "SROUTE{$i}";	
+				$gateway['name'] = "SROUTE{$i}";
+				$gwmap[$sroute['gateway']] = $gateway['name'];
 				$gateway['gateway'] = $sroute['gateway'];
 				$gateway['interface'] = $sroute['interface'];
 				$gateway['descr'] = sprintf(gettext("Upgraded static route for %s"), $sroute['network']);

@@ -684,7 +684,7 @@ EOD;
 	if ($reinit == false)
 		unlock($captiveportallck);
 
-	/* filter on layer2 as well so we can check MAC addresses */
+	/* activate ipfw(4) so CP can work */
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 
 	return $cprules;
@@ -881,6 +881,17 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 
 	/* Release the ruleno so it can be reallocated to new clients. */
 	captiveportal_free_ipfw_ruleno($dbent[1]);
+
+	// XMLRPC Call over to the master Voucher node
+	$a_voucher = &$config['voucher'];
+	if(!empty($a_voucher['vouchersyncdbip'])) {
+		$syncip   = $a_voucher['vouchersyncdbip'];
+		$syncport = $a_voucher['vouchersyncport'];
+		$syncpass = $a_voucher['vouchersyncpass'];
+		$vouchersyncusername = $a_voucher['vouchersyncusername'];
+		$remote_status = xmlrpc_sync_voucher_disconnect($dben, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
+	}
+
 }
 
 /* remove a single client by sessionid */
@@ -1378,7 +1389,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_rang
 				 * and the out pipe ruleno + 1. This removes limitation that where present in 
 				 * previous version of the peruserbw.
 				 */
-				if (isset($config['captiveportal']['peruserbw']))
+				if (isset($config['captiveportal']['peruserbw']) || $usebw == true)
 					$ridx++;
 				continue;
 			}

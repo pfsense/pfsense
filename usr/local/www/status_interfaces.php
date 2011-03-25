@@ -132,6 +132,21 @@ include("head.inc");
 			</a>
 		</td>
 	</tr>
+	<?php  endif; if ($ifinfo['l2tplink']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("L2TP"); ?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
+			<?php if ($ifinfo['l2tplink'] == "up"): ?>
+				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns">
+			<?php else: ?>
+				<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns">
+			<?php endif; ?>
+			</a>
+		</td>
+	</tr>
 	<?php  endif; if ($ifinfo['ppplink']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("PPP"); ?></td>

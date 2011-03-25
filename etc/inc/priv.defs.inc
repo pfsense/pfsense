@@ -186,17 +186,23 @@ $priv_list['page-diag-system-activity']['descr'] = gettext("Allows access to the
 $priv_list['page-diag-system-activity']['match'] = array();
 $priv_list['page-diag-system-activity']['match'][] = "diag_system_activity*";
 
-$priv_list['page-diag-system-activity'] = array();
-$priv_list['page-diag-system-activity']['name'] = gettext("WebCfg - Diagnostics: System Activity");
-$priv_list['page-diag-system-activity']['descr'] = gettext("Allows access to the 'Diagnostics: System Activity' page");
-$priv_list['page-diag-system-activity']['match'] = array();
-$priv_list['page-diag-system-activity']['match'][] = "diag_system_pftop*";
+$priv_list['page-diag-system-pftop'] = array();
+$priv_list['page-diag-system-pftop']['name'] = gettext("WebCfg - Diagnostics: pfTop");
+$priv_list['page-diag-system-pftop']['descr'] = gettext("Allows access to the 'Diagnostics: pfTop' page");
+$priv_list['page-diag-system-pftop']['match'] = array();
+$priv_list['page-diag-system-pftop']['match'][] = "diag_system_pftop*";
 
 $priv_list['page-diagnostics-traceroute'] = array();
 $priv_list['page-diagnostics-traceroute']['name'] = gettext("WebCfg - Diagnostics: Traceroute page");
 $priv_list['page-diagnostics-traceroute']['descr'] = gettext("Allow access to the 'Diagnostics: Traceroute' page.");
 $priv_list['page-diagnostics-traceroute']['match'] = array();
 $priv_list['page-diagnostics-traceroute']['match'][] = "diag_traceroute.php*";
+
+$priv_list['page-diagnostics-tables'] = array();
+$priv_list['page-diagnostics-tables']['name'] = "WebCfg - Diagnostics: Tables page";
+$priv_list['page-diagnostics-tables']['descr'] = "Allow access to the 'Diagnostics: Tables' page.";
+$priv_list['page-diagnostics-tables']['match'] = array();
+$priv_list['page-diagnostics-tables']['match'][] = "diag_tables.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = gettext("WebCfg - Diagnostics: Command page");
@@ -1110,12 +1116,6 @@ $priv_list['page-system-groupmanager']['name'] = gettext("WebCfg - System: Group
 $priv_list['page-system-groupmanager']['descr'] = gettext("Allow access to the 'System: Group manager' page.");
 $priv_list['page-system-groupmanager']['match'] = array();
 $priv_list['page-system-groupmanager']['match'][] = "system_groupmanager.php*";
-
-$priv_list['page-diag-showbogons'] = array();
-$priv_list['page-diag-showbogons']['name'] = gettext("WebCfg - Diagnostics: System Activity");
-$priv_list['page-diag-showbogons']['descr'] = gettext("Allows access to the 'Diagnostics: Show Bogons' page");
-$priv_list['page-diag-showbogons']['match'] = array();
-$priv_list['page-diag-showbogons']['match'][] = "diag_showbogons.php";
 
 $priv_list['page-status-trafficgraph'] = array();
 $priv_list['page-status-trafficgraph']['name'] = gettext("WebCfg - Status: Traffic Graph page");

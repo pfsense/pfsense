@@ -72,7 +72,7 @@ if ($_POST) {
 	if ($_POST['name'])
         	$qname = htmlspecialchars(trim($_POST['name']));
 	else if ($_POST['newname'])
-        	$qname = htmlspecialchars(trim($_POST['name']));
+        	$qname = htmlspecialchars(trim($_POST['newname']));
         if ($_POST['pipe'])
         	$pipe = htmlspecialchars(trim($_POST['pipe']));
 	else

@@ -417,31 +417,29 @@ include("head.inc");
 </script>
 
 <script type="text/javascript" language="JavaScript">
-	function enable_change(enable_over) {
-		var endis;
-		endis = !(document.iform.enable.checked || enable_over || (document.iform.mode.select == "unmanaged"));
-		document.iform.range_from.disabled = endis;
-		document.iform.range_to.disabled = endis;
-		document.iform.dns1.disabled = endis;
-		document.iform.dns2.disabled = endis;
-		document.iform.deftime.disabled = endis;
-		document.iform.maxtime.disabled = endis;
-		document.iform.gateway.disabled = endis;
-		document.iform.failover_peerip.disabled = endis;
-		document.iform.domain.disabled = endis;
-		document.iform.domainsearchlist.disabled = endis;
-		document.iform.staticarp.disabled = endis;
-		document.iform.ddnsdomain.disabled = endis;
-		document.iform.ddnsupdate.disabled = endis;
-		document.iform.ntp1.disabled = endis;
-		document.iform.ntp2.disabled = endis;
-		document.iform.tftp.disabled = endis;
-		document.iform.ldap.disabled = endis;
-		document.iform.netboot.disabled = endis;
-		document.iform.nextserver.disabled = endis;
-		document.iform.filename.disabled = endis;
-		document.iform.rootpath.disabled = endis;
-		document.iform.denyunknown.disabled = endis;
+	function enable_change(disableFields) {
+		document.iform.range_from.disabled = disableFields;
+		document.iform.range_to.disabled = disableFields;
+		document.iform.dns1.disabled = disableFields;
+		document.iform.dns2.disabled = disableFields;
+		document.iform.deftime.disabled = disableFields;
+		document.iform.maxtime.disabled = disableFields;
+		document.iform.gateway.disabled = disableFields;
+		document.iform.failover_peerip.disabled = disableFields;
+		document.iform.domain.disabled = disableFields;
+		document.iform.domainsearchlist.disabled = disableFields;
+		document.iform.staticarp.disabled = disableFields;
+		document.iform.ddnsdomain.disabled = disableFields;
+		document.iform.ddnsupdate.disabled = disableFields;
+		document.iform.ntp1.disabled = disableFields;
+		document.iform.ntp2.disabled = disableFields;
+		document.iform.tftp.disabled = disableFields;
+		document.iform.ldap.disabled = disableFields;
+		document.iform.netboot.disabled = disableFields;
+		document.iform.nextserver.disabled = disableFields;
+		document.iform.filename.disabled = disableFields;
+		document.iform.rootpath.disabled = disableFields;
+		document.iform.denyunknown.disabled = disableFields;
 	}
 
 	function show_shownumbervalue() {
@@ -534,7 +532,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
-				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this.checked);">
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
@@ -542,10 +540,11 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Operating Mode");?></td>
 			<td width="78%" class="vtable">
-				<select name="mode" id="mode">
+				<select name="mode" id="mode" onchange="enable_change(this.value=='unmanaged');">
 					<?php foreach($modes as $name => $value) { ?>
 					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
+				</select><br />
 			<strong><?php printf(gettext("Select the Operating Mode. Use Unmanaged for Router Advertising only, Managed for DHCPv6 only, Assisted for Combined"));?></strong></td>
 			</tr>
 			<tr>

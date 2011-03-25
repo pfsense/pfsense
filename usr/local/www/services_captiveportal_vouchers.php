@@ -168,33 +168,41 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "charset rollbits ticketbits checksumbits publickey magic saveinterval");
-		$reqdfieldsn = array(gettext("charset"),gettext("rollbits"),gettext("ticketbits"),gettext("checksumbits"),gettext("publickey"),gettext("magic"),gettext("saveinterval"));
+		if (!$_POST['vouchersyncusername']) { 
+			$reqdfields = explode(" ", "charset rollbits ticketbits checksumbits publickey magic saveinterval");
+			$reqdfieldsn = array(gettext("charset"),gettext("rollbits"),gettext("ticketbits"),gettext("checksumbits"),gettext("publickey"),gettext("magic"),gettext("saveinterval"));
+		} else {
+			$reqdfields = explode(" ", "vouchersyncdbip vouchersyncport vouchersyncpass vouchersyncusername");
+			$reqdfieldsn = array(gettext("Synchronize Voucher Database IP"),gettext("Sync port"),gettext("Sync password"),gettext("Sync username"));
+		}
 		
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	}
 	
-	// Check for form errors
-	if ($_POST['charset'] && (strlen($_POST['charset'] < 2))) 
-		$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
-	if ($_POST['charset'] && (strpos($_POST['charset'],"\"")>0)) 
-		$input_errors[] = gettext("Double quotes aren't allowed.");
-	if ($_POST['charset'] && (strpos($_POST['charset'],",")>0)) 
-		$input_errors[] = "',' " . gettext("aren't allowed.");
-	if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) 
-		$input_errors[] = gettext("# of Bits to store Roll Id needs to be between 1..31.");
-	if ($_POST['ticketbits'] && (!is_numeric($_POST['ticketbits']) || ($_POST['ticketbits'] < 1) || ($_POST['ticketbits'] > 16))) 
-		$input_errors[] = gettext("# of Bits to store Ticket Id needs to be between 1..16.");
-	if ($_POST['checksumbits'] && (!is_numeric($_POST['checksumbits']) || ($_POST['checksumbits'] < 1) || ($_POST['checksumbits'] > 31))) 
-		$input_errors[] = gettext("# of Bits to store checksum needs to be between 1..31.");
-	if ($_POST['saveinterval'] && (!is_numeric($_POST['saveinterval']) || ($_POST['saveinterval'] < 1))) 
-		$input_errors[] = gettext("Save interval in minutes cant be negative.");
-	if ($_POST['publickey'] && (!strstr($_POST['publickey'],"BEGIN PUBLIC KEY"))) 
-		$input_errors[] = gettext("This doesn't look like an RSA Public key.");
-	if ($_POST['privatekey'] && (!strstr($_POST['privatekey'],"BEGIN RSA PRIVATE KEY"))) 
-		$input_errors[] = gettext("This doesn't look like an RSA Private key.");
+	if (!$_POST['vouchersyncusername']) { 
+		// Check for form errors
+		if ($_POST['charset'] && (strlen($_POST['charset'] < 2))) 
+			$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
+		if ($_POST['charset'] && (strpos($_POST['charset'],"\"")>0)) 
+			$input_errors[] = gettext("Double quotes aren't allowed.");
+		if ($_POST['charset'] && (strpos($_POST['charset'],",")>0)) 
+			$input_errors[] = "',' " . gettext("aren't allowed.");
+		if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) 
+			$input_errors[] = gettext("# of Bits to store Roll Id needs to be between 1..31.");
+		if ($_POST['ticketbits'] && (!is_numeric($_POST['ticketbits']) || ($_POST['ticketbits'] < 1) || ($_POST['ticketbits'] > 16))) 
+			$input_errors[] = gettext("# of Bits to store Ticket Id needs to be between 1..16.");
+		if ($_POST['checksumbits'] && (!is_numeric($_POST['checksumbits']) || ($_POST['checksumbits'] < 1) || ($_POST['checksumbits'] > 31))) 
+			$input_errors[] = gettext("# of Bits to store checksum needs to be between 1..31.");
+		if ($_POST['saveinterval'] && (!is_numeric($_POST['saveinterval']) || ($_POST['saveinterval'] < 1))) 
+			$input_errors[] = gettext("Save interval in minutes cant be negative.");
+		if ($_POST['publickey'] && (!strstr($_POST['publickey'],"BEGIN PUBLIC KEY"))) 
+			$input_errors[] = gettext("This doesn't look like an RSA Public key.");
+		if ($_POST['privatekey'] && (!strstr($_POST['privatekey'],"BEGIN RSA PRIVATE KEY"))) 
+			$input_errors[] = gettext("This doesn't look like an RSA Private key.");
+	}
 
 	if (!$input_errors) {
+		if (!$_POST['vouchersyncusername']) { 
 			$config['voucher']['enable'] = $_POST['enable'] ? true : false;
 			$config['voucher']['charset'] = $_POST['charset'];
 			$config['voucher']['rollbits'] = $_POST['rollbits'];
@@ -206,6 +214,7 @@ if ($_POST) {
 			$config['voucher']['privatekey'] = base64_encode($_POST['privatekey']);
 			$config['voucher']['msgnoaccess'] = $_POST['msgnoaccess'];
 			$config['voucher']['msgexpired'] = $_POST['msgexpired'];
+		}
 			$config['voucher']['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
 			$config['voucher']['vouchersyncport'] = $_POST['vouchersyncport'];
 			$config['voucher']['vouchersyncusername'] = $_POST['vouchersyncusername'];
@@ -215,9 +224,9 @@ if ($_POST) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
 				if($config['voucher']['vouchersyncport'] == "443") 
-					$url = "https://{$config['voucher']['vouchersyncdbip']}:{$config['voucher']['vouchersyncport']}";
+					$url = "https://{$config['voucher']['vouchersyncdbip']}";
 				else 
-					$url = "http://{$config['voucher']['vouchersyncdbip']}:{$config['voucher']['vouchersyncport']}";
+					$url = "http://{$config['voucher']['vouchersyncdbip']}";
 				$execcmd  = <<<EOF
 				\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
 				\$toreturn['voucher']['charset'] = \$config['voucher']['charset'];
@@ -242,7 +251,7 @@ EOF;
 				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $config['voucher']['vouchersyncport']);
 				$cli->setCredentials($config['voucher']['vouchersyncusername'], $config['voucher']['vouchersyncpass']);
 				$resp = $cli->send($msg, "250");
-				if(!$resp) {
+				if(!is_object($resp)) {
 					$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
 					log_error($error);
 					file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");

@@ -198,11 +198,11 @@ $priv_list['page-diagnostics-traceroute']['descr'] = "Allow access to the 'Diagn
 $priv_list['page-diagnostics-traceroute']['match'] = array();
 $priv_list['page-diagnostics-traceroute']['match'][] = "diag_traceroute.php*";
 
-$priv_list['page-diagnostics-traceroute'] = array();
-$priv_list['page-diagnostics-traceroute']['name'] = "WebCfg - Diagnostics: Tables page";
-$priv_list['page-diagnostics-traceroute']['descr'] = "Allow access to the 'Diagnostics: Tables' page.";
-$priv_list['page-diagnostics-traceroute']['match'] = array();
-$priv_list['page-diagnostics-traceroute']['match'][] = "diag_tables.php*";
+$priv_list['page-diagnostics-tables'] = array();
+$priv_list['page-diagnostics-tables']['name'] = "WebCfg - Diagnostics: Tables page";
+$priv_list['page-diagnostics-tables']['descr'] = "Allow access to the 'Diagnostics: Tables' page.";
+$priv_list['page-diagnostics-tables']['match'] = array();
+$priv_list['page-diagnostics-tables']['match'][] = "diag_tables.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = "WebCfg - Diagnostics: Command page";

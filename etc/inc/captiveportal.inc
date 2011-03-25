@@ -1740,7 +1740,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	/* redirect user to desired destination */
 	if (!empty($attributes['url_redirection']))
 		$my_redirurl = $attributes['url_redirection'];
-	else if ($config['captiveportal']['redirurl'])
+	else if (!empty($config['captiveportal']['redirurl']))
 		$my_redirurl = $config['captiveportal']['redirurl'];
 	else
 		$my_redirurl = $redirurl;

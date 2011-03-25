@@ -89,15 +89,15 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	global $g, $config;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
-		$url = "https://{$syncip}:{$port}";
+		$url = "https://{$syncip}";
 	else 
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth($voucher_received);
+	\$timeleft = voucher_auth({$voucher_received});
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
 	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
@@ -132,7 +132,7 @@ EOF;
 	if(count($toreturn['voucher']['roll']) <> count($config['voucher']['roll'])) {
 		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
-		voucher_configure();
+		voucher_configure(true);
 	}
 
 	return $toreturn['timeleft'];
@@ -230,12 +230,12 @@ function voucher_auth($voucher_received, $test = 0) {
                 }
             } else {
                 $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+		captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
             }
         } else {
             // hmm, thats weird ... not what I expected
             $test_result[] = "$voucher invalid: $result !!";
-			captiveportal_syslog("$voucher invalid: $result !!");
+	    captiveportal_syslog("$voucher invalid: $result !!");
             $error++;
         }
     }
@@ -247,7 +247,7 @@ function voucher_auth($voucher_received, $test = 0) {
         } else {
             $test_result[] = "Access granted for $total_minutes Minutes in total.";
         }
-		unlock($voucherlck);
+	unlock($voucherlck);
         return $test_result;
     }
 
@@ -264,8 +264,8 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	// If we did a XMLRPC sync earlier check the timeleft
 	if(!empty($a_voucher['vouchersyncdbip'])) 
-		if($remote_time_used['timeleft'] < $total_minutes) 
-			$total_minutes = $remote_time_used['timeleft'];
+		if($remote_time_used < $total_minutes) 
+			$total_minutes = $remote_time_used;
 
     // All given vouchers were valid and this isn't simply a test.
     // Write back the used DB's

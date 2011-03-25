@@ -202,8 +202,8 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		$config['voucher']['enable'] = $_POST['enable'] ? true : false;
 		if (!$_POST['vouchersyncusername']) { 
-			$config['voucher']['enable'] = $_POST['enable'] ? true : false;
 			$config['voucher']['charset'] = $_POST['charset'];
 			$config['voucher']['rollbits'] = $_POST['rollbits'];
 			$config['voucher']['ticketbits'] = $_POST['ticketbits'];

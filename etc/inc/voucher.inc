@@ -119,12 +119,12 @@ EOF;
 		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return array("timeleft" => "0");
+		return 0; // $timeleft
 	} elseif($resp->faultCode()) {
 		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
-		return array("timeleft" => "0");
+		return 0; // $timeleft
 	} else {
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}

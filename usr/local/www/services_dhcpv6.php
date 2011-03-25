@@ -418,6 +418,7 @@ include("head.inc");
 
 <script type="text/javascript" language="JavaScript">
 	function enable_change(disableFields) {
+		var disableFields = (document.iform.mode.value=='unmanaged' || !document.iform.enable.checked);
 		document.iform.range_from.disabled = disableFields;
 		document.iform.range_to.disabled = disableFields;
 		document.iform.dns1.disabled = disableFields;
@@ -532,7 +533,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
-				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this.checked);">
+				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change();">
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
@@ -540,7 +541,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Operating Mode");?></td>
 			<td width="78%" class="vtable">
-				<select name="mode" id="mode" onchange="enable_change(this.value=='unmanaged');">
+				<select name="mode" id="mode" onchange="enable_change();">
 					<?php foreach($modes as $name => $value) { ?>
 					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
@@ -820,7 +821,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="if" type="hidden" value="<?=$if;?>">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()">
 			</td>
 			</tr>
 			<tr>

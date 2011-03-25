@@ -301,8 +301,8 @@ function voucher_auth($voucher_received, $test = 0) {
     return $total_minutes;
 }
 
-function voucher_configure() {
-    global $config, $g;
+function voucher_configure($sync = false) {
+	global $config, $g;
 
 	/* kill any running minicron */
 	killbypid("{$g['varrun_path']}/vouchercron.pid");
@@ -312,6 +312,8 @@ function voucher_configure() {
 
         if ($g['booting'])
             echo "Enabling voucher support... ";
+	if ($sync == true)
+	    captiveportal_syslog("Writing voucher db from sync data...");
 
         // start cron if we're asked to save runtime DB periodically
         // to XML config if it changed
@@ -329,7 +331,7 @@ function voucher_configure() {
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
         if (!$fd) {
             captiveportal_syslog("Voucher error: cannot write voucher.public\n");
-	   		unlock($voucherlck);
+	    unlock($voucherlck);
             return 1;
         }
         fwrite($fd, $pubkey);
@@ -348,7 +350,7 @@ function voucher_configure() {
         @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
 	unlock($voucherlck);
 
-        if ($g['booting'] && is_array($config['voucher']['roll'])) {
+        if (($g['booting'] || $sync == true) && is_array($config['voucher']['roll'])) {
 
             // create active and used DB per roll on ramdisk from config
             $a_roll = &$config['voucher']['roll'];
@@ -375,7 +377,8 @@ function voucher_configure() {
             }
 
 		unlock($voucherlck);
-            echo "done\n";
+		if ($g['booting'])
+		    echo "done\n";
         }
 
 	return 0;

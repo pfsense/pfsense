@@ -214,7 +214,9 @@ if ($_POST) {
 			$config['voucher']['privatekey'] = base64_encode($_POST['privatekey']);
 			$config['voucher']['msgnoaccess'] = $_POST['msgnoaccess'];
 			$config['voucher']['msgexpired'] = $_POST['msgexpired'];
-		}
+			write_config();
+			voucher_configure();
+		} else {
 			$config['voucher']['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
 			$config['voucher']['vouchersyncport'] = $_POST['vouchersyncport'];
 			$config['voucher']['vouchersyncusername'] = $_POST['vouchersyncusername'];
@@ -227,28 +229,22 @@ if ($_POST) {
 					$url = "https://{$config['voucher']['vouchersyncdbip']}";
 				else 
 					$url = "http://{$config['voucher']['vouchersyncdbip']}";
+
 				$execcmd  = <<<EOF
-				\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
-				\$toreturn['voucher']['charset'] = \$config['voucher']['charset'];
-				\$toreturn['voucher']['rollbits'] = \$config['voucher']['rollbits'];
-				\$toreturn['voucher']['ticketbits'] = \$config['voucher']['ticketbits'];
-				\$toreturn['voucher']['saveinterval'] = \$config['voucher']['saveinterval'];
-				\$toreturn['voucher']['checksumbits'] = \$config['voucher']['checksumbits'];
-				\$toreturn['voucher']['magic'] = \$config['voucher']['magic'];
-				\$toreturn['voucher']['publickey'] = \$config['voucher']['publickey'];
-				\$toreturn['voucher']['privatekey'] = \$config['voucher']['privatekey'];
-				\$toreturn['voucher']['msgnoaccess'] = \$config['voucher']['msgnoaccess'];
-				\$toreturn['voucher']['msgexpired'] = \$config['voucher']['msgexpired'];
-				
+				\$toreturn['voucher'] = \$config['voucher'];
+				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
+
 EOF;
+
 				/* assemble xmlrpc payload */
 				$params = array(
 					XML_RPC_encode($config['voucher']['vouchersyncpass']),
 					XML_RPC_encode($execcmd)
 				);
+				$port = $config['voucher']['vouchersyncport'];
 				log_error("voucher XMLRPC sync data {$url}:{$port}.");
 				$msg = new XML_RPC_Message('pfsense.exec_php', $params);
-				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $config['voucher']['vouchersyncport']);
+				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 				$cli->setCredentials($config['voucher']['vouchersyncusername'], $config['voucher']['vouchersyncpass']);
 				$resp = $cli->send($msg, "250");
 				if(!is_object($resp)) {
@@ -266,43 +262,47 @@ EOF;
 				} else {
 					log_error("The Captive Portal voucher database has been synchronized with {$url}:{$port} (pfsense.exec_php).");
 				}
-				$toreturn =  XML_RPC_Decode($resp->value());
-				if(!is_array($toreturn)) {
-					if($toreturn == "Authentication failed") 
-						$input_errors[] = "Could not synchronize the voucher database: Authentication Failed.";
-				} else {				
-					// If we received back the voucher roll and other information then store it.
-					if($toreturn['voucher']['roll'])
-						$config['voucher']['roll'] = $toreturn['voucher']['roll'];
-					if($toreturn['voucher']['rollbits'])
-						$config['voucher']['rollbits'] = $toreturn['voucher']['rollbits'];
-					if($toreturn['voucher']['ticketbits'])
-						$config['voucher']['ticketbits'] = $toreturn['voucher']['ticketbits'];
-					if($toreturn['voucher']['saveinterval'])
-						$config['voucher']['saveinterval'] = $toreturn['voucher']['saveinterval'];
-					if($toreturn['voucher']['checksumbits'])
-						$config['voucher']['checksumbits'] = $toreturn['voucher']['checksumbits'];
-					if($toreturn['voucher']['magic'])
-						$config['voucher']['magic'] = $toreturn['voucher']['magic'];
-					if($toreturn['voucher']['publickey'])
-						$config['voucher']['publickey'] = $toreturn['voucher']['publickey'];
-					if($toreturn['voucher']['privatekey'])
-						$config['voucher']['privatekey'] = $toreturn['voucher']['privatekey'];
-					if($toreturn['voucher']['msgnoaccess'])
-						$config['voucher']['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
-					if($toreturn['voucher']['msgexpired'])
-						$config['voucher']['msgexpired'] = $toreturn['voucher']['msgexpired'];
-					if($toreturn['voucher']['msgnoaccess'])
-						$config['voucher']['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
-					$savemsg = gettext("Voucher database has been synchronized from {$url}");
+				if (!$input_errors) {
+					$toreturn =  XML_RPC_Decode($resp->value());
+					if(!is_array($toreturn)) {
+						if($toreturn == "Authentication failed") 
+							$input_errors[] = "Could not synchronize the voucher database: Authentication Failed.";
+					} else {				
+						// If we received back the voucher roll and other information then store it.
+						if($toreturn['voucher']['roll'])
+							$config['voucher']['roll'] = $toreturn['voucher']['roll'];
+						if($toreturn['voucher']['rollbits'])
+							$config['voucher']['rollbits'] = $toreturn['voucher']['rollbits'];
+						if($toreturn['voucher']['ticketbits'])
+							$config['voucher']['ticketbits'] = $toreturn['voucher']['ticketbits'];
+						if($toreturn['voucher']['saveinterval'])
+							$config['voucher']['saveinterval'] = $toreturn['voucher']['saveinterval'];
+						if($toreturn['voucher']['checksumbits'])
+							$config['voucher']['checksumbits'] = $toreturn['voucher']['checksumbits'];
+						if($toreturn['voucher']['magic'])
+							$config['voucher']['magic'] = $toreturn['voucher']['magic'];
+						if($toreturn['voucher']['publickey'])
+							$config['voucher']['publickey'] = $toreturn['voucher']['publickey'];
+						if($toreturn['voucher']['privatekey'])
+							$config['voucher']['privatekey'] = $toreturn['voucher']['privatekey'];
+						if($toreturn['voucher']['msgnoaccess'])
+							$config['voucher']['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
+						if($toreturn['voucher']['msgexpired'])
+							$config['voucher']['msgexpired'] = $toreturn['voucher']['msgexpired'];
+						if($toreturn['voucher']['msgnoaccess'])
+							$config['voucher']['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
+						$savemsg = gettext("Voucher database has been synchronized from {$url}:{$port}");
+
+						write_config();
+						voucher_configure(true);
+					}
 				}
 			}
-			write_config();
-			voucher_configure();
-			if($savemsg && isset($config['voucher']['enable']) && !isset($config['captiveportal']['enable'])) 
-				$savemsg .= "<br/>";
-			if (isset($config['voucher']['enable']) && !isset($config['captiveportal']['enable'])) 
-				$savemsg .= gettext("Don't forget to configure and enable Captive Portal.");
+		}
+		if($savemsg && isset($config['voucher']['enable']) && !isset($config['captiveportal']['enable'])) 
+			$savemsg .= "<br/>";
+		if (isset($config['voucher']['enable']) && !isset($config['captiveportal']['enable'])) 
+			$savemsg .= gettext("Don't forget to configure and enable Captive Portal.");
 	}
 }
 include("head.inc");
@@ -591,6 +591,8 @@ function enable_change(enable_change) {
 							<td colspan="2" class="list"><p class="vexpl">
 								<span class="red"><strong> <?=gettext("Note:"); ?><br>   </strong></span>
 							<?=gettext("Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings."); ?>
+							<br/>
+							<?=gettext("Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master."); ?>
 						</p>
 					</td>
 				</tr>

@@ -162,9 +162,11 @@ if ($config['pptpd']['mode'] == "server")
 	if(have_ruleint_access("pptp")) 
 		$iflist['pptp'] = "PPTP VPN";
 
-if ($config['pppoe']['mode'] == "server")
-	if(have_ruleint_access("pppoe")) 
-		$iflist['pppoe'] = "PPPoE VPN";
+if (is_array($config['pppoes']['pppoe'])) {
+	foreach ($config['pppoes']['pppoe'] as $pppoes)
+		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe"))
+			$iflist['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
@@ -192,7 +194,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background. You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br/>You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 

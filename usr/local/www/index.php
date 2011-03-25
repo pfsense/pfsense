@@ -56,6 +56,21 @@ require_once('functions.inc');
 require_once('guiconfig.inc');
 require_once('notices.inc');
 
+if($g['disablecrashreporter'] != true) {
+	// Check to see if we have a crash report
+	$crash = glob("/var/crash/*");
+	$x = 0;
+	$skip_files = array(".", "..", "minfree", "");
+	if(is_array($crash)) {
+		foreach($crash as $c) {
+			if (!in_array(basename($c), $skip_files))
+				$x++;
+		}
+		if($x > 0) 
+			$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
+	}
+}
+
 ##build list of widgets
 $directory = "/usr/local/www/widgets/widgets/";
 $dirhandle  = opendir($directory);
@@ -451,6 +466,10 @@ include("fbegin.inc");
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
+
+if ($savemsg) 
+	print_info_box($savemsg); 
+
 ?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php

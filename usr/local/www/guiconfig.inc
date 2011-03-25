@@ -418,8 +418,15 @@ function print_info_box($msg) {
 
 function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
-
-	return "The changes have been applied successfully.  You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
+	$filter_related = false;
+	$filter_pages = array("nat", "filter");
+	$to_return = "The changes have been applied successfully.";
+	foreach($filter_pages as $fp) 
+		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
+			$filter_related = true;	
+	if($filter_related)
+		$to_return .= "<br/>You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
+	return $to_return;
 }
 
 function pprint_address($adr) {

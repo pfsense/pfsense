@@ -13,7 +13,7 @@ if($_GET['action']) {
 			$retval = kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
-			echo "invalid input";
+			echo gettext("invalid input");
 		}
 		exit;
 	}
@@ -21,7 +21,10 @@ if($_GET['action']) {
 
 
 function kill_client($port, $remipp) {
-	$tcpsrv = "tcp://127.0.0.1:{$port}";
+	global $g;
+
+	//$tcpsrv = "tcp://127.0.0.1:{$port}";
+	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
 	$errval;
 	$errstr;
 
@@ -29,13 +32,19 @@ function kill_client($port, $remipp) {
 	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
 	$killed = -1;
 	if ($fp) {
+		stream_set_timeout($fp, 1);
 		fputs($fp, "kill {$remipp}\n");
 		while (!feof($fp)) {
 			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out'])
+				break;
+
 			/* parse header list line */
-			if (strpos($line, "INFO:"))
+			if (strpos($line, "INFO:") !== false)
 				continue;
-			if (strpos($line, "UCCESS")) {
+			if (strpos($line, "SUCCESS") !== false) {
 				$killed = 0;
 			}
 			break;
@@ -97,7 +106,7 @@ $clients = openvpn_get_active_clients();
 				<td class="listhdrr">Real/Virtual IP</td>
 			</tr>
 			<?php foreach ($server['conns'] as $conn): ?>
-			<tr name='<?php echo "r:{$server['port']}:{$conn['remote_host']}"; ?>'>
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
 				<td class="listlr">
 					<?=$conn['common_name'];?>
 				</td>
@@ -106,12 +115,12 @@ $clients = openvpn_get_active_clients();
 				</td>
 				<td class='list' rowspan="2">
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					   onclick="killClient('<?php echo $server['port']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
-					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
+					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
+					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
 					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>
 			</tr>
-			<tr name='<?php echo "r:{$server['port']}:{$conn['remote_host']}"; ?>'>
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
 				<td class="listlr">
 					<?=$conn['connect_time'];?>
 				</td>

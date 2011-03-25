@@ -29,6 +29,13 @@
 	pfSense_MODULE:	shell
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-edit
+##|*NAME=Diagnostics: Edit FIle
+##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
+##|*MATCH=edit.php*
+##|-PRIV
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 

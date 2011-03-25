@@ -48,3 +48,4 @@
 /usr/local/www/system_usermanager_addcert.php
 /usr/local/pkg/routed/routed.inc
 /usr/local/pkg/routed/routed.xml
+/usr/local/www/filter_log.inc

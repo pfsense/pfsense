@@ -171,7 +171,7 @@ function restore_config_section_xmlrpc($raw_params) {
         // Then add ipalias and proxyarp types already defined on the backup
 	if (is_array($vipbackup)) {
 		foreach ($vipbackup as $vip) {
-			if (($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp'))
+			if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
 				array_unshift($config['virtualip']['vip'], $vip);
 		}
 	}
@@ -226,8 +226,16 @@ function merge_config_section_xmlrpc($raw_params) {
                         foreach ($config['virtualip']['vip'] as $vip)
                                 interface_vip_bring_down($vip);
                 }
+		$vipbackup = $config['virtualip']['vip'];
         }
 	$config = array_merge_recursive_unique($config, $params[0]);
+        // Then add ipalias and proxyarp types already defined on the backup
+	if (is_array($vipbackup)) {
+		foreach ($vipbackup as $vip) {
+			if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
+				array_unshift($config['virtualip']['vip'], $vip);
+		}
+	}
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
 	interfaces_vips_configure();

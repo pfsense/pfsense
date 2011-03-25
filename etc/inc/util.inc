@@ -50,7 +50,7 @@ function isvalidpid($pid) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -x {$process}", $output, $retval);
+	exec("/bin/pgrep -ax {$process}", $output, $retval);
 
         return (intval($retval) == 0);
 }
@@ -463,7 +463,7 @@ function is_domain($domain) {
 
 /* returns true if $macaddr is a valid MAC address */
 function is_macaddr($macaddr) {
-	return preg_match('/^[0-9A-F]{2}(?=([:]?))(?:\\1[0-9A-F]{2}){5}$/i', $macaddr) == 1 ? true : false;
+	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){5}$/i', $macaddr) == 1 ? true : false;
 }
 
 /* returns true if $name is a valid name for an alias */

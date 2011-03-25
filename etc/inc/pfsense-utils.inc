@@ -1039,6 +1039,22 @@ function is_dhcp_server_enabled()
 	return $dhcpdenable;
 }
 
+/* Any PPPoE servers enabled? */
+function is_pppoe_server_enabled() {
+	global $config;
+
+	$pppoeenable = false;
+
+	if (!is_array($config['pppoes']) || !is_array($config['pppoes']['pppoe']))
+		return false;
+
+	foreach ($config['pppoes']['pppoe'] as $pppoes)
+		if ($pppoes['mode'] == 'server')
+			$pppoeenable = true;
+
+	return $pppoeenable;
+}
+
 function convert_seconds_to_hms($sec){
 	$min=$hrs=0;
 	if ($sec != 0){
@@ -1413,7 +1429,7 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body') {
+function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
         global $ch, $fout, $file_size, $downloaded;
         $file_size  = 1;
         $downloaded = 1;
@@ -1433,10 +1449,10 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '60');
-        curl_setopt($ch, CURLOPT_TIMEOUT, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 
-        curl_exec($ch);
+        @curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if($fout)
                 fclose($fout);
@@ -1548,29 +1564,39 @@ if(!function_exists("split")) {
 	}
 }
 
-function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name, $origname) {
+function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
 	if(!$origname) 
 		return;
 
+	$sectionref = &$config;
+	foreach($section as $sectionname) {
+		if(is_array($sectionref) && isset($sectionref[$sectionname]))
+			$sectionref = &$sectionref[$sectionname];
+		else
+			return;
+	}
+
 	if($debug) $fd = fopen("{$g['tmp_path']}/print_r", "a");
 	if($debug) fwrite($fd, print_r($pconfig, true));
 
-	if($fieldb) {
-		if($debug) fwrite($fd, sprintf(gettext("fieldb exists%s"), "\n"));
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($debug) fwrite($fd, "$i\n");
-			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
-				if($debug) fwrite($fd, sprintf(gettext('Setting old alias value %1$s to %2$s%3$s'), $origname, $new_alias_name, "\n"));
-				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
+	if(is_array($sectionref)) {
+		foreach($sectionref as $itemkey => $item) {
+			if($debug) fwrite($fd, "$itemkey\n");
+
+			$fieldfound = true;
+			$fieldref = &$sectionref[$itemkey];
+			foreach($field as $fieldname) {
+				if(is_array($fieldref) && isset($fieldref[$fieldname]))
+					$fieldref = &$fieldref[$fieldname];
+				else {
+					$fieldfound = false;
+					break;
+				}
 			}
-		}	
-	} else {
-		if($debug) fwrite($fd, "fieldb does not exist\n");
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
-				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
-				if($debug) fwrite($fd, sprintf(gettext('Setting old alias value %1$s to %2$s%3$s'), $origname, $new_alias_name, "\n"));
+			if($fieldfound && $fieldref == $origname) {
+				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+				$fieldref = $new_alias_name;
 			}
 		}
 	}
@@ -1674,9 +1700,9 @@ function version_compare_dates($a, $b) {
 	if ((!$a_time) || (!$b_time)) {
 		return FALSE;
 	} else {
-		if ($a < $b)
+		if ($a_time < $b_time)
 			return -1;
-		elseif ($a == $b)
+		elseif ($$a_time == $b_time)
 			return 0;
 		else
 			return 1;
@@ -1735,7 +1761,7 @@ function version_compare_numeric($a, $b) {
 }
 function pfs_version_compare($cur_time, $cur_text, $remote) {
 	// First try date compare
-	$v = version_compare_dates($cur_time, $b);
+	$v = version_compare_dates($cur_time, $remote);
 	if ($v === FALSE) {
 		// If that fails, try to compare by string
 		// Before anything else, simply test if the strings are equal

@@ -282,7 +282,7 @@ if ($_POST) {
 		/* the vpn_ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
 			if($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-				mwexec("/sbin/route delete -host {$oldph1ent['remote-gateway']}");
+				mwexec("/sbin/route delete -host {$old_ph1ent['remote-gateway']}");
 			}
 		}
 
@@ -389,6 +389,8 @@ function methodsel_change() {
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
 			document.getElementById('opt_ca').style.display = '';
+			document.getElementById('opt_cert').disabled = false;
+			document.getElementById('opt_ca').disabled = false;
 			break;
 		case 'xauth_rsa_server':
 		case 'rsasig':
@@ -396,6 +398,8 @@ function methodsel_change() {
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
 			document.getElementById('opt_ca').style.display = '';
+			document.getElementById('opt_cert').disabled = false;
+			document.getElementById('opt_ca').disabled = false;
 			break;
 <?php if ($pconfig['mobile']) { ?>
 		case 'pre_shared_key':
@@ -403,6 +407,8 @@ function methodsel_change() {
 			document.getElementById('opt_peerid').style.display = 'none';
 			document.getElementById('opt_cert').style.display = 'none';
 			document.getElementById('opt_ca').style.display = 'none';
+			document.getElementById('opt_cert').disabled = true;
+			document.getElementById('opt_ca').disabled = true;
 			break;
 <?php } ?>
 		default: /* psk modes*/
@@ -410,6 +416,8 @@ function methodsel_change() {
 			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = 'none';
 			document.getElementById('opt_ca').style.display = 'none';
+			document.getElementById('opt_cert').disabled = true;
+			document.getElementById('opt_ca').disabled = true;
 			break;
 	}
 }

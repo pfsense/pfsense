@@ -603,7 +603,7 @@ function step12_submitphpaction() {
 		$rule['destination']['network'] = $server['interface'] . "ip";
 		$rule['destination']['port'] = $server['local_port'];
 		$rule['interface'] = $server['interface'];
-		$rule['protocol'] = $server['protocol'];
+		$rule['protocol'] = strtolower($server['protocol']);
 		$rule['type'] = "pass";
 		$rule['enabled'] = "on";
 		$config['filter']['rule'][] = $rule;

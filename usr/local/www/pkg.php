@@ -238,15 +238,17 @@ if ($pkg['tabs'] <> "") {
 					$page = 1;
 					$tmpcount = 0;
 					$tmppp = 0;
-				    foreach ($evaledvar as $ipa) {
-						if($tmpcount == $display_maximum_rows) {
-							$page++;
-							$tmpcount = 0;
+					if(is_array($evaledvar)) {
+						foreach ($evaledvar as $ipa) {
+							if($tmpcount == $display_maximum_rows) {
+								$page++;
+								$tmpcount = 0;
+							}
+							if($tmppp == $startdisplayingat)
+						 		break;
+							$tmpcount++;
+							$tmppp++;
 						}
-						if($tmppp == $startdisplayingat)
-						 	break;
-						$tmpcount++;
-						$tmppp++;
 					}
 					echo "<tr><td colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
 					echo "<table width='100%'>";

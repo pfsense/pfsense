@@ -298,9 +298,12 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
+			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
+			$rrdupdatesh .= "unset BYTES \n";
+			$rrdupdatesh .= "BYTES=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
+			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$BYTES\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -324,9 +327,11 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "unset PACKETS \n";
+			$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
+			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\$PACKETS\n";
+			$rrdupdatesh .= "rm \$TMPFILE \n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
@@ -769,6 +774,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
+	mwexec("killall top", true);
+	mwexec("killall rrdtool", true);
 	mwexec("/bin/pkill -f updaterrd.sh", true);
 }
 

@@ -584,7 +584,7 @@ function upgrade_039_to_040() {
 		$config['system']['group'][0]['name'] = "admins";
 		$config['system']['group'][0]['description'] = gettext("System Administrators");
 		$config['system']['group'][0]['scope'] = "system";
-		$config['system']['group'][0]['pages'] = "ANY";
+		$config['system']['group'][0]['priv'] = "page-all";
 		$config['system']['group'][0]['home'] = "index.php";
 		$config['system']['group'][0]['gid'] = "110";
 
@@ -820,15 +820,18 @@ function upgrade_044_to_045() {
 	global $config;
 	$iflist = get_configured_interface_list(false, true);
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		$i = 0;
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {
-			$config['vlans']['vlan'][$id]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 			/* Make sure to update the interfaces section with the right name */
+			$vlan_name = "{$vlan['if']}_vlan{$vlan['tag']}";
 			foreach($iflist as $ifname) {
-				if($config['interfaces'][$ifname]['if'] == "vlan{$id}") {
-					$config['interfaces'][$ifname]['if'] = $vlan['vlanif'];
+				if($config['interfaces'][$ifname]['if'] == "vlan{$i}") {
+					$config['interfaces'][$ifname]['if'] = $vlan_name;
+					continue;
 				}
 			}
-			
+			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan_name}";
+			$i++;			
 		}
 	}
 }
@@ -869,6 +872,8 @@ function upgrade_045_to_046() {
 	if(count($config['load_balancer']) == 0) {
 		unset($config['load_balancer']);
 	}
+	mwexec('/usr/sbin/pw groupadd -n _relayd -g 913');
+	mwexec('/usr/sbin/pw useradd -n _relayd -c "Relay Daemon" -d /var/empty -s /usr/sbin/nologin -u 913 -g 913');
 }
 
 
@@ -917,6 +922,11 @@ function upgrade_046_to_047() {
 				if (isset($tunnel['disabled']))
 					$ph1ent['disabled'] = $tunnel['disabled'];
 
+				/* convert to the new vip[$vhid] name */
+				if(preg_match("/^carp/", $tunnel['interface'])) {
+					$carpid = str_replace("carp", "", $tunnel['interface']);
+					$tunnel['interface'] = "vip" . $config['virtualip']['vip'][$carpid]['vhid'];
+				}
 				$ph1ent['interface'] = $tunnel['interface'];
 				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
 				$ph1ent['descr'] = $tunnel['descr'];
@@ -1681,7 +1691,7 @@ function upgrade_053_to_054() {
 					} else {
 						$i = 1;
 					}
-					$gateway_group['item'][] = "$interface|$i";
+					$gateway_group['item'][] = "$static_name|$i";
 				}
 				$gateway_group_arr[] = $gateway_group;
 			} else {
@@ -2206,18 +2216,16 @@ function upgrade_069_to_070() {
 
 	/* Convert NAT 1:1 rules */
 	if (is_array($config['nat']['onetoone'])) {
-		$a_nat = &$config['nat']['onetoone'];
-
-		foreach ($a_nat as &$natent) {
+		foreach ($config['nat']['onetoone'] as $nidx => $natent) {
 			if ($natent['subnet'] == 32)
-				$natent['source'] = array("address" => $natent['internal']);
+				$config['nat']['onetoone'][$nidx]['source'] = array("address" => $natent['internal']);
 			else
-				$natent['source'] = array("address" => $natent['internal'] . "/" . $natent['subnet']);
+				$config['nat']['onetoone'][$nidx]['source'] = array("address" => $natent['internal'] . "/" . $natent['subnet']);
 
-			$natent['destination'] = array("any" => true);
+			$config['nat']['onetoone'][$nidx]['destination'] = array("any" => true);
 
-			unset($natent['internal']);
-			unset($natent['subnet']);
+			unset($config['nat']['onetoone'][$nidx]['internal']);
+			unset($config['nat']['onetoone'][$nidx]['subnet']);
 		}
 
 		unset($natent);
@@ -2296,6 +2304,14 @@ function upgrade_075_to_076() {
 	$cron_item['who'] = "root";
 	$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.update_urltables";
 	$config['cron']['item'][] = $cron_item;
+}
+
+function upgrade_076_to_077() {
+	global $config;
+	foreach($config['filter']['rule'] as & $rule) {
+		if (isset($rule['protocol']) && !empty($rule['protocol']))
+			$rule['protocol'] = strtolower($rule['protocol']);
+	}
 }
 
 ?>

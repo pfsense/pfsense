@@ -124,7 +124,7 @@ function filter_pflog_start() {
 	}
 	mute_kernel_msgs();
 	$output = 0;
-	exec("/bin/pgrep -f 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	exec("/bin/pgrep -af 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
 	if($retval != 0)
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();
@@ -522,8 +522,10 @@ function filter_generate_aliases() {
 	$aliases .= "table <sshlockout> persist\n";
 	$aliases .= "table <webConfiguratorlockout> persist\n";
 
-	$aliases .= "#Snort2C table\n";
+	$aliases .= "#pfSnortSam tables\n";
 	$aliases .= "table <snort2c>\n";
+	$aliases .= "table <pfSnortSamout>\n";
+	$aliases .= "table <pfSnortSamin>\n";
 
 	$aliases .= "\ntable <virusprot>\n";
 
@@ -1122,14 +1124,22 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	if($src == "")
 		$src = "any";
 	/* Match on this source port */
-	if($srcport != "")
-		$src .= " port {$srcport}";
+	if($srcport != "") {
+		$srcportexpand = alias_expand($srcport);
+		if(!$srcportexpand)
+			$srcportexpand = $srcport;
+		$src .= " port {$srcportexpand}";
+	}
 	/* sometimes this gets called with "" instead of a value */
 	if($dst == "")
 		$dst = "any";
 	/* Match on this dest port */
-	if($dstport != "")
-		$dst .= " port {$dstport}";
+	if($dstport != "") {
+		$dstportexpand = alias_expand($dstport);
+		if(!$dstportexpand)
+			$dstportexpand = $dstport;
+		$dst .= " port {$dstportexpand}";
+	}
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
 	$staticnatport_txt = "";
 	if($staticnatport)
@@ -1232,11 +1242,14 @@ function filter_nat_rules_generate() {
 		if(is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
 				update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $obent['descr']));
-				$src = $obent['source']['network'];
-				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
-					$dst = "!" . $obent['destination']['address'];
-				else
+				$src = alias_expand($obent['source']['network']);
+				if(!$src)
+					$src = $obent['source']['network'];
+				$dst = alias_expand($obent['destination']['address']);
+				if(!$dst)
 					$dst = $obent['destination']['address'];
+				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
+					$dst = "!" . $dst;
 				if(!$obent['interface'])
 					$natif = "wan";
 				else
@@ -1339,6 +1352,7 @@ function filter_nat_rules_generate() {
 			}
 		}
 		$natrules .= "\n# Subnets to NAT \n";
+		$tonathosts .= "127.0.0.0/8 ";
 		if($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
 			$macroortable = "<tonatsubnets>";
@@ -1527,6 +1541,16 @@ function filter_nat_rules_generate() {
 		else
 			sigkillbypid("/var/run/inetd.pid", "HUP");
 	}
+
+	if (isset($config['pptpd']['mode']) && ($config['pptpd']['mode'] != "off")) {
+		if ($config['pptpd']['mode'] == "redir") {
+			$pptpdtarget = $config['pptpd']['redir'];
+			$natrules .= "# PPTP\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> {$pptpdtarget}\n";
+			$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> {$pptpdtarget}\n";
+		}
+	}
+
 	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
@@ -1619,6 +1643,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
+	$rule['protocol'] = strtolower($rule['protocol']);
 	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 		if($rule[$target]['port']) {
 			$srcport = explode("-", $rule[$target]['port']);
@@ -1704,7 +1729,7 @@ function filter_generate_user_rule($rule) {
 	}
 	update_filter_reload_status("Setting up pass/block rules");
 	$type = $rule['type'];
-	if($type != "pass" && $type != "block" && $type != "reject") {
+	if($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {
 		/* default (for older rules) is pass */
 		$type = "pass ";
 	}
@@ -1728,7 +1753,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($rule['disablereplyto'])) {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
 		$rg = get_interface_gateway($rule['interface']);
 		if(is_ipaddr($rg)) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
@@ -1744,10 +1769,10 @@ function filter_generate_user_rule($rule) {
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
 		else
-			log_error(sprintf(gettext("The gateway: %s is invalid/unkown not using it."), $rule['gateway']));
+			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
 
-	if(isset($rule['protocol'])) {
+	if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 		if($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
 		elseif($rule['protocol'] == "icmp")
@@ -2006,9 +2031,11 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
-# snort2c
+# pfSnortSam
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+block quick from <pfSnortSamout> to any label "Block pfSnortSamOut hosts"
+block quick from any to <pfSnortSamin> label "Block pfSnortSamIn hosts"
 
 EOD;
 
@@ -2157,6 +2184,15 @@ pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 6
 pass out on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
+				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
+					$ipfrules .= <<<EOD
+# allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
+pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 label "allow access to DHCP failover"
+
+EOD;
+				}
+
 			}
 			break;
 		}
@@ -2327,10 +2363,37 @@ EOD;
 	$ipfrules .= <<<EOD
 anchor "tftp-proxy/*"
 
+EOD;
+
+	update_filter_reload_status("Creating uPNP rules...");
+	if(isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+
+	$ipfrules .= <<<EOD
 # uPnPd
 anchor "miniupnpd"
 
 EOD;
+	
+		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
+		foreach($upnp_interfaces as $upnp_if) {
+			if(is_array($FilterIflist[$upnp_if])) {
+				$oc = $FilterIflist[$upnp_if];
+				if($oc['ip']) {
+					$sa = $oc['sa'];
+					$sn = $oc['sn'];
+					$if = $oc['if'];
+				}
+				if($sa) {
+					$ipfrules .= <<<EOD
+
+pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
+
+EOD;
+				}
+			}
+		}
+	}
+
 
 	return $ipfrules;
 }
@@ -2570,16 +2633,11 @@ function filter_setup_logging_interfaces() {
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
-	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		/*
-		 * XXX: This should be cleared out after a discussion
-		 * between pf(4) devs is cleared out. This breaks
-		 * compatibility with OpenBSD.
-		 */
-		if(isset($ifcfg['virtual']))
-			continue;
-		$rules .= "set loginterface {$ifcfg['if']}\n";
-	}
+	if (isset($FilterIflist['lan']))
+		$rules .= "set loginterface {$FilterIflist['lan']['if']}\n";
+	else if (isset($FilterIflist['wan']))
+		$rules .= "set loginterface {$FilterIflist['wan']['if']}\n";
+
 	return $rules;
 }
 

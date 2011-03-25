@@ -157,14 +157,14 @@ function enable_altfirmwareurl(enable_over) {
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Updates"); ?></td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell"><?=gettext("Not signed images."); ?></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Unsigned images"); ?></td>
 		<td width="78%" class="vtable">
 			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
 			<br />
-			<?=gettext("Allow updating the system with auto-updater and images with no signature."); ?>
+			<?=gettext("Allow auto-update firmware images with a missing or invalid digital signature to be used."); ?>
 		</td>
 	</tr>
-<?php if(file_exists("/usr/local/bin/git")): ?>
+<?php if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense"): ?>
 	<tr>
 		<td colspan="2" class="list" height="12">&nbsp;</td>
 	</tr>
@@ -179,18 +179,53 @@ function enable_altfirmwareurl(enable_over) {
 			<?=gettext("After updating, sync with the following repository/branch before reboot."); ?>
 		</td>
 	</tr>
+<?php
+	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
+		if(is_array($output_str) && !empty($output_str[0]))
+			$lastrepositoryurl = $output_str[0];
+		unset($output_str);
+	}
+?>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
 		<td width="78%" class="vtable">
 			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>">
+<?php if($lastrepositoryurl): ?>
+			<br />
+			<?=sprintf(gettext("The most recently used repository was %s"), $lastrepositoryurl); ?>
+			<br />
+			<?=gettext("This will be used if the field is left blank."); ?>
+<?php endif; ?>
 		</td>
 	</tr>
+<?php
+	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
+		if(is_array($output_str)) {
+			foreach($output_str as $output_line) {
+				if(strstr($output_line, '* ')) {
+					$lastbranch = substr($output_line, 2);
+					break;
+				}
+			}
+		}
+		unset($output_str);
+	}
+?>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
 		<td width="78%" class="vtable">
 			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>">
+<?php if($lastbranch): ?>
 			<br />
-			<?=gettext("Sync will not be performed if a branch is not specified."); ?>
+			<?=sprintf(gettext("The most recently used branch was %s"), $lastbranch); ?>
+<?php else: ?>
+			<br />
+			<?=gettext("Usually the branch name is master"); ?>
+<?php endif; ?>
+			<br />
+			<?=gettext("Note: Sync will not be performed if a branch is not specified."); ?>
 		</td>
 	</tr>
 <?php endif; ?>

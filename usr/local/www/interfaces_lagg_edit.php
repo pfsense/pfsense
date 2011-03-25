@@ -93,6 +93,8 @@ if ($_POST) {
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
 		$lagg['proto'] = $_POST['proto'];
+		if (isset($id) && $a_laggs[$id])
+			$lagg['laggif'] = $a_laggs[$id]['laggif'];
 
                 $lagg['laggif'] = interface_lagg_configure($lagg);
                 if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
@@ -115,7 +117,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("LAGG"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
 include("head.inc");
 
 ?>

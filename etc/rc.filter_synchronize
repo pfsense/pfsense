@@ -55,7 +55,7 @@ function backup_vip_config_section() {
 	$temp = array();
 	$temp['vip'] = array();
 	foreach($config['virtualip']['vip'] as $section) {
-		if($section['mode'] == "proxyarp" || $section['mode'] == "ipalias")
+		if(($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") && substr($section['interface'],0,3) != "vip")
 			continue;
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
@@ -66,7 +66,6 @@ function backup_vip_config_section() {
 		}
 		if($section['advbase'] <> "") {
 			$section_val = intval($section['advbase']);
-			$section_val=$section_val+1;
 			if($section_val > 255)
 				$section_val = 255;
 			$section['advbase'] = $section_val;
@@ -116,7 +115,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 				$parsed_response =  XML_RPC_decode($resp->value());
 				if(!is_array($parsed_response)) {
 					if (trim($parsed_response) == "Authentication failed") {
-						$error = "A authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
+						$error = "An authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
 						log_error($error);
 						file_notice("sync_settings", $error, "Settings Sync", "");
 						exit;
@@ -251,7 +250,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		} else {
 			$parsed_response =  XML_RPC_decode($resp->value());
 			if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
-				$error = "A authentication failure occurred while trying to access {$url}:{$port} ($method).";
+				$error = "An authentication failure occurred while trying to access {$url}:{$port} ($method).";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");
 				exit;

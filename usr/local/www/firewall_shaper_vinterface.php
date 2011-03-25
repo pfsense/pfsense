@@ -71,10 +71,12 @@ if ($_GET) {
 if ($_POST) {
 	if ($_POST['name'])
         	$qname = htmlspecialchars(trim($_POST['name']));
+	else if ($_POST['newname'])
+        	$qname = htmlspecialchars(trim($_POST['name']));
         if ($_POST['pipe'])
         	$pipe = htmlspecialchars(trim($_POST['pipe']));
 	else
-		$pipe = htmlspecialchars(trim($_POST['name']));
+		$pipe = htmlspecialchars(trim($qname));
 	if ($_POST['parentqueue'])
 		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
 }
@@ -94,12 +96,25 @@ if ($_GET) {
 	switch ($action) {
 	case "delete":
 			if ($queue) {
-				$queue->delete_queue();
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (is_array($config['filter']['rule'])) {
+					foreach ($config['filter']['rule'] as $rule) {
+						if ($rule['dnpipe'] == $queue->GetNumber() || $rule['pdnpipe'] == $queue->GetNumber())
+							$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleteing.");
+					}
+				}
+				if (!$input_errors) {
+					$queue->delete_queue();
+					write_config();
+					mark_subsystem_dirty('shaper');
+					header("Location: firewall_shaper_vinterface.php");
+					exit;
+				}
+				$output_form .= $queue->build_form();
+			} else {
+				$input_errors[] = gettext("No queue with name {$qname} was found!");
+				$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+				$dontshow = true;
 			}
-			header("Location: firewall_shaper_vinterface.php");
-			exit;
 		break;
 	case "resetall":
 			foreach ($dummynet_pipe_list as $dn)

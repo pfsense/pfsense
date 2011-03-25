@@ -145,22 +145,24 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 						}
 					}
 					/* PPPoE subnet */
-					if($config['pppoe']['mode'] == "server") {
-						if (is_ipaddr($config['pppoe']['localip'])) {
-							if($config['pppoe']['pppoe_subnet'] <> "")
-								$ossubnet = $config['pppoe']['pppoe_subnet'];
-							else
-								$ossubnet = "32";
-							$osn = gen_subnet($config['pppoe']['localip'], $ossubnet);
-							$natent = array();
-							$natent['source']['network'] = "{$osn}/{$ossubnet}";
-							$natent['sourceport'] = "";
-							$natent['descr'] = gettext("Auto created rule for PPPoE server");
-							$natent['target'] = "";
-							$natent['interface'] = $if2;
-							$natent['destination']['any'] = true;
-							$natent['natport'] = "";
-							$a_out[] = $natent;
+					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+						foreach ($config['pppoes']['pppoe'] as $pppoes) {
+							if (($pppoes['mode'] == "server") && is_ipaddr($pppoes['localip'])) {
+								if($pppoes['pppoe_subnet'] <> "")
+									$ossubnet = $pppoes['pppoe_subnet'];
+								else
+									$ossubnet = "32";
+								$osn = gen_subnet($pppoes['localip'], $ossubnet);
+								$natent = array();
+								$natent['source']['network'] = "{$osn}/{$ossubnet}";
+								$natent['sourceport'] = "";
+								$natent['descr'] = gettext("Auto created rule for PPPoE server");
+								$natent['target'] = "";
+								$natent['interface'] = $if2;
+								$natent['destination']['any'] = true;
+								$natent['natport'] = "";
+								$a_out[] = $natent;
+							}
 						}
 					}
 					/* L2TP subnet */
@@ -445,14 +447,18 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td colspan="12">
-					<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br>
-                      </strong></span><?=gettext("If advanced outbound NAT is enabled, no outbound NAT " .
-                      "rules will be automatically generated any longer. Instead, only the mappings " .
-                      "you specify below will be used. With advanced outbound NAT disabled, " .
-                      "a mapping is automatically created for each interface's subnet " .
-                      "(except WAN).  If you use target addresses other than the WAN interface's " .
-		      "IP address, then depending on the way your WAN connection is setup, you " .
-	              "may also need a"); ?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP."); ?></a></span><br>
+			<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br>
+			</strong></span>
+			<?=gettext("With automatic outbound NAT enabled, a mapping is automatically created " .
+			"for each interface's subnet (except WAN-type connections) and the rules " .
+			"on this page are ignored.<br/><br/> " .
+			"If manual outbound NAT is enabled, outbound NAT rules will not be " .
+			"automatically generated and only the mappings you specify on this page " .
+			"will be used. <br/><br/> " .
+			"If a target address other than a WAN-type interface's IP address is used, " .
+			"then depending on the way the WAN connection is setup, a "); ?>
+			<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>
+			<?= gettext(" may also be required.") ?></span><br>
                     </td>
                 </tr>
 

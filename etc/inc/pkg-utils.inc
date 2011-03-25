@@ -451,6 +451,17 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
 	global $static_output, $g;
 
+	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
+		$pkgstagingdir = "/root/tmp";
+		if (!is_dir($pkgstagingdir))
+			mkdir($pkgstagingdir);
+		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
+		$fetchdir = $pkgstagingdir;
+	} else {
+		$fetchdir = $g['tmp_path'];
+	}
+
 	$osname = php_uname("s");
 	$arch =  php_uname("m");
 	$rel = strtolower(php_uname("r"));
@@ -461,7 +472,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$base_url = $priv_url;
 	if (substr($base_url, -1) == "/")
 		$base_url = substr($base_url, 0, -1);
-	$fetchto = "{$g['tmp_path']}/apkg_{$filename}";
+	$fetchto = "{$fetchdir}/apkg_{$filename}";
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
 		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
@@ -498,8 +509,9 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			}
 		}
 	}
+
 	$pkgaddout = "";
-	exec("/usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
+	exec("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -fv {$fetchto} 2>&1", $pkgaddout);
 	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npkg_add successfully completed.\n");
 
 	return true;
@@ -580,7 +592,6 @@ function install_package($package, $pkg_info = "") {
 		write_config($changedesc);
 		$static_output .= gettext("done.") . "\n";
 		update_output_window($static_output);
-		$static_output .= gettext("Starting service.") . "\n";
 		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 
 			update_output_window($pkg_info['after_install_info']);	
@@ -1140,6 +1151,8 @@ function squash_from_bytes($size, $round = "") {
 
 function pkg_reinstall_all() {
 	global $g, $config;
+
+	@unlink('/conf/needs_package_sync');
 	$pkg_id = 0;
 	$todo = array();
 	if (is_array($config['installedpackages']['package']))

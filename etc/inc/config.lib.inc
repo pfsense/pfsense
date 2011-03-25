@@ -120,35 +120,6 @@ function parse_config($parse = false) {
 	if(!$parse) {
 		if (file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
-<<<<<<< HEAD
-			if(is_null($config)) {
-				unlock($lockkey);
-				parse_config(true);
-				$lockkey = lock('config');
-			}
-		} else {
-			if(!file_exists($g['conf_path'] . "/config.xml")) {
-				log_error(gettext("No config.xml found, attempting last known config restore."));
-				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
-				$last_backup = discover_last_backup();
-				if ($last_backup)
-					restore_backup("/cf/conf/backup/{$last_backup}");
-				else {
-					log_error(gettext("Could not restore config.xml."));
-					unlock($lockkey);
-					die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
-				}
-			}
-			unlock($lockkey);
-			$config = parse_config(true);
-			$lockkey = lock('config');
-		}
-	} else {
-		if(!file_exists($g['conf_path'] . "/config.xml")) {
-			if($g['booting']) echo ".";
-			log_error(gettext("No config.xml found, attempting last known config restore."));
-			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
-=======
 			if (is_null($config))
 				$parse = true;
 		} else
@@ -160,7 +131,6 @@ function parse_config($parse = false) {
 				echo ".";
 			log_error("No config.xml found, attempting last known config restore.");
 			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
->>>>>>> master
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
@@ -276,12 +246,8 @@ function parse_config_bootup() {
 					restore_backup("/cf/conf/backup/{$last_backup}");
 				}
 				if(!file_exists("{$g['conf_path']}/config.xml")) {
-<<<<<<< HEAD
 					echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_name']) . "\n";
-=======
-					echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
 					unlock($lockkey);
->>>>>>> master
 					mwexec("/sbin/halt");
 					exit;
 				}
@@ -345,23 +311,23 @@ function conf_mount_rw() {
 	if (refcount_reference(1000) > 1)
 		return;
 
-	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])
 			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
          */
-	$status = mwexec("/sbin/mount -u -w /");
+	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	/* we could not mount this correctly.  kick off fsck */
 	if($status <> 0) {
 		log_error(gettext("File system is dirty.  Launching FSCK for /"));
 		mwexec("/sbin/fsck -y /");
-		$status = mwexec("/sbin/mount -u -w /");
+		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
 	
 	mark_subsystem_dirty('mount');
@@ -389,8 +355,8 @@ function conf_mount_ro() {
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
 	pfSense_sync();
-	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
-	mwexec("/sbin/mount -u -r -f /");
+	mwexec("/sbin/mount -u -r -f -o sync,noatime {$g['cf_path']}");
+	mwexec("/sbin/mount -u -r -f -o sync,noatime /");
 }
 
 /****f* config/convert_config
@@ -446,14 +412,7 @@ function convert_config() {
 	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 
 	if ($prev_version != $config['version'])
-<<<<<<< HEAD
 		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
-
-	if($g['booting'])
-		echo gettext("Loading new configuration...");
-=======
-		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
->>>>>>> master
 }
 
 /****f* config/safe_write_file
@@ -520,13 +479,12 @@ function write_config($desc="Unknown", $backup = true) {
 	 *       for now, since it was preventing config saving. */
 	// $config = parse_config(true, false, false);
 	
-<<<<<<< HEAD
-	if($g['bootup']) 
-		log_error(gettext("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml"));
-=======
+	/* Comment this check out for now. There aren't any current issues that
+	 *   make this problematic, and it makes users think there is a problem
+	 *   when one doesn't really exist.
 	if($g['booting'])
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
->>>>>>> master
+	*/
 
 	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
 

@@ -45,8 +45,16 @@ require_once("openvpn.inc");
 if($g['booting']) 
 	exit;
 
-/* Interface IP address has changed */
+function restart_packages() {
+	global $oldip, $curwanipi, $g;
 
+	/* restart packages */
+	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
+	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
+	mwexec_bg("/etc/rc.start_packages");
+}
+
+/* Interface IP address has changed */
 $argument = str_replace("\n", "", $argv[1]);
 
 log_error("rc.newwanip: Informational is starting {$argument}.");
@@ -69,6 +77,12 @@ if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
         log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	send_event("interface reconfigure {$interface}");
         exit;
+}
+
+if (empty($interface)) {
+	filter_configure();
+	restart_packages();
+	exit;
 }
 
 $oldip = "0.0.0.0";
@@ -124,9 +138,6 @@ if (substr($interface_real, 0, 4) != "ovpn")
 /* reload graphing functions */
 enable_rrd_graphing();
 
-/* restart packages */
-mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
-mwexec_bg("/etc/rc.start_packages");
-log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
+restart_packages();
 
 ?>

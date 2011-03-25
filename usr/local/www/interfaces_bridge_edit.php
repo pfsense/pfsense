@@ -223,7 +223,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Bridge"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
 include("head.inc");
 
 ?>

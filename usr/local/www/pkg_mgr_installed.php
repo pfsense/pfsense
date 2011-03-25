@@ -129,6 +129,7 @@ include("head.inc");
 										}
 									} else {
 										// unknown available package version
+										$pkgver = "";
 										if(!strcmp($pkg['version'], $latest_package)) {
 											$tdclass = "listr";
 											$pkgver = $pkg['version'];

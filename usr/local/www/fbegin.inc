@@ -212,6 +212,8 @@ $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagno
 if(! $g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
+	if($g['product_name'] == "pfSense") 
+		$help_menu[] = array(gettext("Bug Database"), "http://www.pfsense.org/j.php?jumpto=redmine");
 	$help_menu[] = array(gettext("User Forum"), "http://www.pfsense.org/j.php?jumpto=forum");
 	$help_menu[] = array(gettext("Documentation"), "http://www.pfsense.org/j.php?jumpto=doc");
 	$help_menu[] = array(gettext("Developers Wiki"), "http://www.pfsense.org/j.php?jumpto=devwiki");
@@ -387,7 +389,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		$notices = get_notices();
 		if(!$notices) {
 			$need_alert_display = true;
-			$display_text = print_notices() . "<br>";
+			$display_text = print_notices($notices) . "<br>";
 		}
 	}
 	if($need_alert_display == true) {

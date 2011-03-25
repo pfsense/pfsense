@@ -4,6 +4,8 @@
  *
  */
 
+require_once("guiconfig.inc");
+
 /* Define hash of jumpto url maps */
 
 /* Links to categories could probably be more specific. */

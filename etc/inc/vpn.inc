@@ -159,11 +159,15 @@ function vpn_ipsec_configure($ipchg = false)
 				if (!is_ipaddr($rg)) {
 					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
-					$rg = resolve_retry($rg);
-					if (!$rg)
+					if(! $g['booting'])
+						$rg = resolve_retry($rg);
+					if (!is_ipaddr($rg))
 						continue;
 				}
-
+				if(array_search($rg, $rgmap)) {
+					log_error("The remote gateway {$rg} already exists on another phase 1 entry");
+					continue;
+				}
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
 				/* step through each phase2 entry */
@@ -813,6 +817,8 @@ EOD;
 					continue;
 
 				$rgip = $rgmap[$ph1ent['remote-gateway']];
+				if(!is_ipaddr($rgip))
+					continue;
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
@@ -844,7 +850,7 @@ EOD;
 				else
 					$parentinterface = $ph1ent['interface'];
 
-				if ($parentinterface <> "wan") {
+				if (($parentinterface <> "wan") && (is_ipaddr($rgip))) {
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
@@ -862,7 +868,7 @@ EOD;
 							}
 						}
 					}
-				} else {
+				} elseif(is_ipaddr($rgip)) {
 					if(stristr($route_str, "{$rgip}")) {
 						mwexec("/sbin/route delete -host {$rgip}", true);
 					}
@@ -880,9 +886,7 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			/* XXX: This seems to not work in ipsec-tools 0.7.3 but a HUP signal is equivalent. */
-			//mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
-			sigkillbypid("{$g['varrun_path']}/racoon.pid", "HUP");
+			mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {
@@ -897,21 +901,21 @@ EOD;
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 
-			/* start filterdns, if necessary */
-			if (count($filterdns_list) > 0) {
-				$interval = 60;
-				if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
-					$interval = $ipseccfg['dns-interval'];
+		}
+		/* start filterdns, if necessary */
+		if (count($filterdns_list) > 0) {
+			$interval = 60;
+			if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
+				$interval = $ipseccfg['dns-interval'];
 
-				$hostnames = "";
-				array_unique($filterdns_list);
-				foreach ($hostname as $filterdns_list)
-					$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
-				file_put_contents("{$g['varetc_path']}/filternds-ipsec.hosts", $hostnames);
+			$hostnames = "";
+			array_unique($filterdns_list);
+			foreach ($filterdns_list as $hostname)
+				$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+			file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
-				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
-				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns_ipsec.hosts -d 1");
-			}
+			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
 		}
 	
 		vpn_ipsec_failover_configure();
@@ -1676,11 +1680,16 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for filterdns */
+	$rgip = "";
 	if (!is_ipaddr($phase1['remote-gateway'])) {
-		$rgip = resolve_retry($phase1['remote-gateway']);
-		add_hostname_to_watch($phase1['remote-gateway']);
-		if (!$rgip) {
-			log_error(sprintf(gettext("Could not determine VPN endpoint for '%s'"), $phase1['descr']));
+		if(! $g['booting']) {
+			$rgip = resolve_retry($phase1['remote-gateway']);
+			add_hostname_to_watch($phase1['remote-gateway']);
+		} else {
+			add_hostname_to_watch($phase1['remote-gateway']);
+		}
+		if (!is_ipaddr($rgip)) {
+			log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 			return false;
 		}
 	} else {

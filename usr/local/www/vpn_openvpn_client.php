@@ -125,7 +125,7 @@ if($_GET['act']=="edit"){
 		} else
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		$pconfig['crypto'] = $a_client[$id]['crypto'];
-		$pconfig['engine'] = $a_server[$id]['engine'];
+		$pconfig['engine'] = $a_client[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
 		$pconfig['remote_network'] = $a_client[$id]['remote_network'];

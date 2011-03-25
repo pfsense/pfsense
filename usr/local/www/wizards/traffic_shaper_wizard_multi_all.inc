@@ -495,10 +495,17 @@ function step3_stepsubmitphpaction() {
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 		if (!is_numeric($_POST["conn{$i}upload"])) {
-				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
+			$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
+			$stepid--;
+			return;
+		}
+		if ($_POST["conn{$i}uploadspeed"] == "%") {
+			if (intval($_POST["conn{$i}upload"]) > 80) {
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				$stepid--;
 				return;
 			}
+		} else {
 			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
 			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
@@ -507,6 +514,7 @@ function step3_stepsubmitphpaction() {
 				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				$stepid--;
 				return;
+			}
 		}	
 	}
 
@@ -517,14 +525,22 @@ function step3_stepsubmitphpaction() {
 			$stepid--;
 			return;
 		}
-		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-		$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
-		$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
-		$input_bw = $factor * floatval($_POST["local{$i}download"]);
-		if ((0.8 * $ifbw) < $input_bw) {
-		$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-		$stepid--;
-			return;
+		if ($_POST["local{$i}downloadspeed"] == "%") {
+			if (intval($_POST["local{$i}download"]) > 80) {
+				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
+		} else {
+			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
+			$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
+			$input_bw = $factor * floatval($_POST["local{$i}download"]);
+			if ((0.8 * $ifbw) < $input_bw) {
+				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
+				$stepid--;
+				return;
+			}
 		}
 	}
 
@@ -1039,8 +1055,8 @@ function apply_all_choosen_items() {
 			if ($penalty) {
 				if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 				    $rule = array();
+				    $rule['type'] = "match";
 				    $rule['descr'] = gettext("Penalty Box");
-				    $rule['direction'] = "out";
 				    $rule['source']['any'] = TRUE;
 				    $rule['defaultqueue'] = "qOthersLow";
 				    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
@@ -1058,8 +1074,8 @@ function apply_all_choosen_items() {
 				if( is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
 					/* create VOIP rules */
 					$rule = array();
+					$rule['type'] = "match";
 					$rule['descr'] = gettext("VOIP Adapter");
-					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['address'] = $config['ezshaper']['step3']['address'];
@@ -1072,8 +1088,8 @@ function apply_all_choosen_items() {
 				} elseif( $config['ezshaper']['step3']['provider'] == "Generic" ) {
 					/* create VOIP rules */
 					$rule = array();
+					$rule['type'] = "match";
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
-					$rule['direction'] = "out";
 					$rule['protocol'] = "udp";
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -1088,8 +1104,8 @@ function apply_all_choosen_items() {
 					/* loop through voiplist[] */
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qVoIP';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_voip {$voip[0]} outbound";
@@ -1111,8 +1127,8 @@ function apply_all_choosen_items() {
 						continue;
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qP2P';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
@@ -1133,10 +1149,10 @@ function apply_all_choosen_items() {
 										continue;
 					foreach ($gamesplist[$key] as $Gameclient) {
 						$rule = array();
+						$rule['type'] = "match";
 						$rule['defaultqueue'] = 'qGames';
 						if ($Gameclient[1] == "tcp")
 							$rule['ackqueue'] = 'qACK';
-						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['floating'] = "yes";
@@ -1158,6 +1174,7 @@ function apply_all_choosen_items() {
 						continue;
 					foreach ($othersplist[$key] as $otherclient) {
 						$rule = array();
+						$rule['type'] = "match";
 						switch ($val) {
 						case "H":
 							$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
@@ -1184,7 +1201,6 @@ function apply_all_choosen_items() {
 							$loop = 1;
 						}
 						if (!$loop) {
-							$rule['direction'] = "out";
 							$rule['source']['any'] = TRUE;
 							$rule['destination']['any'] = TRUE;
 							$rule['floating'] = "yes";

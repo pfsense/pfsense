@@ -196,6 +196,9 @@ if ($_POST) {
 	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
 		$input_errors[] = gettext("Reject type rules only works when the protocol is set to TCP.");
 
+	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
+		$input_errors[] = gettext("Queue type rules only work with queues.");
+
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
@@ -602,6 +605,9 @@ include("head.inc");
 					<?=htmlspecialchars($type);?>
 					</option>
 					<?php endforeach; ?>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected"; ?>>Queue</option>
+<?php endif; ?>
 				</select>
 				<br/>
 				<span class="vexpl">
@@ -683,9 +689,8 @@ include("head.inc");
 						if(have_ruleint_access("pptp")) 
 							$interfaces['pptp'] = "PPTP VPN";
 					
-					if ($config['pppoe']['mode'] == "server")
-						if(have_ruleint_access("pppoe")) 
-							$interfaces['pppoe'] = "PPPoE VPN";
+					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+						$interfaces['pppoe'] = "PPPoE VPN";
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 						if(have_ruleint_access("enc0")) 
@@ -905,7 +910,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
 <?php
@@ -1122,7 +1127,7 @@ include("head.inc");
 			<br/><center>
 			<input onClick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked"; ?>><strong><?=gettext("Any flags.");?></strong><br/></center>
 			<br/>
-			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must". 
+			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must ". 
 			"be set or cleared for this rule to match.");?></span>
 			</div>
 			</td>
@@ -1314,7 +1319,10 @@ include("head.inc");
 					$qselected = 1;
 					echo " SELECTED";
 				}
-				echo ">{$q}</option>"; 
+				if (isset($ifdisp[$q]))
+					echo ">{$ifdisp[$q]}</option>";
+				else
+					echo ">{$q}</option>"; 
 			}
 ?>
 				</select> / 			
@@ -1332,7 +1340,10 @@ include("head.inc");
 					$qselected = 1;
 					echo " SELECTED";
 				}
-				echo ">{$q}</option>"; 
+				if (isset($ifdisp[$q]))
+					echo ">{$ifdisp[$q]}</option>";
+				else
+					echo ">{$q}</option>"; 
 			}
 ?>
 				</select>

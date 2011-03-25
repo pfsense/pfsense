@@ -136,6 +136,7 @@ if ($g['platform'] == "nanobsd") {
 	$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 }
 
+@unlink("/tmp/{$g['product_name']}_version");
 download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 if(!$latest_version) {

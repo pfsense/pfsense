@@ -1,24 +1,25 @@
 <?php
+	require_once("util.inc");
 	require_once("config.inc");
 	require_once("functions.inc");
 	require_once("shaper.inc");
 
 	/* MiniUPnPd */
 
-	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); }
-	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); }
+	function upnp_notice ($msg) { log_error("miniupnpd: {$msg}"); }
+	function upnp_warn ($msg) { log_error("miniupnpd: {$msg}"); }
 
 	function upnp_running () {
-		if((int)exec('pgrep miniupnpd | wc -l') > 0)
+		if((int)exec('/bin/pgrep -a miniupnpd | /usr/bin/wc -l') > 0)
 			return true;
 		return false;
-	}	
+	}
 
 	function upnp_write_config($file, $text) {
 		$handle = fopen($file, 'w');
 		if(!$handle) {
 			upnp_warn("Could not open {$file} for writing.");
-			exit;
+			return;
 		}
 		fwrite($handle, $text);
 		fclose($handle);
@@ -26,7 +27,7 @@
 
 	function upnp_uuid() {
 		/* md5 hash of wan mac */
-		$uuid = md5(exec('arp -an -i '.get_real_interface().' | /usr/bin/cut -d " " -f4'));
+		$uuid = md5(get_interface_mac(get_real_interface("wan")));
 		/* put uuid in correct format 8-4-4-4-12 */
 		return substr($uuid,0,8).'-'.substr($uuid,9,4).'-'.substr($uuid,13,4).'-'.substr($uuid,17,4).'-'.substr($uuid,21,12);
 	}
@@ -42,7 +43,8 @@
 	}
 
 	function upnp_validate_ip($ip, $check_cdir) {
-		/* validate cdir */	
+		/* validate cidr */	
+		$ip_array = array();
 		if($check_cdir)	{
 			$ip_array = explode('/', $ip);
 			if(count($ip_array) == 2) {
@@ -55,11 +57,8 @@
 			$ip_array[] = $ip;
 
 		/* validate ip */
-		if(!eregi('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$', $ip_array[0]))
+		if (!is_ipaddr($ip_array[0]))
 			return false;
-		foreach(explode('.', $ip_array[0]) as $sub)
-			if($sub < 0 || $sub > 256)
-				return false;
 		return true;
 	}
 
@@ -73,15 +72,6 @@
 	function before_form_miniupnpd($pkg) {
 		global $config;
 
-		/* if shaper connection speed defined hide fields */
-		if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
-			$i=0;
-			foreach ($pkg['fields']['field'] as $field) {
-				if ($field['fieldname'] == 'download' || $field['fieldname'] == 'upload')
-					unset($pkg['fields']['field'][$i]);
-				$i++;
-			}
-		}
 	}
 
 	function validate_form_miniupnpd($post, $input_errors) {
@@ -138,49 +128,38 @@
 		$ifaces_active = '';
 
 		/* since config is written before this file invoked we don't need to read post data */
-		if($upnp_config['enable'] && $upnp_config['iface_array'])
+		if($upnp_config['enable'] && !empty($upnp_config['iface_array'])) {
 			$iface_array = explode(',', $upnp_config['iface_array']);
 
-		if($iface_array) {
 			foreach($iface_array as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);
 				/* above function returns iface if fail */
 				if($if!=$iface) {
 					$addr = find_interface_ip($if);
-					/* non enabled interfaces are displayed in list on miniupnpd settings page */
 					/* check that the interface has an ip address before adding parameters */
-					if($addr) {
+					if (is_ipaddr($addr)) {
 						$config_text .= "listening_ip={$addr}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;
-						} else {
+						} else
 							$ifaces_active .= ", {$iface}";
-						}
-					} else {
+					} else
 						upnp_warn("Interface {$iface} has no ip address, ignoring");
-					}
-				} else {
+				} else
 					upnp_warn("Could not resolve real interface for {$iface}");
-				}
 			}
 
-			if($ifaces_active) {
+			if (!empty($ifaces_active)) {
 				/* override wan ip address, common for carp, etc */
 				if($upnp_config['overridewanip'])
 					$config_text .= "ext_ip={$upnp_config['overridewanip']}\n";
 
-				/* if shaper connection speed defined use those values */
-				if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
-					$download = $config['ezshaper']['step2']['download']*1000;
-					$upload = $config['ezshaper']['step2']['upload']*1000;
-				} else {
-					$download = $upnp_config['download']*1000;
-					$upload = $upnp_config['upload']*1000;
-				}
+				$download = $upnp_config['download']*1000;
+				$upload = $upnp_config['upload']*1000;
 
 				/* set upload and download bitrates */
-				if($download && $upload) {
+				if(!empty($download) && !empty($upload)) {
 					$config_text .= "bitrate_down={$download}\n";
 					$config_text .= "bitrate_up={$upload}\n";
 				}
@@ -194,9 +173,9 @@
 					$config_text .= "system_uptime=yes\n";
 
 				/* set webgui url */
-				if($config['system']['webgui']['protocol']) {
+				if(!empty($config['system']['webgui']['protocol'])) {
 					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
-					if($config['system']['webgui']['port'])
+					if(!empty($config['system']['webgui']['port']))
 						$config_text .= ":{$config['system']['webgui']['port']}";
 					$config_text .= "/\n";
 				}
@@ -206,7 +185,7 @@
 				$config_text .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
 
 				/* set model number */
-				$config_text .= "model_number=".exec("/bin/cat /etc/version")."\n";
+				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
 	
 				/* upnp access restrictions */
 				for($i=1; $i<=4; $i++) {
@@ -238,25 +217,23 @@
 					upnp_action('start');	
 				}
 				/* or restart miniupnpd if settings were changed */
-				elseif($_POST['iface_array']) {
+				else {
 					upnp_notice("Restarting service on interface: {$ifaces_active}");
 					upnp_action('restart');
 				}
 			}
-		}
-
-		if(!$iface_array || !$ifaces_active) {
-			/* no parameters user does not want miniupnpd running */
+		} else {
+			/* user does not want miniupnpd running */
 			/* lets stop the service and remove the rc file */
 
-			if(file_exists($config_file)) {
+			if (file_exists($config_file)) {
 				if(!$upnp_config['enable'])
 					upnp_notice('Stopping service: miniupnpd disabled');
 				else
 					upnp_notice('Stopping service: no interfaces selected');				
 
 				upnp_action('stop');
-				unlink($config_file);
+				@unlink($config_file);
 			}
 		}
 	}

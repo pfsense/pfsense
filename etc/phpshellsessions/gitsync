@@ -16,6 +16,7 @@ conf_mount_rw();
 $GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
 $CODIR =  "/root/pfsense/";
 
+global $g;
 global $argv;
 global $command_split;
 
@@ -27,7 +28,14 @@ unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching...";
-    system("pkg_add -r git");
+	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
+		$pkgstagingdir = "/root/tmp";
+		if (!is_dir($pkgstagingdir))
+			mkdir($pkgstagingdir);
+		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
+	}
+	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r git");
 }
 
 # Remove mainline if exists (older)

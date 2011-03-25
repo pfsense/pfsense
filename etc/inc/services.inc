@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/pgrep	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	
@@ -1308,7 +1308,7 @@ function upnp_action ($action) {
 				mwexec_bg('/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf');
 			break;
 		case "stop":
-			while((int)exec("pgrep miniupnpd | wc -l") > 0)
+			while((int)exec("/bin/pgrep -a miniupnpd | wc -l") > 0)
 				mwexec('killall miniupnpd 2>/dev/null', true);
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
 			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');
@@ -1321,21 +1321,16 @@ function upnp_action ($action) {
 }
 
 function upnp_start() {
-	global $config, $g;
+	global $config;
 
 	if(!isset($config['installedpackages']['miniupnpd']['config']))
 		return;
 
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-		if($g['booting']) {
-			echo gettext("Starting UPnP service... ");
-			require_once('/usr/local/pkg/miniupnpd.inc');
-			sync_package_miniupnpd();
-			echo gettext("done.") . "\n";
-		}
-		else {
-			upnp_action('start');
-		}
+		echo gettext("Starting UPnP service... ");
+		require_once('/usr/local/pkg/miniupnpd.inc');
+		sync_package_miniupnpd();
+		echo "done.\n";
 	}
 }
 

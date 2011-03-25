@@ -50,12 +50,12 @@ if($_GET['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
-if($_GET['reloadfilter']) {
+if($_POST['reloadfilter']) {
 	send_event("filter reload");
 	header("Location: status_filter_reload.php");
 	exit;
 }
-if($_GET['syncfilter']) {
+if($_POST['syncfilter']) {
 	send_event("filter sync");
 	header("Location: status_filter_reload.php");
 	exit;
@@ -68,11 +68,13 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 <br/>
-<a href="/status_filter_reload.php?reloadfilter=true"><input type="button" value="Reload Filter" id="reloadfilter"></a>
-<?php if ($config["installedpackages"]["carpsettings"]["config"][0]["pfsyncpeerip"] != ""): ?>
+<form action="status_filter_reload.php" method="POST" name="filter">
+<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
+<?php if (is_array($config["installedpackages"]["carpsettings"]["config"][0]) && $config["installedpackages"]["carpsettings"]["config"][0]["pfsyncpeerip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
-<a href="/status_filter_reload.php?syncfilter=true"><input type="button" value="Force Config Sync" id="syncfilter"></a>
+<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter">
 <? endif; ?>
+</form>
 <br/><br/><br/>
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>

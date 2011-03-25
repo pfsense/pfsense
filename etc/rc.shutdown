@@ -28,7 +28,7 @@ export PATH
 # temporary files on shutdown from /tmp/
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "pfSense" ]; then
-	rm -rf /tmp/*
+	find -x /tmp/ -type f -exec rm -f {} \;
 else
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh

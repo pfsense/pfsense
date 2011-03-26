@@ -42,7 +42,10 @@
 		exit;
 	}
 
-	conf_mount_rw();
+	/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */
+	if(!is_subsystem_dirty('sshdkeys')) {
+		conf_mount_rw();
+	}
 
 	function file_size($file) {
 	  $size = filesize($file);

@@ -82,8 +82,9 @@ if ($_POST) {
 		if (isset($id) && ($a_gifs[$id]) && ($a_gifs[$id] === $gif))
 			continue;
 
-		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['remote-network']);
+		/* FIXME: needs to perform proper subnet checks in the feature */
+		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['tunnel-remote-addr']);
 			break;
 		}
 	}

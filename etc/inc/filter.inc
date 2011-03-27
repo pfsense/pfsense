@@ -1074,7 +1074,12 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+							$target = explode(" ", $target);
+							foreach ($target as $targip) {
+								if (empty($targip))
+									continue;
+								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
+							}
 						}
 						$inetdport++;
 					}
@@ -1976,7 +1981,7 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['flags'] .= "keep state ";
 
-		if($noadvoptions == false || $l7_present)
+		if($noadvoptions == false)
 			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
@@ -1985,7 +1990,7 @@ function filter_generate_user_rule($rule) {
 			    (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") or
 			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
 			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-			    isset($rule['sloppy']) or $l7_present) {
+			    isset($rule['sloppy'])) {
 					$aline['flags'] .= "( ";
 					if (isset($rule['sloppy']))
 						$aline['flags'] .= "sloppy ";

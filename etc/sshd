@@ -42,7 +42,10 @@
 		exit;
 	}
 
-	conf_mount_rw(true);
+	/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */
+	if(!is_subsystem_dirty('sshdkeys')) {
+		conf_mount_rw();
+	}
 
 	function file_size($file) {
 	  $size = filesize($file);
@@ -138,7 +141,6 @@
 
 	/* are we already running?  if so exit */
 	if(is_subsystem_dirty('sshdkeys')) {
-		conf_mount_ro(true);
 		exit;
 	}
 	
@@ -185,6 +187,6 @@
 			exec("mkdir /conf/sshd");
 		exec("/bin/cp -p /etc/ssh/ssh_host* /conf/sshd");
 	}
-	conf_mount_ro(true);
+	conf_mount_ro();
 
 ?>

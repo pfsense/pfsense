@@ -41,9 +41,9 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	global $g, $config;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
-		$url = "https://{$syncip}:{$port}";
+		$url = "https://{$syncip}";
 	else 
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
@@ -89,15 +89,15 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	global $g, $config;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
-		$url = "https://{$syncip}:{$port}";
+		$url = "https://{$syncip}";
 	else 
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth($voucher_received);
+	\$timeleft = voucher_auth({$voucher_received});
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
 	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
@@ -119,12 +119,12 @@ EOF;
 		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return array("timeleft" => "0");
+		return 0; // $timeleft
 	} elseif($resp->faultCode()) {
 		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
-		return array("timeleft" => "0");
+		return 0; // $timeleft
 	} else {
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
@@ -132,7 +132,7 @@ EOF;
 	if(count($toreturn['voucher']['roll']) <> count($config['voucher']['roll'])) {
 		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
-		voucher_configure();
+		voucher_configure(true);
 	}
 
 	return $toreturn['timeleft'];
@@ -230,12 +230,12 @@ function voucher_auth($voucher_received, $test = 0) {
                 }
             } else {
                 $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+		captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
             }
         } else {
             // hmm, thats weird ... not what I expected
             $test_result[] = "$voucher invalid: $result !!";
-			captiveportal_syslog("$voucher invalid: $result !!");
+	    captiveportal_syslog("$voucher invalid: $result !!");
             $error++;
         }
     }
@@ -247,7 +247,7 @@ function voucher_auth($voucher_received, $test = 0) {
         } else {
             $test_result[] = "Access granted for $total_minutes Minutes in total.";
         }
-		unlock($voucherlck);
+	unlock($voucherlck);
         return $test_result;
     }
 
@@ -264,8 +264,8 @@ function voucher_auth($voucher_received, $test = 0) {
 
 	// If we did a XMLRPC sync earlier check the timeleft
 	if(!empty($a_voucher['vouchersyncdbip'])) 
-		if($remote_time_used['timeleft'] < $total_minutes) 
-			$total_minutes = $remote_time_used['timeleft'];
+		if($remote_time_used < $total_minutes) 
+			$total_minutes = $remote_time_used;
 
     // All given vouchers were valid and this isn't simply a test.
     // Write back the used DB's
@@ -301,8 +301,8 @@ function voucher_auth($voucher_received, $test = 0) {
     return $total_minutes;
 }
 
-function voucher_configure() {
-    global $config, $g;
+function voucher_configure($sync = false) {
+	global $config, $g;
 
 	/* kill any running minicron */
 	killbypid("{$g['varrun_path']}/vouchercron.pid");
@@ -312,6 +312,8 @@ function voucher_configure() {
 
         if ($g['booting'])
             echo "Enabling voucher support... ";
+	if ($sync == true)
+	    captiveportal_syslog("Writing voucher db from sync data...");
 
         // start cron if we're asked to save runtime DB periodically
         // to XML config if it changed
@@ -329,7 +331,7 @@ function voucher_configure() {
         $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
         if (!$fd) {
             captiveportal_syslog("Voucher error: cannot write voucher.public\n");
-	   		unlock($voucherlck);
+	    unlock($voucherlck);
             return 1;
         }
         fwrite($fd, $pubkey);
@@ -348,7 +350,7 @@ function voucher_configure() {
         @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
 	unlock($voucherlck);
 
-        if ($g['booting'] && is_array($config['voucher']['roll'])) {
+        if (($g['booting'] || $sync == true) && is_array($config['voucher']['roll'])) {
 
             // create active and used DB per roll on ramdisk from config
             $a_roll = &$config['voucher']['roll'];
@@ -375,7 +377,8 @@ function voucher_configure() {
             }
 
 		unlock($voucherlck);
-            echo "done\n";
+		if ($g['booting'])
+		    echo "done\n";
         }
 
 	return 0;

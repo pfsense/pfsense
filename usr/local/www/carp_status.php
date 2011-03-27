@@ -68,7 +68,7 @@ if($_POST['disablecarp'] <> "") {
                                	}
                 	}
         	}
-		$savemsg = sprintf(gettext("%s IPs have been disabled."), $carp_counter);
+		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot."), $carp_counter);
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");

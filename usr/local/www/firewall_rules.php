@@ -169,7 +169,7 @@ if (is_array($config['pppoes']['pppoe'])) {
 }
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
 	if(have_ruleint_access("enc0")) 
 		$iflist["enc0"] = "IPsec";
 

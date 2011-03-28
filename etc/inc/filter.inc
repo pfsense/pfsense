@@ -792,7 +792,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['pppoe'] = $oic;
 	}
 	/* add ipsec interfaces */
-	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
+	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
@@ -2227,7 +2227,7 @@ EOD;
 
 
 	/* add ipsec interfaces */
-	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
 		$ipfrules .= <<<EOD
 pass out on \$IPsec all keep state label "IPsec internal host to host"
 

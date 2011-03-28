@@ -1625,7 +1625,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = "{$lansa}/{$lansn}";
 					break;
 				case 'pptp':
-					$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
+					$pptpsa = gen_subnet($FilterIflist['pptp']['sa'], $FilterIflist['pptp']['sn']);
 					$pptpsn = $FilterIflist['pptp']['sn'];
 					$src = "{$pptpsa}/{$pptpsn}";
 					break;

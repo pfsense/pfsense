@@ -860,42 +860,42 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 }
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
-	$graphcmd .= "--start $start --end $end ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--vertical-label=\"Conn / Time, sec.\" ";
-	$graphcmd .= "--height 200 --width 620 --no-gridfit ";
-	$graphcmd .= "--lower-limit 0 ";
-	$graphcmd .= "DEF:\"consmin=$rrddbpath$curdatabase:conn:MIN\" ";
-	$graphcmd .= "DEF:\"consavg=$rrddbpath$curdatabase:conn:AVERAGE\" ";
-	$graphcmd .= "DEF:\"consmax=$rrddbpath$curdatabase:conn:MAX\" ";
-	$graphcmd .= "DEF:\"timemin=$rrddbpath$curdatabase:time:MIN\" ";
-	$graphcmd .= "DEF:\"timeavg=$rrddbpath$curdatabase:time:AVERAGE\" ";
-	$graphcmd .= "DEF:\"timemax=$rrddbpath$curdatabase:time:MAX\" ";
-	$graphcmd .= "CDEF:\"timeminadj=timemin,0,86400,LIMIT,UN,0,timemin,IF\" ";
-	$graphcmd .= "CDEF:\"timeavgadj=timeavg,0,86400,LIMIT,UN,0,timeavg,IF\" ";
-	$graphcmd .= "CDEF:\"timemaxadj=timemax,0,86400,LIMIT,UN,0,timemax,IF\" ";
-	$graphcmd .= "CDEF:\"t1=timeminadj,timeavgadj,+,2,/,timeminadj,-\" ";
-	$graphcmd .= "CDEF:\"t2=timeavgadj,timemaxadj,+,2,/,timeminadj,-,t1,-\" ";
-	$graphcmd .= "CDEF:\"t3=timemaxadj,timeminadj,-,t1,-,t2,-\" ";
-	$graphcmd .= "AREA:\"timeminadj\" ";
-	$graphcmd .= "AREA:\"t1#$colorspamdtime[0]::STACK\" ";
-	$graphcmd .= "AREA:\"t2#$colorspamdtime[1]::STACK\" ";
-	$graphcmd .= "AREA:\"t3#$colorspamdtime[2]::STACK\" ";
-	$graphcmd .= "LINE2:\"timeavgadj#$colorspamdtime[3]:\"Time \" ";
-	$graphcmd .= "GPRINT:\"timeminadj:MIN:\"Min\\:%6.2lf\\t\" ";
-	$graphcmd .= "GPRINT:\"timeavgadj:AVERAGE:\"Avg\\:%6.2lf\\t\" ";
-	$graphcmd .= "GPRINT:\"timemaxadj:MAX:\"Max\\:%6.2lf\\n\" ";
-	$graphcmd .= "AREA:\"consmax#$colorspamdconn[0]\" ";
-	$graphcmd .= "AREA:\"consmin#$colorspamdconn[1]\" ";
-	$graphcmd .= "LINE1:\"consmin#$colorspamdconn[2]\" ";
-	$graphcmd .= "LINE1:\"consmax#$colorspamdconn[3]\" ";
-	$graphcmd .= "LINE1:\"consavg#$colorspamdconn[4]:\"Cons \" ";
-	$graphcmd .= "GPRINT:\"consmin:MIN:\"Min\\:%6.2lf\\t\" ";
-	$graphcmd .= "GPRINT:\"consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" ";
-	$graphcmd .= "GPRINT:\"consmax:MAX:\"Max\\:%6.2lf\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
+		--start $start --end $end \\
+		--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
+		--vertical-label=\"Conn / Time, sec.\" \\
+		--height 200 --width 620 --no-gridfit \\
+		--lower-limit 0 \\
+		DEF:consmin=$rrddbpath$curdatabase:conn:MIN \\
+		DEF:consavg=$rrddbpath$curdatabase:conn:AVERAGE \\
+		DEF:consmax=$rrddbpath$curdatabase:conn:MAX \\
+		DEF:timemin=$rrddbpath$curdatabase:time:MIN \\
+		DEF:timeavg=$rrddbpath$curdatabase:time:AVERAGE \\
+		DEF:timemax=$rrddbpath$curdatabase:time:MAX \\
+		\"CDEF:timeminadj=timemin,0,86400,LIMIT,UN,0,timemin,IF\" \\
+		\"CDEF:timeavgadj=timeavg,0,86400,LIMIT,UN,0,timeavg,IF\" \\
+		\"CDEF:timemaxadj=timemax,0,86400,LIMIT,UN,0,timemax,IF\" \\
+		\"CDEF:t1=timeminadj,timeavgadj,+,2,/,timeminadj,-\" \\
+		\"CDEF:t2=timeavgadj,timemaxadj,+,2,/,timeminadj,-,t1,-\" \\
+		\"CDEF:t3=timemaxadj,timeminadj,-,t1,-,t2,-\" \\
+		AREA:timeminadj \\
+		AREA:t1#$colorspamdtime[0]::STACK \\
+		AREA:t2#$colorspamdtime[1]::STACK \\
+		AREA:t3#$colorspamdtime[2]::STACK \\
+		LINE2:timeavgadj#$colorspamdtime[3]:\"Time \" \\
+		GPRINT:timeminadj:MIN:\"Min\\:%6.2lf\\t\" \\
+		GPRINT:timeavgadj:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
+		GPRINT:timemaxadj:MAX:\"Max\\:%6.2lf\\n\" \\
+		AREA:consmax#$colorspamdconn[0] \\
+		AREA:consmin#$colorspamdconn[1] \\
+		LINE1:consmin#$colorspamdconn[2] \\
+		LINE1:consmax#$colorspamdconn[3] \\
+		LINE1:consavg#$colorspamdconn[4]:\"Cons \" \\
+		GPRINT:consmin:MIN:\"Min\\:%6.2lf\\t\" \\
+		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
+		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
 elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";

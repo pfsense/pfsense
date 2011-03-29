@@ -53,7 +53,7 @@ function easyrule_find_rule_interface($int) {
                 $iflist['l2tp'] = "L2TP VPN";
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])){
 		$iflist["enc0"] = "IPSEC";
 	}
 

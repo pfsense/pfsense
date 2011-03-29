@@ -163,7 +163,7 @@ function updateBandwidthHosts(data){
 <?php
 
 /* link the ipsec interface magically */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) 
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) 
 	$ifdescrs['enc0'] = "IPsec";
 
 ?>

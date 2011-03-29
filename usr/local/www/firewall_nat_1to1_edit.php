@@ -288,7 +288,7 @@ function typesel_change() {
 						$interfaces['pppoe'] = "PPPoE VPN";
 
 					/* add ipsec interfaces */
-					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
 						if(have_ruleint_access("enc0"))
 							$interfaces["enc0"] = "IPsec";
 

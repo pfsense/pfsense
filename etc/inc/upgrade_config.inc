@@ -982,6 +982,7 @@ function upgrade_046_to_047() {
 					$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
 					break;
 					case "rijndael 256":
+					case "aes 256":
 					$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
 					break;
 				}
@@ -1066,6 +1067,7 @@ function upgrade_046_to_047() {
 					break;
 					case "rijndael":
 					case "rijndael 256":
+					case "aes 256":
 					$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
 					$aes_found = true;
 					$aes_count++;
@@ -1089,6 +1091,142 @@ function upgrade_046_to_047() {
 		unset($config['ipsec']['tunnel']);
 		$config['ipsec']['phase1'] = $a_phase1;
 		$config['ipsec']['phase2'] = $a_phase2;
+	}
+
+	/* Upgrade Mobile IPsec */
+	if (isset($config['ipsec']['mobileclients'])
+		&& is_array($config['ipsec']['mobileclients'])
+		&& is_array($config['ipsec']['mobileclients']['p1'])
+		&& is_array($config['ipsec']['mobileclients']['p2'])) {
+
+		if (isset($config['ipsec']['mobileclients']['enable'])) {
+			$config['ipsec']['client']['enable'] = true;
+			$config['ipsec']['client']['user_source'] = 'system';
+			$config['ipsec']['client']['group_source'] = 'system';
+		}
+
+		$mobilecfg = $config['ipsec']['mobileclients'];
+
+		$ph1ent = array();
+		$ph1ent['ikeid'] = ++$ikeid;
+
+		if (!isset($mobilecfg['enable']))
+			$ph1ent['disabled'] = true;
+
+		/* Assume WAN since mobile tunnels couldn't be on a separate interface on 1.2.x */
+		$ph1ent['interface'] = 'wan';
+		$ph1ent['descr'] = "Mobile Clients (upgraded)";
+		$ph1ent['mode'] = $mobilecfg['p1']['mode'];
+
+		if (isset($mobilecfg['p1']['myident']['myaddress']))
+			$ph1ent['myid_type'] = "myaddress";
+		if (isset($mobilecfg['p1']['myident']['address'])) {
+			$ph1ent['myid_type'] = "address";
+			$ph1ent['myid_data'] = $mobilecfg['p1']['myident']['address'];
+		}
+		if (isset($mobilecfg['p1']['myident']['fqdn'])) {
+			$ph1ent['myid_type'] = "fqdn";
+			$ph1ent['myid_data'] = $mobilecfg['p1']['myident']['fqdn'];
+		}
+		if (isset($mobilecfg['p1']['myident']['ufqdn'])) {
+			$ph1ent['myid_type'] = "user_fqdn";
+			$ph1ent['myid_data'] = $mobilecfg['p1']['myident']['ufqdn'];
+		}
+		if (isset($mobilecfg['p1']['myident']['asn1dn'])) {
+			$ph1ent['myid_type'] = "asn1dn";
+			$ph1ent['myid_data'] = $mobilecfg['p1']['myident']['asn1dn'];
+		}
+		if (isset($mobilecfg['p1']['myident']['dyn_dns'])) {
+			$ph1ent['myid_type'] = "dyn_dns";
+			$ph1ent['myid_data'] = $mobilecfg['p1']['myident']['dyn_dns'];
+		}
+		$ph1ent['peerid_type'] = "fqdn";
+		$ph1ent['peerid_data'] = "";
+
+		switch ($mobilecfg['p1']['encryption-algorithm']) {
+			case "des":
+			$ph1alg = array( 'name' => 'des' );
+			break;
+			case "3des":
+			$ph1alg = array( 'name' => '3des' );
+			break;
+			case "blowfish":
+			$ph1alg = array( 'name' => 'blowfish', 'keylen' => '128'  );
+			break;
+			case "cast128":
+			$ph1alg = array( 'name' => 'cast128' );
+			break;
+			case "rijndael":
+			$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
+			break;
+			case "rijndael 256":
+			case "aes 256":
+			$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
+			break;
+		}
+
+		$ph1ent['encryption-algorithm'] = $ph1alg;
+		$ph1ent['hash-algorithm'] = $mobilecfg['p1']['hash-algorithm'];
+		$ph1ent['dhgroup'] = $mobilecfg['p1']['dhgroup'];
+		$ph1ent['lifetime'] = $mobilecfg['p1']['lifetime'];
+		$ph1ent['authentication_method'] = $mobilecfg['p1']['authentication_method'];
+
+		if (isset($mobilecfg['p1']['cert']))
+			$ph1ent['cert'] = $mobilecfg['p1']['cert'];
+		if (isset($mobilecfg['p1']['peercert']))
+			$ph1ent['peercert'] = $mobilecfg['p1']['peercert'];
+		if (isset($mobilecfg['p1']['private-key']))
+			$ph1ent['private-key'] = $mobilecfg['p1']['private-key'];
+
+		$ph1ent['nat_traversal'] = "on";
+		$ph1ent['dpd_enable'] = 1;
+		$ph1ent['dpd_delay'] = 10;
+		$ph1ent['dpd_maxfail'] = 5;
+		$ph1ent['mobile'] = true;
+
+		$ph2ent = array();
+		$ph2ent['ikeid'] = $ph1ent['ikeid'];
+		$ph2ent['descr'] = "phase2 for ".$mobilecfg['descr'];
+		$ph2ent['localid'] = array('type' => 'none');
+		$ph2ent['remoteid'] = array('type' => 'mobile');
+		$ph2ent['protocol'] = $mobilecfg['p2']['protocol'];
+
+		$aes_count = 0;
+		foreach( $mobilecfg['p2']['encryption-algorithm-option'] as $tunalg ) {
+			$aes_found = false;
+			switch ($tunalg) {
+				case "des":
+				$ph2alg = array( 'name' => 'des' );
+				break;
+				case "3des":
+				$ph2alg = array( 'name' => '3des' );
+				break;
+				case "blowfish":
+				$ph2alg = array( 'name' => 'blowfish', 'keylen' => 'auto'  );
+				break;
+				case "cast128":
+				$ph2alg = array( 'name' => 'cast128' );
+				break;
+				case "rijndael":
+				case "rijndael 256":
+				case "aes 256":
+				$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+				$aes_found = true;
+				$aes_count++;
+				break;
+			}
+
+			if( !$aes_found || ($aes_count < 2))
+				$ph2ent['encryption-algorithm-option'][] = $ph2alg;
+		}
+		$ph2ent['hash-algorithm-option'] = $mobilecfg['p2']['hash-algorithm-option'];
+		$ph2ent['pfsgroup'] = $mobilecfg['p2']['pfsgroup'];
+		$ph2ent['lifetime'] = $mobilecfg['p2']['lifetime'];
+		$ph2ent['mobile'] = true;
+
+		$config['ipsec']['phase1'][] = $ph1ent;
+		$config['ipsec']['phase2'][] = $ph2ent;
+		unset($config['ipsec']['mobileclients']);
 	}
 }
 

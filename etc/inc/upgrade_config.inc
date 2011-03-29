@@ -982,6 +982,7 @@ function upgrade_046_to_047() {
 					$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
 					break;
 					case "rijndael 256":
+					case "aes 256":
 					$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
 					break;
 				}
@@ -1066,6 +1067,7 @@ function upgrade_046_to_047() {
 					break;
 					case "rijndael":
 					case "rijndael 256":
+					case "aes 256":
 					$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
 					$aes_found = true;
 					$aes_count++;
@@ -1158,6 +1160,7 @@ function upgrade_046_to_047() {
 			$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
 			break;
 			case "rijndael 256":
+			case "aes 256":
 			$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
 			break;
 		}
@@ -1206,6 +1209,7 @@ function upgrade_046_to_047() {
 				break;
 				case "rijndael":
 				case "rijndael 256":
+				case "aes 256":
 				$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
 				$aes_found = true;
 				$aes_count++;

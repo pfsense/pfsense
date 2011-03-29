@@ -2158,6 +2158,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # allow PPTP client
 pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
+pass in on \${$oc['descr']} proto gre from any to any keep state label "allow PPTP client on {$oc['descr']}"
 
 EOD;
 			break;
@@ -2275,6 +2276,7 @@ EOD;
 			$ipfrules .= <<<EOD
 # PPTPd rules
 pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
+pass in on \${$FilterIflist['wan']['descr']} proto gre from any to any keep state label "allow gre pptpd"
 
 EOD;
 

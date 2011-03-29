@@ -1070,7 +1070,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							$target = explode(" ", $target);
+							$target = explode(" ", trim($target));
 							foreach ($target as $targip) {
 								if (empty($targip))
 									continue;

@@ -117,7 +117,7 @@ function xmlrpc_auth(&$params) {
                 if (authenticate_user("admin", $params[0], $authcfg) ||
                     authenticate_user("admin", $params[0])) {
 			array_shift($params);
-			unset($params['0']);
+			unset($params['xmlrpcauth']);
 			return true;
                 } else if (authenticate_user("admin", $params['xmlrpcauth'], $authcfg) ||
                     authenticate_user("admin", $params['xmlrpcauth'])) {
@@ -127,7 +127,7 @@ function xmlrpc_auth(&$params) {
 		}
 	} else if (authenticate_user("admin", $params[0])) {
 		array_shift($params);
-		unset($params['0']);
+		unset($params['xmlrpcauth']);
 		return true;
 	} else if (authenticate_user("admin", $params['xmlrpcauth'])) {
 		array_shift($params);

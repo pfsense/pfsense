@@ -84,6 +84,19 @@ if ($act == "del") {
 	$savemsg = sprintf(gettext("Certificate Authority %s successfully deleted"), $name) . "<br/>";
 }
 
+if ($act == "edit") {
+	if (!$a_ca[$id]) {
+		pfSenseHeader("system_camanager.php");
+		exit;
+	}
+	$pconfig['descr']  = $a_ca[$id]['descr'];
+	$pconfig['refid']  = $a_ca[$id]['refid'];
+	$pconfig['cert']   = base64_decode($a_ca[$id]['crt']);
+	$pconfig['serial'] = $a_ca[$id]['serial'];
+	if (!empty($a_ca[$id]['prv']))
+		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
+}
+
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
@@ -169,26 +182,37 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$ca = array();
-		$ca['refid'] = uniqid();
+		if (!isset($pconfig['refid']) || empty($pconfig['refid']))
+			$ca['refid'] = uniqid();
+		else
+			$ca['refid'] = $pconfig['refid'];
+
 		if (isset($id) && $a_ca[$id])
 			$ca = $a_ca[$id];
 
-	    $ca['descr'] = $pconfig['descr'];
+		$ca['descr'] = $pconfig['descr'];
 
-		if ($pconfig['method'] == "existing")
-			ca_import($ca, $pconfig['cert'], $pconfig['key']);
+		if ($_POST['edit'] == "edit") {
+			$ca['descr']  = $pconfig['descr'];
+			$ca['refid']  = $pconfig['refid'];
+			$ca['serial'] = $pconfig['serial'];
+			$ca['crt']    = base64_encode($pconfig['cert']);
+			if (!empty($pconfig['key']))
+				$ca['prv']    = base64_encode($pconfig['key']);
+		} else {
+			if ($pconfig['method'] == "existing")
+				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 
-		if ($pconfig['method'] == "internal")
-		{
-			$dn = array(
-				'countryName' => $pconfig['dn_country'],
-				'stateOrProvinceName' => $pconfig['dn_state'],
-				'localityName' => $pconfig['dn_city'],
-				'organizationName' => $pconfig['dn_organization'],
-				'emailAddress' => $pconfig['dn_email'],
-				'commonName' => $pconfig['dn_commonname']);
-
-			ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn);
+			if ($pconfig['method'] == "internal") {
+				$dn = array(
+					'countryName' => $pconfig['dn_country'],
+					'stateOrProvinceName' => $pconfig['dn_state'],
+					'localityName' => $pconfig['dn_city'],
+					'organizationName' => $pconfig['dn_organization'],
+					'emailAddress' => $pconfig['dn_email'],
+					'commonName' => $pconfig['dn_commonname']);
+				ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn);
+			}
 		}
 
 		if (isset($id) && $a_ca[$id])
@@ -250,9 +274,14 @@ function method_change() {
 		<td id="mainarea">
 			<div class="tabcont">
 
-				<?php if ($act == "new" || $act == gettext("Save") || $input_errors): ?>
+				<?php if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors): ?>
 
 				<form action="system_camanager.php" method="post" name="iform" id="iform">
+					<?php if ($act == "edit"): ?>
+					<input type="hidden" name="edit" value="edit" id="edit">
+					<input type="hidden" name="id" value="<?php echo $id; ?>" id="id">
+					<input type="hidden" name="refid" value="<?php echo $pconfig['refid']; ?>" id="refid">
+					<?php endif; ?>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
@@ -260,7 +289,7 @@ function method_change() {
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
-						<?php if (!isset($id)): ?>
+						<?php if (!isset($id) || $act == "edit"): ?>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
 							<td width="78%" class="vtable">
@@ -303,6 +332,15 @@ function method_change() {
 								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?></td>
 							</td>
 						</tr>
+
+					<?php if (!isset($id) || $act == "edit"): ?>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial");?></td>
+							<td width="78%" class="vtable">
+								<input name="serial" type="text" class="formfld unknown" id="serial" size="20" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
+							</td>
+						</tr>
+					<?php endif; ?>
 					</table>
 
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal">
@@ -482,6 +520,9 @@ function method_change() {
 						<td class="listr"><?=$certcount;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
+							<a href="system_camanager.php?act=edit&id=<?=$i;?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("edit ca");?>" width="17" height="17" border="0" />
+							</a>
 							<a href="system_camanager.php?act=exp&id=<?=$i;?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>

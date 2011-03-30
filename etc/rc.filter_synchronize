@@ -101,7 +101,8 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 		while ($numberofruns < 2) {
 			$msg = new XML_RPC_Message($method, $params);
 			$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-			$username = $config['system']['user'][0]['name'];
+			/* XXX: Configurable from the GUI?! */
+			$username = "admin";
 			$cli->setCredentials($username, $password);
 			if($numberofruns > 1)
 				$cli->setDebug(1);
@@ -235,7 +236,8 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		log_error("Beginning XMLRPC sync to {$url}:{$port}.");
 		$msg = new XML_RPC_Message($method, $params);
 		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		$username = $config['system']['user'][0]['name'];
+		/* XXX: Configurable from the GUI?! */
+		$username = "admin";
 		$cli->setCredentials($username, $password);
 		if($numberofruns > 1)
 			$cli->setDebug(1);
@@ -394,7 +396,8 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			);
 
 			$msg = new XML_RPC_Message('pfsense.filter_configure', $params);
-			$username = $config['system']['user'][0]['name'];
+			/* XXX: Configurable from the GUI */
+			$username = "admin";
 			$cli->setCredentials($username, $carp['password']);
 			$resp = $cli->send($msg, "900");
 

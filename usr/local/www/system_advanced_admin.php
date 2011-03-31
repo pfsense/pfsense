@@ -331,7 +331,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI login messages"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked"; ?> />
-									<strong><?=gettext("Disable webConfigurator successful logins"); ?></strong>
+									<strong><?=gettext("Disable logging of webConfigurator successful logins"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
 									"will not be logged.");

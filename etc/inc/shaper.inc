@@ -4048,20 +4048,20 @@ function build_iface_without_this_queue($iface, $qname) {
 	global $g, $altq_list_queues;
 
 	$altq =& $altq_list_queues[$iface];
-				if ($altq)
-						$scheduler = ": " . $altq->GetScheduler();
+	if ($altq)
+		$scheduler = ": " . $altq->GetScheduler();
 	$form = "<tr><td width=\"20%\" >";
 	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
-		$form .= "<a href=\"firewall_shaper_queues.php?interface=";
-		$form .= $iface . "&queue=". $qname . "&action=add\">";
-		$form .= "<img src=\"";
-		$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Clone shaper/queue on this interface\">";
-		$form .= " Clone shaper/queue on this interface</a></td></tr>";
+	$form .= "</td></tr>";
+	$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
+	$form .= "<a href=\"firewall_shaper_queues.php?interface=";
+	$form .= $iface . "&queue=". $qname . "&action=add\">";
+	$form .= "<img src=\"";
+	$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
+	$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Clone shaper/queue on this interface\">";
+	$form .= " Clone shaper/queue on this interface</a></td></tr>";
 
-		return $form;
+	return $form;
 
 }
 

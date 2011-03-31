@@ -308,7 +308,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 			<div id="navigation" style="z-index:1000">
 				<ul id="menu">
 					<li class="firstdrop">
-						<div><?php echo gettext("System"); ?></div>
+						<div>System</div>
 						<ul class="subdrop">
 						<?php
 							output_menu($system_menu);
@@ -316,7 +316,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("Interfaces"); ?></div>
+						<div>Interfaces</div>
 						<ul class="subdrop">
 						<?php
 							output_menu($interfaces_menu);
@@ -324,7 +324,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("Firewall"); ?></div>
+						<div>Firewall</div>
 						<ul class="subdrop">
 						<?php
 							output_menu($firewall_menu);
@@ -332,7 +332,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("Services"); ?></div>
+						<div>Services</div>
 						<ul class="subdrop">
 						<?
 							output_menu($services_menu);
@@ -340,7 +340,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("VPN"); ?></div>
+						<div>VPN</div>
 						<ul class="subdrop">
 						<?php
 							output_menu($vpn_menu);
@@ -348,7 +348,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("Status"); ?></div>
+						<div>Status</div>
 						<ul class="subdrop">
 						<?php
 							output_menu($status_menu);
@@ -356,7 +356,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						</ul>
 					</li>
 					<li class="drop">
-						<div><?php echo gettext("Diagnostics"); ?></div>
+						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
 						<?
 							output_menu($diagnostics_menu);
@@ -365,7 +365,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 					</li>
 					<?php if(! $g['disablehelpmenu']): ?>
 					<li class="lastdrop">
-						<div><?php echo gettext("Help"); ?></div>
+						<div>Help</div>
 						<ul id="help" class="subdrop">
 						<?
 							output_menu($help_menu, "_new");

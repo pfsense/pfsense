@@ -124,11 +124,11 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	unset($input_errors);
 	unset($sig_warning);
 
-	if ($_POST['Enable'])
+	if (stristr($_POST['Submit'], gettext("Enable")))
 		$mode = "enable";
-	else if ($_POST['Disable'])
+	else if (stristr($_POST['Submit'], gettext("Disable")))
 		$mode = "disable";
-	else if ($_POST['Upgrade'] || $_POST['sig_override'])
+	else if (stristr($_POST['Submit'], gettext("Upgrade")) || $_POST['sig_override'])
 		$mode = "upgrade";
 	else if ($_POST['sig_no']) {
 		if(file_exists("{$g['upload_path']}/firmware.tgz"))
@@ -257,9 +257,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 						</p>
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
-							<input name="Enable" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
 						<?php else: ?>
-							<input name="Disable" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
+				  			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
 							<br><br>
 							<strong><?=gettext("Firmware image file:");?> </strong>&nbsp;
 							<input name="ulfile" type="file" class="formfld">
@@ -289,7 +289,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
 								*/
 							?>
-							<input name="Upgrade" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
 						<?php endif; ?>

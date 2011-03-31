@@ -742,7 +742,7 @@ class priq_queue {
 	var $available_bw; /* in b/s */
 
 	/* This is here to help with form building and building rules/lists */
-		var $subqueues = array();
+	var $subqueues = array();
 
 	/* Accesor functions */
 	function GetAvailableBandwidth() {
@@ -1139,13 +1139,15 @@ class priq_queue {
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncell\">Scheduler options</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
-		$tmpvalue = $this->GetDefault();	
-		if (!empty($tmpvalue)) { 
-			$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
-			$form .= "> Default queue<br>";
-		} else {
-			$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
-			$form .= "> Default queue<br>";
+		if ($this->CanHaveChildren() && !empty($this->subqueues)) {
+			$tmpvalue = $this->GetDefault();
+			if (!empty($tmpvalue)) { 
+				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
+				$form .= "> Default queue<br>";
+			} else {
+				$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
+				$form .= "> Default queue<br>";
+			}
 		}
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
 		$tmpvalue = $this->GetRed();

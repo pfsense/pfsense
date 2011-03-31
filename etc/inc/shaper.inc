@@ -953,9 +953,17 @@ class priq_queue {
 		$reqdfieldsn[] = "Name";
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
+                if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+			$input_errors[] = "Bandwidth must be an integer.";
+                if ($data['bandwidth'] < 0)
+			$input_errors[] = "Bandwidth cannot be negative.";
+                if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
+			$input_errors[] = "Qlimit must be an integer.";
+	 	if ($data['qlimit'] < 0)
+			$input_errors[] = "Qlimit must be an positive.";
 		if ($data['priority'] && (!is_numeric($data['priority'])
-						|| ($data['priority'] < 1) || ($data['priority'] > 15))) {
-					$input_errors[] = "The priority must be an integer between 1 and 15.";
+		    || ($data['priority'] < 1) || ($data['priority'] > 15))) {
+			$input_errors[] = "The priority must be an integer between 1 and 15.";
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
 				$input_errors[] = "Queue limit must be an integer";

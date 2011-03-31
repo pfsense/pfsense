@@ -1139,7 +1139,7 @@ class priq_queue {
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncell\">Scheduler options</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
-		if ($this->CanHaveChildren() && !empty($this->subqueues)) {
+		if (empty($this->subqueues)) {
 			$tmpvalue = $this->GetDefault();
 			if (!empty($tmpvalue)) { 
 				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";

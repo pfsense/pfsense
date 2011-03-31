@@ -404,7 +404,8 @@ function convert_config() {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
-		$migration_function();
+		if (function_exists($migration_function))
+			$migration_function();
 		$migration_function = "{$migration_function}_custom";
 		if (function_exists($migration_function))
 			$migration_function();

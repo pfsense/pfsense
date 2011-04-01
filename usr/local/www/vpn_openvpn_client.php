@@ -113,7 +113,7 @@ if($_GET['act']=="edit"){
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
-		$pconfig['device_mode'] = $a_client[$id]['device_mode'];
+		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
 	
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
@@ -228,7 +228,7 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$client['disable'] = true;
 		$client['protocol'] = $pconfig['protocol'];
-		$client['device_mode'] = $pconfig['device_mode'];
+		$client['dev_mode'] = $pconfig['dev_mode'];
 		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
@@ -439,11 +439,11 @@ if ($savemsg)
                                         <tr>
                                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Device mode");?></td>
                                                         <td width="78%" class="vtable">
-                                                        <select name='device_mode' class="formselect">
+                                                        <select name='dev_mode' class="formselect">
                                                         <?php
                                                                 foreach ($openvpn_dev_mode as $mode):
                                                                         $selected = "";
-                                                                        if ($pconfig['device_mode'] == $mode)
+                                                                        if ($pconfig['dev_mode'] == $mode)
                                                                                 $selected = "selected";
                                                         ?>
                                                                 <option value="<?=$mode;?>" <?=$selected;?>><?=$mode;?></option>

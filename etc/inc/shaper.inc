@@ -742,7 +742,7 @@ class priq_queue {
 	var $available_bw; /* in b/s */
 
 	/* This is here to help with form building and building rules/lists */
-		var $subqueues = array();
+	var $subqueues = array();
 
 	/* Accesor functions */
 	function GetAvailableBandwidth() {
@@ -953,9 +953,17 @@ class priq_queue {
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
+                if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+			$input_errors[] = "Bandwidth must be an integer.";
+                if ($data['bandwidth'] < 0)
+			$input_errors[] = "Bandwidth cannot be negative.";
+                if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
+			$input_errors[] = "Qlimit must be an integer.";
+	 	if ($data['qlimit'] < 0)
+			$input_errors[] = "Qlimit must be an positive.";
 		if ($data['priority'] && (!is_numeric($data['priority'])
-						|| ($data['priority'] < 1) || ($data['priority'] > 15))) {
-					$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
+		    || ($data['priority'] < 1) || ($data['priority'] > 15))) {
+			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
 				$input_errors[] = gettext("Queue limit must be an integer");
@@ -1131,13 +1139,15 @@ class priq_queue {
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncell\">" . gettext("Scheduler options") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
-		$tmpvalue = $this->GetDefault();	
-		if (!empty($tmpvalue)) { 
-			$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
-			$form .= "> " . gettext("Default queue") . "<br>";
-		} else {
-			$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
-			$form .= "> " . gettext("Default queue") . "<br>";
+		if (empty($this->subqueues)) {
+			$tmpvalue = $this->GetDefault();
+			if (!empty($tmpvalue)) { 
+				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
+				$form .= "> " . gettext("Default queue") . "<br>";
+			} else {
+				$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
+				$form .= "> " . gettext("Default queue") . "<br>";
+			}
 		}
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
 		$tmpvalue = $this->GetRed();
@@ -4035,8 +4045,8 @@ function build_iface_without_this_queue($iface, $qname) {
 	global $g, $altq_list_queues;
 
 	$altq =& $altq_list_queues[$iface];
-				if ($altq)
-						$scheduler = ": " . $altq->GetScheduler();
+	if ($altq)
+		$scheduler = ": " . $altq->GetScheduler();
 	$form = "<tr><td width=\"20%\" >";
 	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
 	$form .= "</td></tr>";
@@ -4045,7 +4055,7 @@ function build_iface_without_this_queue($iface, $qname) {
 	$form .= $iface . "&queue=". $qname . "&action=add\">";
 	$form .= "<img src=\"";
 	$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-	$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("Clone shaper/queue on this interface") . "\">";
+	$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Clone shaper/queue on this interface\">";
 	$form .= gettext(" Clone shaper/queue on this interface") . "</a></td></tr>";
 
 	return $form;

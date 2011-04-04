@@ -399,13 +399,13 @@ EOD;
 function services_igmpproxy_configure() {
         global $config, $g;
 
-        $iflist = get_configured_interface_list();
-
         /* kill any running igmpproxy */
         killbyname("igmpproxy");
 
 	if (!is_array($config['igmpproxy']['igmpentry']))
 		return 1;
+
+        $iflist = get_configured_interface_list();
 
         $igmpconf = <<<EOD
 

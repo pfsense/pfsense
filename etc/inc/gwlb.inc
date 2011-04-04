@@ -367,6 +367,30 @@ function return_gateway_groups_array() {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 
+	/* 
+	 * NOTE: The code below is meant to replace the default gateway when it goes down.
+	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
+	 */
+	$upgw = "";
+	$dfltgwdown = false;
+	foreach ($gateways_arr as $gwname => $gwsttng) {
+		if ($gwsttng['defaultgw'] == true && stristr($gateways_status[$gwname]['status'], "down"))
+			$dfltgwdown = true;
+		/* Keep a record of the last up gateway */
+		if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
+			$upgw = $gwname;
+		if ($dfltgwdown == true && !empty($upgw)) {
+			if ($gateways_arr[$upgw]['gateway'] == "dynamic")
+				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
+			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
+				log_error("Default gateway down setting {$upgw} as default!");
+				mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
+			}
+			break;
+		}
+	}
+	unset($upgw, $dfltgwdown, $gwname, $gwsttng);
+
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members seperated by tier */

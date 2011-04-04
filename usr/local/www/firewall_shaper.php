@@ -386,11 +386,8 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 <?php
-if ($queue) {
-        echo "<script type=\"text/javascript\">";
+if ($queue)
         echo $queue->build_javascript();
-        echo "</script>";
-}
 echo $newjavascript;
 
 include("fbegin.inc"); 

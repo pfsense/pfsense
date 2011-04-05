@@ -1166,11 +1166,11 @@ function system_ntp_configure() {
 			$ips = array_map('find_interface_ip', $ifaces);
 			foreach ($ips as $ip) {
 				if (is_ipaddr($ip))
-					$ntpdcfg .= "listen on $ip\n";
+					$ntpcfg .= "listen on $ip\n";
 			}
 		}
 	}
-	$ntpdcfg .= "\n";
+	$ntpcfg .= "\n";
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");

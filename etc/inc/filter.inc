@@ -1059,6 +1059,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$toadd_array = array_merge($toadd_array, range($loc_pt[0], $loc_pt[0] + $delta));
 
 				if(!empty($toadd_array)) {
+					$target = explode(" ", trim($target));
 					foreach($toadd_array as $tda) {
 						if (empty($tda))
 							continue;
@@ -1070,7 +1071,6 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							$target = explode(" ", trim($target));
 							foreach ($target as $targip) {
 								if (empty($targip))
 									continue;

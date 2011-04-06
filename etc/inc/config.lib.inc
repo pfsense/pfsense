@@ -534,10 +534,17 @@ function write_config($desc="Unknown", $backup = true) {
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 	if ($config == -1) {
+		copy("{$g['conf_path']}/config.xml", "{$g['conf_path']}/config.xml.bad");
 		$last_backup = discover_last_backup();
-		if ($last_backup)
+		if ($last_backup) {
 			restore_backup("/cf/conf/backup/{$last_backup}");
-		else
+			$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
+			if ($g['booting']) {
+				echo "\n\n ************** WARNING **************";
+				echo "\n\n New configuration could not be validated. Restored previous configuration. \n";
+				echo "\n Failed configuration has been saved as {{$g['conf_path']}/config.xml.bad} \n\n";
+			}
+		} else
 			log_error(gettext("Could not restore config.xml."));
 	} else
 		generate_config_cache($config);

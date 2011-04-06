@@ -341,7 +341,7 @@ function update_description(itemnum) {
 									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> />
 									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
 									<br />
-									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec.");?> 
+									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?> 
 									</span>
 								</td>
 							</tr>

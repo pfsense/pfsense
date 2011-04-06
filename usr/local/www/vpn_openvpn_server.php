@@ -563,7 +563,7 @@ function netbios_change() {
 if (!$savemsg)
 	$savemsg = "";
 if (count($a_ca) == 0)
-	$savemsg .= "You have no Certificate Authorities defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
+	$savemsg .= "You have no Certificate Authorities defined. You can visit the <a href=\"system_camanager.php\">Certificate Manager or use the <a href=\"wizard.php?xml=openvpn_wizard.xml\">Wizard.</a> to create one. ";
 if (count($a_cert) == 0)
 	$savemsg .= "<br/>You have no Certificates defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
 

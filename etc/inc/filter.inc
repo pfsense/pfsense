@@ -2267,7 +2267,7 @@ EOD;
 		}
 	}
 	/* PPTPd enabled? */
-	if($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off")) {
+	if($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off") && !isset($config['system']['disablevpnrules'])) {
 		if($pptpdcfg['mode'] == "server")
 			$pptpdtarget = get_interface_ip();
 		else
@@ -2699,6 +2699,9 @@ function filter_generate_ipsec_rules() {
 		$mt = microtime();
 		echo "filter_generate_ipsec_rules() being called $mt\n";
 	}
+
+	if (isset($config['system']['disablevpnrules']))
+		return "\n# VPN Rules not added disabled in System->Advanced.\n";
 
 	$ipfrules = "\n# VPN Rules\n";
 	/* Is IP Compression enabled? */

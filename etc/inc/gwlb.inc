@@ -419,7 +419,7 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = "MONITOR: {$gwname} has high latency, removing from routing group";
+						$msg = "MONITOR: {$gwname} is down, removing from routing group";
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */

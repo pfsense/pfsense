@@ -654,8 +654,6 @@ if ($savemsg)
 								$caname = "";
 								$inuse = "";
 								$revoked = "";
-								if (is_user_cert($cert['refid']))
-									continue;
 								$ca = lookup_ca($cert['caref']);
 								if ($ca)
 									$caname = " (CA: {$ca['descr']})";

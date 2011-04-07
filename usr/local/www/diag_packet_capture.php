@@ -194,13 +194,15 @@ include("fbegin.inc");
 <?php
 
                     /* check to see if packet capture tcpdump is already running */
-					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/grep -v pflog")));
+					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/grep -v pflog | wc -")));
 					
 					$processisrunning = false;
 
-					if ($processcheck != false)
+					if ($processcheck != "")
 						$processisrunning = true;
-						
+					else 
+						$processisrunning = false;
+
 					if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
 				  	else {

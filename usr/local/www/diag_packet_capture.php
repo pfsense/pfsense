@@ -196,8 +196,6 @@ include("fbegin.inc");
                     /* check to see if packet capture tcpdump is already running */
 					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/grep -v pflog")));
 					
-					$processisrunning = false;
-
 					if ($processcheck != "")
 						$processisrunning = true;
 					else 

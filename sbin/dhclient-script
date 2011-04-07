@@ -239,7 +239,7 @@ add_new_resolv_conf() {
 			echo '$nameserver_sanitized' >>/var/etc/nameserver_$interface
 			$ROUTE add $nameserver_sanitized -iface $interface
 		done
-		echo $new_domain_name | /usr/bin/egrep -o "[0-9\.]+" >/var/etc/searchdomain_$interface
+		echo $new_domain_name | /usr/bin/egrep -o '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|[0-9a-f]+:)' >/var/etc/searchdomain_$interface
 	fi
 
 	return 0

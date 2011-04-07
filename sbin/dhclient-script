@@ -232,13 +232,14 @@ add_new_resolv_conf() {
 	if [ -n "$new_domain_name_servers" ]; then 
 		/bin/rm -f /var/etc/nameserver_$interface
 		for nameserver in $new_domain_name_servers; do
+			nameserver_sanitized=`echo '$nameserver' | egrep -o '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|[0-9a-f]+:)'`
 			# Add a route to the nameserver out the correct interface
 			# so that mulitple wans work correctly with multiple dns
 			# also backup the nameserver for later route removal
-			echo $nameserver >>/var/etc/nameserver_$interface
-			$ROUTE add $nameserver -iface $interface
+			echo '$nameserver_sanitized' >>/var/etc/nameserver_$interface
+			$ROUTE add $nameserver_sanitized -iface $interface
 		done
-		echo $new_domain_name >/var/etc/searchdomain_$interface
+		echo $new_domain_name | egrep -o "[0-9\.]+" >/var/etc/searchdomain_$interface
 	fi
 
 	return 0

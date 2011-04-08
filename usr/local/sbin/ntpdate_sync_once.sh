@@ -10,8 +10,3 @@ while [ "$NOTSYNCED" = "true" ]; do
 	fi
 	sleep 5
 done
-
-# Launch -- we have net.
-killall ntpd 2>/dev/null
-sleep 1
-/usr/local/sbin/ntpd -s -f /var/etc/ntpd.conf

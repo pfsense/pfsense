@@ -382,13 +382,13 @@ function openvpn_reconfigure($mode, $settings) {
 
 		// configure p2p/server modes
 		switch($settings['mode']) {
-			case 'p2p_tls':
 			case 'p2p_shared_key':
 				$baselong = ip2long32($ip) & ip2long($mask);
 				$ip1 = long2ip32($baselong + 1);
 				$ip2 = long2ip32($baselong + 2);
 				$conf .= "ifconfig $ip1 $ip2\n";
 				break;
+			case 'p2p_tls':
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':

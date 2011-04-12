@@ -121,13 +121,14 @@ function ca_chain(& $cert) {
 	return "";
 }
 
-function ca_import(& $ca, $str, $key="") {
+function ca_import(& $ca, $str, $key="", $serial=0) {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
 	if (!empty($key))
 		$ca['prv'] = base64_encode($key);
-
+	if (!empty($serial))
+		$ca['serial'] = $serial;
 	$subject = cert_get_subject($str, false);
 	$issuer = cert_get_issuer($str, false);
 	
@@ -355,6 +356,7 @@ function cert_get_issuer($str_crt, $decode = true) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['issuer'];
 	
+	ksort($components);
 	if (!is_array($components))
 		return "unknown";
 	foreach ($components as $a => $v) {

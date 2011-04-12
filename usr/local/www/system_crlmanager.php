@@ -253,14 +253,14 @@ include("head.inc");
 
 function method_change() {
 
-	method = document.iform.method.selectedIndex;
+	method = document.iform.method.value;
 
 	switch (method) {
-		case 0:
+		case "internal":
 			document.getElementById("existing").style.display="none";
 			document.getElementById("internal").style.display="";
 			break;
-		case 1:
+		case "existing":
 			document.getElementById("existing").style.display="";
 			document.getElementById("internal").style.display="none";
 			break;
@@ -302,6 +302,8 @@ function method_change() {
 								<select name='method' id='method' class="formselect" onchange='method_change()'>
 								<?php
 									foreach($crl_methods as $method => $desc):
+									if (($_GET['importonly'] == "yes") && ($method != "existing"))
+										continue;
 									$selected = "";
 									if ($pconfig['method'] == $method)
 										$selected = "selected";
@@ -502,9 +504,9 @@ function method_change() {
 
 							if($ca['prv']) {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
-								$internal = "YES";
+								$cainternal = "YES";
 							} else 
-								continue;
+								$cainternal = "NO";
 					?>
 					<tr>
 						<td class="listlr" colspan="4">
@@ -520,9 +522,15 @@ function method_change() {
 							</table>
 						</td>
 						<td class="list">
+						<?php if ($cainternal == "YES"): ?>
 							<a href="system_crlmanager.php?act=new&caref=<?php echo $ca['refid']; ?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add or Import CRL for ") . $ca['descr'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
+						<?php else: ?>
+							<a href="system_crlmanager.php?act=new&caref=<?php echo $ca['refid']; ?>&importonly=yes">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Import CRL for ") . $ca['descr'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+							</a>
+						<?php endif; ?>
 						</td>
 					</tr>
 					

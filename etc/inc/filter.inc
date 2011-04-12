@@ -796,7 +796,7 @@ function filter_generate_optcfg_array() {
 		$FilterIflist['pppoe'] = $oic;
 	}
 	/* add ipsec interfaces */
-	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
+	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
@@ -1074,7 +1074,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							$target = explode(" ", $target);
+							$target = explode(" ", trim($target));
 							foreach ($target as $targip) {
 								if (empty($targip))
 									continue;
@@ -1673,8 +1673,17 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$lansn = $FilterIflist['lan']['snv6'];
 						$src = "{$lansa}/{$lansn}";
 						break;
-				}
-				if(isset($rule[$target]['not'])) $src = "!{$src}";
+					case 'pptp':
+						$pptpsa = gen_subnetv6($FilterIflist['pptp']['sav6'], $FilterIflist['pptp']['snv6']);
+						$pptpsn = $FilterIflist['pptp']['snv6'];
+						$src = "{$pptpsav6}/{$pptpsnv6}";
+						break;
+					case 'pppoe':
+						$pppoesa = gen_subnetv6($FilterIflist['pppoe']['ipv6'], $FilterIflist['pppoe']['snv6']);
+						$pppoesn = $FilterIflist['pppoe']['snv6'];
+						$src = "{$pppoesav6}/{$pppoesnv6}";
+						break;
+					}
 			} else {
 				switch ($rule[$target]['network']) {
 					case 'wan':
@@ -1704,7 +1713,6 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
 				}
-				if(isset($rule[$target]['not'])) $src = "!{$src}";
 			}
 		}
 	} else if($rule[$target]['address']) {
@@ -2280,6 +2288,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # allow PPTP client
 pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
+pass in on \${$oc['descr']} proto gre from any to any keep state label "allow PPTP client on {$oc['descr']}"
 
 EOD;
 			break;
@@ -2312,8 +2321,8 @@ EOD;
 				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
 					$ipfrules .= <<<EOD
 # allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
-pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
-pass in on \${$oc['descr']} proto udp from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 label "allow access to DHCP failover"
+pass in on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
+pass in on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 label "allow access to DHCP failover"
 
 EOD;
 				}
@@ -2371,7 +2380,7 @@ EOD;
 	
 
 	/* add ipsec interfaces */
-	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
 		$ipfrules .= <<<EOD
 pass out on \$IPsec all keep state label "IPsec internal host to host"
 
@@ -2419,6 +2428,7 @@ EOD;
 			$ipfrules .= <<<EOD
 # PPTPd rules
 pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
+pass in on \${$FilterIflist['wan']['descr']} proto gre from any to any keep state label "allow gre pptpd"
 
 EOD;
 

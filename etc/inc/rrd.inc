@@ -459,14 +459,14 @@ function enable_rrd_graphing() {
 				if($g['booting']) {
 					$rrdqcommand = "-t ";
 					$rrducommand = "N";
-					$q = 0;
+					$qi = 0;
 					foreach ($qlist as $qname => $q) {
-						if($q == 0) {
+						if($qi == 0) {
 							$rrdqcommand .= "{$qname}";
 						} else {
 							$rrdqcommand .= ":{$qname}";
 						}
-						$q++;
+						$qi++;
 						$rrducommand .= ":U";
 					}
 					mwexec("$rrdtool update $rrddbpath$ifname$queues $rrdqcommand $rrducommand");

@@ -345,6 +345,14 @@ function notify_via_smtp($message) {
 function notify_via_growl($message) {
 	require_once("growl.class");
 	global $config,$g;
+
+	/* Do NOT send the same message twice */
+	if(file_exists("/var/db/growlnotices_lastmsg.txt")) {
+		$lastmsg = trim(file_get_contents("/var/db/growlnotices_lastmsg.txt"));
+		if($lastmsg == $message)
+			return;
+	}
+
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
 	$growl_ip = $config['notifications']['growl']['ipaddress'];
 	$growl_password = $config['notifications']['growl']['password'];
@@ -355,6 +363,11 @@ function notify_via_growl($message) {
 		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
 	}
+
+	/* Store last message sent to avoid spamming */
+	$fd = fopen("/var/db/growlnotices_lastmsg.txt", "w");
+	fwrite($fd, $message);
+	fclose($fd);
 }
 
 /****f* notices/register_via_growl

@@ -620,7 +620,7 @@ EOD;
 				}
 			}
 			if(!empty($dns_arrv6))
-				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6]) . ";";
+				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 		}
 
 		$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));

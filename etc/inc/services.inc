@@ -613,7 +613,14 @@ EOD;
 		} else if (isset($config['dnsmasq']['enable'])) {
 			$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-			$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $syscfg['dnsserver']) . ";";
+			$dns_arrv6 = array();
+			foreach($syscfg['dnsserver'] as $dnsserver) {
+				if(is_ipaddrv6($dnsserver)) {
+					$dns_arrv6[] = $dnsserver;
+				}
+			}
+			if(!empty($dns_arrv6))
+				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6]) . ";";
 		}
 
 		$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));

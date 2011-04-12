@@ -372,6 +372,40 @@ function return_gateway_groups_array() {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 
+	/* 
+	 * NOTE: The code below is meant to replace the default gateway when it goes down.
+	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
+	 */
+	$upgw = "";
+	$dfltgwdown = false;
+	$dfltgwfound = false;
+	foreach ($gateways_arr as $gwname => $gwsttng) {
+		if (isset($gwsttng['defaultgw'])) {
+			$dfltgwfound = true;
+			if (stristr($gateways_status[$gwname]['status'], "down"))
+				$dfltgwdown = true;
+		}
+		/* Keep a record of the last up gateway */
+		if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
+			$upgw = $gwname;
+		if ($dfltgwdown == true && !empty($upgw))
+			break;
+	}
+	if ($dfltgwfound == false) {
+		$gwname = convert_friendly_interface_to_friendly_descr("wan");
+		if (stristr($gateways_status[$gwname]['status'], "down"))
+			$dfltgwdown = true;
+	}
+	if ($dfltgwdown == true && !empty($upgw)) {
+		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
+			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
+		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
+			log_error("Default gateway down setting {$upgw} as default!");
+			mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
+		}
+	}
+	unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
+
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members seperated by tier */
@@ -390,7 +424,7 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = "MONITOR: {$gwname} has high latency, removing from routing group";
+						$msg = "MONITOR: {$gwname} is down, removing from routing group";
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */

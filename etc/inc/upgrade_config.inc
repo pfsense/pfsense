@@ -1470,12 +1470,12 @@ function upgrade_051_to_052() {
 				$server['caref'] = $ca['refid'];
 
 				/* create a crl entry if needed */
-				if (!empty($server['crl'])) {
+				if (!empty($server['crl'][0])) {
 					$crl = array();
 					$crl['refid'] = uniqid();
 					$crl['descr'] = "Imported OpenVPN CRL #{$index}";
 					$crl['caref'] = $ca['refid'];
-					$crl['text'] = $server['crl'];
+					$crl['text'] = $server['crl'][0];
 					if(!is_array($config['crl']))
 						$config['crl'] = array();
 					$config['crl'][] = $crl;

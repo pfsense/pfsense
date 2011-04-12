@@ -367,6 +367,8 @@ function local_user_set(& $user) {
 		$user_shell = "/usr/local/bin/scponly";
 	} elseif (userHasPrivilege($user, "user-ssh-tunnel")) {
 		$user_shell = "/usr/local/sbin/ssh_tunnel_shell";
+	} elseif (userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
+		$user_shell = "/sbin/nologin";
 	} else {
 		$user_shell = "/sbin/nologin";
 		$lock_account = true;

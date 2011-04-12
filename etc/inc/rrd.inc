@@ -813,9 +813,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-	mwexec("killall top", true);
 	mwexec("killall rrdtool", true);
-	mwexec("/bin/pkill -f updaterrd.sh", true);
+	mwexec("/bin/pkill -a -f updaterrd.sh", true);
 }
 
 ?>

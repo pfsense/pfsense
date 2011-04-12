@@ -384,7 +384,7 @@ function enable_change(whichone) {
 		    <input name="hostres" type="checkbox" id="hostres" value="yes" onClick="check_deps()" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources (Requires MibII)");?>
 		  </td>
 		</tr>
-<?php if(!$config['interfaces']['lan']): ?>
+<?php if($config['interfaces']['lan']): ?>
 		 <tr> 
 		   <td width="22%" valign="top" class="vtable"></td>
 		   <td width="78%" class="vtable"> 

@@ -50,6 +50,9 @@ $pconfig['localip'] = $l2tpcfg['localip'];
 $pconfig['l2tp_subnet'] = $l2tpcfg['l2tp_subnet'];
 $pconfig['mode'] = $l2tpcfg['mode'];
 $pconfig['interface'] = $l2tpcfg['interface'];
+$pconfig['l2tp_dns1'] = $l2tpcfg['dns1'];
+$pconfig['l2tp_dns2'] = $l2tpcfg['dns2'];
+$pconfig['wins'] = $l2tpcfg['wins'];
 $pconfig['radiusenable'] = isset($l2tpcfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($l2tpcfg['radius']['accounting']);
 $pconfig['radiusserver'] = $l2tpcfg['radius']['server'];
@@ -126,7 +129,25 @@ if ($_POST) {
 		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
 		$l2tpcfg['secret'] = $_POST['secret'];
 
+		if($_POST['wins'])
+			$l2tpcfg['wins'] = $_POST['wins'];
+		else
+			unset($l2tpcfg['wins']);
+
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
+
+
+		if ($_POST['l2tp_dns1'] == "") {
+			if (isset($l2tpcfg['dns1']))
+				unset($l2tpcfg['dns1']);
+			} else
+				$l2tpcfg['dns1'] = $_POST['l2tp_dns1'];
+
+			if ($_POST['l2tp_dns2'] == "") {
+				if (isset($l2tpcfg['dns2']))
+					unset($l2tpcfg['dns2']);
+			} else
+				$l2tpcfg['dns2'] = $_POST['l2tp_dns2'];
 
 		if($_POST['radiusenable'] == "yes")
 			$l2tpcfg['radius']['enable'] = true;
@@ -183,6 +204,8 @@ function enable_change(enable_over) {
 		document.iform.interface.disabled = 0;
 		document.iform.n_l2tp_units.disabled = 0;
 		document.iform.secret.disabled = 0;
+		document.iform.l2tp_dns1.disabled = 0;
+		document.iform.l2tp_dns2.disabled = 0;
     /* fix colors */
 		document.iform.remoteip.style.backgroundColor = '#FFFFFF';
 		document.iform.localip.style.backgroundColor = '#FFFFFF';
@@ -218,6 +241,8 @@ function enable_change(enable_over) {
 		document.iform.interface.disabled = 1;
 		document.iform.n_l2tp_units.disabled = 1;
 		document.iform.l2tp_subnet.disabled = 1;
+		document.iform.l2tp_dns1.disabled = 1;
+		document.iform.l2tp_dns2.disabled = 1;
 		document.iform.paporchap.disabled = 1;
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
@@ -360,6 +385,22 @@ function enable_change(enable_over) {
                     <?=gettext("Specifies which protocol to use for authentication.");?><br />
                     </td>
                 </tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
+		  <td width="78%" class="vtable">
+		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>">
+		   	<br>
+				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>">
+			<br>
+		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br>
+		  </td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
+		  <td width="78%" valign="top" class="vtable">
+		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
+		  </td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
                   <td width="78%" class="vtable">

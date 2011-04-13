@@ -1490,9 +1490,12 @@ l2tp_standard:
 
 EOD;
 
-			if (!empty($l2tpcfg['dns1'])) {
+			if (is_ipaddr($l2tpcfg['wins'])) {
+				$mpdconf .= "	set ipcp nbns {$l2tpcfg['wins']}\n";
+			}
+			if (is_ipaddr($l2tpcfg['dns1'])) {
 				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
-				if (!empty($l2tpcfg['dns2']))
+				if (is_ipaddr($l2tpcfg['dns2']))
 					$mpdconf .= " " . $l2tpcfg['dns2'];
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {

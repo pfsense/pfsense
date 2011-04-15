@@ -1293,7 +1293,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gateway" class="formselect" id="gateway">
 												<option value="none" selected><?=gettext("None"); ?></option>
@@ -1311,9 +1311,10 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 													}
 													?>
 											</select>
+											- or  <strong><a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwbox'>
-												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
 											</div>
 											<div id='notebox'>
 											</div>
@@ -1398,7 +1399,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway IPv6"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway IPv6"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gatewayv6" class="formselect" id="gatewayv6">
 												<option value="none" selected><?=gettext("None"); ?></option>
@@ -1416,9 +1417,10 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 													}
 													?>
 											</select>
+											- or <strong><a OnClick="show_add_gateway_v6();" href="#"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwboxv6'>
-											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway_v6();" href="#"><?=gettext("add a new one."); ?></a>
+											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above"); ?>
 											</div>
 											<div id='noteboxv6'>
 											</div>

@@ -144,6 +144,8 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['gateway'] = $config['dhcpdv6'][$if]['gateway'];
 	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
+	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
+	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['denyunknown'] = isset($config['dhcpdv6'][$if]['denyunknown']);
 	$pconfig['staticarp'] = isset($config['dhcpdv6'][$if]['staticarp']);

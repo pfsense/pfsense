@@ -1352,7 +1352,6 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
-																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
@@ -1399,7 +1398,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway IPv6"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gatewayv6" class="formselect" id="gatewayv6">
 												<option value="none" selected><?=gettext("None"); ?></option>
@@ -1418,14 +1417,14 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 													?>
 											</select>
 											<br/>
-											<div id='addgwbox'>
-												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
+											<div id='addgwboxv6'>
+											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway_v6();" href="#"><?=gettext("add a new one."); ?></a>
 											</div>
-											<div id='notebox'>
+											<div id='noteboxv6'>
 											</div>
-											<div id="status">
+											<div id="statusv6">
 											</div>
-											<div style="display:none" id="addgateway" name="addgateway">
+											<div style="display:none" id="addgatewayv6" name="addgatewayv6">
 												<p>
 												<table border="1" style="background:#990000; border-style: none none none none; width:225px;">
 													<tr>
@@ -1444,23 +1443,22 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 																	<td width="45%" align="right"><font color="white"><?=gettext("Default v6 gateway:"); ?></td><td><input type="checkbox" id="defaultgwv6" name="defaultgwv6"<?=$checked?>></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GWv6"?>"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway Name IPv6:"); ?></td><td><input id="namev6" name="namev6" value="<?=$wancfg['descr'] . "GWv6"?>"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway IPv6:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IPv6:"); ?></td><td><input id="gatewayipv6" name="gatewayipv6"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescrv6" name="gatewaydescrv6"></td>
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
 																	<td>&nbsp;</td>
 																	<td>
 																		<center>
-																			<div id='savebuttondiv'>
-																				<input type="hidden" name="addrtype" id="addrtype" value="IPv6" />
-																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
-																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
+																			<div id='savebuttondivv6'>
+																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave_v6();'>
+																				<input id="gwcancelv6" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway_v6();'>
 																			</div>
 																		</center>
 																	</td>
@@ -2326,6 +2324,8 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 	<script type="text/javascript">
 		var gatewayip;
 		var name;
+		var gatewayipv6;
+		var namev6;
 		function show_add_gateway() {
 			document.getElementById("addgateway").style.display = '';
 			document.getElementById("addgwbox").style.display = 'none';
@@ -2336,10 +2336,29 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 			document.getElementById("gwcancel").style.display = '';
 			$('notebox').innerHTML="";
 		}
+		function show_add_gateway_v6() {
+			document.getElementById("addgatewayv6").style.display = '';
+			document.getElementById("addgwboxv6").style.display = 'none';
+			document.getElementById("gatewayv6").style.display = 'none';
+			document.getElementById("save").style.display = 'none';
+			document.getElementById("cancel").style.display = 'none';
+			document.getElementById("gwsave").style.display = '';
+			document.getElementById("gwcancel").style.display = '';
+			$('noteboxv6').innerHTML="";
+		}
 		function hide_add_gateway() {
 			document.getElementById("addgateway").style.display = 'none';
 			document.getElementById("addgwbox").style.display = '';
 			document.getElementById("gateway").style.display = '';
+			document.getElementById("save").style.display = '';
+			document.getElementById("cancel").style.display = '';
+			document.getElementById("gwsave").style.display = '';
+			document.getElementById("gwcancel").style.display = '';
+		}
+		function hide_add_gateway_v6() {
+			document.getElementById("addgatewayv6").style.display = 'none';
+			document.getElementById("addgwboxv6").style.display = '';
+			document.getElementById("gatewayv6").style.display = '';
 			document.getElementById("save").style.display = '';
 			document.getElementById("cancel").style.display = '';
 			document.getElementById("gwsave").style.display = '';
@@ -2352,10 +2371,9 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 			name = $('name').getValue();
 			var descr = $('gatewaydescr').getValue();
 			gatewayip = $('gatewayip').getValue();
-			addrtype = $('addrtype').getValue();
 			var defaultgw = $('defaultgw').getValue();
 			var url = "system_gateways_edit.php";
-			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
+			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 			var myAjax = new Ajax.Request(
 				url,
 				{
@@ -2363,6 +2381,25 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 					parameters: pars,
 					onFailure: report_failure,
 					onComplete: save_callback
+				});
+		}
+		function hide_add_gatewaysave_v6() {
+			document.getElementById("addgatewayv6").style.display = 'none';
+			$('statusv6').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
+			var iface = $F('if');
+			name = $('namev6').getValue();
+			var descr = $('gatewaydescrv6').getValue();
+			gatewayip = $('gatewayipv6').getValue();
+			var defaultgw = $('defaultgwv6').getValue();
+			var url_v6 = "system_gateways_edit.php";
+			var pars_v6 = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+			var myAjax_v6 = new Ajax.Request(
+				url_v6,
+				{
+					method: 'post',
+					parameters: pars_v6,
+					onFailure: report_failure_v6,
+					onComplete: save_callback_v6
 				});
 		}
 		function addOption(selectbox,text,value)
@@ -2374,9 +2411,22 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 			selectbox.selectedIndex = (selectbox.options.length-1);
 			$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
 		}
+		function addOption_v6(selectbox,text,value)
+		{
+			var optn = document.createElement("OPTION");
+			optn.text = text;
+			optn.value = value;
+			selectbox.options.add(optn);
+			selectbox.selectedIndex = (selectbox.options.length-1);
+			$('noteboxv6').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
+		}
 		function report_failure() {
-			alert("Sorry, we could not create your gateway at this time.");
+			alert("Sorry, we could not create your IPv4 gateway at this time.");
 			hide_add_gateway();
+		}
+		function report_failure_v6() {
+			alert("Sorry, we could not create your IPv6 gateway at this time.");
+			hide_add_gateway_v6();
 		}
 		function save_callback(transport) {
 			var response = transport.responseText;
@@ -2384,12 +2434,28 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
 				$('status').innerHTML = '';
-				addOption($('gateway'), name, name);
+				var gwtext = escape(name) + " - " + gatewayip;
+				addOption($('gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();
 				//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 			} else {
 				report_failure();
+			}
+		}
+		function save_callback_v6(transport) {
+			var response_v6 = transport.responseText;
+			if(response_v6) {
+				document.getElementById("addgatewayv6").style.display = 'none';
+				hide_add_gateway_v6();
+				$('statusv6').innerHTML = '';
+				var gwtext_v6 = escape(name) + " - " + gatewayip;
+				addOption_v6($('gatewayv6'), gwtext_v6, name);
+				// Auto submit form?
+				//document.iform.submit();
+				//$('statusv6').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+			} else {
+				report_failure_v6();
 			}
 		}
 		<?php

@@ -1200,10 +1200,10 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 														}
 													}
 													?>
-											</select>
+											</select> -or- <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
 											<br/>
 											<div id='addgwbox'>
-												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
 											</div>
 											<div id='notebox'>
 											</div>

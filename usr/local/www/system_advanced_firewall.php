@@ -66,6 +66,7 @@ $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
+$pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 
 if ($_POST) {
 
@@ -96,6 +97,10 @@ if ($_POST) {
 		else
 			unset($config['system']['disablefilter']);
 
+		if($_POST['disablevpnrules'] == "yes")
+			$config['system']['disablevpnrules'] = true;
+		else
+			unset($config['system']['disablevpnrules']);
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
 		else
@@ -139,7 +144,7 @@ if ($_POST) {
 
 		if($_POST['bypassstaticroutes'] == "yes")
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
-		else
+		elseif(isset($config['filter']['bypassstaticroutes']))
 			unset($config['filter']['bypassstaticroutes']);
 
 		if($_POST['disablescrub'] == "yes")
@@ -328,6 +333,16 @@ function update_description(itemnum) {
 					 				"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
 									"multiple subnets are connected to the same interface.");?>
 									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable Auto-added VPN rules</td>
+								<td width="78%" class="vtable">
+									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> />
+									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
+									<br />
+									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?> 
+									</span>
 								</td>
 							</tr>
 							<tr>

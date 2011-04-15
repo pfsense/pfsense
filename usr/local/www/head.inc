@@ -7,7 +7,7 @@
  *   if user has selected a custom template, use it.
  *   otherwise default to pfsense tempalte
  */
-if($config['theme'] <> "")
+if($config['theme'] <> "" && (is_dir($g["www_path"].'/themes/'.$config['theme'])))
 	$g['theme'] = $config['theme'];
 else
 	$g['theme'] = "pfsense";

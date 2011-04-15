@@ -192,7 +192,10 @@ add_new_routes() {
 			if [ "$new_ip_address" = "$router" -o "$router" = "255.255.255.255" ]; then
 				$ROUTE add default -iface $interface
 				echo $ROUTE add default -iface $interface | $LOGGER
-				echo $router > /tmp/${interface}_router
+				# NOTE: Do not activate this for all ones address since pf(4) will try to forward packets to it.
+				if [ "$new_ip_address" = "$router" ]; then
+					echo $router > /tmp/${interface}_router
+				fi
 			else
 				$ROUTE add default $router
 				echo $ROUTE add default $router | $LOGGER

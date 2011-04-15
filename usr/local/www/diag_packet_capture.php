@@ -72,7 +72,7 @@ if ($_POST) {
 
 	} elseif ($_POST['stopbtn']!= "") {
 		$action = gettext("Stop");
-		$processes_running = trim(shell_exec('/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep '.$fn.' | /usr/bin/grep -v pflog'));
+		$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
 
 		//explode processes into an array, (delimiter is new line)
 		$processes_running_array = explode("\n", $processes_running);
@@ -194,13 +194,13 @@ include("fbegin.inc");
 <?php
 
                     /* check to see if packet capture tcpdump is already running */
-					$processcheck = (trim(shell_exec('/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog')));
+					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'")));
 					
-					$processisrunning = false;
-
-					if ($processcheck != false)
+					if ($processcheck != "")
 						$processisrunning = true;
-						
+					else 
+						$processisrunning = false;
+
 					if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
 				  	else {

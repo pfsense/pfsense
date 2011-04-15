@@ -47,11 +47,13 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("ipsec.inc");
 require_once("vpn.inc");
 
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
+$pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
@@ -84,6 +86,19 @@ if ($_POST) {
 			$config['ipsec']['preferoldsa'] = true;
 		else
 			unset($config['ipsec']['preferoldsa']);
+
+		$need_racoon_restart = false;
+		if($_POST['racoondebug_enable'] == "yes") {
+			if (!isset($config['ipsec']['racoondebug'])) {
+				$config['ipsec']['racoondebug'] = true;
+				$need_racoon_restart = true;
+			}
+		} else {
+			if (isset($config['ipsec']['racoondebug'])) {
+				unset($config['ipsec']['racoondebug']);
+				$need_racoon_restart = true;
+			}
+		}
 
 		if($_POST['maxmss_enable'] == "yes") {
                         $config['system']['maxmss_enable'] = true;
@@ -125,6 +140,8 @@ if ($_POST) {
 		activate_powerd();
 		load_glxsb();
 		vpn_ipsec_configure_preferoldsa();
+		if ($need_racoon_restart)
+			vpn_ipsec_force_reload();
 	}
 }
 
@@ -256,6 +273,17 @@ function maxmss_checked(obj) {
 									<?=gettext("By default, if several SAs match, the newest one is " .
 									"preferred if it's at least 30 seconds old. Select this " .
 									"option to always prefer old SAs over new ones."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="racoondebug_enable" type="checkbox" id="racoondebug_enable" value="yes" <?php if ($pconfig['racoondebug_enable']) echo "checked"; ?> />
+									<strong><?=gettext("Start racoon in debug mode"); ?></strong>
+									<br />
+									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
+									"will be generated to aid in troubleshooting."); ?><br/>
+									<?=gettext("NOTE: Changing this setting will restart racoon."); ?>
 								</td>
 							</tr>
 							<tr>

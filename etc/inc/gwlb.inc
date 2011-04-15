@@ -373,23 +373,33 @@ function return_gateway_groups_array() {
 	 */
 	$upgw = "";
 	$dfltgwdown = false;
+	$dfltgwfound = false;
 	foreach ($gateways_arr as $gwname => $gwsttng) {
-		if ($gwsttng['defaultgw'] == true && stristr($gateways_status[$gwname]['status'], "down"))
-			$dfltgwdown = true;
+		if (isset($gwsttng['defaultgw'])) {
+			$dfltgwfound = true;
+			if (stristr($gateways_status[$gwname]['status'], "down"))
+				$dfltgwdown = true;
+		}
 		/* Keep a record of the last up gateway */
 		if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
 			$upgw = $gwname;
-		if ($dfltgwdown == true && !empty($upgw)) {
-			if ($gateways_arr[$upgw]['gateway'] == "dynamic")
-				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
-			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
-				log_error("Default gateway down setting {$upgw} as default!");
-				mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
-			}
+		if ($dfltgwdown == true && !empty($upgw))
 			break;
+	}
+	if ($dfltgwfound == false) {
+		$gwname = convert_friendly_interface_to_friendly_descr("wan");
+		if (stristr($gateways_status[$gwname]['status'], "down"))
+			$dfltgwdown = true;
+	}
+	if ($dfltgwdown == true && !empty($upgw)) {
+		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
+			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
+		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
+			log_error("Default gateway down setting {$upgw} as default!");
+			mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
 		}
 	}
-	unset($upgw, $dfltgwdown, $gwname, $gwsttng);
+	unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
 
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {
@@ -409,7 +419,7 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
@@ -423,6 +433,7 @@ function return_gateway_groups_array() {
 					if ($gwdown == true) {
 						log_error($msg);
 						notify_via_growl($msg);
+						notify_via_smtp($msg);
 					} else
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
@@ -435,6 +446,7 @@ function return_gateway_groups_array() {
 					$msg = gettext("Gateways status could not be determined, considering all as up/active.");
 					log_error($msg);
 					notify_via_growl($msg);
+					notify_via_smtp($msg);
 				}
 				$tiers = $backupplan;
 			}

@@ -48,5 +48,6 @@ $colorwireless = array('333333','a83c3c','999999');
 $colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066');
 $colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
 $colorvpnusers = array('990000');
+$colorcaptiveportalusers = array('990000');
 
 ?>

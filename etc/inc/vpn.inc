@@ -896,7 +896,8 @@ EOD;
 			mwexec("/usr/local/sbin/setkey -F", false);
  			sleep("0.1");
  			/* start racoon */
-			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf", false);
+			$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";
+			mwexec("/usr/local/sbin/racoon {$ipsecdebug} -f {$g['varetc_path']}/racoon.conf", false);
  			sleep("0.1");
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
@@ -1489,9 +1490,12 @@ l2tp_standard:
 
 EOD;
 
-			if (!empty($l2tpcfg['dns1'])) {
+			if (is_ipaddr($l2tpcfg['wins'])) {
+				$mpdconf .= "	set ipcp nbns {$l2tpcfg['wins']}\n";
+			}
+			if (is_ipaddr($l2tpcfg['dns1'])) {
 				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
-				if (!empty($l2tpcfg['dns2']))
+				if (is_ipaddr($l2tpcfg['dns2']))
 					$mpdconf .= " " . $l2tpcfg['dns2'];
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {

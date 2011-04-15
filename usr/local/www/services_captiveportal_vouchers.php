@@ -167,7 +167,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['enable']) {
+	if ($_POST['enable'] == "yes") {
 		if (!$_POST['vouchersyncusername']) { 
 			$reqdfields = explode(" ", "charset rollbits ticketbits checksumbits publickey magic saveinterval");
 			$reqdfieldsn = array(gettext("charset"),gettext("rollbits"),gettext("ticketbits"),gettext("checksumbits"),gettext("publickey"),gettext("magic"),gettext("saveinterval"));
@@ -202,8 +202,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['voucher']['enable'] = $_POST['enable'] ? true : false;
-		if (!$_POST['vouchersyncusername']) { 
+		if ($_POST['enable'] == "yes")
+			$config['voucher']['enable'] = true;
+		else
+			unset($config['voucher']['enable']);
+		if (empty($_POST['vouchersyncusername'])) {
 			$config['voucher']['charset'] = $_POST['charset'];
 			$config['voucher']['rollbits'] = $_POST['rollbits'];
 			$config['voucher']['ticketbits'] = $_POST['ticketbits'];

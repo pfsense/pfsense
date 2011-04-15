@@ -438,6 +438,7 @@ function return_gateway_groups_array() {
 					if ($gwdown == true) {
 						log_error($msg);
 						notify_via_growl($msg);
+						notify_via_smtp($msg);
 					} else
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
@@ -450,6 +451,7 @@ function return_gateway_groups_array() {
 					$msg = "Gateways status could not be determined, considering all as up/active.";
 					log_error($msg);
 					notify_via_growl($msg);
+					notify_via_smtp($msg);
 				}
 				$tiers = $backupplan;
 			}

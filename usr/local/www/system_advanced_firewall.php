@@ -144,7 +144,7 @@ if ($_POST) {
 
 		if($_POST['bypassstaticroutes'] == "yes")
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
-		else
+		elseif(isset($config['filter']['bypassstaticroutes']))
 			unset($config['filter']['bypassstaticroutes']);
 
 		if($_POST['disablescrub'] == "yes")

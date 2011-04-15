@@ -289,9 +289,6 @@ echo "Starting OpenNTP time client...";
 system_ntp_configure();
 echo "done.\n";
 
-/* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
-mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
-
 /* start DHCP service */
 services_dhcpd_configure();
 

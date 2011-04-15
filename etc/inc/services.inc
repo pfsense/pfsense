@@ -732,9 +732,11 @@ EOD;
 		if($config['dhcpdv6'][$dhcpv6if]['mode'] <> "unmanaged") {
 			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
 			$dhcpdv6ifs[] = $realif;
+			exec("/sbin/ifconfig {$realif} |awk  '/ether/ {print $2}'", $mac);
+			$v6address = generate_ipv6_from_mac($mac[0]);
 			/* Create link local address for bridges */
 			if(stristr("$realif", "bridge")) {
-				mwexec("$ifconfig {$realif} inet6 fe80::/64 eui64");
+				mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
 			}
 		}
 	}

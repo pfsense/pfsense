@@ -152,6 +152,8 @@ include("head.inc");
 			  $proto = strtolower($filterent['proto']);
 			  if(is_ipaddrv6($filterent['srcip'])) {
 				$ipproto = "inet6";
+				$filterent['srcip'] = "[{$filterent['srcip']}]";
+				$filterent['dstip'] = "[{$filterent['dstip']}]";
 			  } else {
 			        $ipproto = "inet";
 			  }

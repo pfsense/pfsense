@@ -284,8 +284,12 @@ if ($_POST) {
 		$subj_csr = csr_get_subject($pconfig['csr'], false);
 		$subj_cert = cert_get_subject($pconfig['cert'], false);
 
-		if (strcmp($subj_csr,$subj_cert))
-			$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
+		if ( !isset($_POST['ignoresubjectmismatch']) && !($_POST['ignoresubjectmismatch'] == "yes") ) {
+			if (strcmp($subj_csr,$subj_cert)) {
+				$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
+				$subject_mismatch = true;
+			}
+		} 
 
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
@@ -776,6 +780,14 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
+								<?php if ( isset($subject_mismatch) && $subject_mismatch === true): ?>
+								<input id="ignoresubjectmismatch" name="ignoresubjectmismatch" type="checkbox" class="formbtn" value="yes" />
+								<label for="ignoresubjectmismatch"><strong><?=gettext("Ignore certificate subject mismatch"); ?></strong></label><br />
+								<?php echo gettext("Warning: Using this option may create an " .
+								"invalid certificate.  Check this box to disable the request -> " .
+								"response subject verification. ");
+								?><br/>
+								<?php endif;?>
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />

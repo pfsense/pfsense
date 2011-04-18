@@ -117,4 +117,6 @@ function toggle_pause() {
 	}
 }
 /* start local AJAX engine */
-timer = setInterval('fetch_new_rules()', updateDelay);
+if (typeof updateDelay != 'undefined') {
+	timer = setInterval('fetch_new_rules()', updateDelay);
+}

@@ -383,7 +383,6 @@ function openvpn_reconfigure($mode, $settings) {
 		// configure p2p/server modes
 		switch($settings['mode']) {
 			case 'p2p_tls':
-				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 			case 'p2p_shared_key':
 				$baselong = ip2long32($ip) & ip2long($mask);
 				$ip1 = long2ip32($baselong + 1);

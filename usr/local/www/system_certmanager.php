@@ -291,8 +291,8 @@ if ($_POST) {
 //				$subject_mismatch = true;
 //			}
 //		}
-		$mod_csr  =  csr_get_modulus($pconfig['csr']);
-		$mod_cert = cert_get_modulus($pconfig['cert']);
+		$mod_csr  =  csr_get_modulus($pconfig['csr'], false);
+		$mod_cert = cert_get_modulus($pconfig['cert'], false);
 		
 		if (strcmp($mod_csr,$mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match

@@ -369,6 +369,25 @@ function cert_get_issuer($str_crt, $decode = true) {
 	return $issuer;
 }
 
+/* this function works on x509 (crt), rsa key (prv), and req(csr) */
+function cert_get_modulus($str_crt, $decode = true, $type = "crt"){
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+
+	$modulus = "";
+	if ( in_array($type, array("crt", "prv", "csr")) ) {
+			$type = str_replace( array("crt","prv","csr"), array("x509","rsa","req"), $type);
+			$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
+	}
+	return $modulus;
+}
+function csr_get_modulus($str_crt, $decode = true){
+	return cert_get_modulus($str_crt, $decode, "csr");
+}
+function prv_get_modulus($str_crt, $decode = true){
+	return cert_get_modulus($str_crt, $decode, "prv");
+}
+
 function is_user_cert($certref) {
 	global $config;
 	if (!is_array($config['system']['user']))

@@ -1262,13 +1262,13 @@ function upgrade_047_to_048() {
 		unset($config['dnsupdate']);
 	}
 
-	if (is_array($config['pppoe'])) {
+	if (is_array($config['pppoe']) && is_array($config['pppoe'][0])) {
 		$pconfig = array();
-		$pconfig['username'] = $config['pppoe']['username'];
-		$pconfig['password'] = $config['pppoe']['password'];
-		$pconfig['provider'] = $config['pppoe']['provider'];
-		$pconfig['ondemand'] = isset($config['pppoe']['ondemand']);
-		$pconfig['timeout'] = $config['pppoe']['timeout'];
+		$pconfig['username'] = $config['pppoe'][0]['username'];
+		$pconfig['password'] = $config['pppoe'][0]['password'];
+		$pconfig['provider'] = $config['pppoe'][0]['provider'];
+		$pconfig['ondemand'] = isset($config['pppoe'][0]['ondemand']);
+		$pconfig['timeout'] = $config['pppoe'][0]['timeout'];
 		unset($config['pppoe']);
 		$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];

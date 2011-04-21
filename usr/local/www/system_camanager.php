@@ -153,6 +153,8 @@ if ($_POST) {
 				gettext("Certificate data"));
 		if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE")))
 			$input_errors[] = gettext("This certificate does not appear to be valid.");
+		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED"))
+			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",

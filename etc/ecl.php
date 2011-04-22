@@ -149,8 +149,8 @@ function find_config_xml() {
 							exec("/sbin/umount /tmp/mnt/cf");
 							exit;
 						}
-						exec("/sbin/umount /tmp/mnt/cf");
 					}
+					exec("/sbin/umount /tmp/mnt/cf");
 				}
 			}
 		}

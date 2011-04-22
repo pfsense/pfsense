@@ -82,7 +82,7 @@ add_new_address() {
 
 
 	# This is necessary otherwise apinger will try to ping all 1s address
-	if [ "$new_routers" = "255.255.255.255" ]; then
+	if [ "$new_routers" != "255.255.255.255" ]; then
 		echo $new_routers > /tmp/${interface}_router
 	fi
 	echo $new_ip_address > /var/db/${interface}_ip

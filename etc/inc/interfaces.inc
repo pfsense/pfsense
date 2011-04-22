@@ -1578,7 +1578,6 @@ function interfaces_carp_setup() {
 		unset($pfsyncenabled);
 	}
 
-	$cmdchain->add("Allow CARP", "/sbin/sysctl net.inet.carp.allow=1", true);			
 	if($balanacing) {
 		$cmdchain->add("Enable CARP ARP-balancing", "/sbin/sysctl net.inet.carp.arpbalance=1", true);
 		$cmdchain->add("Disallow CARP preemption", "/sbin/sysctl net.inet.carp.preempt=0", true);
@@ -1725,10 +1724,8 @@ function interfaces_vips_configure($interface = "") {
 			case "carp":
 				if ($interface <> "" && $vip['interface'] <> $interface)
 					continue;
-				if ($carp_setuped == false) {
-					interfaces_carp_setup();
+				if ($carp_setuped == false)
 					$carp_setuped = true;
-				}
 				interface_carp_configure($vip);
 				break;
 			case "carpdev-dhcp":
@@ -1738,7 +1735,8 @@ function interfaces_vips_configure($interface = "") {
 				break;
 			}
 		}
-		
+		if ($carp_setuped == true)
+			interfaces_carp_setup();
 		if ($anyproxyarp == true)
 			interface_proxyarp_configure();
 	}

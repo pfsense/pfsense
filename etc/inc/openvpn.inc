@@ -458,6 +458,10 @@ function openvpn_reconfigure($mode, $settings) {
 			$mask = gen_subnet_mask($mask);
 			$conf .= "push \"route $ip $mask\"\n";
 		}
+		if ($settings['local_networkv6']) {
+			list($ipv6, $prefix) = explode('/', $settings['local_networkv6']);
+			$conf .= "push \"route-ipv6 $ipv6/$prefix\"\n";
+		}
 
 		switch($settings['mode']) {
 			case 'server_tls':

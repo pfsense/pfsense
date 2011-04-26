@@ -1201,7 +1201,7 @@ function system_ntp_configure() {
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
 	
 	// Note that we are starting up
-	exec("echo 'OpenNTPD is starting up' >> {$g['varlog_path']}/ntpd.log");
+	log_error("OpenNTPD is starting up.");
 
 }
 

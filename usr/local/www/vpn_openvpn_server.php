@@ -199,13 +199,6 @@ if ($_POST) {
 	else
 		$tls_mode = false;
 
-	if (!empty($pconfig['authmode'])) {
-		foreach ($pconfig['authmode'] as $pauthmode) {
-			if ($pauthmode != "Local Database" && $pconfig['mode'] == "server_tls_user") 
-				$input_errors[] = gettext("Only 'Local authentication database'  is allowed with") . " " . $openvpn_server_modes[$pconfig['mode']];
-		}
-	}
-
 	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
 		$input_errors[] = gettext("You must select a Backend for Authentication if the server mode requires User Auth.");
 

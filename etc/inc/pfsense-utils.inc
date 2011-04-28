@@ -703,7 +703,20 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
-	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
+	$port = 0;
+	$proxyurl = "";
+	$proxyport = 0;
+	$proxyuser = "";
+	$proxypass = "";
+	if (!empty($config['system']['httpproxy']))
+		$proxyurl = $config['system']['httpproxy'];
+	if (!empty($config['system']['httpproxyport']) && is_numeric($config['system']['httpproxyport']))
+		$proxyport = $config['system']['httpproxyport'];
+	if (!empty($config['system']['httpproxyuser']))
+		$proxyuser = $config['system']['httpproxyuser'];
+	if (!empty($config['system']['httpproxypass']))
+		$proxypass = $config['system']['httpproxypass'];
+	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url, $port, $proxyurl, $proxyport, $proxyuser, $proxypass);
 	// If the ALT PKG Repo has a username/password set, use it.
 	if($config['system']['altpkgrepo']['username'] && 
 	   $config['system']['altpkgrepo']['password']) {
@@ -1457,7 +1470,7 @@ function get_freebsd_version() {
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-        global $ch, $fout, $file_size, $downloaded;
+        global $ch, $fout, $file_size, $downloaded, $config;
         $file_size  = 1;
         $downloaded = 1;
         /* open destination file */
@@ -1478,6 +1491,16 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+
+	if (!empty($config['system']['proxyurl'])) {
+		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
+		if (!empty($config['system']['proxyport']))
+			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
+			curl_setopt($ch, CURLOPT_PROXYUSERPASS, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+		}
+	}
 
         @curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -2217,6 +2240,6 @@ function generate_ipv6_from_mac($mac) {
 		
 		$i++;
 	}	
-	return $ipÃv6;
+	return $ipv6;
 }
 ?>

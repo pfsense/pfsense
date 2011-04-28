@@ -50,6 +50,10 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+$pconfig['proxyurl'] = $config['system']['proxyurl'];
+$pconfig['proxyport'] = $config['system']['proxyport'];
+$pconfig['proxyuser'] = $config['system']['proxyuser'];
+$pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
@@ -76,6 +80,26 @@ if ($_POST) {
 			system_set_harddisk_standby();
 		} else
 			unset($config['system']['harddiskstandby']);
+
+		if($_POST['proxyurl'] <> "")
+			$config['system']['proxyurl'] = $_POST['proxyurl'];
+		else
+			unset($config['system']['proxyurl']);
+
+		if($_POST['proxyport'] <> "")
+			$config['system']['proxyport'] = $_POST['proxyport'];
+		else
+			unset($config['system']['proxyport']);
+
+		if($_POST['proxyuser'] <> "")
+			$config['system']['proxyuser'] = $_POST['proxyuser'];
+		else
+			unset($config['system']['proxyuser']);
+
+		if($_POST['proxypass'] <> "")
+			$config['system']['proxypass'] = $_POST['proxypass'];
+		else
+			unset($config['system']['proxypass']);
 
 		if($_POST['lb_use_sticky'] == "yes")
 			$config['system']['lb_use_sticky'] = true;
@@ -194,6 +218,41 @@ function maxmss_checked(obj) {
 						</span>
 						<br/>
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Proxy support"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy URL"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown">
+									<br />
+									<?=gettext("Proxy url for allowing {$g['product']} to use this proxy to connect outside."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Port"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown">
+									<br />
+									<?=gettext("Proxy url for allowing {$g['product']} to use this proxy port to connect outside. Default is 8080 for http protocol or ssl for 443."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Username"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown">
+									<br />
+									<?=gettext("Proxy username for allowing {$g['product']} to use this proxy to connect outside"); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy URL"); ?></td>
+								<td width="78%" class="vtable">
+									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown">
+									<br />
+									<?=gettext("Proxy password for allowing {$g['product']} to use this proxy to connect outside"); ?>
+								</td>
+							</tr>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Load Balancing"); ?></td>
 							</tr>

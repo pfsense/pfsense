@@ -72,7 +72,7 @@ function services_rtadvd_configure() {
 		return 1;
 	}
 
-	/* raflags, managed=64, stateful=128, both=192 */
+	/* raflags, other o, managed=64 m, stateful=128, both=192 */
 
 	$rtadvdconf = "# Automatically Generated, do not edit\n";
 	$rtadvdconf = <<<EOD
@@ -113,10 +113,10 @@ EOD;
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 		switch($dhcpv6ifconf['mode']) {
 			case "managed":
-				$rtadvdconf .= "\t:raflags="m":\\\n";
+				$rtadvdconf .= "\t:raflags=\"m\":\\\n";
 				break;
 			case "assist":
-				$rtadvdconf .= "\t:raflags="o":\\\n";
+				$rtadvdconf .= "\t:raflags=\"o\":\\\n";
 				break;
 			default:
 				$rtadvdconf .= "\t:raflags#0:\\\n";

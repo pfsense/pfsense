@@ -87,6 +87,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
 		unset($a_user[$id]['priv'][$_GET['privid']]);
+		local_user_set($a_user[$id]);
 		write_config();
 		$_GET['act'] = "edit";
 		$savemsg = gettext("Privilege")." {$privdeleted} ".

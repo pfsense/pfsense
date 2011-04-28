@@ -364,7 +364,7 @@ function interfaces_create_wireless_clones() {
 		echo " done.\n";
 }
 
-function interfaces_bridge_configure() {
+function interfaces_bridge_configure($checkmember = 0) {
         global $config;
 
         $i = 0;
@@ -372,6 +372,10 @@ function interfaces_bridge_configure() {
                 foreach ($config['bridges']['bridged'] as $bridge) {
                         if(empty($bridge['bridgeif']))
                                 $bridge['bridgeif'] = "bridge{$i}";
+			if ($checkmember == 1 && (strstr($bridge['members'], "gif") || strstr($bridge['members'], "gre")))
+				continue;
+			if ($checkmember == 2 && !strstr($bridge['members'], "gif") && !strstr($bridge['members'], "gre"))
+				continue;
                         /* XXX: Maybe we should report any errors?! */
                         interface_bridge_configure($bridge);
                         $i++;
@@ -685,13 +689,17 @@ function interface_lagg_configure(&$lagg) {
 	return $laggif;
 }
 
-function interfaces_gre_configure() {
+function interfaces_gre_configure($checkparent = 0) {
         global $config;
 
         if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
                 foreach ($config['gres']['gre'] as $i => $gre) {
                         if(empty($gre['greif']))
                                 $gre['greif'] = "gre{$i}";
+			if ($checkparent == 1 && strstr($gre['if'], "vip"))
+				continue;
+			if ($checkparent == 2 && !strstr($gre['if'], "vip"))
+				continue;
                         /* XXX: Maybe we should report any errors?! */
                         interface_gre_configure($gre);
                 }
@@ -740,13 +748,17 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	return $greif;
 }
 
-function interfaces_gif_configure() {
+function interfaces_gif_configure($checkparent = 0) {
 	global $config;
 
 	if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
 		foreach ($config['gifs']['gif'] as $i => $gif) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
+			if ($checkparent == 1 && strstr($gif['if'], "vip"))
+				continue;
+			if ($checkparent == 2 && !strstr($gif['if'], "vip"))
+				continue;
 			/* XXX: Maybe we should report any errors?! */
 			interface_gif_configure($gif);
 		}
@@ -843,12 +855,30 @@ function interfaces_configure() {
 	/* create the unconfigured wireless clones */
 	interfaces_create_wireless_clones();
 
+	/*
+	 * NOTE: The following function parameter consists of
+	 *	1 - Do not load gre/gif/bridge with parent/member as vip
+	 *	2 - Do load gre/gif/bridge with parent/member as vip
+	 */
+
 	/* set up GRE virtual interfaces */
-	interfaces_gre_configure();
+	interfaces_gre_configure(1);
 
 	/* set up GIF virtual interfaces */
-	interfaces_gif_configure();
-	
+	interfaces_gif_configure(1);
+
+	/* set up BRIDGe virtual interfaces */
+	interfaces_bridge_configure(1);
+
+	/* bring up vip interfaces */
+	interfaces_vips_configure();
+
+	/* set up GRE virtual interfaces */
+	interfaces_gre_configure(2);
+
+	/* set up GIF virtual interfaces */
+	interfaces_gif_configure(2);
+
 	foreach ($delayed_list as $if => $ifname) {
 		if ($g['booting'])
 			echo "Configuring {$ifname} interface...";
@@ -862,7 +892,7 @@ function interfaces_configure() {
 	}
 
 	/* set up BRIDGe virtual interfaces */
-	interfaces_bridge_configure();
+	interfaces_bridge_configure(2);
 
 	foreach ($bridge_list as $if => $ifname) {
 		if ($g['booting'])
@@ -875,9 +905,6 @@ function interfaces_configure() {
 		if ($g['booting'])
 			echo "done.\n";
 	}
-
-	/* bring up vip interfaces */
-	interfaces_vips_configure();
 
 	/* configure interface groups */
 	interfaces_group_setup();

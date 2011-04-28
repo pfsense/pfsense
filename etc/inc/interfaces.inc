@@ -2658,7 +2658,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			} else if (substr($realif, 0, 3) == "gif") {
 				 if (is_array($config['gifs']['gif'])) {
 					foreach ($config['gifs']['gif'] as $gif)
-						if($gif['gifif'] == $interface)
+						if($gif['gifif'] == $realif)
 							interface_gif_configure($gif);
 				}
 			} else if (substr($realif, 0, 4) == "ovpn") {

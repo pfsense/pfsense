@@ -101,11 +101,6 @@
 			<value>default</value>
 		</item>
 		<item>
-			<descr><![CDATA[Verbosity of the rndtest driver (0: do not display results on console)]]></descr>
-			<tunable>kern.rndtest.verbose</tunable>
-			<value>default</value>
-		</item>
-		<item>
 			<descr><![CDATA[Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())]]></descr>
 			<tunable>kern.randompid</tunable>
 			<value>default</value>

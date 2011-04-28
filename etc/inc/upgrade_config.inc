@@ -685,10 +685,6 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][13]['descr'] =    "Allow unprivileged access to tap(4) device nodes";
 		$config['sysctl']['item'][13]['value'] =   "default";
 
-		$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
-		$config['sysctl']['item'][14]['descr'] =    "Verbosity of the rndtest driver (0: do not display results on console)";
-		$config['sysctl']['item'][14]['value'] =   "default";
-
 		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
 		$config['sysctl']['item'][15]['descr'] =    "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())";
 		$config['sysctl']['item'][15]['value'] =   "default";

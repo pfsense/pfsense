@@ -441,7 +441,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 						$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);
 				} elseif ($portinfo['isgif']) {
-					$descr = "GRE {$portinfo['remote-addr']}";
+					$descr = "GIF {$portinfo['remote-addr']}";
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);

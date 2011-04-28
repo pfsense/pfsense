@@ -73,6 +73,7 @@ if ($_GET['act'] == "del") {
                 }
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}qinq:");
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}:");
+		mwexec("/sbin/ifconfig {$qinq['vlanif']} destroy");
 		unset($a_qinqs[$id]);
 
 		write_config();

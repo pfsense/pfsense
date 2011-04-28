@@ -255,6 +255,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
         /* make sure the parent is converted to ng_vlan(4) and is up */
         interfaces_bring_up($qinqif);
 
+	pfSense_ngctl_attach(".", $qinqif);
         if (!empty($vlanif) && does_interface_exist($vlanif)) {
                 fwrite($fd, "shutdown {$qinqif}qinq:\n");
                 exec("/usr/sbin/ngctl msg {$qinqif}qinq: gettable", $result);

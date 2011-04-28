@@ -123,7 +123,7 @@ EOD;
 				break;				
 
 		}
-		$rtadvdconf .= "\t:tc=\"ether\":\n";
+		$rtadvdconf .= "\t:tc=ether:\n";
 		$rtadvdconf .= "\n\n";
 
 	}

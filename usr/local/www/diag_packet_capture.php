@@ -260,7 +260,7 @@ include("fbegin.inc");
 						$matchstr = implode($matches, " and ");
 						echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
 						mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $matchstr");
-						echo "/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $matchstr";
+						// echo "/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $matchstr";
 					} else {
 						//action = stop
 						echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured:") . "</strong><br/>");

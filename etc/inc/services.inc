@@ -88,6 +88,8 @@ ether:\
 
 EOD;
 
+	/* Process all links which need the router advertise daemon */
+	/* Currently for DHCP interfaces only, openvpn? */
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		$rtadvdnum++;
@@ -111,10 +113,10 @@ EOD;
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 		switch($dhcpv6ifconf['mode']) {
 			case "managed":
-				$rtadvdconf .= "\t:raflags#64:\\\n";
+				$rtadvdconf .= "\t:raflags="m":\\\n";
 				break;
 			case "assist":
-				$rtadvdconf .= "\t:raflags#192:\\\n";
+				$rtadvdconf .= "\t:raflags="o":\\\n";
 				break;
 			default:
 				$rtadvdconf .= "\t:raflags#0:\\\n";

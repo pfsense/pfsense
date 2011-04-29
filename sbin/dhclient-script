@@ -230,7 +230,7 @@ add_new_resolv_conf() {
 	if [ -f "/var/etc/nameserver_$interface" ]; then
 		# Remove old entries
 		for nameserver in `cat /var/etc/nameserver_$interface`; do
-			$ROUTE delete $nameserver
+			$ROUTE delete $nameserver >/dev/null 2>&1
 		done
 	fi
 	if [ -n "$new_domain_name_servers" ]; then 

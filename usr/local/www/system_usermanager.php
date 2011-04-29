@@ -897,7 +897,7 @@ function sshkeyClicked(obj) {
 		if (!$input_errors) {
 			// all values are okay --> saving changes
 			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
-
+			local_user_set($config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]);
 			write_config();
 			$savemsg = gettext("Password successfully changed") . "<br />";
 		}

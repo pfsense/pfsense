@@ -1886,7 +1886,7 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['flags'] .= "keep state ";
 
-		if($noadvoptions == false)
+		if($noadvoptions == false || $l7_present)
 			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
@@ -1895,7 +1895,7 @@ function filter_generate_user_rule($rule) {
 			    (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") or
 			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
 			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-			    isset($rule['sloppy'])) {
+			    isset($rule['sloppy']) or $l7_present) {
 					$aline['flags'] .= "( ";
 					if (isset($rule['sloppy']))
 						$aline['flags'] .= "sloppy ";

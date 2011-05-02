@@ -316,7 +316,8 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 
 	$graphcmd .= "VDEF:\"$curif-in_bits_95=$curif-in_bits,95,PERCENT\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_mul=$curif-out_bits,$multiplier,*\" ";
-	$graphcmd .= "VDEF:\"$curif-out_bits_95=$curif-out_bits_mul,95,PERCENT\" ";
+	$perc = $multiplier > 0 ? "95" : "5";
+	$graphcmd .= "VDEF:\"$curif-out_bits_95=$curif-out_bits_mul,{$perc},PERCENT\" ";
 
 	$graphcmd .= "AREA:\"$curif-in_bits_block#{$colortrafficdown[1]}:$curif-in-block\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits_pass#{$colortrafficdown[0]}:$curif-in-pass:STACK\" ";

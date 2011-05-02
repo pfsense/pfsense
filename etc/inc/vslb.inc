@@ -241,6 +241,9 @@ function relayd_configure() {
           $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
           $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
+	  if (isset($conf['system']['lb_use_sticky']))
+		$conf .= "  sticky-address\n";
+
           # sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
           if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
             $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";

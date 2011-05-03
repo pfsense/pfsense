@@ -116,7 +116,7 @@ EOD;
 				$rtadvdconf .= "\t:raflags=\"m\":\\\n";
 				break;
 			case "assist":
-				$rtadvdconf .= "\t:raflags=\"o\":\\\n";
+				$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
 				break;
 			default:
 				$rtadvdconf .= "\t:raflags#0:\\\n";

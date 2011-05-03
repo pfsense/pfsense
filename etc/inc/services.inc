@@ -818,6 +818,7 @@ EOD;
                 $realif = get_real_interface($ifn);
                 $igmpconf .= "phyint {$realif} disabled\n";
         }
+	$igmpconf .= "\n";
 
         $igmpfl = fopen($g['tmp_path'] . "/igmpproxy.conf", "w");
         if (!$igmpfl) {

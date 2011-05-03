@@ -234,61 +234,60 @@ function relayd_configure() {
     }
   }
 	if(is_array($vs_a)) {
-    for ($i = 0; isset($vs_a[$i]); $i++) {
-      switch($vs_a[$i]['mode']) {
-        case 'redirect_mode': {
-			$conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
-			$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-			$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+		for ($i = 0; isset($vs_a[$i]); $i++) {
+			switch($vs_a[$i]['mode']) {
+				case 'redirect_mode': {
+					$conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
+					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
+					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
-			if (isset($config['system']['lb_use_sticky']))
-				$conf .= "  sticky-address\n";
+					if (isset($config['system']['lb_use_sticky']))
+						$conf .= "  sticky-address\n";
 
-			# sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
-			if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
-				$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+					# sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
+					if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
+						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
-			$conf .= "}\n";
-			break;
-        }
-        case 'relay': {
-          $conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
-          $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-          $conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
-          $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+					$conf .= "}\n";
+					break;
+				}
+				case 'relay': {
+					$conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
+					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
+					$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
-          if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
-            $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
-          $conf .= "}\n";
-          break;
-        }
-      }
-    }
-  }
-  fwrite($fd, $conf);
-  fclose($fd);
-
-  if (is_process_running('relayd')) {
-	if (! empty($vs_a)) {
-		// it's running and there is a config, just reload
-		mwexec("/usr/local/sbin/relayctl reload");
-	} else {
-		/*
-		* XXX: Something breaks our control connection with relayd
-		* and makes 'relayctl stop' not work
-		* rule reloads are the current suspect
-		* mwexec('/usr/local/sbin/relayctl stop');
-		*  returns "command failed"
-		*/
-		mwexec('pkill relayd');
+					if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
+						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+					$conf .= "}\n";
+					break;
+				}
+			}
+		}
 	}
-  } else {
-	if (! empty($vs_a)) {
-		// not running and there is a config, start it
-		mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
-	}	
-  }
+	fwrite($fd, $conf);
+	fclose($fd);
 
+	if (is_process_running('relayd')) {
+		if (! empty($vs_a)) {
+			// it's running and there is a config, just reload
+			mwexec("/usr/local/sbin/relayctl reload");
+		} else {
+			/*
+			 * XXX: Something breaks our control connection with relayd
+			 * and makes 'relayctl stop' not work
+			 * rule reloads are the current suspect
+			 * mwexec('/usr/local/sbin/relayctl stop');
+			 *  returns "command failed"
+			 */
+			mwexec('pkill relayd');
+		}
+	} else {
+		if (! empty($vs_a)) {
+			// not running and there is a config, start it
+			mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
+		}
+	}
 }
 
 function get_lb_redirects() {

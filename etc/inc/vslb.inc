@@ -202,6 +202,7 @@ function relayd_configure() {
   /* reindex pools by name as we loop through the pools array */
   $pools = array();
   $conf .= "log updates \n";
+  $conf .= "timeout 1000 \n";
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {
@@ -239,14 +240,14 @@ function relayd_configure() {
 				case 'redirect_mode': {
 					$conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
 					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 
 					if (isset($config['system']['lb_use_sticky']))
 						$conf .= "  sticky-address\n";
 
 					# sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
 					if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
-						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 
 					$conf .= "}\n";
 					break;
@@ -255,10 +256,10 @@ function relayd_configure() {
 					$conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
 					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
 					$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
-					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 
 					if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
-						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 					$conf .= "}\n";
 					break;
 				}

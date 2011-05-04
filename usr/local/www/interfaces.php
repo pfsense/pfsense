@@ -437,8 +437,8 @@ if ($_POST['apply']) {
 				}
 			}
 		case "dhcp":
-			break;
-		case "dhcpv6":
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
+				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
 			if (in_array($wancfg['ipaddrv6'], array("ppp", "pppoe", "pptp", "l2tp")))
 				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
 			break;
@@ -681,16 +681,8 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				$wancfg['duid'] = $_POST['duid'];
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
-				if($gateway_item) {
-					$a_gateways[] = $gateway_item;
-				}
-				break;
-			case "dhcpv6":
-				$wancfg['ipaddrv6'] = "dhcpv6";
-				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
-				$wancfg['alias-address'] = $_POST['alias-address'];
-				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -700,6 +692,7 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				$wancfg['duid'] = $_POST['duid'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -998,7 +991,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "staticv6" => gettext("Static IPv6"), "staticv4v6" => gettext("Static IPv4 + IPv6"), "dhcp" => gettext("DHCP"), "dhcpv6" => gettext("DHCPv6"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
+$types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "staticv6" => gettext("Static IPv6"), "staticv4v6" => gettext("Static IPv4 + IPv6"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
 
 ?>
 
@@ -1011,43 +1004,39 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 	function updateType(t) {
 		switch(t) {
 			case "none": {
-				$('staticv4','staticv6','dhcp','dhcpv6','pppoe','pptp', 'ppp').invoke('hide');
+				$('staticv4', 'staticv6', 'dhcp', 'pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "staticv4": {
-				$('none','staticv6','dhcp','dhcpv6','pppoe','pptp', 'ppp').invoke('hide');
+				$('none', 'staticv6', 'dhcp', 'pppoe', 'pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "staticv6": {
-				$('none','staticv4','dhcp','dhcpv6','pppoe','pptp', 'ppp').invoke('hide');
+				$('none', 'staticv4', 'dhcp', 'pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "staticv4v6": {
-				$('none','dhcp','dhcpv6','pppoe','pptp', 'ppp').invoke('hide');
+				$('none', 'dhcp', 'pppoe', 'pptp', 'ppp').invoke('hide');
 				$('staticv4').show();
 				$('staticv6').show();
 				break;
 			}
 			case "dhcp": {
-				$('none','staticv4','staticv6','dhcpv6','pppoe','pptp', 'ppp').invoke('hide');
-				break;
-			}
-			case "dhcpv6": {
-				$('none','staticv4','staticv6','dhcp','pppoe','pptp', 'ppp').invoke('hide');
+				$('none', 'staticv4', 'staticv6', 'pppoe', 'pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "ppp": {
-				$('none','staticv4','staticv6','dhcp','dhcpv6','pptp', 'pppoe').invoke('hide');
+				$('none', 'staticv4', 'staticv6', 'dhcp', 'pptp', 'pppoe').invoke('hide');
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				$('none','staticv4','staticv6','dhcp','dhcpv6','pptp', 'ppp').invoke('hide');
+				$('none', 'staticv4', 'staticv6', 'dhcp', 'pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				$('none','staticv4','staticv6','dhcp','dhcpv6','pppoe', 'ppp').invoke('hide');
+				$('none', 'staticv4', 'staticv6', 'dhcp', 'pppoe', 'ppp').invoke('hide');
 				$('pptp').show();
 				break;
 			}
@@ -1481,7 +1470,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCPv4 client configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration"); ?></td>
 									</tr>
 									<!-- Uncomment to expose DHCP+ in GUI
 									<tr>
@@ -1502,6 +1491,15 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 											<?=gettext("The value in this field is sent as the DHCP client identifier " .
 											"and hostname when requesting a DHCP lease. Some ISPs may require " .
 											"this (for client identification)."); ?>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Unique Identifier (DUID)"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=htmlspecialchars($pconfig['duid']);?>">
+											<br>
+											<?=gettext("The value in this field is sent as the DHCPv6 client identifier " .
+											"when requesting a DHCPv6 lease."); ?>
 										</td>
 									</tr>
 									<tr>

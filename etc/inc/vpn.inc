@@ -862,7 +862,7 @@ EOD;
 							if(is_ipaddr($gatewayip)) {
 								/* FIXME: does adding route-to and reply-to on the in/outbound
 								 * rules fix this? smos@ 13-01-2009 */
-								log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								// log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 								mwexec("/sbin/route delete -host {$rgip}");
 								mwexec("/sbin/route add -host {$rgip} {$gatewayip}");
 							}

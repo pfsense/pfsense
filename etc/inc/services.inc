@@ -48,16 +48,9 @@ function services_rtadvd_configure() {
 		echo "services_rtadvd_configure() being called $mt\n";
 	}
 
-	if($g['services_dhcp_server_enable'] == false) 
-		return;
-
 	if(is_process_running("rtadvd")) {
 		mwexec("killall -9 rtadvd", true);
 	}
-
-	/* DHCP enabled on any interfaces? */
-	if (!is_dhcp_server_enabled())
-		return 0;
 
 	if (!is_array($config['dhcpdv6']))
 		$config['dhcpdv6'] = array();
@@ -92,7 +85,11 @@ EOD;
 	/* Currently for DHCP interfaces only, openvpn? */
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if($dhcpv6ifconf['mode'] == "disabled")
+			continue;
+
 		$rtadvdnum++;
+
 		/* It appears we can not advertise the gateway IP (carp)
 		 * 	rtadvd[44205]: <sock_open> IPV6_JOIN_GROUP(link) on vip1: Can't assign requested address
 		if($dhcpv6ifconf['gateway'] <> "") {
@@ -139,31 +136,8 @@ EOD;
 
 function services_dhcpd_configure() {
 	global $config, $g;
-	
-	if($g['services_dhcp_server_enable'] == false) 
-		return;
 
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "services_dhcpd_configure($if) being called $mt\n";
-	}
-	
-	/* kill any running dhcpd */
-	if(is_process_running("dhcpd")) {
-		mwexec("killall dhcpd", true);
-	}
-
-	/* DHCP enabled on any interfaces? */
-	if (!is_dhcp_server_enabled())
-		return 0;
-
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if($config['installedpackages']['olsrd'])
-		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
-				if($olsrd['enable'])
-					$is_olsr_enabled = true;
-
-	/* configure DHCPD chroot */
+	/* configure DHCPD chroot once */
 	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
 	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}\n");
@@ -184,6 +158,38 @@ function services_dhcpd_configure() {
 	fclose($fd);
 	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 
+	services_dhcpdv4_configure();
+	services_dhcpdv6_configure();
+	services_rtadvd_configure();
+	return;
+
+}
+function services_dhcpdv4_configure() {
+	global $config, $g;
+	
+	if($g['services_dhcp_server_enable'] == false) 
+		return;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "services_dhcpdv4_configure($if) being called $mt\n";
+	}
+	
+	/* kill any running dhcpd */
+	if(is_process_running("dhcpd")) {
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid/dhcpd.pid");
+	}
+
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcp_server_enabled())
+		return 0;
+
+	/* if OLSRD is enabled, allow WAN to house DHCP. */
+	if($config['installedpackages']['olsrd'])
+		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
+				if($olsrd['enable'])
+					$is_olsr_enabled = true;
+
 	if ($g['booting']) {
 		if ($g['platform'] != "pfSense") {
 			/* restore the leases, if we have them */
@@ -196,25 +202,13 @@ function services_dhcpd_configure() {
 					log_error("DHCP leases restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
 				}
 			}
-			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
-				$dhcprestore = "";
-				$dhcpreturn = "";
-				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1", $dhcprestore, $dhcpreturn);
-				$dhcprestore = implode(" ", $dhcprestore);
-				if($dhcpreturn <> 0) {
-					log_error("DHCP leases v6 restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
-				}
-			}
 		}
 	}
 
 	$syscfg = $config['system'];
 	if (!is_array($config['dhcpd']))
 		$config['dhcpd'] = array();
-	if (!is_array($config['dhcpdv6']))
-		$config['dhcpdv6'] = array();
 	$dhcpdcfg = $config['dhcpd'];
-	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 		
 	if ($g['booting'])
@@ -224,9 +218,8 @@ function services_dhcpd_configure() {
 
 	/* write dhcpd.conf */
 	$fd = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpd.conf", "w");
-	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
-	if ((!$fd) || (! $fdv6)) {
-		printf("Error: cannot open dhcpd.conf or dhcpdv6.conf in services_dhcpd_configure().\n");
+	if (!$fd) {
+		printf("Error: cannot open dhcpd.conf in services_dhcpdv4_configure().\n");
 		return 1;
 	}
 
@@ -239,14 +232,6 @@ function services_dhcpd_configure() {
 				else
 					$itemtype = "text";
 				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
-			}
-		}
-	}
-	$custoptionsv6 = "";
-	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {	
-		if(is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
-			foreach($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
-				$custoptionsv6 .= "option custom-{$dhcpv6if}-{$itemv6idx} code {$itemv6['number']} = text;\n";
 			}
 		}
 	}
@@ -267,34 +252,13 @@ ping-check true;
 
 EOD;
 
-	$dhcpdv6conf = <<<EOD
-	
-option domain-name "{$syscfg['domain']}";
-option ldap-server code 95 = text;
-option domain-search-list code 119 = text;
-{$custoptions}
-default-lease-time 7200;
-max-lease-time 86400;
-log-facility local7;
-ddns-update-style none;
-one-lease-per-client true;
-deny duplicates;
-ping-check true;
-
-EOD;
-
 	if(!isset($dhcpifconf['disableauthoritative']))
 		$dhcpdconf .= "authoritative;\n";
-	if(!isset($dhcpv6ifconf['disableauthoritative']))
-		$dhcpdv6conf .= "authoritative;\n";
 
 	if(isset($dhcpifconf['alwaysbroadcast'])) 
 		$dhcpdconf .= "always-broadcast on\n";
-	if(isset($dhcpv6ifconf['alwaysbroadcast'])) 
-		$dhcpdv6conf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
-	$dhcpdv6ifs = array();
 
 	/*    loop through and determine if we need to setup
 	 *    failover peer "bleh" entries
@@ -355,64 +319,6 @@ failover peer "dhcp{$dhcpnum}" {
 
 EOPP;
 		$dhcpnum++;
-		}
-	}
-	$dhcpv6num = 0;
-	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-
-		interfaces_staticarp_configure($dhcpv6if);
-
-		if (!isset($dhcpv6ifconf['enable']))
-			continue;
-
-		if($dhcpv6ifconf['failover_peerip'] <> "") {
-			$intv6 = guess_interface_from_ip($dhcpv6ifconf['failover_peerip']);
-			$intipv6 = find_interface_ipv6($intv6);
-			$real_dhcpv6if = convert_friendly_interface_to_real_interface_name($dhcpv6if);
-			/*
-			 *    yep, failover peer is defined.
-			 *    does it match up to a defined vip?
-			 */
-			$skew = 110;
-			$a_vip = &$config['virtualip']['vip'];
-			if(is_array($a_vip)) {
-				foreach ($a_vip as $vipent) {
-					if($intv6 == $real_dhcpv6if) {
-						/* this is the interface! */
-						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
-							$skew = 0;
-					}
-				}
-			} else {
-				log_error("Warning!  DHCPv6 Failover setup and no CARP virtual IPv6's defined!");
-			}
-			if($skew > 10) {
-				$typev6 = "secondary";
-				$dhcpdv6conf_pri  = "mclt 600;\n";
-				$my_portv6 = "520";
-				$peer_portv6 = "519";
-			} else {
-				$my_portv6 = "519";
-				$peer_portv6 = "520";
-				$typev6 = "primary";
-				$dhcpdv6conf_pri  = "split 128;\n";
-				$dhcpdv6conf_pri .= "  mclt 600;\n";
-			}
-			$dhcpdv6conf .= <<<EOPP
-failover peer "dhcpv6{$dhcpv6num}" {
-  {$typev6};
-  address {$intipv6};
-  port {$my_portv6};
-  peer address {$dhcpv6ifconf['failover_peerip']};
-  peer port {$peer_portv6};
-  max-response-delay 10;
-  max-unacked-updates 10;
-  {$dhcpdv6conf_pri}
-  load balance max seconds 3;
-}
-
-EOPP;
-		$dhcpv6num++;
 		}
 	}
 
@@ -577,6 +483,180 @@ EOD;
 		$dhcpdifs[] = get_real_interface($dhcpif);
 	}
 
+	fwrite($fd, $dhcpdconf);
+	fclose($fd);
+
+	/* create an empty leases database */
+	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
+	
+
+	/* fire up dhcpd in a chroot */
+	if(count($dhcpdifs) > 0) {
+		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf -pf {$g['varrun_path']}/dhcpd.pid " .
+			join(" ", $dhcpdifs));
+	}
+
+	if ($g['booting']) {
+		print "done.\n";
+	}
+
+	return 0;
+}
+
+function services_dhcpdv6_configure() {
+	global $config, $g;
+	
+	if($g['services_dhcp_server_enable'] == false) 
+		return;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "services_dhcpd_configure($if) being called $mt\n";
+	}
+	
+	/* kill any running dhcpd */
+	if(is_process_running("dhcpd")) {
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+	}
+
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcp_server_enabled())
+		return 0;
+
+	/* if OLSRD is enabled, allow WAN to house DHCP. */
+	if($config['installedpackages']['olsrd'])
+		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
+				if($olsrd['enable'])
+					$is_olsr_enabled = true;
+
+	if ($g['booting']) {
+		if ($g['platform'] != "pfSense") {
+			/* restore the leases, if we have them */
+			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
+				$dhcprestore = "";
+				$dhcpreturn = "";
+				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1", $dhcprestore, $dhcpreturn);
+				$dhcprestore = implode(" ", $dhcprestore);
+				if($dhcpreturn <> 0) {
+					log_error("DHCP leases v6 restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
+				}
+			}
+		}
+	}
+
+	$syscfg = $config['system'];
+	if (!is_array($config['dhcpdv6']))
+		$config['dhcpdv6'] = array();
+	$dhcpdv6cfg = $config['dhcpdv6'];
+	$Iflist = get_configured_interface_list();
+		
+	if ($g['booting'])
+		echo "Starting DHCPv6 service...";
+	else
+		sleep(1);
+
+	/* write dhcpdv6.conf */
+	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
+	if (! $fdv6) {
+		printf("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
+		return 1;
+	}
+
+	$custoptionsv6 = "";
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {	
+		if(is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
+			foreach($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
+				$custoptionsv6 .= "option custom-{$dhcpv6if}-{$itemv6idx} code {$itemv6['number']} = text;\n";
+			}
+		}
+	}
+
+	$dhcpdv6conf = <<<EOD
+	
+option domain-name "{$syscfg['domain']}";
+option ldap-server code 95 = text;
+option domain-search-list code 119 = text;
+{$custoptions}
+default-lease-time 7200;
+max-lease-time 86400;
+log-facility local7;
+ddns-update-style none;
+one-lease-per-client true;
+deny duplicates;
+ping-check true;
+
+EOD;
+
+	if(!isset($dhcpv6ifconf['disableauthoritative']))
+		$dhcpdv6conf .= "authoritative;\n";
+
+	if(isset($dhcpv6ifconf['alwaysbroadcast'])) 
+		$dhcpdv6conf .= "always-broadcast on\n";
+
+	$dhcpdv6ifs = array();
+
+	/*    loop through and determine if we need to setup
+	 *    failover peer "bleh" entries
+	 */
+	$dhcpv6num = 0;
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+
+		interfaces_staticarp_configure($dhcpv6if);
+
+		if (!isset($dhcpv6ifconf['enable']))
+			continue;
+
+		if($dhcpv6ifconf['failover_peerip'] <> "") {
+			$intv6 = guess_interface_from_ip($dhcpv6ifconf['failover_peerip']);
+			$intipv6 = find_interface_ipv6($intv6);
+			$real_dhcpv6if = convert_friendly_interface_to_real_interface_name($dhcpv6if);
+			/*
+			 *    yep, failover peer is defined.
+			 *    does it match up to a defined vip?
+			 */
+			$skew = 110;
+			$a_vip = &$config['virtualip']['vip'];
+			if(is_array($a_vip)) {
+				foreach ($a_vip as $vipent) {
+					if($intv6 == $real_dhcpv6if) {
+						/* this is the interface! */
+						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
+							$skew = 0;
+					}
+				}
+			} else {
+				log_error("Warning!  DHCPv6 Failover setup and no CARP virtual IPv6's defined!");
+			}
+			if($skew > 10) {
+				$typev6 = "secondary";
+				$dhcpdv6conf_pri  = "mclt 600;\n";
+				$my_portv6 = "520";
+				$peer_portv6 = "519";
+			} else {
+				$my_portv6 = "519";
+				$peer_portv6 = "520";
+				$typev6 = "primary";
+				$dhcpdv6conf_pri  = "split 128;\n";
+				$dhcpdv6conf_pri .= "  mclt 600;\n";
+			}
+			$dhcpdv6conf .= <<<EOPP
+failover peer "dhcpv6{$dhcpv6num}" {
+  {$typev6};
+  address {$intipv6};
+  port {$my_portv6};
+  peer address {$dhcpv6ifconf['failover_peerip']};
+  peer port {$peer_portv6};
+  max-response-delay 10;
+  max-unacked-updates 10;
+  {$dhcpdv6conf_pri}
+  load balance max seconds 3;
+}
+
+EOPP;
+		$dhcpv6num++;
+		}
+	}
+
 	$dhcpv6num = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 
@@ -702,20 +782,18 @@ EOD;
 EOD;
 
 		/* add static mappings */
-		/* Does not work for IPv6
-		/* You can not use a hardware parameter for DHCPv6 hosts
-		/* Needs to be figured out
+		/* Needs to use DUID */
 		if (is_array($dhcpv6ifconf['staticmap'])) {
 
 			$i = 0;
 			foreach ($dhcpv6ifconf['staticmap'] as $sm) {
 				$dhcpdv6conf .= <<<EOD
 host s_{$dhcpv6if}_{$i} {
-	hardware ethernet {$sm['mac']};
+	host-identifier option dhcp6.client-id {$sm['duid']};
 
 EOD;
-				if ($sm['ipaddr'])
-					$dhcpdv6conf .= "	fixed-address6 {$sm['ipaddr']};\n";
+				if ($sm['ipaddrv6'])
+					$dhcpdv6conf .= "	fixed-address6 {$sm['ipaddrv6']};\n";
 
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
@@ -729,7 +807,6 @@ EOD;
 				$i++;
 			}
 		}
-		*/
 		
 		if($config['dhcpdv6'][$dhcpv6if]['mode'] <> "unmanaged") {
 			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
@@ -743,33 +820,18 @@ EOD;
 		}
 	}
 
-	fwrite($fd, $dhcpdconf);
-	fclose($fd);
 	fwrite($fdv6, $dhcpdv6conf);
 	fclose($fdv6);
-
-	/* create an empty leases database */
-	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-	touch("{$g['varrun_path']}/dhcpd.pid");
 	/* create an empty leases v6 database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
-	touch("{$g['varrun_path']}/dhcpdv6.pid");
 	
 
+	print_r(dhcpdv6ifs);
 	/* fire up dhcpd in a chroot */
-	if(count($dhcpdifs) > 0) {
-		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf " .
-			join(" ", $dhcpdifs));
-	}
-
 	if(count($dhcpdv6ifs) > 0) {
-		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf " .
+		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
 			join(" ", $dhcpdv6ifs));
-		mwexec("/usr/sbin/rtadvd " . join(" ", $dhcpdv6ifs));
 	}
-
-	/* start ipv6 route advertising if required */
-	services_rtadvd_configure();
 
 	if ($g['booting']) {
 		print "done.\n";

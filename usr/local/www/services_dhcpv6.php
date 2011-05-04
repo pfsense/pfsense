@@ -56,52 +56,6 @@ if(!$g['services_dhcp_server_enable']) {
  */
 ini_set("memory_limit","64M");
 
-/* This function will remove entries from dhcpd.leases that would otherwise
- * overlap with static DHCP reservations. If we don't clean these out,
- * then DHCP will print a warning in the logs about a duplicate lease
- */
-function dhcp_clean_leases() {
-	global $g, $config;
-	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpdv6.leases";
-	if (!file_exists($leasesfile))
-		return;
-	/* Build list of static MACs */
-	$staticmacs = array();
-	foreach($config['interfaces'] as $ifname => $ifarr)
-		if (is_array($config['dhcpdv6'][$ifname]['staticmap']))
-			foreach($config['dhcpdv6'][$ifname]['staticmap'] as $static)
-				$staticmacs[] = $static['mac'];
-	/* Read existing leases */
-	$leases_contents = explode("\n", file_get_contents($leasesfile));
-	$newleases_contents = array();
-	$i=0;
-	while ($i < count($leases_contents)) {
-		/* Find a lease definition */
-		if (substr($leases_contents[$i], 0, 6) == "lease ") {
-			$templease = array();
-			$thismac = "";
-			/* Read to the end of the lease declaration */
-			do {
-				if (substr($leases_contents[$i], 0, 20) == "  hardware ethernet ")
-					$thismac = substr($leases_contents[$i], 20, 17);
-				$templease[] = $leases_contents[$i];
-				$i++;
-			} while ($leases_contents[$i-1] != "}");
-			/* Check for a matching MAC address and if not present, keep it. */
-			if (! in_array($thismac, $staticmacs))
-				$newleases_contents = array_merge($newleases_contents, $templease);
-		} else {
-			/* It's a line we want to keep, copy it over. */
-			$newleases_contents[] = $leases_contents[$i];
-			$i++;
-		}
-	}
-	/* Write out the new leases file */
-	$fd = fopen($leasesfile, 'w');
-	fwrite($fd, implode("\n", $newleases_contents));
-	fclose($fd);
-}
-
 $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
@@ -148,7 +102,6 @@ if (is_array($config['dhcpdv6'][$if])){
 	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['denyunknown'] = isset($config['dhcpdv6'][$if]['denyunknown']);
-	$pconfig['staticarp'] = isset($config['dhcpdv6'][$if]['staticarp']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
@@ -193,7 +146,7 @@ function is_inrange($test, $start, $end) {
 		return false;
 }
 
-$modes = array("unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
+$advertise_modes = array("disabled" => "Disabled", "unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
 
 if ($_POST) {
 
@@ -263,9 +216,6 @@ if ($_POST) {
 			foreach ($a_maps as $map)
 				if (empty($map['ipaddrv6']))
 					$noip = true;
-		if ($_POST['staticarp'] && $noip)
-			$input_errors[] = "Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IPv6 addresses and try again.";
-
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			/* FIXME change for ipv6 subnet */
@@ -334,7 +284,6 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpdv6'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
-		$config['dhcpdv6'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
@@ -363,8 +312,8 @@ if ($_POST) {
 		$retvaldhcp = 0;
 		$retvaldns = 0;
 		/* Stop DHCPv6 so we can cleanup leases */
-		killbyname("dhcpdv6");
-		dhcp_clean_leases();
+		killbyname("dhcpd -6");
+		// dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */
 		if (isset($config['dnsmasq']['regdhcpstatic']))	{
@@ -399,7 +348,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DHCPv6 server"));
-$statusurl = "status_dhcp_leases.php";
+$statusurl = "status_dhcpv6_leases.php";
 $logurl = "diag_logs_dhcp.php";
 
 include("head.inc");
@@ -419,30 +368,30 @@ include("head.inc");
 </script>
 
 <script type="text/javascript" language="JavaScript">
-	function enable_change(disableFields) {
-		var disableFields = (document.iform.mode.value=='unmanaged' || !document.iform.enable.checked);
-		document.iform.range_from.disabled = disableFields;
-		document.iform.range_to.disabled = disableFields;
-		document.iform.dns1.disabled = disableFields;
-		document.iform.dns2.disabled = disableFields;
-		document.iform.deftime.disabled = disableFields;
-		document.iform.maxtime.disabled = disableFields;
-		document.iform.gateway.disabled = disableFields;
-		document.iform.failover_peerip.disabled = disableFields;
-		document.iform.domain.disabled = disableFields;
-		document.iform.domainsearchlist.disabled = disableFields;
-		document.iform.staticarp.disabled = disableFields;
-		document.iform.ddnsdomain.disabled = disableFields;
-		document.iform.ddnsupdate.disabled = disableFields;
-		document.iform.ntp1.disabled = disableFields;
-		document.iform.ntp2.disabled = disableFields;
-		document.iform.tftp.disabled = disableFields;
-		document.iform.ldap.disabled = disableFields;
-		document.iform.netboot.disabled = disableFields;
-		document.iform.nextserver.disabled = disableFields;
-		document.iform.filename.disabled = disableFields;
-		document.iform.rootpath.disabled = disableFields;
-		document.iform.denyunknown.disabled = disableFields;
+	function enable_change(enable_over) {
+		var endis;
+		endis = !(document.iform.enable.checked || enable_over);
+		document.iform.range_from.disabled = endis;
+		document.iform.range_to.disabled = endis;
+		document.iform.dns1.disabled = endis;
+		document.iform.dns2.disabled = endis;
+		document.iform.deftime.disabled = endis;
+		document.iform.maxtime.disabled = endis;
+		document.iform.gateway.disabled = endis;
+		document.iform.failover_peerip.disabled = endis;
+		document.iform.domain.disabled = endis;
+		document.iform.domainsearchlist.disabled = endis;
+		document.iform.ddnsdomain.disabled = endis;
+		document.iform.ddnsupdate.disabled = endis;
+		document.iform.ntp1.disabled = endis;
+		document.iform.ntp2.disabled = endis;
+		document.iform.tftp.disabled = endis;
+		document.iform.ldap.disabled = endis;
+		document.iform.netboot.disabled = endis;
+		document.iform.nextserver.disabled = endis;
+		document.iform.filename.disabled = endis;
+		document.iform.rootpath.disabled = endis;
+		document.iform.denyunknown.disabled = endis;
 	}
 
 	function show_shownumbervalue() {
@@ -533,22 +482,22 @@ include("head.inc");
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Router Advertisements");?></td>
 			<td width="78%" class="vtable">
-				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change();">
-			<strong><?php printf(gettext("Enable DHCPv6 server on " .
-			"%s " .
-			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Operating Mode");?></td>
-			<td width="78%" class="vtable">
-				<select name="mode" id="mode" onchange="enable_change();">
-					<?php foreach($modes as $name => $value) { ?>
+				<select name="mode" id="mode">
+					<?php foreach($advertise_modes as $name => $value) { ?>
 					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
 			<strong><?php printf(gettext("Select the Operating Mode. Use Unmanaged for Router Advertising only, Managed for DHCPv6 only, Assisted for Combined"));?></strong></td>
+			</tr>
+			<tr>
+			<td width="22%" valign="top" class="vtable">&nbsp;</td>
+			<td width="78%" class="vtable">
+				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false);">
+			<strong><?php printf(gettext("Enable DHCPv6 server on " .
+			"%s " .
+			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
@@ -665,25 +614,6 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="28" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
-			</td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Static ARP");?></td>
-			<td width="78%" class="vtable">
-				<table>
-					<tr>
-					<td>
-						<input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
-					</td>
-					<td><b><?=gettext("Enable Static ARP entries");?></b></td>
-					</tr>
-					<tr>
-					<td>&nbsp;</td>
-					<td>
-						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("Only the machines listed below will be able to communicate with the firewall on this NIC.");?>
-					</td>
-					</tr>
-				</table>
 			</td>
 			</tr>
 			<tr>
@@ -823,7 +753,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="if" type="hidden" value="<?=$if;?>">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
 			</td>
 			</tr>
 			<tr>
@@ -842,8 +772,8 @@ include("head.inc");
 		</table>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
-			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>
+			<td width="25%" class="listhdrr"><?=gettext("DUID");?></td>
+			<td width="15%" class="listhdrr"><?=gettext("IPv6 address");?></td>
 			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 			<td width="30%" class="listhdr"><?=gettext("Description");?></td>
 			<td width="10%" class="list">
@@ -857,10 +787,10 @@ include("head.inc");
 		</tr>
 			<?php if(is_array($a_maps)): ?>
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
-			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
+			<?php if($mapent['duid'] <> "" or $mapent['ipaddrv6'] <> ""): ?>
 		<tr>
 		<td class="listlr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['mac']);?>
+			<?=htmlspecialchars($mapent['duid']);?>
 		</td>
 		<td class="listr" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['ipaddrv6']);?>&nbsp;

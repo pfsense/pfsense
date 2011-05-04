@@ -73,7 +73,6 @@ if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
 	$config['dhcpdv6'][$if]['staticmap'] = array();
 }
 
-$static_arp_enabled=isset($config['dhcpdv6'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpdv6'][$if]['netboot']);
 $a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 $ifcfgipv6 = get_interface_ipv6($if);
@@ -85,13 +84,13 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_maps[$id]) {
-        $pconfig['mac'] = $a_maps[$id]['mac'];
+        $pconfig['duid'] = $a_maps[$id]['duid'];
 		$pconfig['hostname'] = $a_maps[$id]['hostname'];
         $pconfig['ipaddrv6'] = $a_maps[$id]['ipaddrv6'];
 	$pconfig['netbootfile'] = $a_maps[$id]['netbootfile'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
-        $pconfig['mac'] = $_GET['mac'];
+        $pconfig['duid'] = $_GET['duid'];
 		$pconfig['hostname'] = $_GET['hostname'];
 	$pconfig['netbootfile'] = $_GET['netbootfile'];
         $pconfig['descr'] = $_GET['descr'];
@@ -103,14 +102,11 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = array(gettext("MAC address"));
+	$reqdfields = explode(" ", "duid");
+	$reqdfieldsn = array(gettext("DUID Identifier"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
-	
 	if ($_POST['hostname']) {
 		preg_match("/^[0-9]/", $_POST['hostname'], $matches);
 		if($matches)
@@ -129,11 +125,8 @@ if ($_POST) {
 	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified.");
 	}
-	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
-		$input_errors[] = gettext("A valid MAC address must be specified.");
-	}
-	if($static_arp_enabled && !$_POST['ipaddrv6']) {
-		$input_errors[] = gettext("Static ARP is enabled.  You must specify an IPv6 address.");
+	if (($_POST['duid'])) {
+		$input_errors[] = gettext("A valid DUID Identifier must be specified.");
 	}
 	
 	/* check for overlaps */
@@ -141,8 +134,8 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
 			continue;
 
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['mac'] == $_POST['mac'])) {
-			$input_errors[] = gettext("This Hostname, IP or MAC address already exists.");
+		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['duid'] == $_POST['duid'])) {
+			$input_errors[] = gettext("This Hostname, IP or DUID Identifier already exists.");
 			break;
 		}
 	}
@@ -154,7 +147,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$mapent = array();
-		$mapent['mac'] = $_POST['mac'];
+		$mapent['duid'] = $_POST['duid'];
 		$mapent['ipaddrv6'] = $_POST['ipaddrv6'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
@@ -196,18 +189,13 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCPv6 Mapping");?></td>
 				</tr>	
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("DUID Identifier");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
-		    <?php
-			$ip = getenv('REMOTE_ADDR');
-			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
-			$mac = str_replace("\n","",$mac);
-		    ?>
-		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>   		    
+                    <input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=htmlspecialchars($pconfig['duid']);?>">
                     <br>
-                    <span class="vexpl"><?=gettext("Enter a MAC address in the following format: ".
-                    "xx:xx:xx:xx:xx:xx");?></span></td>
+                    <span class="vexpl"><?=gettext("Enter a DUID Identifier in the following format: ");?><br />
+"DUID-LLT - ETH -- TIME --- ---- address ----" <br />
+"xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"</span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("IPv6 address");?></td>

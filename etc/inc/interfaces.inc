@@ -2579,6 +2579,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 	if (!empty($wancfg['mtu']))
 		pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+	else {
+		$mtu = get_interface_default_mtu(remove_numbers($realhwif));
+		if ($mtu != get_interface_mtu($realhwif))
+			pfSense_interface_mtu($mtu);
+	}
 
 	$options = pfSense_get_interface_addresses($realhwif);
 	if (is_array($options) && isset($options['caps']['polling'])) {
@@ -3687,6 +3692,27 @@ EOD;
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	} else
 		unlink_if_exists($cron_file);
+}
+
+function get_interface_default_mtu($type = "ethernet") {
+	switch ($type) {
+	case "gre":
+		return 1476;
+		break;
+	case "gif":
+		return 1280;
+		break;
+	case "tun":
+	case "vlan":
+	case "tap":
+	case "ethernet":
+	default:
+		return 1500;
+		break;
+	}
+
+	/* Never reached */
+	return 1500;
 }
 
 function get_vip_descr($ipaddress) {

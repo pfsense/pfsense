@@ -1704,7 +1704,6 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 
 	$ep = ipsec_get_phase1_src($phase1);
 	$phase2['localid']['mode'] = $phase2['mode'];
-	echo "phase2 mode {$phase2['mode']}\n";
 	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
 	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
 
@@ -1713,7 +1712,6 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 
 	$old_ep = ipsec_get_phase1_src($old_phase1);
 	$old_phase2['localid']['mode'] = $old_phase2['mode'];
-	echo "old_phase2 mode {$old_phase2['mode']}\n";
 	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid']);
 	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 

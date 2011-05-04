@@ -826,7 +826,6 @@ EOD;
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	
 
-	print_r(dhcpdv6ifs);
 	/* fire up dhcpd in a chroot */
 	if(count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .

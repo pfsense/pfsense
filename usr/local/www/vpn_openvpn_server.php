@@ -787,13 +787,16 @@ if ($savemsg)
 								<option value="">None</option>
 							<?php
 								foreach ($a_crl as $crl):
-									if (is_crl_internal($crl) && (count($crl['cert']) <= 0))
-										continue;
 									$selected = "";
-									if ($pconfig['crlref'] == $crl['refid'])
-										$selected = "selected";
+									$caname = "";
+									$ca = lookup_ca($crl['caref']);
+									if ($ca) {
+										$caname = " (CA: {$ca['descr']})";
+										if ($pconfig['crlref'] == $crl['refid'])
+											$selected = "selected";
+									}
 							?>
-								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'];?></option>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'] . $caname;?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>

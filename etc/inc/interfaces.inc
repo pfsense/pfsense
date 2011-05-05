@@ -416,6 +416,8 @@ function interface_bridge_configure(&$bridge) {
 		$realif = get_real_interface($member);
 		$opts = pfSense_get_interface_addresses($realif);
 		$mtu = $opts['mtu'];
+		if (substr($realif, 0, 3) == "gif" && $mtu < 1500)
+			continue;
 		if (!isset($opts['encaps']['txcsum']))
 			$commontx = false;
 		if (!isset($opts['encaps']['rxcsum']))

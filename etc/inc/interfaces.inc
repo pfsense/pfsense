@@ -37,6 +37,7 @@
 
 	pfSense_BUILDER_BINARIES:	/sbin/dhclient	/bin/sh	/usr/bin/grep	/usr/bin/xargs	/usr/bin/awk	/usr/local/sbin/choparp
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/route	/usr/sbin/ngctl	/usr/sbin/arp	/bin/kill	/usr/local/sbin/mpd5
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcp6c
 	pfSense_MODULE:	interfaces
 
 */
@@ -2543,7 +2544,7 @@ function find_dhclient_process($interface) {
 
 function find_dhcp6c_process($interface) {
 	if ($interface)
-		$pid = `/bin/pgrep -axf "dhcp6c {$interface}"`;
+		$pid = `/bin/pgrep -axf "[d]hcp6c"|grep -e "{$interface}"`;
 	else
 		$pid = 0;
 
@@ -2861,24 +2862,30 @@ EOD;
 	
 	$dhcp6cconf .= <<<EOD
 interface {$wanif} {
-        information-only;
-        # request stateful address
-        send ia-na 0;
-        send ia-pd 0;
-	request prefix-delegation;
-	request domain-name-servers,domain-name;
-	send domain-name-servers,domain-name;
-};
-id-assoc pd {
-        prefix-interface {$wanif} {
-        sla-id 1;
-        };
-};
-id-assoc na 0 {
-};
+	send ia-na 0;	# request stateful address
+	send ia-pd 0;	# request prefix delegation
+	request domain-name-servers;
+	request domain-name;
+	script "/etc/rc.newwanipv6";	# we'd like some nameservers please
 
+};
+id-assoc na 0 { };
+id-assoc pd 0 {
 
 EOD;
+	
+	/* Setup the prefix delegation */
+	foreach($IfList as $pdinterface => $friendly) {
+		if(is_numeric($interface['ia-pd'])) {
+			$realif = get_real_interface($friendly);
+			$dhcp6cconf .= "	prefix-interface {$realif} {\n";
+			$dhcp6cconf .= "		sla-id {$interface['ia-pd']};\n";
+			$dhcp6cconf .= "		sla-len {$config['interface'][$interface]['dhcp-ia-pd-len']};\n";
+			$dhcp6cconf .= "	};\n";
+		}
+	}
+
+	$dhcp6cconf .= "};\n";
 
 	fwrite($fd, $dhcp6cconf);
 	fclose($fd);
@@ -2889,10 +2896,10 @@ EOD;
 	else 
 		log_error("Could not bring up {$wanif} interface in interface_dhcp_configure()");
 
-	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
-	/* fire up dhcp6c for IPv6 */
+	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
+	/* fire up dhclient */
+	// mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
 }

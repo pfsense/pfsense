@@ -217,9 +217,6 @@ switch($wancfg['ipaddr']) {
 }
 
 switch($wancfg['ipaddrv6']) {
-	case "dhcpv6":
-		$pconfig['type'] = "dhcpv6";
-		break;
 	default:
 		/* if we have dual stack we need a combined type */
 		if(is_ipaddrv6($wancfg['ipaddrv6'])) {
@@ -425,6 +422,13 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "staticv4v6":
+			/* if the saved v6 address is empty we just lookup the link-local address */
+			/* dhcp-pd will override the LAN address and we will setup a router advertisment in the background */
+			if(empty($_POST['ipaddrv6'])) {
+				exec("/sbin/ifconfig {$wancfg['if']} inet6 | awk '/fe80:/ {print $2}' | awk -F% '{print $1}'", $output);
+				$_POST['ipaddrv6'] = trim($output[0]);
+				$_POST['subnetv6'] = "64";
+			}
 			$reqdfields = explode(" ", "ipaddr subnet gateway ipaddrv6 subnetv6 gatewayv6");
 			$reqdfieldsn = array(gettext("IPv4 address"),gettext("Subnet bit count"),gettext("Gateway"),gettext("IPv6 address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -682,6 +686,8 @@ if ($_POST['apply']) {
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 				$wancfg['duid'] = $_POST['duid'];
+				$wancfg['dhcp-ia-pd-len'] = $_POST['dhcp-ia-pd-len'];
+				unset($wancfg['pd-sla-id');
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -693,6 +699,8 @@ if ($_POST['apply']) {
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 				$wancfg['duid'] = $_POST['duid'];
+				$wancfg['dhcp-ia-pd-len'] = $_POST['dhcp-ia-pd-len'];
+				unset($wancfg['pd-sla-id');
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -708,6 +716,7 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
+				unset($wancfg['pd-sla-id');
 				unset($a_ppps[$pppid]['ondemand']);
 				unset($a_ppps[$pppid]['idletimeout']);
 				break;
@@ -738,6 +747,7 @@ if ($_POST['apply']) {
 					unset($a_ppps[$pppid]['pppoe-reset-type']);
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
+				unset($wancfg['pd-sla-id');
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -764,6 +774,7 @@ if ($_POST['apply']) {
 					unset($a_ppps[$pppid]['idletimeout']);
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
+				unset($wancfg['pd-sla-id');
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -1390,6 +1401,25 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway IPv6"); ?></td>
 										<td width="78%" class="vtable">
+											<select name="pd-sla-id" class="formselect" id="pd-sla-id">
+												<option value="none" selected><?=gettext("None"); ?></option>
+												<?php
+												// FIXME: Needs to calculate from prefix length from dhcp-pd
+												// Needs to check if the ID is not used on another interface
+												for ($i = 16; $i > 0; $i--) {
+													if($i <> 15) {
+														echo "<option value=\"{$i}\" ";
+														if ($i == $pconfig['pd-sla-id']) echo "selected";
+														echo ">" . $i . "</option>";
+													}
+												}
+												?>
+
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway IPv6"); ?></td>
+										<td width="78%" class="vtable">
 											<select name="gatewayv6" class="formselect" id="gatewayv6">
 												<option value="none" selected><?=gettext("None"); ?></option>
 													<?php
@@ -1499,7 +1529,30 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 											<input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=htmlspecialchars($pconfig['duid']);?>">
 											<br>
 											<?=gettext("The value in this field is sent as the DHCPv6 client identifier " .
-											"when requesting a DHCPv6 lease."); ?>
+											"when requesting a DHCPv6 lease."); ?><br />
+											<?php	if(is_readable("/var/db/dhcp6c_duid")) {
+													$current_duid = file_get_contents("/var/db/dhcp6c_duid");
+												}
+												echo gettext("The current DUID is: '") . $current_duid ."'";
+											?>
+											
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation size"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="dhcp-ia-pd-len" class="formselect" id="dhcp-ia-pd-len">
+												<?php
+												$sizes = array(16 => "48", 12 => "52", 8 => "56", 4 => "60", 2 => "62", 1 => "63", 0 => "64");
+												foreach($sizes as $bits => $length) {
+													echo "<option value=\"{$bits}\" ";
+													if ($bits == $pconfig['dhcp-ia-pd-len']) echo "selected";
+													echo ">" . $length . "</option>";
+												}
+												?>
+											</select>
+											<br>
+											<?=gettext("The value in this field is the delegated prefix length provided by DHCPv6. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -1522,25 +1575,6 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 										</td>
 									</tr>
 									
-								</table>
-							</td>
-						</tr>
-						<tr style="display:none;" name="dhcpv6" id="dhcpv6">
-							<td colspan="2" style="padding: 0px;">
-								<table width="100%" border="0" cellpadding="6" cellspacing="0">
-									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCPv6 client configuration"); ?></td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
-											<br>
-											<?=gettext("The value in this field is sent as the DHCPv6 client identifier " .
-											"and hostname when requesting a DHCPv6 lease. Some ISPs may require " .
-											"this (for client identification)."); ?>
-										</td>
-									</tr>
 								</table>
 							</td>
 						</tr>

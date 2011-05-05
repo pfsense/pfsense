@@ -687,7 +687,7 @@ if ($_POST['apply']) {
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 				$wancfg['duid'] = $_POST['duid'];
 				$wancfg['dhcp-ia-pd-len'] = $_POST['dhcp-ia-pd-len'];
-				unset($wancfg['pd-sla-id');
+				unset($wancfg['pd-sla-id']);
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -700,7 +700,7 @@ if ($_POST['apply']) {
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 				$wancfg['duid'] = $_POST['duid'];
 				$wancfg['dhcp-ia-pd-len'] = $_POST['dhcp-ia-pd-len'];
-				unset($wancfg['pd-sla-id');
+				unset($wancfg['pd-sla-id']);
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -716,7 +716,7 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
-				unset($wancfg['pd-sla-id');
+				unset($wancfg['pd-sla-id']);
 				unset($a_ppps[$pppid]['ondemand']);
 				unset($a_ppps[$pppid]['idletimeout']);
 				break;
@@ -747,7 +747,7 @@ if ($_POST['apply']) {
 					unset($a_ppps[$pppid]['pppoe-reset-type']);
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
-				unset($wancfg['pd-sla-id');
+				unset($wancfg['pd-sla-id']);
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -774,7 +774,7 @@ if ($_POST['apply']) {
 					unset($a_ppps[$pppid]['idletimeout']);
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
-				unset($wancfg['pd-sla-id');
+				unset($wancfg['pd-sla-id']);
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}

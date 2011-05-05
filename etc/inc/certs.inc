@@ -514,7 +514,10 @@ function cert_unrevoke($cert, & $crl) {
 	foreach ($crl['cert'] as $id => $rcert) {
 		if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr'])) {
 			unset($crl['cert'][$id]);
-			crl_update($crl);
+			if (count($crl['cert']) == 0)
+				unset($crl['text']);
+			else
+				crl_update($crl);
 			return true;
 		}
 	}

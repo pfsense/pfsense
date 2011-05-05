@@ -2899,7 +2899,7 @@ EOD;
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 	/* fire up dhclient */
-	// mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
 }

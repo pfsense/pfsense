@@ -2301,6 +2301,9 @@ EOD;
 # allow our DHCP client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
+# allow our DHCPv6 client out to the {$oc['descr']}
+pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
+pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;

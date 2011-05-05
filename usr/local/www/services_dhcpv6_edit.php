@@ -85,13 +85,15 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_maps[$id]) {
         $pconfig['duid'] = $a_maps[$id]['duid'];
-		$pconfig['hostname'] = $a_maps[$id]['hostname'];
+        $pconfig['prefixpool'] = $a_maps[$id]['prefixpool'];
+	$pconfig['hostname'] = $a_maps[$id]['hostname'];
         $pconfig['ipaddrv6'] = $a_maps[$id]['ipaddrv6'];
 	$pconfig['netbootfile'] = $a_maps[$id]['netbootfile'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
         $pconfig['duid'] = $_GET['duid'];
-		$pconfig['hostname'] = $_GET['hostname'];
+        $pconfig['prefixpool'] = $_GET['prefixpool'];
+	$pconfig['hostname'] = $_GET['hostname'];
 	$pconfig['netbootfile'] = $_GET['netbootfile'];
         $pconfig['descr'] = $_GET['descr'];
 }
@@ -125,7 +127,7 @@ if ($_POST) {
 	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified.");
 	}
-	if (($_POST['duid'])) {
+	if (empty($_POST['duid'])) {
 		$input_errors[] = gettext("A valid DUID Identifier must be specified.");
 	}
 	
@@ -197,12 +199,19 @@ include("head.inc");
 "DUID-LLT - ETH -- TIME --- ---- address ----" <br />
 "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IPv6 address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
                     <br>
                     <?=gettext("If no IPv6 address is given, one will be dynamically allocated  from the pool.");?></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Prefix Pool");?></td>
+                  <td width="78%" class="vtable"> 
+                    <input name="prefixpool" type="text" class="formfld unknown" id="prefixpool" size="28" value="<?=htmlspecialchars($pconfig['prefixpool']);?>">
+                    <br>
+                    <?=gettext("If no IPv6 Prefix Pool is given, no prefixes will be negotiated");?></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>

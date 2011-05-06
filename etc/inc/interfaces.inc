@@ -2544,7 +2544,7 @@ function find_dhclient_process($interface) {
 
 function find_dhcp6c_process($interface) {
 	if ($interface)
-		$pid = `/bin/pgrep -axf "[d]hcp6c"|grep -e "{$interface}"`;
+		$pid = `/bin/pgrep -axf "dhcp6c" |grep  "{$interface}"`;
 	else
 		$pid = 0;
 
@@ -2801,6 +2801,85 @@ function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	/* bring wan interface up before starting dhclient */
+	if($wanif)
+		interfaces_bring_up($wanif);
+	else 
+		log_error("Could not bring up {$wanif} interface in interface_dhcp_configure()");
+
+	/* launch v6 before v4, dhclient can hold up the execution if no dhcp4 is available */
+	interface_dhcpv6_configure($interface);
+	interface_dhcpv4_configure($interface);
+
+	return 0;
+
+}
+
+function interface_dhcpv6_configure($interface = "wan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+
+	/* Add IPv6 dhclient here, only wide-dhcp6c works for now. */
+	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcp_configure() for writing.\n");
+		return 1;
+	}
+
+	$dhcp6cconf = "";
+ 	$dhcp6cconf .= "interface {$wanif} {\n";
+	$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
+	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+		$dhcp6cconf .= " 	send ia-pd 0;	# request prefix delegation\n";
+	}
+	$dhcp6cconf .= "request domain-name-servers;\n";
+	$dhcp6cconf .= "request domain-name;\n";
+	$dhcp6cconf .= "script \"/etc/rc.newwanipv6\";	# we'd like some nameservers please\n";
+
+	$dhcp6cconf .= "};\n";
+	$dhcp6cconf .= "id-assoc na 0 { };\n";
+	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+		/* Setup the prefix delegation */
+		$dhcp6cconf .= "	id-assoc pd 0 {\n";
+		foreach($iflist as $friendly => $pdinterface) {
+			// log_error("setting up $friendly - $pdinterface - {$pdinterface['dhcp6-pd-sla-id']}");
+			if(is_numeric($config['interfaces'][$friendly]['dhcp6-pd-sla-id'])) {
+				$realif = get_real_interface($friendly);
+				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
+				$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['dhcp6-pd-sla-id']};\n";
+				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
+				$dhcp6cconf .= "	};\n";
+			}
+		}
+		$dhcp6cconf .= "};\n";
+	}
+
+	fwrite($fd, $dhcp6cconf);
+	fclose($fd);
+
+	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
+	mwexec("/usr/local/sbin/dhcp6c -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
+
+	return 0;
+}
+
+function interface_dhcpv4_configure($interface = "wan") {
+	global $config, $g;
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
 	if (empty($wancfg))
 		$wancfg = array();
 
@@ -2851,53 +2930,6 @@ EOD;
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
-	/* Add IPv6 dhclient here, only wide-dhcp6c works for now. */
-	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcp_configure() for writing.\n");
-		return 1;
-	}
-
- 	$dhcp6cconf = "";
-	
-	$dhcp6cconf .= <<<EOD
-interface {$wanif} {
-	send ia-na 0;	# request stateful address
-	send ia-pd 0;	# request prefix delegation
-	request domain-name-servers;
-	request domain-name;
-	script "/etc/rc.newwanipv6";	# we'd like some nameservers please
-
-};
-id-assoc na 0 { };
-id-assoc pd 0 {
-
-EOD;
-	
-	/* Setup the prefix delegation */
-	foreach($IfList as $pdinterface => $friendly) {
-		if(is_numeric($interface['ia-pd'])) {
-			$realif = get_real_interface($friendly);
-			$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-			$dhcp6cconf .= "		sla-id {$interface['ia-pd']};\n";
-			$dhcp6cconf .= "		sla-len {$config['interface'][$interface]['dhcp-ia-pd-len']};\n";
-			$dhcp6cconf .= "	};\n";
-		}
-	}
-
-	$dhcp6cconf .= "};\n";
-
-	fwrite($fd, $dhcp6cconf);
-	fclose($fd);
-
-	/* bring wan interface up before starting dhclient */
-	if($wanif)
-		interfaces_bring_up($wanif);
-	else 
-		log_error("Could not bring up {$wanif} interface in interface_dhcp_configure()");
-
-	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
-	mwexec("/usr/local/sbin/dhcp6c -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 	/* fire up dhclient */
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
 

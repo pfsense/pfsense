@@ -82,22 +82,13 @@ ether:\
 EOD;
 
 	/* Process all links which need the router advertise daemon */
-	/* Currently for DHCP interfaces only, openvpn? */
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
 
 		$rtadvdnum++;
-
-		/* It appears we can not advertise the gateway IP (carp)
-		 * 	rtadvd[44205]: <sock_open> IPV6_JOIN_GROUP(link) on vip1: Can't assign requested address
-		if($dhcpv6ifconf['gateway'] <> "") {
-			$dhcpv6if = find_carp_interface($dhcpv6ifconf['gateway']);
-		}
-		*/
 		$realif = get_real_interface($dhcpv6if);
-
 		$rtadvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
@@ -120,6 +111,27 @@ EOD;
 				break;				
 
 		}
+		$rtadvdconf .= "\t:tc=ether:\n";
+		$rtadvdconf .= "\n\n";
+	}
+
+	foreach ($Iflist as $if => $ifdescr) {
+		if(!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id']))
+			continue;
+
+		$rtadvdnum++;
+		$realif = get_real_interface($if);
+		$rtadvdifs[] = $realif;
+
+		$ifcfgipv6 = get_interface_ipv6($if);
+		$ifcfgsnv6 = get_interface_subnetv6($if);
+		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
+
+		$rtadvdconf .= "{$realif}:\\\n";
+		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
+		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
+		$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
 		$rtadvdconf .= "\t:tc=ether:\n";
 		$rtadvdconf .= "\n\n";
 
@@ -177,7 +189,7 @@ function services_dhcpdv4_configure() {
 	
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid/dhcpd.pid");
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */
@@ -516,7 +528,7 @@ function services_dhcpdv6_configure() {
 	
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/'dhcpdv6.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */

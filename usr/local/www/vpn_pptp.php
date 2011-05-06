@@ -166,7 +166,7 @@ if ($_POST) {
 			unset($pptpcfg['radius']['server']['enable']);
 			
 		if($_POST['radiussecenable'] == "yes") 
-			$pptpcfg['radius']['server']['enable'] = true;
+			$pptpcfg['radius']['server2']['enable'] = true;
 		else if (isset($pptpcfg['radius']['server2']['enable']))
 			unset($pptpcfg['radius']['server2']['enable']);
 			

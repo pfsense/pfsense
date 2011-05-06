@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>7.8</version>
+	<version>7.9</version>
 	<lastchange></lastchange>
 	<theme>pfsense_ng</theme>
 	<sysctl>
@@ -187,6 +187,7 @@
 		<!-- <harddiskstandby></harddiskstandby> -->
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
+		<ipv6allow/>
 	</system>
 	<interfaces>
 		<wan>
@@ -202,6 +203,8 @@
 			<dhcphostname></dhcphostname>
 			<media></media>
 			<mediaopt></mediaopt>
+			<dhcp6-duid></dhcp6-duid>
+			<dhcp6-ia-pd-len>0</dhcp6-ia-pd-len>
 			<!--
 			<wireless>
 				*see below (opt[n])*
@@ -213,8 +216,11 @@
 			<if>vr0</if>
 			<ipaddr>192.168.1.1</ipaddr>
 			<subnet>24</subnet>
+			<ipaddrv6>fe80::192:168:1:1</ipaddrv6>
+			<subnetv6>64</subnetv6>
 			<media></media>
 			<mediaopt></mediaopt>
+			<dhcp6-pd-sla-id>0</dhcp6-pd-sla-id>
 			<!--
 			<wireless>
 				*see below (opt[n])*
@@ -422,7 +428,20 @@
 		<!-- <tcpidletimeout></tcpidletimeout> -->
 		<rule>
 			<type>pass</type>
+			<ipprotocol>inet</ipprotocol>
 			<descr><![CDATA[Default allow LAN to any rule]]></descr>
+			<interface>lan</interface>
+			<source>
+				<network>lan</network>
+			</source>
+			<destination>
+				<any/>
+			</destination>
+		</rule>
+		<rule>
+			<type>pass</type>
+			<ipprotocol>inet6</ipprotocol>
+			<descr><![CDATA[Default allow LAN IPv6 to any rule]]></descr>
 			<interface>lan</interface>
 			<source>
 				<network>lan</network>
@@ -436,6 +455,7 @@
 			<disabled/>
 			<id>[0-9]*</id>
 			<type>pass|block|reject</type>
+			<ipprotocol>inet|inet6</ipprotocol>
 			<descr>...</descr>
 			<interface>lan|opt[n]|wan|pptp</interface>
 			<protocol>tcp|udp|tcp/udp|...</protocol>

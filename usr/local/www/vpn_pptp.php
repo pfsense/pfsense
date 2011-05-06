@@ -252,6 +252,10 @@ function enable_change(enable_over) {
 			document.iform.radius_nasip.disabled = 1;	
 			document.iform.radius_acct_update.disabled = 1;	
 			document.iform.radiusissueips.disabled = 1;
+			document.iform.radiusserver2.disabled = 1;
+			document.iform.radiussecret2.disabled = 1;
+			document.iform.radiusserver2port.disabled = 1;
+			document.iform.radiusserver2acctport.disabled = 1;
 		}
 
 	} else {

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# let the configuration system know that the ip has changed.
+/bin/echo $4 > /tmp/$1_router
+/bin/echo $3 > /tmp/$1_ip
+/usr/bin/touch /tmp/$1up
+
 ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
 if [ $ALLOWOVERRIDE -gt 0 ]; then
 	# write nameservers to file
@@ -14,13 +19,9 @@ if [ $ALLOWOVERRIDE -gt 0 ]; then
 		/sbin/route delete $9
 		/sbin/route add $9 $4
 	fi
+	/usr/local/sbin/pfSctl -c 'service reload dns'
+	/bin/sleep 1
 fi
 
-# let the configuration system know that the ip has changed.
-/bin/echo $4 > /tmp/$1_router
-/bin/echo $3 > /tmp/$1_ip
-/usr/bin/touch /tmp/$1up
-/usr/local/sbin/pfSctl -c 'service reload dns'
-/bin/sleep 1
 /usr/local/sbin/pfSctl -c "interface newip $1"
 exit 0

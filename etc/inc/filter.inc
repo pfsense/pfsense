@@ -1537,14 +1537,6 @@ function filter_nat_rules_generate() {
 		}
 	}
 	fclose($inetd_fd);		// Close file handle
-	// Check if inetd is running, if not start it.	If so, restart it gracefully.
-	$helpers = isvalidproc("inetd");
-	if(file_exists("/var/etc/inetd.conf")) {
-		if(!$helpers)
-			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
-		else
-			sigkillbypid("/var/run/inetd.pid", "HUP");
-	}
 
 	if (isset($config['pptpd']['mode']) && ($config['pptpd']['mode'] != "off")) {
 		if ($config['pptpd']['mode'] == "redir") {
@@ -1563,6 +1555,15 @@ function filter_nat_rules_generate() {
 
 	if(!empty($reflection_txt))
 		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
+
+	// Check if inetd is running, if not start it.	If so, restart it gracefully.
+	$helpers = isvalidproc("inetd");
+	if(file_exists("/var/etc/inetd.conf")) {
+		if(!$helpers)
+			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+		else
+			sigkillbypid("/var/run/inetd.pid", "HUP");
+	}
 
 	return $natrules;
 }

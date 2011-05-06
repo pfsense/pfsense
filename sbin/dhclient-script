@@ -242,8 +242,8 @@ add_new_resolv_conf() {
 			# also backup the nameserver for later route removal
 			if [ $ALLOWOVERRIDE -gt 0 ]; then
 				echo $nameserver >>/var/etc/nameserver_$interface
+				$ROUTE add $nameserver -iface $interface
 			fi
-			$ROUTE add $nameserver -iface $interface
 		done
 		echo $new_domain_name >/var/etc/searchdomain_$interface
 	fi

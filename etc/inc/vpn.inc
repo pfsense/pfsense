@@ -485,9 +485,9 @@ function vpn_ipsec_configure($ipchg = false)
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
+						$passive = "passive on;";
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
-							$passive = "passive on;";
 							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
 							$genp = "on";
 						} else {

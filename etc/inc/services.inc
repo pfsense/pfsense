@@ -133,8 +133,7 @@ EOD;
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 		$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
 		$rtadvdconf .= "\t:tc=ether:\n";
-		$rtadvdconf .= "\n\n";
-
+		$rtadvdconf .= "\n\n"; 
 	}
 
 	fwrite($fd, $rtadvdconf);
@@ -528,7 +527,7 @@ function services_dhcpdv6_configure() {
 	
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/'dhcpdv6.pid");
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */
@@ -613,8 +612,6 @@ EOD;
 	$dhcpv6num = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 
-		interfaces_staticarp_configure($dhcpv6if);
-
 		if (!isset($dhcpv6ifconf['enable']))
 			continue;
 
@@ -683,7 +680,7 @@ EOPP;
 
 		if($is_olsr_enabled == true)
 			if($dhcpv6ifconf['netmask'])
-				$subnetmask = gen_subnet_mask($dhcpv6ifconf['netmask']);
+				$subnetmask = gen_subnet_maskv6($dhcpv6ifconf['netmask']);
 
 		$dnscfgv6 = "";
 
@@ -750,6 +747,11 @@ EOPP;
 $dnscfgv6
 
 EOD;
+
+		if(is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
+			$dhcpdv6conf .= "	prefix6 {$dhcpv6ifconf['prefixrange']['from']} {$dhcpv6ifconf['prefixrange']['to']} /{$dhcpv6ifconf['prefixrange']['prefixlength']};\n";
+
+		}
     		// default-lease-time
 		if ($dhcpv6ifconf['defaultleasetime'])
 			$dhcpdv6conf .= "	default-lease-time {$dhcpv6ifconf['defaultleasetime']};\n";

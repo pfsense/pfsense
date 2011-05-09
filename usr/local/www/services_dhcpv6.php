@@ -92,6 +92,11 @@ if (is_array($config['dhcpdv6'][$if])){
 		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
 		$pconfig['range_to'] = $config['dhcpdv6'][$if]['range']['to'];
 	}
+	if (is_array($config['dhcpdv6'][$if]['prefixrange'])) {
+		$pconfig['prefixrange_from'] = $config['dhcpdv6'][$if]['prefixrange']['from'];
+		$pconfig['prefixrange_to'] = $config['dhcpdv6'][$if]['prefixrange']['to'];
+		$pconfig['prefixrange_length'] = $config['dhcpdv6'][$if]['prefixrange']['prefixlength'];
+	}
 	$pconfig['mode'] = $config['dhcpdv6'][$if]['mode'];
 	$pconfig['deftime'] = $config['dhcpdv6'][$if]['defaultleasetime'];
 	$pconfig['maxtime'] = $config['dhcpdv6'][$if]['maxleasetime'];
@@ -173,7 +178,11 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from'])))
+		if (($_POST['prefixrange_from'] && !is_ipaddrv6($_POST['prefixrange_from'])))
+			$input_errors[] = gettext("A valid range must be specified.");
+		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to'])))
+			$input_errors[] = gettext("A valid prefix range must be specified.");
+		if (($_POST['range_from'] && !is_ipaddrv6($_POST['prefixrange_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to'])))
 			$input_errors[] = gettext("A valid range must be specified.");
@@ -196,11 +205,6 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IPv6 address or hostname must be specified for the TFTP server.");
 		if (($_POST['nextserver'] && !is_ipaddrv6($_POST['nextserver'])))
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the network boot server.");
-
-		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
-			$input_errors[] = gettext("You cannot use the network address in the starting subnet range.");
-		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
-			$input_errors[] = gettext("You cannot use the broadcast address in the ending subnet range.");
 
 		// Disallow a range that includes the virtualip
 		if (is_array($config['virtualip']['vip'])) {
@@ -237,7 +241,7 @@ if ($_POST) {
 
 			// $dynsubnet_start = ip2ulong($_POST['range_from']);
 			// $dynsubnet_end = ip2ulong($_POST['range_to']);
-			/* FIX later.
+			/* FIX later. Also applies to prefix delegation
 			if(is_array($a_maps)) {
 				foreach ($a_maps as $map) {
 					if (empty($map['ipaddrv6']))
@@ -258,10 +262,15 @@ if ($_POST) {
 			$config['dhcpdv6'][$if] = array();
 		if (!is_array($config['dhcpdv6'][$if]['range']))
 			$config['dhcpdv6'][$if]['range'] = array();
+		if (!is_array($config['dhcpdv6'][$if]['prefixrange']))
+			$config['dhcpdv6'][$if]['prefixrange'] = array();
 
 		$config['dhcpdv6'][$if]['mode'] = $_POST['mode'];
 		$config['dhcpdv6'][$if]['range']['from'] = $_POST['range_from'];
 		$config['dhcpdv6'][$if]['range']['to'] = $_POST['range_to'];
+		$config['dhcpdv6'][$if]['prefixrange']['from'] = $_POST['prefixrange_from'];
+		$config['dhcpdv6'][$if]['prefixrange']['to'] = $_POST['prefixrange_to'];
+		$config['dhcpdv6'][$if]['prefixrange']['prefixlength'] = $_POST['prefixrange_length'];
 		$config['dhcpdv6'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpdv6'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpdv6'][$if]['netmask'] = $_POST['netmask'];
@@ -373,6 +382,9 @@ include("head.inc");
 		endis = !(document.iform.enable.checked || enable_over);
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
+		document.iform.prefixrange_from.disabled = endis;
+		document.iform.prefixrange_to.disabled = endis;
+		document.iform.prefixrange_length.disabled = endis;
 		document.iform.dns1.disabled = endis;
 		document.iform.dns2.disabled = endis;
 		document.iform.deftime.disabled = endis;
@@ -558,6 +570,20 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="28" value="<?=htmlspecialchars($pconfig['range_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="28" value="<?=htmlspecialchars($pconfig['range_to']);?>">
+			</td>
+			</tr>
+			<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefix Delegation Range");?></td>
+			<td width="78%" class="vtable">
+				<input name="prefixrange_from" type="text" class="formfld unknown" id="prefixrange_from" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_from']);?>">
+				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
+				&nbsp;<?=gettext("prefix length"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
+					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
+					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
+					<option value="60" <?php if($pconfig['prefixrange_length'] == 60) echo "selected"; ?>>60</option>
+				</select> <br/>
+				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
+					assigning networks to subrouters"); ?>
 			</td>
 			</tr>
 			<tr>

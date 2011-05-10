@@ -1,11 +1,13 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        rc.newwanipv6
+        rc.newwanip
         Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
-        Copyright (C) 2011 Seth Mos (seth.mos@dds.nl)
         part of pfSense (http://www.pfsense.com)
 
+		Originally part of m0n0wall (http://m0n0.ch)
+        Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+        All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -38,14 +40,15 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
+require_once("IPv6.inc");
 
 // Do not process while booting
 if($g['booting']) 
 	exit;
 
 
-/* echo print_r($_ENV, true);
-Array
+// echo print_r($_ENV, true);
+/*Array
 (
     [REASON] => NBI
     [new_domain_name_servers] => 2001:470:20::2
@@ -67,6 +70,14 @@ log_error("rc.newwanipv6: Informational is starting.");
 $curwanip = get_interface_ipv6();
 $interface = "wan";
 $interface_real = get_real_interface();
+
+if(is_ipaddr(trim($_ENV['new_domain_name_servers']))) {
+	echo "DNS {$_ENV['new_domain_name_servers']}\n";
+	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", trim($_ENV['new_domain_name_servers']));
+}
+if(!empty($_ENV['new_domain_name'])) {
+	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
+}
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 

@@ -1015,7 +1015,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		$pid = find_dhclient_process($realif);
 		if($pid)
 			mwexec("/bin/kill {$pid}");
-		$pidv6 = find_dhclient6_process($realif);
+		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
 			mwexec("/bin/kill {$pidv6}");
 		sleep(1);
@@ -2869,6 +2869,8 @@ function interface_dhcpv6_configure($interface = "wan") {
 	fwrite($fd, $dhcp6cconf);
 	fclose($fd);
 
+	/* accept router advertisements for this interface */
+	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 

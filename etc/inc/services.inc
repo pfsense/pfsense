@@ -87,7 +87,6 @@ EOD;
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
 
-		$rtadvdnum++;
 		$realif = get_real_interface($dhcpv6if);
 		$rtadvdifs[] = $realif;
 
@@ -96,6 +95,7 @@ EOD;
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
+		$rtadvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$rtadvdconf .= "{$realif}:\\\n";
 		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
@@ -113,13 +113,13 @@ EOD;
 		}
 		$rtadvdconf .= "\t:tc=ether:\n";
 		$rtadvdconf .= "\n\n";
+		$rtadvdnum++;
 	}
 
 	foreach ($Iflist as $if => $ifdescr) {
 		if(!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id']))
 			continue;
 
-		$rtadvdnum++;
 		$realif = get_real_interface($if);
 		$rtadvdifs[] = $realif;
 
@@ -128,12 +128,16 @@ EOD;
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
-		$rtadvdconf .= "{$realif}:\\\n";
-		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
-		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
-		$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
-		$rtadvdconf .= "\t:tc=ether:\n";
-		$rtadvdconf .= "\n\n"; 
+		if(is_ipaddrv6($subnetv6)) {
+			$rtadvdconf .= "# Generated for DHCP-PD delegation $if\n";
+			$rtadvdconf .= "{$realif}:\\\n";
+			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
+			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
+			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
+			$rtadvdconf .= "\t:tc=ether:\n";
+			$rtadvdconf .= "\n\n"; 
+			$rtadvdnum++;
+		}
 	}
 
 	fwrite($fd, $rtadvdconf);

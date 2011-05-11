@@ -599,6 +599,14 @@
 <step>
 	<id>9</id>
 	<title>Wizard completed.</title>
+	<stepbeforeformdisplay>
+	<![CDATA[
+		if($g['product_name'] <> 'pfSense') {
+			Header("Location: $myurl");
+			exit;
+		}	
+	]]>
+	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
 		Congratulations!  pfSense is now configured.<p/>

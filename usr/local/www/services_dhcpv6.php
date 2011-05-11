@@ -182,7 +182,7 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to'])))
 			$input_errors[] = gettext("A valid prefix range must be specified.");
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['prefixrange_from'])))
+		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to'])))
 			$input_errors[] = gettext("A valid range must be specified.");
@@ -573,7 +573,7 @@ include("head.inc");
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefix Delegation Range");?></td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Prefix Delegation Range");?></td>
 			<td width="78%" class="vtable">
 				<input name="prefixrange_from" type="text" class="formfld unknown" id="prefixrange_from" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">

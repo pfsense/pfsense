@@ -485,8 +485,10 @@ function crl_update(& $crl) {
 	$ca_str_crt = base64_decode($ca['crt']);
 	$ca_str_key = base64_decode($ca['prv']);
 	$crl_res = openssl_crl_new($ca_str_crt, $crl['serial'], $crl['lifetime']);
-	foreach ($crl['cert'] as $cert) {
-		openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+	if (is_array($crl['cert']) && (count($crl['cert']) > 0)) {
+		foreach ($crl['cert'] as $cert) {
+			openssl_crl_revoke_cert($crl_res, base64_decode($cert["crt"]), $cert["revoke_time"], $cert["reason"]);
+		}
 	}
 	openssl_crl_export($crl_res, $crl_text, $ca_str_key);
 	$crl['text'] = base64_encode($crl_text);

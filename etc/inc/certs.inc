@@ -479,7 +479,7 @@ function crl_update(& $crl) {
 	if (!$ca)
 		return false;
 	// If we have text but no certs, it was imported and cannot be updated.
-	if (!empty($crl['text']) && empty($crl['cert']))
+	if (($crl["method"] != "internal") && (!empty($crl['text']) && empty($crl['cert'])))
 		return false;
 	$crl['serial']++;
 	$ca_str_crt = base64_decode($ca['crt']);
@@ -514,9 +514,12 @@ function cert_unrevoke($cert, & $crl) {
 	foreach ($crl['cert'] as $id => $rcert) {
 		if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr'])) {
 			unset($crl['cert'][$id]);
-			if (count($crl['cert']) == 0)
-				unset($crl['text']);
-			else
+			if (count($crl['cert']) == 0) {
+				// Protect against accidentally switching the type to imported, for older CRLs
+				if (!isset($crl['method']))
+					$crl['method'] = "internal";
+				crl_update($crl);
+			} else
 				crl_update($crl);
 			return true;
 		}
@@ -567,7 +570,7 @@ function crl_in_use($crlref) {
 }
 
 function is_crl_internal($crl) {
-	return !(!empty($crl['text']) && empty($crl['cert']));
+	return (!(!empty($crl['text']) && empty($crl['cert'])) || ($crl["method"] == "internal"));
 }
 
 ?>

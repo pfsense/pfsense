@@ -2773,32 +2773,32 @@ function filter_generate_ipsec_rules() {
 				}
 
 				/* Add rules to allow IKE to pass */
-				$shorttunneldescr = substr($descr, 0, 36);
+				$shorttunneldescr = substr($descr, 0, 35);
 				$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$shorttunneldescr} - inbound isakmp\"
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 				/* If NAT-T is enabled, add additional rules */
 				if($ph1ent['nat_traversal'] != "off" ) {
 					$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$shorttunneldescr} - inbound nat-t\"
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 				}
 				/* Add rules to allow the protocols in use */
 				if($prot_used_esp == true) {
 					$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound esp proto\"
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 				}
 				if($prot_used_ah == true) {
 					$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound ah proto\"
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;
 				}

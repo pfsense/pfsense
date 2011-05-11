@@ -2544,8 +2544,7 @@ function find_dhclient_process($interface) {
 
 function find_dhcp6c_process($interface) {
 	if ($interface)
-		$pid = `/bin/ps auxw|grep "dhcp6c" |grep 
-"{$interface}"|awk '{print $2}'`;
+		$pid = `/bin/ps auxw|grep "dhcp6c" |grep "{$interface}"|awk '{print $2}'`;
 	else
 		$pid = 0;
 

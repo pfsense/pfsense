@@ -209,7 +209,7 @@ while($i < $leases_count) {
 				$f = $f+3;
 				break;
 			case "rewind":
-				/* skip the next binding statement */
+				/* skip the rewind binding statement */
 				$f = $f+3;
 				break;
 			case "hardware":

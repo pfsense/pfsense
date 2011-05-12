@@ -2584,7 +2584,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	else {
 		$mtu = get_interface_default_mtu(remove_numbers($realhwif));
 		if ($mtu != get_interface_mtu($realhwif))
-			pfSense_interface_mtu($mtu);
+			pfSense_interface_mtu($realhwif, $mtu);
 	}
 
 	$options = pfSense_get_interface_addresses($realhwif);

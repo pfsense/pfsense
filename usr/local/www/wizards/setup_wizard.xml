@@ -590,7 +590,7 @@
 		}
 		unset($config['wizardtemp']);
 		write_config();
-		send_message("reload all");
+		send_event("reload all");
 		setup_gateways_monitor();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		]]>

@@ -57,6 +57,7 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
+$pconfig['noautocomplete'] = isset($config['system']['webgui']['noautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
@@ -151,6 +152,11 @@ if ($_POST) {
 			$config['system']['webgui']['nohttpreferercheck'] = true;
 		else
 			unset($config['system']['webgui']['nohttpreferercheck']);
+
+		if ($_POST['noautocomplete'] == "yes")
+			$config['system']['webgui']['noautocomplete'] = true;
+		else
+			unset($config['system']['webgui']['noautocomplete']);
 
 		if ($_POST['althostnames'])
 			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
@@ -322,8 +328,20 @@ function prot_change() {
 									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
-									"is always permitted even on port 80, regardless of the listening port configured." .
+									"is always permitted even on port 80, regardless of the listening port configured. " .
 									"Check this box to disable this automatically added redirect rule. ");
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI Login Autocomplete"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="noautocomplete" type="checkbox" id="noautocomplete" value="yes" <?php if ($pconfig['noautocomplete']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator login autocomplete"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is unchecked, login credentials for the webConfigurator " .
+									"may be saved by the browser. While convenient, some security standards require this to be disabled. " .
+									"Check this box to disable autocomplete on the login form so that browsers will not prompt to save credentials (NOTE: Some browsers do not respect this option). ");
 									?>
 								</td>
 							</tr>

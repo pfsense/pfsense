@@ -502,9 +502,9 @@ function vpn_ipsec_configure($ipchg = false)
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
+						$passive = "passive on;";
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
-							$passive = "passive on;";
 							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
 							$genp = "on";
 						} else {
@@ -892,7 +892,7 @@ EOD;
 							if(is_ipaddr($gatewayip)) {
 								/* FIXME: does adding route-to and reply-to on the in/outbound
 								 * rules fix this? smos@ 13-01-2009 */
-								log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								// log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 								mwexec("/sbin/route delete -host {$rgip}");
 								mwexec("/sbin/route add -host {$rgip} {$gatewayip}");
 							}

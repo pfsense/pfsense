@@ -597,11 +597,11 @@ if ($_POST['apply']) {
 		}
 	}
 	if (!$input_errors) {
-		if ($wancfg['type'] != $_POST['type']) {
+		if ($wancfg['ipaddr'] != $_POST['type']) {
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
 				unset($a_ppps[$pppid]);
-			} else if ($wancfg['type'] == "dhcp") {
+			} else if ($wancfg['ipaddr'] == "dhcp") {
 				$pid = find_dhclient_process($realif);
 				if($pid)
 					posix_kill($pid, SIGTERM);

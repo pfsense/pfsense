@@ -158,6 +158,10 @@ while($i < $leases_count) {
                                 /* skip the next binding statement */
                                 $f = $f+3;
                                 break;
+			case "rewind":
+				/* skip the rewind binding statement */
+				$f = $f+3;
+				break;
                         case "hardware":
                                 $leases[$l]['mac'] = $data[$f+2];
                                 /* check if it's online and the lease is active */

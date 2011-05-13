@@ -222,8 +222,10 @@ $i = 0;
 /* if list */
 $ifdescrs = get_configured_interface_with_descr();
 
-foreach ($ifdescrs as $key =>$interface) {
-	$hwif[$config['interfaces'][$key]['if']] = $interface;
+foreach ($ifdescrs as $key => $interface) {
+	$thisif = convert_friendly_interface_to_real_interface_name($key);
+	if (!empty($thisif))
+		$hwif[$thisif] = $interface;
 }
 
 $data = array();

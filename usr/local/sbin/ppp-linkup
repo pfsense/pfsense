@@ -1,23 +1,27 @@
 #!/bin/sh
 
-# write nameservers to file
-if [ $6 = "dns1" ]; then
-	echo $7 > /var/etc/nameserver_$1
-	/sbin/route delete $7
-	/sbin/route add $7 $4
-fi
-
-if [ $8 = "dns2" ]; then
-	echo $9 >> /var/etc/nameserver_$1
-	/sbin/route delete $9
-	/sbin/route add $9 $4
-fi
-
 # let the configuration system know that the ip has changed.
 /bin/echo $4 > /tmp/$1_router
 /bin/echo $3 > /tmp/$1_ip
 /usr/bin/touch /tmp/$1up
-/usr/local/sbin/pfSctl -c 'service reload dns'
-/bin/sleep 1
+
+ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
+if [ $ALLOWOVERRIDE -gt 0 ]; then
+	# write nameservers to file
+	if [ $6 = "dns1" ]; then
+		echo $7 > /var/etc/nameserver_$1
+		/sbin/route delete $7
+		/sbin/route add $7 $4
+	fi
+
+	if [ $8 = "dns2" ]; then
+		echo $9 >> /var/etc/nameserver_$1
+		/sbin/route delete $9
+		/sbin/route add $9 $4
+	fi
+	/usr/local/sbin/pfSctl -c 'service reload dns'
+	/bin/sleep 1
+fi
+
 /usr/local/sbin/pfSctl -c "interface newip $1"
 exit 0

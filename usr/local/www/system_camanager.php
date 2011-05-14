@@ -62,6 +62,11 @@ if (!is_array($config['cert']))
 
 $a_cert =& $config['cert'];
 
+if (!is_array($config['crl']))
+	$config['crl'] = array();
+
+$a_crl =& $config['crl'];
+
 $act = $_GET['act'];
 if ($_POST['act'])
 	$act = $_POST['act'];
@@ -78,10 +83,15 @@ if ($act == "del") {
 		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid'])
 			unset($a_cert[$index]);
 
+	$index = count($a_crl) - 1;
+	for (;$index >=0; $index--)
+		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid'])
+			unset($a_crl[$index]);
+
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s successfully deleted"), $name) . "<br/>";
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br/>";
 }
 
 if ($act == "edit") {
@@ -533,7 +543,7 @@ function method_change() {
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca private key");?>" alt="<?=gettext("export ca private key");?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
-							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and all associated certificates?");?>')">
+							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and its CRLs, and unreference any associated certificates?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete ca");?>" alt="<?=gettext("delete ca"); ?>" width="17" height="17" border="0" />
 							</a>
 						</td>

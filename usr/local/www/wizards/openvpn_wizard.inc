@@ -177,6 +177,7 @@ function step6_submitphpaction() {
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
+		unset($config['ovpnserver']['step6']['uselist']);
 		$stepid++;
 	} else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
@@ -228,11 +229,15 @@ function step8_stepbeforeformdisplay() {
 }
 
 function step8_submitphpaction() {
-	global $stepid, $_POST;
+	global $stepid, $config, $_POST;
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
+		unset($config['ovpnserver']['step9']['uselist']);
 		$stepid++;
+	} else {
+		$config['ovpnserver']['step6']['uselist'] = "on";
+		$_POST['uselist'] = "on";
 	}
 }
 
@@ -502,7 +507,7 @@ function step12_submitphpaction() {
 			$config['cert'] = array();
 
 		$config['cert'][] = $cert;
-	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step9']['authcertname'])) {
+	} else if (!isset($pconfig['step9']['uselist']) && empty($pconfig['step9']['authcertname'])) {
 		$message = "Please choose a Certificate.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7&message={$message}");
 		exit;

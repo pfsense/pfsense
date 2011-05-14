@@ -223,7 +223,7 @@ var newrow  = new Array(9999);
 var rowsize = new Array(9999);
 
 for (i = 0; i < 9999; i++) {
-        rowname[i] = '';
+        rowname[i] = 'members';
         rowtype[i] = 'select';
         newrow[i] = '';
         rowsize[i] = '30';
@@ -362,12 +362,11 @@ function removeRow(el) {
 	if ($members <> "") {
 		$item = explode(" ", $members);
 		foreach($item as $ww) {
-			$members = $item[$counter];
-			$tracker = $counter;
+			$member = $item[$counter];
 	?>
         <tr>
 	<td class="vtable">
-	        <input name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>" value="<? echo $members;?>">
+	        <input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<? echo $member;?>">
 	</td>
         <td>
 	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>

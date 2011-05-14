@@ -2191,7 +2191,9 @@ function filter_rules_compare($a, $b) {
  ******/
 function load_mac_manufacturer_table() {
 	/* load MAC-Manufacture data from the file */
-	$macs=file("/usr/local/share/nmap/nmap-mac-prefixes");
+	$macs = false;
+	if (file_exists("/usr/local/share/nmap/nmap-mac-prefixes"))
+		$macs=file("/usr/local/share/nmap/nmap-mac-prefixes");
 	if ($macs){
 		foreach ($macs as $line){
 			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)){

@@ -1018,7 +1018,7 @@ function services_dhcrelay_configure() {
         		foreach($route_str as $routeline) {
                 		$items = preg_split("/[ ]+/i", $routeline);
 				if (ip_in_subnet($srvip, $items[0])) {
-					$destif = trim($items[2]);
+					$destif = trim($items[6]);
 					break;
 				}
         		}

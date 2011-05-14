@@ -324,6 +324,8 @@ foreach ($pools as $data) {
     <td class="listhdrr"><a href="#"><?=gettext("Lease Type"); ?></a></td>
 	</tr>
 <?php
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
 foreach ($leases as $data) {
 	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
@@ -357,10 +359,20 @@ foreach ($leases as $data) {
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
+		$mac=$data['mac']; 
+		$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
                 if ($data['online'] != "online") {
-                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\" onclick=\"return confirm('" . gettext("Send Wake on LAN packet to this MAC address?") . "')\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
-                } else {
-                	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
+			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
+	                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac=$mac\" title=\"" . gettext("$mac - send Wake on LAN packet to this MAC address") ."\">{$mac_man[$mac_hi]}</a>{$fspane}&nbsp;</td>\n";
+			}else{	
+                        	echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
+			}
+                }else{
+			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
+	                	echo "<td class=\"listr\">{$fspans}<span title=\"$mac\">{$mac_man[$mac_hi]}</span>{$fspane}&nbsp;</td>\n";
+	                }else{
+                		echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
+			}
                 }
                 echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
 				if ($data['type'] != "static") {

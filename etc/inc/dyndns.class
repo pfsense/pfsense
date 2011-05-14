@@ -18,6 +18,7 @@
 	 *    - DNSexit (dnsexit.com)
 	 *    - OpenDNS (opendns.com)
 	 *    - Namecheap (namecheap.com)
+	 *    - HE.net (dns.he.net)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -49,6 +50,7 @@
 	 *  DNSexit	   - Last Tested: 20 July 2008
 	 *  OpenDNS	   - Last Tested: 4 August 2008
 	 *  Namecheap	   - Last Tested: 31 August 2010
+	 *  HE.net         - Last Tested: NEVER
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -152,6 +154,7 @@
 				case 'dnsexit':
 				case 'opendns':
 				case 'namecheap':
+				case 'he-net':
 					$this->_update();	
 					break;
 				default:
@@ -434,6 +437,19 @@
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
+					break;
+				case 'he-net':
+					$needsIP = FALSE;
+					log_error("HE.net: DNS update() starting.");
+					$server = "https://dyn.dns.he.net/nic/update?";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsHost . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost);
+					$data = curl_exec($ch);
+					if(@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
 				default:
 					break;
 			}
@@ -752,6 +768,26 @@
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
+					}
+					break;
+					
+				case 'he-net':
+					if (preg_match("/badip/i", $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - The IP provided was invalid.";
+					} else if (preg_match('/nohost/i', $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - A hostname was not provided.";
+					} else if (preg_match('/badauth/i', $data)) {
+					        $status = "phpDynDNS: (Error) Invalid username or password.";
+					} else if (preg_match('/good/i', $data)) {
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					        $successful_update = true;
+					} else if (preg_match('/nochg/i', $data)) {
+							$status = "phpDynDNS: (Success) No Change In IP Address.";
+							$successful_update = true;
+					} else {
+					        $status = "phpDynDNS: (Unknown Response)";
+					        log_error("phpDynDNS: PAYLOAD: {$data}");
+					        $this->_debug($data);
 					}
 					break;
 			}

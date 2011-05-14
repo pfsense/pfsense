@@ -280,12 +280,25 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+//		old way
 		/* make sure this csr and certificate subjects match */
-		$subj_csr = csr_get_subject($pconfig['csr'], false);
-		$subj_cert = cert_get_subject($pconfig['cert'], false);
-
-		if (strcmp($subj_csr,$subj_cert))
-			$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
+//		$subj_csr = csr_get_subject($pconfig['csr'], false);
+//		$subj_cert = cert_get_subject($pconfig['cert'], false);
+//
+//		if ( !isset($_POST['ignoresubjectmismatch']) && !($_POST['ignoresubjectmismatch'] == "yes") ) {
+//			if (strcmp($subj_csr,$subj_cert)) {
+//				$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
+//				$subject_mismatch = true;
+//			}
+//		}
+		$mod_csr  =  csr_get_modulus($pconfig['csr'], false);
+		$mod_cert = cert_get_modulus($pconfig['cert'], false);
+		
+		if (strcmp($mod_csr,$mod_cert)) {
+			// simply: if the moduli don't match, then the private key and public key won't match
+			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."),$subj_cert);
+			$subject_mismatch = true;
+		}
 
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
@@ -314,7 +327,7 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+<body link="#000000" vlink="#000000" alink="#000000" onLoad="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
 <!--
@@ -776,6 +789,14 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
+								<?php /* if ( isset($subject_mismatch) && $subject_mismatch === true): ?>
+								<input id="ignoresubjectmismatch" name="ignoresubjectmismatch" type="checkbox" class="formbtn" value="yes" />
+								<label for="ignoresubjectmismatch"><strong><?=gettext("Ignore certificate subject mismatch"); ?></strong></label><br />
+								<?php echo gettext("Warning: Using this option may create an " .
+								"invalid certificate.  Check this box to disable the request -> " .
+								"response subject verification. ");
+								?><br/>
+								<?php endif; */ ?>
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
@@ -800,7 +821,7 @@ function internalca_change() {
 						$i = 0;
 						foreach($a_cert as $cert):
 							$name = htmlspecialchars($cert['descr']);
-
+							
 							if ($cert['crt']) {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
@@ -868,7 +889,7 @@ function internalca_change() {
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
+							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onClick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete cert");?>" alt="<?=gettext("delete cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>

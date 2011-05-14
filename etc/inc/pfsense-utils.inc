@@ -2242,4 +2242,28 @@ function generate_ipv6_from_mac($mac) {
 	}	
 	return $ipv6;
 }
+
+/****f* pfsense-utils/load_mac_manufacturer_table
+ * NAME
+ *   load_mac_manufacturer_table
+ * INPUTS
+ *   none
+ * RESULT
+ *   returns associative array with MAC-Manufacturer pairs
+ ******/
+function load_mac_manufacturer_table() {
+	/* load MAC-Manufacture data from the file */
+	$macs=file("/usr/local/share/nmap/nmap-mac-prefixes");
+	if ($macs){
+		foreach ($macs as $line){
+			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)){
+				/* store values like this $mac_man['000C29']='VMware' */
+				$mac_man["$matches[1]"]=$matches[2];
+			}
+		}
+ 		return $mac_man;
+	} else
+		return -1;
+
+}
 ?>

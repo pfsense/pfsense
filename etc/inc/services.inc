@@ -75,7 +75,7 @@ function services_rtadvd_configure() {
 #
 default:\
         :raflags#0:rltime#3600:\
-        :pinfoflags#64:vltime#360000:pltime#360000:mtu#1500:
+        :vltime#360000:pltime#360000:mtu#1500:
 ether:\
         :mtu#1280:tc=default:
 

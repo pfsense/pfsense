@@ -933,16 +933,15 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--start $start --end $end ";
 	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--base=1000 ";
+	$graphcmd .= "--lower-limit=0 ";
+	$graphcmd .= "--slope-mode ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-loggedinusers=$rrddbpath$curdatabase:loggedinusers:AVERAGE\" ";
-	$graphcmd .= "LINE2:\"$curif-loggedinusers#{$colorcaptiveportalusers[0]}:$curif-loggedinusers\" ";
-	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
-	$graphcmd .= "COMMENT:\"Users Online\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-loggedinusers:LAST:%7.2lf     \" ";
-	$graphcmd .= "GPRINT:\"$curif-loggedinusers:AVERAGE:%7.2lf      \" ";
-	$graphcmd .= "GPRINT:\"$curif-loggedinusers:MAX:%7.2lf \" ";
+	$graphcmd .= "CDEF:\"$curif-totalusers_t=PREV,UN,0,PREV,IF,$curif-loggedinusers,+\" ";
+	$graphcmd .= "AREA:\"$curif-totalusers_t#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers_t:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }
@@ -953,37 +952,18 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
-	$graphcmd .= "--height 200 --width 620 ";
-	$graphcmd .= "DEF:\"$curif-concurrentusers=$rrddbpath$curdatabase:concurrentusers:AVERAGE\" ";
-	$graphcmd .= "LINE2:\"$curif-concurrentusers#{$colorcaptiveportalusers[0]}:$curif-concurrentusers\" ";
-	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
-	$graphcmd .= "COMMENT:\"Users Online\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%7.2lf     \" ";
-	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%7.2lf      \" ";
-	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%7.2lf \" ";
-	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
-}
-elseif((strstr($curdatabase, "-totalusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
-	/* define graphcmd for online Captive Portal users stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
-	$graphcmd .= "--start $start --end $end ";
-	$graphcmd .= "--vertical-label \"Total Captive Portal Users\" ";
-	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--base=1000 ";
 	$graphcmd .= "--lower-limit=0 ";
 	$graphcmd .= "--slope-mode ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
-	$graphcmd .= "DEF:\"$curif-totalusers=$rrddbpath$curdatabase:totalusers:AVERAGE\" ";
-	$graphcmd .= "AREA:\"$curif-totalusers#{$colorcaptiveportalusers[0]}:$curif-totalusers\" ";
+	$graphcmd .= "DEF:\"$curif-concurrentusers=$rrddbpath$curdatabase:concurrentusers:AVERAGE\" ";
+	$graphcmd .= "AREA:\"$curif-concurrentusers#{$colorcaptiveportalusers[0]}:Concurrent Users\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
 	$graphcmd .= "COMMENT:\"Users Online\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-totalusers:LAST:%8.0lf     \" ";
-	$graphcmd .= "GPRINT:\"$curif-totalusers:AVERAGE:%8.0lf      \" ";
-	$graphcmd .= "GPRINT:\"$curif-totalusers:MAX:%8.0lf \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%8.0lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }

@@ -309,8 +309,8 @@ $mac_man = load_mac_manufacturer_table();
 						<?php
 						$mac=$entry['mac']; 
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-						if(isset($mac_man[$mac_hi])){ print "<span title=\"$mac\">{$mac_man[$mac_hi]}</span>"; }
-						else{ print $mac; }
+						print $mac;
+						if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 						?>
 						<td class="listr">
 							<?php

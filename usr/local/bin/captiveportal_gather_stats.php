@@ -43,7 +43,7 @@ $concurrent_users = $no_users;
 $current_user_count = 0;
 
 /* tmp file to use to store old data (per interface)*/
-$tmpfile = "{$g['tmp_path']}/captiveportal_online_users";
+$tmpfile = "{$g['vardb_path']}/captiveportal_online_users";
 
 $type = $argv[1];
 
@@ -82,12 +82,14 @@ if ($type == "loggedin") {
 			$current_user_count = $current_user_count + 1;
 	}
 	
-	// Write out the latest timestamp
-	$fd = @fopen($tmpfile, "w");
-	if ($fd) {
-		fwrite($fd, $timestamp);
+	// Write out the latest timestamp but not if it is empty
+	if (!empty($timestamp)) {
+		$fd = @fopen($tmpfile, "w");
+		if ($fd) {
+			fwrite($fd, $timestamp);
+		}
+		@fclose($fd);
 	}
-	@fclose($fd);
 	
 	/* If $timestamp is less than or equal to previous_user_timestamp return 0, 
  	 * as we only want the 'X' number of users logged in since last RRD poll.

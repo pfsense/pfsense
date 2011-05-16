@@ -369,7 +369,7 @@ foreach ($leases as $data) {
 			}
                 }else{
 			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
-	                	echo "<td class=\"listr\">{$fspans}<span title=\"$mac\">{$mac_man[$mac_hi]}</span>{$fspane}&nbsp;</td>\n";
+				echo "<td class=\"listr\">{$fspans}{$mac}<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
 	                }else{
                 		echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
 			}

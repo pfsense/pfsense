@@ -40,10 +40,11 @@ require_once("pfsense-utils.inc");
 if (!is_array($config['installedpackages']['package']))
 	return;
 
-log_error("Starting all packages.");
+log_error("Restarting/Starting all packages.");
 
 foreach($config['installedpackages']['package'] as $package) {
 	stop_service($package['name']);
+	sync_package($package['name']);
 	start_service($package['name']);
 }
 

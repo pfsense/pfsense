@@ -114,6 +114,9 @@ function stop_service($name) {
 	global $config;
 	global $rcfileprefix;
 
+	if (empty($name))
+		return;
+
 	if ($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
@@ -146,6 +149,9 @@ function stop_service($name) {
 
 function restart_service($name) {
 	global $config;
+
+	if (empty($name))
+		return;
 
 	stop_service($name);
 	start_service($name);

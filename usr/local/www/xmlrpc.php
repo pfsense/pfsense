@@ -372,6 +372,8 @@ function get_notices_xmlrpc($raw_params) {
 	return $response;
 }
 
+$xmlrpclockkey = lock('xmlrpc', LOCK_EX);
+
 /*****************************/
 $server = new XML_RPC_Server(
         array(
@@ -411,5 +413,7 @@ $server = new XML_RPC_Server(
 			'signature' => $get_notices_sig)
         )
 );
+
+unlock($xmlrpclockkey);
 
 ?>

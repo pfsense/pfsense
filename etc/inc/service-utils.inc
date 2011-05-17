@@ -82,6 +82,9 @@ function start_service($name) {
 	global $config;
 	global $rcfileprefix;
 
+	if (empty($name))
+		return;
+
 	/* make sure service is stopped before starting */
 	stop_service($name);
 	sleep(2);

@@ -122,7 +122,10 @@ function stop_service($name) {
 					if(!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
-					mwexec_bg("{$prefix}{$service['rcfile']} stop");
+					if(file_exists("{$prefix}{$service['rcfile']}")) {
+						mwexec_bg("{$prefix}{$service['rcfile']} stop");
+					}
+					return;
 				}
 				if (!empty($service['stopcmd']))
 					eval($service['stopcmd']);

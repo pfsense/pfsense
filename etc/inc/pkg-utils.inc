@@ -42,6 +42,7 @@
 
 require_once("globals.inc");
 require_once("xmlrpc.inc");
+require_once("service-utils.inc");
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else
@@ -323,6 +324,8 @@ function uninstall_package($pkg_name) {
 			$static_output .= "\n";
 		}
 	}
+
+	stop_service($pkg_name);
 
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {

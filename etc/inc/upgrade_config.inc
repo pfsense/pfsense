@@ -2455,4 +2455,21 @@ function upgrade_076_to_077() {
 	}
 }
 
+function upgrade_077_to_078() {
+	if (is_array($config['pptpd']) && is_array($config['pptpd']['radius'])
+		&& !is_array($config['pptpd']['radius']['server'])) {
+		$radarr = array();
+		$radsvr = array();
+		$radsvr['ip'] = $config['pptpd']['radius']['server'];
+		$radsvr['secret'] = $config['pptpd']['radius']['secret'];
+		$radsvr['port'] = 1812;
+		$radsvr['acctport'] = 1813;
+		$radsvr['enable'] = isset($config['pptpd']['radius']['enable']);
+		$radarr['accounting'] = isset($config['pptpd']['radius']['accounting']);
+		if ($radarr['accounting'])
+			$radarr['acct_update'] = $radsvr['ip'];
+		$radarr['server'] = $radsvr;
+		$config['pptpd']['radius'] = $radarr;
+	}
+}
 ?>

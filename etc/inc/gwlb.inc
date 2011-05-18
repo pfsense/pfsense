@@ -272,6 +272,7 @@ function return_gateways_array($disabled = false) {
 
 	$gateways_arr = array();
 
+	if (0) {
 	$i = 0;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
@@ -303,6 +304,7 @@ function return_gateways_array($disabled = false) {
 			$i++;
 		}
 	} 
+	}
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false)

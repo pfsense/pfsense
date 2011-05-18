@@ -158,6 +158,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
+
 	$vipbackup = array();
 	$oldvips = array();
 	if (isset($params[0]['virtualip'])) {
@@ -170,25 +171,18 @@ function restore_config_section_xmlrpc($raw_params) {
 			}
 		}
 	}
+
         // For vip section, first keep items sent from the master
 	$config = array_merge($config, $params[0]);
 
-	/* 
-	 * NOTE: Do not rely on array_merge since it might keep vips in there if there were
-	 * many vips previously and only a reduced list is sent for synching.
-	 */
-	if (is_array($params[0]['virtualip']) && is_array($params[0]['virtualip']['vip'])) {
+        /* Then add ipalias and proxyarp types already defined on the backup */
+	if (is_array($vipbackup) && !empty($vipbackup)) {
 		if (!is_array($config['virtualip']))
 			$config['virtualip'] = array();
-		$config['virtualip'] = $params[0]['virtualip'];
-	} else
-		$config['virtualip'] = array(); // Reset
-
-        /* Then add ipalias and proxyarp types already defined on the backup */
-	if (is_array($vipbackup)) {
-		foreach ($vipbackup as $vip) {
+		if (!is_array($config['virtualip']['vip']))
+			$config['virtualip']['vip'] = array();
+		foreach ($vipbackup as $vip)
 			array_unshift($config['virtualip']['vip'], $vip);
-		}
 	}
 
 	/* Log what happened */
@@ -201,7 +195,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	 */
 	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		$carp_setuped = false;
-                $anyproxyarp = false;
+		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if (isset($oldvips[$vip['vhid']])) {
 				if ($oldvips[$vip['vhid']] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {

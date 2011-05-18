@@ -166,7 +166,7 @@ function restore_config_section_xmlrpc($raw_params) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
 				if ($vip['mode'] == "carp")
 					$oldvips[$vip['vhid']] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-				if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
+				else if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
 					$vipbackup[] = $vip;
 			}
 		}

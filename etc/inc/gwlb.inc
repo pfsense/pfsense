@@ -272,7 +272,6 @@ function return_gateways_array($disabled = false) {
 
 	$gateways_arr = array();
 
-	if (0) {
 	$i = 0;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
@@ -304,7 +303,6 @@ function return_gateways_array($disabled = false) {
 			$i++;
 		}
 	} 
-	}
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false)
@@ -369,6 +367,7 @@ function return_gateway_groups_array() {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 
+	if (0) {
 	/* 
 	 * NOTE: The code below is meant to replace the default gateway when it goes down.
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
@@ -402,6 +401,7 @@ function return_gateway_groups_array() {
 		}
 	}
 	unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
+	}
 
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {

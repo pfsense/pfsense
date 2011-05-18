@@ -36,15 +36,38 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 require_once("pkg-utils.inc");
 require_once("pfsense-utils.inc");
-
-if (!is_array($config['installedpackages']['package']))
-	return;
+require_once("service-utils.inc");
 
 log_error("Restarting/Starting all packages.");
 
-foreach($config['installedpackages']['package'] as $package) {
-	sync_package($package['name']);
-	start_service($package['name']);
+$rcfiles = glob("{$rcfileprefix}*.sh");
+if (!$rcfiles)
+	$rcfiles = array();
+else {
+	$rcfiles = array_flip($rcfiles);
+	if (!$rcfiles)
+		$rcfiles = array();
+}
+
+if (is_array($config['installedpackages']['package'])) {
+	foreach($config['installedpackages']['package'] as $package) {
+		echo " Starting package {$package['name']}...";
+		sync_package($package['name']);
+		start_service($package['name']);
+		unset($rcfiles["{$rcfileprefix}{$package['name']}.sh"]);
+		echo "done.\n";
+	}
+}
+
+$shell = @popen("/bin/sh", "w");
+if ($shell) {
+	foreach ($rcfiles as $rcfile) {
+		echo " Starting {$rcfile}...";
+		fwrite($shell, "{$rcfile} start >>/tmp/bootup_messages 2>&1 &");
+		echo "done.\n";
+	}
+
+	pclose($shell);
 }
 
 ?>

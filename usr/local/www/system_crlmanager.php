@@ -494,6 +494,7 @@ function method_change() {
 					</thead>
 					<tbody>
 					<?php
+						$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 						// Map CRLs to CAs in one pass
 						$ca_crl_map = array();
 						foreach($a_crl as $crl)
@@ -504,7 +505,6 @@ function method_change() {
 							$name = htmlspecialchars($ca['descr']);
 
 							if($ca['prv']) {
-								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 								$cainternal = "YES";
 							} else 
 								$cainternal = "NO";

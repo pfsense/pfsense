@@ -61,7 +61,7 @@ if (is_array($config['installedpackages']['package'])) {
 
 $shell = @popen("/bin/sh", "w");
 if ($shell) {
-	foreach ($rcfiles as $rcfile) {
+	foreach ($rcfiles as $rcfile => $number) {
 		echo " Starting {$rcfile}...";
 		fwrite($shell, "{$rcfile} start >>/tmp/bootup_messages 2>&1 &");
 		echo "done.\n";

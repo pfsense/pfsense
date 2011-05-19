@@ -116,15 +116,15 @@ $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
 /* stuff the leases file in a proper format into a array by line */
-exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
+exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern} | /usr/bin/grep '^ia-na'", $leases_content);
 $leases_count = count($leases_content);
-exec("/usr/sbin/arp -an", $rawdata);
+exec("/usr/sbin/ndp -an", $rawdata);
 $arpdata = array();
 foreach ($rawdata as $line) {
-	$elements = explode(' ',$line);
-	if ($elements[3] != "(incomplete)") {
+	$elements = preg_split('/\s+/ ',$line);
+	if ($elements[1] != "(incomplete)") {
 		$arpent = array();
-		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[1]));
+		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[0]));
 		// $arpent['mac'] = trim($elements[3]);
 		// $arpent['interface'] = trim($elements[5]);
 	$arpdata[] = $arpent['ip'];
@@ -144,8 +144,8 @@ while($i < $leases_count) {
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
-	/* with less then 20 fields there is nothing useful */
-	if($fcount < 20) {
+	/* with less then 15 fields there is nothing useful */
+	if($fcount < 15) {
 		$i++;
 		continue;
 	}
@@ -162,9 +162,13 @@ while($i < $leases_count) {
 				$p++;
 				$i++;
 				continue 3;
-			case "lease":
-				$leases[$l]['ip'] = $data[$f+1];
+			case "ia-na":
+				$leases[$l]['duid'] = $data[$f+1];
 				$leases[$l]['type'] = "dynamic";
+				$f = $f+2;
+				break;
+			case "iaaddr":
+				$leases[$l]['ip'] = $data[$f+1];
 				$f = $f+2;
 				break;
 			case "starts":
@@ -383,7 +387,7 @@ foreach ($leases as $data) {
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&all=" . htmlspecialchars($_GET['all']) . "\">";
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcpv6_leases.php?deleteip={$data['ip']}&all=" . htmlspecialchars($_GET['all']) . "\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\"></a></td>\n";
 		}
                 echo "</tr>\n";
@@ -393,7 +397,7 @@ foreach ($leases as $data) {
 ?>
 </table>
 <p>
-<form action="status_dhcp_leases.php" method="GET">
+<form action="status_dhcpv6_leases.php" method="GET">
 <input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0">

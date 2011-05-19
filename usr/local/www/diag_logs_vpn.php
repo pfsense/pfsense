@@ -49,11 +49,38 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-$vpntype = (htmlspecialchars($_GET['vpntype'])) ? htmlspecialchars($_GET['vpntype']) : "pptp";
-$mode = (htmlspecialchars($_GET['mode'])) ? htmlspecialchars($_GET['mode']) : "login";
+if (htmlspecialchars($_POST['vpntype']))
+	$vpntype = htmlspecialchars($_POST['vpntype']);
+elseif (htmlspecialchars($_GET['vpntype']))
+	$vpntype = htmlspecialchars($_GET['vpntype']);
+else
+	$vpntype = "pptp";
 
-if ($_POST['clear']) 
-	clear_log_file("/var/log/vpn.log");
+if (htmlspecialchars($_POST['mode']))
+	$mode = htmlspecialchars($_POST['mode']);
+elseif (htmlspecialchars($_GET['mode']))
+	$mode = htmlspecialchars($_GET['mode']);
+else
+	$mode = "login";
+
+switch ($vpntype) {
+	case 'pptp':
+		$logname = "pptps";
+		break;
+	case 'poes':
+		$logname = "poes";
+		break;
+	case 'l2tp':
+		$logname = "l2tps";
+		break;
+}
+
+if ($_POST['clear']) {
+	if ($mode != "raw")
+		clear_log_file("/var/log/vpn.log");
+	else
+		clear_log_file("/var/log/{$logname}.log");
+}
 
 function dump_clog_vpn($logfile, $tail) {
 	global $g, $config, $vpntype;
@@ -151,22 +178,12 @@ include("head.inc");
 		</tr>
 			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
 		<?php else: 
-			switch ($vpntype) {
-				case 'pptp':
-					$logname = "pptps";
-					break;
-				case 'poes':
-					$logname = "poes";
-					break;
-				case 'l2tp':
-					$logname = "l2tps";
-					break;
-			}
 			dump_clog("/var/log/{$logname}.log", $nentries);
 		      endif; ?>
 	</table>
 	<br />
 	<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">
+	<input type="hidden" name="mode" id="mode" value="<?=$mode;?>">
 	<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
 	</form>
 	</td>

@@ -473,8 +473,7 @@ function is_validaliasname($name) {
 	$reserved = array("port", "pass");
 	if (in_array($name, $reserved, true))
 		return; /* return NULL */
-
-	if (!preg_match("/[^a-zA-Z0-9_]/", $name))
+	if (!preg_match("/[^a-zA-Z0-9_]/", $name) && (strlen($name) < 32))
 		return true;
 	else
 		return false;

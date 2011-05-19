@@ -142,7 +142,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Reserved word used for alias name.");
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
+			$input_errors[] = gettext("The alias name must be less than 32 characters long and may only consist of the characters") . " a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
 	if (empty($a_aliases[$id])) {

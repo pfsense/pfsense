@@ -282,7 +282,8 @@ function vpn_ipsec_configure($ipchg = false)
 						break;
 				}
 
-				$pskconf .= "{$peerid_data}\t{$ph1ent['pre-shared-key']}\n";
+				if (!empty($peerid_data) && !empty($ph1ent['pre-shared-key']))
+					$pskconf .= trim($peerid_data) . "\t" . trim($ph1ent['pre-shared-key']) . "\n";
 			}
 		}
 

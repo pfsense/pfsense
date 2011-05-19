@@ -171,9 +171,21 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Synchronize traffic shaper</fielddescr>
+			<fielddescr>Synchronize traffic shaper(queues)</fielddescr>
 			<fieldname>synchronizetrafficshaper</fieldname>
-			<description>When this option is enabled, this system will automatically sync the traffic shaper configuration to the other CARP host when changes are made.</description>
+			<description>When this option is enabled, this system will automatically sync the traffic shaper configuration for queues to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize traffic shaper(limiter)</fielddescr>
+			<fieldname>synchronizetrafficshaperlimiter</fieldname>
+			<description>When this option is enabled, this system will automatically sync the traffic shaper configuration for limiters to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize traffic shaper(layer7)</fielddescr>
+			<fieldname>synchronizetrafficshaperlayer7</fieldname>
+			<description>When this option is enabled, this system will automatically sync the traffic shaper configuration for layer7 to the other CARP host when changes are made.</description>
 			<type>checkbox</type>
 		</field>
 		<field>

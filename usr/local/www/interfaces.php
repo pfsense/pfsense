@@ -346,7 +346,7 @@ if ($_POST['apply']) {
 						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
 						mwexec("/sbin/ifconfig {$realif} inet6 {$values['ipaddrv6']} -alias");
 					}
-					interface_configure($ifapply, true);
+					interface_reconfigure($ifapply);
 				} else {
 					interface_bring_down($ifapply);
 				}

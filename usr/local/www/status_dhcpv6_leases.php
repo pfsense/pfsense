@@ -163,12 +163,26 @@ while($i < $leases_count) {
 				$i++;
 				continue 3;
 			case "ia-na":
-				$leases[$l]['duid'] = $data[$f+1];
+				if ($data[$f+1][0] == '"') {
+					$duid = "";
+					while ($data[$f][strlen($data[$f])-1] != '"') {
+						$duid .= " " . $data[$f+1];
+						$f++;
+					}
+					$leases[$l]['duid'] = $duid;
+				} else {
+					$leases[$l]['duid'] = $data[$f+1];
+				}
 				$leases[$l]['type'] = "dynamic";
 				$f = $f+2;
 				break;
 			case "iaaddr":
 				$leases[$l]['ip'] = $data[$f+1];
+				if (in_array($leases[$l]['ip'], $arpdata)) {
+					$leases[$l]['online'] = 'online';
+				} else {
+					$leases[$l]['online'] = 'offline';
+				}
 				$f = $f+2;
 				break;
 			case "starts":
@@ -214,13 +228,6 @@ while($i < $leases_count) {
 				$f = $f+3;
 				break;
 			case "hardware":
-				$leases[$l]['mac'] = $data[$f+2];
-				/* check if it's online and the lease is active */
-				if (in_array($leases[$l]['ip'], $arpdata)) {
-					$leases[$l]['online'] = 'online';
-				} else {
-					$leases[$l]['online'] = 'offline';
-				}
 				$f = $f+2;
 				break;
 			case "client-hostname":
@@ -244,7 +251,6 @@ while($i < $leases_count) {
 	$i++;
 }
 
-/* remove duplicate items by mac address */
 if(count($leases) > 0) {
 	$leases = remove_duplicate($leases,"ip");
 }
@@ -266,7 +272,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
-			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+			$online = exec("/usr/sbin/ndp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 			if ($online == 1) {
 				$slease['online'] = 'online';
 			} else {
@@ -317,7 +323,7 @@ foreach ($pools as $data) {
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("MAC address"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("DUID"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Hostname"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("End"); ?></a></td>
@@ -358,11 +364,7 @@ foreach ($leases as $data) {
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
-                if ($data['online'] != "online") {
-                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\" onclick=\"return confirm('" . gettext("Send Wake on LAN packet to this MAC address?") . "')\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
-                } else {
-                	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
-                }
+		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
 				if ($data['type'] != "static") {
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
@@ -375,15 +377,12 @@ foreach ($leases as $data) {
                 echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
 		
 		if ($data['type'] == "dynamic") {
-			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";
+			echo "<td valign=\"middle\"><a href=\"services_dhcpv6_edit.php?if={$data['if']}&duid={$data['duid']}&hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\"></a></td>\n";
 		} else {
                 	echo "<td class=\"list\" valign=\"middle\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"></td>\n";
 		}
-
-                echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
-		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a Wake on LAN mapping for this MAC address") ."\"></a></td>\n";
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {

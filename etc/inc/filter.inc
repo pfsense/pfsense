@@ -532,7 +532,7 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if(isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$extraalias = "";
+			$extralias = "";
 			/* 
 			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
 			 * its quite dangerous!
@@ -542,7 +542,10 @@ function filter_generate_aliases() {
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
-			if($aliased['type'] == "host" || $aliased['type'] == "network" || $aliased['type'] == "url") {
+			switch ($aliased['type']) {
+			case "host":
+			case "network":
+			case "url":
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs))
 					$aliases .= "table <{$aliased['name']}> persist\n";
@@ -550,7 +553,8 @@ function filter_generate_aliases() {
 					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-			} else if($aliased['type'] == "openvpn") {
+				break;
+			case "openvpn":
 				$openvpncfg = array();
 				if($config['openvpn']['user']) {
 					/* XXX: Check if we have a correct ip? */
@@ -570,14 +574,21 @@ function filter_generate_aliases() {
 				}
 				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-			} elseif($aliased['type'] == "urltable") {
+				break;
+			case "urltable":
 				$urlfn = alias_expand_urltable($aliased['name']);
 				if ($urlfn) {
 					$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
 					$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				}
-			} else 
+				break;
+			case "port":
+				$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
+				break;
+			default:
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
+				break;
+			}
 		}
 	}
 	$result = "{$alias} \n";

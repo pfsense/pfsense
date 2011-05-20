@@ -1471,7 +1471,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
 		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
 			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPASS, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
 		}
 	}
 

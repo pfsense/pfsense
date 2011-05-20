@@ -173,7 +173,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	}
 
         // For vip section, first keep items sent from the master
-	$config = array_merge($config, $params[0]);
+	$config = array_merge_recursive_unique($config, $params[0]);
 
         /* Then add ipalias and proxyarp types already defined on the backup */
 	if (is_array($vipbackup) && !empty($vipbackup)) {

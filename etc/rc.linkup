@@ -45,6 +45,8 @@ function handle_argument_group($iface, $argument2) {
 		$iface = get_real_interface($iface);
 		interfaces_bring_up($iface);
 		exec("/usr/sbin/arp -d -i {$iface} -a");
+		if ($argument2 == "start" || $argument2 == "up")
+			send_event("interface newip {$iface}");
 	} else {
 		switch ($argument2) {
 		case "stop":

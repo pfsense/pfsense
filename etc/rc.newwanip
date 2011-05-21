@@ -102,19 +102,21 @@ file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
 
+/* reconfigure our gateway monitor */
+setup_gateways_monitor();
+
 /* Check Gif tunnels */
-foreach($config['gifs'] as $gif) {
+foreach($config['gifs']['gif'] as $gif) {
 	if($gif['if'] == $interface) {
-		foreach($config['interfaces'] as $ifparent => $ifname) {
+		foreach($config['interfaces'] as $ifname => $ifparent) {
+			// echo "interface $ifparent, ifname $ifname, gif {$gif['gifif']}\n";
 			if(($ifparent['if'] == $gif['gifif']) && (isset($ifparent['enable']))) {
+				// echo "Running routing configure for $ifname\n";
 				system_routing_configure($ifname);
 			}
 		}
 	}
 }
-
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
 
 /* signal filter reload */
 filter_configure();

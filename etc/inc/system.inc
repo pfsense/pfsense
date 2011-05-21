@@ -318,7 +318,7 @@ function system_routing_configure($interface = "") {
 	}
 
 	/* configure gif interfaces for ipv6 tunnels */
-	interfaces_gif_configure();
+	// interfaces_gif_configure();
 
 	$gatewayip = "";
 	$interfacegw = "";

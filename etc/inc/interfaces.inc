@@ -811,8 +811,15 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	else
 		log_error("could not bring gifif up -- variable not defined");
 
-	/* XXX: Needed?! Let them use the defined gateways instead */
-	//mwexec("/sbin/route add {$gif['tunnel-remote-addr']}/{$gif['tunnel-remote-net']} -iface {$gifif}");
+	$iflist = get_configured_interface_list();
+	foreach($iflist as $ifname) {
+		if($config['interfaces'][$ifname]['if'] == $gifif) {
+			if(get_interface_gateway_v6($ifname)) {
+				system_routing_configure($ifname);
+				break;
+			}
+		}
+	}
 
 	if(is_ipaddrv4($gif['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);

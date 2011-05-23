@@ -294,7 +294,7 @@ function gigawords($bytes) {
      */
 
     // We use BCMath functions since normal integers don't work with so large numbers
-    $gigawords = bcdiv( bcsub( $bytes, remainder($bytes) ) , 4294967295) ;
+    $gigawords = bcdiv( bcsub( $bytes, remainder($bytes) ) , PHP_INT_MAX) ;
 
     // We need to manually set this to a zero instead of NULL for put_int() safety
     if (is_null($gigawords)) {
@@ -308,7 +308,7 @@ function gigawords($bytes) {
 function remainder($bytes) {
 
     // Calculate the bytes we are going to send to the radius
-    $bytes = bcmod($bytes, 4294967295);
+    $bytes = bcmod($bytes, PHP_INT_MAX);
 
     if (is_null($bytes)) {
         $bytes = 0;

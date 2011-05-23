@@ -199,13 +199,6 @@ if ($_POST) {
 	else
 		$tls_mode = false;
 
-	if (!empty($pconfig['authmode'])) {
-		foreach ($pconfig['authmode'] as $pauthmode) {
-			if ($pauthmode != "Local Database" && $pconfig['mode'] == "server_tls_user") 
-				$input_errors[] = gettext("Only 'Local authentication database'  is allowed with") . " " . $openvpn_server_modes[$pconfig['mode']];
-		}
-	}
-
 	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
 		$input_errors[] = gettext("You must select a Backend for Authentication if the server mode requires User Auth.");
 
@@ -794,13 +787,16 @@ if ($savemsg)
 								<option value="">None</option>
 							<?php
 								foreach ($a_crl as $crl):
-									if (is_crl_internal($crl) && (count($crl['cert']) <= 0))
-										continue;
 									$selected = "";
-									if ($pconfig['crlref'] == $crl['refid'])
-										$selected = "selected";
+									$caname = "";
+									$ca = lookup_ca($crl['caref']);
+									if ($ca) {
+										$caname = " (CA: {$ca['descr']})";
+										if ($pconfig['crlref'] == $crl['refid'])
+											$selected = "selected";
+									}
 							?>
-								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'];?></option>
+								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'] . $caname;?></option>
 							<?php endforeach; ?>
 							</select>
 							</td>

@@ -685,10 +685,6 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
-		$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
-		$config['sysctl']['item'][14]['descr'] =    gettext("Verbosity of the rndtest driver (0: do not display results on console)");
-		$config['sysctl']['item'][14]['value'] =   "default";
-
 		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
 		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][15]['value'] =   "default";
@@ -1262,13 +1258,13 @@ function upgrade_047_to_048() {
 		unset($config['dnsupdate']);
 	}
 
-	if (is_array($config['pppoe'])) {
+	if (is_array($config['pppoe']) && is_array($config['pppoe'][0])) {
 		$pconfig = array();
-		$pconfig['username'] = $config['pppoe']['username'];
-		$pconfig['password'] = $config['pppoe']['password'];
-		$pconfig['provider'] = $config['pppoe']['provider'];
-		$pconfig['ondemand'] = isset($config['pppoe']['ondemand']);
-		$pconfig['timeout'] = $config['pppoe']['timeout'];
+		$pconfig['username'] = $config['pppoe'][0]['username'];
+		$pconfig['password'] = $config['pppoe'][0]['password'];
+		$pconfig['provider'] = $config['pppoe'][0]['provider'];
+		$pconfig['ondemand'] = isset($config['pppoe'][0]['ondemand']);
+		$pconfig['timeout'] = $config['pppoe'][0]['timeout'];
 		unset($config['pppoe']);
 		$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
 		$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];

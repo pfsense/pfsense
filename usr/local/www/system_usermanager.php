@@ -87,6 +87,7 @@ if (isAllowedPage("system_usermanager")) {
 
 		$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
 		unset($a_user[$id]['priv'][$_GET['privid']]);
+		local_user_set($a_user[$id]);
 		write_config();
 		$_GET['act'] = "edit";
 		$savemsg = gettext("Privilege")." {$privdeleted} ".
@@ -896,7 +897,7 @@ function sshkeyClicked(obj) {
 		if (!$input_errors) {
 			// all values are okay --> saving changes
 			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
-
+			local_user_set($config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]);
 			write_config();
 			$savemsg = gettext("Password successfully changed") . "<br />";
 		}

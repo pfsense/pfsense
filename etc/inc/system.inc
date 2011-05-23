@@ -1086,6 +1086,11 @@ EOD;
 		$lighty_config .= "## " . gettext("ssl configuration") . "\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
+
+		// Harden SSL a bit for PCI conformance testing
+		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
+		$lighty_config .= "ssl.cipher-list = \"TLSv1+HIGH !SSLv2 RC4+MEDIUM !aNULL !eNULL !3DES @STRENGTH\"\n";
+
 		if(!(empty($ca) || (strlen(trim($ca)) == 0)))
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
@@ -1196,7 +1201,7 @@ function system_ntp_configure() {
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
 	
 	// Note that we are starting up
-	exec("echo 'OpenNTPD is starting up' >> {$g['varlog_path']}/ntpd.log");
+	log_error("OpenNTPD is starting up.");
 
 }
 

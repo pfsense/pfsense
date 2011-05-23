@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>8</totalsteps>
+<totalsteps>9</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
@@ -556,8 +556,12 @@
 <step>
 	<id>8</id>
 	<title>Reload in progress</title>
-	<description>A reload is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
-	&lt;meta http-equiv="refresh" content="60; url=$myurl" &gt;</description>
+	<description>
+		A reload is now in progress.  Please wait. &lt;p&gt; 
+		&lt;meta http-equiv="refresh" content="60; url=wizard.php?xml=setup_wizard.xml&amp;stepid=8" &gt;
+		&lt;p&gt;
+		The wizard will redirect to the next step once the reload is completed.
+	</description>
 	<stepafterformdisplay>
 		<![CDATA[
 		$config['system']['hostname'] = $config['wizardtemp']['system']['hostname'];
@@ -587,9 +591,28 @@
 		unset($config['wizardtemp']);
 		write_config();
 		reload_all();
-		setup_gateways_monitor();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		]]>
 	</stepafterformdisplay>
+</step>
+<step>
+	<id>9</id>
+	<title>Wizard completed.</title>
+	<stepbeforeformdisplay>
+	<![CDATA[
+		if($g['product_name'] <> 'pfSense') {
+			Header("Location: $myurl");
+			exit;
+		}	
+	]]>
+	</stepbeforeformdisplay>
+	<description>
+	<![CDATA[
+		Congratulations!  pfSense is now configured.<p/>
+		Please consider donating to the project to help us with our overheads costs.<p/>
+		Click <a target='_new' href='http://www.pfsense.org/j.php?jumpto=donate'>here</a> to donate or purchase services offered by the pfSense team.<p/>
+		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
+	]]>
+	</description>
 </step>
 </pfsensewizard>

@@ -9,7 +9,13 @@ fi
 /sbin/pfctl -b $3 -b $4
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:
-/bin/rm -f /var/etc/nameserver_$1
+if [ -f "/var/etc/nameserver_$1" ]; then
+	# Remove old entries
+	for nameserver in `cat /var/etc/nameserver_$1`; do
+		/sbin/route delete $nameserver >/dev/null 2>&1
+	done
+	/bin/rm -f /var/etc/nameserver_$1
+fi
 # Do not remove gateway used during filter reload.
 /bin/rm -f /tmp/$1_router
 /bin/rm -f /tmp/$1up

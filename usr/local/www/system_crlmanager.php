@@ -223,6 +223,7 @@ if ($_POST) {
 
 		$crl['descr'] = $pconfig['descr'];
 		$crl['caref'] = $pconfig['caref'];
+		$crl['method'] = $pconfig['method'];
 
 		if ($pconfig['method'] == "existing") {
 			$crl['text'] = base64_encode($pconfig['crltext']);

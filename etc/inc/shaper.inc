@@ -3740,7 +3740,7 @@ function layer7_start_l7daemon() {
 		mwexec("/bin/kill -HUP {$l7pid[0]}");
 	    } else {
 		// XXX: Hardcoded number of packets to garbage collect and queue length..
-		$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
+		$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 8 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
 		mwexec_bg($ipfw_classifyd_init);
 	    }
         }

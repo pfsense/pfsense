@@ -80,7 +80,11 @@ add_new_address() {
 		$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
 		$LOGGER "New Routers ($interface): $new_routers"
 
-        echo $new_routers > /tmp/${interface}_router
+
+	# This is necessary otherwise apinger will try to ping all 1s address
+	if [ "$new_routers" != "255.255.255.255" ]; then
+		echo $new_routers > /tmp/${interface}_router
+	fi
 	echo $new_ip_address > /var/db/${interface}_ip
 }
 
@@ -226,17 +230,20 @@ add_new_resolv_conf() {
 	if [ -f "/var/etc/nameserver_$interface" ]; then
 		# Remove old entries
 		for nameserver in `cat /var/etc/nameserver_$interface`; do
-			$ROUTE delete $nameserver
+			$ROUTE delete $nameserver >/dev/null 2>&1
 		done
 	fi
 	if [ -n "$new_domain_name_servers" ]; then 
 		/bin/rm -f /var/etc/nameserver_$interface
+		ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface
 			# so that mulitple wans work correctly with multiple dns
 			# also backup the nameserver for later route removal
-			echo $nameserver >>/var/etc/nameserver_$interface
-			$ROUTE add $nameserver -iface $interface
+			if [ $ALLOWOVERRIDE -gt 0 ]; then
+				echo $nameserver >>/var/etc/nameserver_$interface
+				$ROUTE add $nameserver -iface $interface
+			fi
 		done
 		echo $new_domain_name >/var/etc/searchdomain_$interface
 	fi

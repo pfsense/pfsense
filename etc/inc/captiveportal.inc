@@ -1659,8 +1659,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		 */
 		$peruserbw = isset($config['captiveportal']['peruserbw']);
 
-		$bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
-		$bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
+		$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $config['captiveportal']['bwdefaultup'];
+		$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $config['captiveportal']['bwdefaultdn'];
 
 		if ($passthrumac) {
 			$mac = array();

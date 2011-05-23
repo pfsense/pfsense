@@ -770,7 +770,7 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>
-								<?=gettext("Paste the certificate received from your cerificate authority here.");?></td>
+								<?=gettext("Paste the certificate received from your certificate authority here.");?></td>
 							</td>
 						</tr>
 						<tr>

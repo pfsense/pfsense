@@ -579,7 +579,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 
 	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];
-	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
+	if (!empty($gwcfg['gatewayv6']) && is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if(($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {
 				$gw = $gateway['gateway'];

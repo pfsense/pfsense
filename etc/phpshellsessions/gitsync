@@ -13,7 +13,7 @@ require_once("pfsense-utils.inc");
 	
 conf_mount_rw();
 
-$GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
+$GIT_REPO="git://github.com/bsdperimeter/pfsense.git";
 $CODIR =  "/root/pfsense/";
 
 global $g;

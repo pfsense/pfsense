@@ -310,7 +310,7 @@ if ($_POST['apply']) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply) {
 				if (isset($config['interfaces'][$ifapply]['enable']))
-					interface_configure($ifapply, true);
+					interface_reconfigure($ifapply, true);
 				else
 					interface_bring_down($ifapply);
 			}

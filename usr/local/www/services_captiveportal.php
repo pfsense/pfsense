@@ -263,6 +263,7 @@ function enable_change(enable_change) {
 	document.iform.freelogins_resettimeout.disabled = endis;
 	document.iform.freelogins_updatetimeouts.disabled = endis;
 	document.iform.timeout.disabled = endis;
+	document.iform.preauthurl.disabled = endis;
 	document.iform.redirurl.disabled = endis;
 	document.iform.radiusip.disabled = radius_endis;
 	document.iform.radiusip2.disabled = radius_endis;
@@ -283,6 +284,7 @@ function enable_change(enable_change) {
 	document.iform.radmac_format.disabled = radius_endis;
 	document.iform.httpsname.disabled = endis;
 	document.iform.cert.disabled = endis;
+	document.iform.cacert.disabled = endis;
 	document.iform.key.disabled = endis;
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;

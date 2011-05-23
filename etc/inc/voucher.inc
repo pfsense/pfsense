@@ -129,7 +129,7 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 	$toreturn =  XML_RPC_Decode($resp->value());
-	if(count($toreturn['voucher']['roll']) <> count($config['voucher']['roll'])) {
+	if (is_array($toreturn['voucher']) && (count($toreturn['voucher']['roll']) <> count($config['voucher']['roll']))) {
 		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
 		voucher_configure(true);

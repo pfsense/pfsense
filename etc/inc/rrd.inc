@@ -742,42 +742,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "# polling Captive Portal for number of logged in users\n";
 			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather loggedin`\n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalloggedin \${CP}\n";
-			
-			$ifname= "captiveportal";
-			if (!file_exists("$rrddbpath$ifname$captiveportaltotalusers")) {
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportaltotalusers --step $rrdcaptiveportalinterval ";
-				$rrdcreate .= "DS:totalusers:GAUGE:$captiveportalvalid:0:10000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:5:1100 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:60:1175 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:5:1100 ";
-				$rrdcreate .= "RRA:MIN:0.5:60:1175 ";
-				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1100 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1175 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
-				$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:5:1100 ";
-				$rrdcreate .= "RRA:LAST:0.5:60:1175 ";
-				$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
 
-				create_new_rrd($rrdcreate);
-			}
-
-			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$captiveportaltotalusers N:U");
-			}
-			
-			/* the Captive Portal stats gathering function. */
-			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
-			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather total`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportaltotalusers \${CP}\n";
-			
 		}
 
 		$rrdupdatesh .= "sleep 60\n";

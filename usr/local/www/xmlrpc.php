@@ -158,26 +158,80 @@ function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
+
 	$vipbackup = array();
+	$oldvips = array();
 	if (isset($params[0]['virtualip'])) {
 		if(is_array($config['virtualip']['vip'])) {
-			foreach ($config['virtualip']['vip'] as $vip)
-				interface_vip_bring_down($vip);
+			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
+				if ($vip['mode'] == "carp")
+					$oldvips[$vip['vhid']] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
+				else if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
+					$vipbackup[] = $vip;
+			}
 		}
-        	$vipbackup = $config['virtualip']['vip'];
 	}
+
         // For vip section, first keep items sent from the master
-	$config = array_merge($config, $params[0]);
-        // Then add ipalias and proxyarp types already defined on the backup
-	if (is_array($vipbackup)) {
-		foreach ($vipbackup as $vip) {
-			if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
-				array_unshift($config['virtualip']['vip'], $vip);
-		}
+	$config = array_merge_recursive_unique($config, $params[0]);
+
+        /* Then add ipalias and proxyarp types already defined on the backup */
+	if (is_array($vipbackup) && !empty($vipbackup)) {
+		if (!is_array($config['virtualip']))
+			$config['virtualip'] = array();
+		if (!is_array($config['virtualip']['vip']))
+			$config['virtualip']['vip'] = array();
+		foreach ($vipbackup as $vip)
+			array_unshift($config['virtualip']['vip'], $vip);
 	}
+
+	/* Log what happened */
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
-	interfaces_vips_configure();
+
+	/* 
+	 * The real work on handling the vips specially
+	 * This is a copy of intefaces_vips_configure with addition of not reloading existing/not changed carps
+	 */
+	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+		$carp_setuped = false;
+		$anyproxyarp = false;
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if (isset($oldvips[$vip['vhid']])) {
+				if ($oldvips[$vip['vhid']] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
+				    if (does_interface_exist("vip{$vip['vhid']}"))
+					continue; // Skip reconfiguring this vips since nothing has changed.
+				} else
+					unset($oldvips['vhid']);
+			}
+
+			switch ($vip['mode']) {
+			case "proxyarp":
+				$anyproxyarp = true;
+				break;
+			case "ipalias":
+				interface_ipalias_configure(&$vip);
+				break;
+			case "carp":
+				if ($carp_setuped == false)
+                                        $carp_setuped = true;
+				interface_carp_configure($vip);
+				break;
+			case "carpdev-dhcp":
+				interface_carpdev_configure($vip);
+				break;
+			}
+		}
+		/* Cleanup remaining old carps */
+		foreach ($oldvips as $oldvipif => $oldvippar) {
+			if (does_interface_exist("vip{$oldvipif}"))
+				pfSense_interface_destroy("vip{$oldvipif}");
+		}
+		if ($carp_setuped == true)
+			interfaces_carp_setup();
+		if ($anyproxyarp == true)
+			interface_proxyarp_configure();
+	}
 
 	return $xmlrpc_g['return']['true'];
 }
@@ -218,29 +272,7 @@ $merge_config_section_sig = array(
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
-	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
-		return $xmlrpc_g['return']['authfail'];
-	if (isset($params[0]['virtualip'])) {
-                if(is_array($config['virtualip']['vip'])) {
-                        foreach ($config['virtualip']['vip'] as $vip)
-                                interface_vip_bring_down($vip);
-                }
-		$vipbackup = $config['virtualip']['vip'];
-        }
-	$config = array_merge_recursive_unique($config, $params[0]);
-        // Then add ipalias and proxyarp types already defined on the backup
-	if (is_array($vipbackup)) {
-		foreach ($vipbackup as $vip) {
-			if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
-				array_unshift($config['virtualip']['vip'], $vip);
-		}
-	}
-	$mergedkeys = implode(",", array_keys($params[0]));
-	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
-	interfaces_vips_configure();
-
-	return $xmlrpc_g['return']['true'];
+	return restore_config_section_xmlrpc($raw_params);
 }
 
 /*****************************/
@@ -372,6 +404,8 @@ function get_notices_xmlrpc($raw_params) {
 	return $response;
 }
 
+$xmlrpclockkey = lock('xmlrpc', LOCK_EX);
+
 /*****************************/
 $server = new XML_RPC_Server(
         array(
@@ -411,5 +445,7 @@ $server = new XML_RPC_Server(
 			'signature' => $get_notices_sig)
         )
 );
+
+unlock($xmlrpclockkey);
 
 ?>

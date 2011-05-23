@@ -932,9 +932,9 @@ function interfaces_configure() {
 	return 0;
 }
 
-function interface_reconfigure($interface = "wan") {
+function interface_reconfigure($interface = "wan", $reloadall = false) {
 	interface_bring_down($interface);
-	interface_configure($interface, true);
+	interface_configure($interface, $reloadall);
 }
 
 function interface_vip_bring_down($vip) {

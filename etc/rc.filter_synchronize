@@ -321,9 +321,10 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 		if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
 			$sections[] = 'shaper';
 		}
-		if ($carp['synchronizetrafficshaper'] != "") {
-			if (!is_array($config['l7shaper']))
-				$config['l7shaper'] = array();
+		if ($carp['synchronizetrafficshaperlimiter'] != "" and is_array($config['dnshaper'])) {
+			$sections[] = 'dnshaper';
+		}
+		if ($carp['synchronizetrafficshaperlayer7'] != "" and is_array($config['l7shaper'])) {
 			$sections[] = 'l7shaper';
 		}
 		if ($carp['synchronizestaticroutes'] != "") {

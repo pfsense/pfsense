@@ -1804,13 +1804,26 @@ function upgrade_053_to_054() {
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
 		$gateways = return_gateways_array();
+		$group_name_changes = array();
 		if (! is_array($config['gateways']['gateway_item']))
 			$config['gateways']['gateway_item'] = array();
 
 		$a_gateways =& $config['gateways']['gateway_item'];
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
-				$gateway_group['name'] = $lbpool['name'];
+				// Gateway Groups have to have valid names in pf, old lb pools did not. Clean them up.
+				$group_name = ereg_replace("[^A-Za-z0-9]", "", $lbpool['name'] );
+				// If we made and changes, check for collisions and note the change.
+				if ($group_name != $lbpool['name']) {
+					// Make sure the name isn't already in use.
+					foreach ($gateway_group_arr as $gwg) {
+						// If the name is in use, add some random bits to avoid collision.
+						if ($gwg['name'] == $group_name)
+							$group_name .= uniqid();
+					}
+					$group_name_changes[$lbpool['name']] = $group_name;
+				}
+				$gateway_group['name'] = $group_name;
 				$gateway_group['descr'] = $lbpool['descr'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
@@ -1855,6 +1868,11 @@ function upgrade_053_to_054() {
 	// Only set the gateway group array if we converted any
 	if (count($gateway_group_arr) != 0) {
 		$config['gateways']['gateway_group'] = $gateway_group_arr;
+		// Update any rules that had a gateway change, if any.
+		if (count($group_name_changes) > 0)
+			foreach ($config['filter']['rule'] as & $rule)
+				if (!empty($rule["gateway"]) && array_key_exists($rule["gateway"], $group_name_changes))
+					$rule["gateway"] = $group_name_changes[$rule["gateway"]];
 	}
 }
 
@@ -2455,4 +2473,21 @@ function upgrade_076_to_077() {
 	}
 }
 
+function upgrade_077_to_078() {
+	if (is_array($config['pptpd']) && is_array($config['pptpd']['radius'])
+		&& !is_array($config['pptpd']['radius']['server'])) {
+		$radarr = array();
+		$radsvr = array();
+		$radsvr['ip'] = $config['pptpd']['radius']['server'];
+		$radsvr['secret'] = $config['pptpd']['radius']['secret'];
+		$radsvr['port'] = 1812;
+		$radsvr['acctport'] = 1813;
+		$radsvr['enable'] = isset($config['pptpd']['radius']['enable']);
+		$radarr['accounting'] = isset($config['pptpd']['radius']['accounting']);
+		if ($radarr['accounting'])
+			$radarr['acct_update'] = $radsvr['ip'];
+		$radarr['server'] = $radsvr;
+		$config['pptpd']['radius'] = $radarr;
+	}
+}
 ?>

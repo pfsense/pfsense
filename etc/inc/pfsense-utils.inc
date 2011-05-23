@@ -708,14 +708,14 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	$proxyport = 0;
 	$proxyuser = "";
 	$proxypass = "";
-	if (!empty($config['system']['httpproxy']))
-		$proxyurl = $config['system']['httpproxy'];
-	if (!empty($config['system']['httpproxyport']) && is_numeric($config['system']['httpproxyport']))
-		$proxyport = $config['system']['httpproxyport'];
-	if (!empty($config['system']['httpproxyuser']))
-		$proxyuser = $config['system']['httpproxyuser'];
-	if (!empty($config['system']['httpproxypass']))
-		$proxypass = $config['system']['httpproxypass'];
+	if (!empty($config['system']['proxyurl']))
+		$proxyurl = $config['system']['proxyurl'];
+	if (!empty($config['system']['proxyport']) && is_numeric($config['system']['proxyport']))
+		$proxyport = $config['system']['proxyport'];
+	if (!empty($config['system']['proxyuser']))
+		$proxyuser = $config['system']['proxyuser'];
+	if (!empty($config['system']['proxypass']))
+		$proxypass = $config['system']['proxypass'];
 	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url, $port, $proxyurl, $proxyport, $proxyuser, $proxypass);
 	// If the ALT PKG Repo has a username/password set, use it.
 	if($config['system']['altpkgrepo']['username'] && 
@@ -1471,7 +1471,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
 		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
 			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPASS, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
 		}
 	}
 
@@ -2179,6 +2179,32 @@ function filter_rules_compare($a, $b) {
 		return $a['seq'] - $b['seq'];
 	else
 		return compare_interface_friendly_names($a['interface'], $b['interface']);
+}
+
+/****f* pfsense-utils/load_mac_manufacturer_table
+ * NAME
+ *   load_mac_manufacturer_table
+ * INPUTS
+ *   none
+ * RESULT
+ *   returns associative array with MAC-Manufacturer pairs
+ ******/
+function load_mac_manufacturer_table() {
+	/* load MAC-Manufacture data from the file */
+	$macs = false;
+	if (file_exists("/usr/local/share/nmap/nmap-mac-prefixes"))
+		$macs=file("/usr/local/share/nmap/nmap-mac-prefixes");
+	if ($macs){
+		foreach ($macs as $line){
+			if (preg_match('/([0-9A-Fa-f]{6}) (.*)$/', $line, $matches)){
+				/* store values like this $mac_man['000C29']='VMware' */
+				$mac_man["$matches[1]"]=$matches[2];
+			}
+		}
+ 		return $mac_man;
+	} else
+		return -1;
+
 }
 
 ?>

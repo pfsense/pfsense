@@ -68,6 +68,8 @@ include("head.inc");
 	$ifdescrs = get_configured_interface_with_descr(false, true);
 	foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
+	// Load MAC-Manufacturer table
+	$mac_man = load_mac_manufacturer_table();
 ?>
 <?php if ($i): ?>
 	<tr>
@@ -175,7 +177,12 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("MAC address");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['macaddr']);?>
+			<?php 
+			$mac=$ifinfo['macaddr']; 
+			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+			if(isset($mac_man[$mac_hi])){ print "<span title=\"$mac\">" . htmlspecialchars($mac_man[$mac_hi]); print "</span>"; }
+			      else {print htmlspecialchars($mac);}
+			?>
 		</td>
 	</tr>
 	<?php endif; if ($ifinfo['status'] != "down"): ?>

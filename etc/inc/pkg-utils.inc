@@ -42,6 +42,7 @@
 
 require_once("globals.inc");
 require_once("xmlrpc.inc");
+require_once("service-utils.inc");
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else
@@ -323,6 +324,8 @@ function uninstall_package($pkg_name) {
 			$static_output .= "\n";
 		}
 	}
+
+	stop_service($pkg_name);
 
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
@@ -892,7 +895,7 @@ function delete_package($pkg) {
 }
 
 function delete_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface;
+	global $g, $config, $static_output, $pkg_interface, $rcfileprefix;
 
 	conf_mount_rw();
 
@@ -964,6 +967,13 @@ function delete_package_xml($pkg) {
 						if($instservice['name'] == $service['name']) {
 							if($g['booting'] != true)
 								stop_service($service['name']);
+							if($service['rcfile']) {
+								$prefix = $rcfileprefix;
+								if (!empty($service['prefix']))
+									$prefix = $service['prefix'];
+								if (file_exists("{$prefix}{$service['rcfile']}"))
+									@unlink("{$prefix}{$service['rcfile']}");
+							}
 							unset($services[$key]);
 						}
 					}

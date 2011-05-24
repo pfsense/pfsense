@@ -513,8 +513,15 @@ function filter_generate_aliases() {
 	$aliases = "loopback = \"{ lo0 }\"\n";
 
 	foreach ($FilterIflist as $if => $ifcfg) {
-		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
-		$aliases .= " }\"\n";
+		if (is_array($ifcfg)) {
+			if ($ifcfg[0]['if'] == 'pppoe') {
+				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
+				$aliases .= " }\"\n";
+			}
+		} else {
+			$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
+			$aliases .= " }\"\n";
+		}
 	}
 
 	$aliases .= "\n#SSH Lockout Table\n";

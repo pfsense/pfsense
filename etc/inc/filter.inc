@@ -513,9 +513,9 @@ function filter_generate_aliases() {
 	$aliases = "loopback = \"{ lo0 }\"\n";
 
 	foreach ($FilterIflist as $if => $ifcfg) {
-		if (is_array($ifcfg['pppoe'])) {
-			if ($ifcfg['pppoe'][0]['if'] == 'pppoe') {
-				$aliases .= "{$ifcfg['pppoe'][0]['descr']} = \"{ {$ifcfg['pppoe'][0]['if']}";
+		if (is_array($ifcfg[0])) {
+			if ($ifcfg[0]['if'] == 'pppoe') {
+				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
 				$aliases .= " }\"\n";
 			}
 		} else {

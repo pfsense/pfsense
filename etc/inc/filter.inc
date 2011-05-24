@@ -1326,12 +1326,10 @@ function filter_nat_rules_generate() {
 			}
 		}
 		/* PPTP subnet */
-		if(isset($FilterIflist['pptp']) && $FilterIflist['pptp']['mode'] == "server" ) {
-			$pptp_subnet = $FilterIflist['pptp']['sn'];
-			if(is_private_ip($FilterIflist['pptp']['sa']) && !empty($pptp_subnet)) {
-				$numberofnathosts++;
-				$tonathosts .= "{$FilterIflist['pptp']['sa']}/{$pptp_subnet} ";
-			}
+		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+			$numberofnathosts += count($pptp_subnets);
+			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
 		/* PPPoE subnet */
 		if(isset($FilterIflist['pppoe']) && $FilterIflist['pppoe']['mode'] == "server") {

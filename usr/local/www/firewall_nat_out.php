@@ -126,15 +126,11 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $a_out[] = $natent;
 					
 					/* PPTP subnet */
-					if($config['pptpd']['mode'] == "server") {
-						if (is_ipaddr($config['pptpd']['localip'])) {
-							if($config['pptpd']['pptp_subnet'] <> "")
-								$ossubnet = $config['pptpd']['pptp_subnet'];
-							else
-								$ossubnet = "32";
-							$osn = gen_subnet($config['pptpd']['localip'], $ossubnet);
+					if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
+						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+						foreach ($pptp_subnets as $pptpsn) {
 							$natent = array();
-							$natent['source']['network'] = "{$osn}/{$ossubnet}";
+							$natent['source']['network'] = $pptpsn;
 							$natent['sourceport'] = "";
 							$natent['descr'] = gettext("Auto created rule for PPTP server");
 							$natent['target'] = "";

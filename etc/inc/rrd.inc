@@ -304,8 +304,14 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In6\/Pass|Out6\/Pass|In4\/Block|Out4\/Block|In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
+			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
+			$rrdupdatesh .= "unset BYTES \n";
+			$rrdupdatesh .= "BYTES4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\n";
+			$rrdupdatesh .= "BYTES4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'`\n";
+			$rrdupdatesh .= "BYTES6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$6 \":\"}'`\n";
+			$rrdupdatesh .= "BYTES6B=`cat \$TMPFILE | awk '/In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$BYTES4P\$BYTES4B\$BYTES6P\$BYTES6B\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -333,8 +339,14 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
-			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In6\/Pass|Out6\/Pass|In4\/Block|Out4\/Block|In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
+			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
+			$rrdupdatesh .= "unset PACKETS \n";
+			$rrdupdatesh .= "PACKETS4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\n";
+			$rrdupdatesh .= "PACKETS4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'`\n";
+			$rrdupdatesh .= "PACKETS6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$4 \":\"}'`\n";
+			$rrdupdatesh .= "PACKETS6B=`cat \$TMPFILE | awk '/In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$PACKETS4P\$PACKETS4B\$PACKETS6P\$PACKETS6B\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {

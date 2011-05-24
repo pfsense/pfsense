@@ -2214,7 +2214,7 @@ function generate_ipv6_from_mac($mac) {
 		return false;
 
 	$i = 0;
-	$ipv6 = "";
+	$ipv6 = "fe80::";
 	foreach($elements as $byte) {
 		if($i == 0) {
 			$hexadecimal =  substr($byte, 1, 2);
@@ -2230,12 +2230,8 @@ function generate_ipv6_from_mac($mac) {
 		if($i == 3) {
 			$ipv6 .= ":";
 		}
-		if($i == 5) {
-			$ipv6 .= ":";
-		}
 		if($i == 2) {
 			$ipv6 .= "ff:fe";
-			$i++;
 		}
 		
 		$i++;

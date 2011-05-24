@@ -1347,7 +1347,7 @@ function filter_nat_rules_generate() {
 			foreach ($FilterIflist['pppoe'] as $pppoe) {
 				if(is_private_ip($pppoe['ip'])) {
 					$numberofnathosts++;
-					$tonathosts .= "{$pppoe['ip']}/{$pppoe['sn']} ";
+					$tonathosts .= "{$pppoe['sa']}/{$pppoe['sn']} ";
 				}
 			}
 		}

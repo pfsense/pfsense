@@ -695,9 +695,15 @@ function filter_get_vpns_list() {
 		}
 	}
 	/* pppoe */
-	if($config['pppoe']['remoteip']) {
-		if(is_subnet($tunnel['remote-subnet'])) {
-			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				if(is_ipaddr($pppoe['remoteip'])) {
+					$pppoesub = gen_subnet($pppoe['remoteip'], $pppoe['pppoe_subnet']);
+					if (is_subnet($pppoesub))
+						$vpns_arr[] = $pppoesub;
+				}
+			}
 		}
 	}
 	if(!empty($vpns_arr)) {
@@ -788,19 +794,24 @@ function filter_generate_optcfg_array() {
 		$oic['virtual'] = true;
 		$FilterIflist['l2tp'] = $oic;
 	}
-	if($config['pppoe']['mode'] == "server") {
-		$oic = array();
-		$oic['if'] = 'pppoe';
-		$oic['descr'] = 'pppoe';
-		$oic['ip'] = $config['pppoe']['localip'];
-		$oic['sa'] = $config['pppoe']['remoteip'];
-		$oic['mode'] = $config['pppoe']['mode'];
-		$oic['virtual'] = true;
-		if($config['pppoe']['pppoe_subnet'] <> "")
-			$oic['sn'] = $config['pppoe']['pppoe_subnet'];
-		else
-			$oic['sn'] = "32";
-		$FilterIflist['pppoe'] = $oic;
+	if (is_array($config['pppoes']['pppoe'])) {
+		$FilterIflist['pppoe'] = array();
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				$oic = array();
+				$oic['if'] = 'pppoe';
+				$oic['descr'] = 'pppoe';
+				$oic['ip'] = $pppoe['localip'];
+				$oic['sa'] = $pppoe['remoteip'];
+				$oic['mode'] = $pppoe['mode'];
+				$oic['virtual'] = true;
+				if($pppoe['pppoe_subnet'] <> "")
+					$oic['sn'] = $pppoe['pppoe_subnet'];
+				else
+					$oic['sn'] = "32";
+				$FilterIflist['pppoe'][] = $oic;
+			}
+		}
 	}
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
@@ -1332,11 +1343,12 @@ function filter_nat_rules_generate() {
 			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
 		/* PPPoE subnet */
-		if(isset($FilterIflist['pppoe']) && $FilterIflist['pppoe']['mode'] == "server") {
-			$pppoe_subnet = $FilterIflist['pppoe']['sn'];
-			if(is_private_ip($FilterIflist['pppoe']['sa']) && !empty($pppoe_subnet)) {
-				$numberofnathosts++;
-				$tonathosts .= "{$FilterIflist['pppoe']['sa']}/{$pppoe_subnet} ";
+		if (is_array($FilterIflist['pppoe'])) {
+			foreach ($FilterIflist['pppoe'] as $pppoe) {
+				if(is_private_ip($pppoe['ip'])) {
+					$numberofnathosts++;
+					$tonathosts .= "{$pppoe['ip']}/{$pppoe['sn']} ";
+				}
 			}
 		}
 		/* L2TP subnet */
@@ -1640,9 +1652,12 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = "{$pptpsa}/{$pptpsn}";
 					break;
 				case 'pppoe':
-					$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-					$pppoesn = $FilterIflist['pppoe']['sn'];
-					$src = "{$pppoesa}/{$pppoesn}";
+					/* XXX: This needs to be fixed somehow! */
+					if (is_array($FilterIflist['pppoe'])) {
+						$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['ip'], $FilterIflist['pppoe'][0]['sn']);
+						$pppoesn = $FilterIflist['pppoe'][0]['sn'];
+						$src = "{$pppoesa}/{$pppoesn}";
+					}
 					break;
 			}
 			if(isset($rule[$target]['not']))
@@ -1701,7 +1716,6 @@ function filter_generate_user_rule($rule) {
 	}
 	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 	$pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pppoe'];
 	$int = "";
 	$aline = array();
 
@@ -2011,7 +2025,6 @@ function filter_rules_generate() {
 	}
 
 	$pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pppoe'];
 
 	$ipfrules = "";
 	//$ipfrules .= discover_pkg_rules("filter");

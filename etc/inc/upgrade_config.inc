@@ -2492,8 +2492,9 @@ function upgrade_077_to_078() {
 }
 
 function upgrade_078_to_079() {
+	global $g;
 	/* Delete old and unused RRD file */
-	unlink_if_exists("/var/db/rrd/captiveportal-totalusers.rrd");
+	unlink_if_exists("{$g['vardb_path']}/rrd/captiveportal-totalusers.rrd");
 }
 
 ?>

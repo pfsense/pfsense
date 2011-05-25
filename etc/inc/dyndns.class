@@ -795,12 +795,13 @@
 			if($successful_update == true) {
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();
-				$currentTime = time();				  
-				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 				conf_mount_rw();
-				$file = fopen($this->_cacheFile, 'w');
-				fwrite($file, $wan_ip.':'.$currentTime);
-				fclose($file);
+				if ($wan_ip > 0) {
+					$currentTime = time();				  
+					log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
+					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
+				} else
+					@unlink($this->_cacheFile);
 				conf_mount_ro();
 			}
 			$this->status = $status;
@@ -853,32 +854,37 @@
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
-			
-			log_error("DynDns: _detectChange() starting.");
+			global $debug;
+
+			if ($debug)
+				log_error("DynDns: _detectChange() starting.");
 		
 			$currentTime = time();
 
 			$wan_ip = $this->_checkIP();
+			if ($wan_ip == 0) {
+				log_error("DynDns: Current WAN IP could not be determined, skipping update process.");
+				return false;
+			}
 			$this->_dnsIP = $wan_ip;
-			log_error("DynDns: Current WAN IP: {$wan_ip}");
+			$log_error = "DynDns: Current WAN IP: {$wan_ip} ";
 
 			if (file_exists($this->_cacheFile)) {
 				$contents = file_get_contents($this->_cacheFile);
 				list($cacheIP,$cacheTime) = split(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;
-				log_error("DynDns: Cached IP: {$cacheIP}");
+				$log_error .= "Cached IP: {$cacheIP} ";
 			} else {
 				conf_mount_rw();
-				$file = fopen($this->_cacheFile, 'w');
-				fwrite($file, '0.0.0.0:'.$currentTime);
-				fclose($file);
-				conf_mount_ro();
 				$cacheIP = '0.0.0.0';
+				@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
+				conf_mount_ro();
 				$cacheTime = $currentTime;
 				$initial = true;
-				log_error("DynDns: No Cached IP found.");
+				$log_error .= "No Cached IP found.";
 			}
+			log_error($log_error);
 
 			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
 			 *   zoneedit, dyns, ods
@@ -928,10 +934,14 @@
 			conf_mount_ro();
 		}
 		function _checkIP() {
+			global $debug;
 
-			log_error("DynDns: _checkIP() starting.");
+			if ($debug)
+				log_error("DynDns: _checkIP() starting.");
 
 			$ip_address = find_interface_ip($this->_if);
+			if (!is_ipaddr($ip_address))
+				return 0;
 			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
@@ -944,7 +954,7 @@
 				}
 				if ($try >= 3) {
 					log_error("Dyndns debug information: Could not resolve {$hosttocheck} to ip using interface ip {$ip_address}.");
-					return $ip_address; /* XXX: Might return private ip address! */
+					return 0;
 				}
 				$ip_ch = curl_init("http://{$checkip}");
 				curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
@@ -957,7 +967,12 @@
 				$ip_result_decoded = urldecode($ip_result_page);
 				preg_match('/Current IP Address: (.*)<\/body>/', $ip_result_decoded, $matches);
 				$ip_address = trim($matches[1]);
-				log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
+				if (is_ipaddr($ip_address))
+					log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
+				else {
+					log_error("DynDns debug information: IP address could not be extracted from {$hosttocheck}");
+					return 0;
+				}
 			} else
 				log_error("DynDns debug information: {$ip_address} extracted from local system.");
 

@@ -164,8 +164,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	$tickets_per_roll = array();
 	$minutes_per_roll = array();
 	if (is_array($config['voucher']['roll'])) {
-		$a_roll = &$config['voucher']['roll'];
-		foreach ($a_roll as $rollent) {
+		foreach ($config['voucher']['roll'] as $rollent) {
 			$tickets_per_roll[$rollent['number']] = $rollent['count'];
 			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
 		}
@@ -192,7 +191,7 @@ function voucher_auth($voucher_received, $test = 0) {
         list($status, $roll, $nr) = explode(" ", $result);
         if ($status == "OK") {
             if (!$first_voucher) {
-				// store first voucher. Thats the one we give the timecredit
+		// store first voucher. Thats the one we give the timecredit
                 $first_voucher = $voucher;
                 $first_voucher_roll = $roll;
             }
@@ -352,11 +351,10 @@ function voucher_configure($sync = false) {
 
         if (($g['booting'] || $sync == true) && is_array($config['voucher']['roll'])) {
 
-            // create active and used DB per roll on ramdisk from config
-            $a_roll = &$config['voucher']['roll'];
 		$voucherlck = lock('voucher', LOCK_EX);
 
-            foreach ($a_roll as $rollent) {
+            // create active and used DB per roll on ramdisk from config
+            foreach ($config['voucher']['roll'] as $rollent) {
 
                 $roll = $rollent['number'];
                 voucher_write_used_db($roll, $rollent['used']);

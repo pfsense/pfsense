@@ -2224,6 +2224,14 @@ function is_ipaddr_configured($ipaddr) {
 	}	
 }
 
+/****f* pfsense-utils/pfSense_handle_custom_code
+ * NAME
+ *   pfSense_handle_custom_code
+ * INPUTS
+ *   directory name to process
+ * RESULT
+ *   globs the directory and includes the files
+ */
 function pfSense_handle_custom_code($src_dir) {
 	// Allow extending of the nat edit page and include custom input validation 
 	if(is_dir("$src_dir")) {

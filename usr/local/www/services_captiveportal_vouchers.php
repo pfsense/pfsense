@@ -163,6 +163,12 @@ $pconfig['vouchersyncusername'] = $config['voucher']['vouchersyncusername'];
 if ($_POST) {
 
 	unset($input_errors);
+
+	if ($_POST['postafterlogin']) {
+		voucher_expire($_POST['voucher_expire']);
+		exit;
+	}
+
 	$pconfig = $_POST;
 
 	/* input validation */

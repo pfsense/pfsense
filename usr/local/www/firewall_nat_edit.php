@@ -290,6 +290,9 @@ if ($_POST) {
 		}
 	}
 
+	// Allow extending of the nat edit page and include custom input validation 
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/input_validation");
+	
 	if (!$input_errors) {
 		$natent = array();
 
@@ -422,6 +425,9 @@ if ($_POST) {
 
 		mark_subsystem_dirty('natconf');
 
+		// Allow extending of the nat edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
+
 		write_config();
 
 		header("Location: firewall_nat.php");
@@ -440,6 +446,11 @@ include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+<?php
+		// Allow extending of the nat edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphpearly");
+?>
+
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Redirect entry"); ?></td>
 				</tr>
@@ -817,6 +828,10 @@ include("fbegin.inc"); ?>
 					</select>
 				  </td>
                 </tr><?php endif; ?>
+<?php
+		// Allow extending of the nat edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphplate");
+?>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">&nbsp;</td>

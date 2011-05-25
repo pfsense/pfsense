@@ -275,7 +275,7 @@ EOPP;
 			$dhcpdconf .= "		deny dynamic bootp clients;\n";
 
 		if (isset($dhcpifconf['denyunknown']))
-		   $dhcpdconf .= "		deny unknown clients;\n";
+		   $dhcpdconf .= "		deny unknown-clients;\n";
 
 		if ($dhcpifconf['gateway'])
 			$routers = $dhcpifconf['gateway'];

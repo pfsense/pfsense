@@ -2207,4 +2207,21 @@ function load_mac_manufacturer_table() {
 
 }
 
+/****f* pfsense-utils/is_ipaddr_configured
+ * NAME
+ *   is_ipaddr_configured
+ * INPUTS
+ *   IP Address to check.
+ * RESULT
+ *   returns true if the IP Address is
+ *   configured and present on this device.
+*/
+function is_ipaddr_configured($ipaddr) {
+	$interface_list_ips = get_configured_ip_addresses();
+	foreach($interface_list_ips as $ilips) {
+		if(strcasecmp($ipaddr, $ilips) == 0) 
+				return true;
+	}	
+}
+
 ?>

@@ -206,6 +206,8 @@ if ($_POST) {
 			$input_errors[] = gettext("This doesn't look like an RSA Public key.");
 		if ($_POST['privatekey'] && (!strstr($_POST['privatekey'],"BEGIN RSA PRIVATE KEY"))) 
 			$input_errors[] = gettext("This doesn't look like an RSA Private key.");
+		if ($_POST['vouchersyncdbip'] && (is_ipaddr_configured($_POST['vouchersyncdbip']))) 
+			$input_errors[] = gettext("You cannot sync the voucher database to this host (itself).");
 	}
 
 	if (!$input_errors) {

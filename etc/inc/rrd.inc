@@ -306,7 +306,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
 			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
 			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
-			$rrdupdatesh .= "unset BYTES \n";
+			$rrdupdatesh .= "unset BYTES4P BYTES4B BYTES6P BYTES6B \n";
 			$rrdupdatesh .= "BYTES4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\n";
 			$rrdupdatesh .= "BYTES4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'`\n";
 			$rrdupdatesh .= "BYTES6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$6 \":\"}'`\n";
@@ -341,7 +341,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
 			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
-			$rrdupdatesh .= "unset PACKETS \n";
+			$rrdupdatesh .= "unset PACKETS4P PACKETS4B PACKETS6P PACKETS6B \n";
 			$rrdupdatesh .= "PACKETS4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\n";
 			$rrdupdatesh .= "PACKETS4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'`\n";
 			$rrdupdatesh .= "PACKETS6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$4 \":\"}'`\n";

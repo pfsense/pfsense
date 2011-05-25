@@ -861,8 +861,8 @@
 
 			$wan_ip = $this->_checkIP();
 			if ($wan_ip == 0) {
-				log_error("DynDns: Current WAN IP could not be determined.");
-				return true;
+				log_error("DynDns: Current WAN IP could not be determined, skipping update process.");
+				return false;
 			}
 			$this->_dnsIP = $wan_ip;
 			log_error("DynDns: Current WAN IP: {$wan_ip}");
@@ -935,6 +935,8 @@
 			log_error("DynDns: _checkIP() starting.");
 
 			$ip_address = find_interface_ip($this->_if);
+			if (!is_ipaddr($ip_address))
+				return 0;
 			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";

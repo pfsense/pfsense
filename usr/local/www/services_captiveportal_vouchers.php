@@ -39,6 +39,8 @@
 $statusurl = "status_captiveportal_vouchers.php";
 $logurl = "diag_logs_auth.php";
 
+if ($_POST['postafterlogin'])
+	$nocsrf= true;
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");

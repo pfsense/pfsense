@@ -854,8 +854,10 @@
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
-			
-			log_error("DynDns: _detectChange() starting.");
+			global $debug;
+
+			if ($debug)
+				log_error("DynDns: _detectChange() starting.");
 		
 			$currentTime = time();
 
@@ -865,14 +867,14 @@
 				return false;
 			}
 			$this->_dnsIP = $wan_ip;
-			log_error("DynDns: Current WAN IP: {$wan_ip}");
+			$log_error = "DynDns: Current WAN IP: {$wan_ip} ";
 
 			if (file_exists($this->_cacheFile)) {
 				$contents = file_get_contents($this->_cacheFile);
 				list($cacheIP,$cacheTime) = split(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;
-				log_error("DynDns: Cached IP: {$cacheIP}");
+				$log_error .= "Cached IP: {$cacheIP} ";
 			} else {
 				conf_mount_rw();
 				$cacheIP = '0.0.0.0';
@@ -880,8 +882,9 @@
 				conf_mount_ro();
 				$cacheTime = $currentTime;
 				$initial = true;
-				log_error("DynDns: No Cached IP found.");
+				$log_error .= "No Cached IP found.";
 			}
+			log_error($log_error);
 
 			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
 			 *   zoneedit, dyns, ods
@@ -931,8 +934,10 @@
 			conf_mount_ro();
 		}
 		function _checkIP() {
+			global $debug;
 
-			log_error("DynDns: _checkIP() starting.");
+			if ($debug)
+				log_error("DynDns: _checkIP() starting.");
 
 			$ip_address = find_interface_ip($this->_if);
 			if (!is_ipaddr($ip_address))

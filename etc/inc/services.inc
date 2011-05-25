@@ -606,8 +606,6 @@ function services_dyndns_configure_client($conf) {
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
 
-	log_error("DynDns: Running updatedns()");
-
 	$dns = new updatedns($dnsService = $conf['type'],
 		$dnsHost = $conf['host'],
 		$dnsUser = $conf['username'],

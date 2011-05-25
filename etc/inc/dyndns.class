@@ -795,15 +795,14 @@
 			if($successful_update == true) {
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();
-				if (is_ipaddr($wan_ip)) {
+				conf_mount_rw();
+				if ($wan_ip > 0) {
 					$currentTime = time();				  
 					log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
-					conf_mount_rw();
-					$file = fopen($this->_cacheFile, 'w');
-					fwrite($file, $wan_ip.':'.$currentTime);
-					fclose($file);
-					conf_mount_ro();
-				}
+					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
+				} else
+					@unlink($this->_cacheFile);
+				conf_mount_ro();
 			}
 			$this->status = $status;
 			log_error($status);
@@ -861,6 +860,10 @@
 			$currentTime = time();
 
 			$wan_ip = $this->_checkIP();
+			if ($wan_ip == 0) {
+				log_error("DynDns: Current WAN IP could not be determined.");
+				return true;
+			}
 			$this->_dnsIP = $wan_ip;
 			log_error("DynDns: Current WAN IP: {$wan_ip}");
 
@@ -872,11 +875,9 @@
 				log_error("DynDns: Cached IP: {$cacheIP}");
 			} else {
 				conf_mount_rw();
-				$file = fopen($this->_cacheFile, 'w');
-				fwrite($file, '0.0.0.0:'.$currentTime);
-				fclose($file);
-				conf_mount_ro();
 				$cacheIP = '0.0.0.0';
+				@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
+				conf_mount_ro();
 				$cacheTime = $currentTime;
 				$initial = true;
 				log_error("DynDns: No Cached IP found.");
@@ -946,7 +947,7 @@
 				}
 				if ($try >= 3) {
 					log_error("Dyndns debug information: Could not resolve {$hosttocheck} to ip using interface ip {$ip_address}.");
-					return $ip_address; /* XXX: Might return private ip address! */
+					return 0;
 				}
 				$ip_ch = curl_init("http://{$checkip}");
 				curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);

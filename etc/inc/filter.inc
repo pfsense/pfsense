@@ -1039,7 +1039,6 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			$target = $FilterIflist[$rule['target']]['ip'];
 		else
 			return "";
-
 		$starting_localhost_port_tmp = $starting_localhost_port;
 		$toomanyports = false;
 		/* only install reflection rules for < 19991 items */
@@ -1088,7 +1087,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$toadd_array = array_merge($toadd_array, range($loc_pt[0], $loc_pt[0] + $delta));
 
 				if(!empty($toadd_array)) {
-					$target = explode(" ", trim($target));
+					$rtarget = explode(" ", trim($target));
 					foreach($toadd_array as $tda) {
 						if (empty($tda))
 							continue;
@@ -1100,7 +1099,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							foreach ($target as $targip) {
+							foreach ($rtarget as $targip) {
 								if (empty($targip))
 									continue;
 								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";

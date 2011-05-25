@@ -116,9 +116,8 @@ if ($_GET['act'] == "del") {
 		exit;
     }
 }
-
 /* print all vouchers of the selected roll */
-if ($_GET['act'] == "csv") {
+else if ($_GET['act'] == "csv") {
 	$privkey = base64_decode($config['voucher']['privatekey']);
 	if (strstr($privkey,"BEGIN RSA PRIVATE KEY")) {
 		$fd = fopen("{$g['varetc_path']}/voucher.private","w");

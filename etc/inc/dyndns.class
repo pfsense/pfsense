@@ -795,13 +795,15 @@
 			if($successful_update == true) {
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();
-				$currentTime = time();				  
-				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
-				conf_mount_rw();
-				$file = fopen($this->_cacheFile, 'w');
-				fwrite($file, $wan_ip.':'.$currentTime);
-				fclose($file);
-				conf_mount_ro();
+				if (is_ipaddr($wan_ip)) {
+					$currentTime = time();				  
+					log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
+					conf_mount_rw();
+					$file = fopen($this->_cacheFile, 'w');
+					fwrite($file, $wan_ip.':'.$currentTime);
+					fclose($file);
+					conf_mount_ro();
+				}
 			}
 			$this->status = $status;
 			log_error($status);
@@ -957,7 +959,12 @@
 				$ip_result_decoded = urldecode($ip_result_page);
 				preg_match('/Current IP Address: (.*)<\/body>/', $ip_result_decoded, $matches);
 				$ip_address = trim($matches[1]);
-				log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
+				if (is_ipaddr($ip_address))
+					log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
+				else {
+					log_error("DynDns debug information: IP address could not be extracted from {$hosttocheck}");
+					return 0;
+				}
 			} else
 				log_error("DynDns debug information: {$ip_address} extracted from local system.");
 

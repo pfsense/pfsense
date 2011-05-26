@@ -253,7 +253,7 @@ function enable_rrd_graphing() {
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
-		$rrdupdatesh .= "export TERM=serial\n";
+		$rrdupdatesh .= "export TERM=dumb\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
 		$rrdupdatesh .= "do\n";
@@ -304,14 +304,11 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
-			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
-			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
-			$rrdupdatesh .= "unset BYTES4P BYTES4B BYTES6P BYTES6B \n";
-			$rrdupdatesh .= "BYTES4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\n";
-			$rrdupdatesh .= "BYTES4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'`\n";
-			$rrdupdatesh .= "BYTES6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$6 \":\"}'`\n";
-			$rrdupdatesh .= "BYTES6B=`cat \$TMPFILE | awk '/In6\/Block|Out6\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$BYTES4P\$BYTES4B\$BYTES6P\$BYTES6B\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '\\\n";
+			$rrdupdatesh .= "/In4\/Pass/ { b4pi = \$6 };/Out4\/Pass/ { b4po = \$6 };/In4\/Block/ { b4bi = \$6 };/Out4\/Block/ { b4bo = \$6 };\\\n";
+			$rrdupdatesh .= "/In6\/Pass/ { b6pi = \$6 };/Out6\/Pass/ { b6po = \$6 };/In6\/Block/ { b6bi = \$6 };/Out6\/Block/ { b6bo = \$6 };\\\n";
+			$rrdupdatesh .= "END {print b4pi \":\" b4po \":\" b4bi \":\" b4bo \":\" b6pi \":\" b6po \":\" b6bi \":\" b6bo};'`\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -339,14 +336,11 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
-			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
-			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
-			$rrdupdatesh .= "unset PACKETS4P PACKETS4B PACKETS6P PACKETS6B \n";
-			$rrdupdatesh .= "PACKETS4P=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\n";
-			$rrdupdatesh .= "PACKETS4B=`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'`\n";
-			$rrdupdatesh .= "PACKETS6P=`cat \$TMPFILE | awk '/In6\/Pass|Out6\/Pass/ {printf \$4 \":\"}'`\n";
-			$rrdupdatesh .= "PACKETS6B=`cat \$TMPFILE | awk '/In6\/Block|Out6\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$PACKETS4P\$PACKETS4B\$PACKETS6P\$PACKETS6B\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '\\\n";
+			$rrdupdatesh .= "/In4\/Pass/ { b4pi = \$4 };/Out4\/Pass/ { b4po = \$4 };/In4\/Block/ { b4bi = \$4 };/Out4\/Block/ { b4bo = \$4 };\\\n";
+			$rrdupdatesh .= "/In6\/Pass/ { b6pi = \$4 };/Out6\/Pass/ { b6po = \$4 };/In6\/Block/ { b6bi = \$4 };/Out6\/Block/ { b6bo = \$4 };\\\n";
+			$rrdupdatesh .= "END {print b4pi \":\" b4po \":\" b4bi \":\" b4bo \":\" b6pi \":\" b6po \":\" b6bi \":\" b6bo};'`\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {

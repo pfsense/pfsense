@@ -367,10 +367,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-pass:STACK\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out6_bits_block_neg#{$colortrafficup[3]}:$curif-out6-block:STACK\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out6_bits_pass_neg#{$colortrafficup[2]}:$curif-out6-pass:STACK\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "HRULE:\"$curif-in_bits_95#{$colortraffic95[1]}:$curif-in (95%)\" ";
 	$graphcmd .= "HRULE:\"$curif-out_bits_95#{$colortraffic95[0]}:$curif-out (95%)\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period        95th percentile\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t maximum\t    average\t\t current\t    period\t   95th percentile\\n\" ";
 	$graphcmd .= "COMMENT:\"IPv4 in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";

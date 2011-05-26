@@ -2578,9 +2578,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 			
 	if (!$g['booting'] && !substr($realif, 0, 4) == "ovpn") {
-		/* remove all IPv4 addresses */
+		/* remove all IPv4 and IPv6 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
+		/* Disable Accepting router advertisements unless specifically requested */
+		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv") == 0);
 
 		switch ($wancfg['ipaddr']) {
 			case 'pppoe':
@@ -2741,6 +2743,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		default:
 			if ($wancfg['ipaddrv6'] <> "" && $wancfg['subnetv6'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
+				// FIXME: Add IPv6 Support to the pfSense module
 				mwexec("/sbin/ifconfig {$realif} inet6 {$wancfg['ipaddrv6']} prefixlen {$wancfg['subnetv6']} ");
 			}
 			break;
@@ -3563,6 +3566,7 @@ function find_interface_ipv6($interface, $flush = false)
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
+		// FIXME: Add IPv6 support to the pfSense module
 		exec("/sbin/ifconfig {$interface} inet6", $output);
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {
@@ -3614,6 +3618,7 @@ function find_interface_subnetv6($interface, $flush = false)
 
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
+		// FIXME: Add IPv6 support to the pfSense module
 		exec("/sbin/ifconfig {$interface} inet6", $output);
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {

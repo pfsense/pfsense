@@ -1096,7 +1096,7 @@ else {
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
-	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 5 ) {
+	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
 		if($data)
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;

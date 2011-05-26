@@ -627,7 +627,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "$AREA:\"$curif-out6_pps_pass_neg#{$colorpacketsup[2]}:$curif-out6-pass:STACK\" ";
 
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t  maximum\t\t average\t     current\t    period\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:MAX:%7.2lf %s pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:AVERAGE:%7.2lf %S pps\" ";

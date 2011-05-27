@@ -39,10 +39,15 @@ function setup_routed() {
 	if (isset($config['installedpackages']['routed']['config'][0]['enable']) &&
 		$config['installedpackages']['routed']['config'][0]['enable'] == "on") {
 		/* if user selected individual interfaces */
-		$ifarr = explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']);
+		$ifarr = array_flip(explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']));
+                $allifs = get_interface_arr();
                 if (!empty($ifarr)) {
-			foreach($ifarr as $ifname) {
-				$gw .= setup_etc_gateways($ifname, 'enable');
+                        foreach($allifs as $ifname) {
+				$friendly_ifname = convert_real_interface_to_friendly_interface_name($ifname);
+				if (array_key_exists($friendly_ifname, $ifarr))
+					$gw .= setup_etc_gateways($ifname, 'enable');
+				else
+					$gw .= setup_etc_gateways($ifname, 'disable');
 			}
 		} else
 			/* setup for all interfaces */
@@ -76,7 +81,7 @@ function setup_etc_gateways($iface="", $mode="") {
 		}
 		break;
 	case "disable":
-		$ret .= "no_rip ";
+		$ret .= "no_rip_out no_solicit no_rdisc no_rdisc_adv";
 		break;
 
 	default:

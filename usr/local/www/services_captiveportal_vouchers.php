@@ -568,7 +568,8 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Synchronize Voucher Database IP"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="vouchersyncdbip" type="text" class="formfld" id="vouchersyncdbip" size="17" value="<?=htmlspecialchars($pconfig['vouchersyncdbip']);?>">
-								<br><?=gettext("IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from."); ?>
+								<br/><?=gettext("IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from."); ?>
+								<br/><?=gettext("NOTE: this should be setup on the slave nodes and not the primary node!"); ?>
 							</td>
 						</tr>
 						<tr> 

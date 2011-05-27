@@ -116,8 +116,8 @@ $iflist = get_configured_interface_with_descr();
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddr($oc['ipaddr']))) ||
-			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddr($oc['ipaddr']))))
+		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
+			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr']))))
 			continue;
 		$if = $ifent;
 		break;
@@ -208,15 +208,15 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from'])))
+		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
-		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to'])))
+		if (($_POST['range_to'] && !is_ipaddrv4($_POST['range_to'])))
 			$input_errors[] = gettext("A valid range must be specified.");
-		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway'])))
+		if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
-		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2'])))
+		if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
-		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2'])))
+		if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
 
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
@@ -225,13 +225,13 @@ if ($_POST) {
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
-		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2'])))
+		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
-		if ($_POST['tftp'] && !is_ipaddr($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp']))
+		if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp']))
 			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
-		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver'])))
+		if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
 
 		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
@@ -276,7 +276,7 @@ if ($_POST) {
 					$input_errors[] = gettext("Signed 16-bit integer type must be a number in the range -32768 to 32767.");
 				else if ( $numberoption['type'] == 'signed integer 32' && (!is_numeric($numberoption['value']) || $numberoption['value'] < -2147483648 || $numberoption['value'] > 2147483647) )
 					$input_errors[] = gettext("Signed 32-bit integer type must be a number in the range -2147483648 to 2147483647.");
-				else if ( $numberoption['type'] == 'ip-address' && !is_ipaddr($numberoption['value']) && !is_hostname($numberoption['value']) )
+				else if ( $numberoption['type'] == 'ip-address' && !is_ipaddrv4($numberoption['value']) && !is_hostname($numberoption['value']) )
 					$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
 			}
 		}
@@ -538,8 +538,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddr($oc['ipaddr']))) ||
-			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddr($oc['ipaddr']))))
+		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
+			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr']))))
 			continue;
 		if ($ifent == $if)
 			$active = true;

@@ -1183,6 +1183,14 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 						echo "<tr>";
 							echo '<td valign="top" class="vncell">' . gettext("Speed and duplex") . '</td>';
 							echo '<td class="vtable">';
+                                			echo '<div id="showadvmediabox"';
+								if ($mediaopt_from_config != 'autoselect ' && $mediaopt_from_config != ' ') echo " style='display:none'>";
+								else echo '>';
+								echo '<input type="button" onClick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
+							echo "</div>";
+							echo '<div id="showmediaadv" ';
+							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
+							else echo '>';
 								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
 								foreach($mediaopts_list as $mediaopt){
 									if ($mediaopt != rtrim($mediaopt_from_config)){
@@ -1193,6 +1201,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								}
 								echo '</select><br>';
 								echo gettext("Here you can explicitely set up speed and duplex mode for the interface.");
+						echo '</div>';
 							echo '</td>';
 						echo '</tr>';
 						}
@@ -2200,6 +2209,11 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 			} else {
 				report_failure();
 			}
+		}
+		function show_advanced_media() {
+			document.getElementById("showadvmediabox").innerHTML='';
+			aodiv = document.getElementById('showmediaadv');
+			aodiv.style.display = "block";
 		}
 		<?php
 		echo "show_allcfg(document.iform.enable);";

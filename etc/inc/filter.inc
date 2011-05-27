@@ -801,8 +801,8 @@ function filter_generate_optcfg_array() {
 		$oic['virtual'] = true;
 		$FilterIflist['l2tp'] = $oic;
 	}
-	if (is_array($config['pppoes']['pppoe'])) {
-		$FilterIflist['pppoe'] = array();
+	if (is_array($config['pppoes']['pppoe']) && (count($config['pppoes']['pppoe']) > 0)) {
+		$pppoeifs = array();
 		foreach($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				$oic = array();
@@ -816,9 +816,11 @@ function filter_generate_optcfg_array() {
 					$oic['sn'] = $pppoe['pppoe_subnet'];
 				else
 					$oic['sn'] = "32";
-				$FilterIflist['pppoe'][] = $oic;
+				$pppoeifs[] = $oic;
 			}
 		}
+		if (count($pppoeifs))
+			$FilterIflist['pppoe'] = $pppoeifs;
 	}
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {

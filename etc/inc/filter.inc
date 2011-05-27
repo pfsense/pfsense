@@ -429,7 +429,7 @@ function filter_generate_scrubing() {
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
-		if(isset($scrubcfg['virtual']))
+		if(isset($scrubcfg['virtual']) || empty($scrubcfg['descr']))
 			continue;
 		/* set up MSS clamping */
 		if($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
@@ -518,7 +518,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
 				$aliases .= " }\"\n";
 			}
-		} else {
+		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 			$aliases .= " }\"\n";
 		}

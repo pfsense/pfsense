@@ -99,6 +99,15 @@ if ($_POST) {
 	
 	unset($input_errors);
 	$pconfig = $_POST;
+        /*  run through $_POST items encoding HTML entties so that the user
+         *  cannot think he is slick and perform a XSS attack on the unwilling
+         */
+        foreach ($_POST as $key => $value) {
+                $temp = str_replace(">", "", $value);
+                $newpost = htmlentities($temp);
+                if($newpost <> $temp)
+                        $input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+        }
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface external");

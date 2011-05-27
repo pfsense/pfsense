@@ -98,7 +98,9 @@
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".debug";
 
 			log_error("DynDns: updatedns() starting");
-			
+
+			$dyndnslck = lock($dnsHost, LOCK_EX);
+
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
 			case 'freedns':
@@ -128,6 +130,7 @@
 			// Ensure that we where able to lookup the IP
 			if(!is_ipaddr($this->_ifIP)) {
 				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
+				unlock($dyndnslck);
 				return;
 			}
 
@@ -162,6 +165,8 @@
 					break;
 				}
 			}
+
+			unlock($dyndnslck);
 		}
 			
 		/*

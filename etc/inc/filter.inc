@@ -429,7 +429,7 @@ function filter_generate_scrubing() {
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
-		if(isset($scrubcfg['virtual']))
+		if(isset($scrubcfg['virtual']) || empty($scrubcfg['descr']))
 			continue;
 		/* set up MSS clamping */
 		if($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
@@ -513,8 +513,15 @@ function filter_generate_aliases() {
 	$aliases = "loopback = \"{ lo0 }\"\n";
 
 	foreach ($FilterIflist as $if => $ifcfg) {
-		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
-		$aliases .= " }\"\n";
+		if (is_array($ifcfg[0])) {
+			if ($ifcfg[0]['if'] == 'pppoe') {
+				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
+				$aliases .= " }\"\n";
+			}
+		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
+			$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
+			$aliases .= " }\"\n";
+		}
 	}
 
 	$aliases .= "\n#SSH Lockout Table\n";
@@ -695,9 +702,15 @@ function filter_get_vpns_list() {
 		}
 	}
 	/* pppoe */
-	if($config['pppoe']['remoteip']) {
-		if(is_subnet($tunnel['remote-subnet'])) {
-			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				if(is_ipaddr($pppoe['remoteip'])) {
+					$pppoesub = gen_subnet($pppoe['remoteip'], $pppoe['pppoe_subnet']);
+					if (is_subnet($pppoesub))
+						$vpns_arr[] = $pppoesub;
+				}
+			}
 		}
 	}
 	if(!empty($vpns_arr)) {
@@ -788,19 +801,26 @@ function filter_generate_optcfg_array() {
 		$oic['virtual'] = true;
 		$FilterIflist['l2tp'] = $oic;
 	}
-	if($config['pppoe']['mode'] == "server") {
-		$oic = array();
-		$oic['if'] = 'pppoe';
-		$oic['descr'] = 'pppoe';
-		$oic['ip'] = $config['pppoe']['localip'];
-		$oic['sa'] = $config['pppoe']['remoteip'];
-		$oic['mode'] = $config['pppoe']['mode'];
-		$oic['virtual'] = true;
-		if($config['pppoe']['pppoe_subnet'] <> "")
-			$oic['sn'] = $config['pppoe']['pppoe_subnet'];
-		else
-			$oic['sn'] = "32";
-		$FilterIflist['pppoe'] = $oic;
+	if (is_array($config['pppoes']['pppoe']) && (count($config['pppoes']['pppoe']) > 0)) {
+		$pppoeifs = array();
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				$oic = array();
+				$oic['if'] = 'pppoe';
+				$oic['descr'] = 'pppoe';
+				$oic['ip'] = $pppoe['localip'];
+				$oic['sa'] = $pppoe['remoteip'];
+				$oic['mode'] = $pppoe['mode'];
+				$oic['virtual'] = true;
+				if($pppoe['pppoe_subnet'] <> "")
+					$oic['sn'] = $pppoe['pppoe_subnet'];
+				else
+					$oic['sn'] = "32";
+				$pppoeifs[] = $oic;
+			}
+		}
+		if (count($pppoeifs))
+			$FilterIflist['pppoe'] = $pppoeifs;
 	}
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
@@ -1021,7 +1041,6 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			$target = $FilterIflist[$rule['target']]['ip'];
 		else
 			return "";
-
 		$starting_localhost_port_tmp = $starting_localhost_port;
 		$toomanyports = false;
 		/* only install reflection rules for < 19991 items */
@@ -1070,7 +1089,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$toadd_array = array_merge($toadd_array, range($loc_pt[0], $loc_pt[0] + $delta));
 
 				if(!empty($toadd_array)) {
-					$target = explode(" ", trim($target));
+					$rtarget = explode(" ", trim($target));
 					foreach($toadd_array as $tda) {
 						if (empty($tda))
 							continue;
@@ -1082,7 +1101,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 								$socktype = "stream";
 								$dash_u = "";
 							}
-							foreach ($target as $targip) {
+							foreach ($rtarget as $targip) {
 								if (empty($targip))
 									continue;
 								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
@@ -1326,19 +1345,18 @@ function filter_nat_rules_generate() {
 			}
 		}
 		/* PPTP subnet */
-		if(isset($FilterIflist['pptp']) && $FilterIflist['pptp']['mode'] == "server" ) {
-			$pptp_subnet = $FilterIflist['pptp']['sn'];
-			if(is_private_ip($FilterIflist['pptp']['sa']) && !empty($pptp_subnet)) {
-				$numberofnathosts++;
-				$tonathosts .= "{$FilterIflist['pptp']['sa']}/{$pptp_subnet} ";
-			}
+		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+			$numberofnathosts += count($pptp_subnets);
+			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
 		/* PPPoE subnet */
-		if(isset($FilterIflist['pppoe']) && $FilterIflist['pppoe']['mode'] == "server") {
-			$pppoe_subnet = $FilterIflist['pppoe']['sn'];
-			if(is_private_ip($FilterIflist['pppoe']['sa']) && !empty($pppoe_subnet)) {
-				$numberofnathosts++;
-				$tonathosts .= "{$FilterIflist['pppoe']['sa']}/{$pppoe_subnet} ";
+		if (is_array($FilterIflist['pppoe'])) {
+			foreach ($FilterIflist['pppoe'] as $pppoe) {
+				if(is_private_ip($pppoe['ip'])) {
+					$numberofnathosts++;
+					$tonathosts .= "{$pppoe['sa']}/{$pppoe['sn']} ";
+				}
 			}
 		}
 		/* L2TP subnet */
@@ -1642,9 +1660,12 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = "{$pptpsa}/{$pptpsn}";
 					break;
 				case 'pppoe':
-					$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-					$pppoesn = $FilterIflist['pppoe']['sn'];
-					$src = "{$pppoesa}/{$pppoesn}";
+					/* XXX: This needs to be fixed somehow! */
+					if (is_array($FilterIflist['pppoe'])) {
+						$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['ip'], $FilterIflist['pppoe'][0]['sn']);
+						$pppoesn = $FilterIflist['pppoe'][0]['sn'];
+						$src = "{$pppoesa}/{$pppoesn}";
+					}
 					break;
 			}
 			if(isset($rule[$target]['not']))
@@ -1703,7 +1724,6 @@ function filter_generate_user_rule($rule) {
 	}
 	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 	$pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pppoe'];
 	$int = "";
 	$aline = array();
 
@@ -2013,7 +2033,6 @@ function filter_rules_generate() {
 	}
 
 	$pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pppoe'];
 
 	$ipfrules = "";
 	//$ipfrules .= discover_pkg_rules("filter");

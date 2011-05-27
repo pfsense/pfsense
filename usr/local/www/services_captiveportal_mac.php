@@ -108,6 +108,7 @@ if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
 		if ($ruleno) {
+			captiveportal_free_ipfw_ruleno($ruleno);
 			mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
 		}
 		unset($a_passthrumacs[$_GET['id']]);

@@ -401,6 +401,9 @@ if ($_POST) {
 			$input_errors[] = gettext("If you specify TCP flags that should be set you should specify out of which flags as well.");
 	}
 
+	// Allow extending of the firewall edit page and include custom input validation 
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/input_validation");
+
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
@@ -554,6 +557,10 @@ if ($_POST) {
 		}
 
 		filter_rules_sort();
+
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
+
 		write_config();
 		mark_subsystem_dirty('filter');
 
@@ -596,6 +603,10 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Firewall rule");?></td>
 		</tr>	
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
+?>
     	<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
 			<td width="78%" class="vtable">
@@ -1381,6 +1392,10 @@ include("head.inc");
 			  </div>
 			</td>
 		</tr>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphplate");
+?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

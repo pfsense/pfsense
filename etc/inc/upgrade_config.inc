@@ -2490,4 +2490,11 @@ function upgrade_077_to_078() {
 		$config['pptpd']['radius'] = $radarr;
 	}
 }
+
+function upgrade_078_to_079() {
+	global $g;
+	/* Delete old and unused RRD file */
+	unlink_if_exists("{$g['vardb_path']}/rrd/captiveportal-totalusers.rrd");
+}
+
 ?>

@@ -2235,12 +2235,12 @@ function is_ipaddr_configured($ipaddr) {
 function pfSense_handle_custom_code($src_dir) {
 	// Allow extending of the nat edit page and include custom input validation 
 	if(is_dir("$src_dir")) {
-		$cf = glob($src_dir);
+		$cf = glob($src_dir . "/*.inc");
 		foreach($cf as $nf) {
 			if($nf == "." || $nf == "..") 
 				continue;
 			// Include the extra handler
-			include("$src_dir/$nf");
+			include("$nf");
 		}
 	}
 }

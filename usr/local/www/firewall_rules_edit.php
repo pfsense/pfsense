@@ -547,6 +547,9 @@ if ($_POST) {
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 		}
 
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
+
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
 		else {
@@ -557,9 +560,6 @@ if ($_POST) {
 		}
 
 		filter_rules_sort();
-
-		// Allow extending of the firewall edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
 
 		write_config();
 		mark_subsystem_dirty('filter');

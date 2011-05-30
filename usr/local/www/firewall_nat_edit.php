@@ -290,6 +290,9 @@ if ($_POST) {
 		}
 	}
 
+	// Allow extending of the firewall edit page and include custom input validation 
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/input_validation");
+
 	if (!$input_errors) {
 		$natent = array();
 
@@ -410,6 +413,9 @@ if ($_POST) {
 			mark_subsystem_dirty('filter');
 		}
 
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
+
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
@@ -443,6 +449,10 @@ include("fbegin.inc"); ?>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Redirect entry"); ?></td>
 				</tr>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphpearly");
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 			<td width="78%" class="vtable">
@@ -817,6 +827,10 @@ include("fbegin.inc"); ?>
 					</select>
 				  </td>
                 </tr><?php endif; ?>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphplate");
+?>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">&nbsp;</td>

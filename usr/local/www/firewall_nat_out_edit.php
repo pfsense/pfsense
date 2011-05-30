@@ -641,7 +641,7 @@ any)");?></td>
           </tr>
 <?php
 		// Allow extending of the firewall edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphplate");
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/htmlphplate");
 ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

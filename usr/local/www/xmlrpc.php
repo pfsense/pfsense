@@ -274,7 +274,7 @@ function merge_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params))
 		return $xmlrpc_g['return']['authfail'];
-	$config_new = array_merge($config, $params[0]);
+	$config_new = array_extend($config, $params[0]);
 	$config = $config_new;
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
@@ -453,5 +453,20 @@ $server = new XML_RPC_Server(
 );
 
 unlock($xmlrpclockkey);
+
+function array_extend($a, $b) {
+    foreach($b as $k=>$v) {
+        if( is_array($v) ) {
+            if( !isset($a[$k]) ) {
+                $a[$k] = $v;
+            } else {
+                $a[$k] = array_extend($a[$k], $v);
+            }
+        } else {
+            $a[$k] = $v;
+        }
+    }
+    return $a;
+}
 
 ?>

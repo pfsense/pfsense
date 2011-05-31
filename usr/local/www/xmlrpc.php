@@ -271,8 +271,17 @@ $merge_config_section_sig = array(
 
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
-
-	return restore_config_section_xmlrpc($raw_params);
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params))
+		return $xmlrpc_g['return']['authfail'];
+	$config_new = array_merge($config, $params[0]);
+	$config = $config_new;
+	$mergedkeys = implode(",", array_keys($params[0]));
+	$fd = fopen("/tmp/array.txt", "w");
+	fwrite($fd, print_r($params[0], true));
+	fclose($fd);
+	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
+	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/

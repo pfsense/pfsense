@@ -142,7 +142,34 @@ if ($_POST) {
 	}
 
 	/* TODO : Validate enabled phase2's are not duplicates */
-
+	if (isset($pconfig['mobile'])){
+		foreach($a_phase2 as $name){
+			if (isset($name['mobile'])){
+				/* check duplicate localids only for mobile clents */
+				if ($name['localid']['type'] == $pconfig['localid_type']){
+					/* Types match, check further */
+					switch($pconfig['localid_type']){
+						case "none":
+						case "lan":
+						case "wan":
+							$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+							break;
+						case "address":
+							if ($name['localid']['address'] == $pconfig['localid_address'])
+								$input_errors[] = gettext("Phase2 with this Local Address is already defined for mobile clients.");
+							break;
+						case "network":
+							if ($name['localid']['address'] == $pconfig['localid_address'] &&
+							    $name['localid']['netbits'] == $pconfig['localid_netbits'])
+								$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+							break;
+					}
+					if (count($input_errors) > 0)
+						break;	/* there is an error, stop checking other phase2 definitions */
+				}
+			}
+		}
+	}
 	$ealgos = pconfig_to_ealgos($pconfig);
 
 	if (!count($ealgos)) {

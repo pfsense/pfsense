@@ -125,6 +125,17 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $natent['natport'] = "";
                                         $a_out[] = $natent;
 					
+                                        $natent = array();
+                                        $natent['source']['network'] = "127.0.0.0/8";
+                                        $natent['dstport'] = "";
+                                        $natent['descr'] = sprintf(gettext('Auto created rule for localhost to %1$s'),$ifdesc2);
+                                        $natent['target'] = "";
+                                        $natent['interface'] = $if2;
+                                        $natent['destination']['any'] = true;
+                                        $natent['staticnatport'] = false;
+                                        $natent['natport'] = "1024:65535";
+                                        $a_out[] = $natent;
+
 					/* PPTP subnet */
 					if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
 						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));

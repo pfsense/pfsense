@@ -277,9 +277,6 @@ function merge_config_section_xmlrpc($raw_params) {
 	$config_new = array_merge($config, $params[0]);
 	$config = $config_new;
 	$mergedkeys = implode(",", array_keys($params[0]));
-	$fd = fopen("/tmp/array.txt", "w");
-	fwrite($fd, print_r($params[0], true));
-	fclose($fd);
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."), $mergedkeys));
 	return $xmlrpc_g['return']['true'];
 }

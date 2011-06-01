@@ -49,7 +49,7 @@
 require("certs.inc");
 require("guiconfig.inc");
 
-if (isAllowedPage("system_usermanager")) {
+if (isAllowedPage("system_usermanager*")) {
 
 	// start admin user code
 	$pgtitle = array(gettext("System"),gettext("User Manager"));

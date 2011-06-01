@@ -2264,9 +2264,6 @@ function load_mac_manufacturer_table() {
 		return -1;
 
 }
-<<<<<<< HEAD
-?>
-=======
 
 /****f* pfsense-utils/is_ipaddr_configured
  * NAME
@@ -2307,4 +2304,3 @@ function pfSense_handle_custom_code($src_dir) {
 }
 
 ?>
->>>>>>> upstream/master

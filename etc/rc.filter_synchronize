@@ -392,7 +392,7 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			update_filter_reload_status("Signaling CARP reload signal...");
 			carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			if (is_array($mergesections))
-				carp_sync_xml($synchronizetoip, $carp['password'], $mergesections, $port, 'pfsense.merge_config_section');
+				carp_sync_xml($synchronizetoip, $carp['password'], $mergesections, $port, 'pfsense.restore_config_section');
 			$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			$params = array(
 				XML_RPC_encode($carp['password'])

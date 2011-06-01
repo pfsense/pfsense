@@ -141,8 +141,74 @@ if ($_POST) {
 		}
 	}
 
-	/* TODO : Validate enabled phase2's are not duplicates */
-
+	/* Validate enabled phase2's are not duplicates */
+	if (isset($pconfig['mobile'])){
+		/* User is adding phase 2 for mobile phase1 */
+		foreach($a_phase2 as $name){
+			if (isset($name['mobile'])){
+				/* check duplicate localids only for mobile clents */
+				if ($name['localid']['type'] == $pconfig['localid_type']){
+					/* Types match, check further */
+					switch($pconfig['localid_type']){
+						case "none":
+						case "lan":
+						case "wan":
+							$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+							break;
+						case "address":
+							if ($name['localid']['address'] == $pconfig['localid_address'])
+								$input_errors[] = gettext("Phase2 with this Local Address is already defined for mobile clients.");
+							break;
+						case "network":
+							if ($name['localid']['address'] == $pconfig['localid_address'] &&
+							    $name['localid']['netbits'] == $pconfig['localid_netbits'])
+								$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+							break;
+					}
+					if (count($input_errors) > 0)
+						break;	/* there is an error, stop checking other phase2 definitions */
+				}
+			}
+		}
+	}else{
+		/* User is adding phase 2 for site-to-site phase1 */
+		$input_error = 0;
+		foreach($a_phase2 as $name){
+			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid']){
+				/* check duplicate subnets only for given phase1 */
+				if ($name['localid']['type'] == $pconfig['localid_type'] &&
+				    $name['remoteid']['type'] == $pconfig['remoteid_type']){ 
+					/* Types match, check further */
+					$configured_remote_string = $name['remoteid']['address'] . $name['remoteid']['netbits'];
+					$eneterd_remote_string = $pconfig['remoteid_address'] . $pconfig['remoteid_netbits'];
+					switch($pconfig['localid_type']){
+						case "none":
+						case "lan":
+						case "wan":
+							if ($configured_remote_string == $eneterd_remote_string)
+								$input_error = 1;
+							break;
+						case "address":
+							if ($name['localid']['address'] == $pconfig['localid_address'] &&
+							    $configured_remote_string == $eneterd_remote_string)
+								$input_error = 1;
+							break;
+						case "network":
+							if ($name['localid']['address'] == $pconfig['localid_address'] &&
+							    $name['localid']['netbits'] == $pconfig['localid_netbits'] &&
+							    $configured_remote_string == $eneterd_remote_string)
+								$input_error = 1;
+							break;
+					}
+					if ($input_error){
+						$input_errors[] = gettext("Phase2 with this Local/Remote Networks combination is already defined for this Phase1.");
+						break;	/* there is an error, stop checking other phase2 definitions */
+					}
+				}
+			}
+		}
+        }
+	
 	$ealgos = pconfig_to_ealgos($pconfig);
 
 	if (!count($ealgos)) {

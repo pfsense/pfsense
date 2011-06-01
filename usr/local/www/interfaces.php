@@ -346,7 +346,7 @@ if ($_POST['apply']) {
 						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
 						mwexec("/sbin/ifconfig {$realif} inet6 {$values['ipaddrv6']} -alias");
 					}
-					interface_reconfigure($ifapply);
+					interface_reconfigure($ifapply, true);
 				} else {
 					interface_bring_down($ifapply);
 				}
@@ -814,6 +814,15 @@ if ($_POST['apply']) {
 		} else {
 			$wancfg['mss'] = $_POST['mss'];
 		}
+		if (empty($_POST['mediaopt'])) {
+			unset($wancfg['media']);
+			unset($wancfg['mediaopt']);
+		} else {
+			$mediaopts = explode(' ', $_POST['mediaopt']);	
+			if ($mediaopts[0] != ''){ $wancfg['media'] = $mediaopts[0]; }
+			if ($mediaopts[1] != ''){ $wancfg['mediaopt'] = $mediaopts[1]; }
+			else { unset($wancfg['mediaopt']); }
+		}
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
 		}
@@ -1003,6 +1012,21 @@ function check_wireless_mode() {
 			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
 		}
 		$wancfg['wireless']['mode'] = $old_wireless_mode;
+	}
+}
+
+// Find all possible media options for the interface
+$mediaopts_list = array();
+$intrealname = $config['interfaces'][$if]['if'];
+exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
+foreach ($mediaopts as $mediaopt){
+	preg_match("/media (.*)/", $mediaopt, $matches);
+ 	if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)){
+		// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
+ 		array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
+	}else{
+		// there is only media like "media 1000baseT"
+		array_push($mediaopts_list, $matches[1]);
 	}
 }
 
@@ -1272,6 +1296,35 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 								"header size) will be in effect."); ?>
 							</td>
 						</tr>
+						<?php 
+						if (count($mediaopts_list) > 0){
+						$mediaopt_from_config = $config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt'];
+						echo "<tr>";
+							echo '<td valign="top" class="vncell">' . gettext("Speed and duplex") . '</td>';
+							echo '<td class="vtable">';
+                                			echo '<div id="showadvmediabox"';
+								if ($mediaopt_from_config != 'autoselect ' && $mediaopt_from_config != ' ') echo " style='display:none'>";
+								else echo '>';
+								echo '<input type="button" onClick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
+							echo "</div>";
+							echo '<div id="showmediaadv" ';
+							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
+							else echo '>';
+								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
+								foreach($mediaopts_list as $mediaopt){
+									if ($mediaopt != rtrim($mediaopt_from_config)){
+										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";
+									} else {
+										print "<option value=\"$mediaopt\" selected>" . gettext("$mediaopt") . "</option>";
+									}
+								}
+								echo '</select><br>';
+								echo gettext("Here you can explicitely set up speed and duplex mode for the interface.");
+						echo '</div>';
+							echo '</td>';
+						echo '</tr>';
+						}
+						?>
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>
@@ -2487,6 +2540,11 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 			} else {
 				report_failure();
 			}
+		}
+		function show_advanced_media() {
+			document.getElementById("showadvmediabox").innerHTML='';
+			aodiv = document.getElementById('showmediaadv');
+			aodiv.style.display = "block";
 		}
 		function save_callback_v6(transport) {
 			var response_v6 = transport.responseText;

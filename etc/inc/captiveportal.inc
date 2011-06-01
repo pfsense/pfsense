@@ -809,12 +809,11 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	captiveportal_free_ipfw_ruleno($dbent[1]);
 
 	// XMLRPC Call over to the master Voucher node
-	$a_voucher = &$config['voucher'];
-	if(!empty($a_voucher['vouchersyncdbip'])) {
-		$syncip   = $a_voucher['vouchersyncdbip'];
-		$syncport = $a_voucher['vouchersyncport'];
-		$syncpass = $a_voucher['vouchersyncpass'];
-		$vouchersyncusername = $a_voucher['vouchersyncusername'];
+	if(!empty($config['voucher']['vouchersyncdbip'])) {
+		$syncip   = $config['voucher']['vouchersyncdbip'];
+		$syncport = $config['voucher']['vouchersyncport'];
+		$syncpass = $config['voucher']['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
 		$remote_status = xmlrpc_sync_voucher_disconnect($dben, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
 	}
 

@@ -37,6 +37,53 @@
 if(!function_exists('captiveportal_syslog'))
 	require_once("captiveportal.inc");
 
+function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
+	global $g, $config;
+	require_once("xmlrpc.inc");
+	if($port == "443") 
+		$url = "https://{$syncip}";
+	else 
+		$url = "http://{$syncip}";
+
+	/* Construct code that is run on remote machine */
+	$method = 'pfsense.exec_php';
+	$execcmd  = <<<EOF
+	require_once('/etc/inc/captiveportal.inc');
+	require_once('/etc/inc/voucher.inc');
+	voucher_expire(\$vouchers);
+
+EOF;
+
+	/* assemble xmlrpc payload */
+	$params = array(
+		XML_RPC_encode($password),
+		XML_RPC_encode($execcmd)
+	);
+
+	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	$msg = new XML_RPC_Message($method, $params);
+	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+	$cli->setCredentials($username, $password);
+	$resp = $cli->send($msg, "250");
+	if(!is_object($resp)) {
+		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
+		return false;
+	} elseif($resp->faultCode()) {
+		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		log_error($error);
+		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
+		return false;
+	} else {
+		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+	}
+
+	$toreturn =  XML_RPC_Decode($resp->value());
+
+	return $toreturn;
+}
+
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = "1", $stop_time = null) {
 	global $g, $config;
 	require_once("xmlrpc.inc");
@@ -138,138 +185,77 @@ EOF;
 	return $toreturn['timeleft'];
 }
 
-/* 
- * Authenticate a voucher and return the remaining time credit in minutes
- * if $test is set, don't mark the voucher as used nor add it to the list
- * of active vouchers
- * If $test is set, simply test the voucher. Don't change anything
- * but return a more verbose error and result message back
- */
-function voucher_auth($voucher_received, $test = 0) {
-    global $g, $config;
+function voucher_expire($voucher_received) {
+	global $g, $config;
 
-    $voucherlck = lock('voucher', LOCK_EX);
+	$voucherlck = lock('voucher', LOCK_EX);
 
 	// XMLRPC Call over to the master Voucher node
-	$a_voucher = &$config['voucher'];
-	if(!empty($a_voucher['vouchersyncdbip'])) {
-		$syncip   = $a_voucher['vouchersyncdbip'];
-		$syncport = $a_voucher['vouchersyncport'];
-		$syncpass = $a_voucher['vouchersyncpass'];
-		$vouchersyncusername = $a_voucher['vouchersyncusername'];
-		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
+	if(!empty($config['voucher']['vouchersyncdbip'])) {
+		$syncip   = $config['voucher']['vouchersyncdbip'];
+		$syncport = $config['voucher']['vouchersyncport'];
+		$syncpass = $config['voucher']['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
+		xmlrpc_sync_voucher_expire($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();
 	$minutes_per_roll = array();
 	if (is_array($config['voucher']['roll'])) {
-		$a_roll = &$config['voucher']['roll'];
-		foreach ($a_roll as $rollent) {
+		foreach ($config['voucher']['roll'] as $rollent) {
 			$tickets_per_roll[$rollent['number']] = $rollent['count'];
 			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
 		}
 	}
 
-    // split into an array. Useful for multiple vouchers given
-    $a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
-    $error = 0;
-    $test_result = array();     // used to display for voucher test option in GUI
-    $total_minutes = 0;
-    $first_voucher = "";
-    $first_voucher_roll = 0;
+	// split into an array. Useful for multiple vouchers given
+	$a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
+	$active_dirty = false;
 
-    // go through all received vouchers, check their valid and extract
-    // Roll# and Ticket# using the external readvoucher binary
+	// go through all received vouchers, check their valid and extract
+	// Roll# and Ticket# using the external readvoucher binary
+	foreach ($a_vouchers_received as $voucher) {
+		$v = escapeshellarg($voucher);
+		if (strlen($voucher) < 3)
+			continue;   // seems too short to be a voucher!
 
-    foreach ($a_vouchers_received as $voucher) {
+		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
+		list($status, $roll, $nr) = explode(" ", $result);
+		if ($status == "OK") {
+			// check if we have this ticket on a registered roll for this ticket 
+			if ($tickets_per_roll[$roll] && ($nr <= $tickets_per_roll[$roll])) {
+				// voucher is from a registered roll. 
+				if (!isset($active_vouchers[$roll]))
+					$active_vouchers[$roll] = voucher_read_active_db($roll);
+				// valid voucher. Store roll# and ticket#
+				if (!empty($active_vouchers[$roll][$voucher])) {
+					$active_dirty = true;
+					unset($active_vouchers[$roll][$voucher]);
+				}
+				// check if voucher already marked as used
+				if (!isset($bitstring[$roll]))
+					$bitstring[$roll] = voucher_read_used_db($roll);
+				$pos = $nr >> 3; // divide by 8 -> octet
+				$mask = 1 << ($nr % 8);
+				// mark bit for this voucher as used
+				if (!(ord($bitstring[$roll][$pos]) & $mask))
+					$bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
+				captiveportal_syslog("{$voucher} ({$roll}/{$nr}) forced to expire");
+			} else
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+		} else
+			// hmm, thats weird ... not what I expected
+			captiveportal_syslog("$voucher invalid: $result !!");
+	}
 
-        $v = escapeshellarg($voucher);
-        if (strlen($voucher) < 3)
-            continue;   // seems too short to be a voucher!
+	// Refresh active DBs
+	if ($active_dirty == true) {
+		foreach ($active_vouchers as $roll => $active)
+			voucher_write_active_db($roll, $active);
+	}
 
-        $result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
-        list($status, $roll, $nr) = explode(" ", $result);
-        if ($status == "OK") {
-            if (!$first_voucher) {
-				// store first voucher. Thats the one we give the timecredit
-                $first_voucher = $voucher;
-                $first_voucher_roll = $roll;
-            }
-            // check if we have this ticket on a registered roll for this ticket 
-            if ($tickets_per_roll[$roll] && ($nr <= $tickets_per_roll[$roll])) {
-                // voucher is from a registered roll. 
-                if (!isset($active_vouchers[$roll]))
-                    $active_vouchers[$roll] = voucher_read_active_db($roll);
-                // valid voucher. Store roll# and ticket#
-                if (!empty($active_vouchers[$roll][$voucher])) {
-                    list($timestamp,$minutes) = explode(",", $active_vouchers[$roll][$voucher]);
-                    // we have an already active voucher here.
-                    $remaining = intval((($timestamp + (60*$minutes)) - time())/60);
-                    $test_result[] = "$voucher ($roll/$nr) active and good for $remaining Minutes";
-                    $total_minutes += $remaining;
-                } else {
-                    // voucher not used. Check if ticket Id is on the roll (not too high)
-                    // and if the ticket is marked used.
-                    // check if voucher already marked as used
-                    if (!isset($bitstring[$roll]))
-                        $bitstring[$roll] = voucher_read_used_db($roll);
-                    $pos = $nr >> 3; // divide by 8 -> octet
-                    $mask = 1 << ($nr % 8);
-                    if (ord($bitstring[$roll][$pos]) & $mask) {
-                        $test_result[] = "$voucher ($roll/$nr) already used and expired";
-						captiveportal_syslog("$voucher ($roll/$nr) already used and expired");
-                        $total_minutes = -1;    // voucher expired
-                        $error++;
-                    } else {
-                        // mark bit for this voucher as used
-                        $bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
-                        $test_result[] = "$voucher ($roll/$nr) good for {$minutes_per_roll[$roll]} Minutes";
-                        $total_minutes += $minutes_per_roll[$roll];
-                    }
-                }
-            } else {
-                $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
-		captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
-            }
-        } else {
-            // hmm, thats weird ... not what I expected
-            $test_result[] = "$voucher invalid: $result !!";
-	    captiveportal_syslog("$voucher invalid: $result !!");
-            $error++;
-        }
-    }
-
-    // if this was a test call, we're done. Return the result.
-    if ($test) {
-        if ($error) {
-            $test_result[] = "Access denied!";
-        } else {
-            $test_result[] = "Access granted for $total_minutes Minutes in total.";
-        }
-	unlock($voucherlck);
-        return $test_result;
-    }
-
-    // if we had an error (one of the vouchers is invalid), return 0.
-    // Discussion: we could return the time remaining for good vouchers, but then
-    // the user wouldn't know that he used at least one invalid voucher.
-
-    if ($error) {
-		unlock($voucherlck);
-        if ($total_minutes > 0)     // probably not needed, but want to make sure
-            $total_minutes = 0;     // we only report -1 (expired) or 0 (no access)
-        return $total_minutes;       // well, at least one voucher had errors. Say NO ACCESS
-    }
-
-	// If we did a XMLRPC sync earlier check the timeleft
-	if(!empty($a_voucher['vouchersyncdbip'])) 
-		if($remote_time_used < $total_minutes) 
-			$total_minutes = $remote_time_used;
-
-    // All given vouchers were valid and this isn't simply a test.
-    // Write back the used DB's
-
+	// Write back the used DB's
 	if (is_array($bitstring)) {
 		foreach ($bitstring as $roll => $used) {
 			if(is_array($used)) {
@@ -281,24 +267,166 @@ function voucher_auth($voucher_received, $test = 0) {
 		}
 	}
 
-    // Active DB: we only add the first voucher if multiple given
-    // and give that one all the time credit. This allows the user to logout and
-    // log in later using just the first voucher. It also keeps username limited
-    // to one voucher and that voucher shows the correct time credit in 'active vouchers'
+	unlock($voucherlck);
 
-    if (!empty($active_vouchers[$first_voucher_roll][$first_voucher])) {
-        list($timestamp, $minutes) = explode(",", $active_vouchers[$first_voucher_roll][$first_voucher]);
-    } else {
-        $timestamp = time();    // new voucher
-        $minutes = $total_minutes;
-    }
+	return true;
+}
 
-    $active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
-    voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
+/* 
+ * Authenticate a voucher and return the remaining time credit in minutes
+ * if $test is set, don't mark the voucher as used nor add it to the list
+ * of active vouchers
+ * If $test is set, simply test the voucher. Don't change anything
+ * but return a more verbose error and result message back
+ */
+function voucher_auth($voucher_received, $test = 0) {
+	global $g, $config;
 
-    unlock($voucherlck);
+	$voucherlck = lock('voucher', LOCK_EX);
 
-    return $total_minutes;
+	// XMLRPC Call over to the master Voucher node
+	if(!empty($config['voucher']['vouchersyncdbip'])) {
+		$syncip   = $config['voucher']['vouchersyncdbip'];
+		$syncport = $config['voucher']['vouchersyncport'];
+		$syncpass = $config['voucher']['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
+		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
+	}
+
+	// read rolls into assoc array with rollid as key and minutes as value
+	$tickets_per_roll = array();
+	$minutes_per_roll = array();
+	if (is_array($config['voucher']['roll'])) {
+		foreach ($config['voucher']['roll'] as $rollent) {
+			$tickets_per_roll[$rollent['number']] = $rollent['count'];
+			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
+		}
+	}
+
+	// split into an array. Useful for multiple vouchers given
+	$a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
+	$error = 0;
+	$test_result = array();     // used to display for voucher test option in GUI
+	$total_minutes = 0;
+	$first_voucher = "";
+	$first_voucher_roll = 0;
+
+	// go through all received vouchers, check their valid and extract
+	// Roll# and Ticket# using the external readvoucher binary
+	foreach ($a_vouchers_received as $voucher) {
+		$v = escapeshellarg($voucher);
+		if (strlen($voucher) < 3)
+			continue;   // seems too short to be a voucher!
+
+		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
+		list($status, $roll, $nr) = explode(" ", $result);
+		if ($status == "OK") {
+			if (!$first_voucher) {
+				// store first voucher. Thats the one we give the timecredit
+				$first_voucher = $voucher;
+				$first_voucher_roll = $roll;
+			}
+			// check if we have this ticket on a registered roll for this ticket 
+			if ($tickets_per_roll[$roll] && ($nr <= $tickets_per_roll[$roll])) {
+				// voucher is from a registered roll. 
+				if (!isset($active_vouchers[$roll]))
+					$active_vouchers[$roll] = voucher_read_active_db($roll);
+				// valid voucher. Store roll# and ticket#
+				if (!empty($active_vouchers[$roll][$voucher])) {
+					list($timestamp,$minutes) = explode(",", $active_vouchers[$roll][$voucher]);
+					// we have an already active voucher here.
+					$remaining = intval((($timestamp + (60*$minutes)) - time())/60);
+					$test_result[] = "$voucher ($roll/$nr) active and good for $remaining Minutes";
+					$total_minutes += $remaining;
+				} else {
+					// voucher not used. Check if ticket Id is on the roll (not too high)
+					// and if the ticket is marked used.
+					// check if voucher already marked as used
+					if (!isset($bitstring[$roll]))
+						$bitstring[$roll] = voucher_read_used_db($roll);
+					$pos = $nr >> 3; // divide by 8 -> octet
+					$mask = 1 << ($nr % 8);
+					if (ord($bitstring[$roll][$pos]) & $mask) {
+						$test_result[] = "$voucher ($roll/$nr) already used and expired";
+						captiveportal_syslog("$voucher ($roll/$nr) already used and expired");
+						$total_minutes = -1;    // voucher expired
+						$error++;
+					} else {
+						// mark bit for this voucher as used
+						$bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
+						$test_result[] = "$voucher ($roll/$nr) good for {$minutes_per_roll[$roll]} Minutes";
+						$total_minutes += $minutes_per_roll[$roll];
+					}
+				}
+			} else {
+				$test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+			}
+		} else {
+			// hmm, thats weird ... not what I expected
+			$test_result[] = "$voucher invalid: $result !!";
+			captiveportal_syslog("$voucher invalid: $result !!");
+			$error++;
+		}
+	}
+
+	// if this was a test call, we're done. Return the result.
+	if ($test) {
+		if ($error) {
+			$test_result[] = "Access denied!";
+		} else {
+			$test_result[] = "Access granted for $total_minutes Minutes in total.";
+		}
+		unlock($voucherlck);
+
+		return $test_result;
+	}
+
+	// if we had an error (one of the vouchers is invalid), return 0.
+	// Discussion: we could return the time remaining for good vouchers, but then
+	// the user wouldn't know that he used at least one invalid voucher.
+	if ($error) {
+		unlock($voucherlck);
+		if ($total_minutes > 0)     // probably not needed, but want to make sure
+			$total_minutes = 0;     // we only report -1 (expired) or 0 (no access)
+		return $total_minutes;       // well, at least one voucher had errors. Say NO ACCESS
+	}
+
+	// If we did a XMLRPC sync earlier check the timeleft
+	if (!empty($config['voucher']['vouchersyncdbip'])) 
+		if($remote_time_used < $total_minutes) 
+			$total_minutes = $remote_time_used;
+
+	// All given vouchers were valid and this isn't simply a test.
+	// Write back the used DB's
+	if (is_array($bitstring)) {
+		foreach ($bitstring as $roll => $used) {
+			if(is_array($used)) {
+				foreach($used as $u)
+					voucher_write_used_db($roll, base64_encode($u));
+			} else {
+				voucher_write_used_db($roll, base64_encode($used));
+			}
+		}
+	}
+
+	// Active DB: we only add the first voucher if multiple given
+	// and give that one all the time credit. This allows the user to logout and
+	// log in later using just the first voucher. It also keeps username limited
+	// to one voucher and that voucher shows the correct time credit in 'active vouchers'
+	if (!empty($active_vouchers[$first_voucher_roll][$first_voucher])) {
+		list($timestamp, $minutes) = explode(",", $active_vouchers[$first_voucher_roll][$first_voucher]);
+	} else {
+		$timestamp = time();    // new voucher
+		$minutes = $total_minutes;
+	}
+
+	$active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
+	voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
+
+	unlock($voucherlck);
+
+	return $total_minutes;
 }
 
 function voucher_configure($sync = false) {
@@ -352,11 +480,10 @@ function voucher_configure($sync = false) {
 
         if (($g['booting'] || $sync == true) && is_array($config['voucher']['roll'])) {
 
-            // create active and used DB per roll on ramdisk from config
-            $a_roll = &$config['voucher']['roll'];
 		$voucherlck = lock('voucher', LOCK_EX);
 
-            foreach ($a_roll as $rollent) {
+            // create active and used DB per roll on ramdisk from config
+            foreach ($config['voucher']['roll'] as $rollent) {
 
                 $roll = $rollent['number'];
                 voucher_write_used_db($roll, $rollent['used']);
@@ -432,6 +559,8 @@ function voucher_read_active_db($roll) {
 function voucher_write_active_db($roll, $active) {
     global $g;
 
+	if (!is_array($active))
+		return;
     $fd = fopen("{$g['vardb_path']}/voucher_active_$roll.db", "w");
     if ($fd) {
         foreach($active as $voucher => $value)

@@ -397,7 +397,7 @@ EOPP;
 			$dhcpdconf .= "		deny dynamic bootp clients;\n";
 
 		if (isset($dhcpifconf['denyunknown']))
-		   $dhcpdconf .= "		deny unknown clients;\n";
+		   $dhcpdconf .= "		deny unknown-clients;\n";
 
 		if ($dhcpifconf['gateway'])
 			$routers = $dhcpifconf['gateway'];
@@ -1066,8 +1066,6 @@ function services_dyndns_configure_client($conf) {
 
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
-
-	log_error("DynDns: Running updatedns()");
 
 	$dns = new updatedns($dnsService = $conf['type'],
 		$dnsHost = $conf['host'],

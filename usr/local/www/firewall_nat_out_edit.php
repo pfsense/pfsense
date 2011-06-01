@@ -46,7 +46,7 @@ require("filter.inc");
 require("shaper.inc");
 
 if (!is_array($config['nat']['advancedoutbound']))
-        $config['nat']['advancedoutbound'] = array();
+	$config['nat']['advancedoutbound'] = array();
 
 if (!is_array($config['nat']['advancedoutbound']['rule'])) {
 	$config['nat']['advancedoutbound']['rule'] = array();
@@ -115,6 +115,15 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+        /*  run through $_POST items encoding HTML entties so that the user
+         *  cannot think he is slick and perform a XSS attack on the unwilling
+         */
+        foreach ($_POST as $key => $value) {
+                $temp = str_replace(">", "", $value);
+                $newpost = htmlentities($temp);
+                if($newpost <> $temp)
+                        $input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
+        }
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
@@ -209,6 +218,9 @@ if ($_POST) {
 		}
 	}
 
+	// Allow extending of the firewall edit page and include custom input validation 
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/input_validation");
+
 	if (!$input_errors) {
 	        $natent = array();
 		$natent['source']['network'] = $osn;
@@ -264,6 +276,9 @@ if ($_POST) {
 		if (isset($_POST['destination_not']) && $ext != "any") {
 			$natent['destination']['not'] = true;
 		}
+
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/pre_write_config");
 
 		if (isset($id) && $a_out[$id]) {
 			$a_out[$id] = $natent;
@@ -387,6 +402,10 @@ function poolopts_change() {
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Advanced Outbound NAT entry");?></td>
 				</tr>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
+?>
 	        <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Do not NAT");?></td>
                   <td width="78%" class="vtable">
@@ -620,6 +639,10 @@ any)");?></td>
                     <br> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed).");?></span></td>
           </tr>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/htmlphplate");
+?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

@@ -1062,8 +1062,9 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-loggedinusers=$rrddbpath$curdatabase:loggedinusers:AVERAGE\" ";
 	$graphcmd .= "CDEF:\"$curif-totalusers_t=PREV,UN,0,PREV,IF,$curif-loggedinusers,+\" ";
-	$graphcmd .= "AREA:\"$curif-totalusers_t#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
-	$graphcmd .= "GPRINT:\"$curif-totalusers_t:MAX:%8.0lf \\n\" ";
+	$graphcmd .= "CDEF:\"$curif-totalusers_d=$curif-totalusers_t,FLOOR\" ";
+	$graphcmd .= "AREA:\"$curif-totalusers_d#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
+	$graphcmd .= "GPRINT:\"$curif-totalusers_d:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
 }

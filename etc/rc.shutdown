@@ -5,10 +5,6 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	exit -1
 fi
 
-if [ -e /dev/ukbd0 ]; then
-        /usr/sbin/vidcontrol -s 2
-fi
-
 product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
         
 echo

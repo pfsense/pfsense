@@ -56,6 +56,7 @@ $pconfig['proxyuser'] = $config['system']['proxyuser'];
 $pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
+$pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
@@ -105,6 +106,11 @@ if ($_POST) {
 			$config['system']['lb_use_sticky'] = true;
 		else
 			unset($config['system']['lb_use_sticky']);
+
+		if($_POST['gw_switch_default'] == "yes")
+			$config['system']['gw_switch_default'] = true;
+		else
+			unset($config['system']['gw_switch_default']);
 
 		if($_POST['preferoldsa_enable'] == "yes")
 			$config['ipsec']['preferoldsa'] = true;
@@ -269,6 +275,15 @@ function maxmss_checked(obj) {
 									"the sticky connection. Further connections from that host " .
 									"will be redirected to the next web server in the round " .
 									"robin."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="lb_use_sticky" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Allow default gateway switching"); ?></strong><br/>
+									<?=gettext("If the link where the default gateway resides fails " .
+									"switch the default gateway to another available one."); ?>
 								</td>
 							</tr>
 							<tr>

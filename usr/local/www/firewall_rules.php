@@ -126,12 +126,12 @@ if($_REQUEST['dragdroporder']) {
 
 $icmptypes = array(
 	"" => gettext("any"),
+	"echoreq" => gettext("Echo request"),
 	"echorep" => gettext("Echo reply"),
 	"unreach" => gettext("Destination unreachable"),
 	"squench" => gettext("Source quench"),
 	"redir" => gettext("Redirect"),
 	"althost" => gettext("Alternate Host"),
-	"echoreq" => gettext("Echo"),
 	"routeradv" => gettext("Router advertisement"),
 	"routersol" => gettext("Router solicitation"),
 	"timex" => gettext("Time exceeded"),

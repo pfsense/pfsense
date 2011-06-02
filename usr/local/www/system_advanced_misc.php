@@ -280,7 +280,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="lb_use_sticky" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
+									<input name="gw_switch_default" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Allow default gateway switching"); ?></strong><br/>
 									<?=gettext("If the link where the default gateway resides fails " .
 									"switch the default gateway to another available one."); ?>

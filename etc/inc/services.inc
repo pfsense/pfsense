@@ -1312,10 +1312,13 @@ function services_dyndns_configure_client($conf) {
 		$dnsBackMX = NULL,
 		$dnsServer = NULL,
 		$dnsPort = NULL,
-		$dnsUpdateURL = NULL,
+		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
                 $dnsZoneID=$conf['zoneid'],
-                $dnsTTL=$conf['ttl']);
+                $dnsTTL=$conf['ttl'],
+		$dnsResultMatch = "{$conf['resultmatch']}",
+		$dnsRequestIf = "{$conf['requestif']}",
+		$dnsID = "{$conf['id']}");
 }
 
 function services_dyndns_configure($int = "") {

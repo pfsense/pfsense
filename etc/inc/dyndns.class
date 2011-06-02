@@ -21,10 +21,12 @@
 	 *    - HE.net (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 *    - SelfHost (selfhost.de)
-         *    - Amazon Route 53 (aws.amazon.com)
+	 *    - Amazon Route 53 (aws.amazon.com)
+	 *    - DNS-O-Matic (dnsomatic.com)
+	 *    - Custom DDNS (any URL)
 	 * +----------------------------------------------------+
 	 *  Requirements:
-	 *    - PHP version 4.0.2 or higher with CURL Library
+	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
 	 * +----------------------------------------------------+
 	 *  Public Functions
 	 *    - updatedns()
@@ -56,7 +58,8 @@
 	 *  HE.net         - Last Tested: NEVER
 	 *  HE.net Tunnel  - Last Tested: 28 June 2011
 	 *  SelfHost       - Last Tested: 26 December 2011
-+        *  Amazon Route 53 - Last tested: 01 April 2012
+	 *  Amazon Route 53 - Last tested: 01 April 2012
+	 *  DNS-O-Matic	   - Last Tested: 9 September 2010
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -65,6 +68,7 @@
 	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
 	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi
+	 * Custom DNS support by Matt Corallo
 	 *
 	 */
 
@@ -91,24 +95,33 @@
 		var $status;
 		var $_debugID;
 		var $_if;
+		var $_dnsResultMatch;
+		var $_dnsRequestIf;
+		var $_dnsRequestIfIP;
 		
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
 		 *   - Gets the dice rolling for the update. 
+		 *   - $dnsResultMatch should only be used with $dnsService = 'custom'
+		 *   -  $dnsResultMatch is parsed for '%IP%', which is the IP the provider was updated to, 
+		 *   -  it is otherwise expected to be exactly identical to what is returned by the Prover.
+		 *   - $dnsUser, and $dnsPass indicate HTTP Auth for custom DNS, if they are needed in the URL (GET Variables), include them in $dnsUpdateURL.
+		 *   - $For custom requests, $dnsUpdateURL is parsed for '%IP%', which is replaced with the new IP.
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
-				    $dnsZoneID ='', $dnsTTL='') {
+				    $dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
+				    $dnsID = '') {
 			
 			global $config, $g;
 			
-			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".cache";
-			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".debug";
+			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.cache";
+			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.debug";
 
 			log_error("DynDns: updatedns() starting");
 
-			$dyndnslck = lock($dnsHost, LOCK_EX);
+			$dyndnslck = lock("DDNS".$dnsID, LOCK_EX);
 
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
@@ -119,11 +132,13 @@
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				break;
-                       case 'route53':
-                                if (!$dnsZoneID) $this->_error(8);
-                                if (!$dnsTTL) $this->_error(9);
-                                break;
-
+			case 'route53':
+				if (!$dnsZoneID) $this->_error(8);
+				if (!$dnsTTL) $this->_error(9);
+				break;
+			case 'custom':
+				if (!$dnsUpdateURL) $this->_error(7);
+				break;
 			default:
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
@@ -142,6 +157,10 @@
                         $this->_dnsTTL = $dnsTTL;
 			$this->_if = get_real_interface($dnsIf);
 			$this->_ifIP = get_interface_ip($dnsIf);
+			$this->_dnsUpdateURL = $dnsUpdateURL;
+			$this->_dnsResultMatch = $dnsResultMatch;
+			$this->_dnsRequestIf = get_real_interface($dnsRequestIf);
+			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 
 			// Ensure that we where able to lookup the IP
 			if(!is_ipaddr($this->_ifIP)) {
@@ -171,15 +190,14 @@
 				case 'loopia':
 				case 'staticcling':
 				case 'dnsexit':
+				case 'custom':
 				case 'opendns':
 				case 'namecheap':
 				case 'he-net':
 				case 'selfhost':
+				case 'he-net-tunnelbroker':
 				case 'route53':
 					$this->_update();	
-					break;
-				case 'he-net-tunnelbroker':
-					$this->_update();
 					break;
 				default:
 					$this->_error(6);
@@ -203,7 +221,7 @@
 				curl_setopt($ch, CURLOPT_HEADER, 0);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
+				curl_setopt($ch, CURLOPT_INTERFACE, $this->_dnsRequestIfIP);
 				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 
@@ -496,6 +514,17 @@
                                                 }
                                         $this->_checkStatus(0, $result);
                                                 break;
+				case 'custom':
+					log_error("Custom DDNS: DNS update() starting.");
+					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
+					if ($this->_dnsUser != '') {
+						curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					}
+					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);
+					log_error("Sending request to: ".$server);
+					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
 				default:
 					break;
 			}
@@ -786,7 +815,7 @@
 						$this->_debug($data);
 					}
 					break;
-                 case 'staticcling':
+				case 'staticcling':
 					if (preg_match("/invalid ip/i", $data)) {
 					        $status = "phpDynDNS: (Error) Bad Request - The IP provided was invalid.";
 					} else if (preg_match('/required info missing/i', $data)) {
@@ -894,6 +923,25 @@
                                 case 'route53':
                                         $successful_update = true;
                                         break;
+				case 'custom':
+					$successful_update = false;
+					if ($this->_dnsResultMatch == "") {
+						$successful_update = true;
+					}else {
+						$this->_dnsResultMatch = str_replace("%IP%", $this->_dnsIP, $this->_dnsResultMatch);
+						$matches = preg_split("/(?<!\\\\)\\|/", $this->_dnsResultMatch);
+						foreach($matches as $match) {
+							$match= str_replace("\\|", "|", $match);
+							if(strcmp($match, trim($data, "\t\n\r")) == 0)
+								$successful_update = true;
+						}
+						unset ($matches);
+					}
+					if ($successful_update == true)
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					else
+					        $status = "phpDynDNS: (Error) Result did not match.";
+					break;
 			}
 			
 			if($successful_update == true) {

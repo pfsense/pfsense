@@ -90,6 +90,7 @@ if ($_GET['act'] == "del") {
 							<td nowrap class="listhdrr"><?=gettext("SPI");?></td>
 							<td nowrap class="listhdrr"><?=gettext("Enc. alg.");?></td>
 							<td nowrap class="listhdr"><?=gettext("Auth. alg.");?></td>
+							<td nowrap class="listhdr"><?=gettext("Data");?></td>
 							<td nowrap class="list"></td>
 						</tr>
 						<?php foreach ($sad as $sa): ?>
@@ -100,6 +101,7 @@ if ($_GET['act'] == "del") {
 							<td class="listr"><?=htmlspecialchars($sa['spi']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
+							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
 							<td class="list" nowrap>
 								<?php
 									$args = "src=" . rawurlencode($sa['src']);

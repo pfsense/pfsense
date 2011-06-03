@@ -141,10 +141,10 @@ function get_pkg_id($pkg_name) {
 
 /****f* pkg-utils/get_pkg_info
  * NAME
- *   get_pkg_info - Retrive package information from pfsense.com.
+ *   get_pkg_info - Retrieve package information from pfsense.com.
  * INPUTS
- *   $pkgs - 'all' to retrive all packages, an array containing package names otherwise
- *   $info - 'all' to retrive all information, an array containing keys otherwise
+ *   $pkgs - 'all' to retrieve all packages, an array containing package names otherwise
+ *   $info - 'all' to retrieve all information, an array containing keys otherwise
  * RESULT
  *   $raw_versions - Array containing retrieved information, indexed by package name.
  ******/

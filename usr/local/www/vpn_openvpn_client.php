@@ -628,6 +628,7 @@ if ($savemsg)
 					<tr id="tls_ca">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Authority"); ?></td>
 							<td width="78%" class="vtable">
+							<?php if (count($a_ca)): ?>
 							<select name='caref' class="formselect">
 							<?php
 								foreach ($a_ca as $ca):
@@ -638,11 +639,15 @@ if ($savemsg)
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
+							<?php else: ?>
+								<b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
 							</td>
 					</tr>
 					<tr id="tls_cert">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Client Certificate"); ?></td>
 							<td width="78%" class="vtable">
+							<?php if (count($a_cert)): ?>
 							<select name='certref' class="formselect">
 							<?php
 							foreach ($a_cert as $cert):
@@ -663,6 +668,9 @@ if ($savemsg)
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
 							</select>
+							<?php else: ?>
+								<b>No Certificates defined.</b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
 						</td>
 					</tr>
 					<tr id="psk">

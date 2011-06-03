@@ -92,6 +92,8 @@ if ($act == "del") {
 	unset($a_ca[$id]);
 	write_config();
 	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br/>";
+	pfSenseHeader("system_camanager.php");
+	exit;
 }
 
 if ($act == "edit") {

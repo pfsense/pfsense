@@ -350,10 +350,6 @@ function autotls_change() {
 <?php
 if (!$savemsg)
 	$savemsg = "";
-if (count($a_ca) == 0)
-	$savemsg .= "You have no Certificate Authorities defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
-if (count($a_cert) == 0)
-	$savemsg .= "<br/>You have no Certificates defined. You must visit the <a href=\"system_camanager.php\">Certificate Manager</a> to make one.";
 
 if ($input_errors)
 	print_input_errors($input_errors);

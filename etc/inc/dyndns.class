@@ -98,7 +98,9 @@
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".debug";
 
 			log_error("DynDns: updatedns() starting");
-			
+
+			$dyndnslck = lock($dnsHost, LOCK_EX);
+
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
 			case 'freedns':
@@ -128,6 +130,7 @@
 			// Ensure that we where able to lookup the IP
 			if(!is_ipaddr($this->_ifIP)) {
 				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
+				unlock($dyndnslck);
 				return;
 			}
 
@@ -162,6 +165,8 @@
 					break;
 				}
 			}
+
+			unlock($dyndnslck);
 		}
 			
 		/*
@@ -178,7 +183,7 @@
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 60); // Completely empirical
+				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 
 			switch ($this->_dnsService) {
@@ -961,7 +966,7 @@
 				curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 				curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
 				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 60);
+				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);

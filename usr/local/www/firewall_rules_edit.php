@@ -253,19 +253,6 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	/*  run through $_POST items encoding HTML entties so that the user
-	 *  cannot think he is slick and perform a XSS attack on the unwilling 
-	 */
-	foreach ($_POST as $key => $value) {
-		$temp = str_replace(">", "", $value);
-			
-		if (isset($_POST['floating']) && $key == "interface")
-			continue;
-		$newpost = htmlentities($temp);
-		if($newpost <> $temp)   	 
-			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);		
-	}
-
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
 	if ( isset($a_filter[$id]['associated-rule-id'])===false ) {
@@ -547,6 +534,9 @@ if ($_POST) {
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 		}
 
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
+
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
 		else {
@@ -557,9 +547,6 @@ if ($_POST) {
 		}
 
 		filter_rules_sort();
-
-		// Allow extending of the firewall edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
 
 		write_config();
 		mark_subsystem_dirty('filter');
@@ -759,12 +746,12 @@ include("head.inc");
 <?php
 				$icmptypes = array(
 				"" => gettext("any"),
+				"echoreq" => gettext("Echo request"),
 				"echorep" => gettext("Echo reply"),
 				"unreach" => gettext("Destination unreachable"),
 				"squench" => gettext("Source quench"),
 				"redir" => gettext("Redirect"),
 				"althost" => gettext("Alternate Host"),
-				"echoreq" => gettext("Echo"),
 				"routeradv" => gettext("Router advertisement"),
 				"routersol" => gettext("Router solicitation"),
 				"timex" => gettext("Time exceeded"),

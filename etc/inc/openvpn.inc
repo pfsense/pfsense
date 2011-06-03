@@ -367,8 +367,8 @@ function openvpn_reconfigure($mode, $settings) {
 	// server specific settings
 	if ($mode == 'server') {
 
-		list($ip, $mask) = explode('/', $settings['tunnel_network']);
-		$mask = gen_subnet_mask($mask);
+		list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
 		switch($settings['mode']) {
@@ -383,8 +383,13 @@ function openvpn_reconfigure($mode, $settings) {
 		// configure p2p/server modes
 		switch($settings['mode']) {
 			case 'p2p_tls':
-				$conf .= "server {$ip} {$mask}\n";
-				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+				// If the CIDR is less than a /30, OpenVPN will complain if you try to
+				//  use the server directive. It works for a single client without it.
+				//  See ticket #1417
+				if ($cidr < 30) {
+					$conf .= "server {$ip} {$mask}\n";
+					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+				}
 			case 'p2p_shared_key':
 				$baselong = ip2long32($ip) & ip2long($mask);
 				$ip1 = long2ip32($baselong + 1);

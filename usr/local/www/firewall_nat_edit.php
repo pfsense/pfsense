@@ -101,6 +101,7 @@ if (isset($_GET['dup']))
 /*  run through $_POST items encoding HTML entties so that the user
  *  cannot think he is slick and perform a XSS attack on the unwilling
  */
+unset($input_errors);
 foreach ($_POST as $key => $value) {
 	$temp = $value;
 	$newpost = htmlentities($temp);
@@ -173,7 +174,6 @@ if ($_POST) {
 		$_POST['dsttype'] = "single";
 	}
 
-	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -290,9 +290,9 @@ if ($_POST) {
 		}
 	}
 
-	// Allow extending of the nat edit page and include custom input validation 
+	// Allow extending of the firewall edit page and include custom input validation 
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/input_validation");
-	
+
 	if (!$input_errors) {
 		$natent = array();
 
@@ -413,6 +413,9 @@ if ($_POST) {
 			mark_subsystem_dirty('filter');
 		}
 
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
+
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
@@ -424,9 +427,6 @@ if ($_POST) {
 		}
 
 		mark_subsystem_dirty('natconf');
-
-		// Allow extending of the nat edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
 
 		write_config();
 
@@ -446,14 +446,13 @@ include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php
-		// Allow extending of the nat edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphpearly");
-?>
-
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Redirect entry"); ?></td>
 				</tr>
+<?php
+		// Allow extending of the firewall edit page and include custom input validation 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphpearly");
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 			<td width="78%" class="vtable">
@@ -829,7 +828,7 @@ include("fbegin.inc"); ?>
 				  </td>
                 </tr><?php endif; ?>
 <?php
-		// Allow extending of the nat edit page and include custom input validation 
+		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphplate");
 ?>
 				<tr>

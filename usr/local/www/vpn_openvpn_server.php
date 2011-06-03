@@ -559,10 +559,6 @@ function netbios_change() {
 <?php
 if (!$savemsg)
 	$savemsg = "";
-if (count($a_ca) == 0)
-	$savemsg .= "You have no Certificate Authorities defined. You can visit the <a href=\"system_camanager.php\">Certificate Manager</a> or use the <a href=\"wizard.php?xml=openvpn_wizard.xml\">Wizard.</a> to create one. ";
-if (count($a_cert) == 0)
-	$savemsg .= "<br/>You have no Certificates defined. You can visit the <a href=\"system_camanager.php\">Certificate Manager</a> or use the <a href=\"wizard.php?xml=openvpn_wizard.xml\">Wizard.</a> to create one. ";
 
 if ($input_errors)
 	print_input_errors($input_errors);
@@ -772,6 +768,7 @@ if ($savemsg)
 					<tr id="tls_ca">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Authority"); ?></td>
 							<td width="78%" class="vtable">
+							<?php if (count($a_ca)): ?>
 							<select name='caref' class="formselect">
 							<?php
 								foreach ($a_ca as $ca):
@@ -782,11 +779,15 @@ if ($savemsg)
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
+							<?php else: ?>
+								<b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
 							</td>
 					</tr>
 					<tr id="tls_crl">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer Certificate Revocation List"); ?></td>
 							<td width="78%" class="vtable">
+							<?php if (count($a_crl)): ?>
 							<select name='crlref' class="formselect">
 								<option value="">None</option>
 							<?php
@@ -803,11 +804,15 @@ if ($savemsg)
 								<option value="<?=$crl['refid'];?>" <?=$selected;?>><?=$crl['descr'] . $caname;?></option>
 							<?php endforeach; ?>
 							</select>
+							<?php else: ?>
+								<b>No Certificate Revocation Lists (CRLs) defined.</b> <br/>Create one under <a href="system_crlmanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
 							</td>
 					</tr>
 					<tr id="tls_cert">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Certificate"); ?></td>
 							<td width="78%" class="vtable">
+							<?php if (count($a_cert)): ?>
 							<select name='certref' class="formselect">
 							<?php
 							foreach ($a_cert as $cert):
@@ -828,6 +833,9 @@ if ($savemsg)
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
 							</select>
+							<?php else: ?>
+								<b>No Certificates defined.</b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
 						</td>
 					</tr>
 					<tr id="tls_dh">

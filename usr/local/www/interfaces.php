@@ -1311,6 +1311,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
 							else echo '>';
 								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
+								print "<option value=\"\">Default</option>";
 								foreach($mediaopts_list as $mediaopt){
 									if ($mediaopt != rtrim($mediaopt_from_config)){
 										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";

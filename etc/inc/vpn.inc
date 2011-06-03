@@ -498,7 +498,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$natt = $ph1ent['nat_traversal'];
 
 					$init = "on";
-					$genp = "off";
+					$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "off";
 					$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "claim";
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
@@ -507,10 +507,10 @@ function vpn_ipsec_configure($ipchg = false)
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
 							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
-							$genp = "on";
+							$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "on";
 						} else {
 							$init = "off";
-							$genp = "unique";
+							$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "unique";
 						}
 					}
 

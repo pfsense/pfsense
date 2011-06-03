@@ -480,6 +480,10 @@ function ipsec_dump_sad()
 					case 3:
 						$cursa['aalgo'] = $linea[1];
 						break;
+					case 8:
+						$sadata = explode("(", $linea[1]);
+						$cursa['data'] = $sadata[0] . " B";
+						break;
 				}
 			}
 			$i++;

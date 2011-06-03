@@ -8,9 +8,14 @@ require("shaper.inc");
 require("captiveportal.inc");
 require("rrd.inc");
 
-mwexec("killall -9 lighttpd");
-
 echo "Restarting webConfigurator...";
+
+sigkillbyname("lighttpd", "INT");
+
+while (is_process_running("lighttpd")) {
+        echo '.';
+        sleep(1);
+}
 
 system_webgui_start();
 

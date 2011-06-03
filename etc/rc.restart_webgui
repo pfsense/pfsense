@@ -10,9 +10,9 @@ require("rrd.inc");
 
 echo "Restarting webConfigurator...";
 
-mwexec("killall -INT lighttpd");
+sigkillbyname("lighttpd", "INT");
 
-while (exec("ps ax | grep lighttpd | grep -v grep")) {
+while (is_process_running("lighttpd")) {
         echo '.';
         sleep(1);
 }

@@ -143,13 +143,13 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td>
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<thead>
 				<tr>
 					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
 					<th class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></th>
 					<th class="listhdr" width="24%"><?=gettext("State");?></th>
-					<th class="list" width="1%"></th>
+					<th class="list sort_ignore" width="1%"></th>
 				</tr>
 				</thead>
 				<tbody>

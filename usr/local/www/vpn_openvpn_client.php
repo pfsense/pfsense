@@ -854,7 +854,7 @@ if ($savemsg)
 
 			<?php else: ?>
 
-			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<thead>
 				<tr>
 					<td width="10%" class="listhdrr"><?=gettext("Disabled"); ?></td>

@@ -375,6 +375,9 @@ include("head.inc");
 										<a href="vpn_ipsec.php?act=delph2&p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0">
 										</a>
+										<a href="vpn_ipsec_phase2.php?dup=<?=$j;?>">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new Phase 2 based on this one"); ?>" width="17" height="17" border="0">
+										</a>
 									</td>
 								</tr>
 

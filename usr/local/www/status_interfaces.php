@@ -180,7 +180,7 @@ include("head.inc");
 			<?php 
 			$mac=$ifinfo['macaddr']; 
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			if(isset($mac_man[$mac_hi])){ print "<span title=\"$mac\">" . htmlspecialchars($mac_man[$mac_hi]); print "</span>"; }
+			if(isset($mac_man[$mac_hi])){ print "<span>" . $mac . " - " . htmlspecialchars($mac_man[$mac_hi]); print "</span>"; }
 			      else {print htmlspecialchars($mac);}
 			?>
 		</td>

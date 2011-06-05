@@ -1384,6 +1384,12 @@ function filter_nat_rules_generate() {
 				}
 			}
 		}
+		/* IPsec mode_cfg subnet */
+		if (isset($config['ipsec']['client']['enable']) &&
+			!empty($config['ipsec']['client']['pool_address']) &&
+			!empty($config['ipsec']['client']['pool_netbits'])) {
+			$tonathosts .= "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']} ";
+		}
 		$natrules .= "\n# Subnets to NAT \n";
 		$tonathosts .= "127.0.0.0/8 ";
 		if($numberofnathosts > 4) {

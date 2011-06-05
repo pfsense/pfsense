@@ -1201,7 +1201,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									}
 								}
 								echo '</select><br>';
-								echo gettext("Here you can explicitely set up speed and duplex mode for the interface.");
+								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autonegotiate unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
 						echo '</tr>';

@@ -80,7 +80,7 @@ $spd = ipsec_dump_spd();
 		<tr>
 			<td>
 				<div id="mainarea" style="background:#eeeeee">
-					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($spd)): ?>
 						<tr>
 							<td nowrap class="listhdrr"><?= gettext("Source"); ?></td>
@@ -112,8 +112,7 @@ $spd = ipsec_dump_spd();
 						</tr>
 						<?php endforeach; ?>
 					</table>
-					<br>
-					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
+					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 						<tr>
 							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
 							<td><?= gettext("incoming (as seen by firewall)"); ?></td>

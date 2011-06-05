@@ -177,7 +177,7 @@ function enable_change(enable_over) {
 	</tr>
 </table>
 &nbsp;<br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 	<thead>
 	<tr>
 		<td width="20%" class="listhdrr"><?=gettext("Host");?></td>
@@ -242,7 +242,7 @@ function enable_change(enable_over) {
 	</tr>
 </table>
 &nbsp;<br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 	<thead>
 	<tr>
 		<td width="35%" class="listhdrr"><?=gettext("Domain");?></td>

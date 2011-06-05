@@ -1152,7 +1152,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 								<?php endif; ?>
 								<br>
 								<?=gettext("This field can be used to modify (\"spoof\") the MAC " .
-								"address of the WAN interface"); ?><br>
+								"address of this interface"); ?><br>
 								<?=gettext("(may be required with some cable connections)"); ?><br>
 								<?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx " .
 								"or leave blank"); ?>

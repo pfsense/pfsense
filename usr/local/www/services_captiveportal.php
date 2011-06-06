@@ -520,8 +520,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" 
-value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
+				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>

@@ -912,7 +912,7 @@ EOD;
 			$hostnames = "";
 			array_unique($filterdns_list);
 			foreach ($filterdns_list as $hostname)
-				$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+				$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload ipsecdns\"'\n";
 			file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
 			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");

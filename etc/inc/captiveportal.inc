@@ -826,18 +826,15 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 	$radiusservers = captiveportal_get_radius_servers();
 	$unsetindex = array();
 
-	$cpdblck = lock('captiveportaldb', LOCK_EX);
-
 	/* read database */
-	$cpdb = captiveportal_read_db(true);
+	$cpdb = captiveportal_read_db();
 
 	/* find entry */
 	if (isset($cpdb[$sessionid])) {
 		$cpentry = $cpdb[$sessionid];
 		/* write database */
 		$unsetindex[] = $sessionid;
-		captiveportal_write_db($cpdb, true, $unsetindex);
-		unlock($cpdblck);
+		captiveportal_write_db($cpdb, false, $unsetindex);
 
 		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");

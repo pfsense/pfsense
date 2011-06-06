@@ -1114,29 +1114,29 @@ function captiveportal_init_radius_servers() {
 
 /* read RADIUS servers into array */
 function captiveportal_get_radius_servers() {
-		global $g;
+	global $g;
 
-		$cprdsrvlck = lock('captiveportalradius');
-		if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
-			$radiusservers = array();
-			$cpradiusdb = file("{$g['vardb_path']}/captiveportal_radius.db", 
-			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			if ($cpradiusdb) {
-				foreach($cpradiusdb as $cpradiusentry) {
-					$line = trim($cpradiusentry);
-					if ($line) {
-						$radsrv = array();
-						list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
-						$radiusservers[] = $radsrv;
-					}
+	$cprdsrvlck = lock('captiveportalradius');
+	if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
+		$radiusservers = array();
+		$cpradiusdb = file("{$g['vardb_path']}/captiveportal_radius.db", 
+		FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if ($cpradiusdb) {
+			foreach($cpradiusdb as $cpradiusentry) {
+				$line = trim($cpradiusentry);
+				if ($line) {
+					$radsrv = array();
+					list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
+					$radiusservers[] = $radsrv;
 				}
 			}
-			unlock($cprdsrvlck);
-			return $radiusservers;
 		}
-
 		unlock($cprdsrvlck);
-		return false;
+		return $radiusservers;
+	}
+
+	unlock($cprdsrvlck);
+	return false;
 }
 
 /* log successful captive portal authentication to syslog */

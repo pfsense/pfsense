@@ -814,7 +814,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 		$syncport = $config['voucher']['vouchersyncport'];
 		$syncpass = $config['voucher']['vouchersyncpass'];
 		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
-		$remote_status = xmlrpc_sync_voucher_disconnect($dben, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
+		$remote_status = xmlrpc_sync_voucher_disconnect($dbent, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
 	}
 
 }

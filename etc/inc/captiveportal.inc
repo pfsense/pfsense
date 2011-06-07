@@ -1195,7 +1195,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
 }
 
 /* read captive portal DB into array */
-function captiveportal_read_db($locked = false) {
+function captiveportal_read_db($locked = false, $index = 5 /* sessionid by default */) {
 	global $g;
 
 	$cpdb = array();
@@ -1209,7 +1209,7 @@ function captiveportal_read_db($locked = false) {
 			if ($line) {
 				$cpe = explode(",", $line);
 				/* Hash by session id */
-				$cpdb[$cpe[5]] = $cpe;
+				$cpdb[$cpe[$index]] = $cpe;
 			}
 		}
 		fclose($fd);

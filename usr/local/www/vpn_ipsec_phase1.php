@@ -89,6 +89,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
+	$pconfig['generate_policy'] = $a_phase1[$p1index]['generate_policy'];
 	$pconfig['proposal_check'] = $a_phase1[$p1index]['proposal_check'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") || 
@@ -307,6 +308,7 @@ if ($_POST) {
 		$ph1ent['certref'] = $pconfig['certref'];
 		$ph1ent['caref'] = $pconfig['caref'];
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
+		$ph1ent['generate_policy'] = $pconfig['generate_policy'];
 		$ph1ent['proposal_check'] = $pconfig['proposal_check'];
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
@@ -641,6 +643,22 @@ function dpdchkbox_change() {
 							<span class="vexpl">
 							<br>
 								<?=gettext("Input your pre-shared key string"); ?>.
+							</span>
+						</td>
+					</tr>
+					<tr id="generate_policy">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Policy Generation"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="generate_policy" class="formselect">
+								<option value="" <?php if (empty($pconfig['generate_policy'])) echo "selected"; ?>>Default</option>
+								<option value="on" <?php if ($pconfig['generate_policy'] == "on") echo "selected"; ?>>On</option>
+								<option value="off" <?php if ($pconfig['generate_policy'] == "off") echo "selected"; ?>>Off</option>
+								<option value="require" <?php if ($pconfig['generate_policy'] == "require") echo "selected"; ?>>Require</option>
+								<option value="unique" <?php if ($pconfig['generate_policy'] == "unique") echo "selected"; ?>>Unique</option>
+							</select>
+							<br>
+							<span class="vexpl">
+								<?=gettext("When working as a responder (as with mobile clients), this controls how policies are generated based on SA proposals."); ?>
 							</span>
 						</td>
 					</tr>

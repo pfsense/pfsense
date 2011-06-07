@@ -140,9 +140,64 @@ if ($_POST) {
 				break;
 		}
 	}
-
-	/* TODO : Validate enabled phase2's are not duplicates */
-
+	/* Validate enabled phase2's are not duplicates */
+	if (isset($pconfig['mobile'])){
+		/* User is adding phase 2 for mobile phase1 */
+		foreach($a_phase2 as $key => $name){
+			if (isset($name['mobile'])){
+				/* check duplicate localids only for mobile clents */
+				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
+				$entered = array();
+				$entered['type'] = $pconfig['localid_type'];
+				if (isset($pconfig['localid_address'])) $entered['address'] = $pconfig['localid_address'];
+				if (isset($pconfig['localid_netbits'])) $entered['netbits'] = $pconfig['localid_netbits'];
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered);
+				if ($localid_data == $entered_localid_data){
+					if (!isset($pconfig['p2index'])){
+						/* adding new p2 entry */
+						$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+						break;
+					}else if ($pconfig['p2index'] != $key){
+						/* editing p2 and entered p2 networks match with different p2 for given p1 */
+						$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+						break;
+					}
+				}
+			}
+		}
+	}else{
+		/* User is adding phase 2 for site-to-site phase1 */
+		$input_error = 0;
+		foreach($a_phase2 as $key => $name){
+			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid']){
+				/* check duplicate subnets only for given phase1 */
+				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
+				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid']);
+				$entered_local = array();
+				$entered_local['type'] = $pconfig['localid_type'];
+				if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
+				if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local);
+				$entered_remote = array();
+				$entered_remote['type'] = $pconfig['remoteid_type'];
+				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
+				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
+				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote);
+				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) { 
+					if (!isset($pconfig['p2index'])){
+						/* adding new p2 entry */
+						$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
+						break;
+					}else if ($pconfig['p2index'] != $key){
+						/* editing p2 and entered p2 networks match with different p2 for given p1 */
+						$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
+						break;
+					}
+				}
+			}
+		}
+        }
+	
 	$ealgos = pconfig_to_ealgos($pconfig);
 
 	if (!count($ealgos)) {

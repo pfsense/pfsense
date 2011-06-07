@@ -116,9 +116,12 @@ function system_resolvconf_generate($dynupdate = false) {
 		}
 	}
 
+	$dnslock = lock('resolvconf', LOCK_EX);
+
 	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+		unlock($dnslock);
 		return 1;
 	}
 
@@ -148,7 +151,9 @@ function system_resolvconf_generate($dynupdate = false) {
 			}
 		}
 	}
-	
+
+	unlock($dnslock);
+
 	return 0;
 }
 
@@ -1251,6 +1256,7 @@ function system_reboot_cleanup() {
 	captiveportal_radius_stop_all();
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
+	// mwexec("/etc/rc.stop_packages");
 }
 
 function system_do_shell_commands($early = 0) {

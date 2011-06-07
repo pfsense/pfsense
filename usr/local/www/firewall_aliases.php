@@ -160,7 +160,7 @@ include("head.inc");
 <?php print_info_box_np(gettext("The alias list has been changed.") . "<br>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 <tr>
   <td width="25%" class="listhdrr"><?=gettext("Name"); ?></td>
   <td width="25%" class="listhdrr"><?=gettext("Values"); ?></td>

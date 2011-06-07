@@ -322,7 +322,7 @@ system_do_shell_commands();
 /* start IPsec tunnels */
 vpn_ipsec_configure();
 /* Reload dynamic hostname tunnels after bootup finishes */
-mwexec_bg("/etc/rc.newipsecdns");
+send_event("service reload ipsecdns");
 
 /* start SNMP service */
 services_snmpd_configure();

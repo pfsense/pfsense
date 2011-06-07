@@ -94,6 +94,8 @@ if ($act == "del") {
 	unset($a_cert[$id]);
 	write_config();
 	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br/>";
+	pfSenseHeader("system_certmanager.php");
+	exit;
 }
 
 if ($act == "new") {

@@ -809,12 +809,11 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	captiveportal_free_ipfw_ruleno($dbent[1]);
 
 	// XMLRPC Call over to the master Voucher node
-	$a_voucher = &$config['voucher'];
-	if(!empty($a_voucher['vouchersyncdbip'])) {
-		$syncip   = $a_voucher['vouchersyncdbip'];
-		$syncport = $a_voucher['vouchersyncport'];
-		$syncpass = $a_voucher['vouchersyncpass'];
-		$vouchersyncusername = $a_voucher['vouchersyncusername'];
+	if(!empty($config['voucher']['vouchersyncdbip'])) {
+		$syncip   = $config['voucher']['vouchersyncdbip'];
+		$syncport = $config['voucher']['vouchersyncport'];
+		$syncpass = $config['voucher']['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
 		$remote_status = xmlrpc_sync_voucher_disconnect($dben, $syncip, $syncport, $syncpass, $vouchersyncusername, $term_cause, $stop_time);
 	}
 
@@ -827,18 +826,15 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 	$radiusservers = captiveportal_get_radius_servers();
 	$unsetindex = array();
 
-	$cpdblck = lock('captiveportaldb', LOCK_EX);
-
 	/* read database */
-	$cpdb = captiveportal_read_db(true);
+	$cpdb = captiveportal_read_db();
 
 	/* find entry */
 	if (isset($cpdb[$sessionid])) {
 		$cpentry = $cpdb[$sessionid];
 		/* write database */
 		$unsetindex[] = $sessionid;
-		captiveportal_write_db($cpdb, true, $unsetindex);
-		unlock($cpdblck);
+		captiveportal_write_db($cpdb, false, $unsetindex);
 
 		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
@@ -1115,29 +1111,29 @@ function captiveportal_init_radius_servers() {
 
 /* read RADIUS servers into array */
 function captiveportal_get_radius_servers() {
-		global $g;
+	global $g;
 
-		$cprdsrvlck = lock('captiveportalradius');
-		if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
-			$radiusservers = array();
-			$cpradiusdb = file("{$g['vardb_path']}/captiveportal_radius.db", 
-			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			if ($cpradiusdb) {
-				foreach($cpradiusdb as $cpradiusentry) {
-					$line = trim($cpradiusentry);
-					if ($line) {
-						$radsrv = array();
-						list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
-						$radiusservers[] = $radsrv;
-					}
+	$cprdsrvlck = lock('captiveportalradius');
+	if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
+		$radiusservers = array();
+		$cpradiusdb = file("{$g['vardb_path']}/captiveportal_radius.db", 
+		FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if ($cpradiusdb) {
+			foreach($cpradiusdb as $cpradiusentry) {
+				$line = trim($cpradiusentry);
+				if ($line) {
+					$radsrv = array();
+					list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
+					$radiusservers[] = $radsrv;
 				}
 			}
-			unlock($cprdsrvlck);
-			return $radiusservers;
 		}
-
 		unlock($cprdsrvlck);
-		return false;
+		return $radiusservers;
+	}
+
+	unlock($cprdsrvlck);
+	return false;
 }
 
 /* log successful captive portal authentication to syslog */

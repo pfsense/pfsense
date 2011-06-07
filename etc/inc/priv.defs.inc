@@ -955,6 +955,12 @@ $priv_list['page-system-usermanager']['descr'] = gettext("Allow access to the 'S
 $priv_list['page-system-usermanager']['match'] = array();
 $priv_list['page-system-usermanager']['match'][] = "system_usermanager.php*";
 
+$priv_list['page-system-usermanager-passwordmg'] = array();
+$priv_list['page-system-usermanager-passwordmg']['name'] = "WebCfg - System: User Password Manager page";
+$priv_list['page-system-usermanager-passwordmg']['descr'] = "Allow access to the 'System: User Password Manager' page.";
+$priv_list['page-system-usermanager-passwordmg']['match'] = array();
+$priv_list['page-system-usermanager-passwordmg']['match'][] = "system_usermanager_passwordmg.php*";
+
 $priv_list['page-system-usermanager_addcert'] = array();
 $priv_list['page-system-usermanager_addcert']['name'] = gettext("WebCfg - System: User Manager: Add Certificate");
 $priv_list['page-system-usermanager_addcert']['descr'] = gettext("Allow access to the 'User Manager: Add Certificate' page.");

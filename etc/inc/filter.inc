@@ -430,7 +430,7 @@ function filter_generate_scrubing() {
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
-		if(isset($scrubcfg['virtual']))
+		if(isset($scrubcfg['virtual']) || empty($scrubcfg['descr']))
 			continue;
 		/* set up MSS clamping */
 		if($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
@@ -519,7 +519,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$ifcfg[0]['descr']} = \"{ {$ifcfg[0]['if']}";
 				$aliases .= " }\"\n";
 			}
-		} else {
+		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 			$aliases .= " }\"\n";
 		}
@@ -802,8 +802,8 @@ function filter_generate_optcfg_array() {
 		$oic['virtual'] = true;
 		$FilterIflist['l2tp'] = $oic;
 	}
-	if (is_array($config['pppoes']['pppoe'])) {
-		$FilterIflist['pppoe'] = array();
+	if (is_array($config['pppoes']['pppoe']) && (count($config['pppoes']['pppoe']) > 0)) {
+		$pppoeifs = array();
 		foreach($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				$oic = array();
@@ -817,9 +817,11 @@ function filter_generate_optcfg_array() {
 					$oic['sn'] = $pppoe['pppoe_subnet'];
 				else
 					$oic['sn'] = "32";
-				$FilterIflist['pppoe'][] = $oic;
+				$pppoeifs[] = $oic;
 			}
 		}
+		if (count($pppoeifs))
+			$FilterIflist['pppoe'] = $pppoeifs;
 	}
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
@@ -1383,6 +1385,12 @@ function filter_nat_rules_generate() {
 				}
 			}
 		}
+		/* IPsec mode_cfg subnet */
+		if (isset($config['ipsec']['client']['enable']) &&
+			!empty($config['ipsec']['client']['pool_address']) &&
+			!empty($config['ipsec']['client']['pool_netbits'])) {
+			$tonathosts .= "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']} ";
+		}
 		$natrules .= "\n# Subnets to NAT \n";
 		$tonathosts .= "127.0.0.0/8 ";
 		if($numberofnathosts > 4) {
@@ -1744,6 +1752,11 @@ function filter_generate_user_rule($rule) {
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
 			foreach($FilterIflist as $oc) $item .= $oc['descr'];
 				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
+	} else if((array_key_exists($rule['interface'], $FilterIflist))
+		&& (is_array($FilterIflist[$rule['interface']]))
+		&& (is_array($FilterIflist[$rule['interface']][0]))) {
+		/* Currently this only case for this is the pppoe server. There should be an existing macro with this name. */
+		$aline['interface'] = " on \$" . $rule['interface'] . " ";
 	} else
 		$aline['interface'] = " on \$" . $FilterIflist[$rule['interface']]['descr'] . " ";
 	$ifcfg = $FilterIflist[$rule['interface']];

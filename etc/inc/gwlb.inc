@@ -367,7 +367,7 @@ function return_gateway_groups_array() {
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
 
-	if (0) {
+	if (isset($config['system']['gw_switch_default'])) {
 	/* 
 	 * NOTE: The code below is meant to replace the default gateway when it goes down.
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.

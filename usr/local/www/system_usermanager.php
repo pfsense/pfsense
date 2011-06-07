@@ -49,311 +49,304 @@
 require("certs.inc");
 require("guiconfig.inc");
 
-if (isAllowedPage("system_usermanager")) {
 
-	// start admin user code
-	$pgtitle = array(gettext("System"),gettext("User Manager"));
+// start admin user code
+$pgtitle = array(gettext("System"),gettext("User Manager"));
 
-	$id = $_GET['id'];
-	if (isset($_POST['id']))
-		$id = $_POST['id'];
+$id = $_GET['id'];
+if (isset($_POST['id']))
+	$id = $_POST['id'];
 
-	if (!is_array($config['system']['user'])) 
-		$config['system']['user'] = array();
+if (!is_array($config['system']['user'])) 
+	$config['system']['user'] = array();
 
-	$a_user = &$config['system']['user'];
+$a_user = &$config['system']['user'];
 
-	if ($_GET['act'] == "deluser") {
+if ($_GET['act'] == "deluser") {
 
-		if (!$a_user[$id]) {
-			pfSenseHeader("system_usermanager.php");
-			exit;
-		}
-
-		local_user_del($a_user[$id]);
-		$userdeleted = $a_user[$id]['name'];
-		unset($a_user[$id]);
-		write_config();
-		$savemsg = gettext("User")." {$userdeleted} ".
-					gettext("successfully deleted")."<br/>";
-	}
-
-	if ($_GET['act'] == "delpriv") {
-
-		if (!$a_user[$id]) {
-			pfSenseHeader("system_usermanager.php");
-			exit;
-		}
-
-		$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
-		unset($a_user[$id]['priv'][$_GET['privid']]);
-		local_user_set($a_user[$id]);
-		write_config();
-		$_GET['act'] = "edit";
-		$savemsg = gettext("Privilege")." {$privdeleted} ".
-					gettext("successfully deleted")."<br/>";
-	}
-
-	if ($_GET['act'] == "expcert") {
-
-		if (!$a_user[$id]) {
-			pfSenseHeader("system_usermanager.php");
-			exit;
-		}
-
-		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
-
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.crt");
-		$exp_data = base64_decode($cert['crt']);
-		$exp_size = strlen($exp_data);
-
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename={$exp_name}");
-		header("Content-Length: $exp_size");
-		echo $exp_data;
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	if ($_GET['act'] == "expckey") {
+	local_user_del($a_user[$id]);
+	$userdeleted = $a_user[$id]['name'];
+	unset($a_user[$id]);
+	write_config();
+	$savemsg = gettext("User")." {$userdeleted} ".
+				gettext("successfully deleted")."<br/>";
+}
+else if ($_GET['act'] == "delpriv") {
 
-		if (!$a_user[$id]) {
-			pfSenseHeader("system_usermanager.php");
-			exit;
-		}
-
-		$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
-
-		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.key");
-		$exp_data = base64_decode($cert['prv']);
-		$exp_size = strlen($exp_data);
-
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename={$exp_name}");
-		header("Content-Length: $exp_size");
-		echo $exp_data;
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	if ($_GET['act'] == "delcert") {
+	$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
+	unset($a_user[$id]['priv'][$_GET['privid']]);
+	local_user_set($a_user[$id]);
+	write_config();
+	$_GET['act'] = "edit";
+	$savemsg = gettext("Privilege")." {$privdeleted} ".
+				gettext("successfully deleted")."<br/>";
+}
+else if ($_GET['act'] == "expcert") {
 
-		if (!$a_user[$id]) {
-			pfSenseHeader("system_usermanager.php");
-			exit;
-		}
-
-		$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
-		$certdeleted = $certdeleted['descr'];
-		unset($a_user[$id]['cert'][$_GET['certid']]);
-		write_config();
-		$_GET['act'] = "edit";
-		$savemsg = gettext("Certificate")." {$certdeleted} ".
-					gettext("association removed.")."<br/>";
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
 	}
 
-	if ($_GET['act'] == "edit") {
-		if (isset($id) && $a_user[$id]) {
-			$pconfig['usernamefld'] = $a_user[$id]['name'];
-			$pconfig['descr'] = $a_user[$id]['descr'];
-			$pconfig['expires'] = $a_user[$id]['expires'];
-			$pconfig['groups'] = local_user_get_groups($a_user[$id]);
-			$pconfig['utype'] = $a_user[$id]['scope'];
-			$pconfig['uid'] = $a_user[$id]['uid'];
-			$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
-			$pconfig['priv'] = $a_user[$id]['priv'];
-			$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
-			$pconfig['disabled'] = isset($a_user[$id]['disabled']);
-		}
+	$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+
+	$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.crt");
+	$exp_data = base64_decode($cert['crt']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+else if ($_GET['act'] == "expckey") {
+
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
 	}
 
-	if ($_GET['act'] == "new") {
-		/*
-		 * set this value cause the text field is read only
-		 * and the user should not be able to mess with this
-		 * setting.
-		 */
-		$pconfig['utype'] = "user";
-		$pconfig['lifetime'] = 3650;
+	$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+
+	$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.key");
+	$exp_data = base64_decode($cert['prv']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+else if ($_GET['act'] == "delcert") {
+
+	if (!$a_user[$id]) {
+		pfSenseHeader("system_usermanager.php");
+		exit;
 	}
 
-	if ($_POST) {
-		unset($input_errors);
-		$pconfig = $_POST;
+	$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+	$certdeleted = $certdeleted['descr'];
+	unset($a_user[$id]['cert'][$_GET['certid']]);
+	write_config();
+	$_GET['act'] = "edit";
+	$savemsg = gettext("Certificate")." {$certdeleted} ".
+				gettext("association removed.")."<br/>";
+}
+else if ($_GET['act'] == "edit") {
+	if (isset($id) && $a_user[$id]) {
+		$pconfig['usernamefld'] = $a_user[$id]['name'];
+		$pconfig['descr'] = $a_user[$id]['descr'];
+		$pconfig['expires'] = $a_user[$id]['expires'];
+		$pconfig['groups'] = local_user_get_groups($a_user[$id]);
+		$pconfig['utype'] = $a_user[$id]['scope'];
+		$pconfig['uid'] = $a_user[$id]['uid'];
+		$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
+		$pconfig['priv'] = $a_user[$id]['priv'];
+		$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
+		$pconfig['disabled'] = isset($a_user[$id]['disabled']);
+	}
+}
+else if ($_GET['act'] == "new") {
+	/*
+	 * set this value cause the text field is read only
+	 * and the user should not be able to mess with this
+	 * setting.
+	 */
+	$pconfig['utype'] = "user";
+	$pconfig['lifetime'] = 3650;
+}
 
-		/* input validation */
-		if (isset($id) && ($a_user[$id])) {
-			$reqdfields = explode(" ", "usernamefld");
-			$reqdfieldsn = array(gettext("Username"));
+if ($_POST) {
+	unset($input_errors);
+	$pconfig = $_POST;
+
+	/* input validation */
+	if (isset($id) && ($a_user[$id])) {
+		$reqdfields = explode(" ", "usernamefld");
+		$reqdfieldsn = array(gettext("Username"));
+	} else {
+		if (empty($_POST['name'])) {
+			$reqdfields = explode(" ", "usernamefld passwordfld1");
+			$reqdfieldsn = array(
+				gettext("Username"),
+				gettext("Password"));
 		} else {
-			if (empty($_POST['name'])) {
-				$reqdfields = explode(" ", "usernamefld passwordfld1");
-				$reqdfieldsn = array(
-					gettext("Username"),
-					gettext("Password"));
-			} else {
-				$reqdfields = explode(" ", "usernamefld passwordfld1 name caref keylen lifetime");
-				$reqdfieldsn = array(
-					gettext("Username"),
-					gettext("Password"),
-					gettext("Descriptive name"),
-					gettext("Certificate authority"),
-					gettext("Key length"),
-					gettext("Lifetime"));
+			$reqdfields = explode(" ", "usernamefld passwordfld1 name caref keylen lifetime");
+			$reqdfieldsn = array(
+				gettext("Username"),
+				gettext("Password"),
+				gettext("Descriptive name"),
+				gettext("Certificate authority"),
+				gettext("Key length"),
+				gettext("Lifetime"));
+		}
+	}
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
+		$input_errors[] = gettext("The username contains invalid characters.");
+
+	if (strlen($_POST['usernamefld']) > 16)
+		$input_errors[] = gettext("The username is longer than 16 characters.");
+
+	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
+		$input_errors[] = gettext("The passwords do not match.");
+
+	if (isset($id) && $a_user[$id])
+		$oldusername = $a_user[$id]['name'];
+	else
+		$oldusername = "";
+	/* make sure this user name is unique */
+	if (!$input_errors) {
+		foreach ($a_user as $userent) {
+			if ($userent['name'] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
+				$input_errors[] = gettext("Another entry with the same username already exists.");
+				break;
 			}
 		}
+	}
+	/* also make sure it is not reserved */
+	if (!$input_errors) {
+		$system_users = explode("\n", file_get_contents("/etc/passwd"));
+		foreach ($system_users as $s_user) {
+			$ent = explode(":", $s_user);
+			if ($ent[0] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
+				$input_errors[] = gettext("That username is reserved by the system.");
+				break;
+			}
+		}
+	}
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	/*
+	 * Check for a valid expirationdate if one is set at all (valid means,
+	 * strtotime() puts out a time stamp so any strtotime compatible time
+	 * format may be used. to keep it simple for the enduser, we only
+	 * claim to accept MM/DD/YYYY as inputs. Advanced users may use inputs
+	 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
+	 * Otherwhise such an entry would lead to an invalid expiration data.
+	 */
+	if ($_POST['expires']){
+		if(strtotime($_POST['expires']) > 0){
+			if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($_POST['expires'])))) {
+				// Allow items to lie in the past which ends up disabling.
+			} else {
+				//convert from any strtotime compatible date to MM/DD/YYYY
+				$expdate = strtotime($_POST['expires']);
+				$_POST['expires'] = date("m/d/Y",$expdate);
+			}
+		} else {
+			$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
+		}
+	}
 
-		if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
-			$input_errors[] = gettext("The username contains invalid characters.");
+	if (!empty($_POST['name'])) {
+		$ca = lookup_ca($_POST['caref']);
+       		if (!$ca)
+               		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+	}
 
-		if (strlen($_POST['usernamefld']) > 16)
-			$input_errors[] = gettext("The username is longer than 16 characters.");
+	/* if this is an AJAX caller then handle via JSON */
+	if (isAjax() && is_array($input_errors)) {
+		input_errors2Ajax($input_errors);
+		exit;
+	}
 
-		if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
-			$input_errors[] = gettext("The passwords do not match.");
+	if (!$input_errors) {
+		conf_mount_rw();
+		$userent = array();
+		if (isset($id) && $a_user[$id])
+			$userent = $a_user[$id];
+
+		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
+
+		/* the user name was modified */
+		if ($_POST['usernamefld'] <> $_POST['oldusername'])
+			$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
+
+		/* the user password was mofified */
+		if ($_POST['passwordfld1'])
+			local_user_set_password($userent, $_POST['passwordfld1']);
+
+		$userent['name'] = $_POST['usernamefld'];
+		$userent['descr'] = $_POST['descr'];
+		$userent['expires'] = $_POST['expires'];
+		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
+		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
+		
+		if($_POST['disabled'])
+			$userent['disabled'] = true;
+		else 
+			unset($userent['disabled']);
 
 		if (isset($id) && $a_user[$id])
-			$oldusername = $a_user[$id]['name'];
-		else
-			$oldusername = "";
-		/* make sure this user name is unique */
-		if (!$input_errors) {
-			foreach ($a_user as $userent) {
-				if ($userent['name'] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
-					$input_errors[] = gettext("Another entry with the same username already exists.");
+			$a_user[$id] = $userent;
+		else {
+			if (!empty($_POST['name'])) {
+				$cert = array();
+				$cert['refid'] = uniqid();
+                       		$userent['cert'] = array();
+
+				$cert['descr'] = $_POST['name'];
+
+               			$subject = cert_get_subject_array($ca['crt']);
+
+               			$dn = array(
+                       			'countryName' => $subject[0]['v'],
+                       			'stateOrProvinceName' => $subject[1]['v'],
+                       			'localityName' => $subject[2]['v'],
+                       			'organizationName' => $subject[3]['v'],
+                       			'emailAddress' => $subject[4]['v'],
+                       			'commonName' => $userent['name']);
+
+				cert_create($cert, $_POST['caref'], $_POST['keylen'],
+					(int)$_POST['lifetime'], $dn);
+
+				if (!is_array($config['cert']))
+					$config['cert'] = array();
+				$config['cert'][] = $cert;
+				$userent['cert'][] = $cert['refid'];
+			}
+			$userent['uid'] = $config['system']['nextuid']++;
+			/* Add the user to All Users group. */
+			foreach ($config['system']['group'] as $gidx => $group) {
+				if ($group['name'] == "all") {
+					if (!is_array($config['system']['group'][$gidx]['member']))
+						$config['system']['group'][$gidx]['member'] = array();
+					$config['system']['group'][$gidx]['member'][] = $userent['uid'];
 					break;
 				}
 			}
-		}
-		/* also make sure it is not reserved */
-		if (!$input_errors) {
-			$system_users = explode("\n", file_get_contents("/etc/passwd"));
-			foreach ($system_users as $s_user) {
-				$ent = explode(":", $s_user);
-				if ($ent[0] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
-					$input_errors[] = gettext("That username is reserved by the system.");
-					break;
-				}
-			}
+
+			$a_user[] = $userent;
 		}
 
-		/*
-		 * Check for a valid expirationdate if one is set at all (valid means,
-		 * strtotime() puts out a time stamp so any strtotime compatible time
-		 * format may be used. to keep it simple for the enduser, we only
-		 * claim to accept MM/DD/YYYY as inputs. Advanced users may use inputs
-		 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
-		 * Otherwhise such an entry would lead to an invalid expiration data.
-		 */
-		if ($_POST['expires']){
-			if(strtotime($_POST['expires']) > 0){
-				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($_POST['expires'])))) {
-					// Allow items to lie in the past which ends up disabling.
-				} else {
-					//convert from any strtotime compatible date to MM/DD/YYYY
-					$expdate = strtotime($_POST['expires']);
-					$_POST['expires'] = date("m/d/Y",$expdate);
-				}
-			} else {
-				$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
-			}
-		}
+		local_user_set_groups($userent,$_POST['groups']);
+		local_user_set($userent);
+		write_config();
 
-		if (!empty($_POST['name'])) {
-			$ca = lookup_ca($_POST['caref']);
-        		if (!$ca)
-                		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
-		}
+		if(is_dir("/etc/inc/privhooks"))
+			run_plugins("/etc/inc/privhooks");
 
-		/* if this is an AJAX caller then handle via JSON */
-		if (isAjax() && is_array($input_errors)) {
-			input_errors2Ajax($input_errors);
-			exit;
-		}
-
-		if (!$input_errors) {
-			conf_mount_rw();
-			$userent = array();
-			if (isset($id) && $a_user[$id])
-				$userent = $a_user[$id];
-
-			isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
-
-			/* the user name was modified */
-			if ($_POST['usernamefld'] <> $_POST['oldusername'])
-				$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
-
-			/* the user password was mofified */
-			if ($_POST['passwordfld1'])
-				local_user_set_password($userent, $_POST['passwordfld1']);
-
-			$userent['name'] = $_POST['usernamefld'];
-			$userent['descr'] = $_POST['descr'];
-			$userent['expires'] = $_POST['expires'];
-			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
-			$userent['ipsecpsk'] = $_POST['ipsecpsk'];
-			
-			if($_POST['disabled'])
-				$userent['disabled'] = true;
-			else 
-				unset($userent['disabled']);
-
-			if (isset($id) && $a_user[$id])
-				$a_user[$id] = $userent;
-			else {
-				if (!empty($_POST['name'])) {
-					$cert = array();
-					$cert['refid'] = uniqid();
-                        		$userent['cert'] = array();
-
-					$cert['descr'] = $_POST['name'];
-
-                			$subject = cert_get_subject_array($ca['crt']);
-
-                			$dn = array(
-                        			'countryName' => $subject[0]['v'],
-                        			'stateOrProvinceName' => $subject[1]['v'],
-                        			'localityName' => $subject[2]['v'],
-                        			'organizationName' => $subject[3]['v'],
-                        			'emailAddress' => $subject[4]['v'],
-                        			'commonName' => $userent['name']);
-
-					cert_create($cert, $_POST['caref'], $_POST['keylen'],
-						(int)$_POST['lifetime'], $dn);
-
-					if (!is_array($config['cert']))
-						$config['cert'] = array();
-					$config['cert'][] = $cert;
-					$userent['cert'][] = $cert['refid'];
-				}
-				$userent['uid'] = $config['system']['nextuid']++;
-				/* Add the user to All Users group. */
-				foreach ($config['system']['group'] as $gidx => $group) {
-					if ($group['name'] == "all") {
-						if (!is_array($config['system']['group'][$gidx]['member']))
-							$config['system']['group'][$gidx]['member'] = array();
-						$config['system']['group'][$gidx]['member'][] = $userent['uid'];
-						break;
-					}
-				}
-
-				$a_user[] = $userent;
-			}
-
-			local_user_set_groups($userent,$_POST['groups']);
-			local_user_set($userent);
-			write_config();
-
-			if(is_dir("/etc/inc/privhooks"))
-				run_plugins("/etc/inc/privhooks");
-
-			conf_mount_ro();
-			
-			pfSenseHeader("system_usermanager.php");
-		}
+		conf_mount_ro();
+		
+		pfSenseHeader("system_usermanager.php");
 	}
+}
 
-	include("head.inc");
+include("head.inc");
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
@@ -871,98 +864,4 @@ function sshkeyClicked(obj) {
 </table>
 <?php include("fend.inc");?>
 </body>
-
-<?php
-
-	// end admin user code
-
-} else {
-
-	// start normal user code
-
-	$pgtitle = array(gettext("System"),gettext("User Password"));
-
-	if (isset($_POST['save'])) {
-		unset($input_errors);
-
-		/* input validation */
-		$reqdfields = explode(" ", "passwordfld1");
-		$reqdfieldsn = array(gettext("Password"));
-
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
-		if ($_POST['passwordfld1'] != $_POST['passwordfld2'])
-			$input_errors[] = gettext("The passwords do not match.");
-
-		if (!$input_errors) {
-			// all values are okay --> saving changes
-			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
-			local_user_set($config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]);
-			write_config();
-			$savemsg = gettext("Password successfully changed") . "<br />";
-		}
-	}
-
-	/* determine if user is not local to system */
-	$islocal = false;
-	foreach($config['system']['user'] as $user) 
-		if($user['name'] == $_SESSION['Username'])
-			$islocal = true;
-?>
-
-<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php
-    include("head.inc");
-	include("fbegin.inc");
-	if ($input_errors)
-		print_input_errors($input_errors);
-	if ($savemsg)
-		print_info_box($savemsg);
-
-	if($islocal == false) {
-		echo gettext("Sorry, you cannot change the password for a LDAP user.");
-		include("fend.inc");
-		exit;
-	}
-?>
-<div id="mainarea">
-	<div class="tabcont">
-		<form action="system_usermanager.php" method="post" name="iform" id="iform">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s <?=gettext("Password"); ?></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell" rowspan="2"><?=gettext("Password"); ?></td>
-					<td width="78%" class="vtable">
-						<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
-					</td>
-				</tr>
-				<tr>
-					<td width="78%" class="vtable">
-						<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
-						&nbsp;<?=gettext("(confirmation)");?>
-						<br/>
-						<span class="vexpl">
-							<?=gettext("Select a new password");?>
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top">&nbsp;</td>
-					<td width="78%">
-						<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					</td>
-				</tr>
-			</table>
-		</form>
-	</div>
-</div>
-<?php include("fend.inc");?>
-</body>
-
-<?php
-
-} // end of normal user code
-
-?>
+</html>

@@ -158,6 +158,8 @@ if ($_POST) {
 		$mode = "restore";
 	else if (stristr($_POST['Submit'], gettext("Reinstall")))
 		$mode = "reinstallpackages";
+	else if (stristr($_POST['Submit'], gettext("Clear Package Lock")))
+		$mode = "clearpackagelock";
 	else if (stristr($_POST['Submit'], gettext("Download")))
 		$mode = "download";
 	else if (stristr($_POST['Submit'], gettext("Restore version")))
@@ -470,6 +472,9 @@ if ($_POST) {
 
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
+		} else if ($mode == "clearpackagelock") {
+			clear_subsystem_dirty('packagelock');
+			$savemsg = "Package Lock Cleared";
                 } else if ($mode == "restore_ver") {
 			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
@@ -655,13 +660,17 @@ function backuparea_change(obj) {
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>
 				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Reinstall packages"); ?></td>
+					<td colspan="2" class="listtopic"><?=gettext("Package Functions"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
 						<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
 		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
+						<br/>
+						<br/>
+						<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
+						<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>">
 					</td>
 				</tr>
 				<?php } ?>

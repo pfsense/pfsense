@@ -159,6 +159,9 @@ include("head.inc");
 		<form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
+                        <td colspan="2" valign="top" class="listtopic"><?=gettext("Edit allowed ip rule");?></td>
+                </tr>
+		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
 			<td width="78%" class="vtable"> 
 			<select name="dir" class="formfld">

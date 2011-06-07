@@ -481,7 +481,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$natt = $ph1ent['nat_traversal'];
 
 					$init = "on";
-					$genp = "off";
+					$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "off";
 					$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "claim";
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
@@ -490,10 +490,10 @@ function vpn_ipsec_configure($ipchg = false)
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
 							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
-							$genp = "on";
+							$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "on";
 						} else {
 							$init = "off";
-							$genp = "unique";
+							$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "unique";
 						}
 					}
 
@@ -864,8 +864,7 @@ EOD;
 								/* FIXME: does adding route-to and reply-to on the in/outbound
 								 * rules fix this? smos@ 13-01-2009 */
 								// log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route delete -host {$rgip}");
-								mwexec("/sbin/route add -host {$rgip} {$gatewayip}");
+								mwexec("/sbin/route delete -host {$rgip}; /sbin/route add -host {$rgip} {$gatewayip}", true);
 							}
 						}
 					}
@@ -913,7 +912,7 @@ EOD;
 			$hostnames = "";
 			array_unique($filterdns_list);
 			foreach ($filterdns_list as $hostname)
-				$hostnames .= "cmd {$hostname} '/etc/rc.newipsecdns'\n";
+				$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload ipsecdns\"'\n";
 			file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
 			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");

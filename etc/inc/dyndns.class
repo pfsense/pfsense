@@ -98,7 +98,9 @@
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . ".debug";
 
 			log_error("DynDns: updatedns() starting");
-			
+
+			$dyndnslck = lock($dnsHost, LOCK_EX);
+
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
 			case 'freedns':
@@ -128,6 +130,7 @@
 			// Ensure that we where able to lookup the IP
 			if(!is_ipaddr($this->_ifIP)) {
 				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
+				unlock($dyndnslck);
 				return;
 			}
 
@@ -162,6 +165,8 @@
 					break;
 				}
 			}
+
+			unlock($dyndnslck);
 		}
 			
 		/*
@@ -178,7 +183,7 @@
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 60); // Completely empirical
+				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			}
 
 			switch ($this->_dnsService) {
@@ -197,10 +202,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'dhs':
 					$needsIP = TRUE;
@@ -228,10 +229,6 @@
 					curl_setopt($ch, CURLOPT_URL, '{$server}{$port}');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'noip':
 					$needsIP = TRUE;
@@ -243,10 +240,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&hostname=' . $this->_dnsHost.'&ip=' . $this->_dnsIP);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'easydns':
 					$needsIP = TRUE;
@@ -259,10 +252,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=' . $this->_dnsBackMX);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'hn':
 					$needsIP = TRUE;
@@ -275,10 +264,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?ver=1&IP=' . $this->_dnsIP);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'zoneedit':
 					$needsIP = FALSE;
@@ -293,11 +278,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" .$this->_dnsHost);
-
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'dyns':
 					$needsIP = FALSE;
@@ -308,10 +288,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;					
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'ods':
 					$needsIP = FALSE;
@@ -349,33 +325,21 @@
 								break;
 						}
 					}
-					$this->_checkStatus($code);
+					$this->_checkStatus(0, $code);
 					break;
 				case 'freedns':
 					$needIP = FALSE;
 					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred:" . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'opendns':
 					$needsIP = FALSE;
@@ -389,19 +353,11 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 
 				case 'staticcling':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;	                    
 				case 'dnsomatic':
 					/* Example syntax 
@@ -418,10 +374,6 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Request completed. DNS-O-Matic reported: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'namecheap':
 					/* Example:
@@ -433,10 +385,6 @@
 					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
 					$server = "https://dynamicdns.park-your-domain.com/update?host={$hostname}&domain={$domain}&password={$this->_dnsPass}&ip={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				case 'he-net':
 					$needsIP = FALSE;
@@ -445,13 +393,14 @@
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsHost . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost);
-					$data = curl_exec($ch);
-					if(@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
 					break;
 				default:
 					break;
+			}
+			if ($this->_dnsService != 'ods') {
+				$data = curl_exec($ch);
+				$this->_checkStatus($ch, $data);
+				@curl_close($ch);
 			}
 		}
 
@@ -463,6 +412,12 @@
 			log_error("DynDns: DynDns _checkStatus() starting.");
 			log_error("DynDns: Current Service: {$this->_dnsService}");
 			$successful_update = false;
+			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
+				$status = "Curl error occurred: " . curl_error($ch);
+				log_error($status);
+				$this->status = $status;
+				return;
+			}
 			switch ($this->_dnsService) {
 				case 'dnsomatic':
 					if (preg_match('/badauth/i', $data)) {
@@ -961,7 +916,7 @@
 				curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 				curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
 				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 60);
+				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);

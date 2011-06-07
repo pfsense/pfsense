@@ -213,6 +213,9 @@ function voucher_expire($voucher_received) {
 	$a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
 	$active_dirty = false;
 
+	$cpdb = captiveportal_read_db(false, 4); /* Indexed by Voucher */
+	$unsetindexes[] = array();
+
 	// go through all received vouchers, check their valid and extract
 	// Roll# and Ticket# using the external readvoucher binary
 	foreach ($a_vouchers_received as $voucher) {
@@ -242,6 +245,15 @@ function voucher_expire($voucher_received) {
 				if (!(ord($bitstring[$roll][$pos]) & $mask))
 					$bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
 				captiveportal_syslog("{$voucher} ({$roll}/{$nr}) forced to expire");
+
+				/* Check if this voucher has any active sessions */
+				if (isset($cpdb[$voucher])) {
+					$cpentry = $cpdb[$voucher];
+					captiveportal_disconnect($cpentry,null,13);
+					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");
+					unset($cpdb[$voucher]);
+					$unsetindexes[] = $cpentry[5];
+				}
 			} else
 				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
 		} else
@@ -268,6 +280,10 @@ function voucher_expire($voucher_received) {
 	}
 
 	unlock($voucherlck);
+
+	/* Write database */
+	if (!empty($unsetindexes))
+		captiveportal_write_db($cpdb, false, $unsetindexes);
 
 	return true;
 }

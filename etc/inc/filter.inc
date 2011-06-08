@@ -504,11 +504,13 @@ function filter_expand_alias($alias_name)
 }
 
 function filter_generate_aliases() {
-	global $config, $FilterIflist;
+	global $config, $FilterIflist, $after_filter_configure_run;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
 	}
+
 	$alias = "#System aliases\n ";
 	$aliases = "loopback = \"{ lo0 }\"\n";
 
@@ -554,9 +556,10 @@ function filter_generate_aliases() {
 			case "network":
 			case "url":
 				$tableaddrs = "{$addrlist}{$extralias}";
-				if(empty($tableaddrs))
+				if(empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
-				else
+					$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
+				} else
 					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";

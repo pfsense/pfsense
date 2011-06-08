@@ -199,8 +199,9 @@ function restore_config_section_xmlrpc($raw_params) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if (isset($oldvips[$vip['vhid']])) {
 				if ($oldvips[$vip['vhid']] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
-				    if (does_interface_exist("vip{$vip['vhid']}"))
-					continue; // Skip reconfiguring this vips since nothing has changed.
+					unset($oldvips[$vip['vhid']]);
+					if (does_interface_exist("vip{$vip['vhid']}"))
+						continue; // Skip reconfiguring this vips since nothing has changed.
 				} else
 					unset($oldvips[$vip['vhid']]);
 			}

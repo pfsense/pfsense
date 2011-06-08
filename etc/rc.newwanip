@@ -51,7 +51,7 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure();
 	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
-	send_event("reload packages");
+	send_event("service reload packages");
 }
 
 /* Interface IP address has changed */

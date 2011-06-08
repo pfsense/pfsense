@@ -3277,9 +3277,12 @@ function link_interface_to_vips($int, $action = "") {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($int == $vip['interface']) {
 				if ($action == "update") {
-					//interface_vip_bring_down($vip);
-					if (!does_interface_exist("vip{$vip['vhid']}"))
+					if ($vip['mode'] == "carp" && !does_interface_exist("vip{$vip['vhid']}"))
 						interfaces_vips_configure($int);
+					else {
+						interface_vip_bring_down($vip);
+						interfaces_vips_configure($int);
+					}
 				} else
 					return $vip;
 			}

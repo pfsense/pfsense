@@ -89,7 +89,10 @@ if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 $system_menu[] = array("Setup Wizard", "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array("Routing", "/system_gateways.php");
 $system_menu[] = array("Cert Manager", "/system_camanager.php");
-$system_menu[] = array("User Manager", "/system_usermanager.php");
+if (!isAllowedPage("system_usermanager.php*"))
+	$system_menu[] = array("User Manager", "/system_usermanager_passwordmg.php");
+else
+	$system_menu[] = array("User Manager", "/system_usermanager.php");
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
 
 // Interfaces

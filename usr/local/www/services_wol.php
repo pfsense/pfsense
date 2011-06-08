@@ -156,7 +156,7 @@ include("head.inc");
 			&nbsp;<br>
 			<?=gettext("Wake all clients at once: ");?><a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
 			<?=gettext("Or Click the MAC address to wake up an individual device:");?>
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>

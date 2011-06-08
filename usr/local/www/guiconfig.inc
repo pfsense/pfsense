@@ -249,6 +249,7 @@ function print_input_errors($input_errors) {
 	global $g;
 
 	print <<<EOF
+	<div id='inputerrorsdiv' name='inputerrorsdiv'>
 	<p>
 	<table border="0" cellspacing="0" cellpadding="4" width="100%">
 	<tr>
@@ -269,6 +270,7 @@ EOF;
 			</span>
 		</td></tr>
 	</table>
+	</div>
 	</p>&nbsp;<br>
 EOF2;
 	

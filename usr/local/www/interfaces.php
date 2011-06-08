@@ -1271,7 +1271,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 								<?php endif; ?>
 								<br>
 								<?=gettext("This field can be used to modify (\"spoof\") the MAC " .
-								"address of the WAN interface"); ?><br>
+								"address of this interface"); ?><br>
 								<?=gettext("(may be required with some cable connections)"); ?><br>
 								<?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx " .
 								"or leave blank"); ?>
@@ -1320,7 +1320,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 									}
 								}
 								echo '</select><br>';
-								echo gettext("Here you can explicitely set up speed and duplex mode for the interface.");
+								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autonegotiate unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
 						echo '</tr>';

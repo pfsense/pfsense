@@ -1831,6 +1831,11 @@ function filter_generate_user_rule($rule) {
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
 			foreach($FilterIflist as $oc) $item .= $oc['descr'];
 				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
+	} else if((array_key_exists($rule['interface'], $FilterIflist))
+		&& (is_array($FilterIflist[$rule['interface']]))
+		&& (is_array($FilterIflist[$rule['interface']][0]))) {
+		/* Currently this only case for this is the pppoe server. There should be an existing macro with this name. */
+		$aline['interface'] = " on \$" . $rule['interface'] . " ";
 	} else
 		$aline['interface'] = " on \$" . $FilterIflist[$rule['interface']]['descr'] . " ";
 	$ifcfg = $FilterIflist[$rule['interface']];

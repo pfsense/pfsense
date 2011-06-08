@@ -202,7 +202,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				    if (does_interface_exist("vip{$vip['vhid']}"))
 					continue; // Skip reconfiguring this vips since nothing has changed.
 				} else
-					unset($oldvips['vhid']);
+					unset($oldvips[$vip['vhid']]);
 			}
 
 			switch ($vip['mode']) {

@@ -15,8 +15,12 @@
 			<fielddescr>Interface</fielddescr>
 			<description>Select the interface(s) the NTP server will listen on.</description>
 			<default_value>lan</default_value>
-			<type>interfaces_selection</type>
 			<multiple/>
+			<type>select_source</type>
+			<source><![CDATA[openntpd_get_listen_ips()]]></source>
+			<source_name>name</source_name>
+			<source_value>value</source_value>
+
 		</field>
 	</fields>
 	<custom_php_resync_config_command>

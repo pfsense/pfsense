@@ -1266,9 +1266,16 @@ function system_ntp_configure() {
 		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
 		if ($xmlsettings['enable'] == 'on') {
 			$ifaces = explode(',', $xmlsettings['interface']);
-			$ifaces = array_map('get_real_interface', $ifaces);
-			$ifaces = array_filter($ifaces, 'does_interface_exist');
-			$ips = array_map('find_interface_ip', $ifaces);
+			$ips = array();
+			foreach ($ifaces as $if) {
+				if (is_ipaddr($if)) {
+					$ips[] = $if;
+				} else {
+					$if = get_real_interface($if);
+					if (does_interface_exist($if))
+						$ips[] = find_interface_ip($if);
+				}
+			}
 			foreach ($ips as $ip) {
 				if (is_ipaddr($ip))
 					$ntpcfg .= "listen on $ip\n";
@@ -1589,4 +1596,23 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
+function openntpd_get_listen_ips() {
+	$interfaces = get_configured_interface_with_descr();
+	$carplist = get_configured_carp_interface_list();
+	$listenips = array();
+	foreach ($carplist as $cif => $carpip)
+		$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+	$aliaslist = get_configured_ip_aliases_list();
+	foreach ($aliaslist as $aliasip => $aliasif)
+		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	foreach ($interfaces as $iface => $ifacename) {
+		$tmp["name"]  = $ifacename;
+		$tmp["value"] = $iface;
+		$listenips[] = $tmp;
+	}
+	$tmp["name"]  = "Localhost";
+	$tmp["value"] = "lo0";
+	$listenips[] = $tmp;
+	return $listenips;
+}
 ?>

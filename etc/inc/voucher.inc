@@ -29,7 +29,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/local/bin/minicron
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher
 	pfSense_MODULE:	captiveportal
 */
 
@@ -265,6 +265,9 @@ function voucher_expire($voucher_received) {
 	if ($active_dirty == true) {
 		foreach ($active_vouchers as $roll => $active)
 			voucher_write_active_db($roll, $active);
+
+		/* Triger a sync of the vouchers on config */
+		send_event("service sync vouchers");
 	}
 
 	// Write back the used DB's
@@ -440,6 +443,9 @@ function voucher_auth($voucher_received, $test = 0) {
 	$active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
 	voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
 
+	/* Triger a sync of the vouchers on config */
+	send_event("service sync vouchers");
+
 	unlock($voucherlck);
 
 	return $total_minutes;
@@ -448,9 +454,6 @@ function voucher_auth($voucher_received, $test = 0) {
 function voucher_configure($sync = false) {
 	global $config, $g;
 
-	/* kill any running minicron */
-	killbypid("{$g['varrun_path']}/vouchercron.pid");
-
 	if (!isset($config['voucher']['enable']))
 		return 0;
 
@@ -458,15 +461,6 @@ function voucher_configure($sync = false) {
             echo "Enabling voucher support... ";
 	if ($sync == true)
 	    captiveportal_syslog("Writing voucher db from sync data...");
-
-        // start cron if we're asked to save runtime DB periodically
-        // to XML config if it changed
-        $croninterval = $config['voucher']['saveinterval'] * 60; // need seconds. Config has minutes
-        if ($croninterval) {
-            /* start pruning process (interval defaults to 60 seconds) */
-            mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/vouchercron.pid " .
-                    "/etc/rc.savevoucher");
-        }
 
 	$voucherlck = lock('voucher', LOCK_EX);
 
@@ -564,8 +558,12 @@ function voucher_read_active_db($roll) {
 				}
 			}
 			fclose($fd);
-			if ($dirty) // if we found expired entries, lets save our snapshot
+			if ($dirty) { // if we found expired entries, lets save our snapshot
 				voucher_write_active_db($roll, $active);
+
+				/* Triger a sync of the vouchers on config */
+				send_event("service sync vouchers");
+			}
 		}
 	}
 	return $active;
@@ -636,12 +634,12 @@ function voucher_log($priority, $message) {
 }
 
 /* Save active and used voucher DB into XML config and write it to flash
- * Called during reboot -> system_reboot_cleanup() and minicron
+ * Called during reboot -> system_reboot_cleanup() and every active voucher change
  */
 function voucher_save_db_to_config() {
     global $config, $g;
     
-    if (!isset($config['voucher']['enable']) || $config['voucher']['saveinterval'] == 0) 
+    if (!isset($config['voucher']['enable']))
         return;   // no vouchers or don't want to save DB's
 
     $voucherlck = lock('voucher', LOCK_EX);
@@ -669,7 +667,7 @@ function voucher_save_db_to_config() {
 
     unlock($voucherlck);
 
-    write_config();
+    write_config("Synching vouchers");
     return;
 }
 

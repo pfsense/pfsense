@@ -652,6 +652,7 @@ function captiveportal_prune_old() {
 	 *	had a chance to iterate over all accounts.
 	 */
 	$unsetindexes = array();
+	$voucher_needs_sync = false;
 	foreach ($cpdb as $cpentry) {
 
 		$timedout = false;
@@ -694,6 +695,7 @@ function captiveportal_prune_old() {
 			if (time() >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
+				$voucher_needs_sync = true;
 			}
 		}
 
@@ -761,6 +763,10 @@ function captiveportal_prune_old() {
 			}
 		}
 	}
+
+	if ($voucher_needs_sync == true)
+		/* Triger a sync of the vouchers on config */
+		send_event("service sync vouchers");
 
 	/* write database */
 	if (!empty($unsetindexes))

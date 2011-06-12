@@ -146,6 +146,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+			<br/><span>Fully qualified hostname of the host to be updated</span>
                   </td>
 				</tr>
                 <tr>

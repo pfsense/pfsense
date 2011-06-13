@@ -193,7 +193,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	 * The real work on handling the vips specially
 	 * This is a copy of intefaces_vips_configure with addition of not reloading existing/not changed carps
 	 */
-	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+	if (isset($params[0]['virtualip']) && is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		$carp_setuped = false;
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {

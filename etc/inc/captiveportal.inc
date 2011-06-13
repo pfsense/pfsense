@@ -691,7 +691,7 @@ function captiveportal_prune_old() {
 		}
 
 		/* if vouchers are configured, activate session timeouts */
-		if (!$timedout && isset($config['voucher']['enable']) && !empty($cpentry[7])) {
+		if (!$timedout && isset($config['voucher']['enable'])) {
 			if (time() >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout

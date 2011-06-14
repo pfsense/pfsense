@@ -143,6 +143,16 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	}
 }
 
+$ovpn_descrs = array();
+if (is_array($config['openvpn'])) {
+	if (is_array($config['openvpn']['openvpn-server']))
+		foreach ($config['openvpn']['openvpn-server'] as $s)
+			$ovpn_descrs[$s['vpnid']] = $s['description'];
+	if (is_array($config['openvpn']['openvpn-client']))
+		foreach ($config['openvpn']['openvpn-client'] as $c)
+			$ovpn_descrs[$c['vpnid']] = $c['description'];
+}
+
 if ($_POST['apply']) {
 	if (file_exists("/var/run/interface_mismatch_reboot_needed"))
 		system_reboot();
@@ -452,6 +462,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 					echo htmlspecialchars($descr);
 				} elseif ($portinfo['isqinq']) {
 					echo htmlspecialchars($portinfo['descr']);
+				} elseif (substr($portname, 0, 4) == 'ovpn') {
+					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5, 1)] . ")");
 				} else
 					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
 			?></option>

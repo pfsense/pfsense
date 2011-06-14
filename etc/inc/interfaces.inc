@@ -94,24 +94,31 @@ function does_vip_exist($vip) {
 	if(!$vip)
 		return false;
 
-	$realif = get_real_interface($vip['interface']);
-	$ints = get_interface_arr(true);
-	if (!in_array($realif, $ints))
-		return false;
 
-	switch ($vip['type']) {
+	switch ($vip['mode']) {
 	case "carp":
 	case "carpdev":
+		$realif = "vip{$vip['vhid']}";
+		if (!does_interface_exist($realif)) {
+			return false;
+		}
+		break;
 	case "ipalias":
-		$ifacedata = pfSense_getall_interface_addresses($realif);
-		foreach ($ifacedata as $vipips) {
-			if ($vipips == "{$vip['subnet']}/{$vip['subnet_bits']}")
-				return true;
+		$realif = get_real_interface($vip['interface']);
+		if (!does_interface_exist($realif)) {
+			return false;
 		}
 		break;
 	case "proxyarp":
 		/* XXX: Implement this */
-		break;
+	default:
+		return false;
+	}
+
+	$ifacedata = pfSense_getall_interface_addresses($realif);
+	foreach ($ifacedata as $vipips) {
+		if ($vipips == "{$vip['subnet']}/{$vip['subnet_bits']}")
+			return true;
 	}
 
 	return false;

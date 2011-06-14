@@ -96,9 +96,7 @@ function does_vip_exist($vip) {
 
 	$realif = get_real_interface($vip['interface']);
 	$ints = get_interface_arr(true);
-	if (in_array($realif, $ints))
-		return true;
-	else
+	if (!in_array($realif, $ints))
 		return false;
 
 	switch ($vip['type']) {

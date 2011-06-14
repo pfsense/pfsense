@@ -87,7 +87,7 @@ function remove_special_characters($string) {
 	return $string;
 }
 
-function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
+function carp_check_version($url, $username, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
 	global $config, $g;
 
 	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
@@ -101,8 +101,6 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 		while ($numberofruns < 2) {
 			$msg = new XML_RPC_Message($method, $params);
 			$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-			/* XXX: Configurable from the GUI?! */
-			$username = "admin";
 			$cli->setCredentials($username, $password);
 			if($numberofruns > 0)
 				$cli->setDebug(1);
@@ -138,7 +136,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 	return false;
 }
 
-function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
+function carp_sync_xml($url, $username, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
 	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
@@ -151,11 +149,11 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 
 	/* strip out nosync items */
 	if (is_array($config_copy['nat']['advancedoutbound']['rule'])) {
-	$rulescnt = count($config_copy['nat']['advancedoutbound']['rule']);
-	for ($x = 0; $x < $rulescnt; $x++) {
-		$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-		if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-			unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
+		$rulescnt = count($config_copy['nat']['advancedoutbound']['rule']);
+		for ($x = 0; $x < $rulescnt; $x++) {
+			$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
+			if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
+				unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
 		}
 	}
 	if (is_array($config_copy['nat']['rule'])) {
@@ -236,8 +234,6 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		log_error("Beginning XMLRPC sync to {$url}:{$port}.");
 		$msg = new XML_RPC_Message($method, $params);
 		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		/* XXX: Configurable from the GUI?! */
-		$username = "admin";
 		$cli->setCredentials($username, $password);
 		if($numberofruns > 0)
 			$cli->setDebug(1);
@@ -386,21 +382,23 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 		if ($carp['synchronizecaptiveportal'] != "" and is_array($config['vouchers']))
 			$sections[] = 'vouchers';
 		if (count($sections) > 0) {
-			if (!carp_check_version($synchronizetoip, $carp['password'], $port))
+			if (empty($carp['username']))
+				$username = "admin";
+			else
+				$username = $carp['username'];
+			if (!carp_check_version($synchronizetoip, $username, $carp['password'], $port))
 				break;
 				
 			update_filter_reload_status("Signaling CARP reload signal...");
-			carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
+			carp_sync_xml($synchronizetoip, $username, $carp['password'], $sections, $port);
 			if (is_array($mergesections))
-				carp_sync_xml($synchronizetoip, $carp['password'], $mergesections, $port, 'pfsense.restore_config_section');
+				carp_sync_xml($synchronizetoip, $username, $carp['password'], $mergesections, $port, 'pfsense.restore_config_section');
 			$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			$params = array(
 				XML_RPC_encode($carp['password'])
 			);
 
 			$msg = new XML_RPC_Message('pfsense.filter_configure', $params);
-			/* XXX: Configurable from the GUI */
-			$username = "admin";
 			$cli->setCredentials($username, $carp['password']);
 			$resp = $cli->send($msg, "900");
 

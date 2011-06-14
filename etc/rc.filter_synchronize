@@ -104,7 +104,7 @@ function carp_check_version($url, $password, $port = 80, $method = 'pfsense.host
 			/* XXX: Configurable from the GUI?! */
 			$username = "admin";
 			$cli->setCredentials($username, $password);
-			if($numberofruns > 1)
+			if($numberofruns > 0)
 				$cli->setDebug(1);
 			/* send our XMLRPC message and timeout after 240 seconds */
 			$resp = $cli->send($msg, "240");
@@ -239,7 +239,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		/* XXX: Configurable from the GUI?! */
 		$username = "admin";
 		$cli->setCredentials($username, $password);
-		if($numberofruns > 1)
+		if($numberofruns > 0)
 			$cli->setDebug(1);
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");

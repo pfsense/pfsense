@@ -258,8 +258,10 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");
 				exit;
-			} else
+			} else {
 				log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
+				update_filter_reload_status("XMLRPC sync successfully completed with {$url}:{$port}.");
+			}
 			$numberofruns = 3;
 		}
 		$numberofruns++;

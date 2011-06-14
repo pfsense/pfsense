@@ -118,9 +118,9 @@ if ($_GET['act'] == "del") {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by CARP") . " {$vip['descr']}.";
 			}
 		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
-			$vipiface = $a_vip[$_GET['id']]['interface'];
+			$vipiface = "vip{$a_vip[$_GET['id']]['vhid']}";
 			foreach ($a_vip as $vip) {
-				if ($vipiface == "vip{$vip['vhid']}" && $vip['mode'] == "ipalias")
+				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias")
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by ip alias entry") . " {$vip['descr']}.";
 			}
 		}

@@ -2498,6 +2498,17 @@ function upgrade_078_to_079() {
 
 function upgrade_079_to_080() {
 	global $config;
+
+	/* Upgrade config in 1.2.3 specifying a username other than admin for synching. */
+	if (!empty($config['system']['username']) && is_array($config['installedpackages']['carpsettings']) &&
+		is_array($config['installedpackages']['carpsettings']['config'])) {
+		$config['installedpackages']['carpsettings']['config'][0]['username'] = $config['system']['username'];
+		unset($config['system']['username']);
+	}
+}
+
+function upgrade_080_to_081() {
+	global $config;
 	global $g;
 
 	/* RRD files changed for quality, traffic and packets graphs */
@@ -2582,10 +2593,9 @@ function upgrade_079_to_080() {
 	}
 }
 
-function upgrade_080_to_081() {
+function upgrade_081_to_082() {
 	global $config;
 	/* enable the allow IPv6 toggle */
 	$config['system']['ipv6allow'] = true;
 }
-
 ?>

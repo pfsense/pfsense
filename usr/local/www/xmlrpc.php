@@ -166,7 +166,9 @@ function restore_config_section_xmlrpc($raw_params) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
 				if ($vip['mode'] == "carp")
 					$oldvips[$vip['vhid']] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-				else if ((($vip['mode'] == 'ipalias') || ($vip['mode'] == 'proxyarp')) && substr($vip['interface'], 0, 3) != "vip")
+				else if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 3) == "vip")
+					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
+				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && substr($vip['interface'], 0, 3) != "vip")
 					$vipbackup[] = $vip;
 			}
 		}
@@ -193,16 +195,26 @@ function restore_config_section_xmlrpc($raw_params) {
 	 * The real work on handling the vips specially
 	 * This is a copy of intefaces_vips_configure with addition of not reloading existing/not changed carps
 	 */
-	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+	if (isset($params[0]['virtualip']) && is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		$carp_setuped = false;
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if (isset($oldvips[$vip['vhid']])) {
-				unset($oldvips[$vip['vhid']]);
+			if ($vip['mode'] == "carp" && isset($oldvips[$vip['vhid']])) {
 				if ($oldvips[$vip['vhid']] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
-					if (does_interface_exist("vip{$vip['vhid']}"))
+					if (does_vip_exist($vip)) {
+						unset($oldvips[$vip['vhid']]);
 						continue; // Skip reconfiguring this vips since nothing has changed.
+					}
 				}
+				unset($oldvips[$vip['vhid']]);
+			} else if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 3) == "vip" && isset($oldvips[$vip['subnet']])) {
+				if ($oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
+					if (does_vip_exist($vip)) {
+						unset($oldvips[$vip['subnet']]);
+						continue; // Skip reconfiguring this vips since nothing has changed.
+					}
+				}
+				unset($oldvips[$vip['subnet']]);
 			}
 
 			switch ($vip['mode']) {
@@ -224,7 +236,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 		/* Cleanup remaining old carps */
 		foreach ($oldvips as $oldvipif => $oldvippar) {
-			if (does_interface_exist("vip{$oldvipif}"))
+			if (!is_ipaddr($oldvipif) && does_interface_exist("vip{$oldvipif}"))
 				pfSense_interface_destroy("vip{$oldvipif}");
 		}
 		if ($carp_setuped == true)

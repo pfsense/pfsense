@@ -85,6 +85,46 @@ function does_interface_exist($interface) {
 		return false;
 }
 
+/*
+ * does_vip_exist($vip): return true or false if a vip is
+ * configured.
+ */
+function does_vip_exist($vip) {
+	global $config;
+	
+	if(!$vip)
+		return false;
+
+
+	switch ($vip['mode']) {
+	case "carp":
+	case "carpdev":
+		$realif = "vip{$vip['vhid']}";
+		if (!does_interface_exist($realif)) {
+			return false;
+		}
+		break;
+	case "ipalias":
+		$realif = get_real_interface($vip['interface']);
+		if (!does_interface_exist($realif)) {
+			return false;
+		}
+		break;
+	case "proxyarp":
+		/* XXX: Implement this */
+	default:
+		return false;
+	}
+
+	$ifacedata = pfSense_getall_interface_addresses($realif);
+	foreach ($ifacedata as $vipips) {
+		if ($vipips == "{$vip['subnet']}/{$vip['subnet_bits']}")
+			return true;
+	}
+
+	return false;
+}
+
 function interface_netgraph_needed($interface = "wan") {
 	global $config;
 

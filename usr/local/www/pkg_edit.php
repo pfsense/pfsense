@@ -366,6 +366,8 @@ if ($pkg['tabs'] <> "") {
 		} else {
 			$active = false;
 		}
+		if(isset($tab['no_drop_down']))
+			$no_drop_down = true;
 		$urltmp = "";
 		if($tab['url'] <> "") $urltmp = $tab['url'];
 		if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
@@ -390,9 +392,9 @@ if ($pkg['tabs'] <> "") {
 
 	ksort($tab_array);
 	foreach($tab_array as $tab) {
-   		echo '<tr><td>';
-    	display_top_tabs($tab);
-   		echo '</td></tr>';
+		echo '<tr><td>';
+		display_top_tabs($tab, $no_drop_down);
+		echo '</td></tr>';
 	}
 }
 ?>
@@ -462,7 +464,7 @@ if ($pkg['tabs'] <> "") {
 			$value = $_POST[$fieldname];
 			if (is_array($value)) $value = implode(',', $value);
 		} else {
-			if (isset($id) && $a_pkg[$id])
+			if (isset($id) && $a_pkg[$id] && $a_pkg[$id][$fieldname])
 				$value = $a_pkg[$id][$fieldname];
 			else
 				$value = $pkga['default_value'];

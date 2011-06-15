@@ -71,8 +71,6 @@ if($_POST['disablecarp'] <> "") {
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot."), $carp_counter);
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
-		mwexec("/sbin/sysctl net.inet.carp.allow=1");
-		interfaces_carp_setup();
 		if(is_array($config['virtualip']['vip'])) {
                         $viparr = &$config['virtualip']['vip'];
                         foreach ($viparr as $vip) {
@@ -85,9 +83,15 @@ if($_POST['disablecarp'] <> "") {
 						interface_carpdev_configure($vip);
 						sleep(1);
 					break;
+					case "ipalias":
+						if (substr($vip['interface'], 0, 3) == "vip")
+							interface_ipalias_configure($vip);
+					break;
                                 }
                         }
                 }
+		interfaces_carp_setup();
+		mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	}
 }
 

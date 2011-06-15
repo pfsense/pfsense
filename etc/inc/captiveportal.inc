@@ -1241,8 +1241,12 @@ function captiveportal_write_db($cpdb, $locked = false, $remove = false) {
 	if (is_array($remove)) {
 		if (!empty($remove)) {
 			$cpdb = captiveportal_read_db(true);
-			foreach ($remove as $key)
-				unset($cpdb[$key]);
+			foreach ($remove as $key) {
+				if (is_array($key))
+					log_error("Captive portal Array passed as unset index: " . print_r($key, true));
+				else
+					unset($cpdb[$key]);
+			}
 		} else
 			return; //This makes sure no record removal calls
 	}

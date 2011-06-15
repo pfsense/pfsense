@@ -216,8 +216,12 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				$xml[$section] = backup_vip_config_section();
 				break;
 			case 'user':
+				$xml['system'][$section] = $config_copy['system'][$section];
+				$xml['system']['nextuid'] = $config_copy['system']['nextuid'];
+				break;
 			case 'group':
 				$xml['system'][$section] = $config_copy['system'][$section];
+				$xml['system']['nextgid'] = $config_copy['system']['nextgid'];
 				break;
 			default:
 				$xml[$section] = $config_copy[$section];
@@ -367,8 +371,8 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 			$sections[] = 'crl';
 		}
 		if ($carp['synchronizeusers'] != "") {
-			$mergesections[] = 'user';
-			$mergesections[] = 'group';
+			$sections[] = 'user';
+			$sections[] = 'group';
 		} 
 		if ($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
 			$sections[] = 'dnsmasq';
@@ -391,8 +395,6 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
 				
 			update_filter_reload_status("Signaling CARP reload signal...");
 			carp_sync_xml($synchronizetoip, $username, $carp['password'], $sections, $port);
-			if (is_array($mergesections))
-				carp_sync_xml($synchronizetoip, $username, $carp['password'], $mergesections, $port, 'pfsense.restore_config_section');
 			$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			$params = array(
 				XML_RPC_encode($carp['password'])

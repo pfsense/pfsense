@@ -425,6 +425,15 @@ function internalca_change() {
 		print_input_errors($input_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
+
+        // Load valid country codes
+        $dn_cc = array();
+        if (file_exists("/etc/ca_countries")){
+                $dn_cc_file=file("/etc/ca_countries");
+                foreach($dn_cc_file as $line)
+                        if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
+                                array_push($dn_cc, $matches[1]);
+        }
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -651,13 +660,15 @@ function internalca_change() {
 									<tr>
 										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
-											<input name="csr_dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['csr_dn_country']);?>" />
-											&nbsp;
-											<em>ex:</em>
-											&nbsp;
-											US
-											&nbsp;
-											<em><?=gettext("( two letters )");?></em>
+											<select name='csr_dn_country' class="formselect">
+											<?php
+											foreach( $dn_cc as $cc){
+												$selected = "";
+												if ($pconfig['csr_dn_country'] == $cc) $selected = "selected";
+												print "<option value=\"$cc\" $selected>$cc</option>";
+												}
+											?>
+											</select>
 										</td>
 									</tr>
 									<tr>

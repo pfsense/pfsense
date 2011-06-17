@@ -404,51 +404,53 @@ init_extraction()
 
   # Lets start by figuring out what medium we are using
   case ${INSTALLMEDIUM} in
-     LiveCD)
-	      get_value_from_cfg cpdupPathsPrefix
-	      if [ ! -z "${VAL}" ]
-			CPDUPPATHPREFIX=""
-	      then
-	        CPDUPPATHPREFIX="${VAL}" ; export CPDUPPATHPREFIX
-	      fi
-	      get_value_from_cfg cpdupPaths
-	      if [ ! -z "${VAL}" ]
-	      then
-	        CPDUPDIR="${VAL}" ; export CPDUPDIR
-	      fi
-		  oIFS=$IFS
-		  IFS=","
-	      for FILE in $CPDUPDIR; do
-	        echo_log "pc-sysinstall: Running cpdup -v -I -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE}"
-	        /usr/local/bin/cpdup -v -I -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE} >&1 2>&1
-	         if [ "$?" != "0" ]
-	         then
-	           echo "CPDUP failure occurred:" >>${LOGOUT}
-	           exit_err "ERROR: Error occurred during cpdup"
-	         fi
-	      done
-  		  oIFS=$IFS
-		  IFS="
-"
-	      return
+  LiveCD) # Copies files using cpdup. Ideal for pre-staged fs
+          if [ ! -f /usr/local/bin/cpdup ]
+          then
+            echo "Could not locate cpdup binary" >>${LOGOUT}
+            exit_err "Could not locate cpdup binary (pkg_add -r cpdup)?"
+          fi
+          get_value_from_cfg cpdupPathsPrefix
+          if [ ! -z "${VAL}" ]
+            CPDUPPATHPREFIX=""
+          then
+            CPDUPPATHPREFIX="${VAL}" ; export CPDUPPATHPREFIX
+          fi
+          get_value_from_cfg cpdupPaths
+          if [ ! -z "${VAL}" ]
+          then
+            CPDUPDIR="${VAL}" ; export CPDUPDIR
+          fi
+          oIFS=$IFS
+          IFS=","
+          for FILE in $CPDUPDIR; do
+            echo_log "pc-sysinstall: Running cpdup -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE}"
+            /usr/local/bin/cpdup -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE} >&1 2>&1
+            if [ "$?" != "0" ]
+            then
+              echo "cpdup failure occurred:" >>${LOGOUT}
+              exit_err "ERROR: Error occurred during cpdup"
+            fi
+          done
+          IFS=$oIFS
+          return
           ;;
  dvd|usb) # Lets start by mounting the disk 
           opt_mount 
-		  if [ ! -z "${INSDIR}" ]
-		  then
-          	INSDIR="${CDMNT}/${INSDIR}" ; export INSDIR
-			start_extract_split
-
-		  else
-          	INSFILE="${CDMNT}/${INSFILE}" ; export INSFILE
-          	start_extract_uzip_tar
-		  fi
+          if [ ! -z "${INSDIR}" ]
+          then
+            INSDIR="${CDMNT}/${INSDIR}" ; export INSDIR
+            start_extract_split
+          else
+            INSFILE="${CDMNT}/${INSFILE}" ; export INSFILE
+            start_extract_uzip_tar
+          fi
           ;;
      ftp) fetch_install_file
           start_extract_uzip_tar 
           ;;
      rsync) start_rsync_copy
-            ;;
+          ;;
        *) exit_err "ERROR: Unknown install medium" ;;
   esac
 

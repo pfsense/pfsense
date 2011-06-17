@@ -413,7 +413,7 @@ init_extraction()
 		  oIFS=$IFS
 		  IFS=","
 	      for FILE in $INSFILE; do
-	        echo_log "pc-sysinstall: Running cpdup -vvv -I -o /${FILE} /mnt/${FILE}"
+	        echo_log "pc-sysinstall: Running cpdup -v -I -o /${FILE} /mnt/${FILE}"
 	        /usr/local/bin/cpdup -vvv -I -o /${FILE} /mnt/${FILE} >&1 2>&1
 	         if [ "$?" != "0" ]
 	         then

@@ -405,19 +405,25 @@ init_extraction()
   # Lets start by figuring out what medium we are using
   case ${INSTALLMEDIUM} in
      LiveCD)
+	      get_value_from_cfg cpdupPathsPrefix
+	      if [ ! -z "${VAL}" ]
+			CPDUPPATHPREFIX=""
+	      then
+	        CPDUPPATHPREFIX="${VAL}" ; export CPDUPPATHPREFIX
+	      fi
 	      get_value_from_cfg cpdupPaths
 	      if [ ! -z "${VAL}" ]
 	      then
-	        INSFILE="${VAL}" ; export INSFILE
+	        CPDUPDIR="${VAL}" ; export CPDUPDIR
 	      fi
 		  oIFS=$IFS
 		  IFS=","
-	      for FILE in $INSFILE; do
-	        echo_log "pc-sysinstall: Running cpdup -v -I -o /${FILE} /mnt/${FILE}"
-	        /usr/local/bin/cpdup -vvv -I -o /${FILE} /mnt/${FILE} >&1 2>&1
+	      for FILE in $CPDUPDIR; do
+	        echo_log "pc-sysinstall: Running cpdup -v -I -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE}"
+	        /usr/local/bin/cpdup -v -I -o ${CPDUPPATHPREFIX}/${FILE} /mnt/${FILE} >&1 2>&1
 	         if [ "$?" != "0" ]
 	         then
-	           echo "CPDUP failure occured:" >>${LOGOUT}
+	           echo "CPDUP failure occurred:" >>${LOGOUT}
 	           exit_err "ERROR: Error occurred during cpdup"
 	         fi
 	      done

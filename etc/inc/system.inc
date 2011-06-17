@@ -739,8 +739,10 @@ function system_webgui_start() {
 	}
 
 	/* generate lighttpd configuration */
+	$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
+		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
+		"cert.pem", "ca.pem", $max_procs);
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -820,6 +822,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	// Ramp up captive portal max procs
+	//  Work relative to the default of 2, for values that would be >2.
 	if($captive_portal == true)  {
 		if($avail > 65 and $avail < 98) {
 			$max_procs = 1;
@@ -828,13 +831,13 @@ function system_generate_lighty_config($filename,
 			$max_procs = 2;
 		}
 		if($avail > 127 and $avail < 256) {
-			$max_procs = 3;
+			$max_procs += 1;
 		}
 		if($avail > 255 and $avail < 384) {
-			$max_procs = 4;
+			$max_procs += 2;
 		}
 		if($avail > 383) {
-			$max_procs = 5;
+			$max_procs += 3;
 		}
 	}
 

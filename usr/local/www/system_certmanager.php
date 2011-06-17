@@ -153,7 +153,7 @@ if ($act == "csr") {
 
 if ($_POST) {
 	if ($_POST['save'] == gettext("Save")) {
-		unset($input_errors);
+		$input_errors = array();
 		$pconfig = $_POST;
 
 		/* input validation */
@@ -206,6 +206,18 @@ if ($_POST) {
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		if ($pconfig['method'] != "import")
+			/* Make sure we do not have invalid characters in the fields for the certificate */
+			for ($i = 0; $i < count($reqdfields); $i++) {
+				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
+				 	if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+						array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
+				}else if (preg_match('/commonname/', $reqdfields[$i])){ /* dn_commonname or csr_dn_commonname */
+					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+						array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
+				}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+			}
 
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {

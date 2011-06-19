@@ -1250,29 +1250,30 @@ function is_interface_vlan_mismatch() {
 }
 
 function is_interface_mismatch() {
-        global $config, $g;
+	global $config, $g;
 
-        /* XXX: Should we process only enabled interfaces?! */
-        $do_assign = false;
-        $i = 0;
+	$do_assign = false;
+	$i = 0;
 	if (is_array($config['interfaces'])) {
-        	foreach ($config['interfaces'] as $ifname => $ifcfg) {
-                	if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
-                        	$i++;
-                	}
-                	else if (does_interface_exist($ifcfg['if']) == false) {
+		foreach ($config['interfaces'] as $ifname => $ifcfg) {
+			if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+				// Do not check these interfaces.
+				$i++;
+				continue;
+			}
+			else if (does_interface_exist($ifcfg['if']) == false) {
 				$do_assign = true;
-                	} else
-                        	$i++;
-        	}
+			} else
+				$i++;
+		}
 	}
 
-        if ($g['minimum_nic_count'] > $i) {
-                $do_assign = true;
-        } else if (file_exists("{$g['tmp_path']}/assign_complete"))
-                $do_assign = false;
+	if ($g['minimum_nic_count'] > $i) {
+		$do_assign = true;
+	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
+	$do_assign = false;
 
-        return $do_assign;
+	return $do_assign;
 }
 
 /* sync carp entries to other firewalls */

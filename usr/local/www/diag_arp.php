@@ -248,10 +248,14 @@ function _getHostName($mac,$ip) {
 		return $dhcpmac[$mac];
 	else if ($dhcpip[$ip])
 		return $dhcpip[$ip];
-	else if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
-		return gethostbyaddr($ip);
-	else
-		return "";
+	else{
+		exec("host -W 1 $ip", $output);
+		if (preg_match('/.*pointer ([A-Za-z0-9.-]+)\..*/',$output[0],$matches)) {
+			if ($matches[1] <> $ip)
+				return $matches[1]; 
+		}
+	}
+	return "";
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
@@ -277,8 +281,18 @@ ob_implicit_flush(1);
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
+$dnsavailable=1;
+$dns = trim(_getHostName("", "8.8.8.8")); 
+if ($dns == ""){
+	$dns = trim(_getHostName("", "8.8.4.4")); 
+	if ($dns == "") $dnsavailable =0;
+}
+
 foreach ($data as &$entry) {
-	$dns = trim(_getHostName($entry['mac'], $entry['ip']));
+	if ($dnsavailable){
+		$dns = trim(_getHostName($entry['mac'], $entry['ip']));
+	}else
+		$dns="";
 	if(trim($dns))
 		$entry['dnsresolve'] = "$dns";
 	else

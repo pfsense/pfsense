@@ -154,7 +154,7 @@ if ($act == "expkey") {
 
 if ($_POST) {
 
-	unset($input_errors);
+	$input_errors = array();
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -185,6 +185,18 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	if ($pconfig['method'] != "existing")
+		/* Make sure we do not have invalid characters in the fields for the certificate */
+		for ($i = 0; $i < count($reqdfields); $i++) {
+			if ($reqdfields[$i] == 'dn_email'){
+				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"]))
+					array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
+			}else if ($reqdfields[$i] == 'dn_commonname'){
+				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"]))
+					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
+			}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+		}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -271,6 +283,15 @@ function method_change() {
 		print_input_errors($input_errors);
 	if ($savemsg)
 		print_info_box($savemsg);
+
+	// Load valid country codes
+	$dn_cc = array();
+	if (file_exists("/etc/ca_countries")){
+		$dn_cc_file=file("/etc/ca_countries");
+		foreach($dn_cc_file as $line)
+			if (preg_match('/^(\S*)\s(.*)$/', $line, $matches))
+				array_push($dn_cc, $matches[1]);
+	}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -394,12 +415,15 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>"/>
-											&nbsp;
-											<em><?=gettext("ex:");?></em>
-											&nbsp;
-											<?=gettext("US");?>
-											<em><?=gettext("( two letters )");?></em>
+											<select name='dn_country' class="formselect">
+											<?php
+											foreach( $dn_cc as $cc){
+												$selected = "";
+												if ($pconfig['dn_country'] == $cc) $selected = "selected";
+												print "<option value=\"$cc\" $selected>$cc</option>";
+												}
+											?>
+											</select>
 										</td>
 									</tr>
 									<tr>

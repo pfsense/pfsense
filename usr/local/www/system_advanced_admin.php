@@ -51,6 +51,7 @@ require_once("shaper.inc");
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
+$pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
@@ -84,6 +85,10 @@ if ($_POST) {
 		if(!is_port($_POST['webguiport']))
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
 
+	if ($_POST['max_procs'])
+		if(!is_numeric($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500))
+			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
+
 	if ($_POST['althostnames']) {
 		$althosts = explode(" ", $_POST['althostnames']);
 		foreach ($althosts as $ah)
@@ -110,6 +115,8 @@ if ($_POST) {
 		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport']))
 			$restart_webgui = true;
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref']))
+			$restart_webgui = true;
+		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs']))
 			$restart_webgui = true;
 
 		if ($_POST['disablehttpredirect'] == "yes") {
@@ -318,6 +325,18 @@ function prot_change() {
 										<?=gettext("Enter a custom port number for the webConfigurator " .
 										"above if you want to override the default (80 for HTTP, 443 " .
 										"for HTTPS). Changes will take effect immediately after save."); ?>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td valign="top" class="vncell"><?=gettext("Max Processes"); ?></td>
+								<td class="vtable">
+									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" "size="5" value="<?=htmlspecialchars($pconfig['max_procs']);?>">
+									<br>
+									<span class="vexpl">
+										<?=gettext("Enter the number of webConfigurator processes you " .
+										"want to run. This defaults to 2. Increasing this will allow more " .
+										"users/browsers to access the GUI concurrently."); ?>
 									</span>
 								</td>
 							</tr>

@@ -110,8 +110,9 @@ function remove_duplicate($array, $field)
 }
 
 $awk = "/usr/bin/awk";
+
 /* this pattern sticks comments into a single array item */
-$cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
+$cleanpattern = "'{ gsub(\"^#.*\", \"\");} { gsub(\"^server-duid.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 /* We then split the leases file by } */
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
@@ -165,6 +166,7 @@ while($i < $leases_count) {
 			case "ia-na":
 				if ($data[$f+1][0] == '"') {
 					$duid = "";
+					/* FIXME: This needs a safety belt to prevent an infinite loop */
 					while ($data[$f][strlen($data[$f])-1] != '"') {
 						$duid .= " " . $data[$f+1];
 						$f++;

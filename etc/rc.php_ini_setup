@@ -179,6 +179,12 @@ EOF
 if [ ! -d /etc/php_dynamodules ]; then
 	/bin/mkdir /etc/php_dynamodules
 fi
+if [ ! -d /etc/php_dynamodules_zend ]; then
+	/bin/mkdir /etc/php_dynamodules_zend
+fi
+if [ ! -d /etc/php_dynamodules_zend_ts ]; then
+	/bin/mkdir /etc/php_dynamodules_zend_ts
+fi
 
 # Read in dynamodules
 if [ -d /etc/php_dynamodules ]; then

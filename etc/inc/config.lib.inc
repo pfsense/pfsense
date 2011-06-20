@@ -342,8 +342,10 @@ function conf_mount_rw() {
 function conf_mount_ro() {
 	global $g;
 
+	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
+	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
+	if($platform == "cdrom" or $platform == "pfSense")
 		return;
 
 	if($g['booting'])

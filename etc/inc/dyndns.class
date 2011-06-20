@@ -408,7 +408,7 @@
 		 * Private Function (added 12 July 2005) [beta]
 		 *   Retrieve Update Status
 		 */
-		function _checkStatus($data) {
+		function _checkStatus($ch, $data) {
 			log_error("DynDns: DynDns _checkStatus() starting.");
 			log_error("DynDns: Current Service: {$this->_dnsService}");
 			$successful_update = false;

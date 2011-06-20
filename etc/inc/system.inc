@@ -86,7 +86,9 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	$resolvconf = "domain {$syscfg['domain']}\n";
+	// Do not create blank domain lines, it breaks tools like dig.
+	if($syscfg['domain'])
+		$resolvconf = "domain {$syscfg['domain']}\n";
 
 	$havedns = false;
 
@@ -739,8 +741,10 @@ function system_webgui_start() {
 	}
 
 	/* generate lighttpd configuration */
+	$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
+		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
+		"cert.pem", "ca.pem", $max_procs);
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -820,6 +824,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	// Ramp up captive portal max procs
+	//  Work relative to the default of 2, for values that would be >2.
 	if($captive_portal == true)  {
 		if($avail > 65 and $avail < 98) {
 			$max_procs = 1;
@@ -828,38 +833,38 @@ function system_generate_lighty_config($filename,
 			$max_procs = 2;
 		}
 		if($avail > 127 and $avail < 256) {
-			$max_procs = 3;
+			$max_procs += 1;
 		}
 		if($avail > 255 and $avail < 384) {
-			$max_procs = 4;
+			$max_procs += 2;
 		}
 		if($avail > 383) {
-			$max_procs = 5;
+			$max_procs += 3;
 		}
 	}
 
 	if($captive_portal == true)  {	
 		$bin_environment =  <<<EOC
-        "bin-environment" => (
-           "PHP_FCGI_CHILDREN" => "$max_procs",
-           "PHP_FCGI_MAX_REQUESTS" => "500"
-        ), 
+			"bin-environment" => (
+				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_MAX_REQUESTS" => "500"
+			),
 EOC;
 
 	} else if ($avail > 0 and $avail < 128) {
 		$bin_environment = <<<EOC
-		"bin-environment" => (
-			"PHP_FCGI_CHILDREN" => "$max_procs",
-			"PHP_FCGI_MAX_REQUESTS" => "2",
-	),
+			"bin-environment" => (
+				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_MAX_REQUESTS" => "2",
+			),
 
 EOC;
 	} else
 		$bin_environment =  <<<EOC
-        "bin-environment" => (
-           "PHP_FCGI_CHILDREN" => "$max_procs",
-           "PHP_FCGI_MAX_REQUESTS" => "500"
-        ), 
+			"bin-environment" => (
+				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_MAX_REQUESTS" => "500"
+			),
 EOC;
 
 	if($fast_cgi_enable == true) {
@@ -874,7 +879,7 @@ fastcgi.server = ( ".php" =>
 			"socket" => "{$g['tmp_path']}/php-fastcgi.socket",
 			"min-procs" => 0,
 			"max-procs" => {$max_procs},
-			{$bin_environment}			
+{$bin_environment}
 			"bin-path" => "/usr/local/bin/php"
 		)
 	)
@@ -1171,9 +1176,16 @@ function system_ntp_configure() {
 		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
 		if ($xmlsettings['enable'] == 'on') {
 			$ifaces = explode(',', $xmlsettings['interface']);
-			$ifaces = array_map('get_real_interface', $ifaces);
-			$ifaces = array_filter($ifaces, 'does_interface_exist');
-			$ips = array_map('find_interface_ip', $ifaces);
+			$ips = array();
+			foreach ($ifaces as $if) {
+				if (is_ipaddr($if)) {
+					$ips[] = $if;
+				} else {
+					$if = get_real_interface($if);
+					if (does_interface_exist($if))
+						$ips[] = find_interface_ip($if);
+				}
+			}
 			foreach ($ips as $ip) {
 				if (is_ipaddr($ip))
 					$ntpcfg .= "listen on $ip\n";
@@ -1494,4 +1506,23 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
+function openntpd_get_listen_ips() {
+	$interfaces = get_configured_interface_with_descr();
+	$carplist = get_configured_carp_interface_list();
+	$listenips = array();
+	foreach ($carplist as $cif => $carpip)
+		$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+	$aliaslist = get_configured_ip_aliases_list();
+	foreach ($aliaslist as $aliasip => $aliasif)
+		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	foreach ($interfaces as $iface => $ifacename) {
+		$tmp["name"]  = $ifacename;
+		$tmp["value"] = $iface;
+		$listenips[] = $tmp;
+	}
+	$tmp["name"]  = "Localhost";
+	$tmp["value"] = "lo0";
+	$listenips[] = $tmp;
+	return $listenips;
+}
 ?>

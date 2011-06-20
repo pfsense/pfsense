@@ -217,7 +217,7 @@
 	}
 
 	$upperifname = strtoupper($interface);
-	echo "\nPlease wait, saving and activating your changes to {$upperifname}...";
+	echo "\nPlease wait while the changes are saved to {$upperifname}...";
 	write_config(gettext("{$interface} IP configuration from console menu"));
 	interface_reconfigure(strtolower($upperifname));
 	echo " Reloading filter...";

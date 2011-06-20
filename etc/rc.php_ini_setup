@@ -116,6 +116,8 @@ PHPMODULES="$PHPMODULES zmq"
 PHPMODULES="$PHPMODULES ssh2"
 # pfSense extensions
 PHPMODULES="$PHPMODULES pfSense"
+# ion cube
+PHPMODULES="$PHPMODULES ioncube_loader"
 
 # Modules previously included.
 # can be turned on by touching

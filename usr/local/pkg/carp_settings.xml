@@ -86,6 +86,14 @@
 			<type>input</type>
 		</field>
 		<field>
+			<fielddescr>Remote System Username</fielddescr>
+			<fieldname>username</fieldname>
+			<default_value>admin</default_value>
+			<description>Enter the webConfigurator username of the system entered above for synchronizing your configuration.
+			&lt;br&gt;&lt;br&gt;NOTE: &lt;b&gt;Do not use the Synchronize Config to IP and username option on backup cluster members!&lt;/b&gt;</description>
+			<type>input</type>
+		</field>
+		<field>
 			<fielddescr>Remote System Password</fielddescr>
 			<fieldname>password</fieldname>
 			<description>Enter the webConfigurator password of the system entered above for synchronizing your configuration.

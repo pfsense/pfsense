@@ -226,7 +226,7 @@ done
 for EXT in $PHP_ZEND_MODULES; do
 	# Ensure extension exists before adding.
 	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension=${EXT}.so" >> /usr/local/lib/php.ini
+		echo "${EXTENSIONSDIR}/zend_extension=${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 
@@ -234,7 +234,7 @@ done
 for EXT in $PHP_ZEND_MODULES_TS; do
 	# Ensure extension exists before adding.
 	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension_ts=${EXT}.so" >> /usr/local/lib/php.ini
+		echo "${EXTENSIONSDIR}/zend_extension_ts=${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 

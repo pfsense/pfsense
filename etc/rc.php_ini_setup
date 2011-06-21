@@ -194,13 +194,13 @@ fi
 
 # Read in zend modules
 if [ -d /etc/php_dynamodules_zend ]; then
-	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
+	DYNA_MODULES=`/bin/ls /etc/php_dynamodules_zend/`
 	PHP_ZEND_MODULES="$PHP_ZEND_MODULES $DYNA_MODULES"
 fi
 
 # Read in zend threaded modules
 if [ -d /etc/php_dynamodules_zend_ts ]; then
-	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
+	DYNA_MODULES=`/bin/ls /etc/php_dynamodules_zend_ts/`
 	PHP_ZEND_MODULES_TS="$PHP_ZEND_MODULES $DYNA_MODULES"
 fi
 

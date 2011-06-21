@@ -201,7 +201,7 @@ fi
 # Read in zend threaded modules
 if [ -d /etc/php_dynamodules_zend_ts ]; then
 	DYNA_MODULES=`/bin/ls /etc/php_dynamodules_zend_ts/`
-	PHP_ZEND_MODULES_TS="$PHP_ZEND_MODULES $DYNA_MODULES"
+	PHP_ZEND_MODULES_TS="$PHP_ZEND_MODULES_TS $DYNA_MODULES"
 fi
 
 # Loop through and generate modules to load.

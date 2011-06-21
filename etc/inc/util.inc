@@ -139,6 +139,9 @@ function unlock($cfglckkey = 0) {
 function send_event($cmd) {
 	global $g;
 
+	if(!isset($g['event_address']))
+		$g['event_address'] = "unix:///var/run/check_reload_status";
+		
 	$try = 0;
 	while ($try < 3) {
 		$fd = @fsockopen($g['event_address']);
@@ -156,20 +159,23 @@ function send_event($cmd) {
 }
 
 function send_multiple_events($cmds) {
-        global $g;
+	global $g;
 
+	if(!isset($g['event_address']))
+		$g['event_address'] = "unix:///var/run/check_reload_status";
+			
 	if (!is_array($cmds))
 		return;
-        $fd = fsockopen($g['event_address']);
-        if ($fd) {
+	$fd = fsockopen($g['event_address']);
+	if ($fd) {
 		foreach ($cmds as $cmd) {
-                	fwrite($fd, $cmd);
-                	$resp = fread($fd, 4096);
-                	if ($resp != "OK\n")
-                        	log_error("send_event: sent {$cmd} got {$resp}");
+			fwrite($fd, $cmd);
+			$resp = fread($fd, 4096);
+			if ($resp != "OK\n")
+				log_error("send_event: sent {$cmd} got {$resp}");
 		}
-                fclose($fd);
-        }
+		fclose($fd);
+	}
 }
 
 function refcount_init($reference) {

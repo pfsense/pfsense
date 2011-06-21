@@ -116,8 +116,9 @@ PHPMODULES="$PHPMODULES zmq"
 PHPMODULES="$PHPMODULES ssh2"
 # pfSense extensions
 PHPMODULES="$PHPMODULES pfSense"
-# ion cube
-PHPMODULES="$PHPMODULES ioncube_loader"
+
+PHP_ZEND_MODULES=""
+PHP_ZEND_MODULES_TS=""
 
 # Modules previously included.
 # can be turned on by touching
@@ -178,11 +179,29 @@ EOF
 if [ ! -d /etc/php_dynamodules ]; then
 	/bin/mkdir /etc/php_dynamodules
 fi
+if [ ! -d /etc/php_dynamodules_zend ]; then
+	/bin/mkdir /etc/php_dynamodules_zend
+fi
+if [ ! -d /etc/php_dynamodules_zend_ts ]; then
+	/bin/mkdir /etc/php_dynamodules_zend_ts
+fi
 
 # Read in dynamodules
 if [ -d /etc/php_dynamodules ]; then
 	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
 	PHPMODULES="$PHPMODULES $DYNA_MODULES"
+fi
+
+# Read in zend modules
+if [ -d /etc/php_dynamodules_zend ]; then
+	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
+	PHP_ZEND_MODULES="$PHP_ZEND_MODULES $DYNA_MODULES"
+fi
+
+# Read in zend threaded modules
+if [ -d /etc/php_dynamodules_zend_ts ]; then
+	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
+	PHP_ZEND_MODULES_TS="$PHP_ZEND_MODULES $DYNA_MODULES"
 fi
 
 # Loop through and generate modules to load.
@@ -200,6 +219,22 @@ for EXT in $PHPMODULES; do
 		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
 		fi
+	fi
+done
+
+# Zend modules
+for EXT in $PHP_ZEND_MODULES; do
+	# Ensure extension exists before adding.
+	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
+		echo "zend_extension=${EXT}.so" >> /usr/local/lib/php.ini
+	fi
+done
+
+# Zend threaded modules
+for EXT in $PHP_ZEND_MODULES_TS; do
+	# Ensure extension exists before adding.
+	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
+		echo "zend_extension_ts=${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 

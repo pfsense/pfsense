@@ -86,7 +86,9 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	$resolvconf = "domain {$syscfg['domain']}\n";
+	// Do not create blank domain lines, it breaks tools like dig.
+	if($syscfg['domain'])
+		$resolvconf = "domain {$syscfg['domain']}\n";
 
 	$havedns = false;
 

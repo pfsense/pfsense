@@ -978,8 +978,11 @@ function setup_wireless_olsr() {
 	conf_mount_rw();
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 		$olsr_enable = $olsrd['enable'];
-		if($olsr_enable <> "on")
+		if($olsr_enable <> "on") {
+			if (is_process_running("olsrd"))
+				mwexec("/usr/bin/killall olsrd", true);
 			return;
+		}
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 
 		if($olsrd['announcedynamicroute'] or $olsrd['enableannounce'] == "on") {
@@ -1241,7 +1244,7 @@ EODAD;
 		fclose($fd);
 	}
 
-	if(is_process_running("olsrd"))
+	if (is_process_running("olsrd"))
 		mwexec("/usr/bin/killall olsrd", true);
 
 	sleep(2);

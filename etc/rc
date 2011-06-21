@@ -359,6 +359,12 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/usr/local/bin/php -q /etc/ecl.php
 fi
 
+if [ -f /etc/rc.custom_boot_early ]; then
+	/bin/echo -n "Launching /etc/rc.custom_boot_early...";
+	/etc/rc.custom_boot_early
+	echo "Done"
+fi
+
 nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now

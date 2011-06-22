@@ -141,6 +141,11 @@ if ($_POST) {
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
+	// Unset ca and cert if not required to avaoid storing in config
+	if ($method == "pre_shared_key" || method == "xauth_psk_server"){
+		unset($pconfig['caref']);	
+		unset($pconfig['certref']);	
+	}
 
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.

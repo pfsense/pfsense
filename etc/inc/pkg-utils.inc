@@ -491,7 +491,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			update_output_window($static_output);
 		}
 	}
-	$static_output .= " (extracting)";
+	$static_output .= " (extracting)\n";
 	update_output_window($static_output);
 	$slaveout = "";
 	exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);

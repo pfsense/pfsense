@@ -1382,7 +1382,7 @@ function filter_nat_rules_generate() {
 		}
 		/* PPTP subnet */
 		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
-			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
 			$numberofnathosts += count($pptp_subnets);
 			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
@@ -1655,7 +1655,7 @@ function filter_generate_user_rule_arr($rule) {
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
-	global $FilterIflist;
+	global $FilterIflist, $config;
 	$src = "";
 
 	if(isset($rule[$target]['any'])) {
@@ -1745,8 +1745,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = "{$lansa}/{$lansn}";
 						break;
 					case 'pptp':
-						$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-						$pptpsn = $FilterIflist['pptp']['sn'];
+						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+						$src = "{ " . implode(" ", $pptp_subnets) . " }";
 						$src = "{$pptpsa}/{$pptpsn}";
 						break;
 					case 'pppoe':

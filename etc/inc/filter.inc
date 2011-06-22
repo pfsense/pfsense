@@ -558,7 +558,8 @@ function filter_generate_aliases() {
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
-					$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
+					if (empty($aliased['address']))
+						$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
 				} else
 					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 

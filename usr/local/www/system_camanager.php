@@ -264,7 +264,14 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref']);
+				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'])){
+					while($ssl_err = openssl_error_string()){
+						$input_errors = array();
+						array_push($input_errors, "openssl library returns: " . $ssl_err);
+					}
+				}
+				error_reporting($old_err_level);
 			}
 		}
 
@@ -273,7 +280,8 @@ if ($_POST) {
 		else
 			$a_ca[] = $ca;
 
-		write_config();
+		if (!$input_errors)
+			write_config();
 
 //		pfSenseHeader("system_camanager.php");
 	}

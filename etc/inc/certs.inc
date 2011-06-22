@@ -186,6 +186,45 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 	return true;
 }
 
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref) {
+	// Create Intermediate Certificate Authority
+	$signing_ca =& lookup_ca($caref);
+	if (!$signing_ca)
+		return false;
+
+	$signing_ca_str_crt = base64_decode($signing_ca['crt']);
+	$signing_ca_str_key = base64_decode($signing_ca['prv']);
+	$signing_ca_res_crt = openssl_x509_read($signing_ca_str_crt);
+	$signing_ca_res_key = openssl_pkey_get_private(array(0 => $signing_ca_str_key, 1 => ""));
+	$signing_ca_serial = ++$signing_ca['serial'];
+
+	$args = array(
+		"digest_alg" => "sha1",
+		"private_key_bits" => (int)$keylen,
+		"private_key_type" => OPENSSL_KEYTYPE_RSA,
+		"encrypt_key" => false);
+
+	// generate a new key pair
+	$res_key = openssl_pkey_new($args);
+
+	// generate a certificate signing request
+	$res_csr = openssl_csr_new($dn, $res_key, $args);
+
+	// Sign the certificate
+	$res_crt = openssl_csr_sign($res_csr, $signing_ca_res_crt, $signing_ca_res_key, $lifetime, $args, $signing_ca_serial);
+
+	// export our certificate data
+	openssl_pkey_export($res_key, $str_key);
+	openssl_x509_export($res_crt, $str_crt);
+
+	// return our ca information
+	$ca['crt'] = base64_encode($str_crt);
+	$ca['prv'] = base64_encode($str_key);
+	$ca['serial'] = 0;
+
+	return true;
+}
+
 function cert_import(& $cert, $crt_str, $key_str) {
 
 	$cert['crt'] = base64_encode($crt_str);

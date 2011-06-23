@@ -316,6 +316,7 @@ function uninstall_package($pkg_name) {
 
 	// Back up /usr/local/lib libraries first if
 	// not running from the builder code.
+	// also take into account rrd binaries
 	if(!$builder_package_install) {
 		if(!file_exists("/tmp/pkg_libs.tgz")) {
 			$static_output .= "Backing up libraries... ";

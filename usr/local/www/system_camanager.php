@@ -42,7 +42,8 @@ require_once("certs.inc");
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),
-	"internal" => gettext("Create an internal Certificate Authority"));
+	"internal" => gettext("Create an internal Certificate Authority"),
+	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array( "512", "1024", "2048", "4096");
 
@@ -154,7 +155,7 @@ if ($act == "expkey") {
 
 if ($_POST) {
 
-	$input_errors = array();
+	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -174,6 +175,22 @@ if ($_POST) {
 				"dn_organization dn_email dn_commonname");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
+				gettext("Key length"),
+				gettext("Lifetime"),
+				gettext("Distinguished name Country Code"),
+				gettext("Distinguished name State or Province"),
+				gettext("Distinguished name City"),
+				gettext("Distinguished name Organization"),
+				gettext("Distinguished name Email Address"),
+				gettext("Distinguished name Common Name"));
+	}
+	if ($pconfig['method'] == "intermediate") {
+		$reqdfields = explode(" ",
+				"descr caref keylen lifetime dn_country dn_state dn_city ".
+				"dn_organization dn_email dn_commonname");
+		$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Signing Certificate Authority"),
 				gettext("Key length"),
 				gettext("Lifetime"),
 				gettext("Distinguished name Country Code"),
@@ -229,7 +246,7 @@ if ($_POST) {
 			if ($pconfig['method'] == "existing")
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 
-			if ($pconfig['method'] == "internal") {
+			else if ($pconfig['method'] == "internal") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
 					'stateOrProvinceName' => $pconfig['dn_state'],
@@ -239,6 +256,23 @@ if ($_POST) {
 					'commonName' => $pconfig['dn_commonname']);
 				ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn);
 			}
+			else if ($pconfig['method'] == "intermediate") {
+				$dn = array(
+					'countryName' => $pconfig['dn_country'],
+					'stateOrProvinceName' => $pconfig['dn_state'],
+					'localityName' => $pconfig['dn_city'],
+					'organizationName' => $pconfig['dn_organization'],
+					'emailAddress' => $pconfig['dn_email'],
+					'commonName' => $pconfig['dn_commonname']);
+				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'])){
+					while($ssl_err = openssl_error_string()){
+						$input_errors = array();
+						array_push($input_errors, "openssl library returns: " . $ssl_err);
+					}
+				}
+				error_reporting($old_err_level);
+			}
 		}
 
 		if (isset($id) && $a_ca[$id])
@@ -246,7 +280,8 @@ if ($_POST) {
 		else
 			$a_ca[] = $ca;
 
-		write_config();
+		if (!$input_errors)
+			write_config();
 
 //		pfSenseHeader("system_camanager.php");
 	}
@@ -268,10 +303,17 @@ function method_change() {
 		case 0:
 			document.getElementById("existing").style.display="";
 			document.getElementById("internal").style.display="none";
+			document.getElementById("intermediate").style.display="none";
 			break;
 		case 1:
 			document.getElementById("existing").style.display="none";
 			document.getElementById("internal").style.display="";
+			document.getElementById("intermediate").style.display="none";
+			break;
+		case 2:
+			document.getElementById("existing").style.display="none";
+			document.getElementById("internal").style.display="";
+			document.getElementById("intermediate").style.display="";
 			break;
 	}
 }
@@ -384,6 +426,23 @@ function method_change() {
 						</tr>
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("Internal Certificate Authority");?></td>
+						</tr>
+						<tr id='intermediate'>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Certificate Authority");?></td>
+							<td width="78%" class="vtable">
+                                                                <select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+                                                                <?php
+                                                                        foreach( $a_ca as $ca):
+                                                                        if (!$ca['prv'])
+                                                                                continue;
+                                                                        $selected = "";
+                                                                        if ($pconfig['caref'] == $ca['refid'])
+                                                                                $selected = "selected";
+                                                                ?>
+                                                                        <option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
+                                                                <?php endforeach; ?>
+                                                                </select>
+							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>

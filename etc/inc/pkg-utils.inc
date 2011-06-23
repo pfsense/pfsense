@@ -321,7 +321,7 @@ function uninstall_package($pkg_name) {
 			$static_output .= "Backing up libraries... ";
 			update_output_window($static_output);
 			exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
-			exec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrdtool' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+			exec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
 			$static_output .= "\n";
 		}
 	}

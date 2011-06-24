@@ -365,7 +365,7 @@ if [ -f /etc/rc.custom_boot_early ]; then
 	echo "Done"
 fi
 
-nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
+/usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."

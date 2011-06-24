@@ -167,16 +167,20 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
+	if (!$res_key) return false;
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	if (!$res_csr) return false;
 
 	// self sign the certificate
 	$res_crt = openssl_csr_sign($res_csr, null, $res_key, $lifetime, $args);
+	if (!$res_crt) return false;
 
 	// export our certificate data
-	openssl_pkey_export($res_key, $str_key);
-	openssl_x509_export($res_crt, $str_crt);
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_x509_export($res_crt, $str_crt))
+		return false;
 
 	// return our ca information
 	$ca['crt'] = base64_encode($str_crt);

@@ -243,6 +243,7 @@ if ($_POST) {
 			if (!empty($pconfig['key']))
 				$ca['prv']    = base64_encode($pconfig['key']);
 		} else {
+			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
 			if ($pconfig['method'] == "existing")
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 
@@ -254,7 +255,12 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn);
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn)){
+					while($ssl_err = openssl_error_string()){
+						$input_errors = array();
+						array_push($input_errors, "openssl library returns: " . $ssl_err);
+					}
+				}
 			}
 			else if ($pconfig['method'] == "intermediate") {
 				$dn = array(
@@ -264,15 +270,14 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'])){
 					while($ssl_err = openssl_error_string()){
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
 				}
-				error_reporting($old_err_level);
 			}
+			error_reporting($old_err_level);
 		}
 
 		if (isset($id) && $a_ca[$id])

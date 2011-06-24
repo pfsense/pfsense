@@ -338,7 +338,7 @@ function csr_get_subject($str_crt, $decode = true) {
 
 	$components = openssl_csr_get_subject($str_crt);
 
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
 
 	ksort($components);
@@ -360,7 +360,7 @@ function cert_get_subject($str_crt, $decode = true) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
 
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
 
 	ksort($components);
@@ -410,9 +410,10 @@ function cert_get_issuer($str_crt, $decode = true) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['issuer'];
 	
-	ksort($components);
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
+
+	ksort($components);
 	foreach ($components as $a => $v) {
 		if (!strlen($issuer))
 			$issuer = "{$a}={$v}";

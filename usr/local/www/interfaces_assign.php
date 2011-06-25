@@ -121,9 +121,9 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
                 /* QinQ members */
                 $qinqifs = explode(' ', $qinq['members']);
                 foreach ($qinqifs as $qinqif) {
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
-		}
+					$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
+					$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
+				}
         }
 }
 

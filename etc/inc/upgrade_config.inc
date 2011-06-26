@@ -842,6 +842,46 @@ function upgrade_044_to_045() {
 
 function upgrade_045_to_046() {
 	global $config;
+	/* Load up monitors that are in the default config for 2.0 but not in 1.2.3 
+		thus wouldn't be in an upgraded config. */
+	$config['load_balancer']['monitor_type'] = array (
+		array ( 'name' => 'ICMP',
+			'type' => 'icmp',
+			'descr' => 'ICMP',
+			'options' => '',
+		),
+		array ( 'name' => 'TCP',
+			'type' => 'tcp',
+			'descr' => 'Generic TCP',
+			'options' => '',
+		),
+		array ( 'name' => 'HTTP',
+			'type' => 'http',
+			'descr' => 'Generic HTTP',
+			'options' =>
+			array ( 'path' => '/',
+				'host' => '',
+				'code' => '200',
+			),
+		),
+		array ( 'name' => 'HTTPS',
+			'type' => 'https',
+			'descr' => 'Generic HTTPS',
+			'options' =>
+			array ( 'path' => '/',
+				'host' => '',
+				'code' => '200',
+			),
+		),
+		array ( 'name' => 'SMTP',
+			'type' => 'send',
+			'descr' => 'Generic SMTP',
+			'options' =>
+			array ( 'send' => 'EHLO nosuchhost',
+				'expect' => '250-',
+			),
+		),
+	);
 	/* Upgrade load balancer from slb to relayd */
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
 		$vs_a = &$config['load_balancer']['virtual_server'];

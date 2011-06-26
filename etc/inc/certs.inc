@@ -167,16 +167,62 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
+	if (!$res_key) return false;
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	if (!$res_csr) return false;
 
 	// self sign the certificate
 	$res_crt = openssl_csr_sign($res_csr, null, $res_key, $lifetime, $args);
+	if (!$res_crt) return false;
 
 	// export our certificate data
-	openssl_pkey_export($res_key, $str_key);
-	openssl_x509_export($res_crt, $str_crt);
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_x509_export($res_crt, $str_crt))
+		return false;
+
+	// return our ca information
+	$ca['crt'] = base64_encode($str_crt);
+	$ca['prv'] = base64_encode($str_key);
+	$ca['serial'] = 0;
+
+	return true;
+}
+
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref) {
+	// Create Intermediate Certificate Authority
+	$signing_ca =& lookup_ca($caref);
+	if (!$signing_ca)
+		return false;
+
+	$signing_ca_res_crt = openssl_x509_read(base64_decode($signing_ca['crt']));
+	$signing_ca_res_key = openssl_pkey_get_private(array(0 => base64_decode($signing_ca['prv']) , 1 => ""));
+	if (!$signing_ca_res_crt || !$signing_ca_res_key) return false;
+	$signing_ca_serial = ++$signing_ca['serial'];
+
+	$args = array(
+		"digest_alg" => "sha1",
+		"private_key_bits" => (int)$keylen,
+		"private_key_type" => OPENSSL_KEYTYPE_RSA,
+		"encrypt_key" => false);
+
+	// generate a new key pair
+	$res_key = openssl_pkey_new($args);
+	if (!$res_key) return false;
+
+	// generate a certificate signing request
+	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	if (!$res_csr) return false;
+
+	// Sign the certificate
+	$res_crt = openssl_csr_sign($res_csr, $signing_ca_res_crt, $signing_ca_res_key, $lifetime, $args, $signing_ca_serial);
+	if (!$res_crt) return false;
+
+	// export our certificate data
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_x509_export($res_crt, $str_crt))
+		return false;
 
 	// return our ca information
 	$ca['crt'] = base64_encode($str_crt);
@@ -213,6 +259,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 	$ca_str_key = base64_decode($ca['prv']);
 	$ca_res_crt = openssl_x509_read($ca_str_crt);
 	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+	if(!$ca_res_key) return false;
 	$ca_serial = ++$ca['serial'];
 
 	$args = array(
@@ -223,17 +270,21 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
+	if(!$res_key) return false;
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	if(!$res_csr) return false;
 
 	// self sign the certificate
 	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,
 				 $args, $ca_serial);
+	if(!$res_crt) return false;
 
 	// export our certificate data
-	openssl_pkey_export($res_key, $str_key);
-	openssl_x509_export($res_crt, $str_crt);
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_x509_export($res_crt, $str_crt))
+		return false;
 
 	// return our certificate information
 	$cert['caref'] = $caref;
@@ -253,13 +304,16 @@ function csr_generate(& $cert, $keylen, $dn) {
 
 	// generate a new key pair
 	$res_key = openssl_pkey_new($args);
+	if(!$res_key) return false;
 
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
+	if(!$res_csr) return false;
 
 	// export our request data
-	openssl_pkey_export($res_key, $str_key);
-	openssl_csr_export($res_csr, $str_csr);
+	if (!openssl_pkey_export($res_key, $str_key) ||
+	    !openssl_csr_export($res_csr, $str_csr))
+		return false;
 
 	// return our request information
 	$cert['csr'] = base64_encode($str_csr);
@@ -284,7 +338,7 @@ function csr_get_subject($str_crt, $decode = true) {
 
 	$components = openssl_csr_get_subject($str_crt);
 
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
 
 	ksort($components);
@@ -306,7 +360,7 @@ function cert_get_subject($str_crt, $decode = true) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['subject'];
 
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
 
 	ksort($components);
@@ -356,9 +410,10 @@ function cert_get_issuer($str_crt, $decode = true) {
 	$inf_crt = openssl_x509_parse($str_crt);
 	$components = $inf_crt['issuer'];
 	
-	ksort($components);
-	if (!is_array($components))
+	if (empty($components) || !is_array($components))
 		return "unknown";
+
+	ksort($components);
 	foreach ($components as $a => $v) {
 		if (!strlen($issuer))
 			$issuer = "{$a}={$v}";

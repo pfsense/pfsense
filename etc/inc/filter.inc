@@ -277,8 +277,6 @@ function filter_configure_sync() {
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
 
-	//$rules .= discover_pkg_rules("pfearly");
-
 	// Configure flowtable support if enabled.
 	flowtable_configure();
 
@@ -2049,7 +2047,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 
 	$ipfrules = "";
-	//$ipfrules .= discover_pkg_rules("filter");
+	$ipfrules .= discover_pkg_rules("pfearly");
 
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
@@ -2372,6 +2370,7 @@ EOD;
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined rules follow\n";
+		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {
 			if(isset($rule['disabled']))

@@ -62,8 +62,11 @@ $periods = array("absolute" => gettext("Absolute Timespans"),
 		"current" => gettext("Current Period"),
 		"previous" => gettext("Previous Period"));
 
-if ($_POST) {
-
+if ($_POST['ResetRRD']) {
+	mwexec('/bin/rm /var/db/rrd/*');
+	$retval = enable_rrd_graphing();
+	$savemsg = "RRD data has been cleared. New RRD files have been generated.";
+} elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -220,6 +223,12 @@ include("head.inc");
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%">
+					<input name="ResetRRD" type="submit" class="formbtn" value="<?=gettext("Reset RRD Data");?>" onclick="return confirm('<?=gettext('Do you really want to reset the RRD graphs? This will erase all graph data.');?>')">
 				</td>
 			</tr>
 			<tr>

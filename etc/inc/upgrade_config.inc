@@ -897,6 +897,8 @@ function upgrade_045_to_046() {
 		}
 		/* Convert sitedown entries to pools and re-attach */
 		for ($i = 0; isset($vs_a[$i]); $i++) {
+			/* Set mode while we're here. */
+			$vs_a[$i]['mode'] = "redirect_mode";
 			if (isset($vs_a[$i]['sitedown'])) {
 				$pool = array();
 				$pool['type'] = 'server';
@@ -1602,7 +1604,7 @@ function upgrade_051_to_052() {
 						$assigned = true;
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
-						$localip = substr($tmpstr, 6);
+						$localip = substr($tmpstr, 5);
 						$server['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
@@ -1704,7 +1706,7 @@ function upgrade_051_to_052() {
 						$assigned = true;
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
-                                                $localip = substr($tmpstr, 6);
+                                                $localip = substr($tmpstr, 5);
                                                 $client['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;

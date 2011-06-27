@@ -897,6 +897,8 @@ function upgrade_045_to_046() {
 		}
 		/* Convert sitedown entries to pools and re-attach */
 		for ($i = 0; isset($vs_a[$i]); $i++) {
+			/* Set mode while we're here. */
+			$vs_a[$i]['mode'] = "redirect_mode";
 			if (isset($vs_a[$i]['sitedown'])) {
 				$pool = array();
 				$pool['type'] = 'server';

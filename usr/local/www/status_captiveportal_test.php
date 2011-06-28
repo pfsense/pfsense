@@ -42,9 +42,10 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"));
+
 include("head.inc");
 include("fbegin.inc");
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"));
 ?>
 
 <form action="status_captiveportal_test.php" method="post" enctype="multipart/form-data" name="iform" id="iform">

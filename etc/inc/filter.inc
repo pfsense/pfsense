@@ -277,8 +277,6 @@ function filter_configure_sync() {
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
 
-	//$rules .= discover_pkg_rules("pfearly");
-
 	// Configure flowtable support if enabled.
 	flowtable_configure();
 
@@ -559,7 +557,8 @@ function filter_generate_aliases() {
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
-					$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
+					if (empty($aliased['address']))
+						$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
 				} else
 					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 
@@ -1350,7 +1349,7 @@ function filter_nat_rules_generate() {
 		}
 		/* PPTP subnet */
 		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
-			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
 			$numberofnathosts += count($pptp_subnets);
 			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
@@ -1623,7 +1622,7 @@ function filter_generate_user_rule_arr($rule) {
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
-	global $FilterIflist;
+	global $FilterIflist, $config;
 	$src = "";
 
 	if(isset($rule[$target]['any'])) {
@@ -1665,9 +1664,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = "{$lansa}/{$lansn}";
 					break;
 				case 'pptp':
-					$pptpsa = gen_subnet($FilterIflist['pptp']['sa'], $FilterIflist['pptp']['sn']);
-					$pptpsn = $FilterIflist['pptp']['sn'];
-					$src = "{$pptpsa}/{$pptpsn}";
+					$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+					$src = "{ " . implode(" ", $pptp_subnets) . " }";
 					break;
 				case 'pppoe':
 					/* XXX: This needs to be fixed somehow! */
@@ -2050,7 +2048,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 
 	$ipfrules = "";
-	//$ipfrules .= discover_pkg_rules("filter");
+	$ipfrules .= discover_pkg_rules("pfearly");
 
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
@@ -2373,6 +2371,7 @@ EOD;
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined rules follow\n";
+		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {
 			if(isset($rule['disabled']))

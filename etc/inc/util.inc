@@ -45,14 +45,14 @@ function isvalidpid($pid) {
 	$output = "";
 	exec("/bin/pgrep -F {$pid}", $output, $retval);
 
-        return (intval($retval) == 0);
+	return (intval($retval) == 0);
 }
 
 function is_process_running($process) {
 	$output = "";
 	exec("/bin/pgrep -ax {$process}", $output, $retval);
 
-        return (intval($retval) == 0);
+	return (intval($retval) == 0);
 }
 
 function isvalidproc($proc) {
@@ -139,6 +139,9 @@ function unlock($cfglckkey = 0) {
 function send_event($cmd) {
 	global $g;
 
+	if(!isset($g['event_address']))
+		$g['event_address'] = "unix:///var/run/check_reload_status";
+		
 	$try = 0;
 	while ($try < 3) {
 		$fd = @fsockopen($g['event_address']);
@@ -156,20 +159,23 @@ function send_event($cmd) {
 }
 
 function send_multiple_events($cmds) {
-        global $g;
+	global $g;
 
+	if(!isset($g['event_address']))
+		$g['event_address'] = "unix:///var/run/check_reload_status";
+			
 	if (!is_array($cmds))
 		return;
-        $fd = fsockopen($g['event_address']);
-        if ($fd) {
+	$fd = fsockopen($g['event_address']);
+	if ($fd) {
 		foreach ($cmds as $cmd) {
-                	fwrite($fd, $cmd);
-                	$resp = fread($fd, 4096);
-                	if ($resp != "OK\n")
-                        	log_error("send_event: sent {$cmd} got {$resp}");
+			fwrite($fd, $cmd);
+			$resp = fread($fd, 4096);
+			if ($resp != "OK\n")
+				log_error("send_event: sent {$cmd} got {$resp}");
 		}
-                fclose($fd);
-        }
+		fclose($fd);
+	}
 }
 
 function refcount_init($reference) {
@@ -402,10 +408,10 @@ function is_ipaddroralias($ipaddr) {
 	if (is_alias($ipaddr)) {
 		if (is_array($config['aliases']['alias'])) {
 			foreach ($config['aliases']['alias'] as $alias) {
-                        	if ($alias['name'] == $ipaddr && $alias['type'] != "port")
+				if ($alias['name'] == $ipaddr && $alias['type'] != "port")
 					return true;
 			}
-                }
+		}
 		return false;
 	} else
 		return is_ipaddr($ipaddr);
@@ -430,7 +436,6 @@ function is_subnet($subnet) {
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
-
 	global $aliastable;
 
 	if (isset($aliastable[$subnet]) && is_subnet($aliastable[$subnet]))
@@ -484,7 +489,7 @@ function is_port($port) {
 	$tmpports = explode(":", $port);
 	foreach($tmpports as $tmpport) {
 		if (getservbyname($tmpport, "tcp") || getservbyname($tmpport, "udp"))
-                	continue;
+			continue;
 		if (!ctype_digit($tmpport))
 			return false;
 		else if ((intval($tmpport) < 1) || (intval($tmpport) > 65535))
@@ -495,28 +500,28 @@ function is_port($port) {
 
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */
 function is_portrange($portrange) {
-        $ports = explode(":", $portrange);
+	$ports = explode(":", $portrange);
 
-        if(count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]))
-                return true;
-        else
-                return false;
+	if(count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]))
+		return true;
+	else
+		return false;
 }
 
 /* returns true if $port is a valid port number or an alias thereof */
 function is_portoralias($port) {
 	global $config;
 
-        if (is_alias($port)) {
-                if (is_array($config['aliases']['alias'])) {
-                        foreach ($config['aliases']['alias'] as $alias) {
-                                if ($alias['name'] == $port && $alias['type'] == "port")
-                                        return true;
-                        }
-                }
-                return false;
-        } else
-                return is_port($port);
+	if (is_alias($port)) {
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if ($alias['name'] == $port && $alias['type'] == "port")
+					return true;
+				}
+			}
+			return false;
+	} else
+		return is_port($port);
 }
 
 /* returns true if $val is a valid shaper bandwidth value */
@@ -531,37 +536,37 @@ function get_configured_carp_interface_list() {
 	$iflist = array();
 
 	if(is_array($config['virtualip']['vip'])) {
-                $viparr = &$config['virtualip']['vip'];
-                foreach ($viparr as $vip) {
-                        switch ($vip['mode']) {
-                        case "carp":
-                        case "carpdev-dhcp":
-				$vipif = "vip" . $vip['vhid'];
-                        	$iflist[$vipif] = $vip['subnet'];
-                                break;
-                        }
-                }
-        }
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip) {
+			switch ($vip['mode']) {
+				case "carp":
+				case "carpdev-dhcp":
+					$vipif = "vip" . $vip['vhid'];
+					$iflist[$vipif] = $vip['subnet'];
+					break;
+			}
+		}
+	}
 
 	return $iflist;
 }
 
 /* return the configured IP aliases list */
 function get_configured_ip_aliases_list() {
-        global $config;
+	global $config;
 
-        $alias_list=array();
+	$alias_list=array();
 
-        if(is_array($config['virtualip']['vip'])) {
-                $viparr = &$config['virtualip']['vip'];
-                foreach ($viparr as $vip) {
-                        if ($vip['mode']=="ipalias") {
-                                $alias_list[$vip['subnet']] = $vip['interface'];
-                        }
-                }
-        }
+	if(is_array($config['virtualip']['vip'])) {
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip) {
+			if ($vip['mode']=="ipalias") {
+				$alias_list[$vip['subnet']] = $vip['interface'];
+			}
+		}
+	}
 
-        return $alias_list;
+	return $alias_list;
 }
 
 
@@ -711,7 +716,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
                 $ifstatus = preg_grep('/status:/', $ifconfig);
 		foreach($ifstatus as $status) {
 			$int = array_shift($intlist);
-                	if(stristr($status, "active")) $upints[] = $int;
+			if(stristr($status, "active")) $upints[] = $int;
 		}
 		break;
 	default:
@@ -728,9 +733,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	array_shift($ipinfo);
 	foreach($linkinfo as $link) {
 		$friendly = "";
-                $alink = explode(" ", $link);
-                $ifname = rtrim(trim($alink[0]), '*');
-                /* trim out all numbers before checking for vfaces */
+		$alink = explode(" ", $link);
+		$ifname = rtrim(trim($alink[0]), '*');
+		/* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
 			!stristr($ifname, "_vlan") && !stristr($ifname, "_wlan")) {
 			$toput = array(
@@ -767,9 +772,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				}
 				break;
 			}
-                }
-        }
-        return $iflist;
+		}
+	}
+	return $iflist;
 }
 
 /****f* util/log_error
@@ -781,12 +786,12 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 *   null
 ******/
 function log_error($error) {
-        global $g;
-        $page = $_SERVER['SCRIPT_NAME'];
-        syslog(LOG_WARNING, "$page: $error");
-        if ($g['debug'])
-                syslog(LOG_WARNING, var_dump(debug_backtrace()));
-        return;
+	global $g;
+	$page = $_SERVER['SCRIPT_NAME'];
+	syslog(LOG_WARNING, "$page: $error");
+	if ($g['debug'])
+		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+	return;
 }
 
 /****f* util/log_auth
@@ -798,12 +803,12 @@ function log_error($error) {
 *   null
 ******/
 function log_auth($error) {
-        global $g;
-        $page = $_SERVER['SCRIPT_NAME'];
-        syslog(LOG_AUTH, "$page: $error");
-        if ($g['debug'])
-                syslog(LOG_WARNING, var_dump(debug_backtrace()));
-        return;
+	global $g;
+	$page = $_SERVER['SCRIPT_NAME'];
+	syslog(LOG_AUTH, "$page: $error");
+	if ($g['debug'])
+		syslog(LOG_WARNING, var_dump(debug_backtrace()));
+	return;
 }
 
 /****f* util/exec_command
@@ -817,9 +822,9 @@ function log_auth($error) {
  *   This function returns the command's stdout and stderr.
  ******/
 function exec_command($command) {
-        $output = array();
-        exec($command . ' 2>&1 ', $output);
-        return(implode("\n", $output));
+	$output = array();
+	exec($command . ' 2>&1 ', $output);
+	return(implode("\n", $output));
 }
 
 /* wrapper for exec() */
@@ -835,7 +840,7 @@ function mwexec($command, $mute = false) {
 	$garbage = exec("$command 2>&1", $oarr, $retval);
 
 	if(isset($config['system']['developerspew']))
-                $mute = false;
+		$mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
 		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
@@ -845,7 +850,6 @@ function mwexec($command, $mute = false) {
 
 /* wrapper for exec() in background */
 function mwexec_bg($command) {
-
 	global $g;
 
 	if ($g['debug']) {
@@ -868,7 +872,6 @@ function unlink_if_exists($fn) {
 }
 /* make a global alias table (for faster lookups) */
 function alias_make_table($config) {
-
 	global $aliastable;
 
 	$aliastable = array();
@@ -882,7 +885,6 @@ function alias_make_table($config) {
 }
 /* check if an alias exists */
 function is_alias($name) {
-
 	global $aliastable;
 
 	return isset($aliastable[$name]);
@@ -890,7 +892,6 @@ function is_alias($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-
 	global $aliastable;
 
 	if (isset($aliastable[$name]))
@@ -1021,21 +1022,21 @@ function mac_format($clientmac) {
 
 function resolve_retry($hostname, $retries = 5) {
 
-       if (is_ipaddr($hostname))
-               return $hostname;
+	if (is_ipaddr($hostname))
+		return $hostname;
 
-       for ($i = 0; $i < $retries; $i++) {
-               $ip = gethostbyname($hostname);
+	for ($i = 0; $i < $retries; $i++) {
+		$ip = gethostbyname($hostname);
 
-               if ($ip && $ip != $hostname) {
-                       /* success */
-                       return $ip;
-               }
+		if ($ip && $ip != $hostname) {
+			/* success */
+			return $ip;
+		}
 
-               sleep(1);
-       }
+		sleep(1);
+	}
 
-       return false;
+	return false;
 }
 
 function format_bytes($bytes) {
@@ -1051,9 +1052,9 @@ function format_bytes($bytes) {
 }
 
 function update_filter_reload_status($text) {
-        global $g;
+	global $g;
 
-        file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
 }
 
 /****f* util/return_dir_as_array
@@ -1065,35 +1066,35 @@ function update_filter_reload_status($text) {
  *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
  ******/
 function return_dir_as_array($dir) {
-        $dir_array = array();
-        if (is_dir($dir)) {
-                if ($dh = opendir($dir)) {
-                        while (($file = readdir($dh)) !== false) {
-                                $canadd = 0;
-                                if($file == ".") $canadd = 1;
-                                if($file == "..") $canadd = 1;
-                                if($canadd == 0)
-                                        array_push($dir_array, $file);
-                        }
-                        closedir($dh);
-                }
-        }
-        return $dir_array;
+	$dir_array = array();
+	if (is_dir($dir)) {
+		if ($dh = opendir($dir)) {
+			while (($file = readdir($dh)) !== false) {
+				$canadd = 0;
+				if($file == ".") $canadd = 1;
+				if($file == "..") $canadd = 1;
+				if($canadd == 0)
+					array_push($dir_array, $file);
+			}
+			closedir($dh);
+		}
+	}
+	return $dir_array;
 }
 
 function run_plugins($directory) {
-        global $config, $g;
+	global $config, $g;
 
-		/* process packager manager custom rules */
-		$files = return_dir_as_array($directory);
-		if (is_array($files)) {
-			foreach ($files as $file) {
-				if (stristr($file, ".sh") == true)
-					mwexec($directory . $file . " start");
-				else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) 
-					require_once($directory . "/" . $file);
-			}
+	/* process packager manager custom rules */
+	$files = return_dir_as_array($directory);
+	if (is_array($files)) {
+		foreach ($files as $file) {
+			if (stristr($file, ".sh") == true)
+				mwexec($directory . $file . " start");
+			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) 
+				require_once($directory . "/" . $file);
 		}
+	}
 }
 
 /*
@@ -1101,13 +1102,13 @@ function run_plugins($directory) {
  *    create directory if it doesn't already exist and isn't a file!
  */
 function safe_mkdir($path, $mode=0755) {
-        global $g;
+	global $g;
 
-        if (!is_file($path) && !is_dir($path)) {
-                return @mkdir($path, $mode, true);
-        } else {
-                return false;
-        }
+	if (!is_file($path) && !is_dir($path)) {
+		return @mkdir($path, $mode, true);
+	} else {
+		return false;
+	}
 }
 
 /*
@@ -1115,15 +1116,15 @@ function safe_mkdir($path, $mode=0755) {
  * create directory tree recursively (mkdir -p)
  */
 function make_dirs($path, $mode = 0755) {
-        $base = '';
-        foreach (explode('/', $path) as $dir) {
-                $base .= "/$dir";
-                if (!is_dir($base)) {
-                        if (!@mkdir($base, $mode))
-                                return false;
-                }
-        }
-        return true;
+	$base = '';
+	foreach (explode('/', $path) as $dir) {
+		$base .= "/$dir";
+		if (!is_dir($base)) {
+			if (!@mkdir($base, $mode))
+				return false;
+		}
+	}
+	return true;
 }
 
 /*
@@ -1194,57 +1195,57 @@ function set_sysctl($values) {
  *     [0]real and [1]available
  */
 function get_memory() {
-		$matches = "";
-        if(file_exists("/var/log/dmesg.boot"))
-			$mem = `cat /var/log/dmesg.boot | grep memory`;
-		else
-			$mem = `dmesg -a | grep memory`;			
-		if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
-			return array($matches[1][0], $matches[1][0]);
-		if(!$real && !$avail) {
-			$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
-			$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-			/* convert from bytes to megabytes */
-			return array(($real/1048576),($avail/1048576));
-		}
+	$matches = "";
+	if(file_exists("/var/log/dmesg.boot"))
+		$mem = `cat /var/log/dmesg.boot | grep memory`;
+	else
+		$mem = `dmesg -a | grep memory`;			
+	if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
+		return array($matches[1][0], $matches[1][0]);
+	if(!$real && !$avail) {
+		$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
+		$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
+		/* convert from bytes to megabytes */
+		return array(($real/1048576),($avail/1048576));
+	}
 }
 
 function mute_kernel_msgs() {
-		global $config;
-		// Do not mute serial console.  The kernel gets very very cranky
-		// and will start dishing you cannot control tty errors.
-		if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
-			return;
-		if($config['system']['enableserial']) 
-			return;			
-		exec("/sbin/conscontrol mute on");
+	global $config;
+	// Do not mute serial console.  The kernel gets very very cranky
+	// and will start dishing you cannot control tty errors.
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
+	if($config['system']['enableserial']) 
+		return;			
+	exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
-		global $config;
-		// Do not mute serial console.  The kernel gets very very cranky
-		// and will start dishing you cannot control tty errors.
-		if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
-			return;
-		exec("/sbin/conscontrol mute off");
+	global $config;
+	// Do not mute serial console.  The kernel gets very very cranky
+	// and will start dishing you cannot control tty errors.
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
+	exec("/sbin/conscontrol mute off");
 }
 
 function start_devd() {
 	global $g;
 
-        exec("/sbin/devd");
-        sleep(1);
+	exec("/sbin/devd");
+	sleep(1);
 }
 
 function is_interface_vlan_mismatch() {
-        global $config, $g;
+	global $config, $g;
 
-        if (is_array($config['vlans']['vlan'])) {
-                foreach ($config['vlans']['vlan'] as $vlan) {
-                        if (does_interface_exist($vlan['if']) == false)
+	if (is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if (does_interface_exist($vlan['if']) == false)
 				return true;
-                }
-        }
+		}
+	}
 
 	return false;
 }
@@ -1291,7 +1292,7 @@ function carp_sync_client() {
  *   true/false
  ******/
 function isAjax() {
-        return isset ($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+	return isset ($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 }
 
 /****f* util/timeout
@@ -1451,51 +1452,51 @@ function is_file_included($file = "") {
 	This function was borrowed from a comment on PHP.net at the following URL:
 	http://www.php.net/manual/en/function.array-merge-recursive.php#73843
  */
-function array_merge_recursive_unique($array0, $array1)
-{
-    $arrays = func_get_args();
-    $remains = $arrays;
+function array_merge_recursive_unique($array0, $array1) {
 
-    // We walk through each arrays and put value in the results (without
-    // considering previous value).
-    $result = array();
+	$arrays = func_get_args();
+	$remains = $arrays;
 
-    // loop available array
-    foreach($arrays as $array) {
+	// We walk through each arrays and put value in the results (without
+	// considering previous value).
+	$result = array();
 
-        // The first remaining array is $array. We are processing it. So
-        // we remove it from remaing arrays.
+	// loop available array
+	foreach($arrays as $array) {
+
+		// The first remaining array is $array. We are processing it. So
+		// we remove it from remaing arrays.
         array_shift($remains);
 
-        // We don't care non array param, like array_merge since PHP 5.0.
-        if(is_array($array)) {
-            // Loop values
-            foreach($array as $key => $value) {
-                if(is_array($value)) {
-                    // we gather all remaining arrays that have such key available
-                    $args = array();
-                    foreach($remains as $remain) {
-                        if(array_key_exists($key, $remain)) {
-                            array_push($args, $remain[$key]);
-                        }
-                    }
+		// We don't care non array param, like array_merge since PHP 5.0.
+		if(is_array($array)) {
+			// Loop values
+			foreach($array as $key => $value) {
+				if(is_array($value)) {
+					// we gather all remaining arrays that have such key available
+					$args = array();
+					foreach($remains as $remain) {
+						if(array_key_exists($key, $remain)) {
+							array_push($args, $remain[$key]);
+						}
+					}
 
-                    if(count($args) > 2) {
-                        // put the recursion
-                        $result[$key] = call_user_func_array(__FUNCTION__, $args);
-                    } else {
-                        foreach($value as $vkey => $vval) {
-                            $result[$key][$vkey] = $vval;
-                        }
-                    }
-                } else {
-                    // simply put the value
-                    $result[$key] = $value;
-                }
-            }
-        }
-    }
-    return $result;
+					if(count($args) > 2) {
+						// put the recursion
+						$result[$key] = call_user_func_array(__FUNCTION__, $args);
+					} else {
+						foreach($value as $vkey => $vval) {
+							$result[$key][$vkey] = $vval;
+						}
+					}
+				} else {
+					// simply put the value
+					$result[$key] = $value;
+				}
+			}
+		}
+	}
+	return $result;
 }
 
 ?>

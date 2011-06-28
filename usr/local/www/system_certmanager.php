@@ -240,6 +240,8 @@ if ($_POST) {
 
 				$cert['descr'] = $pconfig['descr'];
 
+				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+
 				if ($pconfig['method'] == "import")
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);
 
@@ -252,8 +254,13 @@ if ($_POST) {
 						'emailAddress' => $pconfig['dn_email'],
 						'commonName' => $pconfig['dn_commonname']);
 	
-					cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn);
+					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
+						$pconfig['lifetime'], $dn)){
+						while($ssl_err = openssl_error_string()){
+							$input_errors = array();
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
+					}
 				}
 
 				if ($pconfig['method'] == "external") {
@@ -265,8 +272,15 @@ if ($_POST) {
 						'emailAddress' => $pconfig['csr_dn_email'],
 						'commonName' => $pconfig['csr_dn_commonname']);
 
-					csr_generate($cert, $pconfig['csr_keylen'], $dn);
+					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn)){
+						while($ssl_err = openssl_error_string()){
+							$input_errors = array();
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
+					}
 				}
+				error_reporting($old_err_level);
+
 				if (isset($id) && $a_cert[$id])
 					$a_cert[$id] = $cert;
 				else
@@ -275,7 +289,8 @@ if ($_POST) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
 			}
 
-			write_config();
+			if (!$input_errors)
+				write_config();
 
 			if ($userid)
 				pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
@@ -940,7 +955,7 @@ function internalca_change() {
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
-						<td colspan="3">NOTE: You can only delete a certificate if it is not currently in use.</td>
+						<td colspan="3"><?=gettext("Note: You can only delete a certificate if it is not currently in use.");?></td>
 					</tr>
 				</table>
 

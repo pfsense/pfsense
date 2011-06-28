@@ -607,7 +607,7 @@ function get_dates($curperiod, $graph) {
 									}
 									/* generate update events utilizing prototype $('') feature */
 									echo "\n";
-									echo "\t\t\$('{$graph}-{$curoption}-{$curdatabase}').src='status_rrd_graph_img.php?start={$start}&end={$end}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
+									echo "\t\t\$('{$graph}-{$curoption}-{$curdatabase}').src='status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
 									}
 								}
 							?>

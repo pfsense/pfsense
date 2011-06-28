@@ -464,7 +464,7 @@ if ($pkg['tabs'] <> "") {
 			$value = $_POST[$fieldname];
 			if (is_array($value)) $value = implode(',', $value);
 		} else {
-			if (isset($id) && $a_pkg[$id] && $a_pkg[$id][$fieldname])
+			if (isset($id) && $a_pkg[$id])
 				$value = $a_pkg[$id][$fieldname];
 			else
 				$value = $pkga['default_value'];

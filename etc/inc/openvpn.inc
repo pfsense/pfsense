@@ -161,7 +161,7 @@ function openvpn_port_next($prot) {
 function openvpn_get_cipherlist() {
 
 	$ciphers = array();
-	$cipher_out = shell_exec('openvpn --show-ciphers | grep "default key" | awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep "default key" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
 	$cipher_lines = explode("\n", trim($cipher_out));
 	sort($cipher_lines);
 	foreach ($cipher_lines as $line) {
@@ -606,7 +606,7 @@ function openvpn_restart($mode, $settings) {
 
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
-	mwexec_bg("nohup openvpn --config {$fpath}");
+	mwexec_bg("/usr/local/sbin/openvpn --config {$fpath}");
 
 	if (!$g['booting'])
 		send_event("filter reload");

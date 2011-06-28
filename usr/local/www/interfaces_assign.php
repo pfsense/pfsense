@@ -154,9 +154,10 @@ if (is_array($config['openvpn'])) {
 }
 
 if ($_POST['apply']) {
-	if (file_exists("/var/run/interface_mismatch_reboot_needed"))
+	if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 		system_reboot();
-	else {
+		$rebootingnow = true;
+	} else {
 		write_config();
 
 		$retval = 0;
@@ -370,11 +371,14 @@ if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) 
 include("head.inc");
 
 if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
-	if ($_POST)
-		$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
-	else
+	if ($_POST) {
+		if($rebootingnow) 	
+			$savemsg = gettext("The system is now rebooting.  Please wait.");
+		else
+			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+	} else {
 		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click Save.  The firewall will reboot afterwards.");
-
+	}
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

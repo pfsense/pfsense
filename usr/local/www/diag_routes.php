@@ -86,7 +86,7 @@ include('head.inc');
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
 <table class="tabcont" width="100%" cellspacing="0" cellpadding="6" border="0">
-<tr><td class="listbg" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
+<tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
 <?php
 		foreach (explode("\n", $table) as $i => $line) {
 			if ($i == 0) continue;

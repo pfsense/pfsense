@@ -237,7 +237,19 @@ function relayd_configure() {
 	if(is_array($vs_a)) {
 		for ($i = 0; isset($vs_a[$i]); $i++) {
 			switch($vs_a[$i]['mode']) {
-				case 'redirect_mode': {
+				case 'relay':
+					$conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
+					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
+					$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+
+					if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
+						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+					$conf .= "}\n";
+					break;
+				/* Default to Redirect Mode */
+				case 'redirect_mode':
+				default:
 					$conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
 					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
 					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
@@ -251,18 +263,6 @@ function relayd_configure() {
 
 					$conf .= "}\n";
 					break;
-				}
-				case 'relay': {
-					$conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
-					$conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-					$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
-					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
-
-					if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
-						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
-					$conf .= "}\n";
-					break;
-				}
 			}
 		}
 	}

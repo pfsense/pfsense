@@ -842,6 +842,46 @@ function upgrade_044_to_045() {
 
 function upgrade_045_to_046() {
 	global $config;
+	/* Load up monitors that are in the default config for 2.0 but not in 1.2.3 
+		thus wouldn't be in an upgraded config. */
+	$config['load_balancer']['monitor_type'] = array (
+		array ( 'name' => 'ICMP',
+			'type' => 'icmp',
+			'descr' => 'ICMP',
+			'options' => '',
+		),
+		array ( 'name' => 'TCP',
+			'type' => 'tcp',
+			'descr' => 'Generic TCP',
+			'options' => '',
+		),
+		array ( 'name' => 'HTTP',
+			'type' => 'http',
+			'descr' => 'Generic HTTP',
+			'options' =>
+			array ( 'path' => '/',
+				'host' => '',
+				'code' => '200',
+			),
+		),
+		array ( 'name' => 'HTTPS',
+			'type' => 'https',
+			'descr' => 'Generic HTTPS',
+			'options' =>
+			array ( 'path' => '/',
+				'host' => '',
+				'code' => '200',
+			),
+		),
+		array ( 'name' => 'SMTP',
+			'type' => 'send',
+			'descr' => 'Generic SMTP',
+			'options' =>
+			array ( 'send' => 'EHLO nosuchhost',
+				'expect' => '250-',
+			),
+		),
+	);
 	/* Upgrade load balancer from slb to relayd */
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
 		$vs_a = &$config['load_balancer']['virtual_server'];
@@ -857,6 +897,8 @@ function upgrade_045_to_046() {
 		}
 		/* Convert sitedown entries to pools and re-attach */
 		for ($i = 0; isset($vs_a[$i]); $i++) {
+			/* Set mode while we're here. */
+			$vs_a[$i]['mode'] = "redirect_mode";
 			if (isset($vs_a[$i]['sitedown'])) {
 				$pool = array();
 				$pool['type'] = 'server';
@@ -1299,6 +1341,8 @@ function upgrade_048_to_049() {
 	$all['gid'] = 1998;
 	$all['member'] = array();
 
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	if (!is_array($config['system']['group']))
 		$config['system']['group'] = array();
 
@@ -1350,6 +1394,9 @@ function upgrade_048_to_049() {
 
 function upgrade_049_to_050() {
 	global $config;
+
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	/* update user privileges */
 	foreach ($config['system']['user'] as & $user) {
 		$privs = array();
@@ -1562,7 +1609,7 @@ function upgrade_051_to_052() {
 						$assigned = true;
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
-						$localip = substr($tmpstr, 6);
+						$localip = substr($tmpstr, 5);
 						$server['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
@@ -1664,7 +1711,7 @@ function upgrade_051_to_052() {
 						$assigned = true;
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
-                                                $localip = substr($tmpstr, 6);
+                                                $localip = substr($tmpstr, 5);
                                                 $client['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
@@ -2056,6 +2103,7 @@ function upgrade_055_to_056() {
 
 function upgrade_056_to_057() {
 	global $config;
+
 	if (!is_array($config['system']['user']))
 		$config['system']['user'] = array();
 	/* migrate captivate portal to user manager */

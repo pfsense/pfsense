@@ -316,11 +316,13 @@ function uninstall_package($pkg_name) {
 
 	// Back up /usr/local/lib libraries first if
 	// not running from the builder code.
+	// also take into account rrd binaries
 	if(!$builder_package_install) {
 		if(!file_exists("/tmp/pkg_libs.tgz")) {
 			$static_output .= "Backing up libraries... ";
 			update_output_window($static_output);
 			exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+			exec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
 			$static_output .= "\n";
 		}
 	}
@@ -345,7 +347,9 @@ function uninstall_package($pkg_name) {
 		$static_output .= "Cleaning up... ";
 		update_output_window($static_output);
 		exec("/usr/bin/tar xzPfU /tmp/pkg_libs.tgz -C /");
-		@unlink("/tmp/pkg_libs.tgz");	
+		exec("/usr/bin/tar xzPfU /tmp/pkg_bins.tgz -C /");
+		@unlink("/tmp/pkg_libs.tgz");
+		@unlink("/tmp/pkg_bins.tgz");
 	}
 }
 
@@ -491,7 +495,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			update_output_window($static_output);
 		}
 	}
-	$static_output .= " (extracting)";
+	$static_output .= " (extracting)\n";
 	update_output_window($static_output);
 	$slaveout = "";
 	exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);

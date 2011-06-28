@@ -543,9 +543,9 @@ function select_clicked() {
 										<td>
 											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">
-											<br /><?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
-											<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
-											<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+											<br /><?=gettext("Note: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
+											<br /><?=gettext("Example: CN=Users;DC=example");?>
+											<br /><?=gettext("Example: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
 										</td>
 									</tr>
 								</table>

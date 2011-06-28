@@ -89,6 +89,15 @@ $oldip = "0.0.0.0";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 
+unset($gre);
+$gre = link_interface_to_gre($interface);
+if (!empty($gre))
+	array_walk($gre, 'interface_gre_configure');
+unset($gif);
+$gif = link_interface_to_gif($interface);
+if (!empty($gif))
+	array_walk($gif, 'interface_gif_configure');
+
 $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');

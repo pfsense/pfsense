@@ -339,7 +339,7 @@ function maxmss_checked(obj) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("IP Security"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Security Assocications"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>

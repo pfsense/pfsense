@@ -955,7 +955,7 @@ function internalca_change() {
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
-						<td colspan="3">NOTE: You can only delete a certificate if it is not currently in use.</td>
+						<td colspan="3"><?=gettext("Note: You can only delete a certificate if it is not currently in use.");?></td>
 					</tr>
 				</table>
 

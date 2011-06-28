@@ -118,17 +118,11 @@ if ($_POST) {
 			$ip['bw_up'] = $_POST['bw_up'];
 		if ($_POST['bw_down'])
 			$ip['bw_down'] = $_POST['bw_down'];
-		if (isset($id) && $a_allowedhostnames[$id]) {
-			$oldip = $a_allowedhostnames[$id]['hostname'];
-			if (!empty($a_allowedhostnames[$id]['sn']))
-				$oldip .= "/{$a_allowedhostnames[$id]['sn']}";
+		if (isset($id) && $a_allowedhostnames[$id])
 			$a_allowedhostnames[$id] = $ip;
-		} else {
-			$oldip = $ip['hostname'];
-			if (!empty($$ip['sn']))
-				$oldip .= "/{$$ip['sn']}";
+		else
 			$a_allowedhostnames[] = $ip;
-		}
+
 		allowedhostnames_sort();
 		
 		write_config();

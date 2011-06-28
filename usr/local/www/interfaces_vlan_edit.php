@@ -98,11 +98,16 @@ if ($_POST) {
 	if (!$input_errors) {
 		if (isset($id) && $a_vlans[$id]) {
 			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
-				if (!empty($a_vlans[$id]['vlanif']))
+				if (!empty($a_vlans[$id]['vlanif'])) {
+					$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
-				else
+				} else {
 					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+				}
+				if ($confif <> "")
+					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
 			}
 		}
 		$vlan = array();
@@ -122,7 +127,6 @@ if ($_POST) {
 
                         write_config();
 
-			$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if ($confif <> "")
 				interface_configure($confif);
 				

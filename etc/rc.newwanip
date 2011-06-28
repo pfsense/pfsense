@@ -102,9 +102,6 @@ file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
 
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
-
 /* Check Gif tunnels */
 foreach($config['gifs']['gif'] as $gif) {
 	if($gif['if'] == $interface) {
@@ -121,6 +118,9 @@ foreach($config['gifs']['gif'] as $gif) {
 		}
 	}
 }
+
+/* reconfigure our gateway monitor */
+setup_gateways_monitor();
 
 /* signal filter reload */
 filter_configure();

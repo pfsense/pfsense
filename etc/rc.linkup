@@ -35,6 +35,7 @@ require_once("config.inc");
 require_once("filter.inc");	
 require_once("shaper.inc");	
 require_once("interfaces.inc");
+require_once("services.inc");
 
 function handle_argument_group($iface, $argument2) {
 	global $config;	
@@ -42,9 +43,9 @@ function handle_argument_group($iface, $argument2) {
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	if (is_ipaddr($ipaddr) || empty($ipaddr)) {
 		log_error("Hotplug event detected for {$iface} but ignoring since interface is configured with static IP ({$ipaddr})");
+		interfaces_staticarp_configure($iface);
 		$iface = get_real_interface($iface);
 		interfaces_bring_up($iface);
-		exec("/usr/sbin/arp -d -i {$iface} -a");
 		if ($argument2 == "start" || $argument2 == "up")
 			send_event("interface newip {$iface}");
 	} else {
@@ -56,16 +57,14 @@ function handle_argument_group($iface, $argument2) {
 			break;
 		case "start":
 			log_error("DEVD Ethernet attached event for {$iface}");
-			$riface = get_real_interface($iface);
-			exec("/usr/sbin/arp -d -i {$riface} -a");
+			interfaces_staticarp_configure($iface);
 			log_error("HOTPLUG: Configuring interface {$iface}");
 			// Do not try to readd to bridge otherwise em(4) has problems
 			interface_configure($iface, false, true); 
 			break;
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
-			$riface = get_real_interface($iface);
-			exec("/usr/sbin/arp -d -i {$riface} -a");
+			interfaces_staticarp_configure($iface);
 			log_error("HOTPLUG: Configuring interface {$iface}");
 			interface_configure($iface);
 			break;

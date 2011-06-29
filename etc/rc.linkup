@@ -35,7 +35,6 @@ require_once("config.inc");
 require_once("filter.inc");	
 require_once("shaper.inc");	
 require_once("interfaces.inc");
-require_once("services.inc");
 
 function handle_argument_group($iface, $argument2) {
 	global $config;	

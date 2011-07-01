@@ -913,38 +913,6 @@ EOD;
         return 0;
 }
 
-function interfaces_staticarp_configure($if) {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "interfaces_staticarp_configure($if) being called $mt\n";
-	}
-
-        $ifcfg = $config['interfaces'][$if];
-
-	if (empty($if) || empty($ifcfg['if']))
-		return 0;
-
-        /* Enable staticarp, if enabled */
-        if(isset($config['dhcpd'][$if]['staticarp'])) {
-                mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp " );
-                mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
-                if (is_array($config['dhcpd'][$if]['staticmap'])) {
-
-                        foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
-                                mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
-
-                        }
-
-                }
-        } else {
-                mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
-                mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
-        }
-
-        return 0;
-}
-
 function services_dhcrelay_configure() {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {

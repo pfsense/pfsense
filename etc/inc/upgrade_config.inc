@@ -1341,6 +1341,8 @@ function upgrade_048_to_049() {
 	$all['gid'] = 1998;
 	$all['member'] = array();
 
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	if (!is_array($config['system']['group']))
 		$config['system']['group'] = array();
 
@@ -1392,6 +1394,9 @@ function upgrade_048_to_049() {
 
 function upgrade_049_to_050() {
 	global $config;
+
+	if (!is_array($config['system']['user']))
+		$config['system']['user'] = array();
 	/* update user privileges */
 	foreach ($config['system']['user'] as & $user) {
 		$privs = array();
@@ -2098,6 +2103,7 @@ function upgrade_055_to_056() {
 
 function upgrade_056_to_057() {
 	global $config;
+
 	if (!is_array($config['system']['user']))
 		$config['system']['user'] = array();
 	/* migrate captivate portal to user manager */
@@ -2449,9 +2455,9 @@ function upgrade_070_to_071() {
 function rename_field(& $section, $oldname, $newname) {
 	if (is_array($section)) {
 		foreach($section as & $item) {
-			if (!empty($item[$oldname]))
+			if (is_array($item) && !empty($item[$oldname]))
 				$item[$newname] = $item[$oldname];
-			if (isset($item[$oldname]))
+			if (is_array($item) && isset($item[$oldname]))
 				unset($item[$oldname]);
 		}
 	}

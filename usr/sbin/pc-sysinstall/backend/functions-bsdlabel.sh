@@ -123,7 +123,7 @@ gen_glabel_name()
   # Check if we are doing /, and rename it
   if [ "$MOUNT" = "/" ]
   then
-    NAME="rootfs"
+    NAME=`cat /etc/inc/globals.inc | grep product_name | awk '{ print $3 }' | cut -d'"' -f2`
   else
     # If doing a swap partition, also rename it
     if [ "${TYPE}" = "SWAP" ]

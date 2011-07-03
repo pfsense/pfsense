@@ -24,7 +24,7 @@ if [ -f "/tmp/donotbootup" ]; then
 fi
 
 if [ -f /etc/rc.local ]; then
-	RCLOCALPWD=`ps awux | grep sendmail | grep -v grep | awk '{ print $2 }'`
+	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`
 	if [ "$RCLOCALPWD" = "" ]; then
 		echo ">>> Launching rc.local in background..."
 		sh /etc/rc.local &

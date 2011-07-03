@@ -24,6 +24,11 @@ if [ -f "/tmp/donotbootup" ]; then
 	exit
 fi
 
+if [ -f /etc/rc.local ]; then
+	echo ">>> Launching rc.local"
+	sh /etc/rc.local
+fi
+
 CONFIG="/cf/conf/config.xml"
 WORD="https"
 

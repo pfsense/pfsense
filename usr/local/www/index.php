@@ -58,13 +58,8 @@ require_once('notices.inc');
 
 if($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
-	$x = 0;
-	if(file_exists("/tmp/PHP_errors.log")) {
-		$total = `/bin/cat /tmp/PHP_errors.log | /usr/bin/grep -vi warning | wc -l | awk '{ print $1 }'`;
-		if($total > 0) 
-			$x++;
-	}
 	$crash = glob("/var/crash/*");
+	$x = 0;
 	$skip_files = array(".", "..", "minfree", "");
 	if(is_array($crash)) {
 		foreach($crash as $c) {
@@ -72,7 +67,7 @@ if($g['disablecrashreporter'] != true) {
 				$x++;
 		}
 		if($x > 0) 
-			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+			$savemsg = "{$g['product_name']} has detected a crash report.  Click <a href='crash_reporter.php'>here</a> for more information.";
 	}
 }
 

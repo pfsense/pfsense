@@ -102,6 +102,8 @@ $crash_report_header .= "\nCrash report details:\n";
 		echo gettext("Processing...");
 		file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		exec("/usr/bin/gzip /var/crash/*");
+		if(file_exists("/tmp/PHP_errors.log"))
+			exec("cp /tmp/PHP_errors.log /var/crash/");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
 		echo gettext("Uploading...");

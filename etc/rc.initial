@@ -28,6 +28,11 @@ if [ -f /etc/rc.local ]; then
 	if [ "$RCLOCALPWD" = "" ]; then
 		echo ">>> Launching rc.local in background..."
 		sh /etc/rc.local &
+	else
+		if [ -f /etc/rc.local.running ]; then
+			echo ">>> Launching rc.local.running in background..."
+			sh /etc/rc.local.running &
+		fi
 	fi
 fi
 

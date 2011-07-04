@@ -65,8 +65,9 @@ function upload_crash_report($files) {
 }
 
 function output_crash_reporter_html($crash_reports) {
-	echo "<strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
-	echo gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
+	echo "<strong>" . gettext("Unfortunately we have detected a kernel crash (panic).") . "</strong></p>";
+	echo "If you are unfamiliar with kernel panics wikipedia has information <a target='_new' href='http://en.wikipedia.org/wiki/Kernel_panic'>here</a>.<p/>"; 
+	echo gettext("Would you like to submit the crash debug logs to the pfSense developers for inspection?") . "</p>";
 	echo "<p>";
 	echo "<i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i><br/>";
 	echo "<p>";

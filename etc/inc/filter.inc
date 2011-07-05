@@ -2436,7 +2436,7 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if(isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+	if(isset($config['installedpackages']['miniupnpd']) && isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
 
 	$ipfrules .= <<<EOD
 # uPnPd

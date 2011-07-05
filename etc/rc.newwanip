@@ -40,6 +40,7 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
+require_once("rrd.inc");
 
 // Do not process while booting
 if($g['booting']) 

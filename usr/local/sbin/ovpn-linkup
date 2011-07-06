@@ -5,7 +5,7 @@
 
 
 ifindex="${1##?????}"
-if [ -f /dev/tun$ifindex ]; then
+if [ -e /dev/tun$ifindex ]; then
 	if [ "" != "$route_vpn_gateway" ]; then
 		/bin/echo $route_vpn_gateway > /tmp/$1_router
 	else

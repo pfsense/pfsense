@@ -173,6 +173,8 @@ function filter_delete_states_for_down_gateways() {
 					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']}/32 ";
 					if (is_ipaddr($gwip))
 						$cmd .= "-b {$gwip}/32";
+					else
+						$cmd .= "-b 0.0.0.0/32";
 					mwexec($cmd);
 				}
 			}

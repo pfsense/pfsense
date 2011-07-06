@@ -137,13 +137,13 @@ function openvpn_port_used($prot, $port) {
 	if (is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as & $settings)
 			if ($port == $settings['local_port'] &&
-				$prot == $settings['protocol'])
+				$prot == $settings['protocol'] && !isset($settings['disable']))
 				return $settings['vpnid'];
 
 	if (is_array($config['openvpn']['openvpn-client']))
 		foreach ($config['openvpn']['openvpn-client'] as & $settings)
 			if ($port == $settings['local_port'] &&
-				$prot == $settings['protocol'])
+				$prot == $settings['protocol'] && !isset($settings['disable']))
 				return $settings['vpnid'];
 
 	return 0;

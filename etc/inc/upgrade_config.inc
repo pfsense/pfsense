@@ -2455,9 +2455,9 @@ function upgrade_070_to_071() {
 function rename_field(& $section, $oldname, $newname) {
 	if (is_array($section)) {
 		foreach($section as & $item) {
-			if (!empty($item[$oldname]))
+			if (is_array($item) && !empty($item[$oldname]))
 				$item[$newname] = $item[$oldname];
-			if (isset($item[$oldname]))
+			if (is_array($item) && isset($item[$oldname]))
 				unset($item[$oldname]);
 		}
 	}

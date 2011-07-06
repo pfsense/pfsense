@@ -301,6 +301,9 @@ function voucher_expire($voucher_received) {
 function voucher_auth($voucher_received, $test = 0) {
 	global $g, $config;
 
+	if (!isset($config['voucher']['enable']))
+		return 0;
+
 	$voucherlck = lock('voucher', LOCK_EX);
 
 	// XMLRPC Call over to the master Voucher node

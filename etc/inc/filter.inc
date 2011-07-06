@@ -453,6 +453,15 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
+function get_alias_type($name) {
+        global $config;
+
+        foreach ($config['aliases']['alias'] as $alias)
+                if ($name == $alias['name'])
+                        return $alias['type'];
+        return "";
+}
+
 function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
 	global $aliastable, $filterdns;
 
@@ -466,8 +475,18 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$linelength = strlen($builtlist);
 		$tmpline = "";
 		if(is_alias($address)) {
+			if (get_alias_type($address) == 'urltable'){
+				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
+				$urlfn = alias_expand_urltable($address);
+				if ($file_as_arr=file($urlfn)){
+					foreach($file_as_arr as $line){
+						$address= rtrim($line);
+						$tmpline .= " $address";
+					}
+				}
+			}
 			/* We already expanded this alias so there is no neccessity to do it again. */
-			if(!isset($aliasnesting[$address]))
+			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if(!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
@@ -2418,7 +2437,7 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if(isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+	if(isset($config['installedpackages']['miniupnpd']) && isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
 
 	$ipfrules .= <<<EOD
 # uPnPd

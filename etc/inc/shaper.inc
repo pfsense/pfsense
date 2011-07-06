@@ -382,7 +382,7 @@ class altq_root_queue {
 	function &get_queue_list($q = null) {
 		$qlist = array();
 
-		$qlist[$this->GetQname()] = & $this;
+		//$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->queues)) {
 			foreach ($this->queues as $queue)
 				$queue->get_queue_list(&$qlist);

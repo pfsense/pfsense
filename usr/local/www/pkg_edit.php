@@ -198,7 +198,7 @@ if ($_POST) {
 				$fieldname  = $fields['fieldname'];
 				if ($fieldname == "interface_array") {
 					$fieldvalue = $_POST[$fieldname];
-				} elseif (is_array($fieldvalue)) {
+				} elseif (is_array($_POST[$fieldname])) {
 					$fieldvalue = implode(',', $_POST[$fieldname]);
 				} else {
 					$fieldvalue = trim($_POST[$fieldname]);

@@ -52,7 +52,8 @@ if(is_dir("/root/pfsense/HEAD"))
 
 /* NOTE: Set branches here */
 $branches = array(
-	"master" => "2.0 development branch",
+	"master" => "2.x development branch",
+	"RELENG_2_0" => "2.0 RC branch",
 	"RELENG_1_2" => "1.2* release branch",
 	"build_commit" => "The commit originally used to build the image"
 );
@@ -116,9 +117,9 @@ if(!$found) {
 		$command = readline("Is this a custom GIT URL? [y]? ");
 		if(strtolower($command) == "y" or $command == "") {
 			$GIT_REPO = $branch;
-			$command = readline("Checkout which branch [master]? ");
+			$command = readline("Checkout which branch [RELENG_2_0]? ");
 			if($command == "")
-				$branch = "master";
+				$branch = "RELENG_2_0";
 			if($command) 
 				$branch = $command;
 			$found = true;
@@ -159,9 +160,9 @@ if(!$command_split[2] && !$argv[3] && !$upgrading) {
 		echo "\nAdd a custom RCS branch URL (HTTP) to merge in or press enter if done.\n\n";
 		$merge_repo = readline("> ");
 		if(!empty($merge_repo)) {
-			$merge_branch = readline("Merge which branch [master]? ");
+			$merge_branch = readline("Merge which branch [RELENG_2_0]? ");
 			if($merge_branch == "")
-				$merge_repos[] = array('repo' => $merge_repo, 'branch' => 'master');
+				$merge_repos[] = array('repo' => $merge_repo, 'branch' => 'RELENG_2_0');
 			else if($merge_branch)
 				$merge_repos[] = array('repo' => $merge_repo, 'branch' => $merge_branch);
 		}

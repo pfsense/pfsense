@@ -1734,6 +1734,7 @@ function configure_cron() {
 }
 
 function upnp_action ($action) {
+	global $g, $config;
 	switch($action) {
 		case "start":
 			if (file_exists('/var/etc/miniupnpd.conf')) {

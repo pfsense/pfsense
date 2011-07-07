@@ -590,6 +590,8 @@
 		}
 		unset($config['wizardtemp']);
 		write_config();
+		interface_reconfigure("wan");
+		interface_reconfigure("lan");
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		]]>

@@ -252,7 +252,10 @@ if ($_POST) {
 			if($_POST["address{$x}"] <> "") {
 				if (is_alias($_POST["address{$x}"])) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
-						$wrongaliases .= " " . $_POST["address{$x}"];
+						// But alias type network can include alias type urltable. Feature#1603.
+						if (!($_POST['type'] == 'network' &&
+						      alias_get_type($_POST["address{$x}"]) == 'urltable'))
+							$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
 					if (!is_port($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");

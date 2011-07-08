@@ -196,11 +196,12 @@ if ($_POST) {
 				}
 			} else {
 				$fieldname  = $fields['fieldname'];
-				$fieldvalue = $_POST[$fieldname];
-				if (is_array($fieldvalue))
-					$fieldvalue = implode(',', $fieldvalue);
-				else {
-					$fieldvalue = trim($fieldvalue);
+				if ($fieldname == "interface_array") {
+					$fieldvalue = $_POST[$fieldname];
+				} elseif (is_array($_POST[$fieldname])) {
+					$fieldvalue = implode(',', $_POST[$fieldname]);
+				} else {
+					$fieldvalue = trim($_POST[$fieldname]);
 					if ($fields['encoding'] == 'base64')
 						$fieldvalue = base64_encode($fieldvalue);
 				}

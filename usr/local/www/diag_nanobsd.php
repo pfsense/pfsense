@@ -193,7 +193,7 @@ if ($savemsg)
 								<? } ?>
 								</select>
 								<br/>
-								<?=gettext("This will peridoically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+								<?=gettext("This will periodically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
 								<br/>
 								<br/>
 						</td>
@@ -210,7 +210,7 @@ if ($savemsg)
 								<? } ?>
 								</select>
 								<br/>
-								<?=gettext("This will peridoically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+								<?=gettext("This will periodically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
 								<br/>
 								<br/>
 						</td>

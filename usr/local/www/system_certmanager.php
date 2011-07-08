@@ -592,25 +592,25 @@ function internalca_change() {
 									<tr>
 										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>" readonly/>
+											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>"/>
 										</td>
 									</tr>
 									<tr>
 										<td align="right"><?=gettext("State or Province");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>" readonly/>
+											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>"/>
 										</td>
 									</tr>
 									<tr>
 										<td align="right"><?=gettext("City");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>" readonly/>
+											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>"/>
 										</td>
 									</tr>
 									<tr>
 										<td align="right"><?=gettext("Organization");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>" readonly/>
+											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>"/>
 										</td>
 									</tr>
 									<tr>
@@ -955,7 +955,7 @@ function internalca_change() {
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
-						<td colspan="3">NOTE: You can only delete a certificate if it is not currently in use.</td>
+						<td colspan="3"><?=gettext("Note: You can only delete a certificate if it is not currently in use.");?></td>
 					</tr>
 				</table>
 

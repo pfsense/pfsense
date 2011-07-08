@@ -35,6 +35,9 @@
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
 
+if ($_POST['downloadbtn'] == gettext("Download Capture"))
+	$nocsrf = true;
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -92,6 +95,7 @@ if ($_POST) {
 		header("Content-Disposition: attachment; filename=$fn");
 		header("Content-Length: $fs");
 		readfile($fp.$fn);
+		exit;
 	}
 } else {
 	$do_tcpdump = false;

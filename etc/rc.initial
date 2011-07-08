@@ -1,9 +1,8 @@
 #!/bin/sh
 
-# $Id$
 # /etc/rc.initial
 # part of pfSense by Scott Ullrich
-# Copyright (C) 2004-2010 Scott Ullrich, All rights reserved.
+# Copyright (C) 2004-2011 Scott Ullrich, All rights reserved.
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
@@ -22,6 +21,21 @@ if [ -f "/tmp/donotbootup" ]; then
 	sleep 5
 	/etc/rc.reboot
 	exit
+fi
+
+if [ -f /etc/rc.local ]; then
+	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`
+	if [ "$RCLOCALPWD" = "" ]; then
+		echo ">>> Launching rc.local in background..."
+		sh /etc/rc.local &
+		sleep 1
+		sh /etc/rc.local.running &
+	else
+		if [ -f /etc/rc.local.running ]; then
+			echo ">>> Launching rc.local.running in background..."
+			sh /etc/rc.local.running &
+		fi
+	fi
 fi
 
 CONFIG="/cf/conf/config.xml"

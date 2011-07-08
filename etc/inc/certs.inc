@@ -649,4 +649,25 @@ function is_crl_internal($crl) {
 	return (!(!empty($crl['text']) && empty($crl['cert'])) || ($crl["method"] == "internal"));
 }
 
+function cert_get_cn($crt, $isref = false) {
+	/* If this is a certref, not an actual cert, look up the cert first */
+	if ($isref) {
+		$cert = lookup_cert($crt);
+		/* If it's not a valid cert, bail. */
+		if (!(is_array($cert) && !empty($cert['crt'])))
+			return "";
+		$cert = $cert['crt'];
+	} else {
+		$cert = $crt;
+	}
+	$sub = cert_get_subject_array($cert);
+	if (is_array($sub)) {
+		foreach ($sub as $s) {
+			if (strtoupper($s['a']) == "CN")
+				return $s['v'];
+		}
+	}
+	return "";
+}
+
 ?>

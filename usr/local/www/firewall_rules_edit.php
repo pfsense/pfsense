@@ -302,6 +302,26 @@ if ($_POST) {
                 $input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
         if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
                 $input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
+	if ( !$_POST['srcbeginport_cust'] && $_POST['srcendport_cust'])
+		if (is_alias($_POST['srcendport_cust']))
+			$input_errors[] = 'If you put port alias in Source port range to: field you must put the same port alias in from: field';
+	if ( $_POST['srcbeginport_cust'] && $_POST['srcendport_cust']){
+		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust'])
+			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
+		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust']!='')) || 
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust']))) 
+			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
+	}
+	if ( !$_POST['dstbeginport_cust'] && $_POST['dstendport_cust'])
+		if (is_alias($_POST['dstendport_cust']))
+			$input_errors[] = 'If you put port alias in Destination port range to: field you must put the same port alias in from: field';
+	if ( $_POST['dstbeginport_cust'] && $_POST['dstendport_cust']){
+		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust'])
+			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
+		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust']!='')) || 
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust']))) 
+			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
+	}
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if($_POST['srctype'] == "network") {
@@ -639,7 +659,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Associated filter rule");?></td>
 			<td width="78%" class="vtable">
-				<span class="red"><strong><?=gettext("NOTE: ");?></strong></span><?=gettext("This is associated to a NAT rule.");?><br />
+				<span class="red"><strong><?=gettext("Note: ");?></strong></span><?=gettext("This is associated to a NAT rule.");?><br />
 				<?=gettext("You cannot edit the interface, protocol, source, or destination of associated filter rules.");?><br />
 				<br />
 				<?php
@@ -1084,7 +1104,7 @@ include("head.inc");
 				<?=gettext("State Timeout in seconds");?>
 				</p>
 
-				<p><strong><?=gettext("NOTE: Leave fields blank to disable that feature.");?></strong></p>
+				<p><strong><?=gettext("Note: Leave fields blank to disable that feature.");?></strong></p>
 			  </div>
 			</td>
 		</tr>
@@ -1142,7 +1162,7 @@ include("head.inc");
 						<option value="sloppy state" <?php if($pconfig['statetype'] == "sloppy state") echo "selected"; ?>><?=gettext("sloppy state");?></option>
 						<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>><?=gettext("synproxy state");?></option>
 						<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>><?=gettext("none");?></option>
-					</select><br><?=gettext("HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
+					</select><br><?=gettext("Hint: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
 					<p>
 					<table width="90%">
 						<tr><td width="25%"><ul><li><?=gettext("keep state");?></li></ul></td><td><?=gettext("Works with all IP protocols.");?></td></tr>
@@ -1162,7 +1182,7 @@ include("head.inc");
 				</div>
 				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-					<?=gettext("HINT: This prevents the rule from automatically syncing to other CARP members.");?>
+					<?=gettext("Hint: This prevents the rule from automatically syncing to other CARP members.");?>
 				</div>
 			</td>
 		</tr>

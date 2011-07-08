@@ -2,11 +2,17 @@
 
 # let the configuration system know that the ip has changed.
 #/usr/local/sbin/pfSctl -c "interface newip $interface"
-if [ "" != "$route_vpn_gateway" ]; then
-	/bin/echo $route_vpn_gateway > /tmp/$1_router
-else
-	/bin/echo $5 > /tmp/$1_router
+
+
+ifindex="${1##?????}"
+if [ -e /dev/tun$ifindex ]; then
+	if [ "" != "$route_vpn_gateway" ]; then
+		/bin/echo $route_vpn_gateway > /tmp/$1_router
+	else
+		/bin/echo $5 > /tmp/$1_router
+	fi
 fi
+
 /usr/bin/touch /tmp/$1up
 # reload filter 
 /usr/local/sbin/pfSctl -c "interface newip $1"

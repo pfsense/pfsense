@@ -166,6 +166,10 @@ html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
+;display_startup_errors=off
+;display_errors=off
+log_errors=on
+error_log=/tmp/PHP_errors.log
 extension_dir=${EXTENSIONSDIR}
 
 ; Extensions

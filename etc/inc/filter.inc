@@ -170,9 +170,11 @@ function filter_delete_states_for_down_gateways() {
                         	if (!is_ipaddr($gwip))
                                 	$gwip = get_interface_gateway($gateway['friendlyiface']);
                         	if (is_ipaddr($gwstatus['srcip'])) {
-					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']} ";
+					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']}/32 ";
 					if (is_ipaddr($gwip))
-						$cmd .= "-b {$gwip}";
+						$cmd .= "-b {$gwip}/32";
+					else
+						$cmd .= "-b 0.0.0.0/32";
 					mwexec($cmd);
 				}
 			}
@@ -276,8 +278,6 @@ function filter_configure_sync() {
 		/* User defined maximum table entries in Advanced menu. */
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
-
-	//$rules .= discover_pkg_rules("pfearly");
 
 	// Configure flowtable support if enabled.
 	flowtable_configure();
@@ -460,6 +460,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	$addresses = split(" ", $alias);
 	$finallist = "";
 	$builtlist = "";
+	$urltable_nesting = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		if (empty($address))
@@ -467,8 +468,23 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$linelength = strlen($builtlist);
 		$tmpline = "";
 		if(is_alias($address)) {
+			if (alias_get_type($address) == 'urltable') {
+				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
+				$urltable_netsting = alias_expand_urltable($address);
+				if (!empty($urltable_nesting)) {
+					$urlfile_as_arr = file($urltable_nesting);
+					foreach($urlfile_as_arr as $line) {
+						$address= rtrim($line);
+						if ((strlen($tmpline) + $linelength) > 4036) {
+							$finallist .= "{$tmpline} \\\n";
+							$tmpline = "";
+						}
+						$tmpline .= " {$address}";
+					}
+				}
+			}
 			/* We already expanded this alias so there is no neccessity to do it again. */
-			if(!isset($aliasnesting[$address]))
+			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if(!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
@@ -476,7 +492,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;
-			$tmpline = " $address";
+			$tmpline = " {$address}";
 		}
 		if ((strlen($tmpline)+ $linelength) > 4036) {
 			$finallist .= "{$builtlist} \\\n";
@@ -2049,7 +2065,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 
 	$ipfrules = "";
-	//$ipfrules .= discover_pkg_rules("filter");
+	$ipfrules .= discover_pkg_rules("pfearly");
 
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
@@ -2372,6 +2388,7 @@ EOD;
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined rules follow\n";
+		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {
 			if(isset($rule['disabled']))
@@ -2418,7 +2435,7 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if(isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+	if(isset($config['installedpackages']['miniupnpd']) && isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
 
 	$ipfrules .= <<<EOD
 # uPnPd

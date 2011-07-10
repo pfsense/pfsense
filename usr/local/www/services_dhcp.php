@@ -217,11 +217,10 @@ if ($_POST) {
 		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
 		$parent_ip = get_interface_ip($_POST['if']);
-		if (is_ipaddr($parent_ip)) {
+		if (is_ipaddr($parent_ip) && $_POST['gateway']) {
 			$parent_sn = get_interface_subnet($_POST['if']);
-			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {
+			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) 
 				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
-			}
 		}
 		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");

@@ -2734,7 +2734,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if (!empty($gif))
                        	array_walk($gif, 'interface_gif_configure');
 
-		if ($linkupevent == false) {
+		if ($linkupevent == false || substr($realif, 0, 4) == "ovpn") {
 			unset($bridgetmp);
 			$bridgetmp = link_interface_to_bridge($interface);
 			if (!empty($bridgetmp))

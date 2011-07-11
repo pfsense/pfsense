@@ -1683,6 +1683,8 @@ function interfaces_carp_setup() {
 		$cmdchain->add("Bring up pfsync0", "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
 
 	if ($g['booting']) {
+		sleep(1);
+
 		/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issuese
 		 * for exiting sessions.
 		 */

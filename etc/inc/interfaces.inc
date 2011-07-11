@@ -1682,17 +1682,15 @@ function interfaces_carp_setup() {
 	} else
 		$cmdchain->add("Bring up pfsync0", "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
 
-	if ($g['booting']) {
-		sleep(1);
+	sleep(1);
 
-		/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issuese
-		 * for exiting sessions.
-		 */
-		$i = 0;
-		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
-			$i++;
-			sleep(1);
-		}
+	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issuese
+	 * for exiting sessions.
+	 */
+	$i = 0;
+	while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
+		$i++;
+		sleep(1);
 	}
 
 	if($config['virtualip']['vip'])

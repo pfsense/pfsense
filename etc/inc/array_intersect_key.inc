@@ -34,7 +34,7 @@ if (!function_exists('array_intersect_key')) {
     {
         $args = func_get_args();
         if (count($args) < 2) {
-            user_error('Wrong parameter count for array_intersect_key()', E_USER_WARNING);
+            user_error(gettext('Wrong parameter count for array_intersect_key()'), E_USER_WARNING);
             return;
         }
 
@@ -42,8 +42,8 @@ if (!function_exists('array_intersect_key')) {
         $array_count = count($args);
         for ($i = 0; $i !== $array_count; $i++) {
             if (!is_array($args[$i])) {
-                user_error('array_intersect_key() Argument #' .
-                    ($i + 1) . ' is not an array', E_USER_WARNING);
+                user_error(gettext('array_intersect_key() Argument #') .
+                    ($i + 1) . gettext(' is not an array'), E_USER_WARNING);
                 return;
             }
         }

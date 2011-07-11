@@ -401,13 +401,13 @@ class Auth_RADIUS extends PEAR {
     {
         $req = radius_send_request($this->res);
         if (!$req) {
-            return $this->raiseError('Error sending request: ' . $this->getError());
+            return $this->raiseError(gettext('Error sending request:') . ' ' . $this->getError());
         }
 
         switch($req) {
         case RADIUS_ACCESS_ACCEPT:
             if (is_subclass_of($this, 'auth_radius_acct')) {
-                return $this->raiseError('RADIUS_ACCESS_ACCEPT is unexpected for accounting');
+                return $this->raiseError(gettext('RADIUS_ACCESS_ACCEPT is unexpected for accounting'));
             }
             return true;
 
@@ -416,12 +416,12 @@ class Auth_RADIUS extends PEAR {
 
         case RADIUS_ACCOUNTING_RESPONSE:
             if (is_subclass_of($this, 'auth_radius_pap')) {
-                return $this->raiseError('RADIUS_ACCOUNTING_RESPONSE is unexpected for authentication');
+                return $this->raiseError(gettext('RADIUS_ACCOUNTING_RESPONSE is unexpected for authentication'));
             }
             return true;
 
         default:
-            return $this->raiseError("Unexpected return value: $req");
+            return $this->raiseError(gettext("Unexpected return value:") . $req);
         }
 
     }

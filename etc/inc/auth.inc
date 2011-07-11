@@ -88,7 +88,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 
 	if($found_host == false) {
 		if(!security_checks_disabled()) {
-			display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname.");
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."));
 			exit;
 		}
 		$security_passed = false;
@@ -295,7 +295,7 @@ function local_sync_accounts() {
 				continue;
 			$cmd = "/usr/sbin/pw userdel {$line[2]}";
 			if($debug)
-				log_error("Running: {$cmd}");
+				log_error(sprintf(gettext("Running: %s"), $cmd));
 			mwexec($cmd);
 		}
 		pclose($fd);
@@ -315,7 +315,7 @@ function local_sync_accounts() {
 				continue;
 			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
 			if($debug)
-				log_error("Running: {$cmd}");
+				log_error(sprintf(gettext("Running: %s"), $cmd));
 			mwexec($cmd);
 		}
 		pclose($fd);
@@ -381,7 +381,7 @@ function local_user_set(& $user) {
 	if ($user_uid == 0) {
 		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
 		if($debug)
-			log_error("Running: {$cmd}");
+			log_error(sprintf(gettext("Running: %s"), $cmd));
 		$fd = popen($cmd, "w");
 		fwrite($fd, $user['password']);
 		pclose($fd);
@@ -408,7 +408,7 @@ function local_user_set(& $user) {
 			" -c ".escapeshellarg($user['descr'])." -H 0 2>&1";
 
 	if($debug)
-		log_error("Running: {$cmd}");
+		log_error(sprintf(gettext("Running: %s"), $cmd));
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
@@ -453,7 +453,7 @@ function local_user_del($user) {
 	$cmd = "/usr/sbin/pw userdel {$user['name']} {$rmhome}";
 
 	if($debug)
-		log_error("Running: {$cmd}");
+		log_error(sprintf(gettext("Running: %s"), $cmd));
 	mwexec($cmd);
 
 	/* Delete user from groups needs a call to write_config() */
@@ -584,7 +584,7 @@ function local_group_set($group, $reset = false) {
 	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members} 2>&1";
 
 	if($debug)
-		log_error("Running: {$cmd}");
+		log_error(sprintf(gettext("Running: %s"), $cmd));
 	mwexec($cmd);
 
 }
@@ -596,7 +596,7 @@ function local_group_del($group) {
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
 
 	if($debug)
-		log_error("Running: {$cmd}");
+		log_error(sprintf(gettext("Running: %s"), $cmd));
 	mwexec($cmd);
 }
 
@@ -630,7 +630,7 @@ function ldap_test_connection($authcfg) {
                 $error = true;
 
         if ($error == true) {
-                log_error("ERROR!  Could not connect to server {$ldapname}.");
+                log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
                 return false;
         }
 
@@ -672,7 +672,7 @@ function ldap_test_bind($authcfg) {
                 $error = true;
 
         if ($error == true) {
-                log_error("ERROR!  Could not connect to server {$ldapname}.");
+                log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
                 return false;
         }
 
@@ -725,7 +725,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 
         /* first check if there is even an LDAP server populated */
         if(!$ldapserver) {
-                log_error("ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication server defined.");
+                log_error(gettext("ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication server defined."));
                 return $ous;
         }
 
@@ -739,7 +739,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
                 $error = true;
 
         if ($error == true) {
-		log_error("ERROR!  Could not connect to server {$ldapname}.");
+        log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
                 return $ous;
         }
 
@@ -750,12 +750,12 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap))) {
-			log_error("ERROR! ldap_get_user_ous() could not bind anonymously to server {$ldapname}.");
+			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s."), $ldapname));
 			@ldap_close($ldap);
                         return $ous;
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error("ERROR! ldap_get_user_ous() could not bind to server {$ldapname}.");
+		log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind to server %s."), $ldapname));
 		@ldap_close($ldap);
 		return $ous;
 	}
@@ -850,7 +850,7 @@ function ldap_get_groups($username, $authcfg) {
                 $error = true;
 
 	if ($error == true) {
-		log_error("ERROR! ldap_get_groups() Could not connect to server {$ldapname}.");
+		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
                 return memberof;
         }
     
@@ -860,12 +860,12 @@ function ldap_get_groups($username, $authcfg) {
 	/* bind as user that has rights to read group attributes */
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap))) {
-			log_error("ERROR! ldap_get_groups() could not bind anonymously to server {$ldapname}.");
+			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
 			@ldap_close($ldap);
                         return false;
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error("ERROR! ldap_get_groups() could not bind to server {$ldapname}.");
+		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));
 		@ldap_close($ldap);
 		return memberof;
 	}
@@ -949,10 +949,10 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/* first check if there is even an LDAP server populated */ 
 	if(!$ldapserver) {
 		if ($ldapfallback) {
-			log_error("ERROR! ldap_backed() called with no LDAP authentication server defined.  Defaulting to local user database. Visit System -> User Manager.");
+			log_error(gettext("ERROR! ldap_backed() called with no LDAP authentication server defined.  Defaulting to local user database. Visit System -> User Manager."));
 			return local_backed($username, $passwd);
 		} else
-			log_error("ERROR! ldap_backed() called with no LDAP authentication server defined.");
+			log_error(gettext("ERROR! ldap_backed() called with no LDAP authentication server defined."));
 
 		return false;
 	}
@@ -970,7 +970,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		$error = true;
 
 	if ($error == true) {
-		log_error("ERROR!  Could not connect to server {$ldapname}.");
+		log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
 		return false;
 	}
 
@@ -984,7 +984,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	if ($error == true) {
 		@ldap_close($ldap);
-		log_error("ERROR! Could not bind to server {$ldapname}.");
+		log_error(sprintf(gettext("ERROR! Could not bind to server %s."), $ldapname));
 		return false;
 	}
 	
@@ -1001,11 +1001,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/*  Person.  To later be used by ldap_get_groups.                */
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
-	log_error("Now Searching for {$username} in directory.");
+	log_error(sprintf(gettext("Now Searching for %s in directory."), $username));
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
 		/* Make sure we just use the first user we find */
-		log_error("Now Searching in server {$ldapname}, container {$ldac_split} with filter {$ldapfilter}.");
+		log_error(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
 		if ($ldapscope == "one")
 			$ldapfunc = "ldap_list";
 		else
@@ -1016,7 +1016,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		else
 			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
 		if (!$search) {
-			log_error("Search resulted in error: " . ldap_error($ldap));
+			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
 		}
 		$info	 = ldap_get_entries($ldap,$search);
@@ -1032,18 +1032,18 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	if ($usercount != 1){
 		@ldap_unbind($ldap);
-		log_error("ERROR! Either LDAP search failed, or multiple users were found.");
+		log_error(gettext("ERROR! Either LDAP search failed, or multiple users were found."));
 		return false;                         
 	}
 
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		log_error("ERROR! Could not login to server {$ldapname} as user {$username}.");
+		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s.'), $ldapname, $username));
 		@ldap_unbind($ldap);
 		return false;
 	}
 
-	log_error("Logged in successfully as {$username} via LDAP server {$ldapname} with DN = {$userdn}.");
+	log_error(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);
@@ -1074,7 +1074,7 @@ function radius_backed($username, $passwd, $authcfg){
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug)
-			printf("Radius start: %s<br>\n", $retvalue['error']);
+			printf(gettext("Radius start: %s<br>\n"), $retvalue['error']);
 	}
 
 	// XXX - billm - somewhere in here we need to handle securid challenge/response
@@ -1085,7 +1085,7 @@ function radius_backed($username, $passwd, $authcfg){
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $result->getMessage();
 		if ($debug)
-			printf("Radius send failed: %s<br>\n", $retvalue['error']);
+			printf(gettext("Radius send failed: %s<br>\n"), $retvalue['error']);
 	} else if ($result === true) {
 		$retvalue['auth_val'] = 2;
 		if ($debug)
@@ -1137,7 +1137,7 @@ function auth_get_authserver($name) {
                 }
         }
 	if ($name == "Local Database")
-		return array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+		return array("name" => gettext("Local Database"), "type" => gettext("Local Auth"), "host" => $config['system']['hostname']);
 }
 
 function auth_get_authserver_list() {
@@ -1152,7 +1152,7 @@ function auth_get_authserver_list() {
                 }
         }
 
-	$list["Local Database"] = array( "name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+	$list["Local Database"] = array( "name" => gettext("Local Database"), "type" => gettext("Local Auth"), "host" => $config['system']['hostname']);
 	return $list;
 }
 
@@ -1223,7 +1223,7 @@ function session_auth() {
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
 			if(! isset($config['system']['webgui']['quietlogin'])) {
-				log_auth("Successful webConfigurator login for user '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
+				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
@@ -1277,9 +1277,9 @@ function session_auth() {
 	if (isset($_GET['logout'])) {
 
 		if ($_SESSION['Logout'])
-			log_error("Session timed out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
+			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
 		else
-			log_error("User logged out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
+			log_error(sprintf(gettext("User logged out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));
 
 		/* wipe out $_SESSION */
 		$_SESSION = array();

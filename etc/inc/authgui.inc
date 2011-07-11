@@ -64,7 +64,7 @@ if (!isAllowedPage($_SERVER['SCRIPT_NAME'])) {
 		pfSenseHeader("/{$page}");
 		exit;
 	} else {
-		display_error_form("201", "No page assigned to this user! Click here to logout.");
+		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
 		exit;
 	}
 } else 
@@ -88,7 +88,7 @@ function display_error_form($http_code, $desc) {
 	global $config, $g;
 	$g['theme'] = $config['theme'];
 	if(isAjax()) {
-		echo "Error: {$http_code} Description: {$desc}";
+		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
 	}
 
@@ -151,13 +151,13 @@ function display_login_form() {
 	if(isAjax()) {
 		if (isset($_POST['login'])) {
 			if($_SESSION['Logged_In'] <> "True") {
-				isset($_SESSION['Login_Error']) ? $login_error = $_SESSION['Login_Error'] : $login_error = "unknown reason";
-				echo "showajaxmessage('Invalid login ({$login_error}).');";
+				isset($_SESSION['Login_Error']) ? $login_error = $_SESSION['Login_Error'] : $login_error = gettext("unknown reason");
+				printf("showajaxmessage('" . gettext("Invalid login (%s).") . "')", $login_error);
 			}
 			if (file_exists("{$g['tmp_path']}/webconfigurator.lock")) {
 				// TODO: add the IP from the user who did lock the device
 				$whom = file_get_contents("{$g['tmp_path']}/webconfigurator.lock");
-				echo "showajaxmessage('This device is currently being maintained by: {$whom}.');";
+				printf("showajaxmessage('" . gettext("This device is currently being maintained by: %s.") . "');", $whom);
 			}
 		}
 		exit;
@@ -233,14 +233,14 @@ if($config['virtualip'])
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>
 					<span style="text-align:left">
-						<?=gettext("Username"); ?>:<br>
+						<?=gettext("Username:"); ?><br>
 						<input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
 					</span>
 				</p>
 				<br>
 				<p>
 					<span style="text-align:left">
-						<?=gettext("Password"); ?>: <br>
+						<?=gettext("Password:"); ?> <br>
 						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
 					</span>
 				</p>

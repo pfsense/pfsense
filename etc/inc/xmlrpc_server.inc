@@ -62,8 +62,8 @@ $GLOBALS['XML_RPC_Server_listMethods_sig'] = array(
  * docstring for system.listMethods
  * @global string $GLOBALS['XML_RPC_Server_listMethods_doc']
  */
-$GLOBALS['XML_RPC_Server_listMethods_doc'] = 'This method lists all the'
-        . ' methods that the XML-RPC server knows how to dispatch';
+$GLOBALS['XML_RPC_Server_listMethods_doc'] = gettext('This method lists all the'
+        . ' methods that the XML-RPC server knows how to dispatch');
 
 /**
  * signature for system.methodSignature: return = array,
@@ -80,10 +80,10 @@ $GLOBALS['XML_RPC_Server_methodSignature_sig'] = array(
  * docstring for system.methodSignature
  * @global string $GLOBALS['XML_RPC_Server_methodSignature_doc']
  */
-$GLOBALS['XML_RPC_Server_methodSignature_doc'] = 'Returns an array of known'
+$GLOBALS['XML_RPC_Server_methodSignature_doc'] = gettext('Returns an array of known'
         . ' signatures (an array of arrays) for the method name passed. If'
         . ' no signatures are known, returns a none-array (test for type !='
-        . ' array to detect missing signature)';
+        . ' array to detect missing signature)');
 
 /**
  * signature for system.methodHelp: return = string,
@@ -100,8 +100,8 @@ $GLOBALS['XML_RPC_Server_methodHelp_sig'] = array(
  * docstring for methodHelp
  * @global string $GLOBALS['XML_RPC_Server_methodHelp_doc']
  */
-$GLOBALS['XML_RPC_Server_methodHelp_doc'] = 'Returns help text if defined'
-        . ' for the method passed, otherwise returns an empty string';
+$GLOBALS['XML_RPC_Server_methodHelp_doc'] = gettext('Returns help text if defined'
+        . ' for the method passed, otherwise returns an empty string');
 
 /**
  * dispatch map for the automatically declared XML-RPC methods.

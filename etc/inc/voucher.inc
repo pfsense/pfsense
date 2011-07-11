@@ -358,7 +358,7 @@ function voucher_auth($voucher_received, $test = 0) {
 					list($timestamp,$minutes) = explode(",", $active_vouchers[$roll][$voucher]);
 					// we have an already active voucher here.
 					$remaining = intval((($timestamp + (60*$minutes)) - time())/60);
-					$test_result[] = "$voucher ($roll/$nr) active and good for $remaining Minutes";
+					$test_result[] = sprintf(gettext('%1$s (%2$s/%3$s) active and good for %4$d Minutes'), $voucher, $roll, $nr, $remaining);
 					$total_minutes += $remaining;
 				} else {
 					// voucher not used. Check if ticket Id is on the roll (not too high)
@@ -395,9 +395,9 @@ function voucher_auth($voucher_received, $test = 0) {
 	// if this was a test call, we're done. Return the result.
 	if ($test) {
 		if ($error) {
-			$test_result[] = "Access denied!";
+			$test_result[] = gettext("Access denied!");
 		} else {
-			$test_result[] = "Access granted for $total_minutes Minutes in total.";
+			$test_result[] = sprintf(gettext("Access granted for %d Minutes in total."),$total_minutes);
 		}
 		unlock($voucherlck);
 
@@ -482,7 +482,7 @@ function voucher_configure($sync = false) {
         /* write config file used by voucher binary to decode vouchers */
         $fd = fopen("{$g['varetc_path']}/voucher.cfg", "w");
         if (!$fd) {
-            printf("Error: cannot write voucher.cfg\n");
+            printf(gettext("Error: cannot write voucher.cfg") . "\n");
 	    unlock($voucherlck);
             return 1;
         }
@@ -535,7 +535,7 @@ function voucher_write_used_db($roll, $vdb) {
 		fwrite($fd, $vdb . "\n");
 		fclose($fd);
 	} else
-		voucher_log(LOG_ERR, "cant write {$g['vardb_path']}/voucher_used_$roll.db");
+        	voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
 }
 
 /* return assoc array of active vouchers with activation timestamp
@@ -614,7 +614,7 @@ function voucher_read_used_db($roll) {
             $vdb = trim(fgets($fd));
             fclose($fd);
         } else {
-            voucher_log(LOG_ERR, "cant read {$g['vardb_path']}/voucher_used_$roll.db");
+            voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
         }
     }
     return base64_decode($vdb);
@@ -632,7 +632,7 @@ function voucher_log($priority, $message) {
     define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-    syslog($priority, "Voucher: " . $message);
+    syslog($priority, gettext("Voucher: ") . $message);
     closelog();
 }
 

@@ -210,7 +210,7 @@ EOD;
 		 * not strictly necessary but is a added level of protection.
 		 */
 		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-			log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 			mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']), true);
 			mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 				" " . escapeshellarg($gateway['gateway']), true);
@@ -421,15 +421,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = "MONITOR: {$gwname} is down, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = "MONITOR: {$gwname} has packet loss, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = "MONITOR: {$gwname} has high latency, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
@@ -445,7 +445,7 @@ function return_gateway_groups_array() {
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
 				if (!$g['booting']) {
-					$msg = "Gateways status could not be determined, considering all as up/active.";
+					$msg = gettext("Gateways status could not be determined, considering all as up/active.");
 					log_error($msg);
 					notify_via_growl($msg);
 					notify_via_smtp($msg);
@@ -499,7 +499,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 		}
 	}
 	if($changed && $current_gw)
-		write_config("Updating gateway group gateway for $interface - new gateway is $current_gw");
+		write_config(sprintf(gettext('Updating gateway group gateway for %1$s - new gateway is %2$s'), $interfac, $current_gw));
 }
 
 function lookup_gateway_ip_by_name($name) {

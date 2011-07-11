@@ -96,7 +96,7 @@ function mark_subsystem_dirty($subsystem = "") {
 	global $g;
 
 	if (!file_put_contents("{$g['varrun_path']}/{$subsystem}.dirty", "DIRTY"))
-		log_error("WARNING: Could not mark subsystem: {$subsytem} dirty");
+		log_error(sprintf(gettext("WARNING: Could not mark subsystem: %s dirty"), $subsystem));
 }
 
 function clear_subsystem_dirty($subsystem = "") {
@@ -116,7 +116,7 @@ function config_unlock() {
 function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
-		die("WARNING: You must give a name as parameter to lock() function.");
+		die(gettext("WARNING: You must give a name as parameter to lock() function."));
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
@@ -205,7 +205,7 @@ function refcount_unreference($reference) {
 	$shm_data = intval($shm_data) - 1;
 	if ($shm_data < 0) {
 		//debug_backtrace();
-		log_error("Reference {$reference} is going negative, not doing unreference.");
+		log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
 	} else
 		shmop_write($shmid, $shm_data, 0);
 	shmop_close($shmid);
@@ -843,7 +843,7 @@ function mwexec($command, $mute = false) {
 		$mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
-		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
+		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
 	}
 	return $retval;
 }

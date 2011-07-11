@@ -395,7 +395,7 @@ function system_routing_configure($interface = "") {
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			$gatewayip = "";
 			if (empty($gateways_arr[$rtent['gateway']])) {
-				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
+				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
@@ -440,7 +440,7 @@ function system_syslogd_start() {
 	$syslogcfg = $config['syslog'];
 
 	if ($g['booting'])
-		echo "Starting syslog...";
+		echo gettext("Starting syslog...");
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
@@ -479,7 +479,7 @@ function system_syslogd_start() {
 		/* write syslog.conf */		
 		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
 		if (!$fd) {
-			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
+			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
 			return 1;
 		}
 		$syslogconf .= "!ntpdate,!ntpd\n";
@@ -649,7 +649,7 @@ EOD;
 	}
 
 	if ($g['booting'])
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 
 	return $retval;
 }
@@ -662,7 +662,7 @@ function system_pccard_start() {
 	}
 
 	if ($g['booting'])
-		echo "Initializing PCMCIA...";
+		echo gettext("Initializing PCMCIA...");
 
 	/* kill any running pccardd */
 	killbypid("{$g['varrun_path']}/pccardd.pid");
@@ -672,9 +672,9 @@ function system_pccard_start() {
 
 	if ($g['booting']) {
 		if ($res == 0)
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 		else
-			echo "failed!\n";
+			echo gettext("failed!") . "\n";
 	}
 
 	return $res;
@@ -685,7 +685,7 @@ function system_webgui_start() {
 	global $config, $g;
 
 	if ($g['booting'])
-		echo "Starting webConfigurator...";
+		echo gettext("Starting webConfigurator...");
 
 	/* kill any running lighttpd */
 	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
@@ -717,7 +717,7 @@ function system_webgui_start() {
 			log_error("Creating SSL Certificate for this host");
 			$cert = array();
 			$cert['refid'] = uniqid();
-			$cert['descr'] = "webConfigurator default";
+			$cert['descr'] = gettext("webConfigurator default");
 			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
 			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
 			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
@@ -727,7 +727,7 @@ function system_webgui_start() {
 			cert_import($cert, $crt, $key);
 			$a_cert[] = $cert;
 			$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-			write_config("Importing HTTPS certificate");
+			write_config(gettext("Importing HTTPS certificate"));
 			if(!$config['system']['webgui']['port'])
 				$portarg = "443";
 			$ca = ca_chain($cert);
@@ -757,9 +757,9 @@ function system_webgui_start() {
 
 	if ($g['booting']) {
 		if ($res == 0)
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 		else
-			echo "failed!\n";
+			echo gettext("failed!") . "\n";
 	}
 
 	return $res;
@@ -1074,7 +1074,7 @@ EOD;
 	if($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");
 		if (!$fd) {
-			printf("Error: cannot open cert.pem in system_webgui_start().\n");
+			printf(gettext("Error: cannot open cert.pem in system_webgui_start().%s"), "\n");
 			return 1;
 		}
 		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
@@ -1085,7 +1085,7 @@ EOD;
 		if(!(empty($ca) || (strlen(trim($ca)) == 0))) {
 			$fd = fopen("{$g['varetc_path']}/{$ca_location}", "w");
 			if (!$fd) {
-				printf("Error: cannot open ca.pem in system_webgui_start().\n");
+				printf(gettext("Error: cannot open ca.pem in system_webgui_start().%s"), "\n");
 				return 1;
 			}
 			chmod("{$g['varetc_path']}/{$ca_location}", 0600);
@@ -1093,7 +1093,7 @@ EOD;
 			fclose($fd);
 		}
 		$lighty_config .= "\n";
-		$lighty_config .= "## ssl configuration\n";
+		$lighty_config .= "## " . gettext("ssl configuration") . "\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
 
@@ -1120,7 +1120,7 @@ EOD;
 
 	$fd = fopen("{$filename}", "w");
 	if (!$fd) {
-		printf("Error: cannot open {$filename} in system_generate_lighty_config().\n");
+		printf(gettext("Error: cannot open %s in system_generate_lighty_config().%s"), $filename, "\n");
 		return 1;
 	}
 	fwrite($fd, $lighty_config);
@@ -1140,7 +1140,7 @@ function system_timezone_configure() {
 	$syscfg = $config['system'];
 
 	if ($g['booting'])
-		echo "Setting timezone...";
+		echo gettext("Setting timezone...");
 
 	/* extract appropriate timezone file */
 	$timezone = $syscfg['timezone'];
@@ -1156,7 +1156,7 @@ function system_timezone_configure() {
 	conf_mount_ro();
 
 	if ($g['booting'])
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 }
 
 function system_ntp_configure() {
@@ -1226,7 +1226,7 @@ function sync_system_time() {
 	global $config, $g;
 
 	if ($g['booting'])
-		echo "Syncing system time before startup...";
+		echo gettext("Syncing system time before startup...");
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
@@ -1234,7 +1234,7 @@ function sync_system_time() {
 	}
 	
 	if ($g['booting'])
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 	
 }
 
@@ -1332,7 +1332,7 @@ function system_dmesg_save() {
 
 	$fd = fopen("{$g['varlog_path']}/dmesg.boot", "w");
 	if (!$fd) {
-		printf("Error: cannot open dmesg.boot in system_dmesg_save().\n");
+		printf(gettext("Error: cannot open dmesg.boot in system_dmesg_save().%s"), "\n");
 		return 1;
 	}
 
@@ -1353,7 +1353,7 @@ function system_set_harddisk_standby() {
 
 	if (isset($config['system']['harddiskstandby'])) {
 		if ($g['booting']) {
-			echo 'Setting hard disk standby... ';
+			echo gettext('Setting hard disk standby... ');
 		}
 
 		$standby = $config['system']['harddiskstandby'];
@@ -1365,13 +1365,13 @@ function system_set_harddisk_standby() {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');
 				if ($g['booting']) {
-					echo "done.\n";
+					echo gettext("done.") . "\n";
 				}
 			} else if ($g['booting']) {
-				echo "failed!\n";
+				echo gettext("failed!") . "\n";
 			}
 		} else if ($g['booting']) {
-			echo "failed!\n";
+			echo gettext("failed!") . "\n";
 		}
 	}
 }
@@ -1470,10 +1470,10 @@ function system_identify_specific_platform() {
 	global $g;
 	
 	if ($g['platform'] == 'generic-pc')
-		return array('name' => 'generic-pc', 'descr' => "Generic PC");
+		return array('name' => 'generic-pc', 'descr' => gettext("Generic PC"));
 	
 	if ($g['platform'] == 'generic-pc-cdrom')
-		return array('name' => 'generic-pc-cdrom', 'descr' => "Generic PC (CD-ROM)");
+		return array('name' => 'generic-pc-cdrom', 'descr' => gettext("Generic PC (CD-ROM)"));
 	
 	/* the rest of the code only deals with 'embedded' platforms */
 	if ($g['platform'] != 'nanobsd')
@@ -1482,10 +1482,10 @@ function system_identify_specific_platform() {
 	$dmesg = system_get_dmesg_boot();
 	
 	if (strpos($dmesg, "PC Engines WRAP") !== false)
-		return array('name' => 'wrap', 'descr' => 'PC Engines WRAP');
+		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	
 	if (strpos($dmesg, "PC Engines ALIX") !== false)
-		return array('name' => 'alix', 'descr' => 'PC Engines ALIX');
+		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
 
 	if (preg_match("/Soekris net45../", $dmesg, $matches))
 		return array('name' => 'net45xx', 'descr' => $matches[0]);
@@ -1497,7 +1497,7 @@ function system_identify_specific_platform() {
 		return array('name' => 'net55xx', 'descr' => $matches[0]);
 	
 	/* unknown embedded platform */
-	return array('name' => 'embedded', 'descr' => 'embedded (unknown)');
+	return array('name' => 'embedded', 'descr' => gettext('embedded (unknown)'));
 }
 
 function system_get_dmesg_boot() {

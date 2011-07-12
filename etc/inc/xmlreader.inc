@@ -126,7 +126,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 		add_elements($parsedcfg, $par);
 		$par->close();
 	} else
-		log_error("Error returned while trying to parse {$cffile}");
+		log_error(sprintf(gettext("Error returned while trying to parse %s"), $cffile));
 
 	if (!is_array($rootobj))
 		$rootobj = array($rootobj);

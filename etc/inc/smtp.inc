@@ -89,10 +89,10 @@ class smtp_class
 		{
 			$status=socket_get_status($this->connection);
 			if($status["timed_out"])
-				$this->error.=": data access time out";
+				$this->error.=gettext(": data access time out");
 			elseif($status["eof"])
 			{
-				$this->error.=": the server disconnected";
+				$this->error.=gettext(": the server disconnected");
 				$this->disconnected_error=1;
 			}
 		}
@@ -104,13 +104,13 @@ class smtp_class
 		{
 			if(feof($this->connection))
 			{
-				$this->error="reached the end of data while reading from the SMTP server conection";
+				$this->error=gettext("reached the end of data while reading from the SMTP server conection");
 				return("");
 			}
 			if(GetType($data=@fgets($this->connection,100))!="string"
 			|| strlen($data)==0)
 			{
-				$this->SetDataAccessError("it was not possible to read line from the SMTP server");
+				$this->SetDataAccessError(gettext("it was not possible to read line from the SMTP server"));
 				return("");
 			}
 			$line.=$data;
@@ -132,7 +132,7 @@ class smtp_class
 			$this->OutputDebug("C $line");
 		if(!@fputs($this->connection,"$line\r\n"))
 		{
-			$this->SetDataAccessError("it was not possible to send a line to the SMTP server");
+			$this->SetDataAccessError(gettext("it was not possible to send a line to the SMTP server"));
 			return(0);
 		}
 		return(1);
@@ -146,7 +146,7 @@ class smtp_class
 				$this->OutputDebug("C $data");
 			if(!@fputs($this->connection,$data))
 			{
-				$this->SetDataAccessError("it was not possible to send data to the SMTP server");
+				$this->SetDataAccessError(gettext("it was not possible to send data to the SMTP server"));
 				return(0);
 			}
 		}
@@ -218,10 +218,10 @@ class smtp_class
 			$version=explode(".",function_exists("phpversion") ? phpversion() : "3.0.7");
 			$php_version=intval($version[0])*1000000+intval($version[1])*1000+intval($version[2]);
 			if($php_version<4003000)
-				return("establishing SSL connections requires at least PHP version 4.3.0");
+				return(gettext("establishing SSL connections requires at least PHP version 4.3.0"));
 			if(!function_exists("extension_loaded")
 			|| !extension_loaded("openssl"))
-				return("establishing SSL connections requires the OpenSSL extension enabled");
+				return(gettext("establishing SSL connections requires the OpenSSL extension enabled"));
 		}
 		if(ereg('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$',$domain))
 			$ip=$domain;
@@ -230,30 +230,30 @@ class smtp_class
 			if($this->debug)
 				$this->OutputDebug($resolve_message);
 			if(!strcmp($ip=@gethostbyname($domain),$domain))
-				return("could not resolve host \"".$domain."\"");
+				return(sprintf(gettext("could not resolve host \"%s\""), $domain));
 		}
 		if(strlen($this->exclude_address)
 		&& !strcmp(@gethostbyname($this->exclude_address),$ip))
-			return("domain \"".$domain."\" resolved to an address excluded to be valid");
+			return(sprintf(gettext("domain \"%s\" resolved to an address excluded to be valid"), $domain));
 		if($this->debug)
-			$this->OutputDebug("Connecting to host address \"".$ip."\" port ".$port."...");
+			$this->OutputDebug(sprintf(gettext('Connecting to host address "%1$s" port %2$s...'), $ip, $port));
 		if(($this->connection=($this->timeout ? @fsockopen(($this->ssl ? "ssl://" : "").$ip,$port,$errno,$error,$this->timeout) : @fsockopen(($this->ssl ? "ssl://" : "").$ip,$port))))
 			return("");
 		$error=($this->timeout ? strval($error) : "??");
 		switch($error)
 		{
 			case "-3":
-				return("-3 socket could not be created");
+				return(gettext("-3 socket could not be created"));
 			case "-4":
-				return("-4 dns lookup on hostname \"".$domain."\" failed");
+				return(sprintf(gettext("-4 dns lookup on hostname \"%s\" failed"), $domain));
 			case "-5":
-				return("-5 connection refused or timed out");
+				return(gettext("-5 connection refused or timed out"));
 			case "-6":
-				return("-6 fdopen() call failed");
+				return(gettext("-6 fdopen() call failed"));
 			case "-7":
-				return("-7 setvbuf() call failed");
+				return(gettext("-7 setvbuf() call failed"));
 		}
-		return("could not connect to the host \"".$domain."\": ".$error);
+		return(sprintf(gettext('could not connect to the host "%1$s": %2$s'), $domain, $error));
 	}
 
 	Function SASLAuthenticate($mechanisms, $credentials, &$authenticated, &$mechanism)
@@ -262,7 +262,7 @@ class smtp_class
 		if(!function_exists("class_exists")
 		|| !class_exists("sasl_client_class"))
 		{
-			$this->error="it is not possible to authenticate using the specified mechanism because the SASL library class is not loaded";
+			$this->error=gettext("it is not possible to authenticate using the specified mechanism because the SASL library class is not loaded");
 			return(0);
 		}
 		$sasl=new sasl_client_class;
@@ -286,19 +286,19 @@ class smtp_class
 			case SASL_NOMECH:
 				if(strlen($this->authentication_mechanism))
 				{
-					$this->error="authenticated mechanism ".$this->authentication_mechanism." may not be used: ".$sasl->error;
+					$this->error=printf(gettext('authenticated mechanism %1$s may not be used: %2$s'), $this->authentication_mechanism, $sasl->error);
 					return(0);
 				}
 				break;
 			default:
-				$this->error="Could not start the SASL authentication client: ".$sasl->error;
+				$this->error=gettext("Could not start the SASL authentication client:") . " ".$sasl->error;
 				return(0);
 		}
 		if(strlen($mechanism=$sasl->mechanism))
 		{
 			if($this->PutLine("AUTH ".$sasl->mechanism.(IsSet($message) ? " ".base64_encode($message) : ""))==0)
 			{
-				$this->error="Could not send the AUTH command";
+				$this->error=gettext("Could not send the AUTH command");
 				return(0);
 			}
 			if(!$this->VerifyResultLines(array("235","334"),$responses))
@@ -313,7 +313,7 @@ class smtp_class
 					$response=base64_decode($responses[0]);
 					break;
 				default:
-					$this->error="Authentication error: ".$responses[0];
+					$this->error=gettext("Authentication error:") . " ".$responses[0];
 					return(0);
 			}
 			for(;!$authenticated;)
@@ -328,7 +328,7 @@ class smtp_class
 					case SASL_CONTINUE:
 						if($this->PutLine(base64_encode($message))==0)
 						{
-							$this->error="Could not send the authentication step message";
+							$this->error=gettext("Could not send the authentication step message");
 							return(0);
 						}
 						if(!$this->VerifyResultLines(array("235","334"),$responses))
@@ -343,12 +343,12 @@ class smtp_class
 								$response=base64_decode($responses[0]);
 								break;
 							default:
-								$this->error="Authentication error: ".$responses[0];
+								$this->error=gettext("Authentication error:") . " ".$responses[0];
 								return(0);
 						}
 						break;
 					default:
-						$this->error="Could not process the SASL authentication step: ".$sasl->error;
+						$this->error=gettext("Could not process the SASL authentication step:") . " ".$sasl->error;
 						return(0);
 				}
 			}
@@ -362,7 +362,7 @@ class smtp_class
 	{
 		if(strcmp($this->state,"Disconnected"))
 		{
-			$this->error="connection is already established";
+			$this->error=gettext("connection is already established");
 			return(0);
 		}
 		$this->disconnected_error=0;
@@ -400,24 +400,24 @@ class smtp_class
 				$user=$this->user;
 				if(strlen($user)==0)
 				{
-					$this->error="it was not specified the POP3 authentication user";
+					$this->error=gettext("it was not specified the POP3 authentication user");
 					return(0);
 				}
 				$password=$this->password;
 				if(strlen($password)==0)
 				{
-					$this->error="it was not specified the POP3 authentication password";
+					$this->error=gettext("it was not specified the POP3 authentication password");
 					return(0);
 				}
 				$domain=$this->pop3_auth_host;
-				$this->error=$this->ConnectToHost($domain, $this->pop3_auth_port, "Resolving POP3 authentication host \"".$domain."\"...");
+				$this->error=$this->ConnectToHost($domain, $this->pop3_auth_port, sprintf(gettext("Resolving POP3 authentication host \"%s\"..."), $domain));
 				if(strlen($this->error))
 					return(0);
 				if(strlen($response=$this->GetLine())==0)
 					return(0);
 				if(strcmp($this->Tokenize($response," "),"+OK"))
 				{
-					$this->error="POP3 authentication server greeting was not found";
+					$this->error=gettext("POP3 authentication server greeting was not found");
 					return(0);
 				}
 				if(!$this->PutLine("USER ".$this->user)
@@ -425,7 +425,7 @@ class smtp_class
 					return(0);
 				if(strcmp($this->Tokenize($response," "),"+OK"))
 				{
-					$this->error="POP3 authentication user was not accepted: ".$this->Tokenize("\r\n");
+					$this->error=gettext("POP3 authentication user was not accepted:") . " ".$this->Tokenize("\r\n");
 					return(0);
 				}
 				if(!$this->PutLine("PASS ".$password)
@@ -433,7 +433,7 @@ class smtp_class
 					return(0);
 				if(strcmp($this->Tokenize($response," "),"+OK"))
 				{
-					$this->error="POP3 authentication password was not accepted: ".$this->Tokenize("\r\n");
+					$this->error=gettext("POP3 authentication password was not accepted:") . " ".$this->Tokenize("\r\n");
 					return(0);
 				}
 				fclose($this->connection);
@@ -442,13 +442,13 @@ class smtp_class
 		}
 		if(count($hosts)==0)
 		{
-			$this->error="could not determine the SMTP to connect";
+			$this->error=gettext("could not determine the SMTP to connect");
 			return(0);
 		}
 		for($host=0, $error="not connected";strlen($error) && $host<count($hosts);$host++)
 		{
 			$domain=$hosts[$host];
-			$error=$this->ConnectToHost($domain, $this->host_port, "Resolving SMTP server domain \"$domain\"...");
+			$error=$this->ConnectToHost($domain, $this->host_port, sprintf(gettext("Resolving SMTP server domain \"%s\"..."), $domain));
 		}
 		if(strlen($error))
 		{
@@ -460,7 +460,7 @@ class smtp_class
 		&& function_exists("socket_set_timeout"))
 			socket_set_timeout($this->connection,$timeout,0);
 		if($this->debug)
-			$this->OutputDebug("Connected to SMTP server \"".$domain."\".");
+			$this->OutputDebug(sprintf(gettext("Connected to SMTP server \"%s\"."), $domain));
 		if(!strcmp($localhost=$this->localhost,"")
 		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
 		&& !strcmp($localhost=getenv("HOST"),""))
@@ -514,7 +514,7 @@ class smtp_class
 			{
 				if(!IsSet($this->esmtp_extensions["AUTH"]))
 				{
-					$this->error="server does not require authentication";
+					$this->error=gettext("server does not require authentication");
 					$success=0;
 				}
 				else
@@ -578,7 +578,7 @@ class smtp_class
 					if($success
 					&& strlen($mechanism)==0)
 					{
-						$this->error="it is not supported any of the authentication mechanisms required by the server";
+						$this->error=gettext("it is not supported any of the authentication mechanisms required by the server");
 						$success=0;
 					}
 				}
@@ -610,7 +610,7 @@ class smtp_class
 					$sender=$this->direct_sender;
 					break;
 				default:
-					$this->error="direct delivery connection is already established and sender is already set";
+					$this->error=gettext("direct delivery connection is already established and sender is already set");
 					return(0);
 			}
 		}
@@ -618,7 +618,7 @@ class smtp_class
 		{
 			if(strcmp($this->state,"Connected"))
 			{
-				$this->error="connection is not in the initial state";
+				$this->error=gettext("connection is not in the initial state");
 				return(0);
 			}
 		}
@@ -640,7 +640,7 @@ class smtp_class
 		if($this->direct_delivery)
 		{
 			if(GetType($at=strrpos($recipient,"@"))!="integer")
-				return("it was not specified a valid direct recipient");
+				return(gettext("it was not specified a valid direct recipient"));
 			$domain=substr($recipient,$at+1);
 			switch($this->state)
 			{
@@ -659,12 +659,12 @@ class smtp_class
 				case "RecipientSet":
 					if(strcmp($this->connected_domain,$domain))
 					{
-						$this->error="it is not possible to deliver directly to recipients of different domains";
+						$this->error=gettext("it is not possible to deliver directly to recipients of different domains");
 						return(0);
 					}
 					break;
 				default:
-					$this->error="connection is already established and the recipient is already set";
+					$this->error=gettext("connection is already established and the recipient is already set");
 					return(0);
 			}
 		}
@@ -676,7 +676,7 @@ class smtp_class
 				case "RecipientSet":
 					break;
 				default:
-					$this->error="connection is not in the recipient setting state";
+					$this->error=gettext("connection is not in the recipient setting state");
 					return(0);
 			}
 		}
@@ -705,7 +705,7 @@ class smtp_class
 	{
 		if(strcmp($this->state,"RecipientSet"))
 		{
-			$this->error="connection is not in the start sending data state";
+			$this->error=gettext("connection is not in the start sending data state");
 			return(0);
 		}
 		$this->error="";
@@ -735,7 +735,7 @@ class smtp_class
 	{
 		if(strcmp($this->state,"SendingData"))
 		{
-			$this->error="connection is not in the sending data state";
+			$this->error=gettext("connection is not in the sending data state");
 			return(0);
 		}
 		$this->error="";
@@ -746,7 +746,7 @@ class smtp_class
 	{
 		if(strcmp($this->state,"SendingData"))
 		{
-			$this->error="connection is not in the sending data state";
+			$this->error=gettext("connection is not in the sending data state");
 			return(0);
 		}
 		$this->error="";
@@ -782,7 +782,7 @@ class smtp_class
 	{
 		if(!strcmp($this->state,"Disconnected"))
 		{
-			$this->error="it was not previously established a SMTP connection";
+			$this->error=gettext("it was not previously established a SMTP connection");
 			return(0);
 		}
 		$this->error="";

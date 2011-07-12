@@ -93,7 +93,7 @@ switch ($command) {
 				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.md5 \"$url.md5\"");
 			} else {
 				echo "\n\nWARNING.\n";
-				echo "\nCould not locate a MD5 file.  We cannot verify the download once its done.\n\n";
+				echo "\nCould not locate a MD5 file.  We cannot verify the download once completed.\n\n";
 				sleep(15);
 			}
 			if(file_exists("/root/firmware.tgz.md5")) {

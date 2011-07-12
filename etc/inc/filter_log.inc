@@ -161,7 +161,7 @@ function parse_filter_line($line) {
 		return $flent;
 	} else {
 		if($g['debug']) {
-			log_error("There was a error parsing rule: $errline.   Please report to mailing list or forum.");
+			log_error(sprintf(gettext("There was a error parsing rule: %s.   Please report to mailing list or forum."), $errline));
 		}
 		return "";
 	}
@@ -205,7 +205,7 @@ function get_port_with_service($port, $proto) {
 	$service = getservbyport($port, $proto);
 	$portstr = "";
 	if ($service) {
-		$portstr = "<span title=\"Service {$port}/{$proto}: {$service}\">" . htmlspecialchars($port) . "</span>";
+		$portstr = sprintf('<span title="' . gettext('Service %1$s/%2$s: %3$s') . '">' . htmlspecialchars($port) . '</span>', $port, $proto, $service);
 	} else {
 		$portstr = htmlspecialchars($port);
 	}

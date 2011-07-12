@@ -6,10 +6,10 @@ fi
 if [ -f "/tmp/${interface}_defaultgw" ]; then
 	route delete default $4
 fi
-/sbin/pfctl -k 0.0.0.0/0 -k $3
-/sbin/pfctl -k $3
-pfctl -K $3
-/sbin/pfctl -b 0.0.0.0/32 -b $4
+/sbin/pfctl -k 0.0.0.0/0 -k $3/32
+/sbin/pfctl -k $3/32
+pfctl -K $3/32
+/sbin/pfctl -b 0.0.0.0/32 -b $4/32
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:
 if [ -f "/var/etc/nameserver_$1" ]; then

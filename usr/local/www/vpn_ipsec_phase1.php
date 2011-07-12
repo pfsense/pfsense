@@ -615,7 +615,7 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
 							<?php
-								$modes = array(gettext("main"),gettext("aggressive"));
+								$modes = array("main","aggressive");
 								foreach ($modes as $mode):
 							?>
 								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>

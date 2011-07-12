@@ -305,6 +305,26 @@ if ($_POST) {
                 $input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
         if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
                 $input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
+	if ( !$_POST['srcbeginport_cust'] && $_POST['srcendport_cust'])
+		if (is_alias($_POST['srcendport_cust']))
+			$input_errors[] = 'If you put port alias in Source port range to: field you must put the same port alias in from: field';
+	if ( $_POST['srcbeginport_cust'] && $_POST['srcendport_cust']){
+		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust'])
+			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
+		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust']!='')) || 
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust']))) 
+			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
+	}
+	if ( !$_POST['dstbeginport_cust'] && $_POST['dstendport_cust'])
+		if (is_alias($_POST['dstendport_cust']))
+			$input_errors[] = 'If you put port alias in Destination port range to: field you must put the same port alias in from: field';
+	if ( $_POST['dstbeginport_cust'] && $_POST['dstendport_cust']){
+		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust'])
+			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
+		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust']!='')) || 
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust']))) 
+			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
+	}
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if($_POST['srctype'] == "network") {

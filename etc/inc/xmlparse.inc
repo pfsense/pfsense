@@ -82,7 +82,7 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf("XML error: %s at line %d cannot occur more than once\n",
+		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 				$name,
 				xml_get_current_line_number($parser)));
 	}
@@ -173,13 +173,13 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1); 
 
 	if (!($fp = fopen($cffile, "r"))) {
-		log_error("Error: could not open XML input\n");
+		log_error(gettext("Error: could not open XML input") . "\n");
 		return -1;
 	}
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf("XML error: %s at line %d in %s\n",
+			log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
 						xml_error_string(xml_get_error_code($xml_parser)),
 						xml_get_current_line_number($xml_parser),
 						$cffile));
@@ -195,7 +195,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 			break;
 
 	if (!$parsedcfg[$rootobj_name]) {
-		log_error("XML error: no $rootobj_name object found!\n");
+		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", $rootobj));
 		return -1;
 	}
 

@@ -192,7 +192,7 @@ function filter_configure_sync() {
 
 
 	filter_pflog_start();
-	update_filter_reload_status("Initializing");
+	update_filter_reload_status(gettext("Initializing"));
 
 	/* invalidate interface cache */
 	get_interface_arr(true);
@@ -204,45 +204,45 @@ function filter_configure_sync() {
 	/* Get interface list to work with. */
 	filter_generate_optcfg_array();
 	if($g['booting'] == true)
-		echo "Configuring firewall";
+		echo gettext("Configuring firewall");
 
 	/* generate aliases */
 	if($g['booting'] == true)
 		echo ".";
-	update_filter_reload_status("Creating aliases");
+	update_filter_reload_status(gettext("Creating aliases"));
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
 	if($g['booting'] == true)
 		echo ".";
-	update_filter_reload_status("Generating NAT rules");
+	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
 	if($g['booting'] == true)
 		echo ".";
-	update_filter_reload_status("Generating filter rules");
+	update_filter_reload_status(gettext("Generating filter rules"));
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
 	/* generate altq, limiter */
 	if($g['booting'] == true)
 		echo ".";
-	update_filter_reload_status("Generating ALTQ queues");
+	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status("Generating Limiter rules");
+	update_filter_reload_status(gettext("Generating Limiter rules"));
 	$dummynet_rules = filter_generate_dummynet_rules();
-	update_filter_reload_status("Generating Layer7 rules");
+	update_filter_reload_status(gettext("Generating Layer7 rules"));
 	generate_layer7_files();
 	if($g['booting'] == true)
 		echo ".";
-	update_filter_reload_status("Loading filter rules");
+	update_filter_reload_status(gettext("Loading filter rules"));
 	/* enable pf if we need to, otherwise disable */
 	if(!isset ($config['system']['disablefilter'])) {
 		mwexec("/sbin/pfctl -e", true);
 	} else {
 		mwexec("/sbin/pfctl -d");
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
-		update_filter_reload_status("Filter is disabled.  Not loading rules.");
+		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
 		if($g['booting'] == true)
-			echo "done.\n";
+			echo gettext("done.") . "\n";
 		unlock($filterlck);
 		return;
 	}
@@ -254,7 +254,7 @@ function filter_configure_sync() {
 	$rules = "";
 	$rules .= "{$aliases} \n";
 	$rules .= "{$gateways} \n";
-	update_filter_reload_status("Setting up logging information");
+	update_filter_reload_status(gettext("Setting up logging information"));
 	$rules .= filter_setup_logging_interfaces();
 	if($config['system']['optimization'] <> "") {
 		$rules .= "set optimization {$config['system']['optimization']}\n";
@@ -285,7 +285,7 @@ function filter_configure_sync() {
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
 	$rules .= "\n";
-	update_filter_reload_status("Setting up SCRUB information");
+	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
 	/* NOTE: Disabled until we catch up with dummynet changes. */
@@ -331,11 +331,11 @@ function filter_configure_sync() {
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
-			$line_error = "The line in question reads [{$line_number}]: {$line_split[$line_number-1]}";
+			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
 		if($line_error and $line_number) {
-			file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
+			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error), "Filter Reload", "");
 			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
-			update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
+			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error));
 			unlock($filterlck);
 			return;
 		}
@@ -344,12 +344,13 @@ function filter_configure_sync() {
 			exec("/sbin/pfctl -d");
 			exec("/sbin/pfctl -e");
 			exec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-			file_notice("pf_busy", "PF was wedged/busy and has been reset.", "pf_busy", "");
-			log_error("PF was wedged/busy and has been reset.");
+			$error_msg = gettext("PF was wedged/busy and has been reset.");
+			file_notice("pf_busy", $error_msg, "pf_busy", "");
+			log_error($error_msg);
 		}
 	}
 
-	update_filter_reload_status("Starting up layer7 daemon");
+	update_filter_reload_status(gettext("Starting up layer7 daemon"));
 	layer7_start_l7daemon();
 
 	if(!empty($filterdns)) {
@@ -396,21 +397,21 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo ".";
 
-	update_filter_reload_status("Processing down interface states");
+	update_filter_reload_status(gettext("Processing down interface states"));
 	filter_delete_states_for_down_gateways();
 
-	update_filter_reload_status("Running plugins");
+	update_filter_reload_status(gettext("Running plugins"));
 
 	if(is_dir("/usr/local/pkg/pf/")) {
 		/* process packager manager custom rules */
-		update_filter_reload_status("Running plugins (pf)");
+		update_filter_reload_status(gettext("Running plugins (pf)"));
 		run_plugins("/usr/local/pkg/pf/");
-		update_filter_reload_status("Plugins completed.");
+		update_filter_reload_status(gettext("Plugins completed."));
 	}
 
-	update_filter_reload_status("Done");
+	update_filter_reload_status(gettext("Done"));
 	if($g['booting'] == true)
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 
 	unlock($filterlck);
 	return 0;
@@ -628,7 +629,7 @@ function filter_generate_gateways() {
 
 	$rules = "# Gateways\n";
 
-	update_filter_reload_status("Creating gateway group item...");
+	update_filter_reload_status(gettext("Creating gateway group item..."));
 
 	/* Lookup Gateways to be used in filter rules once */
         $GatewaysList = return_gateways_array();
@@ -658,14 +659,14 @@ function filter_generate_gateways() {
 					$gatewayip = $member['gwip'];
 					if (($int <> "") && is_ipaddr($gatewayip)) {
 						if ($g['debug'])
-							log_error("Setting up route with {$gatewayip} om $int");
+							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						if ($member['weight'] > 1) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
 						} else
 							$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb++;
 					} else
-						log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
+						log_error(sprintf(gettext("An error occurred while trying to find the interface got %s .  The rule has not been added."), $gatewayip));
 				}
 				$route = "";
 				if ($foundlb > 0) {
@@ -917,7 +918,7 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	// Initialize natrules holder string
 	$natrules = "";
 
-	update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
+	update_filter_reload_status(sprintf(gettext("Creating reflection NAT rule for %s..."), $rule['descr']));
 
 	/* TODO: Add this option to port forwards page. */
 	if(isset($rule['staticnatport'])) {
@@ -971,7 +972,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 		else
 			$reflectiontimeout = "2000";
 
-		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+		update_filter_reload_status(sprintf(gettext("Creating reflection rule for %s..."), $rule['descr']));
 
 		$rdr_if_list = implode(" ", $rdr_ifs);
 		if(count($rdr_ifs) > 1)
@@ -1229,7 +1230,7 @@ function filter_nat_rules_generate() {
 	$natrules = "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
-	update_filter_reload_status("Creating 1:1 rules...");
+	update_filter_reload_status(gettext("Creating 1:1 rules..."));
 
 	$reflection_txt = "";
 	$route_table = "";
@@ -1328,7 +1329,7 @@ function filter_nat_rules_generate() {
 		/* advanced outbound rules */
 		if(is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
-				update_filter_reload_status("Creating advanced outbound rule {$obent['descr']}");
+				update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $obent['descr']));
 				$src = alias_expand($obent['source']['network']);
 				if(!$src)
 					$src = $obent['source']['network'];
@@ -1364,7 +1365,7 @@ function filter_nat_rules_generate() {
 		}
 	} else {
 		/* standard outbound rules (one for each interface) */
-		update_filter_reload_status("Creating outbound NAT rules");
+		update_filter_reload_status(gettext("Creating outbound NAT rules"));
 		$tonathosts = "";
 		$numberofnathosts = 0;
 
@@ -1456,7 +1457,7 @@ function filter_nat_rules_generate() {
 			foreach ($FilterIflist as $if => $ifcfg) {
 				if (substr($ifcfg['if'], 0, 4) == "ovpn")
 					continue;
-				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
+				update_filter_reload_status(sprintf(gettext('Creating outbound rules %1$s - (%2$s)'), $if, $ifcfg['descr']));
 				if(interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
 					/* create outbound nat entries for all local networks */
@@ -1474,7 +1475,7 @@ function filter_nat_rules_generate() {
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
 
-	update_filter_reload_status("Setting up TFTP helper");
+	update_filter_reload_status(gettext("Setting up TFTP helper"));
 	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
@@ -1514,7 +1515,7 @@ function filter_nat_rules_generate() {
 		$starting_localhost_port = 19000;
 		$natrules .= "# NAT Inbound Redirects\n";
 		foreach ($config['nat']['rule'] as $rule) {
-			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
+			update_filter_reload_status(sprintf(gettext("Creating NAT rule %s"), $rule['descr']));
 
 			if(isset($rule['disabled']))
 				continue;
@@ -1658,7 +1659,7 @@ function filter_nat_rules_generate() {
 
 function filter_generate_user_rule_arr($rule) {
 	global $config;
-	update_filter_reload_status("Creating filter rule {$rule['descr']} ...");
+	update_filter_reload_status(sprintf(gettext("Creating filter rule %s ..."), $rule['descr']));
 	$ret = array();
 	$line = filter_generate_user_rule($rule);
 	$ret['rule'] = $line;
@@ -1792,7 +1793,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
 			if(!$srcporta)
-				log_error("filter_generate_address: {$srcport[0]} is not a valid source port.");
+				log_error(sprintf(gettext("filter_generate_address: %s is not a valid source port."), $srcport[0]));
 			else if((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 				$src .= " port {$srcporta} ";
 			} else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
@@ -1908,7 +1909,7 @@ function filter_generate_user_rule($rule) {
 		$aline['quick'] = " quick ";
 
 	/* set the gateway interface */
-	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
+	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
 	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
@@ -1927,7 +1928,7 @@ function filter_generate_user_rule($rule) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
 			} else {
 				if($rule['interface'] <> "pptp") {
-					log_error("Could not find IPv4 gateway for interface({$rule['interface']}).");
+					log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
 				}
 			}
 		}
@@ -1954,7 +1955,7 @@ function filter_generate_user_rule($rule) {
 		if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "")
 			$aline['prot'] = " proto tcp ";
 	}
-	update_filter_reload_status("Creating rule {$rule['descr']}");
+	update_filter_reload_status(sprintf(gettext("Creating rule %s"), $rule['descr']));
 
 	/* source address */
 	$src = filter_generate_address($rule, "source");
@@ -2163,7 +2164,7 @@ function filter_generate_user_rule($rule) {
 function filter_rules_generate() {
 	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList;
 
-	update_filter_reload_status("Creating default rules");
+	update_filter_reload_status(gettext("Creating default rules"));
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
@@ -2507,7 +2508,7 @@ EOD;
 			/*	  this shouldnt ever happen but instead of breaking the clients ruleset
 			 *	  log an error.
 			 */
-			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
+			log_error(gettext("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget"));
 		}
 	}
 
@@ -2603,7 +2604,7 @@ EOD;
 		}
 	}
 
-	update_filter_reload_status("Creating IPsec rules...");
+	update_filter_reload_status(gettext("Creating IPsec rules..."));
 	$ipfrules .= filter_generate_ipsec_rules();
 
 	$ipfrules .= <<<EOD
@@ -2656,7 +2657,7 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 
 /* COMPAT Function */
 function tdr_install_cron($should_install) {
-	log_error("Please use filter_tdr_install_cron() function tdr_install_cron will be deprecated!");
+	log_error(gettext("Please use filter_tdr_install_cron() function tdr_install_cron will be deprecated!"));
 	filter_tdr_install_cron($should_install);
 }
 
@@ -2701,7 +2702,7 @@ function filter_tdr_install_cron($should_install) {
 				$cron_item['who'] = "root";
 				$cron_item['command'] = "/etc/rc.filter_configure_sync";
 				$config['cron']['item'][] = $cron_item;
-				write_config("Installed 15 minute filter reload for Time Based Rules");
+				write_config(gettext("Installed 15 minute filter reload for Time Based Rules"));
 				configure_cron();
 			}
 			break;
@@ -3056,17 +3057,17 @@ function discover_pkg_rules($ruletype) {
 	$rules = "";
 	$files = glob("/usr/local/pkg/*.inc");
 	foreach($files as $pkg_inc) {
-		update_filter_reload_status("Checking for {$ruletype} PF hooks in package {$pkg_inc}");
+		update_filter_reload_status(sprintf(gettext('Checking for %1$s PF hooks in package %2$s'), $ruletype, $pkg_inc));
 		require_once($pkg_inc);
 		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
-			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
+			update_filter_reload_status(sprintf(gettext('Processing early %1$s rules for package %2$s'), $ruletype, $pkg_inc));
 			$tmprules = $pkg_generate_rules("$ruletype");
 			file_put_contents("{$g['tmp_path']}/rules.test.packages", $aliases . $tmprules);
 			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
 			if ($status <> 0) {
-				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";
+				$errorrules = sprintf(gettext("There was an error while parsing the package filter rules for %s."), $pkg_inc) . "\n";
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n");
 				continue;

@@ -272,7 +272,7 @@ global $g;
 if (file_exists("{$g['varrun_path']}/booting") || $g['booting'])
 	return;
 
-if (is_array($config['installedpackages']['carpsettings']['config'])) {
+if (is_array($config['installedpackages']['carpsettings']) && is_array($config['installedpackages']['carpsettings']['config'])) {
 	update_filter_reload_status("Building CARP sync information");
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if (empty($carp['synchronizetoip'])) {

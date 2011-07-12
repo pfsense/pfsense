@@ -160,7 +160,7 @@ function enable_change(enable_over) {
 			<strong><?=gettext("Resolve DHCP mappings first");?><br>
 			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR).");?></p>
+					"affects the name given for a reverse lookup (PTR)."));?></p>
 		</td>
 	</tr>
 	<tr>

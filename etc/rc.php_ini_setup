@@ -192,7 +192,7 @@ fi
 
 # Read in dynamodules
 if [ -d /etc/php_dynamodules ]; then
-	DYNA_MODULES=`/bin/ls /etc/php_dynamodules/`
+	DYNA_MODULES=`/bin/ls -Utr /etc/php_dynamodules/`
 	PHPMODULES="$PHPMODULES $DYNA_MODULES"
 fi
 

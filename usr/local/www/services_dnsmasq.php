@@ -47,6 +47,7 @@ require_once("shaper.inc");
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
+$pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
 
 if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
@@ -65,6 +66,7 @@ if ($_POST) {
 	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
 	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
 
 	write_config();
 
@@ -112,6 +114,7 @@ function enable_change(enable_over) {
 	endis = !(document.iform.enable.checked || enable_over);
 	document.iform.regdhcp.disabled = endis;
 	document.iform.regdhcpstatic.disabled = endis;
+	document.iform.dhcpfirst.disabled = endis;
 }
 //-->
 </script>
@@ -149,6 +152,15 @@ function enable_change(enable_over) {
 					"be registered in the DNS forwarder, so that their name can be ".
 					"resolved. You should also set the domain in %s".
 					"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
+		</td>
+	</tr>
+	<tr>
+		<td class="vtable"><p>
+			<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
+			<strong><?=gettext("Resolve DHCP mappings first");?><br>
+			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
+					"be resolved before the manual list of names below. This only ".
+					"affects the name given for a reverse lookup (PTR).");?></p>
 		</td>
 	</tr>
 	<tr>

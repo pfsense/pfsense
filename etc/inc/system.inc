@@ -228,6 +228,8 @@ function system_hosts_generate() {
 	$hostscfg = $dnsmasqcfg['hosts'];
 
 	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$lhosts = "";
+	$dhosts = "";
 
 	if ($config['interfaces']['lan']) {
 		$cfgip = get_interface_ip("lan");
@@ -248,17 +250,22 @@ function system_hosts_generate() {
 
 	foreach ($hostscfg as $host) {
 		if ($host['host'])
-			$hosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
+			$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 		else
-			$hosts .= "{$host['ip']}	{$host['domain']}\n";
+			$lhosts .= "{$host['ip']}	{$host['domain']}\n";
 	}
 	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
 			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
 					foreach ($dhcpifconf['staticmap'] as $host)
 						if ($host['ipaddr'] && $host['hostname'])
-							$hosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
 	}
+
+	if (isset($dnsmasqcfg['dhcpfirst']))
+		$hosts .= $dhosts . $lhosts;
+	else
+		$hosts .= $lhosts . $dhosts;
 
 	/*
 	 * Do not remove this because dhcpleases monitors with kqueue it needs to be 

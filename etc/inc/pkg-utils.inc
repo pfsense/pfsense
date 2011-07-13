@@ -547,7 +547,7 @@ function install_package($package, $pkg_info = "") {
 	update_status($static_output);
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {
-		$static_output .= "\n" . gettext(Downloading package configuration file... ");
+		$static_output .= "\n" . gettext("Downloading package configuration file... ");
 		update_output_window($static_output);
 		pkg_debug(gettext("Downloading package configuration file...") . "\n");
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);

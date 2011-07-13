@@ -295,6 +295,8 @@ for EXT in $PHPMODULES; do
 	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | /usr/bin/tr '[:upper:]' '[:lower:]'`"
 done
 
+PHPMODULES=`echo $PHPMODULES | sort -u`
+
 # Check loaded modules and remove anything that did not load correctly
 LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/tr '[:upper:]' '[:lower:]' 2>/dev/null | /usr/bin/grep -v "\["`
 for EXT in $PHPMODULESLC; do

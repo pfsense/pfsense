@@ -118,7 +118,7 @@ PHPMODULES="$PHPMODULES ssh2"
 PHPMODULES="$PHPMODULES pfSense"
 
 PHP_ZEND_MODULES=""
-PHP_ZEND_MODULES_TS=""
+PHP_ZEND_MODULES_TS="ioncube_loader"
 
 # Modules previously included.
 # can be turned on by touching
@@ -230,7 +230,7 @@ done
 for EXT in $PHP_ZEND_MODULES; do
 	# Ensure extension exists before adding.
 	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension=${EXTENSIONSDIR}/${EXT}.so" >> /usr/local/lib/php.ini
+		echo "zend_extension=${EXTENSIONSDIR}${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 

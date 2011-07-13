@@ -778,17 +778,21 @@ function filter_generate_optcfg_array() {
 		if (!does_interface_exist($oic['if']))
 			continue;
 		$oic['ip'] = get_interface_ip($if);
+		$oic['ipv6'] = get_interface_ipv6($if);
 		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
+		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
 		$oic['mss'] = empty($oc['mss']) ? '' : $oc['mss'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+		$oic['sav6'] = gen_subnetv6($oic['ipv6'], $oic['snv6']);
 		$oic['nonat'] = $oc['nonat'];
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
+		$oic['gatewayv6'] = $oc['gatewayv6'];
 		$oic['spoofcheck'] = "yes";
 		$oic['bridge'] = link_interface_to_bridge($if);
 		$FilterIflist[$if] = $oic;
@@ -1290,6 +1294,35 @@ function filter_nat_rules_generate() {
 			$reflection_txt .= filter_generate_reflection_nat($rule, $route_table, $nat_if_list, "", $srcaddr, $srcip, $sn);
 		}
 	}
+
+	/* Add binat rules for Network Prefix translation */
+	if(is_array($config['nat']['npt'])) {
+		foreach ($config['nat']['npt'] as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+
+			if (!$rule['interface'])
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
+			if (!isset($FilterIflist[$natif]))
+                                continue;
+
+			$srcaddr = filter_generate_address($rule, 'source');
+                        $dstaddr = filter_generate_address($rule, 'destination');
+
+			$srcaddr = trim($srcaddr);
+			$dstaddr = trim($dstaddr);
+
+			$natif = $FilterIflist[$natif]['descr'];
+
+			$natrules .= "binat on \${$natif} from {$srcaddr} to any -> {$dstaddr}\n";
+			$natrules .= "binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
+
+		}
+	}
+
+
 	$natrules .= "\n# Outbound NAT rules\n";
 	/* outbound rules - advanced or standard */
 	if(isset($config['nat']['advancedoutbound']['enable'])) {
@@ -1649,53 +1682,101 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
-			/* check for opt$NUMip here */
-			if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
-				$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-				if(!is_ipaddr($src))
-					return "";
-			} else if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-				if(!is_ipaddr($opt_ip))
-					return "";
-				$src = $opt_ip . "/" .
-				$FilterIflist["opt{$optmatch[1]}"]['sn'];
+			if($rule['ipprotocol'] == "inet6") {
+				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
+					if(!is_ipaddr($opt_ip))
+						return "";
+					$src = $opt_ip . "/" .
+					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
+				/* check for opt$NUMip here */
+				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
+					if(!is_ipaddr($src))
+						return "";
+				}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
+			} else {
+				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
+					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
+					if(!is_ipaddr($opt_ip))
+						return "";
+					$src = $opt_ip . "/" .
+					$FilterIflist["opt{$optmatch[1]}"]['sn'];
+				/* check for opt$NUMip here */
+				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
+					if(!is_ipaddr($src))
+						return "";
+				}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
 			}
-			if(isset($rule[$target]['not']))
-				$src = " !{$src}";
 		} else {
-			switch ($rule[$target]['network']) {
-				case 'wan':
-					$wansa = $FilterIflist['wan']['sa'];
-					$wansn = $FilterIflist['wan']['sn'];
-					$src = "{$wansa}/{$wansn}";
-					break;
-				case 'wanip':
-					$src = $FilterIflist["wan"]['ip'];
-					break;
-				case 'lanip':
-					$src = $FilterIflist["lan"]['ip'];
-					break;
-				case 'lan':
-					$lansa = $FilterIflist['lan']['sa'];
-					$lansn = $FilterIflist['lan']['sn'];
-					$src = "{$lansa}/{$lansn}";
-					break;
-				case 'pptp':
-					$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
-					$src = "{ " . implode(" ", $pptp_subnets) . " }";
-					break;
-				case 'pppoe':
-					/* XXX: This needs to be fixed somehow! */
-					if (is_array($FilterIflist['pppoe'])) {
-						$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['ip'], $FilterIflist['pppoe'][0]['sn']);
-						$pppoesn = $FilterIflist['pppoe'][0]['sn'];
-						$src = "{$pppoesa}/{$pppoesn}";
+			if($rule['ipprotocol'] == "inet6") {
+				switch ($rule[$target]['network']) {
+					case 'wan':
+						$wansa = $FilterIflist['wan']['sav6'];
+						$wansn = $FilterIflist['wan']['snv6'];
+						$src = "{$wansa}/{$wansn}";
+						break;
+					case 'wanip':
+						$src = $FilterIflist["wan"]['ipv6'];
+						break;
+					case 'lanip':
+						$src = $FilterIflist["lan"]['ipv6'];
+						break;
+					case 'lan':
+						$lansa = $FilterIflist['lan']['sav6'];
+						$lansn = $FilterIflist['lan']['snv6'];
+						$src = "{$lansa}/{$lansn}";
+						break;
+					case 'pptp':
+						$pptpsav6 = gen_subnetv6($FilterIflist['pptp']['sav6'], $FilterIflist['pptp']['snv6']);
+						$pptpsnv6 = $FilterIflist['pptp']['snv6'];
+						$src = "{$pptpsav6}/{$pptpsnv6}";
+						break;
+					case 'pppoe':
+						if (is_array($FilterIflist['pppoe'])) {
+							$pppoesav6 = gen_subnetv6($FilterIflist['pppoe'][0]['ipv6'], $FilterIflist['pppoe'][0]['snv6']);
+							$pppoesnv6 = $FilterIflist['pppoe'][0]['snv6'];
+							$src = "{$pppoesav6}/{$pppoesnv6}";
+						}
 					}
-					break;
+			} else {
+				switch ($rule[$target]['network']) {
+					case 'wan':
+						$wansa = $FilterIflist['wan']['sa'];
+						$wansn = $FilterIflist['wan']['sn'];
+						$src = "{$wansa}/{$wansn}";
+						break;
+					case 'wanip':
+						$src = $FilterIflist["wan"]['ip'];
+						break;
+					case 'lanip':
+						$src = $FilterIflist["lan"]['ip'];
+						break;
+					case 'lan':
+						$lansa = $FilterIflist['lan']['sa'];
+						$lansn = $FilterIflist['lan']['sn'];
+						$src = "{$lansa}/{$lansn}";
+						break;
+					case 'pptp':
+						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+						$src = "{ " . implode(" ", $pptp_subnets) . " }";
+						$src = "{$pptpsa}/{$pptpsn}";
+						break;
+					case 'pppoe':
+						/* XXX: This needs to be fixed somehow! */
+						if (is_array($FilterIflist['pppoe'])) {
+							$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['ip'], $FilterIflist['pppoe'][0]['sn']);
+							$pppoesn = $FilterIflist['pppoe'][0]['sn'];
+							$src = "{$pppoesa}/{$pppoesn}";
+						}
+						break;
+				}
 			}
-			if(isset($rule[$target]['not']))
-				$src = "!{$src}";
 		}
 	} else if($rule[$target]['address']) {
 		$expsrc = alias_expand($rule[$target]['address']);
@@ -1785,6 +1866,17 @@ function filter_generate_user_rule($rule) {
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
 
+	if(isset($rule['ipprotocol'])) {
+		switch($rule['ipprotocol']) {
+			case "inet":
+				$aline['ipprotocol'] = "inet";
+				break;
+			case "inet6":
+				$aline['ipprotocol'] = "inet6";
+				break;
+		}
+	}
+
 	/* check for unresolvable aliases */
 	if($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");
@@ -1821,12 +1913,23 @@ function filter_generate_user_rule($rule) {
 
 	/* do not process reply-to for gateway'd rules */
 	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
-		$rg = get_interface_gateway($rule['interface']);
-		if(is_ipaddr($rg)) {
-			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+		if($rule['ipprotocol'] == "inet6") {
+			$rg = get_interface_gateway_v6($rule['interface']);
+			if(is_ipaddrv6($rg)) {
+				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+			} else {
+				if($rule['interface'] <> "pptp") {
+					log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
+				}
+			}
 		} else {
-			if($rule['interface'] <> "pptp") {
-				log_error(sprintf(gettext("Could not find gateway for interface (%s)."), $rule['interface']));
+			$rg = get_interface_gateway($rule['interface']);
+			if(is_ipaddrv4($rg)) {
+				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+			} else {
+				if($rule['interface'] <> "pptp") {
+					log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
+				}
 			}
 		}
 	}
@@ -1842,8 +1945,10 @@ function filter_generate_user_rule($rule) {
 	if (isset($rule['protocol']) && !empty($rule['protocol'])) {
 		if($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
+		elseif(($rule['protocol'] == "icmp") && ($rule['ipprotocol'] == "inet6"))
+			$aline['prot'] = " proto ipv6-icmp ";
 		elseif($rule['protocol'] == "icmp")
-			$aline['prot'] = " inet proto icmp ";
+			$aline['prot'] = " proto icmp ";
 		else
 			$aline['prot'] = " proto {$rule['protocol']} ";
 	} else {
@@ -1879,8 +1984,10 @@ function filter_generate_user_rule($rule) {
 		$l7_structures = $l7rule->get_unique_structures();
 		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
 	}
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'])
+	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
+	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
+		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
 	if(!empty($rule['tag']))
 		$aline['tag'] = " tag " .$rule['tag']. " ";
 	if(!empty($rule['tagged']))
@@ -2037,8 +2144,8 @@ function filter_generate_user_rule($rule) {
 		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
-			$aline['interface'] . $aline['prot'] . $aline['src'] . $aline['os'] .
-			$vpns . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] .
+			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
+			$vpns . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
 			$aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy route for vpn(s)\"\n";
@@ -2046,8 +2153,8 @@ function filter_generate_user_rule($rule) {
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
-		$aline['reply'] . $aline['route'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
-		$aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
+		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
+		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
 		$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 
@@ -2080,20 +2187,43 @@ function filter_rules_generate() {
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------
-block in $log all label "Default deny rule"
-block out $log all label "Default deny rule"
+block in $log inet all label "Default deny rule IPv4"
+block out $log inet all label "Default deny rule IPv4"
+block in $log inet6 all label "Default deny rule IPv6"
+block out $log inet6 all label "Default deny rule IPv6"
+
+# IPv6 ICMP is not auxilary, it is required for operation
+# See man icmp6(4)
+# 1    unreach         Destination unreachable
+# 2    toobig          Packet too big
+# 128  echoreq         Echo service request
+# 129  echorep         Echo service reply
+# 133  routersol       Router solicitation
+# 134  routeradv       Router advertisement
+# 135  neighbrsol      Neighbor solicitation
+# 136  neighbradv      Neighbor advertisement
+pass quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} keep state
+
+# Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state
 
 # We use the mighty pf, we cannot be fooled.
-block quick proto { tcp, udp } from any port = 0 to any
-block quick proto { tcp, udp } from any to any port = 0
+block quick inet proto { tcp, udp } from any port = 0 to any
+block quick inet proto { tcp, udp } from any to any port = 0
+block quick inet6 proto { tcp, udp } from any port = 0 to any
+block quick inet6 proto { tcp, udp } from any to any port = 0
 
 
 EOD;
 
 	if(!isset($config['system']['ipv6allow'])) {
 		$ipfrules .= "# Block all IPv6\n";
-		$ipfrules .= "block in quick inet6 all\n";
-		$ipfrules .= "block out quick inet6 all\n";
+		$ipfrules .= "block in inet6 all label \"Default Deny ipv6 rule\"\n";
+		$ipfrules .= "block out inet6 all label \"Default Deny ipv6 rule\"\n";
 	}
 
 	$ipfrules .= <<<EOD
@@ -2185,10 +2315,13 @@ EOD;
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
 			if($bogontableinstalled == 0)
 				$ipfrules .= "table <bogons> persist file \"/etc/bogons\"\n";
+				$ipfrules .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon networks from {$oc['descr']}"
+# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
+block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
 			$bogontableinstalled++;
@@ -2210,10 +2343,11 @@ EOD;
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
 antispoof for \${$oc['descr']}
-block in $log quick on \${$oc['descr']} from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
-block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
-block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
-block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
+block in $log quick on \${$oc['descr']} from 10.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 10/8"
+block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 127/8"
+block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
+block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
+block in $log quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
 
 EOD;
 			}
@@ -2233,6 +2367,9 @@ EOD;
 # allow our DHCP client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
+# allow our DHCPv6 client out to the {$oc['descr']}
+pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
+pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;
@@ -2246,6 +2383,7 @@ EOD;
 			/* allow access to DHCP server on interfaces */
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
+
 # allow access to DHCP server on {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
@@ -2262,6 +2400,19 @@ EOD;
 				}
 
 			}
+			if(isset($config['dhcpdv6'][$on]['enable'])) {
+				$ipfrules .= <<<EOD
+
+# allow access to DHCPv6 server on {$oc['descr']}
+anchor "dhcpv6server{$oc['descr']}"
+# We need inet6 icmp for stateless autoconfig and dhcpv6
+pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
+pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
+pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
+pass out on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
+
+EOD;
+			}
 			break;
 		}
 	}
@@ -2273,24 +2424,32 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # loopback
-pass in on \$loopback all label "pass loopback"
-pass out on \$loopback all label "pass loopback"
+pass in on \$loopback inet all label "pass IPv4 loopback"
+pass out on \$loopback inet all label "pass IPv4 loopback"
+pass in on \$loopback inet6 all label "pass IPv6 loopback"
+pass out on \$loopback inet6 all label "pass IPv6 loopback"
 
 EOD;
 
 	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out all keep state allow-opts label "let out anything from firewall host itself"
+pass out inet all keep state allow-opts label "let out anything IPv4 from firewall host itself"
+pass out inet6 all keep state allow-opts label "let out anything IPv6 from firewall host itself"
 
 EOD;
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-                if(isset($ifcfg['virtual']))
-                        continue;
+		if(isset($ifcfg['virtual']))
+			continue;
+
 		$gw = get_interface_gateway($ifdescr);
 		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
-        }
 
+		$gwv6 = get_interface_gateway_v6($ifdescr);
+		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+	}
+	
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
@@ -2409,19 +2568,37 @@ EOD;
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
-				if($oc['ip']) {
-					$sa = $oc['sa'];
-					$sn = $oc['sn'];
-					$if = $oc['if'];
-				}
-				if($sa) {
-				$ipfrules .= <<<EOD
+				if(is_ipaddrv4($route['network'])) {
+					if($oc['ip']) {
+						$sa = $oc['sa'];
+						$sn = $oc['sn'];
+						$if = $oc['if'];
+					}
+					if($sa) {
+					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
+					}
+				}
+				if(is_ipaddrv6($route['network'])) {
+					if($oc['ipv6']) {
+						$sa = $oc['sav6'];
+						$sn = $oc['snv6'];
+						$if = $oc['if'];
+					}
+					if($sa) {
+					$ipfrules .= <<<EOD
+pass quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} inet6 proto tcp from {$route['network']} to {$sa}/{$sn} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} inet6 from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
+
+EOD;
+					}
 				}
 			}
 		}

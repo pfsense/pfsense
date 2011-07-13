@@ -113,11 +113,23 @@ if ($_POST) {
 			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
 				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static ip configuration.");
 		}
-		$parent_ip = get_interface_ip($_POST['interface']);
-		if (is_ipaddr($parent_ip)) {
+		if(is_ipaddrv6($_POST['gateway'])) {
+			$parent_ip = get_interface_ipv6($_POST['interface']);
+		} else {		
+			$parent_ip = get_interface_ip($_POST['interface']);
+		}
+		if (is_ipaddrv4($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
-			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['gateway'])) {
-				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
+			$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
+			if(!ip_in_subnet($_POST['gateway'], $subnet) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['gateway'])) {
+				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet '{$subnet}'."), $_POST['gateway']);
+			}
+		}
+		if (is_ipaddrv6($parent_ip)) {
+			$parent_sn = get_interface_subnetv6($_POST['interface']);
+			$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
+			if(!ip_in_subnet($_POST['gateway'], $subnet)) {
+				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet '{$subnet}'."), $_POST['gateway']);
 			}
 		}
 	}
@@ -226,10 +238,18 @@ if ($_POST) {
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 			$i = 0;
+			/* remove the default gateway bits for all gateways with the same address family */
 			foreach($a_gateway_item as $gw) {
-				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-				if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
-					$reloadif = $gw['interface'];
+				if(is_ipaddrv4($gateway['gateway']) && is_ipaddrv4($gw['gateway'])) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+						$reloadif = $gw['interface'];
+				}
+				if(is_ipaddrv6($gateway['gateway']) && is_ipaddrv6($gw['gateway'])) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
+						$reloadif = $gw['interface'];
+				}
 				$i++;
 			}
 			$gateway['defaultgw'] = true;
@@ -334,7 +354,7 @@ function show_advanced_gateway() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
                     <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
@@ -354,7 +374,7 @@ function show_advanced_gateway() {
 				else
 					$monitor = htmlspecialchars($pconfig['monitor']);
 			?>
-			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
+			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" size="28" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
 			<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .

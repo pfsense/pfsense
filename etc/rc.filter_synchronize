@@ -297,6 +297,8 @@ if (is_array($config['installedpackages']['carpsettings']) && is_array($config['
 				$port = "443";
 		}
 
+		if(is_ipaddrv6($carp['synchronizetoip']))
+			$carp['synchronizetoip'] = "[{$carp['synchronizetoip']}]";
 		$synchronizetoip .= $carp['synchronizetoip'];
 		if ($carp['synchronizerules'] != "") {
 			if (!is_array($config['filter']))

@@ -179,6 +179,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 	$tab_array[] = array(gettext("Port Forward"), true, "firewall_nat.php");
 	$tab_array[] = array(gettext("1:1"), false, "firewall_nat_1to1.php");
 	$tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
+	$tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>

@@ -67,6 +67,8 @@ require_once('config.lib.inc');
 if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";
+require_once("IPv6.inc");
+if($g['booting']) echo ".";
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else

@@ -188,11 +188,11 @@ $speedlimit = ($upstream + $downstream);
 
 /* Set default colors explicity, the theme can then override them below.
    This prevents missing colors in themes from crashing the graphs. */
-$colortrafficup = array("666666", "CCCCCC");
-$colortrafficdown = array("990000", "CC0000");
+$colortrafficup = array("666666", "CCCCCC", "b36666", "bd9090");
+$colortrafficdown = array("990000", "CC0000", "b36666", "bd9090");
+$colorpacketsup = array("666666", "CCCCCC", "b36666", "bd9090");
+$colorpacketsdown = array("990000", "CC0000", "b36666", "bd9090");
 $colortraffic95 = array("660000", "FF0000");
-$colorpacketsup = array("666666", "CCCCCC");
-$colorpacketsdown = array("990000", "CC0000");
 $colorstates = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorprocessor = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colormemory = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
@@ -286,37 +286,72 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "DEF:$curif-in_bytes_block=$rrddbpath$curdatabase:inblock:AVERAGE ";
 	$graphcmd .= "DEF:$curif-out_bytes_block=$rrddbpath$curdatabase:outblock:AVERAGE ";
 
+	$graphcmd .= "DEF:$curif-in6_bytes_pass=$rrddbpath$curdatabase:inpass6:AVERAGE ";
+	$graphcmd .= "DEF:$curif-out6_bytes_pass=$rrddbpath$curdatabase:outpass6:AVERAGE ";
+	$graphcmd .= "DEF:$curif-in6_bytes_block=$rrddbpath$curdatabase:inblock6:AVERAGE ";
+	$graphcmd .= "DEF:$curif-out6_bytes_block=$rrddbpath$curdatabase:outblock6:AVERAGE ";
+
 	$graphcmd .= "CDEF:\"$curif-in_bits_pass=$curif-in_bytes_pass,8,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_pass=$curif-out_bytes_pass,8,*\" ";
 	$graphcmd .= "CDEF:\"$curif-in_bits_block=$curif-in_bytes_block,8,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_block=$curif-out_bytes_block,8,*\" ";
+
+	$graphcmd .= "CDEF:\"$curif-in6_bits_pass=$curif-in6_bytes_pass,8,*\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bits_pass=$curif-out6_bytes_pass,8,*\" ";
+	$graphcmd .= "CDEF:\"$curif-in6_bits_block=$curif-in6_bytes_block,8,*\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bits_block=$curif-out6_bytes_block,8,*\" ";
 
 	$graphcmd .= "CDEF:\"$curif-in_bytes=$curif-in_bytes_pass,$curif-in_bytes_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bytes=$curif-out_bytes_pass,$curif-out_bytes_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-in_bits=$curif-in_bits_pass,$curif-in_bits_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits=$curif-out_bits_pass,$curif-out_bits_block,+\" ";
 
+	$graphcmd .= "CDEF:\"$curif-in6_bytes=$curif-in6_bytes_pass,$curif-in6_bytes_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bytes=$curif-out6_bytes_pass,$curif-out6_bytes_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-in6_bits=$curif-in6_bits_pass,$curif-in6_bits_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bits=$curif-out6_bits_pass,$curif-out6_bits_block,+\" ";
+
 	$graphcmd .= "CDEF:\"$curif-bits_io=$curif-in_bits,$curif-out_bits,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_block_neg=$curif-out_bits_block,$multiplier,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_pass_neg=$curif-out_bits_pass,$multiplier,*\" ";
+
+	$graphcmd .= "CDEF:\"$curif-bits6_io=$curif-in6_bits,$curif-out6_bits,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bits_block_neg=$curif-out6_bits_block,$multiplier,*\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_bits_pass_neg=$curif-out6_bits_pass,$multiplier,*\" ";
 
 	$graphcmd .= "CDEF:\"$curif-bytes_in_pass=$curif-in_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes_pass,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_out_pass=$curif-out_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes_pass,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_in_block=$curif-in_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes_block,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_out_block=$curif-out_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes_block,IF,$average,*\" ";
 
+	$graphcmd .= "CDEF:\"$curif-bytes_in6_pass=$curif-in6_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-in6_bytes_pass,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out6_pass=$curif-out6_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-out6_bytes_pass,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in6_block=$curif-in6_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-in6_bytes_block,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out6_block=$curif-out6_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-out6_bytes_block,IF,$average,*\" ";
+
 	$graphcmd .= "CDEF:\"$curif-bytes_pass=$curif-bytes_in_pass,$curif-bytes_out_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_block=$curif-bytes_in_block,$curif-bytes_out_block,+\" ";
+
+	$graphcmd .= "CDEF:\"$curif-bytes_pass6=$curif-bytes_in6_pass,$curif-bytes_out6_pass,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_block6=$curif-bytes_in6_block,$curif-bytes_out6_block,+\" ";
 
 	$graphcmd .= "CDEF:\"$curif-bytes_in_t_pass=$curif-in_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes_pass,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_out_t_pass=$curif-out_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes_pass,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_in_t_block=$curif-in_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes_block,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_out_t_block=$curif-out_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes_block,IF,$seconds,*\" ";
 
+	$graphcmd .= "CDEF:\"$curif-bytes_in6_t_pass=$curif-in6_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-in6_bytes_pass,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out6_t_pass=$curif-out6_bytes_pass,0,$speedlimit,LIMIT,UN,0,$curif-out6_bytes_pass,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in6_t_block=$curif-in6_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-in6_bytes_block,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out6_t_block=$curif-out6_bytes_block,0,$speedlimit,LIMIT,UN,0,$curif-out6_bytes_block,IF,$seconds,*\" ";
+
 	$graphcmd .= "CDEF:\"$curif-bytes_t_pass=$curif-bytes_in_t_pass,$curif-bytes_out_t_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t_block=$curif-bytes_in_t_block,$curif-bytes_out_t_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_in_t_pass,$curif-bytes_out_t_block,+\" ";
 
+	$graphcmd .= "CDEF:\"$curif-bytes_t_pass6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_pass,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_t_block6=$curif-bytes_in6_t_block,$curif-bytes_out6_t_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_t6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_block,+\" ";
 	$graphcmd .= "VDEF:\"$curif-in_bits_95=$curif-in_bits,95,PERCENT\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_mul=$curif-out_bits,$multiplier,*\" ";
 	$perc = $multiplier > 0 ? "95" : "5";
@@ -324,15 +359,20 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 
 	$graphcmd .= "AREA:\"$curif-in_bits_block#{$colortrafficdown[1]}:$curif-in-block\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits_pass#{$colortrafficdown[0]}:$curif-in-pass:STACK\" ";
+	$graphcmd .= "AREA:\"$curif-in6_bits_block#{$colortrafficdown[3]}:$curif-in6-block:STACK\" ";
+	$graphcmd .= "AREA:\"$curif-in6_bits_pass#{$colortrafficdown[2]}:$curif-in6-pass:STACK\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_block_neg#{$colortrafficup[1]}:$curif-out-block\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-pass:STACK\" ";
+	$graphcmd .= "{$AREA}:\"$curif-out6_bits_block_neg#{$colortrafficup[3]}:$curif-out6-block:STACK\" ";
+	$graphcmd .= "{$AREA}:\"$curif-out6_bits_pass_neg#{$colortrafficup[2]}:$curif-out6-pass:STACK\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "HRULE:\"$curif-in_bits_95#{$colortraffic95[1]}:$curif-in (95%)\" ";
 	$graphcmd .= "HRULE:\"$curif-out_bits_95#{$colortraffic95[0]}:$curif-out (95%)\" ";
-
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period        95th percentile\\n\" ";
-
-	$graphcmd .= "COMMENT:\"in-pass\t\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t maximum\t    average\t\t current\t    period\t   95th percentile\\n\" ";
+	$graphcmd .= "COMMENT:\"IPv4 in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:LAST:%7.2lf %Sb/s\" ";
@@ -340,24 +380,49 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"$curif-in_bits_95:%7.2lf %sb/s\" ";
 
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"out-pass\t\" ";
+	$graphcmd .= "COMMENT:\"IPv4 out-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_pass:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_out_t_pass:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_95:%7.2lf %sb/s\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"in-block\t\" ";
+	$graphcmd .= "COMMENT:\"IPv4 in-block\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_block:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_block:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_in_t_block:AVERAGE:%7.2lf %sB i\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"out-block\t\" ";
+	$graphcmd .= "COMMENT:\"IPv4 out-block\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_block:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_block:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_out_t_block:AVERAGE:%7.2lf %sB o\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"IPv6 in-pass\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_pass:MAX:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_pass:LAST:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-bytes_in6_t_pass:AVERAGE:%7.2lf %sB i\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"IPv6 out-pass\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_pass:MAX:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_pass:LAST:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-bytes_out6_t_pass:AVERAGE:%7.2lf %sB o\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"IPv6 in-block\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_block:MAX:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_block:AVERAGE:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_bits_block:LAST:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-bytes_in6_t_block:AVERAGE:%7.2lf %sB i\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"IPv6 out-block\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_block:MAX:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_block:AVERAGE:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_bits_block:LAST:%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-bytes_out6_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
@@ -502,36 +567,67 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "DEF:\"$curif-in_pps_block=$rrddbpath$curdatabase:inblock:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-out_pps_block=$rrddbpath$curdatabase:outblock:AVERAGE\" ";
 
+	$graphcmd .= "DEF:\"$curif-in6_pps_pass=$rrddbpath$curdatabase:inpass6:AVERAGE\" ";
+	$graphcmd .= "DEF:\"$curif-out6_pps_pass=$rrddbpath$curdatabase:outpass6:AVERAGE\" ";
+	$graphcmd .= "DEF:\"$curif-in6_pps_block=$rrddbpath$curdatabase:inblock6:AVERAGE\" ";
+	$graphcmd .= "DEF:\"$curif-out6_pps_block=$rrddbpath$curdatabase:outblock6:AVERAGE\" ";
+
 	$graphcmd .= "CDEF:\"$curif-in_pps=$curif-in_pps_pass,$curif-in_pps_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps=$curif-out_pps_pass,$curif-out_pps_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps_pass_neg=$curif-out_pps_pass,$multiplier,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps_block_neg=$curif-out_pps_block,$multiplier,*\" ";
+
+	$graphcmd .= "CDEF:\"$curif-in6_pps=$curif-in6_pps_pass,$curif-in6_pps_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_pps=$curif-out6_pps_pass,$curif-out6_pps_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_pps_pass_neg=$curif-out6_pps_pass,$multiplier,*\" ";
+	$graphcmd .= "CDEF:\"$curif-out6_pps_block_neg=$curif-out6_pps_block,$multiplier,*\" ";
 
 	$graphcmd .= "CDEF:\"$curif-pps_in_pass=$curif-in_pps_pass,0,12500000,LIMIT,UN,0,$curif-in_pps_pass,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_out_pass=$curif-out_pps_pass,0,12500000,LIMIT,UN,0,$curif-out_pps_pass,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_in_block=$curif-in_pps_block,0,12500000,LIMIT,UN,0,$curif-in_pps_block,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_out_block=$curif-out_pps_block,0,12500000,LIMIT,UN,0,$curif-out_pps_block,IF,$average,*\" ";
 
+	$graphcmd .= "CDEF:\"$curif-pps_in6_pass=$curif-in6_pps_pass,0,12500000,LIMIT,UN,0,$curif-in6_pps_pass,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out6_pass=$curif-out6_pps_pass,0,12500000,LIMIT,UN,0,$curif-out6_pps_pass,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in6_block=$curif-in6_pps_block,0,12500000,LIMIT,UN,0,$curif-in6_pps_block,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out6_block=$curif-out6_pps_block,0,12500000,LIMIT,UN,0,$curif-out6_pps_block,IF,$average,*\" ";
+
 	$graphcmd .= "CDEF:\"$curif-pps_io=$curif-in_pps,$curif-out_pps,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_pass=$curif-pps_in_pass,$curif-pps_out_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_block=$curif-pps_in_block,$curif-pps_out_block,+\" ";
+
+	$graphcmd .= "CDEF:\"$curif-pps_io6=$curif-in6_pps,$curif-out6_pps,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_pass6=$curif-pps_in6_pass,$curif-pps_out6_pass,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_block6=$curif-pps_in6_block,$curif-pps_out6_block,+\" ";
 
 	$graphcmd .= "CDEF:\"$curif-pps_in_t_pass=$curif-in_pps_pass,0,12500000,LIMIT,UN,0,$curif-in_pps_pass,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_out_t_pass=$curif-out_pps_pass,0,12500000,LIMIT,UN,0,$curif-out_pps_pass,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_in_t_block=$curif-in_pps_block,0,12500000,LIMIT,UN,0,$curif-in_pps_block,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_out_t_block=$curif-out_pps_block,0,12500000,LIMIT,UN,0,$curif-out_pps_block,IF,$seconds,*\" ";
 
+	$graphcmd .= "CDEF:\"$curif-pps_in6_t_pass=$curif-in6_pps_pass,0,12500000,LIMIT,UN,0,$curif-in6_pps_pass,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out6_t_pass=$curif-out6_pps_pass,0,12500000,LIMIT,UN,0,$curif-out6_pps_pass,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in6_t_block=$curif-in6_pps_block,0,12500000,LIMIT,UN,0,$curif-in6_pps_block,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out6_t_block=$curif-out6_pps_block,0,12500000,LIMIT,UN,0,$curif-out6_pps_block,IF,$seconds,*\" ";
+
 	$graphcmd .= "CDEF:\"$curif-pps_t_pass=$curif-pps_in_t_pass,$curif-pps_out_t_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_t_block=$curif-pps_in_t_block,$curif-pps_out_t_block,+\" ";
 
+	$graphcmd .= "CDEF:\"$curif-pps_t_pass6=$curif-pps_in6_t_pass,$curif-pps_out6_t_pass,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_t_block6=$curif-pps_in6_t_block,$curif-pps_out6_t_block,+\" ";
+
 	$graphcmd .= "AREA:\"$curif-in_pps_block#{$colorpacketsdown[1]}:$curif-in-block\" ";
 	$graphcmd .= "AREA:\"$curif-in_pps_pass#{$colorpacketsdown[0]}:$curif-in-pass:STACK\" ";
-
+	$graphcmd .= "AREA:\"$curif-in6_pps_block#{$colorpacketsdown[3]}:$curif-in6-block:STACK\" ";
+	$graphcmd .= "AREA:\"$curif-in6_pps_pass#{$colorpacketsdown[2]}:$curif-in6-pass:STACK\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_block_neg#{$colorpacketsup[1]}:$curif-out-block\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_pass_neg#{$colorpacketsup[0]}:$curif-out-pass:STACK\" ";
+	$graphcmd .= "$AREA:\"$curif-out6_pps_block_neg#{$colorpacketsup[3]}:$curif-out6-block:STACK\" ";
+	$graphcmd .= "$AREA:\"$curif-out6_pps_pass_neg#{$colorpacketsup[2]}:$curif-out6-pass:STACK\" ";
 
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t  maximum\t\t average\t     current\t    period\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:MAX:%7.2lf %s pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:AVERAGE:%7.2lf %S pps\" ";
@@ -555,6 +651,32 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:AVERAGE:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-out_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_out_t_block:AVERAGE:%7.2lf %s pkts\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"in-pass6\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_pass:MAX:%7.2lf %s pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_pass:AVERAGE:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_pass:LAST:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pps_in6_t_pass:AVERAGE:%7.2lf %s pkts\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"out-pass6\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_pass:MAX:%7.2lf %s pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_pass:AVERAGE:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_pass:LAST:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pps_out6_t_pass:AVERAGE:%7.2lf %s pkts\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"in-block6\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_block:MAX:%7.2lf %s pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_block:AVERAGE:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-in6_pps_block:LAST:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pps_in6_t_block:AVERAGE:%7.2lf %s pkts\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"out-pass6\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_block:MAX:%7.2lf %s pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_block:AVERAGE:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-out6_pps_block:LAST:%7.2lf %S pps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pps_out6_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
@@ -975,7 +1097,7 @@ else {
 
 /* check modification time to see if we need to generate image */
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
-	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 5 ) {
+	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
 		if($data)
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;

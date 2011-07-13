@@ -104,7 +104,12 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
-	$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
+	if(is_ipaddrv6($_POST['network'])) {
+		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
+	}
+	if(is_ipaddrv4($_POST['network'])) {
+		$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
+	}
 	foreach ($a_routes as $route) {
 		if (isset($id) && ($a_routes[$id]) && ($a_routes[$id] === $route))
 			continue;
@@ -168,7 +173,7 @@ include("head.inc");
                     <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
                     <select name="network_subnet" class="formselect" id="network_subnet">
-                      <?php for ($i = 32; $i >= 1; $i--): ?>
+                      <?php for ($i = 128; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

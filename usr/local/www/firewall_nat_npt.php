@@ -1,10 +1,10 @@
 <?php
 /* $Id$ */
 /*
-	firewall_nat_1to1.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	firewall_nat_npt.php
+	part of pfSense (http://pfsense.org)
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-firewall-nat-1-1
-##|*NAME=Firewall: NAT: 1:1 page
-##|*DESCR=Allow access to the 'Firewall: NAT: 1:1' page.
-##|*MATCH=firewall_nat_1to1.php*
+##|*IDENT=page-firewall-nat-npt
+##|*NAME=Firewall: NAT: NPT page
+##|*DESCR=Allow access to the 'Firewall: NAT: NPT' page.
+##|*MATCH=firewall_nat_npt.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -44,10 +44,10 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['onetoone'])) {
-	$config['nat']['onetoone'] = array();
+if (!is_array($config['nat']['npt'])) {
+	$config['nat']['npt'] = array();
 }
-$a_1to1 = &$config['nat']['onetoone'];
+$a_npt = &$config['nat']['npt'];
 
 if ($_POST) {
 
@@ -66,22 +66,22 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_1to1[$_GET['id']]) {
-		unset($a_1to1[$_GET['id']]);
+	if ($a_npt[$_GET['id']]) {
+		unset($a_npt[$_GET['id']]);
 		write_config();
 		mark_subsystem_dirty('natconf');
-		header("Location: firewall_nat_1to1.php");
+		header("Location: firewall_nat_npt.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"));
+$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"));
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="firewall_nat_1to1.php" method="post">
+<form action="firewall_nat_npt.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
@@ -90,9 +90,9 @@ include("head.inc");
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
-	$tab_array[] = array(gettext("1:1"), true, "firewall_nat_1to1.php");
+	$tab_array[] = array(gettext("1:1"), false, "firewall_nat_1to1.php");
 	$tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
-	$tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
+	$tab_array[] = array(gettext("NPt"), true, "firewall_nat_npt.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -102,15 +102,14 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
 		  <td width="10%" class="listhdrr"><?=gettext("Interface"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("External IP"); ?></td>
-                  <td width="15%" class="listhdrr"><?=gettext("Internal IP"); ?></td>
-                  <td width="15%" class="listhdrr"><?=gettext("Destination IP"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("External Prefix"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Internal prefix"); ?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_npt_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
                       </tr>
                     </table>
 		  </td>
@@ -118,14 +117,14 @@ include("head.inc");
 	  <?php 
 			$textse = "</span>";
 
-			$i = 0; foreach ($a_1to1 as $natent):
+			$i = 0; foreach ($a_npt as $natent):
 
 			if (isset($natent['disabled']))
 				$textss = "<span class=\"gray\">";
 			else
 				$textss = "<span>"; ?>
                 <tr>
-		  <td class="listlr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+		  <td class="listlr" ondblclick="document.location='firewall_nat_npt_edit.php?id=<?=$i;?>';">
                   <?php
 			echo $textss;
 					if (!$natent['interface'])
@@ -135,20 +134,19 @@ include("head.inc");
 			echo $textse;
 				  ?>
                   </td>
-                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <?php 
 			$source_net = pprint_address($natent['source']);
 			$source_cidr = strstr($source_net, '/');
-			echo $textss . $natent['external'] . $source_cidr . $textse;
+			$destination_net = pprint_address($natent['destination']);
+			$destination_cidr = strstr($destination_net, '/');
                     ?>
+                  <td class="listr" ondblclick="document.location='firewall_nat_npt_edit.php?id=<?=$i;?>';">
+                    <?php 		echo $textss . $destination_net . $textse; ?>
                   </td>
-                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+                  <td class="listr" ondblclick="document.location='firewall_nat_npt_edit.php?id=<?=$i;?>';">
                     <?php 		echo $textss . $source_net . $textse; ?>
                   </td>
-                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <?php 		echo $textss . pprint_address($natent['destination']) . $textse; ?>
-                  </td>
-                  <td class="listbg" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
+                  <td class="listbg" ondblclick="document.location='firewall_nat_npt_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
 			<?=$textse;?>
@@ -156,32 +154,24 @@ include("head.inc");
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
-			<td valign="middle"><a href="firewall_nat_1to1.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_npt_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
+			<td valign="middle"><a href="firewall_nat_npt.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>"></a></td>
                       </tr>
                     </table>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="5"></td>
+                  <td class="list" colspan="4"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_npt_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-		<tr>
-		  <td colspan="4">
-		        <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br>
-                      </strong></span><?=gettext("Depending on the way your WAN connection is setup, you may also need a"); ?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP."); ?></a><br/>
-			<?=gettext("If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if " .
-			"you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) using the WAN IP address will no longer function."); ?></span></p>
-		  </td>
-		<tr>
               </table>
 	    </div>
 	</td>

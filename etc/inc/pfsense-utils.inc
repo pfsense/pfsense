@@ -1037,15 +1037,26 @@ function is_dhcp_server_enabled()
 
 	$dhcpdenable = false;
 	
-	if (!is_array($config['dhcpd']))
+	if ((!is_array($config['dhcpd'])) && (!is_array($config['dhcpdv6'])))
 		return false;
 
 	$Iflist = get_configured_interface_list();
 
-	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-		if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
-			$dhcpdenable = true;
-			break;
+	if(is_array($config['dhcpd'])) {
+		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+			if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
+				$dhcpdenable = true;
+				break;
+			}
+		}
+	}
+
+	if(is_array($config['dhcpdv6'])) {
+		foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+			if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if])) {
+				$dhcpdenable = true;
+				break;
+			}
 		}
 	}
 
@@ -1123,11 +1134,13 @@ function get_interface_info($ifdescr) {
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
+	$ifinfo['ipaddrv6'] = get_interface_ipv6($ifdescr);
+	$ifinfo['subnetv6'] = get_interface_subnetv6($ifdescr);
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
 	$ifinfotmp = pfSense_get_interface_stats($chkif);
-        $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
-        $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
+        // $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
+        // $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
         $ifinfo['inerrs'] = $ifinfotmp['inerrs'];
         $ifinfo['outerrs'] = $ifinfotmp['outerrs'];
         $ifinfo['collisions'] = $ifinfotmp['collisions'];
@@ -1137,31 +1150,43 @@ function get_interface_info($ifdescr) {
 	exec("/sbin/pfctl -vvsI -i {$chkif}", $pfctlstats);
 	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
 	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
+	$pf_in6_pass = preg_split("/ +/ ", $pfctlstats[7]);
+	$pf_out6_pass = preg_split("/ +/", $pfctlstats[9]);
 	$in4_pass = $pf_in4_pass[5];
 	$out4_pass = $pf_out4_pass[5];
 	$in4_pass_packets = $pf_in4_pass[3];
 	$out4_pass_packets = $pf_out4_pass[3];
-	$ifinfo['inbytespass'] = $in4_pass;
-	$ifinfo['outbytespass'] = $out4_pass;
-	$ifinfo['inpktspass'] = $in4_pass_packets;
-	$ifinfo['outpktspass'] = $out4_pass_packets;
+	$in6_pass = $pf_in6_pass[5];
+	$out6_pass = $pf_out6_pass[5];
+	$in6_pass_packets = $pf_in6_pass[3];
+	$out6_pass_packets = $pf_out6_pass[3];
+	$ifinfo['inbytespass'] = $in4_pass + $in6_pass;
+	$ifinfo['outbytespass'] = $out4_pass + $out6_pass;
+	$ifinfo['inpktspass'] = $in4_pass_packets + $in6_pass_packets;
+	$ifinfo['outpktspass'] = $out4_pass_packets + $in6_pass_packets;
 
 	/* Block */
 	$pf_in4_block = preg_split("/ +/", $pfctlstats[4]);
 	$pf_out4_block = preg_split("/ +/", $pfctlstats[6]);
+	$pf_in6_block = preg_split("/ +/", $pfctlstats[8]);
+	$pf_out6_block = preg_split("/ +/", $pfctlstats[10]);
 	$in4_block = $pf_in4_block[5];
 	$out4_block = $pf_out4_block[5];
 	$in4_block_packets = $pf_in4_block[3];
 	$out4_block_packets = $pf_out4_block[3];
-	$ifinfo['inbytesblock'] = $in4_block;
-	$ifinfo['outbytesblock'] = $out4_block;
-	$ifinfo['inpktsblock'] = $in4_block_packets;
-	$ifinfo['outpktsblock'] = $out4_block_packets;
+	$in6_block = $pf_in6_block[5];
+	$out6_block = $pf_out6_block[5];
+	$in6_block_packets = $pf_in6_block[3];
+	$out6_block_packets = $pf_out6_block[3];
+	$ifinfo['inbytesblock'] = $in4_block + $in6_block;
+	$ifinfo['outbytesblock'] = $out4_block + $out6_block;
+	$ifinfo['inpktsblock'] = $in4_block_packets + $in6_block_packets;
+	$ifinfo['outpktsblock'] = $out4_block_packets + $out6_block_packets;
 
-	$ifinfo['inbytes'] = $in4_pass + $in4_block;
-	$ifinfo['outbytes'] = $out4_pass + $out4_block;
-	$ifinfo['inpkts'] = $in4_pass_packets + $in4_block_packets;
-	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
+	$ifinfo['inbytes'] = $in4_pass + $in6_pass;
+	$ifinfo['outbytes'] = $out4_pass + $out6_pass;
+	$ifinfo['inpkts'] = $in4_pass_packets + $in6_pass_packets;
+	$ifinfo['outpkts'] = $in4_pass_packets + $out6_pass_packets;
 		
 	$ifconfiginfo = "";
 	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];
@@ -1275,8 +1300,10 @@ function get_interface_info($ifdescr) {
 
 		}
 		/* lookup the gateway */
-		if (interface_has_gateway($ifdescr)) 
+		if (interface_has_gateway($ifdescr)) {
 			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
+			$ifinfo['gatewayv6'] = get_interface_gateway_v6($ifdescr);
+		}
 	}
 
 	$bridge = "";
@@ -2179,6 +2206,37 @@ function filter_rules_compare($a, $b) {
 		return $a['seq'] - $b['seq'];
 	else
 		return compare_interface_friendly_names($a['interface'], $b['interface']);
+}
+
+function generate_ipv6_from_mac($mac) {
+	$elements = explode(":", $mac);
+	if(count($elements) <> 6)
+		return false;
+
+	$i = 0;
+	$ipv6 = "fe80::";
+	foreach($elements as $byte) {
+		if($i == 0) {
+			$hexadecimal =  substr($byte, 1, 2);
+			$bitmap = base_convert($hexadecimal, 16, 2);
+			$bitmap = str_pad($bitmap, 4, "0", STR_PAD_LEFT);
+			$bitmap = substr($bitmap, 0, 2) ."1". substr($bitmap, 3,4);
+			$byte = substr($byte, 0, 1) . base_convert($bitmap, 2, 16);
+		}
+		$ipv6 .= $byte;
+		if($i == 1) {
+			$ipv6 .= ":";
+		}
+		if($i == 3) {
+			$ipv6 .= ":";
+		}
+		if($i == 2) {
+			$ipv6 .= "ff:fe";
+		}
+		
+		$i++;
+	}	
+	return $ipv6;
 }
 
 /****f* pfsense-utils/load_mac_manufacturer_table

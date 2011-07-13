@@ -40,11 +40,21 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
-require_once("rrd.inc");
+require_once("IPv6.inc");
 
 // Do not process while booting
 if($g['booting']) 
 	exit;
+
+
+// echo print_r($_ENV, true);
+/*Array
+(
+    [REASON] => NBI
+    [new_domain_name_servers] => 2001:470:20::2
+    [new_domain_name] => domain.nl.
+)
+*/
 
 function restart_packages() {
 	global $oldip, $curwanipi, $g;
@@ -52,30 +62,27 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure();
 	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
-	send_event("service reload packages");
+	mwexec_bg("/etc/rc.start_packages");
 }
 
-/* Interface IP address has changed */
-$argument = str_replace("\n", "", $argv[1]);
+log_error("rc.newwanipv6: Informational is starting.");
 
-log_error("rc.newwanip: Informational is starting {$argument}.");
+$curwanip = get_interface_ipv6();
+$interface = "wan";
+$interface_real = get_real_interface();
 
-if(empty($argument)) {
-    $curwanip = get_interface_ip();
-    $interface = "wan";
-    $interface_real = get_real_interface();
-} else {
-        $interface = convert_real_interface_to_friendly_interface_name($argument);
-        $interface_real = $argument;
-        $curwanip = find_interface_ip($interface_real, true);
-        if($curwanip == "")
-                $curwanip = get_interface_ip($interface);
+if(is_ipaddr(trim($_ENV['new_domain_name_servers']))) {
+	echo "DNS {$_ENV['new_domain_name_servers']}\n";
+	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", trim($_ENV['new_domain_name_servers']));
+}
+if(!empty($_ENV['new_domain_name'])) {
+	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 }
 
-log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
+log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
-if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
-        log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
+if($curwanipv6 == "" || !is_ipaddrv6($curwanipv6)) {
+        log_error("rc.newwanipv6: Failed to update {$interface} IP, restarting...");
 	send_event("interface reconfigure {$interface}");
         exit;
 }
@@ -86,48 +93,22 @@ if (empty($interface)) {
 	exit;
 }
 
-$oldip = "0.0.0.0";
-if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
-	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
-
-/* regenerate resolv.conf if DNS overrides are allowed */
-system_resolvconf_generate(true);
-
-/* write current WAN IP to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
-
-unset($gre);
-$gre = link_interface_to_gre($interface);
-if (!empty($gre))
-	array_walk($gre, 'interface_gre_configure');
-unset($gif);
-$gif = link_interface_to_gif($interface);
-if (!empty($gif))
-	array_walk($gif, 'interface_gif_configure');
+$oldip = "";
+if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
+	$oldipv6 = file_get_contents("{$g['vardb_path']}/{$interface}_cacheipv6");
 
 $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');
 
+/* regenerate resolv.conf if DNS overrides are allowed */
+system_resolvconf_generate(true);
+
+/* write current WAN IP to file */
+file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
-
-/* Check Gif tunnels */
-foreach($config['gifs']['gif'] as $gif) {
-	if($gif['if'] == $interface) {
-		foreach($config['interfaces'] as $ifname => $ifparent) {
-			// echo "interface $ifparent, ifname $ifname, gif {$gif['gifif']}\n";
-			if(($ifparent['if'] == $gif['gifif']) && (isset($ifparent['enable']))) {
-				// echo "Running routing configure for $ifname\n";
-				$gif['gifif'] = interface_gif_configure($gif);
-				$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
-				if ($confif <> "")
-					interface_configure($confif);
-				system_routing_configure($ifname);
-			}
-		}
-	}
-}
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
@@ -135,7 +116,7 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
-if (is_ipaddr($oldip) && $curwanip == $oldip) {
+if (is_ipaddr($oldipv6) && $curwanipv6 == $oldipv6) {
 	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
 	if (in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
 		/* reconfigure IPsec tunnels */
@@ -147,7 +128,7 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	exit;
 }
 
-file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);
@@ -169,5 +150,7 @@ enable_rrd_graphing();
 services_igmpproxy_configure();
 
 restart_packages();
+
+services_rtadvd_configure();
 
 ?>

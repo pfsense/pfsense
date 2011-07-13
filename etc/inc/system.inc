@@ -331,14 +331,20 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
+	/* configure gif interfaces for ipv6 tunnels */
+	// interfaces_gif_configure();
+
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;
+	$gatewayipv6 = "";
+	$interfacegwv6 = "";
+	$foundgwv6 = false;
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw'])) {
+			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']))) {
 				if(strstr($gateway['gateway'], ":"))
 					break;
 				if ($gateway['gateway'] == "dynamic")
@@ -354,6 +360,21 @@ function system_routing_configure($interface = "") {
 				break;
 			}
 		}
+		foreach	($config['gateways']['gateway_item'] as $gateway) {
+			if (isset($gateway['defaultgw']) && (is_ipaddrv6($gateway['gateway']))) {
+				if ($gateway['gateway'] == "dynamic")
+					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+				$gatewayipv6 = $gateway['gateway'];
+				$interfacegwv6 = $gateway['interface'];
+				if (!empty($interfacegwv6)) {
+					$defaultifv6 = get_real_interface($gateway['interface']);
+					if ($defaultifv6)
+						@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gatewayipv6);
+				}
+				$foundgwv6 = true;
+				break;
+			}
+		}
 	}
 	if ($foundgw == false) {
 		$defaultif = get_real_interface("wan");
@@ -361,6 +382,12 @@ function system_routing_configure($interface = "") {
 		$gatewayip = get_interface_gateway("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
 	}	
+	if ($foundgwv6 == false) {
+		$defaultifv6 = get_real_interface("wan");
+		$interfacegwv6 = "wan";
+		$gatewayipv6 = get_interface_gateway_v6("wan");
+		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");
+	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd']) {
@@ -371,7 +398,7 @@ function system_routing_configure($interface = "") {
 			}
 		}
 	}
-	/* Create a array from the existing route table */
+	/* Create a array from the existing inet route table */
 	exec("/usr/bin/netstat -rnf inet", $route_str);
 	array_shift($route_str);
 	array_shift($route_str);
@@ -386,13 +413,38 @@ function system_routing_configure($interface = "") {
 	if ($dont_add_route == false ) {
 		if (!empty($interface) && $interface != $interfacegw)
 			;
-		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+		else if (($interfacegw <> "bgpd") && (is_ipaddrv4($gatewayip))) {
 			$action = "add";
 			if(isset($route_arr['default'])) {
 				$action = "change";
 			}
 			log_error("ROUTING: $action default route to $gatewayip");
 			mwexec("/sbin/route {$action} -inet default " . escapeshellarg($gatewayip));
+		}
+	}
+
+	/* Create a array from the existing inet6 route table */
+	exec("/usr/bin/netstat -rnf inet6", $routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	array_shift($routev6_str);
+	$routev6_arr = array();
+	foreach($routev6_str as $routeline) {
+		$items = preg_split("/[ ]+/i", $routeline);
+		$routev6_arr[$items[0]] = array($items[0], $items[1], $items[5]);
+	}
+
+	if ($dont_add_route == false ) {
+		if (!empty($interface) && $interface != $interfacegwv6)
+			;
+		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
+			$action = "add";
+			if(isset($routev6_arr['default'])) {
+				$action = "change";
+			}
+			log_error("ROUTING: $action IPv6 default route to $gatewayipv6");
+			mwexec("/sbin/route {$action} -inet6 default " . escapeshellarg($gatewayipv6));
 		}
 	}
 
@@ -408,17 +460,23 @@ function system_routing_configure($interface = "") {
 			$gateway = $gateways_arr[$rtent['gateway']];
 			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
+
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 			$action = "add";
 			if (isset($route_arr[$rtent['network']]))
 				$action = "change";
 
+			if(is_ipaddrv6($gatewayip)) {
+				$inetfamily = "-inet6";
+			} else {
+				$inetfamily = "-inet";
+			}
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} {$inetfamily} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route {$action} {$inetfamily} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}
@@ -434,7 +492,9 @@ function system_routing_enable() {
 		echo "system_routing_enable() being called $mt\n";
 	}
 
-	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
+	mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
+	mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
+	return;
 }
 
 function system_syslogd_start() {
@@ -925,13 +985,14 @@ EOD;
 ## FreeBSD!
 server.event-handler	= "freebsd-kqueue"
 server.network-backend 	= "writev"
+#server.use-ipv6 = "enable"
 
 ## modules to load
 server.modules              =   (
-									{$captive_portal_module}
-									"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
-									{$module}{$captiveportal}
-								)
+	{$captive_portal_module}
+	"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
+	{$module}{$captiveportal}
+)
 
 ## Unused modules
 #                               "mod_setenv",
@@ -1038,7 +1099,41 @@ url.access-deny             = ( "~", ".inc" )
 ######### Options that are good to be but not neccesary to be changed #######
 
 ## bind to port (default: 80)
-server.port                = {$lighty_port}
+
+EOD;
+
+	if($captive_portal == true) {
+		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
+		$lighty_config .= "server.port  = {$lighty_port}\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"127.0.0.1:{$lighty_port}\" { }\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:{$lighty_port}\" { \n";
+		if($cert <> "" and $key <> "") {
+			$lighty_config .= "\n";
+			$lighty_config .= "## ssl configuration\n";
+			$lighty_config .= "ssl.engine = \"enable\"\n";
+			$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
+			if($ca <> "")
+				$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
+		}
+		$lighty_config .= " }\n";
+	} else {
+		$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
+		$lighty_config .= "server.port  = {$lighty_port}\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:{$lighty_port}\" { \n";
+		if($cert <> "" and $key <> "") {
+			$lighty_config .= "\n";
+			$lighty_config .= "## ssl configuration\n";
+			$lighty_config .= "ssl.engine = \"enable\"\n";
+			$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
+			if($ca <> "")
+				$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
+		}
+		$lighty_config .= " }\n";
+	}
+
+
+	$lighty_config .= <<<EOD
 
 ## error-handler for status 404
 #server.error-handler-404   = "/error-handler.html"

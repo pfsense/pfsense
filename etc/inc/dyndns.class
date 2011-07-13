@@ -19,6 +19,7 @@
 	 *    - OpenDNS (opendns.com)
 	 *    - Namecheap (namecheap.com)
 	 *    - HE.net (dns.he.net)
+	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -51,6 +52,7 @@
 	 *  OpenDNS	   - Last Tested: 4 August 2008
 	 *  Namecheap	   - Last Tested: 31 August 2010
 	 *  HE.net         - Last Tested: NEVER
+	 *  HE.net Tunnel  - Last Tested: 28 June 2011
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -159,6 +161,9 @@
 				case 'namecheap':
 				case 'he-net':
 					$this->_update();	
+					break;
+				case 'he-net-tunnelbroker':
+					$this->_update();
 					break;
 				default:
 					$this->_error(6);
@@ -393,6 +398,14 @@
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsHost . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost);
+					break;
+				case 'he-net-tunnelbroker':
+					$needsIP = FALSE;
+					log_error("HE.net Tunnelbroker: DNS update() starting.");
+					$server = "https://ipv4.tunnelbroker.net/ipv4_end.php?";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . 'tid=' . $this->_dnsHost);
 					break;
 				default:
 					break;
@@ -737,6 +750,33 @@
 					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					        $successful_update = true;
 					} else if (preg_match('/nochg/i', $data)) {
+							$status = "phpDynDNS: (Success) No Change In IP Address.";
+							$successful_update = true;
+					} else {
+					        $status = "phpDynDNS: (Unknown Response)";
+					        log_error("phpDynDNS: PAYLOAD: {$data}");
+					        $this->_debug($data);
+					}
+					break;
+				case 'he-net-tunnelbroker':
+					/*
+					-ERROR: Missing parameter(s).
+					-ERROR: Invalid API key or password
+					-ERROR: Tunnel not found
+					-ERROR: Another tunnel exists for this IP.
+					-ERROR: This tunnel is already associated with this IP address
+					+OK: Tunnel endpoint updated to: x.x.x.x
+					*/
+					if (preg_match("/Missing parameter/i", $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - Missing/Invalid Parameters.";
+					} else if (preg_match('/Tunnel not found/i', $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - Invalid Tunnel ID.";
+					} else if (preg_match('/Invalid API key or password/i', $data)) {
+					        $status = "phpDynDNS: (Error) Invalid username or password.";
+					} else if (preg_match('/OK:/i', $data)) {
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					        $successful_update = true;
+					} else if (preg_match('/This tunnel is already associated with this IP address/i', $data)) {
 							$status = "phpDynDNS: (Success) No Change In IP Address.";
 							$successful_update = true;
 					} else {

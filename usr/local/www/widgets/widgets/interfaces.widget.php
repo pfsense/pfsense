@@ -71,52 +71,54 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				?>
 				</td>
 				<td width="60%"  class="listr">
-	                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
-	                 		<table>
-								<tr>
-									<td>
-										<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-									</td>
+	                 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+		                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
+							<td>
+								<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+							</td>
 		                <? } else if ($ifinfo['status'] == "no carrier") { ?>
-		                  	<table>
-								<tr>
-									<td>
-										<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-									</td>
-						<? }  else if ($ifinfo['status'] == "down") { ?>
-							<table>
-								<tr>
-									<td>
-										<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-									</td>
-									<td>
-										<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-									</td>
+							<td>
+								<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+							</td>
+				<? }  else if ($ifinfo['status'] == "down") { ?>
+							<td>
+								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+							</td>
+							<td>
+								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+							</td>
 		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
-								<td>
-									<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?>&nbsp; </div>
-								</td>
-								<td>
-									<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
-								</td>
-							</tr>
-						</table>
-		          </td></tr><?php 
-			}//end for each
-			?> 
+							<td>
+								<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+							</td>
+						</tr>
+					</table>
+					<table  width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="vncellt" width="45%">
+								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
+							</td>
+							<td class="vncellt" >
+								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
+							</td>
+						</tr>
+					</table>
+				<?php 	}//end for each ?> 
+		          </td></tr>
 			</table>

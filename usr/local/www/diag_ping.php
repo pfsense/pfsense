@@ -29,7 +29,7 @@
 */
 
 /*	
-	pfSense_BUILDER_BINARIES:	/sbin/ping
+	pfSense_BUILDER_BINARIES:	/sbin/ping /sbin/ping6
 	pfSense_MODULE:	routing
 */
 
@@ -130,6 +130,12 @@ include("head.inc"); ?>
 						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
 					else
 						system("/sbin/ping -c$count " . escapeshellarg($host));
+					$ifaddr = get_interface_ipv6($interface);
+					if ($ifaddr)
+						system("/sbin/ping6 -S$ifaddr -c$count " . escapeshellarg($host));
+					else
+						system("/sbin/ping6 -c$count " . escapeshellarg($host));
+					
 					echo('</pre>');
 				}
 				?>

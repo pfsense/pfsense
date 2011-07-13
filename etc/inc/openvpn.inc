@@ -328,20 +328,31 @@ function openvpn_reconfigure($mode, $settings) {
 
 	$interface = $settings['interface'];
 	$ipaddr = $settings['ipaddr'];
+	$ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it
 	// If "any" interface was selected, local directive will be ommited.
-	if (!empty($ipaddr)) {
+	if (is_ipaddrv4($ipaddr)) {
 		$iface_ip=$ipaddr;
+	} elseif (is_ipaddrv6($ipaddrv6)) {
+		$iface_ipv6=$ipaddrv6;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
+		}
+		if ((!empty($interface)) && (strcmp($interface, "any"))) {
+			$iface_ipv6=get_interface_ipv6($interface);
 		}
 	}
 
 	$conf  = "dev {$devname}\n";
 	$conf .= "dev-type {$settings['dev_mode']}\n";
+	switch($settings['dev_mode']) {
+		case "tun":
+			$conf .= "tun-ipv6\n";
+			break;
+	}
 	$conf .= "dev-node /dev/{$tunname}\n";
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";
@@ -357,8 +368,11 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 
-	if (!empty($iface_ip)) {
+	if (is_ipaddrv4($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	
+	}
+	if (is_ipaddrv6($iface_ipv6)) {
+		// $conf .= "local {$iface_ipv6}\n";	
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))
@@ -368,6 +382,7 @@ function openvpn_reconfigure($mode, $settings) {
 	if ($mode == 'server') {
 
 		list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+		list($ipv6, $prefix) = explode('/', $settings['tunnel_networkv6']);
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
@@ -400,6 +415,8 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_user':
 			case 'server_tls_user':
 				$conf .= "server {$ip} {$mask}\n";
+				if(is_ipaddr($ipv6))
+					$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 				break;
 		}
@@ -447,6 +464,10 @@ function openvpn_reconfigure($mode, $settings) {
 			list($ip, $mask) = explode('/', $settings['local_network']);
 			$mask = gen_subnet_mask($mask);
 			$conf .= "push \"route $ip $mask\"\n";
+		}
+		if ($settings['local_networkv6']) {
+			list($ipv6, $prefix) = explode('/', $settings['local_networkv6']);
+			$conf .= "push \"route-ipv6 $ipv6/$prefix\"\n";
 		}
 
 		switch($settings['mode']) {

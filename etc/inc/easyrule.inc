@@ -46,7 +46,7 @@ function easyrule_find_rule_interface($int) {
 	if ($config['pptpd']['mode'] == "server")
 		$iflist['pptp'] = "PPTP VPN";
 
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+	if ($config['pppoe']['mode'] == "server")
 		$iflist['pppoe'] = "PPPoE VPN";
 
 	if ($config['l2tp']['mode'] == "server")
@@ -230,7 +230,7 @@ function easyrule_block_host_add($host, $int = 'wan') {
 	}
 }
 
-function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
+function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
 	global $config;
 
 	/* No rules, start a new array */
@@ -245,7 +245,12 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
 	$filterent = array();
 	$filterent['type'] = 'pass';
 	$filterent['interface'] = $int;
+<<<<<<< HEAD
+	$filterent['ipprotocol'] = $ipproto;
+	$filterent['descr'] = "Easy Rule: Passed from Firewall Log View";
+=======
 	$filterent['descr'] = gettext("Easy Rule: Passed from Firewall Log View");
+>>>>>>> upstream/master
 
 	if ($proto != "any")
 		$filterent['protocol'] = $proto;
@@ -272,7 +277,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
 	}
 }
 
-function easyrule_parse_block($int, $src) {
+function easyrule_parse_block($int, $src, $ipproto) {
+	$filterent['ipprotocol'] = $ipproto;
 	if (!empty($src) && !empty($int)) {
 		if (!is_ipaddr($src)) {
 			return gettext("Tried to block invalid IP:") . ' ' . htmlspecialchars($src);
@@ -291,7 +297,7 @@ function easyrule_parse_block($int, $src) {
 	}
 	return gettext("Unknown block error.");
 }
-function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0) {
+function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = inet) {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;
 
@@ -320,7 +326,7 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0) {
 			$dstport = 0;
 		}
 		/* Should have valid input... */
-		if (easyrule_pass_rule_add($int, $proto, $src, $dst, $dstport)) {
+		if (easyrule_pass_rule_add($int, $proto, $src, $dst, $dstport, $ipproto)) {
 			return gettext("Successfully added pass rule!");
 		} else {
 			return gettext("Failed to add pass rule.");

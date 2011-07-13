@@ -120,8 +120,10 @@ $services_menu = array();
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
-if($g['services_dhcp_server_enable'])
+if($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
+	$services_menu[] = array(gettext("DHCPv6 Server"), "/services_dhcpv6.php");
+}
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
 $services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
@@ -155,6 +157,7 @@ $status_menu[] = array(gettext("CARP (failover)"), "/carp_status.php");
 $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
+$status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
 $status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/diag_ipsec.php");
@@ -190,6 +193,7 @@ $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
 $diagnostics_menu[] = array(gettext("Halt System"), "/halt.php" );
 $diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php" );
+$diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );
 
 $diagnostics_menu[] = array(gettext("Tables"), "/diag_tables.php");
 $diagnostics_menu[] = array(gettext("Ping"), "/diag_ping.php");

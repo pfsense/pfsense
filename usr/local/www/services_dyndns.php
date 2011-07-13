@@ -114,8 +114,8 @@ include("head.inc");
 		  </td>
                   <td class="listlr">
 				  <?php
-					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net");
-					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net");
+					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker");
+					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker");
 					$j = 0; for ($j = 0; $j < count($vals); $j++) 
                       			if ($vals[$j] == $dyndns['type']) { 
                       				echo htmlspecialchars($types[$j]);

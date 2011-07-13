@@ -284,7 +284,7 @@ include("head.inc");
 							?>
 							<tr>
 								<td>
-									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
+									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo $pconfig['dns'.$dnscounter];?>">
 								</td>
 								<td>
 <?php if ($multiwan): ?>

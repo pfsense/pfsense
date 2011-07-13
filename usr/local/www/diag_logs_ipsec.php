@@ -62,7 +62,7 @@ if(is_array($config['ipsec']['phase1']))
 		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
 	}
 /* collect all our own ip addresses */
-exec("/sbin/ifconfig | /usr/bin/awk '/inet / {print $2}'", $ip_address_list);
+exec("/sbin/ifconfig | /usr/bin/awk '/inet/ {print $2}'", $ip_address_list);
 foreach($ip_address_list as $address) {
 	$search[] = "/(racoon: )(INFO[:].*?)({$address}\[[0-9].+\])/i";
 	$search[] = "/(racoon: )(\[{$address}\]|{$address})(.*)/i";
@@ -78,7 +78,6 @@ $replace[] = "$1 <strong>[Remote Side not responding]</strong>";
 $replace[] = "$1 <strong>[Check Phase 1 settings, lifetime, algorithm]</strong>";
 $replace[] = "$1 <strong>[Check Phase 2 settings, networks]</strong>";
 $replace[] = "$1 <strong>[Check Phase 2 settings, algorithm]</strong>";
-
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

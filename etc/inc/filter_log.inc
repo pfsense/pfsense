@@ -135,6 +135,8 @@ function parse_filter_line($line) {
 	 * boolean FALSE because it could return a valid answer of 0 upon success. */
 	if (!(strpos($details, 'proto ') === FALSE)) {
 		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
+	} elseif (!(strpos($details, 'next-header ') === FALSE)) {
+		preg_match("/.*\snext-header\s(.*)\s\(/", $details, $proto);
 	} elseif (!(strpos($details, 'proto: ') === FALSE)) {
 		preg_match("/.*\sproto\:(.*)\s\(/", $details, $proto);
 	} elseif (!(strpos($leftovers, 'sum ok] ') === FALSE)) {

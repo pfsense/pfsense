@@ -118,7 +118,7 @@ PHPMODULES="$PHPMODULES ssh2"
 PHPMODULES="$PHPMODULES pfSense"
 
 PHP_ZEND_MODULES=""
-PHP_ZEND_MODULES_TS=""
+PHP_ZEND_MODULES_TS="ioncube_loader"
 
 # Modules previously included.
 # can be turned on by touching

@@ -245,12 +245,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	$filterent = array();
 	$filterent['type'] = 'pass';
 	$filterent['interface'] = $int;
-<<<<<<< HEAD
 	$filterent['ipprotocol'] = $ipproto;
-	$filterent['descr'] = "Easy Rule: Passed from Firewall Log View";
-=======
 	$filterent['descr'] = gettext("Easy Rule: Passed from Firewall Log View");
->>>>>>> upstream/master
 
 	if ($proto != "any")
 		$filterent['protocol'] = $proto;

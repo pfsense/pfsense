@@ -638,6 +638,12 @@ EOD;
 EOD;
 
 }
+		if (isset($syslogcfg['zmqserver'])) {
+				$syslogconf .= <<<EOD
+*.*								^{$syslogcfg['zmqserver']}
+
+EOD;
+		}
 		fwrite($fd, $syslogconf);
 		fclose($fd);
 

@@ -562,6 +562,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);
+				crl_update($crl);
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {

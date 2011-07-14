@@ -553,7 +553,7 @@ function install_package($package, $pkg_info = "") {
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
 		download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto);
 		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
-			pkg_debug(gettext("ERROR! Unable to fetch package configuration file. Aborting installation.") . \n");
+			pkg_debug(gettext("ERROR! Unable to fetch package configuration file. Aborting installation.") . "\n");
 			if($pkg_interface == "console")
 				print "\n" . gettext("ERROR! Unable to fetch package configuration file. Aborting package installation.") . "\n";
 			else {

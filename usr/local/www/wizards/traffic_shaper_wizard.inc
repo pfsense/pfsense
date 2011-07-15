@@ -783,7 +783,7 @@ function apply_all_choosen_items() {
                                                 $tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					}
 					$tmpcf['default'] = "on";				
-					
+					$tmpcf['qlimit'] = 500;
 				} else {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
@@ -1056,6 +1056,7 @@ function apply_all_choosen_items() {
 			$tmpcf['priority'] = 1;
 			$tmpcf['enabled'] = "on";
 			$tmpcf['default'] = "on";
+			$tmpcf['qlimit'] = 500;
 			$tmpcf['ecn'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";

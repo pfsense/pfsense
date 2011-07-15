@@ -56,7 +56,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
-    $nas_port = $ruleno;
+    $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
 
     switch($radiusvendor) {
@@ -171,7 +171,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
-    $nas_port = $ruleno;
+    $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;
     $session_time = $stop_time - $start_time;
@@ -233,7 +233,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     // Default attributes
     $racct->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
     $racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
-    $racct->putAttribute(RADIUS_NAS_PORT, $nas_port);
+    $racct->putAttribute(RADIUS_NAS_PORT, $nas_port, 'integer');
     $racct->putAttribute(RADIUS_ACCT_SESSION_ID, $sessionid);
 
     // Extra data to identify the client and nas

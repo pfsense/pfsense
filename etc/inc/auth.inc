@@ -620,8 +620,10 @@ function ldap_test_connection($authcfg) {
         if(!$ldapserver)
                 return false;
 
+        /* Setup CA environment if needed. */
+        ldap_setup_caenv($authcfg);
+
         /* connect and see if server is up */
-        putenv('LDAPTLS_REQCERT=never');
         $error = false;
         if (empty($ldapport)) {
                 if (!($ldap = ldap_connect($ldapserver)))
@@ -635,6 +637,34 @@ function ldap_test_connection($authcfg) {
         }
 
 	return true;
+}
+
+function ldap_setup_caenv($authcfg) {
+	global $g;
+
+	unset($caref);
+	if (empty($authcfg['ldap_cacert']) || !strstr($authcfg['ldap_urltype'], "SSL")) {
+		putenv('LDAPTLS_REQCERT=never');
+		return;
+	} else {
+		$caref = lookup_ca($authcfg['ldap_cacert']);
+		if (!$caref) {
+			log_error(sprintf(gettext("LDAP: Could not lookup CA by reference for host %s."), $authcfg['ldap_cacert']));
+			/* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
+			putenv('LDAPTLS_REQCERT=hard');
+			return;
+		}
+		if (!is_dir("{$g['varrun_path']}/certs"))
+			@mkdir("{$g['varrun_path']}/certs");
+		if (file_exists("{$g['varrun_path']}/certs/{$authcfg['name']}.ca"))
+			@unlink("{$g['varrun_path']}/certs/{$authcfg['name']}.ca");
+		file_put_contents("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", base64_decode($caref['crt']));
+		@chmod("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", 0600);
+		putenv('LDAPTLS_REQCERT=hard');
+		/* XXX: Probably even the hashed link should be created for this? */
+		putenv("TLS_CACERTDIR={$g['varrun_path']}/certs");
+		putenv("TLS_CACERT={$g['varrun_path']}/certs/{$authcfg['name']}.ca");
+	}
 }
 
 function ldap_test_bind($authcfg) {
@@ -662,8 +692,10 @@ function ldap_test_bind($authcfg) {
         if(!$ldapserver)
                 return false;
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
         /* connect and see if server is up */
-        putenv('LDAPTLS_REQCERT=never');
         $error = false;
         if (empty($ldapport)) {
                 if (!($ldap = ldap_connect($ldapserver)))
@@ -729,8 +761,10 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
                 return $ous;
         }
 
+	/* Setup CA environment if needed. */
+	ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
-        putenv('LDAPTLS_REQCERT=never');
         $error = false;
         if (empty($ldapport)) {
                 if (!($ldap = ldap_connect($ldapserver)))
@@ -840,8 +874,10 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapgroupattribute = strtolower($ldapgroupattribute);
 	$memberof = array();
 
+        /* Setup CA environment if needed. */
+        ldap_setup_caenv($authcfg);
+
 	/* connect and see if server is up */
-	putenv('LDAPTLS_REQCERT=never');
 	$error = false;
         if (empty($ldapport)) {
                 if (!($ldap = ldap_connect($ldapserver)))
@@ -960,8 +996,10 @@ function ldap_backed($username, $passwd, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
+        /* Setup CA environment if needed. */
+        ldap_setup_caenv($authcfg);
+
 	/* Make sure we can connect to LDAP */
-	putenv('LDAPTLS_REQCERT=never');
 	$error = false;
 	if (empty($ldapport)) {
 		if (!($ldap = ldap_connect($ldapserver)))

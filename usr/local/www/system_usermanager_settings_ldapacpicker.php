@@ -47,6 +47,7 @@ if($_GET) {
 	$authcfg['ldap_urltype'] = $_GET['urltype'];
 	$authcfg['ldap_protver'] = $_GET['proto'];
 	$authcfg['ldap_authcn'] = explode(";", $_GET['authcn']);
+	$authcfg['ldap_caref'] = $_GET['cert'];
 	$ous = ldap_get_user_ous(true, $authcfg);
 }
 

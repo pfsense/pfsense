@@ -1830,7 +1830,7 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
-	else if($rule['gateway'] <> "") {
+	else if($rule['gateway'] <> "" && $type == "pass") {
 		if (isset($GatewaysList[$rule['gateway']]))
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";

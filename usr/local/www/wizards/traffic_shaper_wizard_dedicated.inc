@@ -1107,32 +1107,34 @@ function apply_all_choosen_items() {
 			$remainbw = 100 - $remainbw;
 		}
 
-		if ($sched == "PRIQ")
-			$q =& new priq_queue();
-		else if ($sched == "CBQ")
-			$q =& new cbq_queue();
-		else if ($sched == "HFSC")
-			$q =& new hfsc_queue();
-		$tmpcf = array();
-		$tmpcf['name'] = "qLink";
-		$tmpcf['priority'] = 3;
-		$tmpcf['enabled'] = "on";
-		$tmpcf['default'] = "on";
-		$tmpcf['ecn'] = "on";
-		if ($sched == "CBQ") {
-			$tmpcf['borrow'] = "on";
-			$tmpcf['bandwidth'] = 20; /* 20% bandwidth */
-			$tmpcf['bandwidthtype'] = "%";
-		} else if ($sched == "HFSC") {
-			$tmpcf['bandwidth'] = 20; /* 20% bandwidth */
-			$tmpcf['bandwidthtype'] = "%";
+		if (!$p2pcatchall) {
+			if ($sched == "PRIQ")
+				$q =& new priq_queue();
+			else if ($sched == "CBQ")
+				$q =& new cbq_queue();
+			else if ($sched == "HFSC")
+				$q =& new hfsc_queue();
+			$tmpcf = array();
+			$tmpcf['name'] = "qLink";
+			$tmpcf['priority'] = 3;
+			$tmpcf['enabled'] = "on";
+			$tmpcf['default'] = "on";
+			$tmpcf['ecn'] = "on";
+			if ($sched == "CBQ") {
+				$tmpcf['borrow'] = "on";
+				$tmpcf['bandwidth'] = 20; /* 20% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			} else if ($sched == "HFSC") {
+				$tmpcf['bandwidth'] = 20; /* 20% bandwidth */
+				$tmpcf['bandwidthtype'] = "%";
+			}
+			array_push($tmppath, $tmpcf['name']);
+			$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+			array_pop($tmppath);
+			//echo "qDefault <br />";
+			//var_dump($input_errors);
+			$qtmp->wconfig();
 		}
-		array_push($tmppath, $tmpcf['name']);
-		$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
-		array_pop($tmppath);
-		//echo "qDefault <br />";
-		//var_dump($input_errors);
-		$qtmp->wconfig();
 
                 if ($sched != "PRIQ") {
                        if ($sched == "CBQ")
@@ -1219,7 +1221,7 @@ function apply_all_choosen_items() {
 					$tmpcf['bandwidth'] = $p2pcatchbw;
                                         $tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 				}
-				//$tmpcf['default'] = "on";				
+				$tmpcf['default'] = "on";				
 			} else {
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";

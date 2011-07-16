@@ -43,8 +43,11 @@ $pagetitle = gentitle( $pgtitle );
 		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
 		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all">
 		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
+		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";
+
+			jQuery.noConflict();
 		</script>
 		<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
 <?php

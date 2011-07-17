@@ -340,21 +340,27 @@ if($_REQUEST['undodrag']) {
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr id="frheader">
-                  <td width="3%" class="list">&nbsp;</td>
-                  <td width="5%" class="list">&nbsp;</td>
-                  <td width="3%" class="listhdrr"><?=gettext("ID");?></td>
-                  <td width="6%" class="listhdrr"><?=gettext("Proto");?></td>
-                  <td width="12%" class="listhdrr"><?=gettext("Source");?></td>
-                  <td width="6%" class="listhdrr"><?=gettext("Port");?></td>
-                  <td width="12%" class="listhdrr"><?=gettext("Destination");?></td>
-                  <td width="6%" class="listhdrr"><?=gettext("Port");?></td>
-		  <td width="5%" class="listhdrr"><?=gettext("Gateway");?></td>
-		  <td width="8%" class="listhdrr"><?=gettext("Queue");?></td>
-		  <td width="5%" class="listhdrr"><?=gettext("Schedule");?></td>
-                  <td width="19%" class="listhdr"><?=gettext("Description");?></td>
-                  <td width="10%" class="list">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr id="frheader">
+			<td width="3%" class="list">&nbsp;</td>
+			<td width="5%" class="list">&nbsp;</td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tablehead");
+?>
+			<td width="3%" class="listhdrr"><?=gettext("ID");?></td>
+			<td width="6%" class="listhdrr"><?=gettext("Proto");?></td>
+			<td width="12%" class="listhdrr"><?=gettext("Source");?></td>
+			<td width="6%" class="listhdrr"><?=gettext("Port");?></td>
+			<td width="12%" class="listhdrr"><?=gettext("Destination");?></td>
+			<td width="6%" class="listhdrr"><?=gettext("Port");?></td>
+			<td width="5%" class="listhdrr"><?=gettext("Gateway");?></td>
+			<td width="8%" class="listhdrr"><?=gettext("Queue");?></td>
+			<td width="5%" class="listhdrr"><?=gettext("Schedule");?></td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_schedule_tablehead");
+?>
+			<td width="19%" class="listhdr"><?=gettext("Description");?></td>
+			<td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
 				<?php
@@ -681,6 +687,7 @@ if($_REQUEST['undodrag']) {
 					 	$printicon = true;				  	
 					  }
 				}
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
 				?>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']; else echo ""; ?><?=$textse;?>
@@ -728,6 +735,9 @@ if($_REQUEST['undodrag']) {
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
                     <?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0"><?php } ?>&nbsp;<?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>
                   </td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_descr_tr");
+?>
                   <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" class="descr">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
                   </td>

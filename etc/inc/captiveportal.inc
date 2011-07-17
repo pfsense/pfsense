@@ -357,7 +357,7 @@ EOD;
 		captiveportal_init_radius_servers();
 
 		if ($g['booting'])
-			echo "done\n";
+			printf(gettext("done%s"), "\n");
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
@@ -1281,7 +1281,7 @@ function captiveportal_write_elements() {
 		foreach ($config['captiveportal']['element'] as $data) {
 			$fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
 			if (!$fd) {
-				printf("Error: cannot open '{$data['name']}' in captiveportal_write_elements().\n");
+				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
 			$decoded = base64_decode($data['content']);

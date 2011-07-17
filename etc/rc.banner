@@ -70,13 +70,19 @@
 			break;
 		}
 		$ipaddr = get_interface_ip($ifname);
+		$subnet = get_interface_subnet($ifname);
+		$ipaddr6 = get_interface_ipv6($ifname);
+		$subnet6 = get_interface_subnetv6($ifname);
 		$realif = get_real_interface($ifname);
 		$tobanner = "{$friendly} ({$ifname})";
 
-		printf("\n  %-25s -> %-10s -> %s %s",
+		printf("\n %-15s -> %-10s -> %s/%s\t%s/%s %s",
 			$tobanner,
 			$realif,
 			$ipaddr ? $ipaddr : "NONE",
+			$subnet ? $subnet : "NONE",
+			$ipaddr6 ? $ipaddr6 : "NONE",
+			$subnet6 ? $subnet6 : "NONE",
 			$class
 		);
 	}

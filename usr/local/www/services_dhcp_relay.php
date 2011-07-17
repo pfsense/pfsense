@@ -180,7 +180,7 @@ function enable_change(enable_over) {
                         <td width="78%" class="vtable">
                           <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
-			  <?=gettext("This is the IP address of the server to which the DHCP packet is relayed. You can enter multiple ip address server entries separated by commas. Select \"Proxy requests to DHCP server on WAN subnet\" to relay DHCP packets to the server that was used on the WAN interface.");?>
+			  <?=gettext("This is the IP address of the server to which DHCP requests are relayed. You can enter multiple server IP addresses, separated by commas. Select \"Proxy requests to DHCP server on WAN subnet\" to relay DHCP packets to the server that was used on the WAN interface.");?>
                         </td>
 		</tr>
 		<tr>

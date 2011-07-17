@@ -42,7 +42,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);
-		log_error("RRD dump failed exited with $dumpret, the error is: $dumpout");
+		log_error(sprintf(gettext('RRD dump failed exited with %1$s, the error is: %2$s'), $dumpret, $dumpout));
 	}
 	return($dumpret);
 }
@@ -53,7 +53,7 @@ function create_new_rrd($rrdcreatecmd) {
 	exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
-		log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput");
+		log_error(sprintf(gettext('RRD create failed exited with %1$s, the error is: %2$s'), $rrdcreatereturn, $rrdcreateoutput));
 	}
 	return $rrdcreatereturn;
 }
@@ -67,7 +67,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsnew = count($rrdnewxml['ds']);
-	log_error("Import RRD has $numdsold DS values and $numrraold RRA databases, new format RRD has $numdsnew DS values and $numrranew RRA databases");
+	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
 	
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
@@ -151,7 +151,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 
 	$numrranew = count($rrdoldxml['rra']);
 	$numdsnew = count($rrdoldxml['ds']);
-	log_error("The new RRD now has $numdsnew DS values and $numrranew RRA databases");
+	log_error(sprintf(gettext('The new RRD now has %1$s DS values and %2$s RRA databases'), $numdsnew, $numrranew));
 	return $rrdoldxml;
 }
 
@@ -159,7 +159,7 @@ function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
 	if($g['booting']) 
-		echo "Generating RRD graphs...";
+		echo gettext("Generating RRD graphs...");
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
@@ -244,7 +244,7 @@ function enable_rrd_graphing() {
 					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
 					$rrdrestore = implode(" ", $rrdrestore);
 					if($rrdreturn <> 0) {
-						log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+						log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s%3$s'), $rrdreturn, $rrdrestore, "\n"));
 					}
 				}
 			}
@@ -253,6 +253,7 @@ function enable_rrd_graphing() {
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
+		$rrdupdatesh .= "export TERM=dumb\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
 		$rrdupdatesh .= "do\n";
@@ -284,6 +285,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:outpass:COUNTER:$trafficvalid:0:$upstream ";
 				$rrdcreate .= "DS:inblock:COUNTER:$trafficvalid:0:$downstream ";
 				$rrdcreate .= "DS:outblock:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass6:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass6:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock6:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock6:COUNTER:$trafficvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -294,17 +299,16 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
-			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
-			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
-			$rrdupdatesh .= "unset BYTES \n";
-			$rrdupdatesh .= "BYTES=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$BYTES\n";
+			$rrdupdatesh .= "# polling traffic for interface $ifname $realif IPv4/IPv6 counters \n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '\\\n";
+			$rrdupdatesh .= "/In4\/Pass/ { b4pi = \$6 };/Out4\/Pass/ { b4po = \$6 };/In4\/Block/ { b4bi = \$6 };/Out4\/Block/ { b4bo = \$6 };\\\n";
+			$rrdupdatesh .= "/In6\/Pass/ { b6pi = \$6 };/Out6\/Pass/ { b6po = \$6 };/In6\/Block/ { b6bi = \$6 };/Out6\/Block/ { b6bo = \$6 };\\\n";
+			$rrdupdatesh .= "END {print b4pi \":\" b4po \":\" b4bi \":\" b4bo \":\" b6pi \":\" b6po \":\" b6bi \":\" b6bo};'`\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -313,6 +317,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:outpass:COUNTER:$packetsvalid:0:$upstream ";
 				$rrdcreate .= "DS:inblock:COUNTER:$packetsvalid:0:$downstream ";
 				$rrdcreate .= "DS:outblock:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass6:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass6:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock6:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock6:COUNTER:$packetsvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -323,16 +331,16 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
-			$rrdupdatesh .= "unset PACKETS \n";
-			$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\$PACKETS\n";
-			$rrdupdatesh .= "rm \$TMPFILE \n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:";
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '\\\n";
+			$rrdupdatesh .= "/In4\/Pass/ { b4pi = \$4 };/Out4\/Pass/ { b4po = \$4 };/In4\/Block/ { b4bi = \$4 };/Out4\/Block/ { b4bo = \$4 };\\\n";
+			$rrdupdatesh .= "/In6\/Pass/ { b6pi = \$4 };/Out6\/Pass/ { b6po = \$4 };/In6\/Block/ { b6bi = \$4 };/Out6\/Block/ { b6bo = \$4 };\\\n";
+			$rrdupdatesh .= "END {print b4pi \":\" b4po \":\" b4bi \":\" b4bo \":\" b6pi \":\" b6po \":\" b6bi \":\" b6bo};'`\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
@@ -747,7 +755,7 @@ function enable_rrd_graphing() {
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		log_error("Creating rrd update script");
+		log_error(gettext("Creating rrd update script"));
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
@@ -771,7 +779,7 @@ function enable_rrd_graphing() {
 	}
 
 	if($g['booting']) 
-		echo "done.\n";
+		echo gettext("done.") . "\n";
 		
 }
 

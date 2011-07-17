@@ -131,9 +131,11 @@ if($_GET['act']=="edit"){
 		$pconfig['engine'] = $a_server[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
+		$pconfig['tunnel_networkv6'] = $a_server[$id]['tunnel_networkv6'];
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
 		$pconfig['gwredir'] = $a_server[$id]['gwredir'];
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
+		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
 		$pconfig['passtos'] = $a_server[$id]['passtos'];
@@ -324,9 +326,11 @@ if ($_POST) {
 		$server['engine'] = $pconfig['engine'];
 
 		$server['tunnel_network'] = $pconfig['tunnel_network'];
+		$server['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['gwredir'] = $pconfig['gwredir'];
 		$server['local_network'] = $pconfig['local_network'];
+		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
 		$server['compression'] = $pconfig['compression'];
 		$server['passtos'] = $pconfig['passtos'];
@@ -942,13 +946,27 @@ if ($savemsg)
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Tunnel Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunnel Network"); ?></td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv4 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
 							<br>
-							<?=gettext("This is the virtual network used for private " .
+							<?=gettext("This is the IPv4 virtual network used for private " .
 							"communications between this server and client " .
 							"hosts expressed using CIDR (eg. 10.0.8.0/24). " .
+							"The first network address will be assigned to " .
+							"the	server virtual interface. The remaining " .
+							"network addresses can optionally be assigned " .
+							"to connecting clients. (see Address Pool)"); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 Tunnel Network"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>">
+							<br>
+							<?=gettext("This is the IPv6 virtual network used for private " .
+							"communications between this server and client " .
+							"hosts expressed using CIDR (eg. fe80::/64). " .
 							"The first network address will be assigned to " .
 							"the	server virtual interface. The remaining " .
 							"network addresses can optionally be assigned " .
@@ -974,11 +992,24 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="local_opts">
-						<td width="22%" valign="top" class="vncell"><?=gettext("Local Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
 							<br>
 							<?=gettext("This is the network that will be accessible " .
+							"from the remote endpoint. Expressed as a CIDR " .
+							"range. You may leave this blank if you don't " .
+							"want to add a route to the local network " .
+							"through this tunnel on the remote machine. " .
+							"This is generally set to your LAN network"); ?>.
+						</td>
+					</tr>
+					<tr id="local_opts">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="local_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
+							<br>
+							<?=gettext("This is the IPv6 network that will be accessible " .
 							"from the remote endpoint. Expressed as a CIDR " .
 							"range. You may leave this blank if you don't " .
 							"want to add a route to the local network " .
@@ -1403,7 +1434,8 @@ if ($savemsg)
 						<?=htmlspecialchars($server['protocol']);?> / <?=htmlspecialchars($server['local_port']);?>
 					</td>
 					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
-						<?=htmlspecialchars($server['tunnel_network']);?>
+						<?=htmlspecialchars($server['tunnel_network']);?><br/>
+						<?=htmlspecialchars($server['tunnel_networkv6']);?><br/>
 					</td>
 					<td class="listbg" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['description']);?>

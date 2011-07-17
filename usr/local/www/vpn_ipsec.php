@@ -281,7 +281,7 @@ include("head.inc");
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>
 									<td class="listhdrr"><?=gettext("Mode"); ?></td>
-									<?php if($ph2ent['mode'] == "tunnel"): ?>
+									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
 									<td class="listhdrr"><?=gettext("Local Subnet"); ?></td>
 									<td class="listhdrr"><?=gettext("Remote Subnet"); ?></td>
 									<?php endif; ?>
@@ -317,11 +317,11 @@ include("head.inc");
 										<?=$spane;?>
 									</td>
 									<?php 
-										if($ph2ent['mode'] <> "tunnel") {
+										if(($ph2ent['mode'] <> "tunnel") and ($ph2ent['mode'] <> "tunnel6")) {
 											echo "<td nowrap class=\"listr\">&nbsp;</td><td nowrap class=\"listr\">&nbsp;</td>";
 										} 
 									?>
-									<?php if($ph2ent['mode'] == "tunnel"): ?>
+									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
 									<td nowrap class="listr">
 										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>

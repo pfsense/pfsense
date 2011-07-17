@@ -118,7 +118,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if($pconfig['mode'] == "tunnel")
+	if(($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) 
 	{
 		switch ($pconfig['localid_type']) {
 			case "network":
@@ -213,7 +213,7 @@ if ($_POST) {
 		$ph2ent['mode'] = $pconfig['mode'];
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
 
-		if($ph2ent['mode'] == "tunnel") {
+		if(($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6")){
 			$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
 			$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
 		}
@@ -271,7 +271,7 @@ include("head.inc");
 function change_mode() {
 	index = document.iform.mode.selectedIndex;
 	value = document.iform.mode.options[index].value;
-	if (value == 'tunnel') {
+	if ((value == 'tunnel') || (value == 'tunnel6')) {
 		document.getElementById('opt_localid').style.display = '';
 <?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = '';
@@ -286,8 +286,14 @@ function change_mode() {
 
 function typesel_change_local(bits) {
 
-	if (typeof(bits)=="undefined")
-		bits = 24;
+	if (typeof(bits)=="undefined") {
+		if (value == 'tunnel') {
+			bits = 24;
+		}
+		if (value == 'tunnel6') {
+			bits = 64;
+		}
+	}
 
 	switch (document.iform.localid_type.selectedIndex) {
 		case 0:	/* single */
@@ -317,8 +323,14 @@ function typesel_change_local(bits) {
 
 function typesel_change_remote(bits) {
 
-	if (typeof(bits)=="undefined")
-		bits = 24;
+	if (typeof(bits)=="undefined") {
+		if (value == 'tunnel') {
+			bits = 24;
+		}
+		if (value == 'tunnel6') {
+			bits = 64;
+		}
+	}
 
 	switch (document.iform.remoteid_type.selectedIndex) {
 		case 0:	/* single */
@@ -428,10 +440,10 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
+										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
 										/
 										<select name="localid_netbits" class="formselect" id="localid_netbits">
-										<?php for ($i = 32; $i >= 0; $i--): ?>
+										<?php for ($i = 128; $i >= 0; $i--): ?>
 											<option value="<?=$i;?>" <?php if ($i == $pconfig['localid_netbits']) echo "selected"; ?>>
 												<?=$i;?>
 											</option>
@@ -463,10 +475,10 @@ function change_protocol() {
 									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
+										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
 										/
 										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
-										<?php for ($i = 32; $i >= 0; $i--) { 
+										<?php for ($i = 128; $i >= 0; $i--) { 
 											
 											echo "<option value=\"{$i}\"";
 											if ($i == $pconfig['remoteid_netbits']) echo " selected";
@@ -619,7 +631,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Automatically ping host"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="28" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
 							<?=gettext("IP address"); ?>
 						</td>
 					</tr>

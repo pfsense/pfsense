@@ -45,10 +45,10 @@ if ($_GET && isset($_GET['action'])) {
 	switch ($_GET['action']) {
 		case 'block':
 			/* Check that we have a valid host */
-			easyrule_parse_block($_GET['int'], $_GET['src']);
+			easyrule_parse_block($_GET['int'], $_GET['src'], $_GET['ipproto']);
 			break;
 		case 'pass':
-			easyrule_parse_pass($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport']);
+			easyrule_parse_pass($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport'], $_GET['ipproto']);
 			break;
 	}
 }

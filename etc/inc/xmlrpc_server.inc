@@ -10,35 +10,18 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: License is granted to use or modify this software
- * ("XML-RPC for PHP") for commercial or non-commercial use provided the
- * copyright of the author is preserved in any distributed or derivative work.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESSED OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  * @category   Web Services
  * @package    XML_RPC
  * @author     Edd Dumbill <edd@usefulinc.com>
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    CVS: $Id$
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    SVN: $Id: Server.php 300961 2010-07-03 02:17:34Z danielc $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
-/*
-	pfSense_MODULE:	utils
-*/
 
 /**
  * Pull in the XML_RPC class
@@ -62,8 +45,8 @@ $GLOBALS['XML_RPC_Server_listMethods_sig'] = array(
  * docstring for system.listMethods
  * @global string $GLOBALS['XML_RPC_Server_listMethods_doc']
  */
-$GLOBALS['XML_RPC_Server_listMethods_doc'] = 'This method lists all the'
-        . ' methods that the XML-RPC server knows how to dispatch';
+$GLOBALS['XML_RPC_Server_listMethods_doc'] = gettext('This method lists all the'
+        . ' methods that the XML-RPC server knows how to dispatch');
 
 /**
  * signature for system.methodSignature: return = array,
@@ -80,10 +63,10 @@ $GLOBALS['XML_RPC_Server_methodSignature_sig'] = array(
  * docstring for system.methodSignature
  * @global string $GLOBALS['XML_RPC_Server_methodSignature_doc']
  */
-$GLOBALS['XML_RPC_Server_methodSignature_doc'] = 'Returns an array of known'
+$GLOBALS['XML_RPC_Server_methodSignature_doc'] = gettext('Returns an array of known'
         . ' signatures (an array of arrays) for the method name passed. If'
         . ' no signatures are known, returns a none-array (test for type !='
-        . ' array to detect missing signature)';
+        . ' array to detect missing signature)');
 
 /**
  * signature for system.methodHelp: return = string,
@@ -100,8 +83,8 @@ $GLOBALS['XML_RPC_Server_methodHelp_sig'] = array(
  * docstring for methodHelp
  * @global string $GLOBALS['XML_RPC_Server_methodHelp_doc']
  */
-$GLOBALS['XML_RPC_Server_methodHelp_doc'] = 'Returns help text if defined'
-        . ' for the method passed, otherwise returns an empty string';
+$GLOBALS['XML_RPC_Server_methodHelp_doc'] = gettext('Returns help text if defined'
+        . ' for the method passed, otherwise returns an empty string');
 
 /**
  * dispatch map for the automatically declared XML-RPC methods.
@@ -272,8 +255,9 @@ function XML_RPC_Server_debugmsg($m)
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.1
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: @package_version@
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
@@ -377,7 +361,7 @@ class XML_RPC_Server
 
         if ($XML_RPC_Server_debuginfo != '') {
             return "<!-- PEAR XML_RPC SERVER DEBUG INFO:\n\n"
-                   . $GLOBALS['XML_RPC_func_ereg_replace']('--', '- - ', $XML_RPC_Server_debuginfo)
+                   . str_replace('--', '- - ', $XML_RPC_Server_debuginfo)
                    . "-->\n";
         } else {
             return '';
@@ -434,9 +418,9 @@ class XML_RPC_Server
          * that someone composed a single header with multiple lines, which
          * the RFCs allow.
          */
-        $this->server_headers = $GLOBALS['XML_RPC_func_ereg_replace']("[\r\n]+[ \t]+",
+        $this->server_headers = preg_replace("@[\r\n]+[ \t]+@",
                                 ' ', trim($this->server_headers));
-        $headers = $GLOBALS['XML_RPC_func_split']("[\r\n]+", $this->server_headers);
+        $headers = preg_split("@[\r\n]+@", $this->server_headers);
         foreach ($headers as $header)
         {
             header($header);

@@ -145,7 +145,12 @@ EOD;
 		}
 
 		/* Interface ip is needed since apinger will bind a socket to it. */
-		$gwifip = find_interface_ip($gateway['interface'], true);
+		if (is_ipaddrv4($gateway['gateway'])) {
+			$gwifip = find_interface_ip($gateway['interface'], true);
+		}
+		if (is_ipaddrv6($gateway['gateway'])) {
+			$gwifip = find_interface_ipv6($gateway['interface'], true);
+		}
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
@@ -210,7 +215,7 @@ EOD;
 		 * not strictly necessary but is a added level of protection.
 		 */
 		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-			log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 			mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']), true);
 			mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 				" " . escapeshellarg($gateway['gateway']), true);
@@ -421,15 +426,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = "MONITOR: {$gwname} is down, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = "MONITOR: {$gwname} has packet loss, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = "MONITOR: {$gwname} has high latency, removing from routing group";
+						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
@@ -445,7 +450,7 @@ function return_gateway_groups_array() {
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
 				if (!$g['booting']) {
-					$msg = "Gateways status could not be determined, considering all as up/active.";
+					$msg = gettext("Gateways status could not be determined, considering all as up/active.");
 					log_error($msg);
 					notify_via_growl($msg);
 					notify_via_smtp($msg);
@@ -499,7 +504,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 		}
 	}
 	if($changed && $current_gw)
-		write_config("Updating gateway group gateway for $interface - new gateway is $current_gw");
+		write_config(sprintf(gettext('Updating gateway group gateway for %1$s - new gateway is %2$s'), $interfac, $current_gw));
 }
 
 function lookup_gateway_ip_by_name($name) {
@@ -539,35 +544,63 @@ function lookup_gateway_interface_by_name($name) {
 }
 
 function get_interface_gateway($interface, &$dynamic = false) {
-        global $config, $g;
+	global $config, $g;
 
-        $gw = NULL;
+	$gw = NULL;
 
-        $gwcfg = $config['interfaces'][$interface];
-        if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
-               	foreach($config['gateways']['gateway_item'] as $gateway) {
-                        if ($gateway['name'] == $gwcfg['gateway']) {
-                                $gw = $gateway['gateway'];
+	$gwcfg = $config['interfaces'][$interface];
+	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if(($gateway['name'] == $gwcfg['gateway']) && (is_ipaddrv4($gateway['gateway']))) {
+				$gw = $gateway['gateway'];
 				break;
 			}
-                }
+		}
 	}
 
-        // for dynamic interfaces we handle them through the $interface_router file.
-        if (!is_ipaddr($gw) && !is_ipaddr($gwcfg['ipaddr'])) {
-                $realif = get_real_interface($interface);
-                if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
-                        $gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
-					$dynamic = true;
-                }
-                if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
-					$dynamic = "default";
+	// for dynamic interfaces we handle them through the $interface_router file.
+	if (!is_ipaddr($gw) && !is_ipaddr($gwcfg['ipaddr'])) {
+		$realif = get_real_interface($interface);
+		if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
+			$dynamic = true;
+		}
+		if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
+			$dynamic = "default";
 			
-				
-        }
+	}
 
-        /* return gateway */
-        return ($gw);
+	/* return gateway */
+	return ($gw);
+}
+
+function get_interface_gateway_v6($interface, &$dynamic = false) {
+	global $config, $g;
+
+	$gw = NULL;
+	$gwcfg = $config['interfaces'][$interface];
+	if (!empty($gwcfg['gatewayv6']) && is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if(($gateway['name'] == $gwcfg['gatewayv6']) && (is_ipaddrv6($gateway['gateway']))) {
+				$gw = $gateway['gateway'];
+				break;
+			}
+		}
+	}
+
+	// for dynamic interfaces we handle them through the $interface_router file.
+	if (!is_ipaddrv6($gw) && !is_ipaddr($gwcfg['ipaddrv6'])) {
+			$realif = get_real_interface($interface);
+			if (file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
+				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_routerv6"), " \n");
+				$dynamic = true;
+			}
+			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgwv6"))
+				$dynamic = "default";
+			
+	}
+	/* return gateway */
+	return ($gw);
 }
 
 ?>

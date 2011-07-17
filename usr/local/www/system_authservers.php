@@ -54,6 +54,10 @@ $a_servers = auth_get_authserver_list();
 foreach ($a_servers as $servers)
 	$a_server[] = $servers;
 
+if (!is_array($config['ca']))
+        $config['ca'] = array();
+$a_ca =& $config['ca'];
+
 $act = $_GET['act'];
 if ($_POST['act'])
 	$act = $_POST['act'];
@@ -87,6 +91,7 @@ if ($act == "edit") {
 		$pconfig['name'] = $a_server[$id]['name'];
 
 		if ($pconfig['type'] == "ldap") {
+			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
 			$pconfig['ldap_host'] = $a_server[$id]['host'];
 			$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
 			$pconfig['ldap_urltype'] = $a_server[$id]['ldap_urltype'];
@@ -168,7 +173,6 @@ if ($_POST) {
 			$reqdfieldsn[] = gettext("Bind user DN");
 			$reqdfieldsn[] = gettext("Bind Password");
 		}
-
 	}
 
 	if ($pconfig['type'] == "radius") {
@@ -222,6 +226,8 @@ if ($_POST) {
 
 		if ($server['type'] == "ldap") {
 
+			if (!empty($pconfig['ldap_caref']))
+				$server['ldap_caref'] = $pconfig['ldap_caref'];
 			$server['host'] = $pconfig['ldap_host'];
 			$server['ldap_port'] = $pconfig['ldap_port'];
 			$server['ldap_urltype'] = $pconfig['ldap_urltype'];
@@ -389,6 +395,7 @@ function select_clicked() {
         url += '&urltype=' + document.getElementById("ldap_urltype").value;
         url += '&proto=' + document.getElementById("ldap_protver").value;
 	url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
+	url += '&cert=' + document.getElementById("ldap_caref").value;
 
         var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined")
@@ -489,6 +496,27 @@ function select_clicked() {
 								<?php endforeach; ?>
 								</select>
 							</td>
+						</tr>
+						<tr id="tls_ca">
+							<td width="22%" valign="top" class="vncell"><?=gettext("Peer Certificate Authority"); ?></td>
+                                                        <td width="78%" class="vtable">
+                                                        <?php if (count($a_ca)): ?>
+								<select name='ldap_caref' class="formselect">
+                                                        <?php
+                                                                foreach ($a_ca as $ca):
+                                                                        $selected = "";
+                                                                        if ($pconfig['ldap_caref'] == $ca['refid'])
+                                                                                $selected = "selected";
+                                                        ?>
+									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+                                                        <?php	endforeach; ?>
+								</select>
+								<br/><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br/>
+								<?=gettext("It must match with the CA in the AD otherwise problems will arise.");?></span>
+                                                        <?php else: ?>
+                                                                <b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+                                                        <?php endif; ?>
+                                                        </td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol version");?></td>

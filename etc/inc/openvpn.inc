@@ -72,15 +72,15 @@ $openvpn_dh_lengths = array(
 	1024, 2048, 4096 );
 
 $openvpn_server_modes = array(
-	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
-	'p2p_shared_key' => "Peer to Peer ( Shared Key )",
-	'server_tls' => "Remote Access ( SSL/TLS )",
-	'server_user' => "Remote Access ( User Auth )",
-	'server_tls_user' => "Remote Access ( SSL/TLS + User Auth )");
+	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
+	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )"),
+	'server_tls' => gettext("Remote Access ( SSL/TLS )"),
+	'server_user' => gettext("Remote Access ( User Auth )"),
+	'server_tls_user' => gettext("Remote Access ( SSL/TLS + User Auth )"));
 
 $openvpn_client_modes = array(
-	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
-	'p2p_shared_key' => "Peer to Peer ( Shared Key )" );
+	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
+	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )") );
 
 function openvpn_create_key() {
 
@@ -168,7 +168,7 @@ function openvpn_get_cipherlist() {
 		$words = explode(' ', $line);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
-	$ciphers["none"] = "None (No Encryption)";
+	$ciphers["none"] = gettext("None (No Encryption)");
 	return $ciphers;
 }
 
@@ -192,14 +192,14 @@ function openvpn_validate_engine($engine) {
 function openvpn_validate_host($value, $name) {
 	$value = trim($value);
 	if (empty($value) || (!is_domain($value) && !is_ipaddr($value)))
-		return "The field '$name' must contain a valid IP address or domain name.";
+		return sprintf(gettext("The field '%s' must contain a valid IP address or domain name."), $name);
 	return false;
 }
 
 function openvpn_validate_port($value, $name) {
 	$value = trim($value);
 	if (empty($value) || !is_numeric($value) || $value < 0 || ($value > 65535))
-		return "The field '$name' must contain a valid port, ranging from 0 to 65535.";
+		return sprintf(gettext("The field '%s' must contain a valid port, ranging from 0 to 65535."), $name);
 	return false;
 }
 
@@ -208,7 +208,7 @@ function openvpn_validate_cidr($value, $name) {
 	if (!empty($value)) {
 		list($ip, $mask) = explode('/', $value);
 		if (!is_ipaddr($ip) or !is_numeric($mask) or ($mask > 32) or ($mask < 0))
-			return "The field '$name' must contain a valid CIDR range.";
+			return sprintf(gettext("The field '%s' must contain a valid CIDR range."), $name);
 	}
 	return false;
 }
@@ -328,20 +328,31 @@ function openvpn_reconfigure($mode, $settings) {
 
 	$interface = $settings['interface'];
 	$ipaddr = $settings['ipaddr'];
+	$ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it
 	// If "any" interface was selected, local directive will be ommited.
-	if (!empty($ipaddr)) {
+	if (is_ipaddrv4($ipaddr)) {
 		$iface_ip=$ipaddr;
+	} elseif (is_ipaddrv6($ipaddrv6)) {
+		$iface_ipv6=$ipaddrv6;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
+		}
+		if ((!empty($interface)) && (strcmp($interface, "any"))) {
+			$iface_ipv6=get_interface_ipv6($interface);
 		}
 	}
 
 	$conf  = "dev {$devname}\n";
 	$conf .= "dev-type {$settings['dev_mode']}\n";
+	switch($settings['dev_mode']) {
+		case "tun":
+			$conf .= "tun-ipv6\n";
+			break;
+	}
 	$conf .= "dev-node /dev/{$tunname}\n";
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";
@@ -357,8 +368,11 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 
-	if (!empty($iface_ip)) {
+	if (is_ipaddrv4($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	
+	}
+	if (is_ipaddrv6($iface_ipv6)) {
+		// $conf .= "local {$iface_ipv6}\n";	
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))
@@ -368,6 +382,7 @@ function openvpn_reconfigure($mode, $settings) {
 	if ($mode == 'server') {
 
 		list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+		list($ipv6, $prefix) = explode('/', $settings['tunnel_networkv6']);
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
@@ -400,6 +415,8 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_user':
 			case 'server_tls_user':
 				$conf .= "server {$ip} {$mask}\n";
+				if(is_ipaddr($ipv6))
+					$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 				break;
 		}
@@ -447,6 +464,10 @@ function openvpn_reconfigure($mode, $settings) {
 			list($ip, $mask) = explode('/', $settings['local_network']);
 			$mask = gen_subnet_mask($mask);
 			$conf .= "push \"route $ip $mask\"\n";
+		}
+		if ($settings['local_networkv6']) {
+			list($ipv6, $prefix) = explode('/', $settings['local_networkv6']);
+			$conf .= "push \"route-ipv6 $ipv6/$prefix\"\n";
 		}
 
 		switch($settings['mode']) {
@@ -541,6 +562,7 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);
+				crl_update($crl);
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {

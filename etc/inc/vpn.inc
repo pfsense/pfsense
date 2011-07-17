@@ -121,7 +121,7 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
 
 		if ($g['booting'])
-			echo "Configuring IPsec VPN... ";
+			echo gettext("Configuring IPsec VPN... ");
 
 		/* fastforwarding is not compatible with ipsec tunnels */
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
@@ -138,12 +138,13 @@ function vpn_ipsec_configure($ipchg = false)
 
 			$ipsecpinghosts = "";
 			/* step through each phase1 entry */
+			$ipsecpinghosts = "";
 			foreach ($a_phase1 as $ph1ent) {
 				if (isset($ph1ent['disabled']))
 					continue;
 
 				$ep = ipsec_get_phase1_src($ph1ent);
-				if (!$ep)
+				if (!is_ipaddr($ep))
 					continue;
 
 				if(!in_array($ep,$ipmap))
@@ -182,27 +183,43 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ikeid != $ph1ent['ikeid'])
 						continue;
 
+					$ph2ent['localid']['mode'] = $ph2ent['mode'];
 					/* add an ipsec pinghosts entry */
 					if ($ph2ent['pinghost']) {
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
-							$interface_ip = get_interface_ip($ifent);
-							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-							if (ip_in_subnet($interface_ip, $local_subnet)) {
-								$srcip = $interface_ip;
-								break;
+							if(is_ipaddrv6($ph2ent['pinghost'])) {
+								$interface_ip = get_interface_ipv6($ifent);
+								if(!is_ipaddrv6($interface_ip))
+									continue;
+								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+								if (ip_in_subnet($interface_ip, $local_subnet)) {
+									$srcip = $interface_ip;
+									break;
+								}
+							} else {
+								$interface_ip = get_interface_ip($ifent);
+								if(!is_ipaddrv4($interface_ip))
+									continue;
+								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+								if (ip_in_subnet($interface_ip, $local_subnet)) {
+									$srcip = $interface_ip;
+									break;
+								}
 							}
 						}
 						$dstip = $ph2ent['pinghost'];
+						if(is_ipaddrv6($dstip)) {
+							$family = "inet6";
+						} else {
+							$family = "inet";
+						}
 						if (is_ipaddr($srcip))
-							$ipsecpinghosts .= "{$srcip}|{$dstip}|3\n";
+							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
+
 					}
 				}
-				$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "w");
-				if ($pfd) {
-					fwrite($pfd, $ipsecpinghosts);
-					fclose($pfd);
-				}
+				file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
 				
 			}
 		}
@@ -211,18 +228,18 @@ function vpn_ipsec_configure($ipchg = false)
 		if (is_array($config['ca']) && count($config['ca'])) {
 			foreach ($config['ca'] as $ca) {
 				if (!isset($ca['crt'])) {
-					log_error("Error: Invalid certificate info for {$ca['descr']}");
+					log_error(sprintf(gettext("Error: Invalid certificate info for %s"), $ca['descr']));
 					continue;
 				}
 				$cert = base64_decode($ca['crt']);
 				$x509cert = openssl_x509_parse(openssl_x509_read($cert));
 				if (!is_array($x509cert) || !isset($x509cert['hash'])) {
-					log_error("Error: Invalid certificate hash info for {$ca['descr']}");
+					log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['descr']));
 					continue;
 				}
 				$fname = $g['varetc_path']."/".$x509cert['hash'].".0";
 				if (!file_put_contents($fname, $cert)) {
-					log_error("Error: Cannot write IPsec CA file for {$ca['descr']}");
+					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
 					continue;
 				}
 			}
@@ -231,7 +248,7 @@ function vpn_ipsec_configure($ipchg = false)
 		/* generate psk.txt */
 		$fd = fopen("{$g['varetc_path']}/psk.txt", "w");
 		if (!$fd) {
-			printf("Error: cannot open psk.txt in vpn_ipsec_configure().\n");
+			printf(gettext("Error: cannot open psk.txt in vpn_ipsec_configure().") . "\n");
 			return 1;
 		}
 
@@ -294,7 +311,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 			$fd = fopen("{$g['varetc_path']}/racoon.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open racoon.conf in vpn_ipsec_configure().\n");
+				printf(gettext("Error: cannot open racoon.conf in vpn_ipsec_configure().") . "\n");
 				return 1;
 			}
 
@@ -386,7 +403,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$fn = "{$g['varetc_path']}/racoon.motd";
 					$fd1 = fopen($fn, "w");
 					if (!$fd1) {
-						printf("Error: cannot open server{$fn} in vpn.\n");
+						printf(gettext("Error: cannot open server %s in vpn.%s"). $fn, "\n");
 						return 1;
 					}
 
@@ -437,7 +454,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						case "dyn_dns":
 							$myid_type = "address";
-							$myid_data = gethostbyname($ph1ent['myid_data']);
+							$myid_data = resolve_retry($ph1ent['myid_data']);
 							break;
 
 						case "address";
@@ -517,7 +534,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						if (!$cert)
 						{
-							log_error("Error: Invalid phase1 certificate reference for {$ph1ent['name']}");
+							log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
 							continue;
 						}
 
@@ -526,7 +543,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						if (!file_put_contents($certpath, base64_decode($cert['crt'])))
 						{
-							log_error("Error: Cannot write phase1 certificate file for {$ph1ent['name']}");
+							log_error(sprintf(gettext("Error: Cannot write phase1 certificate file for %s"), $ph1ent['name']));
 							continue;
 						}
 
@@ -537,7 +554,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						if (!file_put_contents($keypath, base64_decode($cert['prv'])))
 						{
-							log_error("Error: Cannot write phase1 key file for {$ph1ent['name']}");
+							log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
 							continue;
 						}
 
@@ -550,7 +567,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 							if (!file_put_contents($capath, base64_decode($ca['crt'])))
 							{
-								log_error("Error: Cannot write phase1 CA certificate file for {$ph1ent['name']}");
+								log_error(sprintf(gettext("Error: Cannot write phase1 CA certificate file for %s"), $ph1ent['name']));
 								continue;
 							}
 
@@ -637,9 +654,10 @@ EOD;
 					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
-					if ($ph2ent['mode'] == 'tunnel') {
+					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 
 						$localid_type = $ph2ent['localid']['type'];
+						$ph2ent['localid']['mode'] = $ph2ent['mode'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
 						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 						if (($localid_type == "none") ||
@@ -782,7 +800,7 @@ EOD;
 			/* generate spd.conf */
 			$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open spd.conf in vpn_ipsec_configure().\n");
+				printf(gettext("Error: cannot open spd.conf in vpn_ipsec_configure().") . "\n");
 				return 1;
 			}
 
@@ -791,11 +809,18 @@ EOD;
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
-				if (!empty($lanip) && is_ipaddr($lanip)) {
+				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
 					$lansa = gen_subnet($lanip, $lansn);
-					$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
-					$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+					$spdconf .= "spdadd -4 {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+					$spdconf .= "spdadd -4 {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+				}
+				$lanipv6 = get_interface_ipv6("lan");
+				if (!empty($lanipv6) && is_ipaddrv6($lanipv6)) {
+					$lansnv6 = get_interface_subnetv6("lan");
+					$lansav6 = gen_subnetv6($lanipv6, $lansnv6);
+					$spdconf .= "spdadd -6 {$lanipv6}/128 {$lansav6}/{$lansnv6} any -P out none;\n";
+					$spdconf .= "spdadd -6 {$lansav6}/{$lansnv6} {$lanipv6}/128 any -P in none;\n";
 				}
 			}
 
@@ -821,15 +846,20 @@ EOD;
 				if(!is_ipaddr($rgip))
 					continue;
 
+				$ph2ent['localid']['mode'] = $ph2ent['mode'];
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
 
-				if($ph2ent['mode'] == "tunnel") {
+				if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == 'tunnel6')) {
+					if($ph2ent['mode'] == "tunnel6")
+						$family = "-6";
+					else
+						$family = "-4";
 
-					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
+					$spdconf .= "spdadd {$family} {$localid} {$remoteid} any -P out ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
 
-					$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
+					$spdconf .= "spdadd {$family} {$remoteid} {$localid} any -P in ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
 
 				} else {
@@ -955,7 +985,7 @@ function vpn_ipsec_force_reload() {
 
 	/* if ipsec is enabled, start up again */
 	if (isset($ipseccfg['enable'])) {
-		log_error("Forcefully reloading IPsec racoon daemon");
+		log_error(gettext("Forcefully reloading IPsec racoon daemon"));
 		vpn_ipsec_configure();
 	}
 
@@ -994,7 +1024,7 @@ function vpn_pptpd_configure() {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
 
-		echo "Configuring PPTP VPN service... ";
+		echo gettext("Configuring PPTP VPN service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pptp-vpn.pid");
@@ -1004,7 +1034,7 @@ function vpn_pptpd_configure() {
 
 		if (is_process_running("mpd -b")) {
 			killbypid("{$g['varrun_path']}/pptp-vpn.pid");
-			log_error("Could not kill mpd within 3 seconds.   Trying again.");
+			log_error(gettext("Could not kill mpd within 3 seconds.   Trying again."));
 		}
 
 		/* remove mpd.conf, if it exists */
@@ -1022,7 +1052,7 @@ function vpn_pptpd_configure() {
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.conf in vpn_pptpd_configure().\n");
+				printf(gettext("Error: cannot open mpd.conf in vpn_pptpd_configure().") . "\n");
 				return 1;
 			}
 
@@ -1135,7 +1165,7 @@ EOD;
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.links", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.links in vpn_pptpd_configure().\n");
+				printf(gettext("Error: cannot open mpd.links in vpn_pptpd_configure().") . "\n");
 				return 1;
 			}
 
@@ -1159,7 +1189,7 @@ EOD;
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.secret", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.secret in vpn_pptpd_configure().\n");
+				printf(gettext("Error: cannot open mpd.secret in vpn_pptpd_configure().") . "\n");
 				return 1;
 			}
 
@@ -1213,7 +1243,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;
 
-		echo "Configuring PPPoE VPN service... ";
+		echo gettext("Configuring PPPoE VPN service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
@@ -1237,7 +1267,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.conf in vpn_pppoe_configure().\n");
+				printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
 				return 1;
 			}
 			$mpdconf = "\n\n";
@@ -1340,7 +1370,7 @@ EOD;
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.links", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.links in vpn_pppoe_configure().\n");
+				printf(gettext("Error: cannot open mpd.links in vpn_pppoe_configure().") . "\n");
 				return 1;
 			}
 
@@ -1366,7 +1396,7 @@ EOD;
 				/* write mpd.secret */
 				$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", "w");
 				if (!$fd) {
-					printf("Error: cannot open mpd.secret in vpn_pppoe_configure().\n");
+					printf(gettext("Error: cannot open mpd.secret in vpn_pppoe_configure().") . "\n");
 					return 1;
 				}
 
@@ -1394,7 +1424,7 @@ EOD;
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		echo gettext("done") . "\n";
 
 	return 0;
 }
@@ -1413,7 +1443,7 @@ function vpn_l2tp_configure() {
 		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off"))
 			return 0;
 
-		echo "Configuring l2tp VPN service... ";
+		echo gettext("Configuring l2tp VPN service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/l2tp-vpn.pid");
@@ -1438,7 +1468,7 @@ function vpn_l2tp_configure() {
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.conf in vpn_l2tp_configure().\n");
+				printf(gettext("Error: cannot open mpd.conf in vpn_l2tp_configure().") . "\n");
 				return 1;
 			}
 			$mpdconf = "\n\n";
@@ -1531,7 +1561,7 @@ EOD;
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.links", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.links in vpn_l2tp_configure().\n");
+				printf(gettext("Error: cannot open mpd.links in vpn_l2tp_configure().") . "\n");
 				return 1;
 			}
 
@@ -1556,7 +1586,7 @@ EOD;
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
 			if (!$fd) {
-				printf("Error: cannot open mpd.secret in vpn_l2tp_configure().\n");
+				printf(gettext("Error: cannot open mpd.secret in vpn_l2tp_configure().") . "\n");
 				return 1;
 			}
 
@@ -1673,6 +1703,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$sad_arr = ipsec_dump_sad();
 
 	$ep = ipsec_get_phase1_src($phase1);
+	$phase2['localid']['mode'] = $phase2['mode'];
 	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
 	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
 
@@ -1680,6 +1711,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$old_gw = trim($old_phase1['remote-gateway']);
 
 	$old_ep = ipsec_get_phase1_src($old_phase1);
+	$old_phase2['localid']['mode'] = $old_phase2['mode'];
 	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid']);
 	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 
@@ -1701,25 +1733,30 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		$rgip = $phase1['remote-gateway'];
 	}
 	if (!$ep) {
-		log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
+		log_error(sprintf(gettext("Could not determine VPN endpoint for '%s'"), $phase1['descr']));
 		return false;
 	}
 
 	if((!is_ipaddr($old_ep)) || (! is_ipaddr($ep))) {
-		log_error("IPSEC: ERROR: One of the endpoints is not a IP address. Old EP '{$old_ep}' new EP '{$ep}'");
+		log_error(sprintf(gettext("IPSEC: ERROR: One of the endpoints is not a IP address. Old EP '%1\$s' new EP '%2\$s'"), $old_ep, $ep));
 	}
 	if((! is_ipaddr($rgip)) || (! is_ipaddr($old_gw))) {
-		log_error("IPSEC: ERROR: One of the remote endpoints is not a IP address. Old RG '{$old_gw}' new RG '{$rgip}'");
+		log_error(sprintf(gettext("IPSEC: ERROR: One of the remote endpoints is not a IP address. Old RG '%1\$s' new RG '%2\$s'"), $old_gw, $rgip));
 	}
 
 	$spdconf = "";
 	/* Delete old SPD policies if there are changes between the old and new */
 	if(($phase1 != $old_phase1) || ($phase2 != $old_phase2)) {
-		$spdconf .= "spddelete {$old_local_subnet} " .
+		if($old_phase2['mode'] == "tunnel6")
+			$family = "-6";
+		else
+			$family = "-4";
+
+		$spdconf .= "spddelete {$family} {$old_local_subnet} " .
 			"{$old_remote_subnet} any -P out ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_ep}-" .
 			"{$old_gw}/unique;\n";
-		$spdconf .= "spddelete {$old_remote_subnet} " .
+		$spdconf .= "spddelete {$family} {$old_remote_subnet} " .
 			"{$old_local_subnet} any -P in ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_gw}-" .
 			"{$old_ep}/unique;\n";
@@ -1727,35 +1764,40 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		/* zap any existing SA entries */
 		foreach($sad_arr as $sad) {
 			if(($sad['dst'] == $old_ep) && ($sad['src'] == $old_gw)) {
-				$spdconf .= "delete {$old_ep} {$old_gw} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
+				$spdconf .= "delete {$family} {$old_ep} {$old_gw} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
 			if(($sad['src'] == $oldep) && ($sad['dst'] == $old_gw)) {
-				$spdconf .= "delete {$old_gw} {$old_ep} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
+				$spdconf .= "delete {$family} {$old_gw} {$old_ep} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
 		}
 	}
+
+	if($phase2['mode'] == "tunnel6")
+		$family = "-6";
+	else
+		$family = "-4";
 
 	/* Create new SPD entries for the new configuration */
 	/* zap any existing SA entries beforehand */
 	foreach($sad_arr as $sad) {
 		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
-			$spdconf .= "delete {$rgip} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$family} {$rgip} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
-			$spdconf .= "delete {$ep} {$rgip} {$phase2['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$family} {$ep} {$rgip} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 	}
 	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$local_subnet} " .
+	$spdconf .= "spdadd {$family} {$local_subnet} " .
 		"{$remote_subnet} any -P out ipsec " .
 		"{$phase2['protocol']}/tunnel/{$ep}-" .
 		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$remote_subnet} " .
+	$spdconf .= "spdadd {$family} {$remote_subnet} " .
 		"{$local_subnet} any -P in ipsec " .
 		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error("Reloading IPsec tunnel '{$phase1['descr']}'. Previous IP '{$old_gw}', current IP '{$rgip}'. Reloading policy");
+	log_error(sprintf(gettext("Reloading IPsec tunnel '%1\$s'. Previous IP '%2\$s', current IP '%3\$s'. Reloading policy"), $phase1['descr'], $old_gw, $rgip));
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");

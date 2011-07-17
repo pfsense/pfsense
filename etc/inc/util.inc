@@ -96,7 +96,7 @@ function mark_subsystem_dirty($subsystem = "") {
 	global $g;
 
 	if (!file_put_contents("{$g['varrun_path']}/{$subsystem}.dirty", "DIRTY"))
-		log_error("WARNING: Could not mark subsystem: {$subsytem} dirty");
+		log_error(sprintf(gettext("WARNING: Could not mark subsystem: %s dirty"), $subsystem));
 }
 
 function clear_subsystem_dirty($subsystem = "") {
@@ -116,7 +116,7 @@ function config_unlock() {
 function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
-		die("WARNING: You must give a name as parameter to lock() function.");
+		die(gettext("WARNING: You must give a name as parameter to lock() function."));
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
@@ -205,7 +205,7 @@ function refcount_unreference($reference) {
 	$shm_data = intval($shm_data) - 1;
 	if ($shm_data < 0) {
 		//debug_backtrace();
-		log_error("Reference {$reference} is going negative, not doing unreference.");
+		log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
 	} else
 		shmop_write($shmid, $shm_data, 0);
 	shmop_close($shmid);
@@ -225,8 +225,16 @@ function is_module_loaded($module_name) {
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
 		return "";
-
 	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+}
+
+/* return the subnet address given a host address and a subnet bit count */
+function gen_subnetv6($ipaddr, $bits) {
+	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
+		return "";
+
+	$address = Net_IPv6::getNetmask($ipaddr, $bits);
+	return $address;
 }
 
 /* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */
@@ -235,6 +243,49 @@ function gen_subnet_max($ipaddr, $bits) {
 		return "";
 
 	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+}
+
+/* Generate end number for a given ipv6 subnet mask
+ * no, it does not perform math */
+function gen_subnetv6_max($ipaddr, $bits) {
+	if(!is_ipaddrv6($ipaddr))
+		return false;
+	
+	$subnetstart = gen_subnetv6($ipaddr, $bits);
+	/* we should have a expanded full ipv6 subnet starting at 0.
+	 * Now split those by the semicolon so we can do 16 bit math */
+	$parts = explode(":", $subnetstart);
+	if(count($parts) <> 8)
+		return false;
+
+	/* reverse the array, we start with the lsb */
+	$parts = array_reverse($parts);
+	/* set the itteration count properly */
+	$bitsleft = 128 - $bits;
+	$i = 0;
+	foreach($parts as $part) {
+		/* foreach 16 bits we go to the next part */
+		/* no this isn't proper hex math, neither does it overflow properly */
+		while($bitsleft > 0) {
+			if($part == "0") {
+				$part = "f";
+			} else {
+				$part = $part . "f";
+			}
+			$bitsleft = $bitsleft - 4;
+			$j++;
+			if($j == 4) {
+				$parts[$i] = $part;
+				$j = 0;
+				$i++;
+				continue 2;
+			}
+		}
+		$i++;
+	}
+	$parts = array_reverse($parts);
+	$subnet_end = implode(":", $parts);
+	return $subnet_end;
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -387,8 +438,26 @@ function is_numericint($arg) {
 	return (preg_match("/[^0-9]/", $arg) ? false : true);
 }
 
-/* returns true if $ipaddr is a valid dotted IPv4 address */
+
+/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
 function is_ipaddr($ipaddr) {
+	if(is_ipaddrv4($ipaddr)) {
+		return true;
+	}
+	if(is_ipaddrv6($ipaddr)) {
+		return true;
+	}
+	return false;
+}
+
+/* returns true if $ipaddr is a valid IPv6 address */
+function is_ipaddrv6($ipaddr) {
+	$result = Net_IPv6::checkIPv6($ipaddr);
+	return $result;
+}
+
+/* returns true if $ipaddr is a valid dotted IPv4 address */
+function is_ipaddrv4($ipaddr) {
 	if (!is_string($ipaddr))
 		return false;
 
@@ -843,7 +912,7 @@ function mwexec($command, $mute = false) {
 		$mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
-		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
+		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
 	}
 	return $retval;
 }
@@ -968,6 +1037,13 @@ function ipcmp($a, $b) {
 
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
+	if(is_ipaddrv6($addr)) {
+		$result = Net_IPv6::IsInNetmask($addr, $subnet);
+		if($result)
+			return true;
+		else
+			return false;
+	}
 	list($ip, $mask) = explode('/', $subnet);
 	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
 	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
@@ -1041,8 +1117,9 @@ function resolve_retry($hostname, $retries = 5) {
 	if (is_ipaddr($hostname))
 		return $hostname;
 
-	for ($i = 0; $i < $retries; $i++) {
-		$ip = gethostbyname($hostname);
+       for ($i = 0; $i < $retries; $i++) {
+		// FIXME: gethostbyname does not work for AAAA hostnames, boo, hiss
+               $ip = gethostbyname($hostname);
 
 		if ($ip && $ip != $hostname) {
 			/* success */

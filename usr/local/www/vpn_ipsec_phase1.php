@@ -80,6 +80,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
 
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
+	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
@@ -114,6 +115,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	if($config['interfaces']['lan']) 
 		$pconfig['localnet'] = "lan";
 	$pconfig['mode'] = "aggressive";
+	$pconfig['protocol'] = "inet";
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
@@ -298,6 +300,7 @@ if ($_POST) {
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
 
 		$ph1ent['mode'] = $pconfig['mode'];
+		$ph1ent['protocol'] = $pconfig['protocol'];
 
 		$ph1ent['myid_type'] = $pconfig['myid_type'];
 		$ph1ent['myid_data'] = $pconfig['myid_data'];
@@ -517,6 +520,21 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Internet Protocol"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="protocol" class="formselect">
+							<?php
+								$protocols = array("inet" => "IPv4", "inet6" => "IPv6");
+								foreach ($protocols as $protocol => $name):
+							?>
+								<option value="<?=$protocol;?>" <?php if ($protocol == $pconfig['protocol']) echo "selected"; ?>>
+									<?=htmlspecialchars($name);?>
+								</option>
+							<?php endforeach; ?>
+							</select> <br> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="interface" class="formselect">
@@ -545,7 +563,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=htmlspecialchars($pconfig['remotegw']);?>">
+							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=htmlspecialchars($pconfig['remotegw']);?>">
 							<br>
 							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
@@ -597,7 +615,7 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
 							<?php
-								$modes = array(gettext("main"),gettext("aggressive"));
+								$modes = array("main","aggressive");
 								foreach ($modes as $mode):
 							?>
 								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>

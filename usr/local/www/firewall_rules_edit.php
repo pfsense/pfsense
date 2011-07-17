@@ -95,6 +95,9 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['direction']))
                 $pconfig['direction'] = $a_filter[$id]['direction'];
 
+	if (isset($a_filter[$id]['ipprotocol']))
+                $pconfig['ipprotocol'] = $a_filter[$id]['ipprotocol'];
+
 	if (isset($a_filter[$id]['protocol']))
 		$pconfig['proto'] = $a_filter[$id]['protocol'];
 	else
@@ -418,6 +421,9 @@ if ($_POST) {
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
 
+		if (isset($_POST['ipprotocol'] ))
+			$filterent['ipprotocol'] = $_POST['ipprotocol'];
+
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;
 		} else {
@@ -549,6 +555,7 @@ if ($_POST) {
 				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
 			else if (isset($filterent['icmptype']))
 				unset($filterent['icmptype']);
+
 			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
@@ -697,8 +704,10 @@ include("head.inc");
 						if (have_ruleint_access($ifgen['ifname']))
 							$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
 				$ifdescs = get_configured_interface_with_descr();
+				// Allow extending of the firewall edit page and include custom input validation 
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_interfaces_edit");
 				foreach ($ifdescs as $ifent => $ifdesc)
-        				if(have_ruleint_access($ifent))
+					if(have_ruleint_access($ifent))
 							$interfaces[$ifent] = $ifdesc;
 					if ($config['l2tp']['mode'] == "server")
 						if(have_ruleint_access("l2tp"))
@@ -745,6 +754,22 @@ include("head.inc");
 			</td>
 		<tr>
 <?php endif; ?>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
+			<td width="78%" class="vtable">
+				<select name="ipprotocol" class="formselect">
+					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6');
+				foreach ($ipproto as $proto => $name): ?>
+				<option value="<?=$proto;?>"
+					<?php if ($proto == $pconfig['ipprotocol']): ?>
+						selected="selected" 
+					<?php endif; ?>
+					><?=$name;?></option>
+				<?php endforeach; ?>      
+				</select>
+				<strong><?=gettext("Select the Internet Protocol version this rule applies to");?></strong><br />
+			</td>
+		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">
@@ -837,7 +862,7 @@ include("head.inc");
 						<td>
 							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
 							<select <?=$edit_disabled;?> name="srcmask" class="formselect" id="srcmask">
-<?php						for ($i = 31; $i > 0; $i--): ?>
+<?php						for ($i = 127; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
 							</select>
@@ -932,7 +957,8 @@ include("head.inc");
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
 <?php
-							for ($i = 31; $i > 0; $i--): ?>
+							for ($i = 127; $i > 0; 
+$i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
 <?php						endfor; ?>
 							</select>

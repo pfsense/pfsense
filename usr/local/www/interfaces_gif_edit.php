@@ -82,8 +82,9 @@ if ($_POST) {
 		if (isset($id) && ($a_gifs[$id]) && ($a_gifs[$id] === $gif))
 			continue;
 
-		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['remote-network']);
+		/* FIXME: needs to perform proper subnet checks in the feature */
+		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['tunnel-remote-addr']);
 			break;
 		}
 	}
@@ -157,24 +158,24 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif remote address"); ?></td>
                   <td class="vtable">
-                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>">
+                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="24" value="<?=htmlspecialchars($pconfig['remote-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Peer address where encapsulated gif packets will be sent. "); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel local address"); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>">
+                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>">
                     <br>
                     <span class="vexpl"><?=gettext("Local gif tunnel endpoint"); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel remote address "); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
-                                        for ($i = 32; $i > 0; $i--) {
+                                        for ($i = 128; $i > 0; $i--) {
                                                 if($i <> 31) {
                                                         echo "<option value=\"{$i}\" ";
                                                         if ($i == $pconfig['tunnel-remote-net']) echo "selected";
@@ -184,7 +185,7 @@ include("head.inc");
                                         ?>
                     </select>					
                     <br/>
-                    <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for the determinig the network that is tunneled."); ?></span></td>
+                    <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for determining the network that is tunnelled."); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route caching  "); ?></td>

@@ -145,9 +145,9 @@ if ($act == "addcert") {
 		if (!$input_errors) {
 			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
 			cert_revoke($cert, $crl, $reason);
-			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			require_once('openvpn.inc');
 			openvpn_refresh_crls();
+			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
 			pfSenseHeader("system_crlmanager.php");
 			exit;
 		}
@@ -172,10 +172,10 @@ if ($act == "delcert") {
 	}
 	$name = $thiscert['descr'];
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
 		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
 		require_once('openvpn.inc');
 		openvpn_refresh_crls();
+		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
 	} else {
 		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
 	}

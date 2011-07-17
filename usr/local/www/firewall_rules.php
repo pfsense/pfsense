@@ -357,7 +357,7 @@ if($_REQUEST['undodrag']) {
 			<td width="8%" class="listhdrr"><?=gettext("Queue");?></td>
 			<td width="5%" class="listhdrr"><?=gettext("Schedule");?></td>
 <?php
-				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_schedule_tablehead");
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_desc_tablehead");
 ?>
 			<td width="19%" class="listhdr"><?=gettext("Description");?></td>
 			<td width="10%" class="list">

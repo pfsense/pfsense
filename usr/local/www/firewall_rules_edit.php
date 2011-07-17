@@ -704,8 +704,10 @@ include("head.inc");
 						if (have_ruleint_access($ifgen['ifname']))
 							$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
 				$ifdescs = get_configured_interface_with_descr();
+				// Allow extending of the firewall edit page and include custom input validation 
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_interfaces_edit");
 				foreach ($ifdescs as $ifent => $ifdesc)
-        				if(have_ruleint_access($ifent))
+					if(have_ruleint_access($ifent))
 							$interfaces[$ifent] = $ifdesc;
 					if ($config['l2tp']['mode'] == "server")
 						if(have_ruleint_access("l2tp"))

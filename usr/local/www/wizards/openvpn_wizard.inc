@@ -599,7 +599,7 @@ function step12_submitphpaction() {
 
 	if (isset($pconfig['step11']['ovpnrule'])) {
 		$rule = array();
-		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard");
+		$rule['descr'] = sprintf(gettext("OpenVPN %s wizard"),$server['description']);
 		/* Ensure the rule descr is not too long for pf to handle */
 		if (strlen($rule['descr']) > 52)
 			$rule['descr'] = substr($rule['descr'], 0, 52);
@@ -615,7 +615,7 @@ function step12_submitphpaction() {
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {
 		$rule = array();
-		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard");
+		$rule['descr'] = sprintf(gettext("OpenVPN %s wizard"),$server['description']);
 		/* Ensure the rule descr is not too long for pf to handle */
 		if (strlen($rule['descr']) > 52)
 			$rule['descr'] = substr($rule['descr'], 0, 52);

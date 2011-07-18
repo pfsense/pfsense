@@ -122,14 +122,14 @@ if ($_POST) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
 			if(!ip_in_subnet($_POST['gateway'], $subnet) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['gateway'])) {
-				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet '{$subnet}'."), $_POST['gateway']);
+				$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
 			}
 		}
 		if (is_ipaddrv6($parent_ip)) {
 			$parent_sn = get_interface_subnetv6($_POST['interface']);
 			$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
 			if(!ip_in_subnet($_POST['gateway'], $subnet)) {
-				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet '{$subnet}'."), $_POST['gateway']);
+				$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
 			}
 		}
 	}

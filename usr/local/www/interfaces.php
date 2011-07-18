@@ -451,9 +451,9 @@ if ($_POST['apply']) {
 			}
 		case "dhcp":
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			if (in_array($wancfg['ipaddrv6'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");

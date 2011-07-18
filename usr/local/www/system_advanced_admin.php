@@ -93,7 +93,7 @@ if ($_POST) {
 		$althosts = explode(" ", $_POST['althostnames']);
 		foreach ($althosts as $ah)
 			if (!is_hostname($ah))
-				$input_errors[] = gettext("Alternate hostname " . htmlspecialchars($ah) . " is not a valid hostname.");
+				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."),htmlspecialchars($ah));
 	}
 
 	if ($_POST['sshport'])

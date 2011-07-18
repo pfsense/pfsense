@@ -2508,7 +2508,7 @@ EOD;
 			/*	  this shouldnt ever happen but instead of breaking the clients ruleset
 			 *	  log an error.
 			 */
-			log_error(gettext("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget"));
+			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
 		}
 	}
 

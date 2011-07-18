@@ -111,7 +111,7 @@ if ($_GET) {
 				}
 				$output_form .= $queue->build_form();
 			} else {
-				$input_errors[] = gettext("No queue with name {$qname} was found!");
+				$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
 				$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
 				$dontshow = true;
 			}

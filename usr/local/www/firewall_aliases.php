@@ -1,4 +1,4 @@
-<?php
+	<?php
 /* $Id$ */
 /*
 	firewall_aliases.php
@@ -159,7 +159,7 @@ include("head.inc");
 <?php if (is_subsystem_dirty('aliases')): ?><p>
 <?php print_info_box_np(gettext("The alias list has been changed.") . "<br>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
-
+<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases/pre_table"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 <tr>
   <td width="25%" class="listhdrr"><?=gettext("Name"); ?></td>

@@ -476,6 +476,8 @@ include("fbegin.inc"); ?>
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
+						// Allow extending of the firewall edit interfaces 
+						pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
 						foreach ($iflist as $if => $ifdesc)
 							if(have_ruleint_access($if))
 								$interfaces[$if] = $ifdesc;

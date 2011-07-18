@@ -475,6 +475,8 @@ echo $jscriptstr;
 if ($savemsg) 
 	print_info_box($savemsg); 
 
+pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
+	
 ?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php

@@ -392,6 +392,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>
 
+<?php pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

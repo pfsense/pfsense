@@ -608,6 +608,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_rules_edit.php" method="post" name="iform" id="iform">

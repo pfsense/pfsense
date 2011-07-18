@@ -657,7 +657,7 @@ if ($_POST['apply']) {
 			}
 			if($skip == false) {
 				$gateway_item['gateway'] = "dynamic";
-				$gateway_item['descr'] = gettext("Interface") . $if . gettext("dynamic gateway");
+				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic gateway"),$if);
 				$gateway_item['name'] = "GW_" . strtoupper($if);
 				$gateway_item['interface'] = "{$if}";
 			} else {
@@ -1617,7 +1617,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 											<?php	if(is_readable("/var/db/dhcp6c_duid")) {
 													// $current_duid = file_get_contents("/var/db/dhcp6c_duid");
 												}
-												echo gettext("The current DUID is: '") . $current_duid ."'";
+												printf(gettext("The current DUID is: '%s'"),$current_duid);
 											?>
 											
 										</td>

@@ -632,7 +632,7 @@ function voucher_log($priority, $message) {
     define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-    syslog($priority, gettext("Voucher: ") . $message);
+    syslog($priority, sprintf(gettext("Voucher: %s"),$message));
     closelog();
 }
 

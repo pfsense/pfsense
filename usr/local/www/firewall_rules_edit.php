@@ -602,6 +602,9 @@ $closehead = false;
 $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
+// Allow extending of the firewall edit page and include custom input validation 
+pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
+
 ?>
 
 </head>
@@ -617,10 +620,6 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Firewall rule");?></td>
 		</tr>	
-<?php
-		// Allow extending of the firewall edit page and include custom input validation 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
-?>
     	<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
 			<td width="78%" class="vtable">

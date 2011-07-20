@@ -456,7 +456,7 @@ function interface_bridge_configure(&$bridge) {
 		$realif = get_real_interface($member);
 		$opts = pfSense_get_interface_addresses($realif);
 		$mtu = $opts['mtu'];
-		if (substr($realif, 0, 3) == "gif" && $mtu < 1500)
+		if (substr($realif, 0, 3) == "gif" && $mtu <= 1500)
 			continue;
 		if (!isset($opts['encaps']['txcsum']))
 			$commontx = false;
@@ -623,7 +623,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	$mtu = get_interface_mtu($brigeif);
 	$mtum = get_interface_mtu($interface);
 	
-	if ($mtu != $mtum)
+	if ($mtu != $mtum && substr($interface, 0, 3) == "gif" && $mtu <= 1500)
 		pfSense_interface_mtu($interface, $mtu);
 
 	$options = pfSense_get_interface_addresses($bridgeif);

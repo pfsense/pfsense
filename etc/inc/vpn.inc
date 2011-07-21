@@ -402,7 +402,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$racoonconf .= "}\n\n";
 			}
 			/* end mode_cfg section */
-		
+
 			$authcfg =  $config['system']['authserver'][0];
 	
 			/* begin ldap_cfg */
@@ -418,7 +418,7 @@ function vpn_ipsec_configure($ipchg = false)
 			$racoonconf .= "\tbind_pw \"".$authcfg['ldap_bindpw']."\";\n";
 			$racoonconf .= "\tattr_user \"".$authcfg['ldap_attr_user']."\";\n";
 			$racoonconf .= "}\n\n";
-			
+
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {
 				/* begin remote */

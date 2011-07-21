@@ -55,6 +55,7 @@ if (count($a_client)) {
 
 	$pconfig['user_source'] = $a_client['user_source'];
 	$pconfig['group_source'] = $a_client['group_source'];
+
 	$pconfig['pool_address'] = $a_client['pool_address'];
 	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
 	$pconfig['net_list'] = $a_client['net_list'];
@@ -354,8 +355,8 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="user_source" class="formselect" id="user_source">
-								<option value="<?=htmlspecialchars($pconfig['user_source']);?>"><?=gettext($pconfig['user_source']); ?></option>
-								<option value="system">System</option>
+							<option value="<?=htmlspecialchars($pconfig['user_source']);?>"><?=gettext($pconfig['user_source']); ?></option>
+								<option value="system"><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>

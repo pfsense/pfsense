@@ -193,7 +193,7 @@ EOD;
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
         portal_reply_page($redirurl, "error", $errormsg);
     }
-} else if ($_POST['accept'] && $clientip) {
+} else if ($_POST['accept'] && $clientip && $config['captiveportal']['auth_method'] == "none") {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {

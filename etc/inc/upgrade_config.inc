@@ -110,8 +110,8 @@ function upgrade_010_to_011() {
 			$fr['interface'] = $ifmap[$fr['interface']];
 		else {
 			/* remove the rule */
-			printf(gettext("%sWarning: filter rule removed " .
-				"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
+			echo "\nWarning: filter rule removed " .
+				"(interface '{$fr['interface']}' does not exist anymore).";
 			unset($config['filter']['rule'][$i]);
 			continue;
 		}
@@ -122,8 +122,8 @@ function upgrade_010_to_011() {
 				$fr['source']['network'] = $ifmap[$fr['source']['network']];
 			else {
 				/* remove the rule */
-				printf(gettext("%sWarning: filter rule removed " .
-					"(source network '%s' does not exist anymore)."), "\n", $fr['source']['network']);
+				echo "\nWarning: filter rule removed " .
+					"(source network '{$fr['source']['network']}' does not exist anymore).";
 				unset($config['filter']['rule'][$i]);
 				continue;
 			}
@@ -135,8 +135,8 @@ function upgrade_010_to_011() {
 				$fr['destination']['network'] = $ifmap[$fr['destination']['network']];
 			else {
 				/* remove the rule */
-				printf(gettext("%sWarning: filter rule removed " .
-					"(destination network '%s' does not exist anymore)."), "\n", $fr['destination']['network']);
+				echo "\nWarning: filter rule removed " .
+					"(destination network '{$fr['destination']['network']}' does not exist anymore).";
 				unset($config['filter']['rule'][$i]);
 				continue;
 			}
@@ -155,8 +155,8 @@ function upgrade_010_to_011() {
 			$fr['interface'] = $ifmap[$fr['interface']];
 		else {
 			/* remove the rule */
-			printf(gettext("%sWarning: traffic shaper rule removed " .
-				"(interface '%s' does not exist anymore)."), "\n", $fr['interface']);
+			echo "\nWarning: traffic shaper rule removed " .
+				"(interface '{$fr['interface']}' does not exist anymore).";
 			unset($config['pfqueueing']['rule'][$i]);
 			continue;
 		}
@@ -167,8 +167,8 @@ function upgrade_010_to_011() {
 				$fr['source']['network'] = $ifmap[$fr['source']['network']];
 			else {
 				/* remove the rule */
-				printf(gettext("%sWarning: traffic shaper rule removed " .
-					"(source network '%s' does not exist anymore)."), "\n", $fr['source']['network']);
+				echo "\nWarning: traffic shaper rule removed " .
+					"(source network '{$fr['source']['network']}' does not exist anymore).";
 				unset($config['pfqueueing']['rule'][$i]);
 				continue;
 			}
@@ -180,8 +180,8 @@ function upgrade_010_to_011() {
 				$fr['destination']['network'] = $ifmap[$fr['destination']['network']];
 			else {
 				/* remove the rule */
-				printf(gettext("%sWarning: traffic shaper rule removed " .
-					"(destination network '%s' does not exist anymore)."), "\n", $fr['destination']['network']);
+				echo "\nWarning: traffic shaper rule removed " .
+					"(destination network '{$fr['destination']['network']}' does not exist anymore).";
 				unset($config['pfqueueing']['rule'][$i]);
 				continue;
 			}
@@ -330,7 +330,7 @@ function upgrade_017_to_018() {
 			$vip = array();
 			$vip['mode'] = "carp";
 			$vip['interface'] = "AUTO";
-			$vip['descr'] = sprintf(gettext("CARP vhid %s"), $carpent['vhid']);
+			$vip['descr'] = "CARP vhid {$carpent['vhid']}";
 			$vip['type'] = "single";
 			$vip['vhid'] = $carpent['vhid'];
 			$vip['advskew'] = $carpent['advskew'];
@@ -507,7 +507,7 @@ function upgrade_028_to_029() {
 	$rule_item['type'] = "pass";
 	$rule_item['source']['any'] = true;
 	$rule_item['destination']['any'] = true;
-	$rule_item['descr'] = gettext("Permit IPsec traffic.");
+	$rule_item['descr'] = "Permit IPsec traffic.";
 	$rule_item['statetype'] = "keep state";
 	$a_filter[] = $rule_item;
 }
@@ -582,7 +582,7 @@ function upgrade_039_to_040() {
 	if (isset ($config['system']['username'])) {
 		$config['system']['group'] = array();
 		$config['system']['group'][0]['name'] = "admins";
-		$config['system']['group'][0]['description'] = gettext("System Administrators");
+		$config['system']['group'][0]['description'] = "System Administrators";
 		$config['system']['group'][0]['scope'] = "system";
 		$config['system']['group'][0]['priv'] = "page-all";
 		$config['system']['group'][0]['home'] = "index.php";
@@ -601,19 +601,19 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'] = array();
 		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
 		$config['system']['user'][0]['priv'][0]['name'] = "Lock webConfigurator";
-		$config['system']['user'][0]['priv'][0]['descr'] = gettext("Indicates whether this user will lock access to the webConfigurator for other users.");
+		$config['system']['user'][0]['priv'][0]['descr'] = "Indicates whether this user will lock access to the webConfigurator for other users.";
 		$config['system']['user'][0]['priv'][1]['id'] = "lock-ipages";
 		$config['system']['user'][0]['priv'][1]['name'] = "Lock individual pages";
-		$config['system']['user'][0]['priv'][1]['descr'] = gettext("Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).");
+		$config['system']['user'][0]['priv'][1]['descr'] = "Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).";
 		$config['system']['user'][0]['priv'][2]['id'] = "hasshell";
 		$config['system']['user'][0]['priv'][2]['name'] = "Has shell access";
-		$config['system']['user'][0]['priv'][2]['descr'] = gettext("Indicates whether this user is able to login for example via SSH.");
+		$config['system']['user'][0]['priv'][2]['descr'] = "Indicates whether this user is able to login for example via SSH.";
 		$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
 		$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
-		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP. If you are going to use this privilege, you must install scponly on the appliance (Hint: pkg_add -r scponly)."), $g['product_name']);
+		$config['system']['user'][0]['priv'][3]['descr'] = "Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP. If you are going to use this privilege, you must install scponly on the appliance (Hint: pkg_add -r scponly).";
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
-		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (you should associate this privilege only with one single user).");
+		$config['system']['user'][0]['priv'][4]['descr'] = "This user is associated with the UNIX root user (you should associate this privilege only with one single user).";
 
 		$config['system']['nextuid'] = "111";
 		$config['system']['nextgid'] = "111";
@@ -630,75 +630,75 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'] = array();
 
 		$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
-		$config['sysctl']['item'][0]['descr'] =    gettext("Drop packets to closed TCP ports without returning a RST");
+		$config['sysctl']['item'][0]['descr'] =    "Drop packets to closed TCP ports without returning a RST";
 		$config['sysctl']['item'][0]['value'] =   "default";
 
 		$config['sysctl']['item'][1]['tunable'] = "net.inet.udp.blackhole";
-		$config['sysctl']['item'][1]['descr'] =    gettext("Do not send ICMP port unreachable messages for closed UDP ports");
+		$config['sysctl']['item'][1]['descr'] =    "Do not send ICMP port unreachable messages for closed UDP ports";
 		$config['sysctl']['item'][1]['value'] =   "default";
 
 		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
-		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
+		$config['sysctl']['item'][2]['descr'] =    "Randomize the ID field in IP packets (default is 0: sequential IP IDs)";
 		$config['sysctl']['item'][2]['value'] =   "default";
 
 		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
-		$config['sysctl']['item'][3]['descr'] =    gettext("Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)");
+		$config['sysctl']['item'][3]['descr'] =    "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)";
 		$config['sysctl']['item'][3]['value'] =   "default";
 
 		$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
-		$config['sysctl']['item'][4]['descr'] =    gettext("Sending of IPv4 ICMP redirects");
+		$config['sysctl']['item'][4]['descr'] =    "Sending of IPv4 ICMP redirects";
 		$config['sysctl']['item'][4]['value'] =   "default";
 
 		$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
-		$config['sysctl']['item'][5]['descr'] =    gettext("Sending of IPv6 ICMP redirects");
+		$config['sysctl']['item'][5]['descr'] =    "Sending of IPv6 ICMP redirects";
 		$config['sysctl']['item'][5]['value'] =   "default";
 
 		$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
-		$config['sysctl']['item'][6]['descr'] =    gettext("Generate SYN cookies for outbound SYN-ACK packets");
+		$config['sysctl']['item'][6]['descr'] =    "Generate SYN cookies for outbound SYN-ACK packets";
 		$config['sysctl']['item'][6]['value'] =   "default";
 
 		$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
-		$config['sysctl']['item'][7]['descr'] =    gettext("Maximum incoming TCP datagram size");
+		$config['sysctl']['item'][7]['descr'] =    "Maximum incoming TCP datagram size";
 		$config['sysctl']['item'][7]['value'] =   "default";
 
 		$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
-		$config['sysctl']['item'][8]['descr'] =    gettext("Maximum outgoing TCP datagram size");
+		$config['sysctl']['item'][8]['descr'] =    "Maximum outgoing TCP datagram size";
 		$config['sysctl']['item'][8]['value'] =   "default";
 
 		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['descr'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
+		$config['sysctl']['item'][9]['descr'] =    "Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)";
 		$config['sysctl']['item'][9]['value'] =   "default";
 
 		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
+		$config['sysctl']['item'][10]['descr'] =    "Do not delay ACK to try and piggyback it onto a data packet";
 		$config['sysctl']['item'][10]['value'] =   "default";
 
 		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['descr'] =    gettext("Maximum outgoing UDP datagram size");
+		$config['sysctl']['item'][11]['descr'] =    "Maximum outgoing UDP datagram size";
 		$config['sysctl']['item'][11]['value'] =   "default";
 
 		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
+		$config['sysctl']['item'][12]['descr'] =    "Handling of non-IP packets which are not passed to pfil (see if_bridge(4))";
 		$config['sysctl']['item'][12]['value'] =   "default";
 
 		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
+		$config['sysctl']['item'][13]['descr'] =    "Allow unprivileged access to tap(4) device nodes";
 		$config['sysctl']['item'][13]['value'] =   "default";
 
 		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
+		$config['sysctl']['item'][15]['descr'] =    "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())";
 		$config['sysctl']['item'][15]['value'] =   "default";
 
 		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][16]['descr'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
 		$config['sysctl']['item'][16]['value'] =   "default";
 
 		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['descr'] =    gettext("Set ICMP Limits");
+		$config['sysctl']['item'][17]['descr'] =    "Set ICMP Limits";
 		$config['sysctl']['item'][17]['value'] =   "default";
 
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
+		$config['sysctl']['item'][18]['descr'] =    "TCP Offload engine";
 		$config['sysctl']['item'][18]['value'] =   "default";
 		
 		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
@@ -739,10 +739,10 @@ function upgrade_042_to_043() {
 		$config['gateways']['gateway_item'][$i] = array();
 		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
 			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
-			$config['gateways']['gateway_item'][$i]['descr'] = sprintf(gettext("Interface %s Static Gateway"), $ifname);
+			$config['gateways']['gateway_item'][$i]['descr'] = "Interface $ifname Static Gateway";			
 		} else {
 			$config['gateways']['gateway_item'][$i]['gateway'] = "dynamic";
-			$config['gateways']['gateway_item'][$i]['descr'] = sprintf(gettext("Interface %s Dynamic Gateway"), $ifname);
+			$config['gateways']['gateway_item'][$i]['descr'] = "Interface $ifname Dynamic Gateway";			
 		}
 		$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
 		$config['gateways']['gateway_item'][$i]['name'] = "GW_" . strtoupper($ifname);
@@ -807,7 +807,7 @@ function upgrade_043_to_044() {
 				$gwmap[$sroute['gateway']] = $gateway['name'];
 				$gateway['gateway'] = $sroute['gateway'];
 				$gateway['interface'] = $sroute['interface'];
-				$gateway['descr'] = sprintf(gettext("Upgraded static route for %s"), $sroute['network']);
+				$gateway['descr'] = "Upgraded static route for {$sroute['network']}";
 				if (!is_array($config['gateways']['gateway_item']))
 					$config['gateways']['gateway_item'] = array();
 				$config['gateways']['gateway_item'][] = $gateway;
@@ -904,7 +904,7 @@ function upgrade_045_to_046() {
 				$pool['type'] = 'server';
 				$pool['behaviour'] = 'balance';
 				$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
-				$pool['descr'] = sprintf(gettext("Sitedown pool for VS: %s"), $vs_a[$i]['name']);
+				$pool['descr'] = "Sitedown pool for VS: {$vs_a[$i]['name']}";
 				$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
 				$pool['servers'] = array();
 				$pool['servers'][] = $vs_a[$i]['sitedown'];
@@ -1057,7 +1057,7 @@ function upgrade_046_to_047() {
 			if (isset($tunnel['disabled']))
 				$ph1ent['disabled'] = $tunnel['disabled'];
 
-			$ph2ent['descr'] = sprintf(gettext("phase2 for %s"), $tunnel['descr']);
+			$ph2ent['descr'] = "phase2 for ".$tunnel['descr'];
 
 			$type = "lan";
 			if ($tunnel['local-subnet']['network'])
@@ -1139,7 +1139,8 @@ function upgrade_046_to_047() {
 
 		if (isset($config['ipsec']['mobileclients']['enable'])) {
 			$config['ipsec']['client']['enable'] = true;
-			$config['ipsec']['client']['user_source'] = 'system';
+			$config['ipsec']['client']['enable'] = $config['ipsec']['mobileclients']['user_source'];
+			//$config['ipsec']['client']['user_source'] = 'system';
 			$config['ipsec']['client']['group_source'] = 'system';
 		}
 
@@ -1284,7 +1285,7 @@ function upgrade_047_to_048() {
 			$tempdyn['host'] = $config['dyndns'][0]['host'];
 			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
 			$tempdyn['interface'] = "wan";
-			$tempdyn['descr'] = sprintf(gettext("Upgraded Dyndns %s"), $tempdyn['type']);
+			$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
 			$config['dyndnses']['dyndns'][] = $tempdyn;
 		}
 		unset($config['dyndns']);
@@ -1336,7 +1337,7 @@ function upgrade_048_to_049() {
 	/* setup new all users group */
 	$all = array();
 	$all['name'] = "all";
-	$all['description'] = gettext("All Users");
+	$all['description'] = "All Users";
 	$all['scope'] = "system";
 	$all['gid'] = 1998;
 	$all['member'] = array();
@@ -1468,7 +1469,7 @@ function upgrade_050_to_051() {
 			if (isset($intf['bridge']) && $intf['bridge'] <> "") {
 				$nbridge = array();
 				$nbridge['members'] = "{$ifr},{$intf['bridge']}";
-				$nbridge['descr'] = sprintf(gettext("Converted bridged %s"), $ifr);
+				$nbridge['descr'] = "Converted bridged {$ifr}";
 				$nbridge['bridgeif'] = "bridge{$i}";
 				$config['bridges']['bridged'][] = $nbridge;
 				unset($intf['bridge']);
@@ -1794,7 +1795,7 @@ function upgrade_051_to_052() {
                 $ovpnrule['destination'] = array();
                 $ovpnrule['source']['any'] = true;
                 $ovpnrule['destination']['any'] = true;
-                $ovpnrule['descr'] = gettext("Auto added OpenVPN rule from config upgrade.");
+                $ovpnrule['descr'] = "Auto added OpenVPN rule from config upgrade.";
 		$config['filter']['rule'][] = $ovpnrule;
 	}
 
@@ -1964,7 +1965,7 @@ function upgrade_054_to_055() {
 		$xmldumpnew = "{$database}.new.xml";
 
 		if ($g['booting'])
-			echo "Migrate RRD database {$database} to new format for IPv6 \n";
+			echo "Migrate RRD database {$database} to new format \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -2516,8 +2517,8 @@ function upgrade_075_to_076() {
 function upgrade_076_to_077() {
 	global $config;
 	foreach($config['filter']['rule'] as & $rule) {
-	if (isset($rule['protocol']) && !empty($rule['protocol']))
-		$rule['protocol'] = strtolower($rule['protocol']);
+		if (isset($rule['protocol']) && !empty($rule['protocol']))
+			$rule['protocol'] = strtolower($rule['protocol']);
 	}
 }
 
@@ -2538,6 +2539,7 @@ function upgrade_077_to_078() {
 		$config['pptpd']['radius'] = $radarr;
 	}
 }
+
 function upgrade_078_to_079() {
 	global $g;
 	/* Delete old and unused RRD file */
@@ -2555,95 +2557,4 @@ function upgrade_079_to_080() {
 	}
 }
 
-function upgrade_080_to_081() {
-	global $config;
-	global $g;
-
-	/* RRD files changed for quality, traffic and packets graphs */
-	/* convert traffic RRD file */
-	global $parsedcfg, $listtags;
-	$listtags = array("ds", "v", "rra", "row");
-
-	$rrddbpath = "/var/db/rrd/";
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	$rrdinterval = 60;
-	$valid = $rrdinterval * 2;
-
-	/* Asume GigE for now */
-	$downstream = 125000000;
-	$upstream = 125000000;
-
-	/* build a list of traffic and packets databases */
-	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
-	rsort($databases);
-	foreach($databases as $database) {
-		$databasetmp = "{$database}.tmp";
-		$xmldump = "{$database}.old.xml";
-		$xmldumptmp = "{$database}.tmp.xml";
-		$xmldumpnew = "{$database}.new.xml";
-
-		if ($g['booting'])
-			echo "Migrate RRD database {$database} to new format for IPv6.\n";
-
-		/* dump contents to xml and move database out of the way */
-		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
-
-		/* create new rrd database file */
-		$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
-		$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inblock:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outblock:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inpass6:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outpass6:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inblock6:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outblock6:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-
-		create_new_rrd("$rrdcreate");
-		/* create temporary xml from new RRD */
-		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
-
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
-		$rrdold = $rrdold['rrd'];
-
-		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
-		$rrdnew = xml2array($rrdnewxml, 1, "tag");
-		$rrdnew = $rrdnew['rrd'];
-
-		/* remove any MAX RRA's. Not needed for traffic. */
-		$i = 0;
-		foreach ($rrdold['rra'] as $rra) {
-			if(trim($rra['cf']) == "MAX") {
-				unset($rrdold['rra'][$i]);
-			}
-			$i++;
-		}
-
-		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
-		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-
-	}
-	enable_rrd_graphing();
-	if ($g['booting'])
-		echo "Updating configuration...";
-	foreach($config['filter']['rule'] as & $rule) {
-		if (isset($rule['protocol']) && !empty($rule['protocol']))
-			$rule['protocol'] = strtolower($rule['protocol']);
-	}
-}
-
-function upgrade_081_to_082() {
-	global $config;
-	/* enable the allow IPv6 toggle */
-	$config['system']['ipv6allow'] = true;
-}
 ?>

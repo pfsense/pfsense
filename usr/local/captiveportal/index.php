@@ -77,12 +77,12 @@ if ($orig_host != $ourhostname) {
 
     exit;
 }
-if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
-    $redirurl = urldecode($matches[1]);
-if ($_POST['redirurl'])
-    $redirurl = $_POST['redirurl'];
 if (!empty($config['captiveportal']['redirurl']))
 	$redirurl = $config['captiveportal']['redirurl'];
+else if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
+	$redirurl = urldecode($matches[1]);
+else if ($_REQUEST['redirurl'])
+	$redirurl = $_REQUEST['redirurl'];
 
 $macfilter = !isset($config['captiveportal']['nomacfilter']);
 $passthrumac = isset($config['captiveportal']['passthrumacadd']);

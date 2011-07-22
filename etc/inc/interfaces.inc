@@ -623,7 +623,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	$mtu = get_interface_mtu($brigeif);
 	$mtum = get_interface_mtu($interface);
 	
-	if ($mtu != $mtum && substr($interface, 0, 3) == "gif" && $mtu <= 1500)
+	if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500))
 		pfSense_interface_mtu($interface, $mtu);
 
 	$options = pfSense_get_interface_addresses($bridgeif);

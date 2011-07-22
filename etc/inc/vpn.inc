@@ -420,22 +420,29 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 			/* end mode_cfg section */
 			
-			 /* begin ldapcfg */
-                        $authcfg =  $config['system']['authserver'][0];
+			 if ($a_client['user_source'] = "ldap")
+             {
+				foreach ($config['system']['authserver'] as $authcfg) {
+                    if ($authcfg['type'] == 'ldap') {
+                        $thisauthcfg = $authcfg;
+                    }
+                }
+
+				/* begin ldapcfg */                        
                         $racoonconf .= "ldapcfg {\n";
                         $racoonconf .= "\tversion 3;\n";
-                        $racoonconf .= "\thost \"".$authcfg['host']."\";\n";
+                        $racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
                         $lport = "389";
                         if ($authcfg['port'] != "") {$lport = $authcfg['port'];};
                         $racoonconf .= "\tport ".$lport.";\n";
-                        $racoonconf .= "\tbase \"".$authcfg['ldap_basedn']."\";\n";
+                        $racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
                         $racoonconf .= "\tsubtree on;\n";
-                        $racoonconf .= "\tbind_dn \"".$authcfg['ldap_binddn']."\";\n";
-                        $racoonconf .= "\tbind_pw \"".$authcfg['ldap_bindpw']."\";\n";
-                        $racoonconf .= "\tattr_user \"".$authcfg['ldap_attr_user']."\";\n";
+                        $racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
+                        $racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
+                        $racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
                         $racoonconf .= "}\n\n";
-             /* end ldapcfg */
-
+				/* end ldapcfg */
+			}
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {
 				/* begin remote */

@@ -47,7 +47,7 @@ $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
 if ($_GET['act'] == "del") {
 	if ($a_ifgroups[$_GET['id']]) {
-		$members = explode(" ", $a_ifgroups[$_GET[$id]]);
+		$members = explode(" ", $a_ifgroups[$_GET[$id]]['members']);
 		foreach ($members as $ifs) {
 			$realif = get_real_interface($ifs);
 			if ($realif)

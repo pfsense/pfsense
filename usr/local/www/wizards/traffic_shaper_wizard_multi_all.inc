@@ -658,13 +658,16 @@ function apply_all_choosen_items() {
 	$altq_list_queues = array();
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
-	
+
+	$interfacelist = array();
+
 	for ($i = 0; $i < $steps; $i++) {
 
 		$tmppath = array();	
 		$altq =& new altq_root_queue();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
+		$interfacelist[] = $config['ezshaper']['step2']["conn{$i}interface"];
 		$altq->SetScheduler($config['ezshaper']['step2']["conn{$i}uploadscheduler"]);
 		$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conn{$i}upload"]));
 		$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
@@ -1448,23 +1451,26 @@ function apply_all_choosen_items() {
 	if (!is_array($config['filter']['rule']))
 	        $config['filter']['rule'] = array();
 
-			/* Rules */
-			if ($penalty) {
-				if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
-				    $rule = array();
-				    $rule['type'] = "match";
-				    $rule['descr'] = gettext("Penalty Box");
-				    $rule['source']['any'] = TRUE;
-				    $rule['defaultqueue'] = "qOthersLow";
-				    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
-				    $rule['destination']['any'] = TRUE;
-				    $rule['floating'] = "yes";
-				    $rule['wizard'] = "yes";
-				    $rule['enabled'] = "on";
-				    $config['filter']['rule'][] = $rule;
-	
-				}
-			}
+	$interfacelist = implode(",", $interfacelist);
+
+	/* Rules */
+	if ($penalty) {
+		if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
+		    $rule = array();
+		    $rule['type'] = "match";
+		    $rule['interface'] = $interfacelist;
+		    $rule['descr'] = gettext("Penalty Box");
+		    $rule['source']['any'] = TRUE;
+		    $rule['defaultqueue'] = "qOthersLow";
+		    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
+		    $rule['destination']['any'] = TRUE;
+		    $rule['floating'] = "yes";
+		    $rule['wizard'] = "yes";
+		    $rule['enabled'] = "on";
+		    $config['filter']['rule'][] = $rule;
+
+		}
+	}
 
 			/* If user specifies an IP, we don't bother with providers */
 			if ($voip) {
@@ -1472,6 +1478,7 @@ function apply_all_choosen_items() {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['type'] = "match";
+				        $rule['interface'] = $interfacelist;
 					$rule['descr'] = gettext("VOIP Adapter");
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
@@ -1486,6 +1493,7 @@ function apply_all_choosen_items() {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['type'] = "match";
+				        $rule['interface'] = $interfacelist;
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
 					$rule['protocol'] = "udp";
 					$rule['source']['any'] = TRUE;
@@ -1502,6 +1510,7 @@ function apply_all_choosen_items() {
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 						$rule = array();
 						$rule['type'] = "match";
+						$rule['interface'] = $interfacelist;
 						$rule['defaultqueue'] = 'qVoIP';
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1525,6 +1534,7 @@ function apply_all_choosen_items() {
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
 						$rule['type'] = "match";
+						$rule['interface'] = $interfacelist;
 						$rule['defaultqueue'] = 'qP2P';
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
@@ -1547,6 +1557,7 @@ function apply_all_choosen_items() {
 					foreach ($gamesplist[$key] as $Gameclient) {
 						$rule = array();
 						$rule['type'] = "match";
+						$rule['interface'] = $interfacelist;
 						$rule['defaultqueue'] = 'qGames';
 						if ($Gameclient[1] == "tcp")
 							$rule['ackqueue'] = 'qACK';
@@ -1564,59 +1575,60 @@ function apply_all_choosen_items() {
 				}
 			}
 			
-			/* loop through othersplist[] */
-			if ($otherpriority) {
-				foreach($config['ezshaper']['step7'] as $key => $val) {
-					if (!is_array($othersplist[$key]))
-						continue;
-					foreach ($othersplist[$key] as $otherclient) {
-						$rule = array();
-						$rule['type'] = "match";
-						switch ($val) {
-						case "H":
-							$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
-							if ($otherclient[1] == "tcp")
+	/* loop through othersplist[] */
+	if ($otherpriority) {
+		foreach($config['ezshaper']['step7'] as $key => $val) {
+			if (!is_array($othersplist[$key]))
+				continue;
+			foreach ($othersplist[$key] as $otherclient) {
+				$rule = array();
+				$rule['type'] = "match";
+				$rule['interface'] = $interfacelist;
+				switch ($val) {
+				case "H":
+					$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
+					if ($otherclient[1] == "tcp")
 								$rule['ackqueue'] = 'qACK';
-							$loop = 0;
-						break;
-						case "L":
-							$rule['defaultqueue'] = 'qOthersLow'; /* posted value H or L */
-							if ($otherclient[1] == "tcp")
-                                                                $rule['ackqueue'] = 'qACK';
-							$loop = 0;
-						break;
-						case "D":
-							if ($p2pcatchall) {
-								$loop = 0;
-								$rule['defaultqueue'] = 'qOthersDefault';
-								if ($otherclient[1] == "tcp")
-									$rule['ackqueue'] = 'qACK';
-							} else
-								$loop = 1; /* It automitaclly goes to default queue */
-						break;
-						default:
-							$loop = 1;
-						}
-						if (!$loop) {
-							$rule['source']['any'] = TRUE;
-							$rule['destination']['any'] = TRUE;
-							$rule['floating'] = "yes";
-							$rule['wizard'] = "yes";
-							$rule['enabled'] = "on";
-							$rule['descr'] = "m_Other {$otherclient[0]} outbound";
-		
-							if($otherclient[2] or $otherclient[3]) {
-								$rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
-							}
-							if($otherclient[1] != '')
-								$rule['protocol'] = $otherclient[1];
-		
-								$config['filter']['rule'][] = $rule;
-						}
+					$loop = 0;
+					break;
+				case "L":
+					$rule['defaultqueue'] = 'qOthersLow'; /* posted value H or L */
+					if ($otherclient[1] == "tcp")
+                                                              $rule['ackqueue'] = 'qACK';
+					$loop = 0;
+					break;
+				case "D":
+					if ($p2pcatchall) {
+						$loop = 0;
+						$rule['defaultqueue'] = 'qOthersDefault';
+						if ($otherclient[1] == "tcp")
+							$rule['ackqueue'] = 'qACK';
+					} else
+						$loop = 1; /* It automitaclly goes to default queue */
+					break;
+				default:
+					$loop = 1;
+				}
+				if (!$loop) {
+					$rule['source']['any'] = TRUE;
+					$rule['destination']['any'] = TRUE;
+					$rule['floating'] = "yes";
+					$rule['wizard'] = "yes";
+					$rule['enabled'] = "on";
+					$rule['descr'] = "m_Other {$otherclient[0]} outbound";
+
+					if($otherclient[2] or $otherclient[3]) {
+						$rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
 					}
+					if($otherclient[1] != '')
+						$rule['protocol'] = $otherclient[1];
+
+					$config['filter']['rule'][] = $rule;
 				}
 			}
-		write_config();
+		}
+	}
+	write_config();
 }
 
 function wizard_get_bandwidthtype_scale($type = "b") {

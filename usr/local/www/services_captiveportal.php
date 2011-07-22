@@ -67,7 +67,6 @@ if ($_GET['act'] == "viewhtml") {
 }
 
 $pconfig['cinterface'] = $config['captiveportal']['interface'];
-$pconfig['maxproc'] = $config['captiveportal']['maxproc'];
 $pconfig['maxprocperip'] = $config['captiveportal']['maxprocperip'];
 $pconfig['timeout'] = $config['captiveportal']['timeout'];
 $pconfig['idletimeout'] = $config['captiveportal']['idletimeout'];
@@ -172,18 +171,13 @@ if ($_POST) {
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
-		$input_errors[] = gettext("The total maximum number of concurrent connections must be between 4 and 100.");
-	}
-	$mymaxproc = $_POST['maxproc'] ? $_POST['maxproc'] : 16;
-	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] > $mymaxproc))) {
+	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] < 4) || $_POST['maxprocperip'] > 100)) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
 
 	if (!$input_errors) {
 		if (is_array($_POST['cinterface']))
 			$config['captiveportal']['interface'] = implode(",", $_POST['cinterface']);
-		$config['captiveportal']['maxproc'] = $_POST['maxproc'];
 		$config['captiveportal']['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
 		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
@@ -256,7 +250,6 @@ function enable_change(enable_change) {
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 
 	document.iform.cinterface.disabled = endis;
-	//document.iform.maxproc.disabled = endis;
 	document.iform.maxprocperip.disabled = endis;
 	document.iform.idletimeout.disabled = endis;
 	document.iform.freelogins_count.disabled = endis;

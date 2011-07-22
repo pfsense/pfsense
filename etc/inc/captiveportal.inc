@@ -397,8 +397,8 @@ function captiveportal_init_webgui() {
 	 if (!isset($config['captiveportal']['enable']))
 				return;
 
-	if ($config['captiveportal']['maxproc'])
-		$maxproc = $config['captiveportal']['maxproc'];
+	if ($config['captiveportal']['maxprocperip'])
+		$maxproc = $config['captiveportal']['maxprocperip'];
 	else
 		$maxproc = 16;
 

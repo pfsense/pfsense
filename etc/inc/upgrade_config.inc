@@ -1139,7 +1139,7 @@ function upgrade_046_to_047() {
 
 		if (isset($config['ipsec']['mobileclients']['enable'])) {
 			$config['ipsec']['client']['enable'] = true;
-			$config['ipsec']['client']['user_source'] = 'system';
+			$config['ipsec']['client']['enable'] = $config['ipsec']['mobileclients']['user_source'];
 			$config['ipsec']['client']['group_source'] = 'system';
 		}
 

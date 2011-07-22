@@ -419,6 +419,22 @@ function vpn_ipsec_configure($ipchg = false)
 				$racoonconf .= "}\n\n";
 			}
 			/* end mode_cfg section */
+			
+			 /* begin ldapcfg */
+                        $authcfg =  $config['system']['authserver'][0];
+                        $racoonconf .= "ldapcfg {\n";
+                        $racoonconf .= "\tversion 3;\n";
+                        $racoonconf .= "\thost \"".$authcfg['host']."\";\n";
+                        $lport = "389";
+                        if ($authcfg['port'] != "") {$lport = $authcfg['port'];};
+                        $racoonconf .= "\tport ".$lport.";\n";
+                        $racoonconf .= "\tbase \"".$authcfg['ldap_basedn']."\";\n";
+                        $racoonconf .= "\tsubtree on;\n";
+                        $racoonconf .= "\tbind_dn \"".$authcfg['ldap_binddn']."\";\n";
+                        $racoonconf .= "\tbind_pw \"".$authcfg['ldap_bindpw']."\";\n";
+                        $racoonconf .= "\tattr_user \"".$authcfg['ldap_attr_user']."\";\n";
+                        $racoonconf .= "}\n\n";
+             /* end ldapcfg */
 
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {

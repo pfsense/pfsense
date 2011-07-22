@@ -355,6 +355,7 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="user_source" class="formselect" id="user_source">
+								<option value="ldap"><?=gettext("ldap"); ?></option>
 								<option value="system"><?=gettext("system"); ?></option>
 							</select>
 						</td>

@@ -914,7 +914,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		}
 
 		if ($tab_array_char_limit == '') {
-			$tab_array_char_limit = 82;
+			$tab_array_char_limit = 92;
 		}
 
         $tab_temp = array ();

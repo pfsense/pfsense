@@ -368,39 +368,45 @@ function return_gateway_groups_array() {
 	$gateway_groups_array = array();
 
 	if (isset($config['system']['gw_switch_default'])) {
-	/* 
-	 * NOTE: The code below is meant to replace the default gateway when it goes down.
-	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
-	 */
-	$upgw = "";
-	$dfltgwdown = false;
-	$dfltgwfound = false;
-	foreach ($gateways_arr as $gwname => $gwsttng) {
-		if (isset($gwsttng['defaultgw'])) {
-			$dfltgwfound = true;
+		/* 
+		 * NOTE: The code below is meant to replace the default gateway when it goes down.
+		 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
+		 */
+		$upgw = "";
+		$dfltgwdown = false;
+		$dfltgwfound = false;
+		foreach ($gateways_arr as $gwname => $gwsttng) {
+			if (isset($gwsttng['defaultgw'])) {
+				$dfltgwfound = true;
+				$dfltgwname = $gwname;
+				if (stristr($gateways_status[$gwname]['status'], "down"))
+					$dfltgwdown = true;
+			}
+			/* Keep a record of the last up gateway */
+			if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
+				$upgw = $gwname;
+			if ($dfltgwdown == true && !empty($upgw))
+				break;
+		}
+		if ($dfltgwfound == false) {
+			$gwname = convert_friendly_interface_to_friendly_descr("wan");
 			if (stristr($gateways_status[$gwname]['status'], "down"))
 				$dfltgwdown = true;
 		}
-		/* Keep a record of the last up gateway */
-		if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
-			$upgw = $gwname;
-		if ($dfltgwdown == true && !empty($upgw))
-			break;
-	}
-	if ($dfltgwfound == false) {
-		$gwname = convert_friendly_interface_to_friendly_descr("wan");
-		if (stristr($gateways_status[$gwname]['status'], "down"))
-			$dfltgwdown = true;
-	}
-	if ($dfltgwdown == true && !empty($upgw)) {
-		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
-			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
-		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
-			log_error("Default gateway down setting {$upgw} as default!");
-			mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
+		if ($dfltgwdown == true && !empty($upgw)) {
+			if ($gateways_arr[$upgw]['gateway'] == "dynamic")
+				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
+			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
+				log_error("Default gateway down setting {$upgw} as default!");
+				mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$upgw]['gateway']}");
+			}
+		} else {
+			$defaultgw = trim(`/sbin/route -n get -inet default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
+			if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
+				mwexec("/sbin/route delete -inet default; /sbin/route add -inet default {$gateways_arr[$dfltgwname]['gateway']}");
 		}
-	}
-	unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
+				
+		unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
 	}
 
 	if (is_array($config['gateways']['gateway_group'])) {

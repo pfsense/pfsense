@@ -361,6 +361,7 @@ EOD;
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 		killbypid("{$g['varrun_path']}/cp_prunedb.pid");
 
 		captiveportal_radius_stop_all();

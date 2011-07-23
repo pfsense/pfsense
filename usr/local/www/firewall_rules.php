@@ -346,10 +346,10 @@ if($_REQUEST['undodrag']) {
 			<tr id="frheader">
 			<td width="3%" class="list">&nbsp;</td>
 			<td width="5%" class="list">&nbsp;</td>
+			<td width="3%" class="listhdrr"><?=gettext("ID");?></td>
 <?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tablehead");
 ?>
-			<td width="3%" class="listhdrr"><?=gettext("ID");?></td>
 			<td width="6%" class="listhdrr"><?=gettext("Proto");?></td>
 			<td width="12%" class="listhdrr"><?=gettext("Source");?></td>
 			<td width="6%" class="listhdrr"><?=gettext("Port");?></td>
@@ -409,6 +409,9 @@ if($_REQUEST['undodrag']) {
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0"></td>
 			<td class="listlr" style="background-color: #E0E0E0"></td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_antilockout");
+?>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
@@ -501,7 +504,6 @@ if($_REQUEST['undodrag']) {
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = "";
-				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tablerow");
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
                   <td class="listt">
@@ -690,11 +692,13 @@ if($_REQUEST['undodrag']) {
 					 	$printicon = true;				  	
 					  }
 				}
-				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
 				?>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']; else echo ""; ?><?=$textse;?>
                   </td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
+?>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php
 			if (isset($filterent['ipprotocol'])) {

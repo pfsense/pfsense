@@ -184,6 +184,8 @@ if (!$if || !isset($iflist[$if])) {
                 $if = "wan";
 }
 
+pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/interfaces_override");
+
 if ($_POST) {
 
 	$pconfig = $_POST;

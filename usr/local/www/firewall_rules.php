@@ -788,6 +788,9 @@ if($_REQUEST['undodrag']) {
                 <tr id="fr<?=$nrules;?>">
                   <td class="list"></td>
                   <td class="list"></td>
+<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_belowtable");
+?>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>

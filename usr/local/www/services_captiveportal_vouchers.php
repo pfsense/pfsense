@@ -295,7 +295,7 @@ EOF;
 							$config['voucher']['msgexpired'] = $toreturn['voucher']['msgexpired'];
 						if($toreturn['voucher']['msgnoaccess'])
 							$config['voucher']['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
-						$savemsg = gettext("Voucher database has been synchronized to {$url}:{$port}");
+						$savemsg = gettext("Voucher database has been synchronized from {$url}:{$port}");
 
 						write_config();
 						voucher_configure(true);

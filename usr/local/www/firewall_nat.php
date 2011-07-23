@@ -70,6 +70,8 @@ if ($_POST) {
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);
 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
+
 		if ($retval == 0) {
 			clear_subsystem_dirty('natconf');
 			clear_subsystem_dirty('filter');

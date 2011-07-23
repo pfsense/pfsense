@@ -501,6 +501,7 @@ if($_REQUEST['undodrag']) {
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = ""
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tablerow");
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
                   <td class="listt">

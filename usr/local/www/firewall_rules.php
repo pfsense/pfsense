@@ -296,9 +296,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
+<link rel="stylesheet" href="/pfCenter/javascript/chosen/chosen.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/pfCenter/javascript/chosen/chosen.proto.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 

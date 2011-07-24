@@ -177,14 +177,14 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
    	$iflist["openvpn"] = "OpenVPN";
 
+pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/interfaces_override");
+
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)
                 $if = "FloatingRules";
         else if ("FloatingRules" != $if)
                 $if = "wan";
 }
-
-pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/interfaces_override");
 
 if ($_POST) {
 

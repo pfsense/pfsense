@@ -499,6 +499,7 @@ if($_REQUEST['undodrag']) {
 <?php endif; ?>
 				<tbody id="dragtable" width="100%">
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
+					pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/row_start");
 					$filterent = $a_filter[$i];
 					if ($filterent['interface'] != $if && !isset($filterent['floating']))
 						continue;
@@ -509,7 +510,6 @@ if($_REQUEST['undodrag']) {
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = "";
-					pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/row_start");
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
                   <td class="listt">

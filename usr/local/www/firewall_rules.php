@@ -350,6 +350,9 @@ if($_REQUEST['undodrag']) {
     <td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+<?php
+			pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_first_tr");
+?>
 			<tr id="frheader">
 			<td width="3%" class="list">&nbsp;</td>
 			<td width="5%" class="list">&nbsp;</td>

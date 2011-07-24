@@ -321,6 +321,9 @@ if($_REQUEST['undodrag']) {
 	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...
 	<p/>&nbsp;
 </div>
+<?php
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_table");
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -506,6 +509,7 @@ if($_REQUEST['undodrag']) {
 						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
 					else 
 						$advanced_set = "";
+					pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/row_start");
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
                   <td class="listt">

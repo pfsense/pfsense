@@ -166,7 +166,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 
 ?>
-<link rel="stylesheet" href="/pfCenter/javascript/chosen/chosen.css" />
+<link rel="stylesheet" href="/javascript/chosen/chosen.css" />
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">

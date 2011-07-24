@@ -296,7 +296,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
-<link rel="stylesheet" href="/pfCenter/javascript/chosen/chosen.css" />
+<link rel="stylesheet" href="/javascript/chosen/chosen.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

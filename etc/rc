@@ -88,6 +88,12 @@ if grep -q cf /etc/fstab; then
 	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
 
+# sync pw database after mount.
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	rm -f /etc/spwd.db.tmp
+	/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
+fi
+
 product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
 varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`

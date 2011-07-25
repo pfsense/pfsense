@@ -361,6 +361,7 @@ EOD;
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 		killbypid("{$g['varrun_path']}/cp_prunedb.pid");
 
 		captiveportal_radius_stop_all();
@@ -397,8 +398,8 @@ function captiveportal_init_webgui() {
 	 if (!isset($config['captiveportal']['enable']))
 				return;
 
-	if ($config['captiveportal']['maxproc'])
-		$maxproc = $config['captiveportal']['maxproc'];
+	if ($config['captiveportal']['maxprocperip'])
+		$maxproc = $config['captiveportal']['maxprocperip'];
 	else
 		$maxproc = 16;
 

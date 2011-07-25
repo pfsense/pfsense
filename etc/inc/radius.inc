@@ -421,7 +421,7 @@ class Auth_RADIUS extends PEAR {
             return true;
 
         default:
-            return $this->raiseError(gettext("Unexpected return value:") . $req);
+            return $this->raiseError(sprintf(gettext("Unexpected return value: %s"),$req));
         }
 
     }

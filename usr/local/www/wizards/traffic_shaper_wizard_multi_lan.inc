@@ -451,6 +451,7 @@ function apply_all_choosen_items() {
 	$altq_list_queues = array();
 
 	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
+
 	for ($i = 0; $i < $steps; $i++) {
 
 		$tmppath = array();	
@@ -1202,6 +1203,7 @@ function apply_all_choosen_items() {
 			if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 			    $rule = array();
 			    $rule['type'] = "match";
+			    $rule['interface'] = "wan";
 			    $rule['descr'] = gettext("Penalty Box");
 			    $rule['source']['any'] = TRUE;
 			    $rule['defaultqueue'] = "qOthersLow";
@@ -1221,6 +1223,7 @@ function apply_all_choosen_items() {
 				/* create VOIP rules */
 				$rule = array();
 				$rule['type'] = "match";
+			        $rule['interface'] = "wan";
 				$rule['descr'] = gettext("VOIP Adapter");
 				$rule['protocol'] = "udp";
 				$rule['defaultqueue'] = "qVoIP";
@@ -1235,6 +1238,7 @@ function apply_all_choosen_items() {
 				/* create VOIP rules */
 				$rule = array();
 				$rule['type'] = "match";
+			        $rule['interface'] = "wan";
 				$rule['descr'] = "DiffServ/Lowdelay/Upload";
 				$rule['protocol'] = "udp";
 				$rule['source']['any'] = TRUE;
@@ -1251,6 +1255,7 @@ function apply_all_choosen_items() {
 				foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 					$rule = array();
 					$rule['type'] = "match";
+					$rule['interface'] = "wan";
 					$rule['defaultqueue'] = 'qVoIP';
 					$rule['source']['any'] = TRUE;
 					$rule['destination']['any'] = TRUE;
@@ -1274,6 +1279,7 @@ function apply_all_choosen_items() {
 				foreach ($p2plist[$key] as $p2pclient) {
 					$rule = array();
 					$rule['type'] = "match";
+					$rule['interface'] = "wan";
 					$rule['defaultqueue'] = 'qP2P';
 					$rule['source']['any'] = TRUE;		
 					$rule['destination']['any'] = TRUE;
@@ -1296,6 +1302,7 @@ function apply_all_choosen_items() {
 				foreach ($gamesplist[$key] as $Gameclient) {
 					$rule = array();
 					$rule['type'] = "match";
+					$rule['interface'] = "wan";
 					$rule['defaultqueue'] = 'qGames';
 					if ($Gameclient[1] == "tcp")
 						$rule['ackqueue'] = 'qACK';
@@ -1321,6 +1328,7 @@ function apply_all_choosen_items() {
 				foreach ($othersplist[$key] as $otherclient) {
 					$rule = array();
 					$rule['type'] = "match";
+					$rule['interface'] = "wan";
 					switch ($val) {
 					case "H":
 						$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */

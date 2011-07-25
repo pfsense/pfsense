@@ -202,10 +202,10 @@ include("head.inc");
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell"><?=gettext("IP Address of E-Mail server"); ?></td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtpipaddress' value='<?php echo $pconfig['smtpipaddress']; ?>'><br/>
-								<?=gettext("This is the IP address of the SMTP E-Mail server that will be used to send notifications to."); ?>
+								<?=gettext("This is the FQDN or IP address of the SMTP E-Mail server to which notifications will be sent."); ?>
 							</td>
 						</tr>
 						<tr>

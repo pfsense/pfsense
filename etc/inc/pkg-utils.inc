@@ -573,7 +573,7 @@ function install_package($package, $pkg_info = "") {
 	update_output_window($static_output);
 	if($pkgid == -1) {
 		$config['installedpackages']['package'][] = $pkg_info;
-		$changedesc = gettext("Installed") . $pkg_info['name'] . gettext("package.");
+		$changedesc = sprintf(gettext("Installed %s package."),$pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
 	} else {
 		$config['installedpackages']['package'][$pkgid] = $pkg_info;

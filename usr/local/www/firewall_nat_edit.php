@@ -439,8 +439,11 @@ $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gett
 include("head.inc");
 
 ?>
+<link rel="stylesheet" href="/javascript/chosen/chosen.css" />
+</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/chosen/chosen.proto.js" type="text/javascript"></script>
 <?php
 include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -476,6 +479,8 @@ include("fbegin.inc"); ?>
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
+						// Allow extending of the firewall edit interfaces 
+						pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
 						foreach ($iflist as $if => $ifdesc)
 							if(have_ruleint_access($if))
 								$interfaces[$if] = $ifdesc;

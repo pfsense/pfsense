@@ -144,7 +144,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth({$voucher_received});
+	\$timeleft = voucher_auth(\$voucher_received);
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
 	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
@@ -632,7 +632,7 @@ function voucher_log($priority, $message) {
     define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-    syslog($priority, gettext("Voucher: ") . $message);
+    syslog($priority, sprintf(gettext("Voucher: %s"),$message));
     closelog();
 }
 

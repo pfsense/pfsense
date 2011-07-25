@@ -558,6 +558,7 @@ EOD;
 	rowsize[2] = "50";
 </script>
 
+<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="inputerrors"></div>
 

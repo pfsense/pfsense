@@ -451,9 +451,9 @@ if ($_POST['apply']) {
 			}
 		case "dhcp":
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			if (in_array($wancfg['ipaddrv6'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = gettext("You have to reassign the interface to be able to configure as {$_POST['type']}.");
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
@@ -657,7 +657,7 @@ if ($_POST['apply']) {
 			}
 			if($skip == false) {
 				$gateway_item['gateway'] = "dynamic";
-				$gateway_item['descr'] = gettext("Interface") . $if . gettext("dynamic gateway");
+				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic gateway"),$if);
 				$gateway_item['name'] = "GW_" . strtoupper($if);
 				$gateway_item['interface'] = "{$if}";
 			} else {
@@ -1617,7 +1617,7 @@ $types = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), 
 											<?php	if(is_readable("/var/db/dhcp6c_duid")) {
 													// $current_duid = file_get_contents("/var/db/dhcp6c_duid");
 												}
-												echo gettext("The current DUID is: '") . $current_duid ."'";
+												printf(gettext("The current DUID is: '%s'"),$current_duid);
 											?>
 											
 										</td>

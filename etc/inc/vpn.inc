@@ -403,7 +403,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$fn = "{$g['varetc_path']}/racoon.motd";
 					$fd1 = fopen($fn, "w");
 					if (!$fd1) {
-						printf(gettext("Error: cannot open server %s in vpn.%s"). $fn, "\n");
+						printf(gettext("Error: cannot open server %s in vpn.\n"), $fn);
 						return 1;
 					}
 

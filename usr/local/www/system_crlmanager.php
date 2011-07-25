@@ -525,11 +525,11 @@ function method_change() {
 						<td class="list">
 						<?php if ($cainternal == "YES"): ?>
 							<a href="system_crlmanager.php?act=new&caref=<?php echo $ca['refid']; ?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add or Import CRL for ") . $ca['descr'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Add or Import CRL for %s"),$ca['descr']);?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
 						<?php else: ?>
 							<a href="system_crlmanager.php?act=new&caref=<?php echo $ca['refid']; ?>&importonly=yes">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Import CRL for ") . $ca['descr'];?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?php printf(gettext("Import CRL for %s"),$ca['descr']);?>" alt="<?=gettext("add crl");?>" width="17" height="17" border="0" />
 							</a>
 						<?php endif; ?>
 						</td>

@@ -946,15 +946,15 @@ class XML_RPC_Client extends XML_RPC_Base {
          * but keep it here for backwards compatibility.
          */
         if (!$fp && $this->proxy) {
-            $this->raiseError(gettext('Connection to proxy server ')
-                              . $this->proxy . ':' . $this->proxy_port
-                              . gettext(' failed. ') . $this->errstr,
+            $this->raiseError(sprintf(gettext('Connection to proxy server 
+                              %1$s:%2$s failed. %3$s')
+                              ,$this->proxy,$this->proxy_port,$this->errstr),
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
         } elseif (!$fp) {
-            $this->raiseError(gettext('Connection to RPC server ')
-                              . $server . ':' . $port
-                              . gettext(' failed. ') . $this->errstr,
+            $this->raiseError(sprintf(gettext('Connection to RPC server 
+                              %1$s:%2$s failed. %3$s')
+                              ,$server,$port,$this->errstr),
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
         }
@@ -1465,7 +1465,7 @@ class XML_RPC_Message extends XML_RPC_Base
             !preg_match('@^HTTP/[0-9\.]+ 10[0-9]([A-Z ]+)?[\r\n]+HTTP/[0-9\.]+ 200@', $data))
         {
                 $errstr = substr($data, 0, strpos($data, "\n") - 1);
-                error_log(gettext("HTTP error, got response: ") . $errstr);
+                error_log(sprintf(gettext("HTTP error, got response: %s"),$errstr));
                 $r = new XML_RPC_Response(0, $XML_RPC_err['http_error'],
                                           $XML_RPC_str['http_error'] . ' (' .
                                           $errstr . ')');

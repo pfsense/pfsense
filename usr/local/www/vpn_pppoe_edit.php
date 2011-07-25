@@ -139,9 +139,9 @@ if ($_POST) {
 		for($x=0; $x<4999; $x++) {
 			if ($_POST["username{$x}"]) {
 				if (empty($_POST["password{$x}"]))
-					$input_errors[] = gettext("No password specified for username ") . $_POST["username{$x}"];
+					$input_errors[] = sprintf(gettext("No password specified for username %s"),$_POST["username{$x}"]);
 				if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"]))
-					$input_errors[] = gettext("Incorrect ip address  specified for username ") . $_POST["username{$x}"];
+					$input_errors[] = sprintf(gettext("Incorrect ip address  specified for username %s"),$_POST["username{$x}"]);
 			}
 		}
 	}

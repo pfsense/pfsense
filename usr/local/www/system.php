@@ -135,7 +135,7 @@ if ($_POST) {
 			if(interface_has_gateway($_POST[$dnsgwitem])) {
 				foreach($direct_networks_list as $direct_network) {
 					if(ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = gettext("You can not assign a gateway to DNS '{$_POST[$dnsitem]}' server which is on a directly connected network.");
+						$input_errors[] = sprintf(gettext("You can not assign a gateway to DNS '%s' server which is on a directly connected network."),$_POST[$dnsitem]);
 					}
 				}
 			}

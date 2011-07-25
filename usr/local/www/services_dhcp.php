@@ -156,8 +156,8 @@ if (is_array($config['dhcpd'][$if])){
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 
-$ifcfgip = get_interface_ip($if);
-$ifcfgsn = get_interface_subnet($if);
+$ifcfgip = $config['interfaces'][$if]['ipaddr'];
+$ifcfgsn = $config['interfaces'][$if]['subnet'];
 
 /*   set the enabled flag which will tell us if DHCP relay is enabled
  *   on any interface. We will use this to disable DHCP server since

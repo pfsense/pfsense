@@ -232,7 +232,7 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown">
 									<br />
-									<?=gettext("Proxy url for allowing {$g['product']} to use this proxy to connect outside."); ?>
+									<?php printf(gettext("Proxy url for allowing %s to use this proxy to connect outside."),$g['product']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -240,7 +240,7 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown">
 									<br />
-									<?=gettext("Proxy url for allowing {$g['product']} to use this proxy port to connect outside. Default is 8080 for http protocol or ssl for 443."); ?>
+									<?php printf(gettext("Proxy url for allowing %s to use this proxy port to connect outside. Default is 8080 for http protocol or ssl for 443."),$g['product']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -248,7 +248,7 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown">
 									<br />
-									<?=gettext("Proxy username for allowing {$g['product']} to use this proxy to connect outside"); ?>
+									<?php printf(gettext("Proxy username for allowing %s to use this proxy to connect outside"),$g['product']); ?>
 								</td>
 							</tr>
 							<tr>
@@ -256,7 +256,7 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown">
 									<br />
-									<?=gettext("Proxy password for allowing {$g['product']} to use this proxy to connect outside"); ?>
+									<?php printf(gettext("Proxy password for allowing %s to use this proxy to connect outside"),$g['product']); ?>
 								</td>
 							</tr>
 							<tr>

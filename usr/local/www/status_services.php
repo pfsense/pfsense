@@ -63,6 +63,7 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'captiveportal':
 			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 			captiveportal_init_webgui();
 			break;
 		case 'ntpd':
@@ -157,6 +158,7 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'captiveportal':
 			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 			break;
 		case 'ntpd':
 			killbyname("ntpd");

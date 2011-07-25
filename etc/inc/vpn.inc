@@ -35,7 +35,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/usr/bin/netstat	/sbin/route	/bin/mkdir
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/sbin/route	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4	
 	pfSense_MODULE:	vpn
@@ -125,10 +125,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 		/* fastforwarding is not compatible with ipsec tunnels */
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
-
-		/* this loads a route table which is used to determine if a route needs to be removed. */
-		exec("/usr/bin/netstat -rnf inet", $route_arr, $retval);
-		$route_str = implode("\n", $route_arr);
 
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
@@ -898,11 +894,8 @@ EOD;
 							}
 						}
 					}
-				} elseif(is_ipaddr($rgip)) {
-					if(stristr($route_str, "{$rgip}")) {
-						mwexec("/sbin/route delete -host {$rgip}", true);
-					}
-				}
+				} else if(is_ipaddr($rgip))
+					mwexec("/sbin/route delete -host {$rgip}", true);
 			}
 
 			fwrite($fd, $spdconf);

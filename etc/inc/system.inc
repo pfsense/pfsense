@@ -31,7 +31,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
-	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
+	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
@@ -371,28 +371,13 @@ function system_routing_configure($interface = "") {
 			}
 		}
 	}
-	/* Create a array from the existing route table */
-	exec("/usr/bin/netstat -rnf inet", $route_str);
-	array_shift($route_str);
-	array_shift($route_str);
-	array_shift($route_str);
-	array_shift($route_str);
-	$route_arr = array();
-	foreach($route_str as $routeline) {
-		$items = preg_split("/[ ]+/i", $routeline);
-		$route_arr[$items[0]] = array($items[0], $items[1], $items[5]);
-	}
 
 	if ($dont_add_route == false ) {
 		if (!empty($interface) && $interface != $interfacegw)
 			;
 		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
-			$action = "add";
-			if(isset($route_arr['default'])) {
-				$action = "change";
-			}
-			log_error("ROUTING: $action default route to $gatewayip");
-			mwexec("/sbin/route {$action} -inet default " . escapeshellarg($gatewayip));
+			log_error("ROUTING: setting default route to $gatewayip");
+			mwexec("/sbin/route change -inet default " . escapeshellarg($gatewayip));
 		}
 	}
 
@@ -410,15 +395,12 @@ function system_routing_configure($interface = "") {
 				continue;
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
-			$action = "add";
-			if (isset($route_arr[$rtent['network']]))
-				$action = "change";
 
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route change -inet " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route {$action} -inet " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route change -inet " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}

@@ -183,7 +183,7 @@ function filter_delete_states_for_down_gateways() {
 }
 
 /* reload filter sync */
-function filter_configure_sync() {
+function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
@@ -397,8 +397,10 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo ".";
 
-	update_filter_reload_status(gettext("Processing down interface states"));
-	filter_delete_states_for_down_gateways();
+	if($delete_states_if_needed) {
+		update_filter_reload_status(gettext("Processing down interface states"));
+		filter_delete_states_for_down_gateways();
+	}
 
 	update_filter_reload_status(gettext("Running plugins"));
 

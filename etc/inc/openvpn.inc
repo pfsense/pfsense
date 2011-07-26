@@ -780,7 +780,10 @@ function openvpn_get_active_servers() {
 	$servers = array();
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
-	
+
+			if (empty($settings) || isset($settings['disable']))
+				continue;
+
 			$prot = $settings['protocol'];
 			$port = $settings['local_port'];
 	
@@ -866,6 +869,9 @@ function openvpn_get_active_clients() {
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
 	
+			if (empty($settings) || isset($settings['disable']))
+				continue;
+
 			$prot = $settings['protocol'];
 			$port = $settings['local_port'];
 	

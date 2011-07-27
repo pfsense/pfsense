@@ -1159,8 +1159,10 @@ EOD;
 			$mpdsecret = "";
 
 			if (is_array($pptpdcfg['user'])) {
-				foreach ($pptpdcfg['user'] as $user)
-					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
+				foreach ($pptpdcfg['user'] as $user) {
+					$pass = str_replace('"', '\"', $user['password']);
+					$mpdsecret .= "{$user['name']} \"{$pass}\" {$user['ip']}\n";
+				}
 			}
 
 			fwrite($fd, $mpdsecret);

@@ -420,10 +420,11 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 			/* end mode_cfg section */
 			
-			if ($a_client['user_source'] = "ldap")
+			if ($a_client['user_source'] != "system")
             {
 				foreach ($config['system']['authserver'] as $authcfg) {
-                    if ($authcfg['type'] == 'ldap') {
+                     if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
+					{
                         $thisauthcfg = $authcfg;
                     }
                 }

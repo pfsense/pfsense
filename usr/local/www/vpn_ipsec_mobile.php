@@ -358,11 +358,13 @@ function login_banner_change() {
 								<?
                                     foreach ($config['system']['authserver'] as $authcfg) {
                                         if ($authcfg['type'] == 'ldap') {
-                                            print '<option value="ldap">ldap</option>';
+                                            $selected = "";
+                                            if ($pconfig['user_source'] == $authcfg['name'])  $selected = "selected";
+                                                 print '<option value="'.$authcfg['name'].'" '. $selected.'>'.$authcfg['name'].'</option>';
                                         }
                                     }
                                 ?>
-								<option value="system"><?=gettext("system"); ?></option>
+								<option value="system" <?php if ($pconfig['user_source'] == 'system') echo "selected"; ?>><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>

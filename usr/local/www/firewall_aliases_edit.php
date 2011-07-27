@@ -324,6 +324,8 @@ if ($_POST) {
 			update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $_POST['name'], $origname);
 		}
 
+		pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_write_config");
+
 		if (isset($id) && $a_aliases[$id]) {
 			if ($a_aliases[$id]['name'] <> $alias['name']) {
 				foreach ($a_aliases as $aliasid => $aliasd) {

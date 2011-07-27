@@ -285,6 +285,9 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
 	}
 
+	// Allow extending of the firewall edit page and include custom input validation 
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/input_validation");
+
 	if (!$input_errors) {
 		$alias['address'] = is_array($address) ? implode(" ", $address) : $address;
 		$alias['descr'] = $_POST['descr'];
@@ -581,6 +584,7 @@ EOD;
       </span>
     </td>
   </tr>
+  <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/after_first_tr"); ?>
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
     <td width="78%" class="vtable">

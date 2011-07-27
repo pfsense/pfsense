@@ -84,11 +84,11 @@ if ($_POST) {
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['username']))
 		$input_errors[] = gettext("The username contains invalid characters.");
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['password']))
-		$input_errors[] = gettext("The password contains invalid characters.");
-
 	if (preg_match("/^!/", $_POST['password']))
 		$input_errors[] = gettext("The password cannot start with '!'.");
+
+	if (!preg_match("/^[\x20-\x7E]*$/", $_POST['password']))
+		$input_errors[] = gettext("The password contains invalid characters.");
 
 	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
 		$input_errors[] = gettext("The passwords do not match.");

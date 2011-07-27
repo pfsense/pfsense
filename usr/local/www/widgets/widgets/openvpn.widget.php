@@ -55,6 +55,7 @@ function kill_client($port, $remipp) {
 }
 
 $servers = openvpn_get_active_servers();
+$sk_servers = openvpn_get_active_servers("sharedkey");
 $clients = openvpn_get_active_clients();
 ?>
 
@@ -95,7 +96,7 @@ $clients = openvpn_get_active_clients();
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
-			Client connections for <?=$server['name'];?>
+			<?=$server['name'];?> Client connections
 		</td>
 	</tr>
 	<tr>
@@ -140,14 +141,61 @@ $clients = openvpn_get_active_clients();
 </table>
 
 <?php endforeach; ?>
-<br/>
+<?php if (!empty($sk_servers)) { ?>
+<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="6" class="listtopic">
+			Shared Key Server Instance Statistics
+		</td>
+	</tr>
+	<tr>
+		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="listhdrr">Name/Time</td>
+			<td class="listhdrr">Remote/Virtual IP</td>
+		</tr>
 
+<?php foreach ($sk_servers as $sk_server): ?>
+		<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+			<td class="listlr">
+				<?=$sk_server['name'];?>
+			</td>
+			<td class="listr">
+				<?=$sk_server['remote_host'];?>
+			</td>
+			<td rowspan="2" align="center">
+			<?php
+			if ($sk_server['status'] == "up") {
+				/* tunnel is up */
+				$iconfn = "interface_up";
+			} else {
+				/* tunnel is down */
+				$iconfn = "interface_down";
+			}
+			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+			?>
+			</td>
+		</tr>
+		<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+			<td class="listlr">
+				<?=$sk_server['connect_time'];?>
+			</td>
+			<td class="listr">
+				<?=$sk_server['virtual_addr'];?>
+			</td>
+		</tr>
+<?php endforeach; ?>
+		</table>
+	</tr>
+</table>
 
+<?php
+} ?>
 <?php if (!empty($clients)) { ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
-			OpenVPN client instances statistics
+			Client Instance Statistics
 		</td>
 	</tr>
 	<tr>
@@ -158,7 +206,7 @@ $clients = openvpn_get_active_clients();
 		</tr>
 
 <?php foreach ($clients as $client): ?>
-		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
 			<td class="listlr">
 				<?=$client['name'];?>
 			</td>
@@ -178,7 +226,7 @@ $clients = openvpn_get_active_clients();
 			?>
 			</td>
 		</tr>
-		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+		<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
 			<td class="listlr">
 				<?=$client['connect_time'];?>
 			</td>

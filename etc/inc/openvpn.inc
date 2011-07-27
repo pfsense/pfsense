@@ -774,13 +774,12 @@ function openvpn_resync_all($interface = "") {
 
 }
 
-function openvpn_get_active_servers() {
+function openvpn_get_active_servers($type="ssl") {
 	global $config, $g;
 
 	$servers = array();
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
-
 			if (empty($settings) || isset($settings['disable']))
 				continue;
 
@@ -788,7 +787,7 @@ function openvpn_get_active_servers() {
 			$port = $settings['local_port'];
 	
 			$server = array();
-			$server['port'] = $settings['local_port'];
+			$server['port'] = ($settings['local_port']) ? $settings['local_port'] : 1194;
 			$server['mode'] = $settings['mode'];
 			if ($settings['description'])
 				$server['name'] = "{$settings['description']} {$prot}:{$port}";
@@ -797,69 +796,73 @@ function openvpn_get_active_servers() {
 			$server['conns'] = array();
 	
 			$vpnid = $settings['vpnid'];
-                        $mode_id = "server{$vpnid}";
+			$mode_id = "server{$vpnid}";
 			$server['mgmt'] = $mode_id;
-                        $tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
-			$errval;
-			$errstr;
-	
-			/* open a tcp connection to the management port of each server */
-			$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
-			if ($fp) {
-				stream_set_timeout($fp, 1);
-	
-				/* send our status request */
-				fputs($fp, "status 2\n");
-	
-				/* recv all response lines */
-				while (!feof($fp)) {
-	
-					/* read the next line */
-					$line = fgets($fp, 1024);
-	
-					$info = stream_get_meta_data($fp);
-					if ($info['timed_out'])
-						break;
-
-					/* parse header list line */
-					if (strstr($line, "HEADER"))
-						continue;
-	
-					/* parse end of output line */
-					if (strstr($line, "END") || strstr($line, "ERROR"))
-						break;
-	
-					/* parse client list line */
-					if (strstr($line, "CLIENT_LIST")) {
-						$list = explode(",", $line);
-						$conn = array();
-						$conn['common_name'] = $list[1];
-						$conn['remote_host'] = $list[2];
-						$conn['virtual_addr'] = $list[3];
-						$conn['bytes_recv'] = $list[4];
-						$conn['bytes_sent'] = $list[5];
-						$conn['connect_time'] = $list[6];
-						$server['conns'][] = $conn;
-					}
-				}
-	
-				/* cleanup */
-				fclose($fp);
-			} else {
-				$conn = array();
-				$conn['common_name'] = "[error]";
-				$conn['remote_host'] = "Management Daemon Unreachable";
-				$conn['virtual_addr'] = "";
-				$conn['bytes_recv'] = 0;
-				$conn['bytes_sent'] = 0;
-				$conn['connect_time'] = 0;
-				$server['conns'][] = $conn;
-			}
-	
-			$servers[] = $server;
+			$socket = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
+			if (($server['mode'] == "p2p_shared_key") && ($type == "sharedkey"))
+				$servers[] = openvpn_get_client_status($server, $socket);
+			elseif (($server['mode'] != "p2p_shared_key") && ($type == "ssl"))
+				$servers[] = openvpn_get_server_status($server, $socket);
 		}
 	}
 	return $servers;
+}
+
+function openvpn_get_server_status($server, $socket) {
+	$errval;
+	$errstr;
+	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
+	if ($fp) {
+		stream_set_timeout($fp, 1);
+
+		/* send our status request */
+		fputs($fp, "status 2\n");
+
+		/* recv all response lines */
+		while (!feof($fp)) {
+
+			/* read the next line */
+			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out'])
+				break;
+
+			/* parse header list line */
+			if (strstr($line, "HEADER"))
+				continue;
+
+			/* parse end of output line */
+			if (strstr($line, "END") || strstr($line, "ERROR"))
+				break;
+
+			/* parse client list line */
+			if (strstr($line, "CLIENT_LIST")) {
+				$list = explode(",", $line);
+				$conn = array();
+				$conn['common_name'] = $list[1];
+				$conn['remote_host'] = $list[2];
+				$conn['virtual_addr'] = $list[3];
+				$conn['bytes_recv'] = $list[4];
+				$conn['bytes_sent'] = $list[5];
+				$conn['connect_time'] = $list[6];
+				$server['conns'][] = $conn;
+			}
+		}
+
+		/* cleanup */
+		fclose($fp);
+	} else {
+		$conn = array();
+		$conn['common_name'] = "[error]";
+		$conn['remote_host'] = "Management Daemon Unreachable";
+		$conn['virtual_addr'] = "";
+		$conn['bytes_recv'] = 0;
+		$conn['bytes_sent'] = 0;
+		$conn['connect_time'] = 0;
+		$server['conns'][] = $conn;
+	}
+	return $server;
 }
 
 function openvpn_get_active_clients() {
@@ -873,97 +876,98 @@ function openvpn_get_active_clients() {
 				continue;
 
 			$prot = $settings['protocol'];
-			$port = $settings['local_port'];
+			$port = ($settings['local_port']) ? ":{$settings['local_port']}" : "";
 	
 			$client = array();
 			$client['port'] = $settings['local_port'];
 			if ($settings['description'])
-				$client['name'] = "{$settings['description']} {$prot}:{$port}";
+				$client['name'] = "{$settings['description']} {$prot}{$port}";
 			else
-				$client['name'] = "Client {$prot}:{$port}";
+				$client['name'] = "Client {$prot}{$port}";
 	
 			$vpnid = $settings['vpnid'];
-        		$mode_id = "client{$vpnid}";
+			$mode_id = "client{$vpnid}";
 			$client['mgmt'] = $mode_id;
-			$tcpcli = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
-			$errval;
-			$errstr;
-	
+			$socket = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
 			$client['status']="down";
-	
-			/* open a tcp connection to the management port of each cli */
-			$fp = @stream_socket_client($tcpcli, $errval, $errstr, 1);
-			if ($fp) {
-				stream_set_timeout($fp, 1);
-				/* send our status request */
-				fputs($fp, "state 1\n");
-	
-				/* recv all response lines */
-				while (!feof($fp)) {
-					/* read the next line */
-					$line = fgets($fp, 1024);
-					
-					$info = stream_get_meta_data($fp);
-					if ($info['timed_out'])
-						break;	
 
-					/* Get the client state */
-					if (strstr($line,"CONNECTED")) {
-						$client['status']="up";
-						$list = explode(",", $line);
-	
-						$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
-						$client['virtual_addr']  = $list[3];
-						$client['remote_host'] = $list[4];
-					}
-					/* parse end of output line */
-					if (strstr($line, "END") || strstr($line, "ERROR"))
-						break;
-				}
-	
-				/* If up, get read/write stats */
-				if (strcmp($client['status'], "up") == 0) {
-					fputs($fp, "status 2\n");
-					/* recv all response lines */
-					while (!feof($fp)) {
-						/* read the next line */
-						$line = fgets($fp, 1024);
-	
-						$info = stream_get_meta_data($fp);
-						if ($info['timed_out'])
-							break;	
-
-						if (strstr($line,"TCP/UDP read bytes")) {
-							$list = explode(",", $line);
-							$client['bytes_recv'] = $list[1];
-						}
-	
-						if (strstr($line,"TCP/UDP write bytes")) {
-							$list = explode(",", $line);
-							$client['bytes_sent'] = $list[1];
-						}
-	
-						/* parse end of output line */
-						if (strstr($line, "END"))
-							break;
-					}
-				}
-	
-				fclose($fp);
-	
-			} else {
-				$DisplayNote=true;
-				$client['remote_host'] = "No Management Daemon";
-				$client['virtual_addr'] = "See Note Below";
-				$client['bytes_recv'] = 0;
-				$client['bytes_sent'] = 0;
-				$client['connect_time'] = 0;
-			}
-	
-			$clients[] = $client;
+			$clients[] = openvpn_get_client_status($client, $socket);
 		}
 	}
 	return $clients;
+}
+
+function openvpn_get_client_status($client, $socket) {
+	$errval;
+	$errstr;
+	$fp = @stream_socket_client($socket, $errval, $errstr, 1);
+	if ($fp) {
+		stream_set_timeout($fp, 1);
+		/* send our status request */
+		fputs($fp, "state 1\n");
+
+		/* recv all response lines */
+		while (!feof($fp)) {
+			/* read the next line */
+			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out'])
+				break;
+
+			/* Get the client state */
+			if (strstr($line,"CONNECTED")) {
+				$client['status']="up";
+				$list = explode(",", $line);
+
+				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr']  = $list[3];
+				$client['remote_host'] = $list[4];
+			}
+			/* parse end of output line */
+			if (strstr($line, "END") || strstr($line, "ERROR"))
+				break;
+		}
+
+		/* If up, get read/write stats */
+		if (strcmp($client['status'], "up") == 0) {
+			fputs($fp, "status 2\n");
+			/* recv all response lines */
+			while (!feof($fp)) {
+				/* read the next line */
+				$line = fgets($fp, 1024);
+
+				$info = stream_get_meta_data($fp);
+				if ($info['timed_out'])
+					break;
+
+				if (strstr($line,"TCP/UDP read bytes")) {
+					$list = explode(",", $line);
+					$client['bytes_recv'] = $list[1];
+				}
+
+				if (strstr($line,"TCP/UDP write bytes")) {
+					$list = explode(",", $line);
+					$client['bytes_sent'] = $list[1];
+				}
+
+				/* parse end of output line */
+				if (strstr($line, "END"))
+					break;
+			}
+		}
+
+		fclose($fp);
+
+	} else {
+		$DisplayNote=true;
+		$client['remote_host'] = "No Management Daemon";
+		$client['virtual_addr'] = "See Note Below";
+		$client['bytes_recv'] = 0;
+		$client['bytes_sent'] = 0;
+		$client['connect_time'] = 0;
+	}
+	return $client;
 }
 
 function openvpn_refresh_crls() {

@@ -1006,6 +1006,11 @@ function vpn_pptpd_configure() {
 		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.secret");
 	}
 
+	if (empty($pptpdcfg['n_pptp_units'])) {
+		log_error("Something wrong in the PPTPd configuration. Preventing starting the daemon because issues would arise.");
+		return; 
+	}
+
 	/* make sure pptp-vpn directory exists */
 	if (!file_exists("{$g['varetc_path']}/pptp-vpn"))
 		mkdir("{$g['varetc_path']}/pptp-vpn");

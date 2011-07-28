@@ -66,6 +66,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig = array();
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
+	$pconfig['interval'] = $a_gateways[$id]['interval'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	if (isset($a_gateways[$id]['dynamic']))
@@ -221,6 +222,7 @@ if ($_POST) {
 			$gateway['gateway'] = "dynamic";
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
+		$gateway['interval'] = $_POST['interval'];
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
@@ -379,10 +381,10 @@ function monitor_change() {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
-			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1)) echo "style='display:none'"; ?>>
+			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && $pconfig['interval'])) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 			</div>
-			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1)) echo "style='display:none'"; ?>>
+			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1) && (empty($pconfig['interval']) || $pconfig['interval'] == 1)) echo "style='display:none'"; ?>>
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>
@@ -430,6 +432,14 @@ function monitor_change() {
                                     <input name="down" type="text" class="formfld unknown" id="down" size="2"
                                         value="<?=htmlspecialchars($pconfig['down']);?>">
                                     <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire, in seconds.");?></span></td>
+                                </td>
+                        </tr>
+			<tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
+                                <td width="78%" class="vtable">
+                                    <input name="interval" type="text" class="formfld unknown" id="interval" size="2"
+                                        value="<?=htmlspecialchars($pconfig['interval']);?>">
+                                    <br> <span class="vexpl"><?=gettext("This defines the frequency in seconds that an icmp probe will be sent. Default is 1 second.");?></span></td>
                                 </td>
                         </tr>
                         </table>

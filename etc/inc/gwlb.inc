@@ -155,6 +155,8 @@ EOD;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
+		if (!empty($gateway['interval']) && intval($gateway['interval']) > 1)
+			$apingercfg .= "	interval " . intval($gateway['interval']) . "s\n";
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;

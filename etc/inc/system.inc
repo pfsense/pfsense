@@ -144,11 +144,10 @@ function system_resolvconf_generate($dynupdate = false) {
 			$interface = $config['system'][$dnsgw];
 			if (($interface <> "") && ($interface <> "none")) {
 				$gatewayip = get_interface_gateway($interface);
-				if(is_ipaddr($gatewayip)) {
+				if (is_ipaddr($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route delete -host {$syscfg['dnsserver'][$dnscountermo]}", true);
-					mwexec("route add -host {$syscfg['dnsserver'][$dnscountermo]} {$gatewayip}");
+					mwexec("route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 			}
 		}

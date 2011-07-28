@@ -109,6 +109,9 @@ include("head.inc");
 						$online = gettext("Online");
 						$bgcolor = "lightgreen";
 					}
+				} else if (isset($gateway['monitor_disable'])) {
+						$online = gettext("Online");
+						$bgcolor = "lightgreen";
 				} else {
 					$online = gettext("Gathering data");
 					$bgcolor = "lightgray";

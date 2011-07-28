@@ -409,11 +409,9 @@ if($_REQUEST['undodrag']) {
 
 		$sshport = "";
 		if (isset($config['system']['enablesshd'])) {
-			$sshport = 22;
-		if($config['system']['ssh']['port'] <> "")
-			$sshport = $config['system']['ssh']['port'];
+			$sshport = ($config['system']['ssh']['port']) ? $config['system']['ssh']['port'] : 22;
 		}
-		$sshport = "22<br/>";
+		$sshport = "{$sshport}<br/>";
 ?>
 		<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>

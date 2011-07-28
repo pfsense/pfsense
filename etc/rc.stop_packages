@@ -1,4 +1,6 @@
-#!/usr/local/bin/php -f
+#!/bin/sh
+
+/usr/local/bin/php -q <<ENDPHP
 <?php
 /* $Id$ */
 /*
@@ -69,3 +71,4 @@ if ($shell) {
         pclose($shell);
 }
 ?>
+ENDPHP

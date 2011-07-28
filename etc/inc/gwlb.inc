@@ -137,6 +137,9 @@ target default {
 EOD;
 
 	foreach($gateways_arr as $name => $gateway) {
+		/* Do not monitor if such was requested */
+		if (isset($gateway['monitor_disable']))
+			continue;
 		if (empty($gateway['monitor']) || !is_ipaddr($gateway['monitor'])) {
 			if (is_ipaddr($gateway['gateway']))
 				$gateway['monitor'] = $gateway['gateway'];
@@ -287,7 +290,9 @@ function return_gateways_array($disabled = false) {
 					$gateway['gateway'] = "dynamic";
 				$gateway['dynamic'] = true;
 			}
-			if(empty($gateway['monitor']))
+			if (isset($gateway['monitor_disable']))
+				$gateway['monitor_disable'] = true;
+			else if (empty($gateway['monitor']))
 				$gateway['monitor'] = $gateway['gateway'];
 
 			$gateway['friendlyiface'] = $gateway['interface'];
@@ -383,18 +388,18 @@ function return_gateway_groups_array() {
 			if (isset($gwsttng['defaultgw'])) {
 				$dfltgwfound = true;
 				$dfltgwname = $gwname;
-				if (stristr($gateways_status[$gwname]['status'], "down"))
+				if (!isset($gwsttng['monitor_disable']) && stristr($gateways_status[$gwname]['status'], "down"))
 					$dfltgwdown = true;
 			}
 			/* Keep a record of the last up gateway */
-			if (empty($upgw) && !stristr($gateways_status[$gwname]['status'], "down"))
+			if (empty($upgw) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")))
 				$upgw = $gwname;
 			if ($dfltgwdown == true && !empty($upgw))
 				break;
 		}
 		if ($dfltgwfound == false) {
 			$gwname = convert_friendly_interface_to_friendly_descr("wan");
-			if (stristr($gateways_status[$gwname]['status'], "down"))
+			if (!empty($gateways_status[$gwname]) && stristr($gateways_status[$gwname]['status'], "down"))
 				$dfltgwdown = true;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
@@ -449,7 +454,8 @@ function return_gateway_groups_array() {
 					} else
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
-				}
+				} else if (isset($gateways_arr[$gwname]['monitor_disable']))
+					$tiers[$tier][] = $gwname;
 			}
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {

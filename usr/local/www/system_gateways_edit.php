@@ -78,6 +78,7 @@ if (isset($id) && $a_gateways[$id]) {
         $pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
         $pconfig['down'] = $a_gateway_item[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
+	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
@@ -233,7 +234,9 @@ if ($_POST) {
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
 		$gateway['descr'] = $_POST['descr'];
-		if (is_ipaddr($_POST['monitor']))
+		if ($_POST['monitor_disable'] == "yes")
+			$gateway['monitor_disable'] = true;
+		else if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
@@ -307,6 +310,9 @@ function show_advanced_gateway() {
         aodiv = document.getElementById('showgatewayadv');
         aodiv.style.display = "block";
 }
+function monitor_change() {
+        document.iform.monitor.disabled = document.iform.monitor_disable.checked;
+}
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
@@ -363,6 +369,14 @@ function show_advanced_gateway() {
 			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> />
 			<strong><?=gettext("Default Gateway"); ?></strong><br />
 			<?=gettext("This will select the above gateway as the default gateway"); ?>
+		  </td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Disable Gateway Monitoring"); ?></td>
+		  <td width="78%" class="vtable">
+			<input name="monitor_disable" type="checkbox" id="monitor_disable" value="yes" <?php if ($pconfig['monitor_disable'] == true) echo "checked"; ?> onClick="monitor_change()" />
+			<strong><?=gettext("Disable Gateway Monitoring"); ?></strong><br />
+			<?=gettext("This will consider this gateway as always being up"); ?>
 		  </td>
 		</tr>
 		<tr>
@@ -461,7 +475,7 @@ function show_advanced_gateway() {
 </form>
 <?php include("fend.inc"); ?>
 <script language="JavaScript">
-enable_change(document.iform.defaultgw);
+monitor_change();
 </script>
 </body>
 </html>

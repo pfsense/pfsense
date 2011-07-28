@@ -228,6 +228,9 @@ include("fbegin.inc");
 ?>
 			</td>
 		</tr>
+	</table>
+	</form>
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 		<td valign="top" colspan="2">
 <?php
@@ -282,7 +285,6 @@ include("fbegin.inc");
 		</td>
 		</tr>
 	</table>
-	</form>
 	</td></tr>
 </table>
 

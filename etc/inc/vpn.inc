@@ -35,7 +35,7 @@
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/usr/bin/netstat	/sbin/route	/bin/mkdir
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/sbin/route	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4	
 	pfSense_MODULE:	vpn
@@ -125,10 +125,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 		/* fastforwarding is not compatible with ipsec tunnels */
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
-
-		/* this loads a route table which is used to determine if a route needs to be removed. */
-		exec("/usr/bin/netstat -rnf inet", $route_arr, $retval);
-		$route_str = implode("\n", $route_arr);
 
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
@@ -419,6 +415,31 @@ function vpn_ipsec_configure($ipchg = false)
 				$racoonconf .= "}\n\n";
 			}
 			/* end mode_cfg section */
+			
+			if ($a_client['user_source'] != "system") {
+				if (is_array($config['system']['authserver'])) {
+					foreach ($config['system']['authserver'] as $authcfg) {
+						if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
+							$thisauthcfg = $authcfg;
+					}
+
+					/* begin ldapcfg */                        
+					$racoonconf .= "ldapcfg {\n";
+					$racoonconf .= "\tversion 3;\n";
+					$racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
+					$lport = "389";
+					if ($authcfg['port'] != "")
+						$lport = $authcfg['port'];
+					$racoonconf .= "\tport ".$lport.";\n";
+					$racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
+					$racoonconf .= "\tsubtree on;\n";
+					$racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
+					$racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
+					$racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
+					$racoonconf .= "}\n\n";
+					/* end ldapcfg */
+				}
+			}
 
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {
@@ -894,15 +915,12 @@ EOD;
 								/* FIXME: does adding route-to and reply-to on the in/outbound
 								 * rules fix this? smos@ 13-01-2009 */
 								// log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route delete -host {$rgip}; /sbin/route add -host {$rgip} {$gatewayip}", true);
+								mwexec("/sbin/route change -host {$rgip} {$gatewayip}", true);
 							}
 						}
 					}
-				} elseif(is_ipaddr($rgip)) {
-					if(stristr($route_str, "{$rgip}")) {
-						mwexec("/sbin/route delete -host {$rgip}", true);
-					}
-				}
+				} else if(is_ipaddr($rgip))
+					mwexec("/sbin/route delete -host {$rgip}", true);
 			}
 
 			fwrite($fd, $spdconf);
@@ -1041,6 +1059,11 @@ function vpn_pptpd_configure() {
 		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.conf");
 		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.links");
 		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.secret");
+	}
+
+	if (empty($pptpdcfg['n_pptp_units'])) {
+		log_error("Something wrong in the PPTPd configuration. Preventing starting the daemon because issues would arise.");
+		return; 
 	}
 
 	/* make sure pptp-vpn directory exists */
@@ -1196,8 +1219,11 @@ EOD;
 			$mpdsecret = "";
 
 			if (is_array($pptpdcfg['user'])) {
-				foreach ($pptpdcfg['user'] as $user)
-					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
+				foreach ($pptpdcfg['user'] as $user) {
+					$pass = str_replace('\\', '\\\\', $user['password']);
+					$pass = str_replace('"', '\"', $pass);
+					$mpdsecret .= "{$user['name']} \"{$pass}\" {$user['ip']}\n";
+				}
 			}
 
 			fwrite($fd, $mpdsecret);

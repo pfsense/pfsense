@@ -10,14 +10,12 @@ if [ $ALLOWOVERRIDE -gt 0 ]; then
 	# write nameservers to file
 	if [ $6 = "dns1" ]; then
 		echo $7 > /var/etc/nameserver_$1
-		/sbin/route delete $7
-		/sbin/route add $7 $4
+		/sbin/route change $7 $4
 	fi
 
 	if [ $8 = "dns2" ]; then
 		echo $9 >> /var/etc/nameserver_$1
-		/sbin/route delete $9
-		/sbin/route add $9 $4
+		/sbin/route change $9 $4
 	fi
 	/usr/local/sbin/pfSctl -c 'service reload dns'
 	/bin/sleep 1

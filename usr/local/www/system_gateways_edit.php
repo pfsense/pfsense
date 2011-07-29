@@ -66,6 +66,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig = array();
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
+	$pconfig['interval'] = $a_gateways[$id]['interval'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	if (isset($a_gateways[$id]['dynamic']))
@@ -78,6 +79,7 @@ if (isset($id) && $a_gateways[$id]) {
         $pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
         $pconfig['down'] = $a_gateway_item[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
+	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
@@ -232,8 +234,11 @@ if ($_POST) {
 			$gateway['gateway'] = "dynamic";
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
+		$gateway['interval'] = $_POST['interval'];
 		$gateway['descr'] = $_POST['descr'];
-		if (is_ipaddr($_POST['monitor']))
+		if ($_POST['monitor_disable'] == "yes")
+			$gateway['monitor_disable'] = true;
+		else if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
@@ -307,6 +312,9 @@ function show_advanced_gateway() {
         aodiv = document.getElementById('showgatewayadv');
         aodiv.style.display = "block";
 }
+function monitor_change() {
+        document.iform.monitor.disabled = document.iform.monitor_disable.checked;
+}
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
@@ -366,6 +374,14 @@ function show_advanced_gateway() {
 		  </td>
 		</tr>
 		<tr>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Disable Gateway Monitoring"); ?></td>
+		  <td width="78%" class="vtable">
+			<input name="monitor_disable" type="checkbox" id="monitor_disable" value="yes" <?php if ($pconfig['monitor_disable'] == true) echo "checked"; ?> onClick="monitor_change()" />
+			<strong><?=gettext("Disable Gateway Monitoring"); ?></strong><br />
+			<?=gettext("This will consider this gateway as always being up"); ?>
+		  </td>
+		</tr>
+		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
@@ -385,10 +401,10 @@ function show_advanced_gateway() {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
-			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1)) echo "style='display:none'"; ?>>
+			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && $pconfig['interval'])) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 			</div>
-			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1)) echo "style='display:none'"; ?>>
+			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1) && (empty($pconfig['interval']) || $pconfig['interval'] == 1)) echo "style='display:none'"; ?>>
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>
@@ -438,6 +454,14 @@ function show_advanced_gateway() {
                                     <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire, in seconds.");?></span></td>
                                 </td>
                         </tr>
+			<tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
+                                <td width="78%" class="vtable">
+                                    <input name="interval" type="text" class="formfld unknown" id="interval" size="2"
+                                        value="<?=htmlspecialchars($pconfig['interval']);?>">
+                                    <br> <span class="vexpl"><?=gettext("This defines the frequency in seconds that an icmp probe will be sent. Default is 1 second.");?></span></td>
+                                </td>
+                        </tr>
                         </table>
 			</div>
 		   </td>
@@ -461,7 +485,7 @@ function show_advanced_gateway() {
 </form>
 <?php include("fend.inc"); ?>
 <script language="JavaScript">
-enable_change(document.iform.defaultgw);
+monitor_change();
 </script>
 </body>
 </html>

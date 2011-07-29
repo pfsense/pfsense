@@ -183,7 +183,7 @@ function filter_delete_states_for_down_gateways() {
 }
 
 /* reload filter sync */
-function filter_configure_sync() {
+function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns, $aliases;
 
@@ -397,8 +397,10 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo ".";
 
-	update_filter_reload_status(gettext("Processing down interface states"));
-	filter_delete_states_for_down_gateways();
+	if($delete_states_if_needed) {
+		update_filter_reload_status(gettext("Processing down interface states"));
+		filter_delete_states_for_down_gateways();
+	}
 
 	update_filter_reload_status(gettext("Running plugins"));
 
@@ -1400,7 +1402,10 @@ function filter_nat_rules_generate() {
 		}
 		/* PPTP subnet */
 		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
-			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+			if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units']))
+				$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+			else
+				$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
 			$numberofnathosts += count($pptp_subnets);
 			$tonathosts .= implode(" ", $pptp_subnets) . " ";
 		}
@@ -1763,9 +1768,13 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = "{$lansa}/{$lansn}";
 						break;
 					case 'pptp':
-						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+						if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units']))
+							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+						else
+							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
+						if (empty($pptp_subnets))
+							return "";
 						$src = "{ " . implode(" ", $pptp_subnets) . " }";
-						$src = "{$pptpsa}/{$pptpsn}";
 						break;
 					case 'pppoe':
 						/* XXX: This needs to be fixed somehow! */
@@ -1912,7 +1921,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto'])) {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && $type != "match") {
 		if($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if(is_ipaddrv6($rg)) {

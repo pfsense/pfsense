@@ -557,7 +557,7 @@ function apply_all_choosen_items() {
 				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qLink";
-			$tmpcf['priority'] = 1;
+			$tmpcf['priority'] = 2;
 			$tmpcf['enabled'] = "on";
 			$tmpcf['default'] = "on";
 			$tmpcf['qlimit'] = 500;
@@ -802,7 +802,7 @@ function apply_all_choosen_items() {
 				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qOthersLow";
-			$tmpcf['priority'] = 2;
+			$tmpcf['priority'] = 3;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			if ($sched == "CBQ") {

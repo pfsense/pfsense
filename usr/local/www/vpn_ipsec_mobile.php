@@ -355,7 +355,19 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="user_source" class="formselect" id="user_source">
-								<option value="system"><?=gettext("system"); ?></option>
+								<option value="system" <?php if ($pconfig['user_source'] == 'system') echo "selected"; ?>><?=gettext("system"); ?></option>
+								<?php
+									if (is_array($config['system']['authserver'])) {
+										foreach ($config['system']['authserver'] as $authcfg) {
+											if ($authcfg['type'] == 'ldap') {
+												$selected = "";
+												if ($pconfig['user_source'] == $authcfg['name'])
+													$selected = "selected";
+												echo "<option value='{$authcfg['name']}' {$selected} >{$authcfg['name']}</option>\n";
+											}
+										}
+									}
+								?>
 							</select>
 						</td>
 					</tr>

@@ -623,14 +623,14 @@ function method_change() {
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_camanager.php?act=edit&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("edit ca");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit CA");?>" alt="<?=gettext("edit CA");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_camanager.php?act=exp&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export CA cert");?>" alt="<?=gettext("export CA cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php if ($ca['prv']): ?>
 							<a href="system_camanager.php?act=expkey&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca private key");?>" alt="<?=gettext("export ca private key");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export CA private key");?>" alt="<?=gettext("export CA private key");?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and its CRLs, and unreference any associated certificates?");?>')">

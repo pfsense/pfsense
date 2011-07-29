@@ -238,7 +238,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if(!isset ($config['system']['disablefilter'])) {
 		mwexec("/sbin/pfctl -e", true);
 	} else {
-		mwexec("/sbin/pfctl -d");
+		mwexec("/sbin/pfctl -d", true);
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
 		if($g['booting'] == true)

@@ -810,7 +810,7 @@ function system_generate_lighty_config($filename,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
 	$ca_location = "ca.pem",
-	$max_procs = 2,
+	$max_procs = 1,
 	$max_requests = "2",
 	$fast_cgi_enable = true,
 	$captive_portal = false) {

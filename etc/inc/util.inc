@@ -592,6 +592,9 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 
 	$iflist = array();
 
+	if(!$is_array['interfaces'])
+		$config = parse_config(true);
+
 	/* if list */
 	foreach($config['interfaces'] as $if => $ifdetail) {
 		if ($only_opt && ($if == "wan" || $if == "lan"))

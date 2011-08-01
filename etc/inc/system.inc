@@ -425,6 +425,8 @@ function system_syslogd_start() {
 		echo "system_syslogd_start() being called $mt\n";
 	}
 
+	mwexec("/etc/rc.d/hostid start");
+
 	$syslogcfg = $config['syslog'];
 
 	if ($g['booting'])

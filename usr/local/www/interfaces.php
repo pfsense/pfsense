@@ -642,7 +642,7 @@ if ($_POST['apply']) {
 				if (!empty($_POST['provider']))
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				else
-					unset($a_ppps[$pppid]['provider']);
+					$a_ppps[$pppid]['provider'] = true;
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];

@@ -152,10 +152,6 @@ $gamesplist['battlenet'] = array();
 $gamesplist['worldofwarcraft'] = array();
 	$gamesplist[] = array('WoW', 'tcp', '3724', '3724', 'both');
 
-$gamesplist['battlenet'] = array();
-	/* Add battle.net only if WoW is selected and battle.net isn't */
-	$gamesplist[] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
-
 $gamesplist['gunzonline'] = array();
 	/* GunZ Online */
 	$gamesplist['gunzonline'][] = array('GunZOnline', 'udp', '7700', '7700', 'both');

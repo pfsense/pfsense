@@ -1437,7 +1437,7 @@ function apply_all_choosen_items() {
 			if ($games) {
 				foreach($config['ezshaper']['step6'] as $key => $val) {
 					if (!is_array($gamesplist[$key]))
-										continue;
+						continue;
 					foreach ($gamesplist[$key] as $Gameclient) {
 						$rule = array();
 						$rule['type'] = "match";

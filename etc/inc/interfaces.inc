@@ -1576,9 +1576,11 @@ EOD;
 
 EOD;
 		}
-		if (isset($ppp['provider']) && $type == "pppoe") {
+		if ($type == "pppoe") {
+			// Send a null service name if none is set.
+			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
-	set pppoe service "{$ppp['provider']}"
+	set pppoe service "{$provider}"
 
 EOD;
 		}

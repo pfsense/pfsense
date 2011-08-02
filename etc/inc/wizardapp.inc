@@ -167,8 +167,8 @@ $voiplist = array();
 
    /* asterisk server / same as vonage */
 $voiplist['Asterisk'] = array();
-	$voiplist['Asterisk'][] = array($_POST['provider'], 'udp', '5060', '5069', 'both');
-	$voiplist['Asterisk'][] = array($_POST['provider'], 'udp', '10000', '20000', 'both');
+	$voiplist['Asterisk'][] = array('Asterisk', 'udp', '5060', '5069', 'both');
+	$voiplist['Asterisk'][] = array('Asterisk', 'udp', '10000', '20000', 'both');
 
     /* VoicePulse server */	
 $voiplist['VoicePulse'] = array();

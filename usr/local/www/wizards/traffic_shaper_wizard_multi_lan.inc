@@ -161,7 +161,7 @@ function step2_stepbeforeformdisplay() {
 	$opts['value'] = "Gb";
 	$opts['name'] = "Gbit/s";
 	$field['options']['option'][] = $opts;
-	$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
+	$field['bindstofield'] = "ezshaper->step2->conndownloadspeed";
 	$fields[] = $field;
 
 	for ($i = 0; $i < $numberofconnections; $i++) {
@@ -196,7 +196,7 @@ function step2_stepbeforeformdisplay() {
 		$field['name'] = "conn{$i}downloadscheduler";
 		$field['displayname'] = "LAN Scheduler";
 		$field['type'] = "select";
-		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
+		$field['typehint'] = "Queueing discipline to apply on the download of this connection.";
 		$field['options']['option'] = array();
 		$opts = array();
 		$opts['name'] = "HFSC";
@@ -301,42 +301,40 @@ function step3_stepsubmitphpaction() {
 		$stepid--;
 		return;
 	}
-	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
-	for ($i = 0; $i < $steps; $i++) {
-		if ($_POST["connuploadspeed"] == "%") {
-			if (intval($_POST['connupload']) > 80) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
-			}
-		} else {
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
-			$factor = wizard_get_bandwidthtype_scale($_POST["connuploadspeed"]);
-			$input_bw = $factor * floatval($_POST["connupload"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
-			}
-		}	
-		if ($_POST["conndownloadspeed"] == "%") {
-			if (intval($_POST['conndownload']) > 80) {
-				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
-			}
-		} else {
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);	
-			$factor = wizard_get_bandwidthtype_scale($_POST["conndownloadspeed"]);
-			$input_bw = $factor * floatval($_POST["conndownload"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
-			}
-		}	
+
+	if ($_POST["connuploadspeed"] == "%") {
+		if (intval($_POST['connupload']) > 80) {
+			$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+			$stepid--;
+			return;
+		}
+	} else {
+		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["connuploadspeed"]);
+		$ifbw = $factor * floatval($config['ezshaper']['step2']["connupload"]);	
+		$factor = wizard_get_bandwidthtype_scale($_POST["connuploadspeed"]);
+		$input_bw = $factor * floatval($_POST["connupload"]);
+		if ((0.8 * $ifbw) < $input_bw) {
+			$savemsg=gettext("You cannot set the VoIP upload bandwidth on WAN connection higher than 80% of the connection.");
+			$stepid--;
+			return;
+		}
+	}	
+	if ($_POST["conndownloadspeed"] == "%") {
+		if (intval($_POST['conndownload']) > 80) {
+			$savemsg=gettext("You cannot set the VoIP download bandwidth on connection higher than 80% of the connection.");
+			$stepid--;
+			return;
+		}
+	} else {
+		$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conndownloadspeed"]);
+		$ifbw = $factor * floatval($config['ezshaper']['step2']["conndownload"]);	
+		$factor = wizard_get_bandwidthtype_scale($_POST["conndownloadspeed"]);
+		$input_bw = $factor * floatval($_POST["conndownload"]);
+		if ((0.8 * $ifbw) < $input_bw) {
+			$savemsg=gettext("You cannot set the VoIP download bandwidth on connection higher than 80% of the connection.");
+			$stepid--;
+			return;
+		}
 	}
 }
 

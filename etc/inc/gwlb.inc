@@ -394,7 +394,8 @@ function return_gateway_groups_array() {
 					$dfltgwdown = true;
 			}
 			/* Keep a record of the last up gateway */
-			if (empty($upgw) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")))
+			/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
+			if (empty($upgw) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")) && $gateways_status[$gwname]['friendlyiface'] != "lan")
 				$upgw = $gwname;
 			if ($dfltgwdown == true && !empty($upgw))
 				break;

@@ -238,7 +238,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 
 <div id="wrapper">
 	<div id="header">
-		<div id="header-left"><a href="index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
+		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
 		<div id="header-right">
 			<div class="container">
 				<div class="left">webConfigurator</div>

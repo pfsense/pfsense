@@ -570,7 +570,7 @@ function step8_stepsubmitphpaction() {
 }
 
 function apply_all_choosen_items() {
-	global $config, $g, $altq_list_queues, $gamesplist;
+	global $config, $g, $altq_list_queues, $gamesplist, $voiplist, $othersplist, $p2plist;
 
 	require_once("wizardapp.inc");
 

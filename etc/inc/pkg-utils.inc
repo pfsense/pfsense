@@ -754,6 +754,33 @@ function install_package_xml($pkg) {
 				return false;
 			}
 		}
+
+		/* custom commands */
+		$static_output .= gettext("Custom commands...") . "\n";
+		update_output_window($static_output);
+		if ($missing_include == false) {
+			if($pkg_config['custom_php_global_functions'] <> "") {
+				$static_output .= gettext("Executing custom_php_global_functions()...");
+				update_output_window($static_output);
+				eval_once($pkg_config['custom_php_global_functions']);
+				$static_output .= gettext("done.") . "\n";
+				update_output_window($static_output);
+			}
+			if($pkg_config['custom_php_install_command']) {
+				$static_output .= gettext("Executing custom_php_install_command()...");
+				update_output_window($static_output);
+				eval_once($pkg_config['custom_php_install_command']);
+				$static_output .= gettext("done.") . "\n";
+				update_output_window($static_output);
+			}
+			if($pkg_config['custom_php_resync_config_command'] <> "") {
+				$static_output .= gettext("Executing custom_php_resync_config_command()...");
+				update_output_window($static_output);
+				eval_once($pkg_config['custom_php_resync_config_command']);
+				$static_output .= gettext("done.") . "\n";
+				update_output_window($static_output);
+			}
+		}
 		/* sidebar items */
 		if(is_array($pkg_config['menu'])) {
 			$static_output .= gettext("Menu items... ");
@@ -801,33 +828,6 @@ function install_package_xml($pkg) {
 			}
 			$static_output .= gettext("done.") . "\n";
 			update_output_window($static_output);
-		}
-
-		/* custom commands */
-		$static_output .= gettext("Custom commands...") . "\n";
-		update_output_window($static_output);
-		if ($missing_include == false) {
-			if($pkg_config['custom_php_global_functions'] <> "") {
-				$static_output .= gettext("Executing custom_php_global_functions()...");
-				update_output_window($static_output);
-				eval_once($pkg_config['custom_php_global_functions']);
-				$static_output .= gettext("done.") . "\n";
-				update_output_window($static_output);
-			}
-			if($pkg_config['custom_php_install_command']) {
-				$static_output .= gettext("Executing custom_php_install_command()...");
-				update_output_window($static_output);
-				eval_once($pkg_config['custom_php_install_command']);
-				$static_output .= gettext("done.") . "\n";
-				update_output_window($static_output);
-			}
-			if($pkg_config['custom_php_resync_config_command'] <> "") {
-				$static_output .= gettext("Executing custom_php_resync_config_command()...");
-				update_output_window($static_output);
-				eval_once($pkg_config['custom_php_resync_config_command']);
-				$static_output .= gettext("done.") . "\n";
-				update_output_window($static_output);
-			}
 		}
 	} else {
 		$static_output .= gettext("Loading package configuration... failed!") . "\n\n" . gettext("Installation aborted.");

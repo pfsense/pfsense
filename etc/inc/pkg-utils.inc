@@ -802,8 +802,7 @@ function install_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
-		/* XXX: Seems there are issues with packages doing things */
-		write_config("Intermediate config write during package install for {$pkg_info['name']}");
+
 		/* custom commands */
 		$static_output .= "Custom commands...\n";
 		update_output_window($static_output);

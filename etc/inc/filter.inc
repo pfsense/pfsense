@@ -551,8 +551,6 @@ function filter_generate_aliases() {
 
 	$aliases .= "#pfSnortSam tables\n";
 	$aliases .= "table <snort2c>\n";
-	$aliases .= "table <pfSnortSamout>\n";
-	$aliases .= "table <pfSnortSamin>\n";
 
 	$aliases .= "\ntable <virusprot>\n";
 

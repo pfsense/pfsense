@@ -599,7 +599,6 @@ function install_package($package, $pkg_info = "") {
 		write_config($changedesc);
 		$static_output .= "done.\n";
 		update_output_window($static_output);
-		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 
 			update_output_window($pkg_info['after_install_info']);	
 	}
@@ -764,6 +763,8 @@ function install_package_xml($pkg) {
 					foreach($config['installedpackages']['menu'] as $amenu)
 						if($amenu['name'] == $menu['name'])
 							continue 2;
+				else
+					$config['installedpackages']['menu'] = array();
 				$config['installedpackages']['menu'][] = $menu;
 			}
 			$static_output .= "done.\n";
@@ -778,6 +779,8 @@ function install_package_xml($pkg) {
 					foreach($config['installedpackages']['tab'] as $atab)
 						if($atab['name'] == $tab['name'])
 							continue 2;
+				else
+					$config['installedpackages']['tab'] = array();
 				$config['installedpackages']['tab'][] = $tab;
 			}
 			$static_output .= "done.\n";
@@ -792,11 +795,15 @@ function install_package_xml($pkg) {
 					foreach($config['installedpackages']['service'] as $aservice)
 						if($aservice['name'] == $service['name'])
 							continue 2;
+				else
+					$config['installedpackages']['service'] = array();
 				$config['installedpackages']['service'][] = $service;
 			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* XXX: Seems there are issues with packages doing things */
+		write_config("Intermediate config write during package install for {$pkg_info['name']}");
 		/* custom commands */
 		$static_output .= "Custom commands...\n";
 		update_output_window($static_output);

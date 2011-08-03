@@ -759,11 +759,11 @@ function install_package_xml($pkg) {
 			$static_output .= "Menu items... ";
 			update_output_window($static_output);
 			foreach($pkg_config['menu'] as $menu) {
-				if(is_array($config['installedpackages']['menu']))
+				if(is_array($config['installedpackages']['menu'])) {
 					foreach($config['installedpackages']['menu'] as $amenu)
 						if($amenu['name'] == $menu['name'])
 							continue 2;
-				else
+				} else
 					$config['installedpackages']['menu'] = array();
 				$config['installedpackages']['menu'][] = $menu;
 			}
@@ -775,11 +775,11 @@ function install_package_xml($pkg) {
 			$static_output .= "Integrated Tab items... ";
 			update_output_window($static_output);
 			foreach($pkg_config['tabs']['tab'] as $tab) {
-				if(is_array($config['installedpackages']['tab']))
+				if(is_array($config['installedpackages']['tab'])) {
 					foreach($config['installedpackages']['tab'] as $atab)
 						if($atab['name'] == $tab['name'])
 							continue 2;
-				else
+				} else
 					$config['installedpackages']['tab'] = array();
 				$config['installedpackages']['tab'][] = $tab;
 			}
@@ -791,11 +791,11 @@ function install_package_xml($pkg) {
 			$static_output .= "Services... ";
 			update_output_window($static_output);
 			foreach($pkg_config['service'] as $service) {
-				if(is_array($config['installedpackages']['service']))
+				if(is_array($config['installedpackages']['service'])) {
 					foreach($config['installedpackages']['service'] as $aservice)
 						if($aservice['name'] == $service['name'])
 							continue 2;
-				else
+				} else
 					$config['installedpackages']['service'] = array();
 				$config['installedpackages']['service'][] = $service;
 			}

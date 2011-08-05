@@ -75,22 +75,6 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('staticroutes');
-	} else {
-		if ($_POST['enablefastrouting'] == "") {
-			/* Only update config if something changed */
-			if (isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " " . gettext("disable fast routing");
-				unset($config['staticroutes']['enablefastrouting']);
-				write_config($changedesc);
-			}
-		} else {
-			/* Only update config if something changed */
-			if (!isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " " . gettext("enable fast routing");
-				$config['staticroutes']['enablefastrouting'] = "enabled";
-				write_config($changedesc);
-			}
-		}
 	}
 }
 
@@ -120,15 +104,6 @@ include("head.inc");
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
 <?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
-
-	     <?php if($config['system']['disablefilter'] <> "") :?>
-	       <table width="100%" border="0" cellpadding="0" cellspacing="0">
-
-		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b><?=gettext("Enable fast routing");?></td></tr>
-
-		<tr><td colspan=2><hr><input type="submit" value="<?=gettext("Save"); ?>"></td></tr>
-	       </table><br>
-	     <?php endif; ?>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>

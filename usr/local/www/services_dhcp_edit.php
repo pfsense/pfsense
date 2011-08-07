@@ -111,9 +111,6 @@ if ($_POST) {
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
 	if ($_POST['hostname']) {
-		preg_match("/^[0-9]/", $_POST['hostname'], $matches);
-		if($matches)
-			$input_errors[] = gettext("The hostname cannot start with a numeric character according to RFC952");
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
 		if($matches)
 			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");		

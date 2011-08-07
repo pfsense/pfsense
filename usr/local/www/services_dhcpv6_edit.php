@@ -108,9 +108,6 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ($_POST['hostname']) {
-		preg_match("/^[0-9]/", $_POST['hostname'], $matches);
-		if($matches)
-			$input_errors[] = gettext("The hostname cannot start with a numeric character according to RFC952");
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
 		if($matches)
 			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");		

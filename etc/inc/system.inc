@@ -90,33 +90,25 @@ function system_resolvconf_generate($dynupdate = false) {
 	if($syscfg['domain'])
 		$resolvconf = "domain {$syscfg['domain']}\n";
 
-	$havedns = false;
-
 	$resolvconf .= "nameserver 127.0.0.1\n";
 
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_searchdomains());
 		foreach($ns as $searchserver) {
-			if($searchserver) {
+			if($searchserver)
 				$resolvconf .= "search {$searchserver}\n";
-				$havedns = true;
-			}
 		}
 		$ns = array_unique(get_nameservers());
 		foreach($ns as $nameserver) {
-			if($nameserver) {
+			if($nameserver)
 				$resolvconf .= "nameserver $nameserver\n";
-				$havedns = true;
-			}
 		}
 	}
-	if (!$havedns && is_array($syscfg['dnsserver'])) {
+	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {
-			if ($ns) {
+			if ($ns)
 				$resolvconf .= "nameserver $ns\n";
-				$havedns = true;
-			}
 		}
 	}
 

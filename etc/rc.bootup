@@ -284,11 +284,6 @@ relayd_configure();
 /* configure console menu */
 system_console_configure();
 
-/* start the NTP client */
-echo "Starting OpenNTP time client...";
-system_ntp_configure();
-echo "done.\n";
-
 /* start DHCP service */
 services_dhcpd_configure();
 
@@ -306,6 +301,11 @@ send_event("service reload dyndnsall");
 
 /* Run a filter configure now that most all services have started */
 filter_configure_sync();
+
+/* start the NTP client */
+echo "Starting OpenNTP time client...";
+system_ntp_configure();
+echo "done.\n";
 
 /* setup pppoe and pptp */
 vpn_setup();

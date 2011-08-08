@@ -51,19 +51,6 @@ if ($_GET['act'] == "del") {
 	exit;
 }
 
-$pgtitle = array(gettext("Status: Captive portal"));
-
-include("head.inc");
-
-?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/sorttable.js"></script>
-<?php include("fbegin.inc"); ?>
-<?php
-
-flush();
-
 function clientcmp($a, $b) {
 	global $order;
 	return strcmp($a[$order], $b[$order]);
@@ -78,6 +65,19 @@ if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
 	$cpcontents = array();
 
 $concurrent = count($cpcontents);
+
+$pgtitle = array(gettext("Status: Captive portal ({$concurrent})"));
+
+include("head.inc");
+
+?>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/sorttable.js"></script>
+<?php include("fbegin.inc"); ?>
+<?php
+
+flush();
 
 foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);

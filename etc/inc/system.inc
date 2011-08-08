@@ -92,6 +92,8 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$havedns = false;
 
+	$resolvconf .= "nameserver 127.0.0.1\n";
+
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_searchdomains());

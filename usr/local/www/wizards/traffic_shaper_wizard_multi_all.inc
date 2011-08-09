@@ -576,7 +576,7 @@ function step4_stepsubmitphpaction() {
 			return;
 		}
 		$bw = $_POST['bandwidth'];
-		if($bw > 15 && $bw < 2) {
+		if($bw > 15 || $bw < 2) {
 			$savemsg="Values should be between 2% and 15%!";
 			$stepid--;
 			return;
@@ -603,7 +603,7 @@ function step5_stepsubmitphpaction() {
 				return;
 			}
 			$bw = $_POST['bandwidth'];
-			if($bw > 15 && $bw < 2) {
+			if($bw > 15 || $bw < 2) {
 				$savemsg="Values should be between 2% and 15%!";
 				$stepid--;
 				return;

@@ -426,6 +426,12 @@ $priv_list['page-system-login/logout']['descr'] = "Allow access to the 'System: 
 $priv_list['page-system-login/logout']['match'] = array();
 $priv_list['page-system-login/logout']['match'][] = "index.php*";
 
+$priv_list['page-system-login/logout'] = array();
+$priv_list['page-system-login/logout']['name'] = "WebCfg - System: Direct access to dashboard widgets.";
+$priv_list['page-system-login/logout']['descr'] = "Allow direct access to the Dashboard widget pages, required for some widgets using AJAX.";
+$priv_list['page-system-login/logout']['match'] = array();
+$priv_list['page-system-login/logout']['match'][] = "*.widget.php*";
+
 $priv_list['page-interfaces'] = array();
 $priv_list['page-interfaces']['name'] = "WebCfg - Interfaces: WAN page";
 $priv_list['page-interfaces']['descr'] = "Allow access to the 'Interfaces' page.";

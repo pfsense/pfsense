@@ -62,6 +62,12 @@ if (!isAllowedPage($_SERVER['SCRIPT_NAME'])) {
 		$_SESSION['Post_Login'] = true;
 		require_once("functions.inc");
 		pfSenseHeader("/{$page}");
+
+		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
+		if (!empty($_SERVER['REMOTE_ADDR']))
+			$username .= '@' . $_SERVER['REMOTE_ADDR'];
+		log_error("{$username} attempted to access {$_SERVER['SCRIPT_NAME']} but does not have access to that page. Redirecting to {$page}.");
+
 		exit;
 	} else {
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));

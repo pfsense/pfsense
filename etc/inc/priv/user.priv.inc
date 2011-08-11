@@ -2,6 +2,24 @@
 
 global $priv_list;
 
+$priv_list['page-dashboard-all'] = array();
+$priv_list['page-dashboard-all']['name'] = "WebCfg - Dashboard (all)";
+$priv_list['page-dashboard-all']['descr'] = "Allow access to all pages required for the dashboard.";
+$priv_list['page-dashboard-all']['match'] = array();
+$priv_list['page-dashboard-all']['match'][] = "index.php*";
+$priv_list['page-dashboard-all']['match'][] = "*.widget.php*";
+$priv_list['page-dashboard-all']['match'][] = "graph.php*";
+$priv_list['page-dashboard-all']['match'][] = "graph_cpu.php*";
+$priv_list['page-dashboard-all']['match'][] = "getstats.php*";
+$priv_list['page-dashboard-all']['match'][] = "ifstats.php*";
+$priv_list['page-dashboard-all']['match'][] = "diag_logs_filter_dynamic.php*";
+
+$priv_list['page-dashboard-widgets'] = array();
+$priv_list['page-dashboard-widgets']['name'] = "WebCfg - System: Direct access to dashboard widgets.";
+$priv_list['page-dashboard-widgets']['descr'] = "Allow direct access to the Dashboard widget pages, required for some widgets using AJAX.";
+$priv_list['page-dashboard-widgets']['match'] = array();
+$priv_list['page-dashboard-widgets']['match'][] = "*.widget.php*";
+
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = "User - System - Shell account access";
 $priv_list['user-shell-access']['descr'] = "Indicates whether the user is able to login for ".

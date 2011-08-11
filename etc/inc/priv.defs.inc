@@ -12,18 +12,6 @@ $priv_list['page-all']['descr'] = gettext("Allow access to all pages");
 $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
-$priv_list['page-dashboard-all'] = array();
-$priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");
-$priv_list['page-dashboard-all']['descr'] = gettext("Allow access to all pages required for the dashboard.");
-$priv_list['page-dashboard-all']['match'] = array();
-$priv_list['page-dashboard-all']['match'][] = "index.php*";
-$priv_list['page-dashboard-all']['match'][] = "*.widget.php*";
-$priv_list['page-dashboard-all']['match'][] = "graph.php*";
-$priv_list['page-dashboard-all']['match'][] = "graph_cpu.php*";
-$priv_list['page-dashboard-all']['match'][] = "getstats.php*";
-$priv_list['page-dashboard-all']['match'][] = "ifstats.php*";
-$priv_list['page-dashboard-all']['match'][] = "diag_logs_filter_dynamic.php*";
-
 $priv_list['page-status-carp'] = array();
 $priv_list['page-status-carp']['name'] = gettext("WebCfg - Status: CARP page");
 $priv_list['page-status-carp']['descr'] = gettext("Allow access to the 'Status: CARP' page.");
@@ -437,12 +425,6 @@ $priv_list['page-system-login/logout']['name'] = gettext("WebCfg - System: Login
 $priv_list['page-system-login/logout']['descr'] = gettext("Allow access to the 'System: Login / Logout' page and Dashboard.");
 $priv_list['page-system-login/logout']['match'] = array();
 $priv_list['page-system-login/logout']['match'][] = "index.php*";
-
-$priv_list['page-system-directwidget'] = array();
-$priv_list['page-system-directwidget']['name'] = "WebCfg - System: Direct access to dashboard widgets.";
-$priv_list['page-system-directwidget']['descr'] = "Allow direct access to the Dashboard widget pages, required for some widgets using AJAX.";
-$priv_list['page-system-directwidget']['match'] = array();
-$priv_list['page-system-directwidget']['match'][] = "*.widget.php*";
 
 $priv_list['page-interfaces'] = array();
 $priv_list['page-interfaces']['name'] = gettext("WebCfg - Interfaces: WAN page");

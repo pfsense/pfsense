@@ -12,6 +12,18 @@ $priv_list['page-all']['descr'] = "Allow access to all pages";
 $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
+$priv_list['page-dashboard-all'] = array();
+$priv_list['page-dashboard-all']['name'] = "WebCfg - Dashboard (all)";
+$priv_list['page-dashboard-all']['descr'] = "Allow access to all pages required for the dashboard.";
+$priv_list['page-dashboard-all']['match'] = array();
+$priv_list['page-dashboard-all']['match'][] = "index.php*";
+$priv_list['page-dashboard-all']['match'][] = "*.widget.php*";
+$priv_list['page-dashboard-all']['match'][] = "graph.php*";
+$priv_list['page-dashboard-all']['match'][] = "graph_cpu.php*";
+$priv_list['page-dashboard-all']['match'][] = "getstats.php*";
+$priv_list['page-dashboard-all']['match'][] = "ifstats.php*";
+$priv_list['page-dashboard-all']['match'][] = "diag_logs_filter_dynamic.php*";
+
 $priv_list['page-status-carp'] = array();
 $priv_list['page-status-carp']['name'] = "WebCfg - Status: CARP page";
 $priv_list['page-status-carp']['descr'] = "Allow access to the 'Status: CARP' page.";

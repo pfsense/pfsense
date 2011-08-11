@@ -149,8 +149,8 @@ $gamesplist['battlenet'] = array();
 	$gamesplist['battlenet'][] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
 	$gamesplist['battlenet'][] = array('Battle.NET-2', 'tcp', '1119', '1119', 'both');
 
-$gamesplist['worldofwarcraft'] = array();
-	$gamesplist['worldofwarcraft'][] = array('WoW', 'tcp', '3724', '3724', 'both');
+$gamesplist['wow'] = array();
+	$gamesplist['wow'][] = array('WoW', 'tcp', '3724', '3724', 'both');
 
 $gamesplist['gunzonline'] = array();
 	/* GunZ Online */

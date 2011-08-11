@@ -88,7 +88,7 @@ function cmp_privkeys($a, $b) {
 	$auser = strncmp("user-", $a, 5);
 	$buser = strncmp("user-", $b, 5);
 	if($auser != $buser)
-		return $auser - buser;
+		return $auser - $buser;
 
 	/* name compare others */
 	return strcasecmp($a, $b);

@@ -15,8 +15,8 @@ $priv_list['page-dashboard-all']['match'][] = "ifstats.php*";
 $priv_list['page-dashboard-all']['match'][] = "diag_logs_filter_dynamic.php*";
 
 $priv_list['page-dashboard-widgets'] = array();
-$priv_list['page-dashboard-widgets']['name'] = "WebCfg - System: Direct access to dashboard widgets.";
-$priv_list['page-dashboard-widgets']['descr'] = "Allow direct access to the Dashboard widget pages, required for some widgets using AJAX.";
+$priv_list['page-dashboard-widgets']['name'] = "WebCfg - Dashboard widgets (direct access).";
+$priv_list['page-dashboard-widgets']['descr'] = "Allow direct access to all Dashboard widget pages, required for some widgets using AJAX.";
 $priv_list['page-dashboard-widgets']['match'] = array();
 $priv_list['page-dashboard-widgets']['match'][] = "*.widget.php*";
 

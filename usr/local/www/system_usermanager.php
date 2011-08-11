@@ -62,6 +62,19 @@ if (!is_array($config['system']['user']))
 
 $a_user = &$config['system']['user'];
 
+if (isset($id) && $a_user[$id]) {
+	$pconfig['usernamefld'] = $a_user[$id]['name'];
+	$pconfig['descr'] = $a_user[$id]['descr'];
+	$pconfig['expires'] = $a_user[$id]['expires'];
+	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
+	$pconfig['utype'] = $a_user[$id]['scope'];
+	$pconfig['uid'] = $a_user[$id]['uid'];
+	$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
+	$pconfig['priv'] = $a_user[$id]['priv'];
+	$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
+	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
+}
+
 if ($_GET['act'] == "deluser") {
 
 	if (!$a_user[$id]) {
@@ -143,20 +156,6 @@ else if ($_GET['act'] == "delcert") {
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Certificate")." {$certdeleted} ".
 				gettext("association removed.")."<br/>";
-}
-else if ($_GET['act'] == "edit") {
-	if (isset($id) && $a_user[$id]) {
-		$pconfig['usernamefld'] = $a_user[$id]['name'];
-		$pconfig['descr'] = $a_user[$id]['descr'];
-		$pconfig['expires'] = $a_user[$id]['expires'];
-		$pconfig['groups'] = local_user_get_groups($a_user[$id]);
-		$pconfig['utype'] = $a_user[$id]['scope'];
-		$pconfig['uid'] = $a_user[$id]['uid'];
-		$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
-		$pconfig['priv'] = $a_user[$id]['priv'];
-		$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
-		$pconfig['disabled'] = isset($a_user[$id]['disabled']);
-	}
 }
 else if ($_GET['act'] == "new") {
 	/*

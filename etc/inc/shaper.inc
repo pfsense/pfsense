@@ -231,7 +231,6 @@ class altq_root_queue {
 	var $queues = array();
 	var $qenabled = false;
 	var $link;
-	var $default_present = false; /* if we have a default queue set */
 	var $available_bw; /* in b/s */
 
 	/* Accesor functions */
@@ -241,11 +240,15 @@ class altq_root_queue {
 	function SetAvailableBandwidth($bw) {
 		$this->available_bw = $bw;
 	}
-	function SetDefaultQueuePresent($value = false) {
-		$this->default_present = $value;
-	}
 	function GetDefaultQueuePresent() {
-		return $this->default_present;
+		if (!empty($this->queues)) {
+			foreach ($this->queues as $q) {
+				if ($q->GetDefault())
+					return true;
+			}
+		}
+
+		return false;
 	}
 	function SetLink($link) {
 		$this->link = $link;
@@ -823,12 +826,23 @@ class priq_queue {
 	function SetBwscale($scale) {
 		$this->qbandwidthtype = $scale;
 	}
+	function GetDefaultQueuePresent() {
+		if ($this->GetDefault())
+			return true;
+		if (!empty($this->subqueues)) {
+			foreach ($this->subqueues as $q) {
+				if ($q->GetDefault())
+					return true;
+			}
+		}
+
+		return false;
+	}
 	function GetDefault() {
 		return $this->qdefault;
 	}
 	function SetDefault($value = false) {
 		$this->qdefault = $value;
-		altq_set_default_queue($this->GetInterface(), $value);
 	}
 	function GetRed() {
 		return $this->qred;
@@ -923,8 +937,6 @@ class priq_queue {
 
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
-		if ($this->GetDefault())
-			altq_set_default_queue($this->GetInterface(), false);
 		cleanup_queue_from_rules($this->GetQname());
 		unset_object_by_reference($this->GetLink());
 	}
@@ -973,7 +985,8 @@ class priq_queue {
 			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
 			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-		
+		if (!empty($data['default']) && altq_get_default_queue($data['interface']))
+			$input_errors[] = gettext("Only one default queue per interface is allowed.");
 	}
 
 	function ReadConfig(&$q) {
@@ -984,7 +997,7 @@ class priq_queue {
 		} else if (isset($q['name']))
 			$this->SetQname($q['name']);
 		if (isset($q['interface']))
-				$this->SetInterface($q['interface']);
+			$this->SetInterface($q['interface']);
 		$this->SetBandwidth($q['bandwidth']);
 		if ($q['bandwidthtype'] <> "")
 			$this->SetBwscale($q['bandwidthtype']);
@@ -1140,15 +1153,12 @@ class priq_queue {
 		$form .= "<td width=\"22%\" valign=\"center\" class=\"vncell\">" . gettext("Scheduler options") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
 		if (empty($this->subqueues)) {
-			$tmpvalue = $this->GetDefault();
-			if (altq_get_default_queue($this->GetInterface()) == false || !empty($tmpvalue)) {
-				if (!empty($tmpvalue)) { 
-					$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
-					$form .= "> " . gettext("Default queue") . "<br>";
-				} else {
-					$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
-					$form .= "> " . gettext("Default queue") . "<br>";
-				}
+			if ($this->GetDefault()) { 
+				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
+				$form .= "> " . gettext("Default queue") . "<br>";
+			} else {
+				$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
+				$form .= "> " . gettext("Default queue") . "<br>";
 			}
 		}
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
@@ -1494,9 +1504,6 @@ class hfsc_queue extends priq_queue {
 
 	function delete_queue() { 
 		unref_on_altq_queue_list($this->GetQname());
-		$tmpvalue = $this->GetDefault();
-		if (!empty($tmpvalue)) 
-			altq_set_default_queue($this->GetInterface(), false);
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
 		foreach ($this->subqueues as $q)  {
@@ -1632,7 +1639,6 @@ class hfsc_queue extends priq_queue {
 				$input_errors[] = ("realtime specification excedd 80% of allowable allocation.");
 		}
 		*/
-
 	}
 
 	function ReadConfig(&$cflink) {
@@ -2169,8 +2175,6 @@ class cbq_queue extends priq_queue {
 
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
-		if ($this->GetDefault())
-			altq_set_default_queue($this->GetInterface(), false);
 		cleanup_queue_from_rules($this->GetQname());
 		foreach ($this->subqueues as $q) {
 		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
@@ -2204,14 +2208,15 @@ class cbq_queue extends priq_queue {
 		}
 
 /*
-           $parent =& $this->GetParent();
-           switch ($data['bandwidthtype']) {
-                       case "%":
-                             $myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-                       default:
-                             $mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-                             break;
-           }
+		$parent =& $this->GetParent();
+		switch ($data['bandwidthtype']) {
+		case "%":
+			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
+			break;
+		default:
+			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
+			break;
+		}
                 if ($parent->GetAvailableBandwidth() < floatval($myBw))
                         $input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
 */
@@ -2449,8 +2454,6 @@ class fairq_queue extends priq_queue {
 
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
-		if ($this->GetDefault())
-			altq_set_default_queue($this->GetInterface(), false);
 		cleanup_queue_from_rules($this->GetQname());
 		unset_object_by_reference($this->GetLink());
 	}
@@ -3817,14 +3820,6 @@ function get_altq_name_list() {
  * This is a layer violation but for now there is no way 
  * i can find to properly do this with PHP.
  */
-function altq_set_default_queue($interface, $value) {
-	global $altq_list_queues;
-		
-	$altq_tmp =& $altq_list_queues[$interface];
-	if ($altq_tmp)
-		$altq_tmp->SetDefaultQueuePresent($value);
-}
-
 function altq_get_default_queue($interface) {
 	global $altq_list_queues;
 

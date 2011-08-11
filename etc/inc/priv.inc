@@ -122,8 +122,10 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 		$wcpos = strpos($match, "*");
 		if ($wcpos === false)
 			$result = strcmp($page, $match);
-		else
-			$result = strncmp($page, $match, $wcpos);
+		else {
+			$match = "/" . str_replace(array(".", "*"), array("\.", ".*"), $match) . "/";
+			$result = !preg_match($match, $page);
+		}
 
 		if (!$result)
 			return true;

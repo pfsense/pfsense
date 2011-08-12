@@ -3322,7 +3322,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"center\" class=\"vncellreq\">";
 		$form .= "<input name=\"weight\" type=\"text\" id=\"weight\" size=\"5\" value=\"";
 		$form .= $this->GetWeight() . "\">";
-		$form .= "&nbsp;ms<br> <span class=\"vexpl\">" . gettext("Hint: For queues under the same parent "
+		$form .= "&nbsp;<br> <span class=\"vexpl\">" . gettext("Hint: For queues under the same parent "
 		      .  "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\" name=\"sprtable1\">";

@@ -65,6 +65,7 @@ $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
+$pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if ($_POST) {
 
@@ -158,9 +159,15 @@ if ($_POST) {
                 else
                         unset($config['system']['kill_states']);
 
+		if($_POST['dnslocalhost'] == "yes")
+                        $config['system']['dnslocalhost'] = true;
+                else
+                        unset($config['system']['dnslocalhost']);
+
 		write_config();
 
 		$retval = 0;
+		system_resolvconf_generate(true);
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message(gettext($retval));
@@ -385,6 +392,21 @@ function maxmss_checked(obj) {
                                                                         <br />
 									<?=gettext("By default schedules clear the states of existing connections when expiry time has come. ".
 									"This option allows to override this setting by not clearing states for existing connections."); ?>
+                                                                </td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="2" class="list" height="12">&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="2" valign="top" class="listtopic"><?=gettext("DNS Forwarder"); ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Localhost"); ?></td>
+                                                                <td width="78%" class="vtable">
+                                                                        <input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked"; ?> />
+                                                                        <br />
+									<?=gettext("By default localhost(127.0.0.1) will be used as the first dns server. ".
+									"This option allows to override this setting by not including localhost in the list of dns servers."); ?>
                                                                 </td>
                                                         </tr>
                                                         <tr>

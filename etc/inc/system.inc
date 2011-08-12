@@ -90,7 +90,8 @@ function system_resolvconf_generate($dynupdate = false) {
 	if($syscfg['domain'])
 		$resolvconf = "domain {$syscfg['domain']}\n";
 
-	$resolvconf .= "nameserver 127.0.0.1\n";
+	if (!isset($config['system']['dnslocalhost']))
+		$resolvconf .= "nameserver 127.0.0.1\n";
 
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */

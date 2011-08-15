@@ -471,10 +471,12 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		if(is_alias($address)) {
 			/* We already expanded this alias so there is no neccessity to do it again. */
 			if(!isset($aliasnesting[$address]))
-				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if(!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
 				$filterdns .= "pf {$address} {$name}\n";
+				/* Guarantee unique dns names on filterdns config */
+				$aliasaddrnesting[$address] = $address;
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;

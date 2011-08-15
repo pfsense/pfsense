@@ -2573,7 +2573,7 @@ EOD;
 	 *  topologies
 	 */
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n":
+		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n";
 		foreach ($config['staticroutes']['route'] as $route) {
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
@@ -2591,7 +2591,6 @@ pass quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn}
 pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
-					}
 				}
 				if($oc['ipv6']) {
 					$sa = $oc['sav6'];
@@ -2606,7 +2605,6 @@ pass quick on \${$oc['descr']} inet6 proto tcp from {$route['network']} to {$sa}
 pass quick on \${$oc['descr']} inet6 from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
-					}
 				}
 			}
 		}

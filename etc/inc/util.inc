@@ -886,25 +886,11 @@ function alias_make_table($config) {
 		}
 	}
 }
-
 /* check if an alias exists */
 function is_alias($name) {
 	global $aliastable;
 
 	return isset($aliastable[$name]);
-}
-
-function alias_get_type($name) {
-        global $config;
-        
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($name == $alias['name'])
-				return $alias['type'];
-		}
-	}
-
-        return "";
 }
 
 /* expand a host or network alias, if necessary */
@@ -924,14 +910,12 @@ function alias_expand_urltable($name) {
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
-				if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
-					return $urltable_filename;
-				else if (process_alias_urltable($name, $alias["url"], 0, true))
-					return $urltable_filename;
-			}
+	foreach ($config['aliases']['alias'] as $alias) {
+		if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
+			if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
+				return $urltable_filename;
+			else if (process_alias_urltable($name, $alias["url"], 0, true))
+				return $urltable_filename;
 		}
 	}
 	return null;

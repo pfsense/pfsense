@@ -456,13 +456,21 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
+function get_alias_type($name) {
+        global $config;
+
+        foreach ($config['aliases']['alias'] as $alias)
+                if ($name == $alias['name'])
+                        return $alias['type'];
+        return "";
+}
+
 function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
 	global $aliastable, $filterdns;
 
 	$addresses = split(" ", $alias);
 	$finallist = "";
 	$builtlist = "";
-	$urltable_nesting = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		if (empty($address))
@@ -470,18 +478,13 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$linelength = strlen($builtlist);
 		$tmpline = "";
 		if(is_alias($address)) {
-			if (alias_get_type($address) == 'urltable') {
+			if (get_alias_type($address) == 'urltable'){
 				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
-				$urltable_netsting = alias_expand_urltable($address);
-				if (!empty($urltable_nesting)) {
-					$urlfile_as_arr = file($urltable_nesting);
-					foreach($urlfile_as_arr as $line) {
+				$urlfn = alias_expand_urltable($address);
+				if ($file_as_arr=file($urlfn)){
+					foreach($file_as_arr as $line){
 						$address= rtrim($line);
-						if ((strlen($tmpline) + $linelength) > 4036) {
-							$finallist .= "{$tmpline} \\\n";
-							$tmpline = "";
-						}
-						$tmpline .= " {$address}";
+						$tmpline .= " $address";
 					}
 				}
 			}
@@ -494,7 +497,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;
-			$tmpline = " {$address}";
+			$tmpline = " $address";
 		}
 		if ((strlen($tmpline)+ $linelength) > 4036) {
 			$finallist .= "{$builtlist} \\\n";

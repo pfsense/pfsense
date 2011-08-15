@@ -254,7 +254,7 @@ if ($_POST) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						// But alias type network can include alias type urltable. Feature#1603.
 						if (!($_POST['type'] == 'network' &&
-						      alias_get_type($_POST["address{$x}"]) == 'urltable'))
+						      get_alias_type($_POST["address{$x}"]) == 'urltable'))
 							$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
 					if (!is_port($_POST["address{$x}"]))

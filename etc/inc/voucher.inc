@@ -50,7 +50,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
-	voucher_expire(\$vouchers);
+	voucher_expire('$vouchers');
 
 EOF;
 
@@ -144,7 +144,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth(\$voucher_received);
+	\$timeleft = voucher_auth('$voucher_received');
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
 	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];

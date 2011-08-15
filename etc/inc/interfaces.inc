@@ -2637,15 +2637,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		/* Disable Accepting router advertisements unless specifically requested */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv") == 0);
 
-		switch ($wancfg['ipaddr']) {
-			case 'pppoe':
-			case 'l2tp':
-			case 'pptp':
-			case 'ppp':
-				break;
-			default:
-				interface_bring_down($interface);
-				break;
+		/* only bring down the interface when both v4 and v6 are set to NONE */
+		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
+			interface_bring_down($interface);
 		}
 	}
 
@@ -2772,7 +2766,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			interface_ppps_configure($interface);
 			break;
 		default:
-			if ($wancfg['ipaddr'] <> "" && $wancfg['subnet'] <> "") {
+			if (is_ipaddr($wancfg['ipaddr']) && $wancfg['subnet'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
 			} else if (substr($realif, 0, 3) == "gre") {
 				if (is_array($config['gres']['gre'])) {
@@ -2793,8 +2787,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	switch ($wancfg['ipaddrv6']) {
+		case 'dhcp6':
+			interface_dhcpv6_configure($interface);
+			break;
 		default:
-			if ($wancfg['ipaddrv6'] <> "" && $wancfg['subnetv6'] <> "") {
+			if (is_ipaddr($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
 				// FIXME: Add IPv6 Support to the pfSense module
 				mwexec("/sbin/ifconfig {$realif} inet6 {$wancfg['ipaddrv6']} prefixlen {$wancfg['subnetv6']} ");
@@ -2818,7 +2815,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		unset($gif);
 		$gif = link_interface_to_gif($interface);
 		if (!empty($gif))
-                       	array_walk($gif, 'interface_gif_configure');
+			array_walk($gif, 'interface_gif_configure');
 
 		if ($linkupevent == false || substr($realif, 0, 4) == "ovpn") {
 			unset($bridgetmp);
@@ -2871,29 +2868,6 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	return 0;
 }
 
-function interface_dhcp_configure($interface = "wan") {
-	global $config, $g;
-
-	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
-	if (empty($wancfg))
-		$wancfg = array();
-
-	$wanif = get_real_interface($interface);
-	/* bring wan interface up before starting dhclient */
-	if($wanif)
-		interfaces_bring_up($wanif);
-	else 
-		log_error("Could not bring up {$wanif} interface in interface_dhcp_configure()");
-
-	/* launch v6 before v4, dhclient can hold up the execution if no dhcp4 is available */
-	interface_dhcpv6_configure($interface);
-	interface_dhcpv4_configure($interface);
-
-	return 0;
-
-}
-
 function interface_dhcpv6_configure($interface = "wan") {
 	global $config, $g;
 	$iflist = get_configured_interface_with_descr(false, true);
@@ -2905,10 +2879,10 @@ function interface_dhcpv6_configure($interface = "wan") {
 
 	$wanif = get_real_interface($interface);
 
-	/* Add IPv6 dhclient here, only wide-dhcp6c works for now. */
+	/* Add ISC IPv6 dhclient here, only wide-dhcp6c works for now. */
 	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcp_configure() for writing.\n");
+		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcpv6_configure() for writing.\n");
 		return 1;
 	}
 
@@ -2952,7 +2926,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	return 0;
 }
 
-function interface_dhcpv4_configure($interface = "wan") {
+function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];

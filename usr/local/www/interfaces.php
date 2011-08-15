@@ -468,8 +468,8 @@ if ($_POST['apply']) {
 	}
 	switch(strtolower($_POST['type6'])) {
 		case "staticv6":
-			$reqdfields = explode(" ", "ipaddrv6 subnetv6 gatewayv6 dhcp6-pd-sla-id");
-			$reqdfieldsn = array(gettext("IPv6 address"),gettext("Subnet bit count"),gettext("Gateway"));
+			$reqdfields = explode(" ", "ipaddrv6 subnetv6 gatewayv6");
+			$reqdfieldsn = array(gettext("IPv6 address"),gettext("Subnet bit count"),gettext("Gateway")));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "none":
@@ -1245,7 +1245,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv4 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="" onChange="updateType(this.value);" class="formselect" id="type">
+								<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
 								<?php
 									foreach ($types4 as $key => $opt) {
 										echo "<option onClick=\"updateType('{$key}');\"";

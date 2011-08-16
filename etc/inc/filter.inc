@@ -2578,12 +2578,13 @@ EOD;
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
+				$routeent = explode("/", $route['network']);
 				if($oc['ip']) {
 					$sa = $oc['sa'];
 					$sn = $oc['sn'];
 					$if = $oc['if'];
 				}
-				if($sa) {
+				if($sa && is_ipaddrv4($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
@@ -2597,7 +2598,7 @@ EOD;
 					$sn = $oc['snv6'];
 					$if = $oc['if'];
 				}
-				if($sa) {
+				if($sa && is_ipaddrv6($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"

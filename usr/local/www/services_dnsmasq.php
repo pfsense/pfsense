@@ -48,6 +48,7 @@ $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
 $pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
+$pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
 
 if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
@@ -62,23 +63,36 @@ $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 if ($_POST) {
 
 	$pconfig = $_POST;
+	unset($input_errors);
 
 	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
 	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 
-	write_config();
+	if ($config['dnsmasq']['custom_options']) {
+		$args = '';
+		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
+			$args .= "--$c ";
+		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
+		if ($rc != 0)
+			$input_errors[] = gettext("Invalid custom options");
+	}
 
-	$retval = 0;
-	$retval = services_dnsmasq_configure();
-	$savemsg = get_std_save_message($retval);
+	if (!$input_errors) {
+		write_config();
 
-	// Relaod filter (we might need to sync to CARP hosts)
-	filter_configure();
+		$retval = 0;
+		$retval = services_dnsmasq_configure();
+		$savemsg = get_std_save_message($retval);
 
-	if ($retval == 0)
-		clear_subsystem_dirty('hosts');
+		// Relaod filter (we might need to sync to CARP hosts)
+		filter_configure();
+
+		if ($retval == 0)
+			clear_subsystem_dirty('hosts');
+	}
 }
 
 if ($_GET['act'] == "del") {
@@ -116,12 +130,18 @@ function enable_change(enable_over) {
 	document.iform.regdhcpstatic.disabled = endis;
 	document.iform.dhcpfirst.disabled = endis;
 }
+function show_advanced_dns() {
+	document.getElementById("showadvbox").innerHTML='';
+	aodiv = document.getElementById('showadv');
+	aodiv.style.display = "block";
+}
 //-->
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
 <?php print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
@@ -161,6 +181,19 @@ function enable_change(enable_over) {
 			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
 					"affects the name given for a reverse lookup (PTR)."));?></p>
+		</td>
+	</tr>
+	<tr>
+		<td class="vtable"><p>
+			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
+				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
+			</div>
+			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
+				<strong><?=gettext("Advanced");?><br></strong>
+				<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
+				<?=gettext("Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline"); ?><br/>
+			</div>
+			</p>
 		</td>
 	</tr>
 	<tr>

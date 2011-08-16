@@ -1122,6 +1122,12 @@ function services_dnsmasq_configure() {
 		if(!isset($config['system']['webgui']['nodnsrebindcheck']))
 			$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
 
+		if ($config['dnsmasq']['custom_options']) {
+			$args = '';
+			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
+				$args .= "--$c ";
+		}
+
 		/* run dnsmasq */
 		mwexec("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
 

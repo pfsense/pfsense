@@ -40,6 +40,7 @@
 ##|*NAME=Status: Traffic Graph page
 ##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
 ##|*MATCH=status_graph.php*
+##|*MATCH=bandwidth_by_ip.php*
 ##|-PRIV
 
 require("guiconfig.inc");

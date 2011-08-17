@@ -44,6 +44,10 @@ WORD="https"
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
+if [ "$PLATFORM" = "jail" ]; then
+	exit
+fi
+
 # endless loop
 while : ; do
 

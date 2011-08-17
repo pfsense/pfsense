@@ -40,6 +40,8 @@
 
 function activate_powerd() {
 	global $config, $g;
+	if ($g['platform'] == 'jail')
+		return;
 	if(isset($config['system']['powerd_enable'])) {
 		if ($g["platform"] == "nanobsd")
 			exec("/sbin/kldload cpufreq");
@@ -59,6 +61,8 @@ function get_default_sysctl_value($id) {
 
 function activate_sysctls() {
 	global $config, $g;
+	if ($g['platform'] == 'jail')
+		return;
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000002");
@@ -285,6 +289,8 @@ function system_hosts_generate() {
 function system_dhcpleases_configure() {
 	global $config, $g;
 	
+	if ($g['platform'] == 'jail')
+		return;
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if (isset($config['dnsmasq']['regdhcp'])) {
 		/* Make sure we do not error out */
@@ -320,6 +326,8 @@ function system_hostname_configure() {
 
 function system_routing_configure($interface = "") {
 	global $config, $g;
+	if ($g['platform'] == 'jail')
+		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
@@ -1152,6 +1160,9 @@ function system_timezone_configure() {
 
 function system_ntp_configure() {
 	global $config, $g;
+
+	if ($g['platform'] == 'jail')
+		return;
 
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense OpenNTPD configuration file \n";

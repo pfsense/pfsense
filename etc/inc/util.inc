@@ -1217,11 +1217,8 @@ function mute_kernel_msgs() {
 	global $config;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
-	}
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
 	if($config['system']['enableserial']) 
 		return;			
 	exec("/sbin/conscontrol mute on");
@@ -1231,19 +1228,14 @@ function unmute_kernel_msgs() {
 	global $config;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
-	}
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
 	exec("/sbin/conscontrol mute off");
 }
 
 function start_devd() {
 	global $g;
 
-	if ($g['platform'] == 'jail')
-		return;
 	exec("/sbin/devd");
 	sleep(1);
 }

@@ -9,11 +9,9 @@ if [ "$PFSENSETYPE" = "embedded" ]; then
 fi
 
 # this is super annoying in VMware, exit if in VMware
-if [ -f /var/log/dmesg.boot ]; then
-	VMWCOUNT=`/usr/bin/grep -c VMware /var/log/dmesg.boot`
-	if [ $VMWCOUNT -gt 0 ]; then
-		exit;
-	fi
+VMWCOUNT=`/usr/bin/grep -c VMware /var/log/dmesg.boot`
+if [ $VMWCOUNT -gt 0 ]; then
+    exit;
 fi
 
 # Check for different HZ 

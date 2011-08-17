@@ -80,14 +80,12 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 	fi
 fi
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Check to see if a compact flash mountpoint exists
-	# If it fails to mount then run a fsck -fy
-	if grep -q cf /etc/fstab; then
-		/sbin/mount -w /cf 2>/dev/null
-		/sbin/mount -uw /cf || \
-			(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
-	fi
+# Check to see if a compact flash mountpoint exists
+# If it fails to mount then run a fsck -fy
+if grep -q cf /etc/fstab; then
+	/sbin/mount -w /cf 2>/dev/null
+    /sbin/mount -uw /cf || \
+	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
 
 # sync pw database after mount.
@@ -111,10 +109,8 @@ echo
 echo "Welcome to ${product} ${version} ${platformbanner} ..."
 echo
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Enable console output if its muted.
-	/sbin/conscontrol mute off >/dev/null
-fi
+# Enable console output if its muted.
+/sbin/conscontrol mute off >/dev/null
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
@@ -125,8 +121,6 @@ elif [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
-elif [ "$PLATFORM" = "jail" ]; then
-	# do nothing for jail platform
 else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
@@ -308,11 +302,9 @@ fi
 /bin/chmod 0600 /var/log/*.log
 
 echo -n "."
-if [ ! "$PLATFORM" = "jail" ]; then
-	DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
-	if [ "$DEVFS" = "0" ]; then
-		mount_devfs devfs /dev
-	fi
+DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
+if [ "$DEVFS" = "0" ]; then
+    mount_devfs devfs /dev
 fi
 
 # Create an initial utmp file
@@ -326,20 +318,18 @@ if [ -f /etc/rc.conf ]; then
     /bin/rm -rf /etc/rc.conf
 fi
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Launching kbdmux(4)
-	if [ -f "/dev/kbdmux0" ]; then
-		echo -n "."
-		/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
-		[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
-		[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
-	fi
+# Launching kbdmux(4)
+if [ -f "/dev/kbdmux0" ]; then
+	echo -n "."
+	/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
+	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
+	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
+fi
 
-	# Fire up unionfs if mount points exist.
-	if [ -f /dist/uniondirs ]; then
-		echo -n "."
-		/etc/rc.d/unionfs start
-	fi
+# Fire up unionfs if mount points exist.
+if [ -f /dist/uniondirs ]; then
+	echo -n "."
+	/etc/rc.d/unionfs start
 fi
 
 echo "done."
@@ -421,6 +411,6 @@ echo "Bootup complete"
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 # Reset the cache.  read-only requires this.
-/bin/rm -f /tmp/config.cache
+/bin/rm /tmp/config.cache
 
 exit 0

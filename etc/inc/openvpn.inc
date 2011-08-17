@@ -701,8 +701,6 @@ function openvpn_resync($mode, $settings) {
 function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
-	if ($g['platform'] == 'jail')
-		return;
 	// delay our setup until the system
 	// has a chance to init our paths
 	if (!file_exists($g['varetc_path']."/openvpn") ||

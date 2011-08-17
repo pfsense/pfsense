@@ -42,7 +42,7 @@
 function services_dhcpd_configure() {
 	global $config, $g;
 	
-	if ($g['platform'] == 'jail' || $g['services_dhcp_server_enable'] == false) 
+	if($g['services_dhcp_server_enable'] == false) 
 		return;
 
 	if(isset($config['system']['developerspew'])) {
@@ -454,8 +454,6 @@ EOD;
 
 function services_dhcrelay_configure() {
 	global $config, $g;
-	if ($g['platform'] == 'jail')
-		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcrelay_configure() being called $mt\n";
@@ -945,7 +943,7 @@ EOD;
 
 function setup_wireless_olsr() {
 	global $config, $g;
-	if ($g['platform'] == 'jail' || !$config['installedpackages']['olsrd'] || !$config['installedpackages'])
+	if(!$config['installedpackages']['olsrd'] || !$config['installedpackages'])
 		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

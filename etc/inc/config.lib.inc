@@ -348,10 +348,10 @@ function conf_mount_ro() {
 	if($platform == "cdrom" or $platform == "pfSense")
 		return;
 
-	if($g['booting'])
+	if (refcount_unreference(1000) > 0)
 		return;
 
-	if (refcount_unreference(1000) > 0)
+	if($g['booting'])
 		return;
 
 	clear_subsystem_dirty('mount');

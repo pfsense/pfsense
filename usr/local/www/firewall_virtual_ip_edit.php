@@ -174,7 +174,8 @@ if ($_POST) {
 	}
 
 
-	if (isset($id) && ($a_vip[$id])) {
+	/* XXX: Seems this code is to draconian and without a real usefulness. Leaving commented out for now and remove later on */
+	if (0 && isset($id) && ($a_vip[$id])) {
 		if ($a_vip[$id]['mode'] != $_POST['mode']) {
 			$bringdown = false;
 			if ($a_vip[$id]['mode'] == "proxyarp") {

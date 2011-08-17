@@ -82,6 +82,8 @@ function vpn_ipsec_configure($ipchg = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
 
+	if ($g['platform'] == 'jail')
+		return;
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
@@ -1011,6 +1013,11 @@ function vpn_ipsec_force_reload() {
 
 /* master setup for vpn (mpd) */
 function vpn_setup() {
+	global $g;
+
+	if ($g['platform'] == 'jail')
+		return;
+
 	/* start pptpd */
 	vpn_pptpd_configure();
 

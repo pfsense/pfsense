@@ -118,6 +118,8 @@ function filter_load_ipfw() {
 
 function filter_pflog_start() {
 	global $config, $g;
+	if ($g['platform'] == 'jail')
+		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";

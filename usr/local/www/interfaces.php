@@ -1560,14 +1560,22 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="dhcp6-pd-sla-id" class="formselect" id="dhcp6-pd-sla-id">
 												<option value="none" selected><?=gettext("None"); ?></option>
 												<?php
-												// FIXME: Needs to calculate from prefix length from dhcp-pd
 												// Needs to check if the ID is not used on another interface
-												for ($i = 16; $i > 0; $i--) {
-													if($i <> 15) {
+												foreach($ifdescrs as $pdif => $pddescr)
+													if($config['interfaces'][$pdif]['dhcp6-ia-pd-len'] > 0) {
+														$pdlen = $config['interfaces'][$pdif]['dhcp6-ia-pd-len'];
+														continue;
+													}
+												}
+												$numbers = pow(2, $pdlen);
+												$i = 0;
+												while($i < $numbers) {
+													if($i <> $number) {
 														echo "<option value=\"{$i}\" ";
 														if ($i == $pconfig['dhcp6-pd-sla-id']) echo "selected";
 														echo ">" . $i . "</option>";
 													}
+													$i++;
 												}
 												?> 
 											</select>

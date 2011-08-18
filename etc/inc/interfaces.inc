@@ -1671,6 +1671,15 @@ EOD;
 		else
 			setup_pppoe_reset_file($ppp['if']);
 	}
+	/* wait for upto 10 seconds for the interface to appear (ppp(oe)) */
+	$i = 0;
+	while($i < 10) {
+		exec("/sbin/ifconfig {$ppp['if']} 2>&1", $out, $ret);
+		if($ret == 0)
+			break;
+		sleep(1);
+		$i++;
+	}
 
 	return 1;
 }

@@ -2924,7 +2924,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	}
 	$dhcp6cconf .= "request domain-name-servers;\n";
 	$dhcp6cconf .= "request domain-name;\n";
-	$dhcp6cconf .= "script \"/etc/rc.newwanipv6\";	# we'd like some nameservers please\n";
+	// $dhcp6cconf .= "script \"/etc/rc.newwanipv6\";	# we'd like some nameservers please\n";
 
 	$dhcp6cconf .= "};\n";
 	$dhcp6cconf .= "id-assoc na 0 { };\n";

@@ -1040,6 +1040,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	if (!isset($config['interfaces'][$interface]))
 		return; 
 
+	log_error("Calling interface down for interface {$interface}, destroy is {$destroy}");
+
 	$ifcfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
@@ -1075,11 +1077,31 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		$pid = find_dhclient_process($realif);
 		if($pid)
 			mwexec("/bin/kill {$pid}");
+		sleep(1);
+		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
+		}
+		break;
+	default:
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
+		}
+		break;
+	}
+
+	switch ($ifcfg['ipaddrv6']) {
+	case "dhcp6":
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
 			mwexec("/bin/kill {$pidv6}");
 		sleep(1);
-		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -1097,6 +1119,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		}
 		break;
 	}
+
 
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");

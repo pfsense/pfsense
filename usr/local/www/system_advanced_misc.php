@@ -401,12 +401,12 @@ function maxmss_checked(obj) {
                                                                 <td colspan="2" valign="top" class="listtopic"><?=gettext("DNS Forwarder"); ?></td>
                                                         </tr>
                                                         <tr>
-                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Localhost"); ?></td>
+                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Localhost inclusion"); ?></td>
                                                                 <td width="78%" class="vtable">
                                                                         <input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked"; ?> />
                                                                         <br />
-									<?=gettext("By default localhost(127.0.0.1) will be used as the first dns server. ".
-									"This option allows to override this setting by not including localhost in the list of dns servers."); ?>
+									<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS forwarder is enabled, so this system uses the DNS forwarder to perform lookups. ".
+									"Checking this box omits localhost from the list of DNS servers."); ?>
                                                                 </td>
                                                         </tr>
                                                         <tr>

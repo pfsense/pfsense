@@ -2659,13 +2659,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
+	/* Disable Accepting router advertisements unless specifically requested */
+	log_error("Deny router advertisements for interface {$interface}");
+	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv");
 			
 	if (!$g['booting'] && !substr($realif, 0, 4) == "ovpn") {
 		/* remove all IPv4 and IPv6 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
-		/* Disable Accepting router advertisements unless specifically requested */
-		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv") == 0);
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {

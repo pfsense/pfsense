@@ -1554,9 +1554,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 										</td>
 									</tr>
-									<?php
-									if($pconfig['gatewayv6'] == "none") {
-									?>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation ID"); ?></td>
 										<td width="78%" class="vtable">
@@ -1577,7 +1574,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("This ID sets the delegated DHCP-PD prefix number which will be used to setup the interface.");?>
 										</td>
 									</tr>
-									<?php }; ?>
 								</table>
 							</td>
 						</tr>

@@ -1128,9 +1128,8 @@ function services_dnsmasq_configure() {
 			$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
 
 		if ($config['dnsmasq']['custom_options']) {
-			$args = '';
 			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
-				$args .= "--$c ";
+				$args .= " --$c";
 		}
 
 		/* run dnsmasq */

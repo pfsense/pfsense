@@ -195,6 +195,7 @@
 			<if>vr1</if>
 			<mtu></mtu>
 			<ipaddr>dhcp</ipaddr>
+			<ipaddrv6>dhcp6</ipaddrv6>
 			<!-- *or* ipv4-address *or* 'pppoe' *or* 'pptp' *or* 'bigpond' -->
 			<subnet></subnet>
 			<gateway></gateway>

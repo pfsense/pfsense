@@ -783,8 +783,10 @@ function filter_generate_optcfg_array() {
 			continue;
 		$oic['ip'] = get_interface_ip($if);
 		$oic['ipv6'] = get_interface_ipv6($if);
-		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
+		if(!is_ipaddrv4($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
+		if(!is_ipaddrv6($oc['ipaddrv6']) && !empty($oc['ipaddrv6']))
+			$oic['type6'] = $oc['ipaddrv6'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
@@ -2378,9 +2380,6 @@ EOD;
 # allow our DHCP client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
-# allow our DHCPv6 client out to the {$oc['descr']}
-pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
-pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;
@@ -2411,6 +2410,19 @@ EOD;
 				}
 
 			}
+			break;
+		}
+		switch($oc['type6']) {
+		case "dhcp6":
+			$ipfrules = <<<EOD
+
+# allow our DHCPv6 client out to the {$oc['descr']}
+pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
+pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
+
+EOD;
+			break;
+		default:
 			if(isset($config['dhcpdv6'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
 

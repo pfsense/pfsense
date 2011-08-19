@@ -115,6 +115,8 @@ if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
 if ($_POST) {
+	conf_mount_rw();
+
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {
 		    if($pkg['custom_php_command_before_form'] <> "")
@@ -246,10 +248,13 @@ if ($_POST) {
 		} elseif(!$pkg['preoutput']) {
 		    pfSenseHeader("pkg.php?xml=" . $xml);
 		}
+		conf_mount_ro();
 		exit;
 	} else {
 		$get_from_post = true;
 	}
+
+	conf_mount_ro();
 }
 
 if($pkg['title'] <> "") {

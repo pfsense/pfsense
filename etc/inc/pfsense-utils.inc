@@ -1557,10 +1557,11 @@ function update_output_window($text) {
  */
 function update_status($status) {
         global $pkg_interface;
-        if($pkg_interface == "console") {
-                echo $status . "\n";
-        } else {
+
+        if($pkg_interface != "console") {
                 echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
+        } else {
+                echo $status . "\n";
         }
         /* ensure that contents are written out */
         ob_flush();

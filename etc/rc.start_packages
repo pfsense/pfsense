@@ -40,6 +40,8 @@ require_once("service-utils.inc");
 
 log_error("Restarting/Starting all packages.");
 
+conf_mount_rw();
+
 $rcfiles = glob("{$rcfileprefix}*.sh");
 if (!$rcfiles)
 	$rcfiles = array();
@@ -69,5 +71,7 @@ if ($shell) {
 
 	pclose($shell);
 }
+
+conf_mount_ro();
 
 ?>

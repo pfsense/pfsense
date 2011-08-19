@@ -593,6 +593,7 @@ function install_package($package, $pkg_info = "") {
 	if (!install_package_xml($package)) {
 		uninstall_package($package);
 		write_config($changedesc);
+		conf_mount_rw(); //Compensate write_config() sending to _ro
 		$static_output .= "Failed to install package.\n";
 		update_output_window($static_output);
 		return -1;
@@ -600,6 +601,7 @@ function install_package($package, $pkg_info = "") {
 		$static_output .= "Writing configuration... ";
 		update_output_window($static_output);
 		write_config($changedesc);
+		conf_mount_rw(); //Compensate write_config() sending to _ro
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 

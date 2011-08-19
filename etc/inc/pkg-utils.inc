@@ -481,6 +481,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$base_url = substr($base_url, 0, -1);
 	$fetchto = "{$fetchdir}/apkg_{$filename}";
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
+	update_output_window($static_output);
 	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
 		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
 			$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";

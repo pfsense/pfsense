@@ -1546,7 +1546,8 @@ function update_output_window($text) {
                 echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
 				echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";	
 				echo "</script>";
-        }
+        } else
+		echo $text;
         /* ensure that contents are written out */
         ob_flush();
 }

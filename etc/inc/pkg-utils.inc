@@ -580,10 +580,12 @@ function install_package($package, $pkg_info = "") {
 		$changedesc = "Overwrote previous installation of {$pkg_info['name']}.";
 		$to_output = "overwrite!\n";
 	}
+
 	if(file_exists('/conf/needs_package_sync'))
 		@unlink('/conf/needs_package_sync');
-	conf_mount_ro();
 	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
+	conf_mount_rw(); //Compensate write_config() sending to _ro
+
 	$static_output .= $to_output;
 	update_output_window($static_output);
 	/* install other package components */
@@ -602,6 +604,7 @@ function install_package($package, $pkg_info = "") {
 		if($pkg_info['after_install_info']) 
 			update_output_window($pkg_info['after_install_info']);	
 	}
+	conf_mount_ro();
 }
 
 function get_after_install_info($package) {
@@ -1024,6 +1027,7 @@ function delete_package_xml($pkg) {
 		 * 	Same is done during installation.
 		 */
 		write_config("Intermediate config write during package removal for {$pkg}.");
+		conf_mount_rw(); //Compensate for write_config() sending to _ro
 
 		/*
 		 * If a require exists, include it.  this will
@@ -1202,20 +1206,20 @@ function pkg_reinstall_all() {
 	@unlink('/conf/needs_package_sync');
 	$pkg_id = 0;
 	$todo = array();
-	if (is_array($config['installedpackages']['package']))
+	if (is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package)
 			$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-	echo "One moment please, reinstalling packages...\n";
-	echo " >>> Trying to fetch package info...";
-	$pkg_info = get_pkg_info();
-	if ($pkg_info) {
-		echo " Done.\n";
-	} else {
-		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
-		echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
-		return;
-	}
-	if(is_array($todo)) {
+
+		echo "One moment please, reinstalling packages...\n";
+		echo " >>> Trying to fetch package info...";
+		$pkg_info = get_pkg_info();
+		if ($pkg_info) {
+			echo " Done.\n";
+		} else {
+			$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+			echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+			return;
+		}
 		foreach($todo as $pkgtodo) {
 			$static_output = "";
 			if($pkgtodo['name']) {

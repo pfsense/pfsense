@@ -211,7 +211,7 @@ function refcount_unreference($reference) {
 		$shm_data = @shmop_read($shmid, 0, 10);
 		$shm_data = intval($shm_data) - 1;
 		if ($shm_data < 0) {
-			//debug_backtrace();
+			//log_error("MISUAGE OF REFCOUNT_API: trace " . print_r(debug_backtrace(), true));
 			log_error("Reference {$reference} is going negative, not doing unreference.");
 		} else
 			@shmop_write($shmid, $shm_data, 0);

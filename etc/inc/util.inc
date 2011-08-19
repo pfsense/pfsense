@@ -192,6 +192,8 @@ function refcount_reference($reference) {
 			$shmid = @shmop_open($reference, "w", 0, 0);
 		}
 		$shm_data = @shmop_read($shmid, 0, 10);
+		if (intval($shm_data) < 0)
+			$shm_data = 0;
 		$shm_data = intval($shm_data) + 1;
 		@shmop_write($shmid, $shm_data, 0);
 		@shmop_close($shmid);

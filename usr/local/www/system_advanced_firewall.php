@@ -295,7 +295,6 @@ function update_description(itemnum) {
 									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> />
 									<strong><?=gettext("Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.");?></strong>
 									<br/>
-									<?=gettext("Click")?> <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'><?=gettext("here");?></a> <?=gettext("for more information.");?>
 								</td>
 							</tr>
 							<tr>

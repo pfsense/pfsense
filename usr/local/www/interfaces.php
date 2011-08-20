@@ -1561,7 +1561,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<option value="none" selected><?=gettext("None"); ?></option>
 												<?php
 												// Needs to check if the ID is not used on another interface
-												foreach($ifdescrs as $pdif => $pddescr)
+												foreach($ifdescrs as $pdif => $pddescr) {
 													if($config['interfaces'][$pdif]['dhcp6-ia-pd-len'] > 0) {
 														$pdlen = $config['interfaces'][$pdif]['dhcp6-ia-pd-len'];
 														continue;

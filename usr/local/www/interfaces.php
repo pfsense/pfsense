@@ -227,6 +227,7 @@ switch($wancfg['ipaddrv6']) {
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
+			$pconfig['dhcp6-pd-sla-id'] = $wancfg['dhcp6-pd-sla-id'];
 		} else
 			$pconfig['type6'] = "none";
 		break;

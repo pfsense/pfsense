@@ -195,7 +195,20 @@ if ($_POST) {
 
 		if ($restart_webgui) {
 			global $_SERVER;
-			list($host) = explode(":", $_SERVER['HTTP_HOST']);
+			$http_host_port = explode("]", $_SERVER['HTTP_HOST']);
+			/* IPv6 address check */
+			if(strstr($_SERVER['HTTP_HOST'], "]")) {
+				if(count($http_host_port) > 1) {
+					array_pop($http_host_port);
+					$host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
+					$host = "[{$host}]";
+				} else {
+					$host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
+					$host = "[{$host}]";
+				}
+			} else {
+				list($host) = explode(":", $_SERVER['HTTP_HOST']);
+			}
 			$prot = $config['system']['webgui']['protocol'];
 			$port = $config['system']['webgui']['port'];
 			if ($port)

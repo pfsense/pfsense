@@ -117,6 +117,7 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 		}
 		$found_host = false;
 		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if($referrer_host) {
 			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
 					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
@@ -134,6 +135,13 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 				$interface_list_ips = get_configured_ip_addresses();
 				foreach($interface_list_ips as $ilips) {
 					if(strcasecmp($referrer_host, $ilips) == 0) {
+						$found_host = true;
+						break;
+					}
+				}
+				$interface_list_ipv6s = get_configured_ipv6_addresses();
+				foreach($interface_list_ipv6s as $ilipv6s) {
+					if(strcasecmp($referrer_host, $ilipv6s) == 0) {
 						$found_host = true;
 						break;
 					}

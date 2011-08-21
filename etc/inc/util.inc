@@ -744,6 +744,28 @@ function get_configured_ip_addresses() {
 }
 
 /*
+ *   get_configured_ipv6_addresses() - Return a list of all configured
+ *   interfaces IPv6 Addresses
+ *
+ */
+function get_configured_ipv6_addresses() {
+	require_once("interfaces.inc");
+	$ipv6_array = array();
+	$interfaces = get_configured_interface_list();
+	if(is_array($interfaces)) {
+		foreach($interfaces as $int) {
+			$ipaddrv6 = get_interface_ipv6($int);
+			$ipv6_array[$int] = $ipaddrv6;
+		}
+	}
+	$interfaces = get_configured_carp_interface_list();
+	if(is_array($interfaces)) 
+		foreach($interfaces as $int => $ipaddrv6) 
+			$ipv6_array[$int] = $ipaddrv6;
+	return $ipv6_array;
+}
+
+/*
  *   get_interface_list() - Return a list of all physical interfaces
  *   along with MAC and status.
  *

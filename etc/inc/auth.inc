@@ -69,7 +69,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 			$http_host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
 		}
 	} else {
-		$http_host = $_SERVER['HTTP_HOST'];
+		$http_host = explode(":", $_SERVER['HTTP_HOST']);
+		$http_host = $http_host[0];
 	}
 	if(is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
 			strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1")

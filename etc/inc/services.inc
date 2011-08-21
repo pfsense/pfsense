@@ -69,6 +69,7 @@ function services_rtadvd_configure() {
 	}
 
 	/* raflags, other o, managed=64 m, stateful=128, both=192 */
+	/* pinfoflags 0 = disable slaac */
 
 	$rtadvdconf = "# Automatically Generated, do not edit\n";
 	$rtadvdconf = <<<EOD
@@ -105,6 +106,10 @@ EOD;
 		switch($dhcpv6ifconf['mode']) {
 			case "managed":
 				$rtadvdconf .= "\t:raflags=\"m\":\\\n";
+				$rtadvdconf .= "\t:pinfoflags=\"\":\\\n";
+				break;
+			case "router":
+				$rtadvdconf .= "\t:pinfoflags=\"\":\\\n";
 				break;
 			case "assist":
 				$rtadvdconf .= "\t:raflags=\"mo\":\\\n";

@@ -58,14 +58,15 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 
-	if(strstr($_SERVER['HTTP_HOST'], ":")) {
-		$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
+	/* Either a IPv6 address with or without a alternate port */
+	if(strstr($_SERVER['HTTP_HOST'], "]")) {
+		$http_host_port = explode("]", $_SERVER['HTTP_HOST']);
 		/* v6 address has more parts, drop the last part */
 		if(count($http_host_port) > 1) {
 			array_pop($http_host_port);
 			$http_host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
 		} else {
-			$http_host = $http_host_port[0];
+			$http_host = str_replace(array("[", "]"), "", implode(":", $http_host_port));
 		}
 	} else {
 		$http_host = $_SERVER['HTTP_HOST'];

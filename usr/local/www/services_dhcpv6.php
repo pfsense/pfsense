@@ -151,7 +151,7 @@ function is_inrange($test, $start, $end) {
 		return false;
 }
 
-$advertise_modes = array("disabled" => "Disabled", "unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
+$advertise_modes = array("disabled" => "Disabled", "router" => "Router Only", "unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
 
 if ($_POST) {
 
@@ -501,7 +501,7 @@ include("head.inc");
 					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
-			<strong><?php printf(gettext("Select the Operating Mode. Use Unmanaged for Router Advertising only, Managed for DHCPv6 only, Assisted for Combined"));?></strong></td>
+			<strong><?php printf(gettext("Select the Operating Mode for the router advertisement Daemon. Use "Router Only" to only advertise the router, "Unmanaged" for Router Advertising with Stateless Autoconfig, "Managed" for DHCPv6 only with router advertisements, "Assisted" for DHCPv6 Combined with Stateless Autoconfig"));?></strong></td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>

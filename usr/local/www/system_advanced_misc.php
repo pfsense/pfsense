@@ -259,7 +259,7 @@ function maxmss_checked(obj) {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy URL"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Pass"); ?></td>
 								<td width="78%" class="vtable">
 									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown">
 									<br />

@@ -401,10 +401,11 @@ function monitor_change() {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
-			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && $pconfig['interval'])) echo "style='display:none'"; ?>>
+			<?php $showbutton = (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && $pconfig['interval'])); ?>
+			<div id="showadvgatewaybox" <? if ($showbutton) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 			</div>
-			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1) && (empty($pconfig['interval']) || $pconfig['interval'] == 1)) echo "style='display:none'"; ?>>
+			<div id="showgatewayadv" <? if (!$showbutton) echo "style='display:none'"; ?>>
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>

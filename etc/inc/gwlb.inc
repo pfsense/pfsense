@@ -617,4 +617,41 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	return ($gw);
 }
 
+/* Check a IP address against a gateway IP or name
+ * to verify it's address family */
+function validate_address_family($ipaddr, $gwname) {
+	$v4ip = false;
+	$v6ip = false;
+	$v4gw = false;
+	$v6gw = false;
+
+	if(is_ipaddrv4($ipaddr))
+		$v4ip = true;
+	if(is_ipaddrv6($ipaddr))
+		$v6ip = true;
+	if(is_ipaddrv4($gwname))
+		$v4gw = true;
+	if(is_ipaddrv6($gwname))
+		$v6gw = true;
+
+	if($v4ip && $v4gw)
+		return true;
+	if($v6ip && $v6gw)
+		return true;
+
+	/* still no match, carry on, lookup gateways */
+	if(is_ipaddrv4(lookup_gateway_ip_by_name($gwname)))
+		$v4gw = true;
+	if(is_ipaddrv6(lookup_gateway_ip_by_name($gwname)))
+		$v6gw = true;
+
+	if($v4ip && $v4gw)
+		return true;
+	if($v6ip && $v6gw)
+		return true;
+	
+	return false;
+}
+
+
 ?>

@@ -49,10 +49,12 @@ $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 
-$pconfig['dns1gwint'] = $config['system']['dns1gwint'];
-$pconfig['dns2gwint'] = $config['system']['dns2gwint'];
-$pconfig['dns3gwint'] = $config['system']['dns3gwint'];
-$pconfig['dns4gwint'] = $config['system']['dns4gwint'];
+$arr_gateways = return_gateways_array();
+
+$pconfig['dns1gw'] = $config['system']['dns1gw'];
+$pconfig['dns2gw'] = $config['system']['dns2gw'];
+$pconfig['dns3gw'] = $config['system']['dns3gw'];
+$pconfig['dns4gw'] = $config['system']['dns4gw'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['timezone'] = $config['system']['timezone'];
@@ -116,12 +118,18 @@ if ($_POST) {
 	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
-	if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS server.");
+
+	for ($dnscounter=1; $dnscounter<5; $dnscounter++){
+		$dnsname="dns{$dnscounter}";
+		$dnsgwname="dns{$dnscounter}gw";
+		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
+			$input_errors[] = gettext("A valid IP address must be specified for the DNS server $dnscounter.");
+		}
+		if (($_POST[$dnsgwname] && validate_address_family(lookup_gateway_ip_by_name($_POST[$dnsgwname])))) {
+			$input_errors[] = gettext("The gateway specified for DNS server $dnscounter is not from the same Address Family.");
+		}
 	}
-	if (($_POST['dns3'] && !is_ipaddr($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddr($_POST['dns4']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS server.");
-	}	
+
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
 		$input_errors[] = gettext("A valid TCP/IP port must be specified for the webConfigurator port.");
@@ -130,7 +138,7 @@ if ($_POST) {
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";
-		$dnsgwitem = "dns{$dnscounter}gwint";
+		$dnsgwitem = "dns{$dnscounter}gw";
 		if ($_POST[$dnsgwitem]) {
 			if(interface_has_gateway($_POST[$dnsgwitem])) {
 				foreach($direct_networks_list as $direct_network) {
@@ -182,25 +190,15 @@ if ($_POST) {
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
 		/* which interface should the dns servers resolve through? */
-		if($_POST['dns1gwint']) 
-			$config['system']['dns1gwint'] = $pconfig['dns1gwint'];
-		else 
-			unset($config['system']['dns1gwint']);
-
-		if($_POST['dns2gwint']) 
-			$config['system']['dns2gwint'] = $pconfig['dns2gwint'];
-		else
-			unset($config['system']['dns2gwint']);
-
-		if($_POST['dns3gwint']) 
-			$config['system']['dns3gwint'] = $pconfig['dns3gwint'];
-		else 
-			unset($config['system']['dns3gwint']);
-
-		if($_POST['dns4gwint']) 
-			$config['system']['dns4gwint'] = $pconfig['dns4gwint'];
-		else
-			unset($config['system']['dns4gwint']);
+		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
+			$dnsname="dns{$dnscounter}";
+			$dnsgwname="dns{$dnscounter}gw";
+			if($_POST[$dnsgwname]) {
+				$config['system'][$dnsgwname] = $pconfig[$dnsgwname];
+			} else {
+				unset($config['system'][$dnsgwname]);
+			}
+		}
 
 		if ($changecount > 0)
 			write_config($changedesc);
@@ -280,7 +278,7 @@ include("head.inc");
 							</tr>
 							<?php
 								for ($dnscounter=1; $dnscounter<5; $dnscounter++):
-									$fldname="dns{$dnscounter}gwint";
+									$fldname="dns{$dnscounter}gw";
 							?>
 							<tr>
 								<td>
@@ -290,24 +288,29 @@ include("head.inc");
 <?php if ($multiwan): ?>
 									<select name='<?=$fldname;?>'>
 										<?php
-											$interface = "none";
-											$dnsgw = "dns{$dnscounter}gwint";
-											if($pconfig[$dnsgw] == $interface) {
+											$gwname = "none";
+											$dnsgw = "dns{$dnscounter}gw";
+											if($pconfig[$dnsgw] == $gwname) {
 												$selected = "selected";
 											} else {
 												$selected = "";
 											}
-											echo "<option value='$interface' $selected>". ucwords($interface) ."</option>\n";
-											foreach($interfaces as $interface) {
-												if(interface_has_gateway($interface)) {
-													if($pconfig[$dnsgw] == $interface) {
-														$selected = "selected";
-													} else {
-														$selected = "";
-													}
-													$friendly_interface = convert_friendly_interface_to_friendly_descr($interface);
-													echo "<option value='$interface' $selected>". ucwords($friendly_interface) ."</option>\n";
+											echo "<option value='$gwname' $selected>$gwname</option>\n";
+											foreach($arr_gateways as $gwname => $gwitem) {
+												echo $pconfig[$dnsgw];
+												if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
+													continue;
 												}
+												if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
+													continue;
+												}
+												if($pconfig[$dnsgw] == $gwname) {
+													$selected = "selected";
+												} else {
+													$selected = "";
+												}
+												echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}
+</option>\n";
 											}
 										?>
 									</select>

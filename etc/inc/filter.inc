@@ -719,8 +719,11 @@ function filter_get_vpns_list() {
 		if(is_array($config['openvpn']["openvpn-$type"])) {
 			foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
 				if(is_array($settings)) {
-					if(is_subnet($settings['remote-subnet']) && $settings['remote-subnet'] <> "0.0.0.0/0") {
-						$vpns_arr[] = $settings['remote-subnet'];
+					if(is_subnet($settings['remote_network']) && $settings['remote_network'] <> "0.0.0.0/0") {
+						$vpns_arr[] = $settings['remote_network'];
+					}
+					if(is_subnet($settings['tunnel_network']) && $settings['tunnel_network'] <> "0.0.0.0/0") {
+						$vpns_arr[] = $settings['tunnel_network'];
 					}
 				}
 			}

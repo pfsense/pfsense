@@ -125,8 +125,8 @@ if ($_POST) {
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = gettext("A valid IP address must be specified for the DNS server $dnscounter.");
 		}
-		if (($_POST[$dnsgwname] && validate_address_family(lookup_gateway_ip_by_name($_POST[$dnsgwname])))) {
-			$input_errors[] = gettext("The gateway specified for DNS server $dnscounter is not from the same Address Family.");
+		if (($_POST[$dnsgwname] <> "none") && (validate_address_family($_POST[$dnsname], lookup_gateway_ip_by_name($_POST[$dnsgwname])) === false )) {
+			$input_errors[] = gettext("The gateway specified for DNS server '{$_POST[$dnsname]}' is not from the same Address Family as gateway '". lookup_gateway_ip_by_name($_POST[$dnsgwname]) ."'.");
 		}
 	}
 

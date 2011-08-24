@@ -352,6 +352,10 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
 	}
+	if((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst'])) {
+		if(!validate_address_family($_POST['src'], $_POST['dst']))
+			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
 		/* swap */
@@ -1266,6 +1270,10 @@ $i--): ?>
 					$gateways = return_gateways_array();
 					// add statically configured gateways to list
 					foreach($gateways as $gwname => $gw) {
+						if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6($gw['gateway']))
+							continue;
+						if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4($gw['gateway']))
+							continue;
 						if($gw == "") 
 							continue;
 						if($gwname == $pconfig['gateway']) {
@@ -1278,13 +1286,18 @@ $i--): ?>
 					/* add gateway groups to the list */
 					if (is_array($config['gateways']['gateway_group'])) {
 						foreach($config['gateways']['gateway_group'] as $gw_group) {
+							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6($gw_group[0]['gwip']))
+								continue;
+							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4($gw_group[0]['gwip']))
+								continue;
 							if($gw_group['name'] == "")
 								continue;
 							if($pconfig['gateway'] == $gw_group['name']) {
-								echo "<option value=\"{$gw_group['name']}\" SELECTED>{$gw_group['name']}</option>\n";
+								$selected = " SELECTED";
 							} else {
-								echo "<option value=\"{$gw_group['name']}\">{$gw_group['name']}</option>\n";
+								$selected = "";
 							}
+							echo "<option value=\"{$gw_group['name']}\" $selected>{$gw_group['name']}</option>\n";
 						}
 					}
 ?>

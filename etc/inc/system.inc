@@ -138,15 +138,20 @@ function system_resolvconf_generate($dynupdate = false) {
 	/* setup static routes for DNS servers. */
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		/* setup static routes for dns servers */
-		$dnsgw = "dns{$dnscounter}gwint";
+		$dnsgw = "dns{$dnscounter}gw";
 		if (isset($config['system'][$dnsgw])) {
-			$interface = $config['system'][$dnsgw];
-			if (($interface <> "") && ($interface <> "none")) {
-				$gatewayip = get_interface_gateway($interface);
-				if (is_ipaddr($gatewayip)) {
+			$gwname = $config['system'][$dnsgw];
+			if (($gwname <> "") && ($gwname <> "none")) {
+				$gatewayip = lookup_gateway_ip_by_name($gwname);
+				if (is_ipaddrv4($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
 					mwexec("route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+				}
+				if (is_ipaddrv6($gatewayip)) {
+					/* dns server array starts at 0 */
+					$dnscountermo = $dnscounter - 1;
+					mwexec("route change -host inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 			}
 		}

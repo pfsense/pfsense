@@ -101,6 +101,8 @@ if ($_POST) {
 	if ($_POST['gateway']) {
 		if (!isset($a_gateways[$_POST['gateway']]))
 			$input_errors[] = gettext("A valid gateway must be specified.");
+		if(!validate_address_family($_POST['network'], lookup_gateway_ip_by_name($_POST['gateway'])))
+			$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family as network '{$_POST['network']}'.");
 	}
 
 	/* check for overlaps */
@@ -108,7 +110,10 @@ if ($_POST) {
 		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
 	}
 	if(is_ipaddrv4($_POST['network'])) {
-		$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
+		if($_POST['network_subnet'] > 32)
+			$input_errors[] = gettext("A IPv4 subnet can not be over 32 bits.");
+		else
+			$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
 	}
 	foreach ($a_routes as $route) {
 		if (isset($id) && ($a_routes[$id]) && ($a_routes[$id] === $route))

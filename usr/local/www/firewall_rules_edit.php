@@ -189,6 +189,7 @@ if (isset($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
+	unset($input_errors);
 
 	if( isset($a_filter[$id]['associated-rule-id']) ) {
 		$_POST['proto'] = $pconfig['proto'];
@@ -201,6 +202,30 @@ if ($_POST) {
 
 	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
 		$input_errors[] = gettext("Queue type rules only work with queues.");
+
+	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+		foreach($config['gateways']['gateway_group'] as $gw_group) {
+			if($gw_group['name'] == $_POST['gateway']) {
+				$af = explode("|", $gw_group['item'][0]);
+				$ip = lookup_gateway_ip_by_name($af[0]);
+				if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6($ip))) {
+					$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
+				}
+				if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4($ip))) {
+					$input_errors[] = gettext("You can not assign a IPv6 gateway group on IPv4 Address Family rule");
+				}
+			}
+		}
+	}
+	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+			$input_errors[] = gettext("You can not assign the IPv4 Gateway to a IPv6 Filter rule");
+		}
+		if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+			$input_errors[] = gettext("You can not assign the IPv6 Gateway to a IPv4 Filter rule");
+		}
+	}
+
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
@@ -253,7 +278,6 @@ if ($_POST) {
 		$_POST['dstmask'] = 32;
 	}
 
-	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */

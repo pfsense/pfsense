@@ -177,8 +177,14 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
-                    <select name="network_subnet" class="formselect" id="network_subnet">
-                      <?php for ($i = 128; $i >= 1; $i--): ?>
+                    <select name="network_subnet" class="formselect" id="network_subnet"
+                      <?php
+			if(is_ipaddrv6($pconfig['network'])) {
+				$size = 128;
+			} else {
+				$size = 32;
+			}
+			for ($i = $size; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

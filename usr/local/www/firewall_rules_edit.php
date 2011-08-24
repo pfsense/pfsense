@@ -355,6 +355,10 @@ if ($_POST) {
 	if((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
 		if(!validate_address_family($_POST['src'], $_POST['dst']))
 			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+		if((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet"))
+			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
+		if((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6"))
+			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {

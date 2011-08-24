@@ -3,13 +3,21 @@ if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
         seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
         /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
 fi
-if [ -f "/tmp/${interface}_defaultgw" ]; then
-	route delete default $4
+if [ "$3" != "" ]; then
+	echo "Removing states from $3" | logger -t ppp-linkdown
+	/sbin/pfctl -k 0.0.0.0/0 -k $3/32
+	/sbin/pfctl -k $3/32
+	pfctl -K $3/32
 fi
-/sbin/pfctl -k 0.0.0.0/0 -k $3/32
-/sbin/pfctl -k $3/32
-pfctl -K $3/32
-/sbin/pfctl -b 0.0.0.0/32 -b $4/32
+if [ "$4" != "" ]; then
+	echo "Removing states to $4" | logger -t ppp-linkdown
+	/sbin/pfctl -b 0.0.0.0/32 -b $4/32
+
+	if [ -f "/tmp/${interface}_defaultgw" ]; then
+		route delete default $4
+	fi
+
+fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:
 if [ -f "/var/etc/nameserver_$1" ]; then

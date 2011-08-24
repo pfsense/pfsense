@@ -1138,7 +1138,7 @@ function services_dnsmasq_configure() {
 		}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
+		mwexec_bg("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
 
 		if ($g['booting'])
 			echo gettext("done.") . "\n";

@@ -165,6 +165,11 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
 		<?php
 			foreach($a_gateways as $gwname => $gateway) {
+				if(!empty($pconfig['item'])) {
+					$af = explode("|", $pconfig['item'][0]);
+					if(!validate_address_family(lookup_gateway_ip_by_name($af[0]), $gateway['gateway']))
+						continue;
+				}
 				$selected = array();
 				$interface = $gateway['interface'];
 				foreach((array)$pconfig['item'] as $item) {

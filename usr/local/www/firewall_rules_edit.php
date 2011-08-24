@@ -1286,9 +1286,10 @@ $i--): ?>
 					/* add gateway groups to the list */
 					if (is_array($config['gateways']['gateway_group'])) {
 						foreach($config['gateways']['gateway_group'] as $gw_group) {
-							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6($gw_group[0]['gwip']))
+							$af = explode("|", $gw_group['item'][0]);
+							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6(lookup_gateway_ip_by_name($af[0])))
 								continue;
-							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4($gw_group[0]['gwip']))
+							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4(lookup_gateway_ip_by_name($af[0])))
 								continue;
 							if($gw_group['name'] == "")
 								continue;

@@ -229,16 +229,16 @@ done
 # Zend modules
 for EXT in $PHP_ZEND_MODULES; do
 	# Ensure extension exists before adding.
-	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension=${EXTENSIONSDIR}${EXT}.so" >> /usr/local/lib/php.ini
+	if [ -f "${EXTENSIONSDIR}/ioncube/${EXT}.so" ]; then
+		echo "zend_extension=${EXTENSIONSDIR}/ioncube/${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 
 # Zend threaded modules
 for EXT in $PHP_ZEND_MODULES_TS; do
 	# Ensure extension exists before adding.
-	if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
-		echo "zend_extension_ts=${EXTENSIONSDIR}/${EXT}.so" >> /usr/local/lib/php.ini
+	if [ -f "${EXTENSIONSDIR}/ioncube/${EXT}.so" ]; then
+		echo "zend_extension_ts=${EXTENSIONSDIR}/ioncube/${EXT}.so" >> /usr/local/lib/php.ini
 	fi
 done
 

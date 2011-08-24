@@ -352,7 +352,7 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
 	}
-	if((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst'])) {
+	if((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
 		if(!validate_address_family($_POST['src'], $_POST['dst']))
 			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
 	}

@@ -111,32 +111,45 @@ if ($_POST) {
 	}
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && !$_REQUEST['isAjax']) {
-		if (!empty($config['interfaces'][$_POST['interface']]['ipaddr'])) {
-			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
-				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static ip configuration.");
+		if(is_ipaddrv4($_POST['gateway'])) {
+			$parent_ip = get_interface_ip($_POST['interface']);
+			$parent_sn = get_interface_subnet($_POST['interface']);
+			if(empty($parent_ip) || empty($parent_sn)) {
+				$input_errors[] = gettext("You can not use a IPv6 Gateway Address on a IPv4 only interface.");
+			} else {
+				$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
+				if(!ip_in_subnet($_POST['gateway'], $subnet))
+					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+			}
 		}
 		if(is_ipaddrv6($_POST['gateway'])) {
 			$parent_ip = get_interface_ipv6($_POST['interface']);
-		} else {		
-			$parent_ip = get_interface_ip($_POST['interface']);
-		}
-		if (is_ipaddrv4($parent_ip)) {
-			$parent_sn = get_interface_subnet($_POST['interface']);
-			$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
-			if(!ip_in_subnet($_POST['gateway'], $subnet) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['gateway'])) {
-				$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
-			}
-		}
-		if (is_ipaddrv6($parent_ip)) {
 			$parent_sn = get_interface_subnetv6($_POST['interface']);
-			$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
-			if(!ip_in_subnet($_POST['gateway'], $subnet)) {
-				$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+			if(empty($parent_ip) || empty($parent_sn)) {
+				$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
+			} else {
+				$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
+				if(!ip_in_subnet($_POST['gateway'], $subnet))
+					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
 			}
+		}
+
+		if (!empty($config['interfaces'][$_POST['interface']]['ipaddr'])) {
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddr']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
+				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv4 configuration.");
+		}
+		if (!empty($config['interfaces'][$_POST['interface']]['ipaddrv6'])) {
+			if (is_ipaddr($config['interfaces'][$_POST['interface']]['ipaddrv6']) && (empty($_POST['gateway']) || $_POST['gateway'] == "dynamic"))
+				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv6 configuration.");
 		}
 	}
 	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
+	}
+	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
+		if(!validate_address_family($_POST['monitor'], $_POST['gateway'])) {
+			$input_errors[] = gettext("The monitor address '{$_POST['monitor']}' is a different Address Family then gateway '{$_POST['gateway']}'.");
+		}
 	}
 
 	if (isset($_POST['name'])) {

@@ -401,7 +401,7 @@ function maxmss_checked(obj) {
                                                                 <td colspan="2" valign="top" class="listtopic"><?=gettext("DNS Forwarder"); ?></td>
                                                         </tr>
                                                         <tr>
-                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Localhost inclusion"); ?></td>
+                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Localhost exclusion"); ?></td>
                                                                 <td width="78%" class="vtable">
                                                                         <input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked"; ?> />
                                                                         <br />

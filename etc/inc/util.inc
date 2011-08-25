@@ -265,34 +265,41 @@ function gen_subnetv6_max($ipaddr, $bits) {
 	$parts = explode(":", $subnetstart);
 	if(count($parts) <> 8)
 		return false;
-
-	/* reverse the array, we start with the lsb */
-	$parts = array_reverse($parts);
+	
+	$result = array();
 	/* set the itteration count properly */
-	$bitsleft = 128 - $bits;
+	$bitsleft = $bits;
 	$i = 0;
 	foreach($parts as $part) {
-		/* foreach 16 bits we go to the next part */
-		/* no this isn't proper hex math, neither does it overflow properly */
-		while($bitsleft > 0) {
-			if($part == "0") {
-				$part = "f";
-			} else {
-				$part = $part . "f";
+		/* if we have more then 16 bits we just append the part to the result */
+		if($bitsleft >= 16) {
+			$result[$i] = $parts[$i];
+			$bitsleft = $bitsleft - 16;
+			$i++;
+			continue;
+		}
+		/* if we have less then 16 bits we need to calculate the other bits */
+		if(($bitsleft < 16) && ($bitsleft > 0)) {
+			$result[$i] = dechex(pow(2, (16 - $bitsleft)) -1) ;
+			$integer = pow(2, (16 - $bitsleft));
+			$strlen = strlen($result[$i]);
+			while($strlen < 4) {
+				$result[$i] = 0 . $result[$i];
+				$strlen++;
 			}
-			$bitsleft = $bitsleft - 4;
-			$j++;
-			if($j == 4) {
-				$parts[$i] = $part;
-				$j = 0;
-				$i++;
-				continue 2;
-			}
+			$bitsleft = 0;
+			$i++;
+			continue;
+		}
+		/* counter is zero, append quad F */
+		if($bitsleft == 0) {
+			$result[$i] = "ffff";
+			$i++;
+			continue;
 		}
 		$i++;
 	}
-	$parts = array_reverse($parts);
-	$subnet_end = implode(":", $parts);
+	$subnet_end = implode(":", $result);
 	return $subnet_end;
 }
 

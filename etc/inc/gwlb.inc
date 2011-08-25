@@ -376,8 +376,6 @@ function return_gateways_array($disabled = false) {
 		if(!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
 			continue;
 
-		echo "found dynamic v6 interface $ifname\n";
-
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet6";

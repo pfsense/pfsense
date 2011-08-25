@@ -402,8 +402,6 @@ function return_gateways_array($disabled = false) {
 				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))
 					continue 2;
 		}
-		print_r($gateway);
-
 
 		if (is_ipaddrv6($gateway['gateway']))
 			$gateway['monitor'] = $gateway['gateway'];

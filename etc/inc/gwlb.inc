@@ -321,7 +321,7 @@ function return_gateways_array($disabled = false) {
 	else
 		$iflist = get_configured_interface_with_descr(false, true);
 
-	/* Process/add dynamic gateways. */
+	/* Process/add dynamic v4 gateways. */
 	foreach($iflist as $ifname => $friendly ) {
 		if(! interface_has_gateway($ifname))
 			continue;
@@ -330,11 +330,12 @@ function return_gateways_array($disabled = false) {
 			continue;
 
 		$ifcfg = &$config['interfaces'][$ifname];
-		if (!empty($ifcfg['ipaddr']) && is_ipaddr($ifcfg['ipaddr']))
+		if(!empty($ifcfg['ipaddr']) && is_ipaddrv4($ifcfg['ipaddr']))
 			continue;
 
 		$gateway = array();
 		$gateway['dynamic'] = false;
+		$gateway['ipprotocol'] = "inet";
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
@@ -346,21 +347,69 @@ function return_gateways_array($disabled = false) {
 			$gateway['dynamic'] = true;
 		}
 		/* Loopback dummy for dynamic interfaces without a IP */
-		if (!is_ipaddr($gateway['gateway']) && $gateway['dynamic'] == true)
+		if (!is_ipaddrv4($gateway['gateway']) && $gateway['dynamic'] == true)
 			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if (($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) ||
-				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true))
+			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])&& ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
+				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))
 					continue 2;
 		}
 
-		if (is_ipaddr($gateway['gateway']))
+		if (is_ipaddrv4($gateway['gateway']))
 			$gateway['monitor'] = $gateway['gateway'];
 
 		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
-		$gateways_arr[$friendly] = $gateway;
+		$gateways_arr[$gateway['name']] = $gateway;
+	}
+
+	/* Process/add dynamic v6 gateways. */
+	foreach($iflist as $ifname => $friendly ) {
+		if(! interface_has_gateway($ifname))
+			continue;
+
+		if (empty($config['interfaces'][$ifname]))
+			continue;
+
+		$ifcfg = &$config['interfaces'][$ifname];
+		if(!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
+			continue;
+
+		echo "found dynamic v6 interface $ifname\n";
+
+		$gateway = array();
+		$gateway['dynamic'] = false;
+		$gateway['ipprotocol'] = "inet6";
+		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
+		$gateway['interface'] = get_real_interface($ifname);
+		$gateway['friendlyiface'] = $ifname;
+		$gateway['name'] = "{$friendly}_v6";
+		$gateway['attribute'] = "system";
+	
+		if ($gateway['dynamic'] === "default") {
+			$gateway['defaultgw'] = true;
+			$gateway['dynamic'] = true;
+		}
+
+		/* Loopback dummy for dynamic interfaces without a IP */
+		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
+			$gateway['gateway'] = "dynamic";
+
+		/* automatically skip known static and dynamic gateways we have a array entry for */
+		foreach($gateways_arr as $gateway_item) {
+			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
+				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))
+					continue 2;
+		}
+		print_r($gateway);
+
+
+		if (is_ipaddrv6($gateway['gateway']))
+			$gateway['monitor'] = $gateway['gateway'];
+
+		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
+		$gateways_arr[$gateway['name']] = $gateway;
 	}
 
 	return($gateways_arr);

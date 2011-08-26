@@ -3871,6 +3871,28 @@ function interface_has_gateway($friendly) {
 	return false;
 }
 
+/* return true if interface has a gateway */
+function interface_has_gatewayv6($friendly) {
+	global $config;
+
+	if (!empty($config['interfaces'][$friendly])) {
+		$ifname = &$config['interfaces'][$friendly];
+		switch ($ifname['ipaddrv6']) {
+			case "dhcp6":
+				return true;
+			break;
+			default:
+				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
+					return true;
+				if (!empty($ifname['gatewayv6']))
+					return true;
+			break;
+		}
+	}
+
+	return false;
+}
+
 /****f* interfaces/is_altq_capable
  * NAME
  *   is_altq_capable - Test if interface is capable of using ALTQ

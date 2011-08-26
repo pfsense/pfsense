@@ -288,10 +288,15 @@ function return_gateways_array($disabled = false) {
 			if(empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				/* no IP address found, set to dynamic */
-				if(! is_ipaddr($gateway['gateway']))
+				if(! is_ipaddr($gateway['gateway'])) {
 					$gateway['gateway'] = "dynamic";
+				}
 				$gateway['dynamic'] = true;
 			}
+			if(is_ipaddrv4($gateway['gateway']))
+				$gateway['ipprotocol'] = "inet";
+			if(is_ipaddrv6($gateway['gateway']))
+				$gateway['ipprotocol'] = "inet6";
 			if (isset($gateway['monitor_disable']))
 				$gateway['monitor_disable'] = true;
 			else if (empty($gateway['monitor']))

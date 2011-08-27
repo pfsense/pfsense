@@ -445,7 +445,7 @@ function monitor_change() {
                                 <?=gettext("To");?>
                                     <input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
                                         value="<?=htmlspecialchars($pconfig['latencyhigh']);?>">
-                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for latency in milliseconds.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for latency in milliseconds. Default is 100/200.");?></span></td>
                                 </td>
                         </tr>
                         <tr>
@@ -457,7 +457,7 @@ function monitor_change() {
                                 <?=gettext("To");?>
                                     <input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2"
                                         value="<?=htmlspecialchars($pconfig['losshigh']);?>">
-                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for packet loss in %.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for packet loss in %. Default is 10/20.");?></span></td>
                                 </td>
                         </tr>
 			<tr>
@@ -465,7 +465,7 @@ function monitor_change() {
                                 <td width="78%" class="vtable">
                                     <input name="down" type="text" class="formfld unknown" id="down" size="2"
                                         value="<?=htmlspecialchars($pconfig['down']);?>">
-                                    <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire, in seconds.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire in seconds. Default is 10.");?></span></td>
                                 </td>
                         </tr>
 			<tr>
@@ -473,7 +473,7 @@ function monitor_change() {
                                 <td width="78%" class="vtable">
                                     <input name="interval" type="text" class="formfld unknown" id="interval" size="2"
                                         value="<?=htmlspecialchars($pconfig['interval']);?>">
-                                    <br> <span class="vexpl"><?=gettext("This defines the frequency in seconds that an icmp probe will be sent. Default is 1 second.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext("This defines the frequency that an icmp probe will be sent in seconds. Default is 1.");?></span></td>
                                 </td>
                         </tr>
                         </table>

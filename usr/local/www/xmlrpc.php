@@ -84,12 +84,18 @@ $exec_php_sig = array(
 	)
 );
 
+function xmlrpc_authfail() {
+	log_auth("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']}");
+}
+
 function exec_php_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	$exec_php = $params[0];
 	eval($exec_php);
 	if($toreturn) {
@@ -113,8 +119,10 @@ function exec_shell_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	$shell_cmd = $params[0];
 	mwexec($shell_cmd);
 
@@ -135,8 +143,10 @@ function backup_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	$val = array_intersect_key($config, array_flip($params[0]));
 
 	return new XML_RPC_Response(XML_RPC_encode($val));
@@ -156,9 +166,10 @@ function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
-
+	}
 	$vipbackup = array();
 	$oldvips = array();
 	if (isset($params[0]['virtualip'])) {
@@ -262,8 +273,10 @@ function merge_installedpackages_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
 	$mergedkeys = implode(",", array_keys($params[0]));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
@@ -284,8 +297,10 @@ $merge_config_section_sig = array(
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	$config_new = array_overlay($config, $params[0]);
 	$config = $config_new;
 	$mergedkeys = implode(",", array_keys($params[0]));
@@ -306,8 +321,10 @@ function filter_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	filter_configure();
 	system_routing_configure();
 	setup_gateways_monitor();
@@ -334,8 +351,10 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	interfaces_vips_configure();
 
 	return $xmlrpc_g['return']['true'];
@@ -355,9 +374,10 @@ function check_firmware_version_xmlrpc($raw_params) {
 	global $xmlrpc_g, $XML_RPC_String;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
-
+	}
 	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
 }
 
@@ -375,9 +395,10 @@ function pfsense_firmware_version_xmlrpc($raw_params) {
         global $xmlrpc_g;
 
         $params = xmlrpc_params_to_php($raw_params);
-        if(!xmlrpc_auth($params))
-                return $xmlrpc_g['return']['authfail'];
-
+        if(!xmlrpc_auth($params)) {
+			xmlrpc_authfail();
+			return $xmlrpc_g['return']['authfail'];
+		}
         return new XML_RPC_Response(XML_RPC_encode(host_firmware_version()));
 }
 
@@ -388,8 +409,10 @@ function reboot_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params))
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
+	}
 	mwexec_bg("/etc/rc.reboot");
 
 	return $xmlrpc_g['return']['true'];
@@ -410,7 +433,10 @@ function get_notices_xmlrpc($raw_params) {
 	global $g, $xmlrpc_g;
 
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	if(!xmlrpc_auth($params)) {
+		xmlrpc_authfail();
+		return $xmlrpc_g['return']['authfail'];
+	}
 	require("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();

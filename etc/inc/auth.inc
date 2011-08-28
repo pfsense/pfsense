@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal Luï¿½i
 	All rights reserved.
 
 	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
@@ -991,7 +991,18 @@ function ldap_backed($username, $passwd, $authcfg) {
 			$ldapanon = false;
                 $ldapauthcont       = $authcfg['ldap_authcn'];
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
-                $ldapfilter         = "({$ldapnameattribute}={$username})";
+                $ldapextendedqueryenabled  = $authcfg['ldap_extended_enabled'];
+                $ldapextendedquery = $authcfg['ldap_extended_query'];
+                $ldapfilter         = "";
+                if(!$ldapextendedqueryenabled)
+                {
+                        $ldapfilter = "({$ldapnameattribute}={$username})";
+                }
+                else
+                {
+                        $ldapfilter = 
+"(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
+                } 
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
 		$ldapname	    = $authcfg['name'];

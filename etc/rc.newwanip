@@ -109,6 +109,11 @@ $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');
 
+unset($bridgetmp);
+$bridgetmp = link_interface_to_bridge($interface);
+if (!empty($bridgetmp))
+	interface_bridge_add_member($bridgetmp, $interface_real);
+
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
 

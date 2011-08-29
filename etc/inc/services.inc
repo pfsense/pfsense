@@ -1037,6 +1037,122 @@ function services_dhcrelay_configure() {
 	return 0;
 }
 
+function services_dhcrelay6_configure() {
+	global $config, $g;
+	if ($g['platform'] == 'jail')
+		return;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "services_dhcrelay_configure() being called $mt\n";
+	}
+
+	/* kill any running dhcrelay */
+	killbypid("{$g['varrun_path']}/dhcrelay6.pid");
+
+	$dhcrelaycfg =& $config['dhcrelay6'];
+
+	/* DHCPv6 Relay enabled on any interfaces? */
+	if (!isset($dhcrelaycfg['enable']))
+		return 0;
+
+	if ($g['booting'])
+		echo gettext("Starting DHCPv6 relay service...");
+	else
+		sleep(1);
+
+	$iflist = get_configured_interface_list();
+
+	$dhcifaces = explode(",", $dhcrelaycfg['interface']);
+	foreach ($dhcifaces as $dhcrelayif) {
+		if (!isset($iflist[$dhcrelayif]) ||
+			link_interface_to_bridge($dhcrelayif))
+			continue;
+
+		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif)))
+			$dhcrelayifs[] = get_real_interface($dhcrelayif);
+	}
+
+	/* 
+	 * In order for the relay to work, it needs to be active
+	 * on the interface in which the destination server sits.
+	 */
+	$srvips = explode(",", $dhcrelaycfg['server']);
+	foreach ($srvips as $srcidx => $srvip) {
+		unset($destif);
+		foreach ($iflist as $ifname) {
+			$subnet = get_interface_ipv6($ifname);
+			if (!is_ipaddrv6($subnet))
+				continue;
+			$subnet .=  "/" . get_interface_subnetv6($ifname);
+			if (ip_in_subnet($srvip, $subnet)) {
+				$destif = get_real_interface($ifname);
+				break;
+			}
+		}
+		if (!isset($destif)) {
+			if (is_array($config['staticroutes']['route'])) {
+				foreach ($config['staticroutes']['route'] as $rtent) {
+					if (ip_in_subnet($srvip, $rtent['network'])) {
+						$a_gateways = return_gateways_array(true);
+						$destif = $a_gateways[$rtent['gateway']]['interface'];
+						break;
+					}
+				}
+			}
+		}
+
+		if (!isset($destif)) {
+			/* Create a array from the existing route table */
+        		exec("/usr/bin/netstat -rnWf inet6", $route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		array_shift($route_str);
+        		$route_arr = array();
+        		foreach($route_str as $routeline) {
+                		$items = preg_split("/[ ]+/i", $routeline);
+				if (ip_in_subnet($srvip, $items[0])) {
+					$destif = trim($items[6]);
+					break;
+				}
+        		}
+		}
+	
+		if (!isset($destif)) {
+			if (is_array($config['gateways']['gateway_item'])) {
+				foreach ($config['gateways']['gateway_item'] as $gateway) {
+					if (isset($gateway['defaultgw'])) {
+						$a_gateways = return_gateways_array(true);
+                                        	$destif = $a_gateways[$rtent['gateway']]['interface'];
+						break;
+					}		
+				}
+			} else
+				$destif = get_real_interface("wan");
+		}
+
+		if (!empty($destif))
+			$dhcrelayifs[] = $destif;
+	}
+	$dhcrelayifs = array_unique($dhcrelayifs);
+
+	/* fire up dhcrelay */
+	if (empty($dhcrelayifs)) {
+		log_error("No suitable interface found for running dhcrelay -6!");
+		return; /* XXX */
+	}
+
+	$cmd = "/usr/local/sbin/dhcrelay -6 -pf "{$g['varetc_path]}/dhcrelay6.pid" -i " .  implode(" -i ", $dhcrelayifs);
+
+	if (isset($dhcrelaycfg['agentoption']))
+		$cmd .=  " -a -m replace";
+
+	$cmd .= " " . implode(" ", $srvips);
+	mwexec($cmd);
+
+	return 0;
+}
+
 function services_dyndns_configure_client($conf) {
 
 	if (!isset($conf['enable']))

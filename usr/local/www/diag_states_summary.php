@@ -80,13 +80,39 @@ if(count($states) > 0) {
 			$dstinfo = $ends[count($ends) - 1];
 		}
 
-		$parts = split(":", $srcinfo);
-		$srcip = trim($parts[0]);
-		$srcport = trim($parts[1]);
+		/* Handle IPv6 */
+		$parts = explode(":", $srcinfo);
+		$partcount = count($parts) -1;
+		$partsip = $parts;
+		if($partcount == 1) {
+			array_pop($partsip);
+		} else {
+			$srcip = trim(preg_replace("/\[[0-9]+\]/i", "", implode(":", $partsip)));
+		}
+		if($partcount > 1) {
+			preg_match("/\[[0-9]+\]/i", $parts[$partcount], $matches);
+			$srcport = $matches[0];
+			// $srcport = trim($parts[$partcount]);
+		} else {
+			$srcport = trim($parts[$partcount]);
+		}
 
-		$parts = split(":", $dstinfo);
-		$dstip = trim($parts[0]);
-		$dstport = trim($parts[1]);
+
+		$parts = explode(":", $dstinfo);
+		$partsip = $parts;
+		$partcount = count($parts) -1;
+		if($partcount == 1) {
+			array_pop($partsip);
+		} else {
+			$dstip = trim(preg_replace("/\[[0-9]+\]/i", "", implode(":", $partsip)));
+		}
+		if($partcount > 1) {
+			preg_match("/\[[0-9]+\]/i", $parts[$partcount], $matches);
+			$dstport = $matches[0];
+			// $dstport = trim($parts[$partcount]);
+		} else {
+			$dstport = trim($parts[$partcount]);
+		}
 
 		addipinfo($srcipinfo, $srcip, $proto, $srcport, $dstport);
 		addipinfo($dstipinfo, $dstip, $proto, $srcport, $dstport);

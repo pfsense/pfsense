@@ -59,65 +59,30 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Add layer7 pattern"));
 include("head.inc");
 ?>
 
-<style>
-<!--
-
-input {
-   font-family: courier new, courier;
-   font-weight: normal;
-   font-size: 9pt;
-}
-
-pre {
-   border: 2px solid #435370;
-   background: #F0F0F0;
-   padding: 1em;
-   font-family: courier new, courier;
-   white-space: pre;
-   line-height: 10pt;
-   font-size: 10pt;
-}
-
-.label {
-   font-family: tahoma, verdana, arial, helvetica;
-   font-size: 11px;
-   font-weight: bold;
-}
-
-.button {
-   font-family: tahoma, verdana, arial, helvetica;
-   font-weight: bold;
-   font-size: 11px;
-}
-
--->
-</style>
-</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p><strong><?=gettext("You can upload new layer7 patterns to your system!");?></strong></p>
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
-<div id="niftyOutter">
+<div id="mainarea">
 <form action="diag_patterns.php" method="POST" enctype="multipart/form-data" name="frmPattern">
-  <table>
-	
-  <tr>
-    <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Upload");?></td>
-  </tr>    
-    <tr>
-      <td align="right"><?=gettext("File to upload:");?></td>
-      <td valign="top" class="label">
-	<input name="ulfile" type="file" class="formfld file" id="ulfile">
-	</td></tr>
-    <tr>
-      <td valign="top">&nbsp;&nbsp;&nbsp;</td>
-      <td valign="top" class="label">	
-	<input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload");?>"></td>
-    </tr>
+  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
+  	<tr>
+    	<td colspan="4" valign="top" class="listtopic"><?=gettext("Upload layer7 pattern file");?></td>
+  	</tr>
 	<tr>
-	  <td colspan="2" valign="top" height="16"></td>
+		<td align="right"><strong><?=gettext("File to upload:");?></strong></td>
+		<td valign="top" class="label">
+			<input name="ulfile" type="file" class="formfld file" id="ulfile">
+		</td>
 	</tr>
-	    
+	<tr>
+		<td valign="top">&nbsp;&nbsp;&nbsp;</td>
+		<td valign="top" class="label">	
+			<input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload Pattern file");?>">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top" height="16"></td>
+	</tr>    
   </table>
 </div>
 <?php include("fend.inc"); ?>

@@ -681,6 +681,7 @@ ul#wzdnav a:active {
 }
 .file {
   background: url('/themes/nervecenter/images/icons/icon_frmfld_file.png') no-repeat 0 1px #FFFFFF;
+  background-color: transparent;
 }
 .mail {
   background: url('/themes/nervecenter/images/icons/icon_frmfld_mail.png') no-repeat 0 1px #FFFFFF;

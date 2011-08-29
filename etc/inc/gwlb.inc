@@ -285,11 +285,14 @@ function return_gateways_array($disabled = false) {
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if(empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
+			if(empty($gateway['gateway']) || preg_match("/dynamic/", $gateway['gateway'])) {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+				if(preg_match("/dynamic/", $gateway['gateway'])) {
+					$dynstr = $gateway['gateway'];
+				}
 				/* no IP address found, set to dynamic */
 				if(! is_ipaddr($gateway['gateway'])) {
-					$gateway['gateway'] = "dynamic";
+					$gateway['gateway'] = "{$dynstr}";
 				}
 				$gateway['dynamic'] = true;
 			}
@@ -397,7 +400,7 @@ function return_gateways_array($disabled = false) {
 
 		/* Loopback dummy for dynamic interfaces without a IP */
 		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
-			$gateway['gateway'] = "dynamic";
+			$gateway['gateway'] = "dynamic6";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -455,7 +458,7 @@ function return_gateway_groups_array() {
 				$dfltgwdown = true;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
-			if ($gateways_arr[$upgw]['gateway'] == "dynamic")
+			if (preg_match("/dynamic", $gateways_arr[$upgw]['gateway']))
 				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 				log_error("Default gateway down setting {$upgw} as default!");

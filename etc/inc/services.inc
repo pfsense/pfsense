@@ -1142,7 +1142,7 @@ function services_dhcrelay6_configure() {
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -6 -pf "{$g['varetc_path]}/dhcrelay6.pid" -i " .  implode(" -i ", $dhcrelayifs);
+	$cmd = "/usr/local/sbin/dhcrelay -6 -pf \"{$g['varetc_path']}/dhcrelay6.pid\" -i " .  implode(" -i ", $dhcrelayifs);
 
 	if (isset($dhcrelaycfg['agentoption']))
 		$cmd .=  " -a -m replace";

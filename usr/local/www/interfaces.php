@@ -650,7 +650,7 @@ if ($_POST['apply']) {
 			/* check for duplicates */
 			$skip = false;
 			foreach($a_gateways as $item) {
-				if(($item['interface'] == "$if") && ($item['gateway'] == "dynamic")) {
+				if(($item['interface'] == "$if") && (preg_match("/dynamic/", $item['gateway']))) {
 					$skip = true;
 				}
 			}

@@ -120,6 +120,7 @@ $services_menu = array();
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
+$services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 if($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
 	$services_menu[] = array(gettext("DHCPv6 Server"), "/services_dhcpv6.php");

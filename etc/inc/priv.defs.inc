@@ -738,6 +738,12 @@ $priv_list['page-services-dhcprelay']['descr'] = gettext("Allow access to the 'S
 $priv_list['page-services-dhcprelay']['match'] = array();
 $priv_list['page-services-dhcprelay']['match'][] = "services_dhcp_relay.php*";
 
+$priv_list['page-services-dhcprelay6'] = array();
+$priv_list['page-services-dhcprelay6']['name'] = gettext("WebCfg - Services: DHCPv6 Relay page");
+$priv_list['page-services-dhcprelay6']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Relay' page.");
+$priv_list['page-services-dhcprelay6']['match'] = array();
+$priv_list['page-services-dhcprelay6']['match'][] = "services_dhcpv6_relay.php*";
+
 $priv_list['page-services-dnsforwarder'] = array();
 $priv_list['page-services-dnsforwarder']['name'] = gettext("WebCfg - Services: DNS Forwarder page");
 $priv_list['page-services-dnsforwarder']['descr'] = gettext("Allow access to the 'Services: DNS Forwarder' page.");

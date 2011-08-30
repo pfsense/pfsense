@@ -2965,7 +2965,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	sleep(1);
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 	sleep(1);
-	mwexec("/usr/sbin/rtsol -d -O /etc/rc.newwanipv6 {$wanif}");
+	mwexec("/sbin/rtsol -d -O /etc/rc.newwanipv6 {$wanif}");
 
 	return 0;
 }

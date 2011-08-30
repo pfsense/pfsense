@@ -103,7 +103,7 @@ if ($_POST) {
 	if ((is_hostname($host) || is_ipaddr($host))) {
 		$dns_speeds = array();
 		$resolvconf_servers = `grep nameserver /etc/resolv.conf | cut -f2 -d' '`;
-		$dns_servers = explode("\n", $resolvconf_servers);
+		$dns_servers = explode("\n", trim($resolvconf_servers));
 		foreach ($dns_servers as $dns_server) {
 			$query_time = `dig {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
 			if($query_time == "")

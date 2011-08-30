@@ -328,13 +328,13 @@ include("head.inc");
 						</table>
 						<br>
 						<span class="vexpl">
-							<?=gettext("IP addresses: these are also used for the DHCP " .
-							"service, DNS forwarder and for PPTP VPN clients."); ?>
+							<?=gettext("Enter IP addresses to by used by the system for DNS resolution." .
+							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>
 							<br/>
-							<?=gettext("In addition, select the gateway for each DNS server. " .
-							"You should have a unique DNS server per gateway."); ?>
+							<?=gettext("In addition, optionally select the gateway for each DNS server. " .
+							"When using multiple WAN connections there should be at least one unique DNS server per gateway."); ?>
 							<br/>
 							<?php endif; ?>
 							<br/>

@@ -138,9 +138,9 @@ if ($_POST) {
 		for($x=0; $x<4999; $x++) {
 			if ($_POST["username{$x}"]) {
 				if (empty($_POST["password{$x}"]))
-					$input_errors[] = gettext("No password specified for username ") . $_POST["username{$x}"];
+					$input_errors[] = sprintf(gettext("No password specified for username %s"),$_POST["username{$x}"]);
 				if ($_POST["ip{$x}"] <> "" && !is_ipaddr($_POST["ip{$x}"]))
-					$input_errors[] = gettext("Incorrect ip address  specified for username ") . $_POST["username{$x}"];
+					$input_errors[] = sprintf(gettext("Incorrect ip address  specified for username %s"),$_POST["username{$x}"]);
 			}
 		}
 	}
@@ -424,9 +424,13 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
-                    <br>
-                    <?=gettext("Enter the IP address the PPPoE server should use on its side " .
-                    "for all clients"); ?>.</td>
+			<br/>
+			<?=gettext("Enter the IP address the PPPoE server should give to clients for use as their \"gateway\""); ?>.
+			<br/>
+			<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
+			<br/>
+			<br/>
+			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address range"); ?></td>

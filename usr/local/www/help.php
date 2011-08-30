@@ -152,12 +152,14 @@ $helppages = array(
 	'system_usermanager_settings.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_usermanager_settings_ldapacpicker.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_usermanager_settings_test.php' => 'http://doc.pfsense.org/index.php/User_Manager',
+	'system_usermanager_passwordmg.php' => 'http://doc.pfsense.org/index.php/User_Manager',
 	'system_camanager.php' => 'http://doc.pfsense.org/index.php/Certificate_Management',
 	'system_certmanager.php' => 'http://doc.pfsense.org/index.php/Certificate_Management',
 	'vpn_l2tp.php' => 'http://doc.pfsense.org/index.php/L2TP_VPN_Settings',
 	'vpn_l2tp_users.php' => 'http://doc.pfsense.org/index.php/L2TP_VPN_Settings',
 	'vpn_l2tp_users_edit.php' => 'http://doc.pfsense.org/index.php/L2TP_VPN_Settings',
 	'vpn_pppoe.php' => 'http://doc.pfsense.org/index.php/PPPoE_Server_Settings',
+	'vpn_pppoe_edit.php' => 'http://doc.pfsense.org/index.php/PPPoE_Server_Settings',
 	'vpn_pppoe_users.php' => 'http://doc.pfsense.org/index.php/PPPoE_Server_Settings',
 	'vpn_pppoe_users_edit.php' => 'http://doc.pfsense.org/index.php/PPPoE_Server_Settings',
 	'vpn_pptp.php' => 'http://doc.pfsense.org/index.php/PPTP_VPN_Settings',
@@ -185,6 +187,8 @@ $helppages = array(
 	'services_captiveportal_ip_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
 	'services_captiveportal_mac.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
 	'services_captiveportal_mac_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_hostname.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_hostname_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
 	'status_captiveportal.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Status',
 	'status_captiveportal_test.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Status',
 	'services_captiveportal_users.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal', # 1.2.x only
@@ -218,6 +222,7 @@ $helppages = array(
 	'interfaces_wireless.php' => 'http://doc.pfsense.org/index.php/Wireless_Interfaces',
 	'interfaces_wireless_edit.php' => 'http://doc.pfsense.org/index.php/Wireless_Interfaces',
 	'system_crlmanager.php' => 'http://doc.pfsense.org/index.php/Certificate_Management',
+	'crash_reporter.php' => 'http://doc.pfsense.org/index.php/Unexpected_Reboot_Troubleshooting',
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 

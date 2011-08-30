@@ -174,7 +174,7 @@ include("head.inc");
                   </td>
                 </tr>
 		<tr>
-		  <td colspan="4">
+		  <td colspan="5">
 		        <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br>
                       </strong></span><?=gettext("Depending on the way your WAN connection is setup, you may also need a"); ?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP."); ?></a><br/>
 			<?=gettext("If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if " .

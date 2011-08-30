@@ -2961,11 +2961,13 @@ function interface_dhcpv6_configure($interface = "wan") {
 	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
+	mwexec("/sbin/ifconfig {$wanif} inet6 defroute_rtadv");
+	sleep(1);
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	sleep(1);
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
-	sleep(1);
-	mwexec("/sbin/rtsol -d -O /etc/rc.newwanipv6 {$wanif}");
+	// sleep(1);
+	// mwexec("/sbin/rtsol -d -O /etc/rc.newwanipv6 {$wanif}");
 
 	return 0;
 }

@@ -95,7 +95,6 @@ if (isset($id) && $a_pppoes[$id]) {
 			$pconfig['radiusserver2acctport'] = $pppoecfg['radius']['server2']['acctport'];
 			$pconfig['radiussecret2'] = $pppoecfg['radius']['server2']['secret2'];
 		}
-		$pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
 		$pconfig['radius_nasip'] = $pppoecfg['radius']['nasip'];
 		$pconfig['radius_acct_update'] = $pppoecfg['radius']['acct_update'];
 	}
@@ -170,7 +169,7 @@ if ($_POST) {
 			$pppoecfg['radius']['server']['port'] = $_POST['radiusserverport'];
 			$pppoecfg['radius']['server']['acctport'] = $_POST['radiusserveracctport'];
 		}
-		if ($_POST['radiusserver']) {
+		if ($_POST['radiusserver2']) {
 			$pppoecfg['radius']['server2'] = array();
 
 			$pppoecfg['radius']['server2']['ip'] = $_POST['radiusserver2'];

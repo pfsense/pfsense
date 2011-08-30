@@ -55,7 +55,7 @@ function kill_client($port, $remipp) {
 }
 
 $servers = openvpn_get_active_servers();
-$sk_servers = openvpn_get_active_servers("sharedkey");
+$sk_servers = openvpn_get_active_servers("p2p");
 $clients = openvpn_get_active_clients();
 ?>
 
@@ -145,7 +145,7 @@ $clients = openvpn_get_active_clients();
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
-			Shared Key Server Instance Statistics
+			Peer to Peer Server Instance Statistics
 		</td>
 	</tr>
 	<tr>

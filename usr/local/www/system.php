@@ -60,6 +60,8 @@ $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['theme'] = $config['system']['theme'];
 
+$pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
+
 if (!isset($pconfig['timeupdateinterval']))
 	$pconfig['timeupdateinterval'] = 300;
 if (!$pconfig['timezone'])
@@ -180,6 +182,11 @@ if ($_POST) {
 
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
+
+		if($_POST['dnslocalhost'] == "yes")
+			$config['system']['dnslocalhost'] = true;
+		else
+			unset($config['system']['dnslocalhost']);
 
 		/* which interface should the dns servers resolve through? */
 		if($_POST['dns1gwint']) 
@@ -338,6 +345,15 @@ include("head.inc");
 							"for its own purposes (including the DNS forwarder). " .
 							"However, they will not be assigned to DHCP and PPTP " .
 							"VPN clients."), $g['product_name']); ?>
+							<br />
+							<br />
+							<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked"; ?> />
+							<strong>
+								<?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?>
+							</strong>
+							<br />
+							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS forwarder is enabled, so system can use the DNS forwarder to perform lookups. ".
+							"Checking this box omits localhost from the list of DNS servers."); ?>
 						</span>
 					</p>
 				</td>

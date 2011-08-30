@@ -144,6 +144,11 @@ include("head.inc");
 	</div>
     </td>
   </tr>
+  <tr><td>
+	<br/><span class="red"><strong><?=gettext("Hint:");?></strong></span><br/>
+	<?= sprintf(gettext("The Load Balancer in %s 2.0 is for server load balancing, not Multi-WAN. For load balancing or failover for multiple WANs, use "), $g['product_name']);?>
+	<a href="/system_gateway_groups.php"><?= gettext("Gateway Groups"); ?></a>
+  </td></tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

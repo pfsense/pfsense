@@ -193,10 +193,10 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" class="vncellt">MBUF Usage</td>
 			<td width="75%" class="listr">
 				<?php
-					$mbufs_inuse=`netstat -mb | grep "mbufs in use" | awk '{ print $1 }' | cut -d"/" -f1`;
-					$mbufs_total=`netstat -mb | grep "mbufs in use" | awk '{ print $1 }' | cut -d"/" -f3`;
+					$mbufs_output=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`;
+					list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
 				?>
-				<?=$mbufs_inuse?>/<?=$mbufs_total?>
+				<?= $mbufs_total ?>/<?= $mbufs_max ?>
 			</td>
 		</tr>
 		<tr>

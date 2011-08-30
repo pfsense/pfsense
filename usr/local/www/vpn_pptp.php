@@ -359,7 +359,7 @@ function enable_change(enable_over) {
 			<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
 			<br/>
 			<br/>
-			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>. 
+			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address " .

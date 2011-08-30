@@ -147,7 +147,7 @@ include("head.inc");
                   <td class="list"> <a href="interfaces_qinq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 				<tr>
-				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
+				<td colspan="4" class="list"><p class="vexpl"><span class="red"><strong>
 				  <?=gettext("Note:");?><br>
 				  </strong></span>
 				  <?php printf(gettext("Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?></p>

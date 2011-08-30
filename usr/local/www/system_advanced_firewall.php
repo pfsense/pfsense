@@ -285,7 +285,8 @@ function update_description(itemnum) {
 									<strong><?=gettext("Disable all packet filtering.");?></strong>
 									<br/>
 									<span class="vexpl"><?php printf(gettext("Note:  This converts %s into a routing only platform!"), $g['product_name']);?><br>
-										<?=gettext("Note:  This will turn off NAT!");?>
+										<?=gettext("Note:  This will also turn off NAT!");?>
+										<br/><?=gettext("If you only want to disable NAT, and not firewall rules, visit the");?> <a href="firewall_nat_out.php"><?=gettext("Outbound NAT");?></a> <?=gettext("page");?>.
 									</span>
 								</td>
 							</tr>

@@ -466,7 +466,10 @@ include("head.inc");
 			"If a target address other than a WAN-type interface's IP address is used, " .
 			"then depending on the way the WAN connection is setup, a "); ?>
 			<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>
-			<?= gettext(" may also be required.") ?></span><br>
+			<?= gettext(" may also be required.") ?>
+			<br/><br/>
+			<?= gettext("To completely disable outbound NAT, switch to Manual Outbound NAT then delete any " .
+			"NAT rules that appear in the list.") ?>
                     </td>
                 </tr>
 

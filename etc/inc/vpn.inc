@@ -1314,7 +1314,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 
 				$clientip = long2ip32(ip2long($pppoecfg['remoteip']) + $i);
 
-				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['server']['enable'])) {
+				if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
@@ -1382,7 +1382,7 @@ EOD;
 				if (isset($pppoecfg['radius']['server']['acctport']))
 					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
 				$mpdconf .=<<<EOD
-	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']} {$radiusport} {$radiusacctport}" 
+	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}" {$radiusport} {$radiusacctport}
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth

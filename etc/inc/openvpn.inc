@@ -753,7 +753,7 @@ function openvpn_resync_all($interface = "") {
 
 }
 
-function openvpn_get_active_servers($type="ssl") {
+function openvpn_get_active_servers($type="multipoint") {
 	global $config, $g;
 
 	$servers = array();
@@ -778,10 +778,13 @@ function openvpn_get_active_servers($type="ssl") {
 			$mode_id = "server{$vpnid}";
 			$server['mgmt'] = $mode_id;
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
-			if (($server['mode'] == "p2p_shared_key") && ($type == "sharedkey"))
+			list($tn, $sm) = explode('/', $settings['tunnel_network']);
+
+			if ((($server['mode'] == "p2p_shared_key") || ($sm >= 30) ) && ($type == "p2p"))
 				$servers[] = openvpn_get_client_status($server, $socket);
-			elseif (($server['mode'] != "p2p_shared_key") && ($type == "ssl"))
+			elseif (($server['mode'] != "p2p_shared_key") && ($type == "multipoint") && ($sm < 30))
 				$servers[] = openvpn_get_server_status($server, $socket);
+
 		}
 	}
 	return $servers;
@@ -902,6 +905,23 @@ function openvpn_get_client_status($client, $socket) {
 				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
 				$client['virtual_addr']  = $list[3];
 				$client['remote_host'] = $list[4];
+			}
+			if (strstr($line,"CONNECTING")) {
+				$client['status']="connecting";
+			}
+			if (strstr($line,"ASSIGN_IP")) {
+				$client['status']="waiting";
+				$list = explode(",", $line);
+
+				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+				$client['virtual_addr']  = $list[3];
+			}
+			if (strstr($line,"RECONNECTING")) {
+				$client['status']="reconnecting";
+				$list = explode(",", $line);
+
+				$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+				$client['status'] .= "; " . $list[2];
 			}
 			/* parse end of output line */
 			if (strstr($line, "END") || strstr($line, "ERROR"))

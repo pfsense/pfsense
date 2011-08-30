@@ -846,10 +846,13 @@ function sshkeyClicked(obj) {
 					<tr>
 						<td colspan="4">
 							<p>
-								<?=gettext("Additional webConfigurator users can be added here.
-								User permissions can be assigned directly or inherited from group memberships.
-								An icon that appears grey indicates that it is a system defined object. 
-								Some system object properties can be modified but they cannot be deleted."); ?>
+								<?=gettext("Additional users can be added here. User permissions for accessing " .
+								"the webConfigurator can be assigned directly or inherited from group memberships. " .
+								"An icon that appears grey indicates that it is a system defined object. " .
+								"Some system object properties can be modified but they cannot be deleted."); ?>
+								<br/><br/>
+								<?=gettext("Accounts created here are also used for other parts of the system " .
+								"such as OpenVPN, IPsec, and Captive Portal.");?>
 							</p>
 						</td>
 					</tr>

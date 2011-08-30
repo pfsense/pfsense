@@ -851,12 +851,21 @@ if($_REQUEST['undodrag']) {
 	<span class="red"><?=gettext("Hint:");?></span>
   </strong><br>
 	<ul>
-  <li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .
-  "the action of the first rule to match a packet will be executed). " .
-  "This means that if you use block rules, you'll have to pay attention " .
-  "to the rule order. Everything that isn't explicitly passed is blocked " .
-  "by default. ");?>
-</li>
+<? if ("FloatingRules" != $if): ?>
+	<li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .
+	"the action of the first rule to match a packet will be executed). " .
+	"This means that if you use block rules, you'll have to pay attention " .
+	"to the rule order. Everything that isn't explicitly passed is blocked " .
+	"by default. ");?>
+	</li>
+<? else: ?>
+	<li><?=gettext("Floating rules are evaluated on a first-match basis (i.e. " .
+	"the action of the first rule to match a packet will be executed) only " .
+	"if the 'quick' option is checked on a rule. Otherwise they will only apply if no " .
+	"other rules match. Pay close attention to the rule order and options " .
+	"chosen. If no rule here matches, the per-interface or default rules are used. ");?>
+	</li>
+<? endif; ?>
 </ul>
 		 </td>
 	        </tr>

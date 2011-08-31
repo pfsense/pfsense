@@ -57,7 +57,7 @@ if($g['booting'])
 */
 
 function restart_packages() {
-	global $oldip, $curwanipi, $g;
+	global $oldip, $curwanipv6, $g;
 
 	/* restart packages */
 	system_ntp_configure();
@@ -67,12 +67,11 @@ function restart_packages() {
 
 log_error("rc.newwanipv6: Informational is starting.");
 
-$curwanip = get_interface_ipv6();
+$curwanipv6 = get_interface_ipv6();
 $interface = "wan";
 $interface_real = get_real_interface();
 
-if(is_ipaddr(trim($_ENV['new_domain_name_servers']))) {
-	echo "DNS {$_ENV['new_domain_name_servers']}\n";
+if(is_ipaddrv6(trim($_ENV['new_domain_name_servers']))) {
 	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", trim($_ENV['new_domain_name_servers']));
 }
 if(!empty($_ENV['new_domain_name'])) {
@@ -82,18 +81,18 @@ if(!empty($_ENV['new_domain_name'])) {
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 if($curwanipv6 == "" || !is_ipaddrv6($curwanipv6)) {
-        log_error("rc.newwanipv6: Failed to update {$interface} IP, restarting...");
-	send_event("interface reconfigure {$interface}");
+        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
+	// send_event("interface reconfigure {$interface}");
         exit;
 }
 
 if (empty($interface)) {
 	filter_configure();
-	restart_packages();
+	// restart_packages();
 	exit;
 }
 
-$oldip = "";
+$oldipv6 = "";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
 	$oldipv6 = file_get_contents("{$g['vardb_path']}/{$interface}_cacheipv6");
 
@@ -104,7 +103,7 @@ if (!empty($grouptmp))
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
-/* write current WAN IP to file */
+/* write current WAN IPv6 to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
 
 /* reconfigure static routes (kernel may have deleted them) */
@@ -118,7 +117,7 @@ filter_configure();
 
 if (is_ipaddr($oldipv6) && $curwanipv6 == $oldipv6) {
 	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-	if (in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
+	if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
 		/* reconfigure IPsec tunnels */
 		vpn_ipsec_force_reload();
 

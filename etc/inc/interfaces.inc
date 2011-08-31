@@ -2934,7 +2934,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	}
 	$dhcp6cconf .= "request domain-name-servers;\n";
 	$dhcp6cconf .= "request domain-name;\n";
-	$dhcp6cconf .= "script \"/etc/rc.newwanipv6\";	# we'd like some nameservers please\n";
+	$dhcp6cconf .= "script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
 
 	$dhcp6cconf .= "};\n";
 	$dhcp6cconf .= "id-assoc na 0 { };\n";
@@ -2957,6 +2957,21 @@ function interface_dhcpv6_configure($interface = "wan") {
 	fwrite($fd, $dhcp6cconf);
 	fclose($fd);
 
+	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
+	$fds = fopen("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", "w");
+	if (!$fds) {
+		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interfaces_wan_dhcpv6_configure() for writing.\n");
+		return 1;
+	}
+	$dhcp6cscript = "#!/bin/sh\n";
+	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
+	$dhcp6cscript .= "/etc/rc.newwanipv6 $interface \n";
+
+	fwrite($fds, $dhcp6cscript);
+	fclose($fds);
+	chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
+
+
 	/* accept router advertisements for this interface */
 	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
 	log_error("Accept router advertisements on interface {$wanif} ");
@@ -2966,8 +2981,23 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	sleep(1);
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
-	// sleep(1);
-	// mwexec("/sbin/rtsol -d -O /etc/rc.newwanipv6 {$wanif}");
+	sleep(1);
+	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
+	if(!empty($out)) {
+		echo "Output from rtsol {$wanif}\n";
+		foreach($out as $line) {
+			if(stristr($line, "received")) {
+				$parts = explode(" ", $line);
+				if(is_ipaddrv6($parts[3])) {
+					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
+					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
+				}
+			}
+		}
+	}
+	if(!empty($out)) {
+		print_r($out);
+	}
 
 	return 0;
 }

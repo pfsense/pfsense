@@ -332,6 +332,8 @@ if (is_array($config['installedpackages']['carpsettings']) && is_array($config['
 		if ($carp['synchronizestaticroutes'] != "") {
 			if (!is_array($config['staticroutes']))
 				$config['staticroutes'] = array();
+			if (!is_array($config['staticroutes']['route']))
+				$config['staticroutes']['route'] = array();
 			$sections[] = 'staticroutes';
 			if (!is_array($config['gateways']))
 				$config['gateways'] = array();

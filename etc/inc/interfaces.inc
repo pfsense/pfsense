@@ -2995,10 +2995,6 @@ function interface_dhcpv6_configure($interface = "wan") {
 			}
 		}
 	}
-	if(!empty($out)) {
-		print_r($out);
-	}
-
 	return 0;
 }
 

@@ -715,6 +715,7 @@ function install_package_xml($pkg) {
 				update_output_window($static_output);
 				if (download_file_with_progress_bar($afn['item'][0], $prefix . $filename) !== true) {
 					$static_output .= "failed.\n";
+					@unlink($prefix . $filename);
 					update_output_window($static_output);
 					return false;
 				}

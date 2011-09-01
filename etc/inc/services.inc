@@ -741,7 +741,7 @@ EOPP;
 			$dhcpdv6conf .= "		deny dynamic bootp clients;\n";
 
 		if (isset($dhcpv6ifconf['denyunknown']))
-		   $dhcpdv6conf .= "		deny unknown clients;\n";
+		   $dhcpdv6conf .= "		deny unknown-clients;\n";
 
 		if ($dhcpv6ifconf['gateway'])
 			$routersv6 = $dhcpv6ifconf['gateway'];

@@ -338,9 +338,6 @@ function system_routing_configure($interface = "") {
 		echo "system_routing_configure() being called $mt\n";
 	}
 
-	/* configure gif interfaces for ipv6 tunnels */
-	// interfaces_gif_configure();
-
 	$gatewayip = "";
 	$interfacegw = "";
 	$foundgw = false;
@@ -369,7 +366,7 @@ function system_routing_configure($interface = "") {
 		}
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw']) && (is_ipaddrv6($gateway['gateway']))) {
-				if ($gateway['gateway'] == "dynamic")
+				if ($gateway['gateway'] == "dynamic6")
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 				$gatewayipv6 = $gateway['gateway'];
 				$interfacegwv6 = $gateway['interface'];
@@ -417,8 +414,8 @@ function system_routing_configure($interface = "") {
 		if (!empty($interface) && $interface != $interfacegwv6)
 			;
 		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
-			log_error("ROUTING: setting IPv6 default route to $gatewayipv6");
-			mwexec("/sbin/route change -inet6 default " . escapeshellarg($gatewayipv6));
+			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}%{$defaultifv6}");
+			mwexec("/sbin/route change -inet6 default " . escapeshellarg($gatewayipv6) ."%". escapeshellarg($defaultifv6));
 		}
 	}
 

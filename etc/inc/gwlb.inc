@@ -152,7 +152,14 @@ EOD;
 			$gwifip = find_interface_ip($gateway['interface'], true);
 		}
 		if (is_ipaddrv6($gateway['gateway'])) {
-			$gwifip = find_interface_ipv6($gateway['interface'], true);
+			/* link locals really need a different src ip */
+			if(preg_match("/fe80::/i", $gateway['gateway'])) {
+				$linklocal = explode("%", find_interface_ipv6_ll($gateway['interface'], true));
+				$gwifip = $linklocal[0];
+				$ifscope = "%". $linklocal[1];
+			} else {
+				$gwifip = find_interface_ipv6($gateway['interface'], true);
+			}
 		}
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target

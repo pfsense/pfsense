@@ -3698,6 +3698,46 @@ function find_interface_ipv6($interface, $flush = false)
 	return $interface_ipv6_arr_cache[$interface];
 }
 
+/*
+ * find_interface_ipv6_ll($interface): return the interface ipv6 link local (first found)
+ */
+function find_interface_ipv6_ll($interface, $flush = false)
+{
+	global $interface_ipv6_arr_cache;
+	global $interface_snv6_arr_cache;
+	global $config;
+	
+	$interface = str_replace("\n", "", $interface);
+	
+	if (!does_interface_exist($interface))
+		return;
+
+	/* Setup IP cache */
+	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
+		$ifinfo = pfSense_get_interface_addresses($interface);
+		// FIXME: Add IPv6 support to the pfSense module
+		exec("/sbin/ifconfig {$interface} inet6", $output);
+		foreach($output as $line) {
+			if(preg_match("/inet6/", $line)) {
+				$parts = explode(" ", $line);
+				if(preg_match("/fe80::/", $parts[1])) {
+					$ifinfo['ipaddrv6'] = $parts[1];
+					if($parts[2] == "-->") {
+						$parts[5] = "126";
+						$ifinfo['subnetbitsv6'] = $parts[5];
+					} else {
+						$ifinfo['subnetbitsv6'] = $parts[3];
+					}
+				}
+			}
+		}
+		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
+		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+	}
+
+	return $interface_ipv6_arr_cache[$interface];
+}
+
 function find_interface_subnet($interface, $flush = false)
 {
 	global $interface_sn_arr_cache;

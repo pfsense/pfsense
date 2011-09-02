@@ -192,10 +192,6 @@ if($config['virtualip'])
 		foreach($config['virtualip']['vip'] as $vip) 
 			if($vip['subnet'] == $http_host)
 				$local_ip = true;
-
-setcookie("cookie_test", time() + 3600);
-$have_cookies = isset($_COOKIE["cookie_test"]);
-
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -259,13 +255,6 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					<span style="text-align:center; font-weight: normal ; font-style: italic">
 						<?=gettext("Enter username and password to login."); ?>
 					</span>
-
-					<? if (!$have_cookies): ?>
-					<br/><br/>
-					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
-						<?= gettext("Your browser must support cookies to login."); ?>
-					</span>
-					<? endif; ?>
 				</p>        
 				<p>
 					<span style="text-align:center">

@@ -265,7 +265,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 						<?=gettext("Enter username and password to login."); ?>
 					</span>
 
-					<? if (!$have_cookies): ?>
+					<? if (!$have_cookies && isset($_POST['login'])): ?>
 					<br/><br/>
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>

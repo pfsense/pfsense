@@ -594,6 +594,7 @@ include("head.inc");
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
+			<!--
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
@@ -601,6 +602,7 @@ include("head.inc");
 			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
 			</td>
 			</tr>
+			-->
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">

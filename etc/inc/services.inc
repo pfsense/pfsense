@@ -159,7 +159,14 @@ EOD;
 			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
-			$rtadvdconf .= "\t:tc=ether:\n";
+			$rtadvdconf .= "\t:tc=ether:\\\n";
+			if (isset($config['dnsmasq']['enable'])) {
+				$dnslist = get_interface_ipv6($dhcpv6if);
+				$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+			} elseif (!empty($config['system']['dnsserver'][0])) {
+				$dnslist = implode(",", $config['system']['dnsserver']);
+				$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+			}
 			$rtadvdconf .= "\n\n"; 
 			$rtadvdnum++;
 		}

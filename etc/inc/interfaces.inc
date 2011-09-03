@@ -842,7 +842,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
 	if((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$gifif} inet6 {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} prefixlen {$gif['tunnel-remote-net']} ");
+		mwexec("/sbin/ifconfig {$gifif} inet6 {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} prefixlen /{$gif['tunnel-remote-net']} ");
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}

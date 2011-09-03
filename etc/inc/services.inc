@@ -119,7 +119,24 @@ EOD;
 				break;				
 
 		}
-		$rtadvdconf .= "\t:tc=ether:\n";
+		$rtadvdconf .= "\t:tc=ether:\\\n";
+		/* add DNS servers */
+		if(!empty($dhcpv6ifconf['dnsserver'][0])) {
+			$dnslist = implode(",", $dhcpv6ifconf['dnsserver']);
+			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+		} elseif (isset($config['dnsmasq']['enable'])) {
+			$dnslist = get_interface_ipv6($dhcpv6if);
+			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+		} elseif (!empty($config['system']['dnsserver'][0])) {
+			$dnslist = implode(",", $config['system']['dnsserver']);
+			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+		}
+
+		if($dhcpv6ifconf['domain'] <> "") {
+			$rtadvdconf .= "\t:dnssl=\"{$dhcpv6ifconf['domain']}\":\n";
+		} elseif ($config['system']['domain'] <> "") {
+			$rtadvdconf .= "\t:dnssl=\"{$config['system']['domain']}\":\n";
+		}
 		$rtadvdconf .= "\n\n";
 		$rtadvdnum++;
 	}

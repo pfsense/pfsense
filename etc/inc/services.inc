@@ -121,17 +121,24 @@ EOD;
 		}
 		$rtadvdconf .= "\t:tc=ether:\\\n";
 		/* add DNS servers */
+		$dnslist = array();
 		if(!empty($dhcpv6ifconf['dnsserver'][0])) {
-			$dnslist = implode(",", $dhcpv6ifconf['dnsserver']);
-			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+			foreach($dhcpv6ifconf['dnsserver'] as $server) {
+				if(is_ipaddrv6($server))
+					$dnslist[] = $server;
+			}
 		} elseif (isset($config['dnsmasq']['enable'])) {
-			$dnslist = get_interface_ipv6($dhcpv6if);
-			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+			$dnslist[] = get_interface_ipv6($dhcpv6if);
 		} elseif (!empty($config['system']['dnsserver'][0])) {
-			$dnslist = implode(",", $config['system']['dnsserver']);
-			$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+			foreach($config['system']['dnsserver'] as $server) {
+				if(is_ipaddrv6($server))
+					$dnslist[] = $server;
+			}
 		}
-
+		if(!empty($dnslist)) {
+			$dnsstring = implode(",", $dnslist);
+			$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
+		}
 		if($dhcpv6ifconf['domain'] <> "") {
 			$rtadvdconf .= "\t:dnssl=\"{$dhcpv6ifconf['domain']}\":\n";
 		} elseif ($config['system']['domain'] <> "") {
@@ -153,6 +160,7 @@ EOD;
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
+		$dnslist = array();
 		if(is_ipaddrv6($subnetv6)) {
 			$rtadvdconf .= "# Generated for DHCP-PD delegation $if\n";
 			$rtadvdconf .= "{$realif}:\\\n";
@@ -161,11 +169,16 @@ EOD;
 			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
 			$rtadvdconf .= "\t:tc=ether:\\\n";
 			if (isset($config['dnsmasq']['enable'])) {
-				$dnslist = get_interface_ipv6($dhcpv6if);
-				$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+				$dnslist[] = get_interface_ipv6($dhcpv6if);
 			} elseif (!empty($config['system']['dnsserver'][0])) {
-				$dnslist = implode(",", $config['system']['dnsserver']);
-				$rtadvdconf .= "\t:rdnss=\"{$dnslist}\":\\\n";
+				foreach($config['system']['dnsserver'] as $server) {
+					if(is_ipaddrv6($server))
+						$dnslist[] = $server;
+				}
+			}
+			if(!empty($dnslist)) {
+				$dnsstring = implode(",", $dnslist);
+				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
 			}
 			$rtadvdconf .= "\n\n"; 
 			$rtadvdnum++;

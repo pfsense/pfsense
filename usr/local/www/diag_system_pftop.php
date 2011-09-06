@@ -35,7 +35,7 @@
 ##|*IDENT=page-diag-system-activity
 ##|*NAME=Diagnostics: System Activity
 ##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
-##|*MATCH=diag_system_pftop*
+##|*MATCH=diag_system_pftop.php*
 ##|-PRIV
 
 require("guiconfig.inc");

@@ -226,7 +226,7 @@ $priv_list['page-diag-system-activity'] = array();
 $priv_list['page-diag-system-activity']['name'] = gettext("WebCfg - Diagnostics: System Activity");
 $priv_list['page-diag-system-activity']['descr'] = gettext("Allows access to the 'Diagnostics: System Activity' page");
 $priv_list['page-diag-system-activity']['match'] = array();
-$priv_list['page-diag-system-activity']['match'][] = "diag_system_pftop*";
+$priv_list['page-diag-system-activity']['match'][] = "diag_system_pftop.php*";
 
 $priv_list['page-diagnostics-tables'] = array();
 $priv_list['page-diagnostics-tables']['name'] = gettext("WebCfg - Diagnostics: PF Table IP addresses");

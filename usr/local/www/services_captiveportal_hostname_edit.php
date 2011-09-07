@@ -46,8 +46,8 @@ function allowedhostnamescmp($a, $b) {
 }
 
 function allowedhostnames_sort() {
-	global $g, $config;
-	usort($config['captiveportal']['allowedhostname'],"allowedhostname");
+	global $g, $config, $cpzone;
+	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostname");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -61,16 +61,29 @@ require("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
 
-if (!is_array($config['captiveportal']['allowedhostname']))
-	$config['captiveportal']['allowedhostname'] = array();
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
 
-$a_allowedhostnames = &$config['captiveportal']['allowedhostname'];
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+if (!is_array($a_cp[$cpzone]['allowedhostname']))
+	$a_cp[$cpzone]['allowedhostname'] = array();
+$a_allowedhostnames = &$a_cp[$cpzone]['allowedhostname'];
+
 if (isset($id) && $a_allowedhostnames[$id]) {
+	$pconfig['zone'] = $a_allowedhostnames[$id]['zone'];
 	$pconfig['hostname'] = $a_allowedhostnames[$id]['hostname'];
 	$pconfig['sn'] = $a_allowedhostnames[$id]['sn'];
 	$pconfig['dir'] = $a_allowedhostnames[$id]['dir'];
@@ -127,10 +140,10 @@ if ($_POST) {
 		
 		write_config();
 
-		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) 
+		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) 
 			captiveportal_init_rules();
 		
-		header("Location: services_captiveportal_hostname.php");
+		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;
 	}
 }
@@ -188,6 +201,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
 				<?php if (isset($id) && $a_allowedhostnames[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>

@@ -2287,41 +2287,45 @@ EOD;
 	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
 
 	/* if captive portal is enabled, ensure that access to this port
-	 * is allowed on a locked down interface
-	 */
-	if(isset($config['captiveportal']['enable'])) {
-		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
-		$cpiflist = array();
-		$cpiplist = array();
-		foreach ($cpinterfaces as $cpifgrp) {
-			if(!isset($FilterIflist[$cpifgrp]))
-				continue;
-			$tmpif = get_real_interface($cpifgrp);
-			if(!empty($tmpif)) {
-				$cpiflist[] = "{$tmpif}";
-				$cpipm = get_interface_ip($cpifgrp);
-				if(is_ipaddr($cpipm)) {
-					$carpif = link_ip_to_carp_interface($cpipm);
-					if (!empty($carpif)) {
-						$cpiflist[] = $carpif;
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp) {
-							$carpip = find_interface_ip($cpcarp);
-							if (is_ipaddr($carpip))
-							$cpiplist[] = $carpip;
-						}
-					}
-					$cpiplist[] = $cpipm;
-				}
-			}
-		}
-		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-			$cpinterface = implode(" ", $cpiflist);
-			$cpaddresses = implode(" ", $cpiplist);
-			$ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-			$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
-		}
-	}
+         * is allowed on a locked down interface
+         */
+        if(is_array($config['captiveportal'])) {
+                foreach ($config['captiveportal'] as $cpcfg) {
+                        $cpinterfaces = explode(",", $cpcfg['interface']);
+                        $cpiflist = array();
+                        $cpiplist = array();
+                        foreach ($cpinterfaces as $cpifgrp) {
+                                if(!isset($FilterIflist[$cpifgrp]))
+                                        continue;
+                                $tmpif = get_real_interface($cpifgrp);
+                                if(!empty($tmpif)) {
+                                        $cpiflist[] = "{$tmpif}";
+                                        $cpipm = get_interface_ip($cpifgrp);
+                                        if(is_ipaddr($cpipm)) {
+                                                $carpif = link_ip_to_carp_interface($cpipm);
+                                                if (!empty($carpif)) {
+                                                        $cpiflist[] = $carpif;
+                                                        $carpsif = explode(" ", $carpif);
+                                                        foreach ($carpsif as $cpcarp) {
+                                                                $carpip = find_interface_ip($cpcarp);
+                                                                if (is_ipaddr($carpip))
+                                                                $cpiplist[] = $carpip;
+                                                        }
+                                                }
+                                                $cpiplist[] = $cpipm;
+                                        }
+                                }
+                        }
+                        if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+                                $cpinterface = implode(" ", $cpiflist);
+                                $cpaddresses = implode(" ", $cpiplist);
+                                $portalias = $cpcfg['zoneid'] + 1;
+                                $portalias .= " {$cpcfg['zoneid']}";
+                                $ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
+                                $ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+                        }
+                }
+        }
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {

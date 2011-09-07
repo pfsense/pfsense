@@ -44,9 +44,9 @@ function cpelementscmp($a, $b) {
 }
 
 function cpelements_sort() {
-        global $config;
+        global $config, $cpzone;
 
-        usort($config['captiveportal']['element'],"cpelementscmp");
+        usort($config['captiveportal'][$cpzone]['element'],"cpelementscmp");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -59,12 +59,24 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"));
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+                        
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
 
-if (!is_array($config['captiveportal']['element']))
-	$config['captiveportal']['element'] = array();
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
 
-$a_element = &$config['captiveportal']['element'];
+$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+
+if (!is_array($a_cp[$cpzone]['element']))
+	$a_cp[$cpzone]['element'] = array();
+$a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
 $total_size = 0;
@@ -108,21 +120,19 @@ if ($_POST) {
 
 			write_config();
 			captiveportal_write_elements();
-			header("Location: services_captiveportal_filemanager.php");
+			header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 			exit;
 		}
     }
-} else {
-	if (($_GET['act'] == "del") && $a_element[$_GET['id']]) {
-		conf_mount_rw();
-		unlink_if_exists($g['captiveportal_path'] . "/" . $a_element[$id]['name']);
-		unset($a_element[$_GET['id']]);
-		write_config();
-		captiveportal_write_elements();
-		conf_mount_ro();
-		header("Location: services_captiveportal_filemanager.php");
-		exit;
-	}
+} else if (($_GET['act'] == "del") && !empty($cpzone) && $a_element[$_GET['id']]) {
+	conf_mount_rw();
+	unlink_if_exists($g['captiveportal_path'] . "/" . $a_element[$id]['name']);
+	unset($a_element[$_GET['id']]);
+	write_config();
+	captiveportal_write_elements();
+	conf_mount_ro();
+	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
+	exit;
 }
 
 include("head.inc");
@@ -131,17 +141,18 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
+<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
-	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php");
-	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
 ?>  </td></tr>
   <tr>
@@ -154,22 +165,23 @@ include("head.inc");
 		<table border="0" cellspacing="0" cellpadding="1">
 		    <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 		    </tr>
 		</table>
 	</td>
       </tr>
-  <?php $i = 0; foreach ($a_element as $element): ?>
+<?php if (is_array($a_cp[$cpzone]['element'])):
+	$i = 0; foreach ($a_cp[$cpzone]['element'] as $element): ?>
   	  <tr>
 		<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
 		<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
 		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0"></a>
+		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0"></a>
 		</td>
 	  </tr>
-  <?php $i++; endforeach; ?>
+  <?php $i++; endforeach; endif; ?>
 
-  <?php if (count($a_element) > 0): ?>
+  <?php if ($total_size > 0): ?>
   	  <tr>
 		<td class="listlr" style="background-color: #eee"><strong><?=gettext("TOTAL"); ?></strong></td>
 		<td class="listr" style="background-color: #eee" align="right"><strong><?=format_bytes($total_size);?></strong></td>
@@ -182,7 +194,7 @@ include("head.inc");
 		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld file" size="40" id="new">
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upload"); ?>"></td>
 		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0"></a>
+		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0"></a>
 		</td>
 	  </tr>
   <?php else: ?>
@@ -192,7 +204,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
 				<td width="17" heigth="17"></td>
-				<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
+				<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 			    </tr>
 			</table>
 		</td>
@@ -212,7 +224,7 @@ include("head.inc");
 	<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
 	"to your custom page from the initial page by using text similar to:"); ?>
 	<br><br>
-	<tt>&lt;a href="/captiveportal-aup.php?redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
+	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
 	<br><br>
 	<?php printf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']));?></span>
 </td>
@@ -222,4 +234,3 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

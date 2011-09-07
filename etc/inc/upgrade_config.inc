@@ -2646,4 +2646,16 @@ function upgrade_081_to_082() {
 	/* enable the allow IPv6 toggle */
 	$config['system']['ipv6allow'] = true;
 }
+
+function upgrade_082_to_083() {
+	global $config;
+	/* Upgrade captiveportal config */
+	if (!empty($config['captiveportal'])) {
+		$tmpcp = $config['captiveportal'];
+		$config['captiveportal'] = array();
+		$config['captiveportal']['cpZone'] = array();
+		$config['captiveportal']['cpZone'] = $tmpcp;
+		$config['captiveportal']['cpZone']['zoneid'] = 8000;
+	}
+}
 ?>

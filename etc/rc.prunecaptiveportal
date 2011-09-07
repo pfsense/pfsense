@@ -38,6 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
+$cpzone = str_replace("\n", "", $argv[1]);
 captiveportal_prune_old();
 
 ?>

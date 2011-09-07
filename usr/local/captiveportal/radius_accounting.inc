@@ -51,13 +51,13 @@ PEAR::loadExtension('bcmath');
 
 function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers, $clientip, $clientmac) {
 
-    global $config;
+    global $config, $cpzone;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
     $nas_port = intval($ruleno);
-    $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
+    $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
 
     switch($radiusvendor) {
 
@@ -67,10 +67,10 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
         break;
 
         default:
-	if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
-            $calledstationid = $config['captiveportal']['radiussrcip_attribute'];
+	if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute']))
+            $calledstationid = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
         else
-                $calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+                $calledstationid = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
             $callingstationid = $clientmac;
         $callingstationid = $clientmac;
     }
@@ -166,13 +166,13 @@ RADIUS ACCOUNTING STOP/UPDATE
 
 function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusservers,$clientip,$clientmac, $term_cause = 1, $interimupdate=false,$stop_time = null) {
 
-    global $config;
+    global $config, $cpzone;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
     $nas_port = intval($ruleno);
-    $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
+    $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;
     $session_time = $stop_time - $start_time;
     $volume = getVolume($clientip);

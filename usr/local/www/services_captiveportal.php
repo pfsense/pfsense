@@ -47,65 +47,87 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"));
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+	$cpzone = $_POST['zone'];
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-	$config['captiveportal']['page'] = array();
-	$config['captiveportal']['timeout'] = 60;
+if (empty($cpzone)) {
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
+
+if (!is_array($config['captiveportal']))
+	$config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 
 if ($_GET['act'] == "viewhtml") {
-	echo base64_decode($config['captiveportal']['page']['htmltext']);
+	if (isset($cpzone) && $a_cp[$cpzone])
+		echo base64_decode($pconfig['page']['htmltext']);
 	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
-	echo base64_decode($config['captiveportal']['page']['errtext']);
+	if (isset($cpzone) && $a_cp[$cpzone])
+		echo base64_decode($pconfig['page']['errtext']);
 	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
-	echo base64_decode($config['captiveportal']['page']['logouttext']);
+	if (isset($cpzone) && $a_cp[$cpzone])
+		echo base64_decode($pconfig['page']['logouttext']);
 	exit;
 }
 
-$pconfig['cinterface'] = $config['captiveportal']['interface'];
-$pconfig['maxprocperip'] = $config['captiveportal']['maxprocperip'];
-$pconfig['timeout'] = $config['captiveportal']['timeout'];
-$pconfig['idletimeout'] = $config['captiveportal']['idletimeout'];
-$pconfig['freelogins_count'] = $config['captiveportal']['freelogins_count'];
-$pconfig['freelogins_resettimeout'] = $config['captiveportal']['freelogins_resettimeout'];
-$pconfig['freelogins_updatetimeouts'] = isset($config['captiveportal']['freelogins_updatetimeouts']);
-$pconfig['enable'] = isset($config['captiveportal']['enable']);
-$pconfig['auth_method'] = $config['captiveportal']['auth_method'];
-$pconfig['radacct_enable'] = isset($config['captiveportal']['radacct_enable']);
-$pconfig['radmac_enable'] = isset($config['captiveportal']['radmac_enable']);
-$pconfig['radmac_secret'] = $config['captiveportal']['radmac_secret'];
-$pconfig['reauthenticate'] = isset($config['captiveportal']['reauthenticate']);
-$pconfig['reauthenticateacct'] = $config['captiveportal']['reauthenticateacct'];
-$pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
-$pconfig['httpsname'] = $config['captiveportal']['httpsname'];
-$pconfig['preauthurl'] = strtolower($config['captiveportal']['preauthurl']);
-$pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
-$pconfig['cacert'] = base64_decode($config['captiveportal']['cacertificate']);
-$pconfig['key'] = base64_decode($config['captiveportal']['private-key']);
-$pconfig['logoutwin_enable'] = isset($config['captiveportal']['logoutwin_enable']);
-$pconfig['peruserbw'] = isset($config['captiveportal']['peruserbw']);
-$pconfig['bwdefaultdn'] = $config['captiveportal']['bwdefaultdn'];
-$pconfig['bwdefaultup'] = $config['captiveportal']['bwdefaultup'];
-$pconfig['nomacfilter'] = isset($config['captiveportal']['nomacfilter']);
-$pconfig['noconcurrentlogins'] = isset($config['captiveportal']['noconcurrentlogins']);
-$pconfig['redirurl'] = $config['captiveportal']['redirurl'];
-$pconfig['radiusip'] = $config['captiveportal']['radiusip'];
-$pconfig['radiusip2'] = $config['captiveportal']['radiusip2'];
-$pconfig['radiusport'] = $config['captiveportal']['radiusport'];
-$pconfig['radiusport2'] = $config['captiveportal']['radiusport2'];
-$pconfig['radiusacctport'] = $config['captiveportal']['radiusacctport'];
-$pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
-$pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
-$pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
-$pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
-$pconfig['radiussrcip_attribute'] = $config['captiveportal']['radiussrcip_attribute'];
-$pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
-$pconfig['passthrumacaddusername'] = isset($config['captiveportal']['passthrumacaddusername']);
-$pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
+if (isset($cpzone) && $a_cp[$cpzone]) {
+	$pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
+	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
+	$pconfig['maxproc'] = $a_cp[$cpzone]['maxproc'];
+	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
+	$pconfig['timeout'] = $a_cp[$cpzone]['timeout'];
+	$pconfig['idletimeout'] = $a_cp[$cpzone]['idletimeout'];
+	$pconfig['freelogins_count'] = $a_cp[$cpzone]['freelogins_count'];
+	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
+	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
+	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
+	$pconfig['pms_enabled'] = $a_cp[$cpzone]['pms_enabled'];
+	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
+	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
+	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
+	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
+	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
+	$pconfig['reauthenticateacct'] = $a_cp[$cpzone]['reauthenticateacct'];
+	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
+	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
+	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
+	$pconfig['cert'] = base64_decode($a_cp[$cpzone]['certificate']);
+	$pconfig['cacert'] = base64_decode($a_cp[$cpzone]['cacertificate']);
+	$pconfig['key'] = base64_decode($a_cp[$cpzone]['private-key']);
+	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
+	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
+	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
+	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
+	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
+	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
+	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
+	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
+	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
+	$pconfig['radiusport'] = $a_cp[$cpzone]['radiusport'];
+	$pconfig['radiusport2'] = $a_cp[$cpzone]['radiusport2'];
+	$pconfig['radiusacctport'] = $a_cp[$cpzone]['radiusacctport'];
+	$pconfig['radiuskey'] = $a_cp[$cpzone]['radiuskey'];
+	$pconfig['radiuskey2'] = $a_cp[$cpzone]['radiuskey2'];
+	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
+	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
+	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
+	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
+	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
+	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
+	$pconfig['page'] = array();
+	if ($a_cp[$cpzone]['page']['htmltext'])
+		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
+	if ($a_cp[$cpzone]['page']['errtext'])
+		$pconfig['page']['errtext'] = $a_cp[$cpzone]['page']['errtext'];
+	if ($a_cp[$cpzone]['page']['logouttext'])
+		$pconfig['page']['logouttext'] = $a_cp[$cpzone]['page']['logouttext'];
+}
 
 if ($_POST) {
 
@@ -114,16 +136,24 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "cinterface");
-		$reqdfieldsn = array(gettext("Interface"));
+		$reqdfields = explode(" ", "zone cinterface");
+		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-		/* make sure no interfaces are bridged */
-		if (is_array($_POST['cinterface']))
-			foreach ($pconfig['cinterface'] as $cpbrif)
+		/* make sure no interfaces are bridged or used on other zones */
+		if (is_array($_POST['cinterface'])) {
+			foreach ($pconfig['cinterface'] as $cpbrif) {
 				if (link_interface_to_bridge($cpbrif))
 					$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is part of a bridge."), $cpbrif);
+				foreach ($a_cp as $cpkey => $cp) {
+					if ($cpkey != $cpzone || empty($cpzone)) {
+						if (in_array($cpbrif, explode(",", $cp['interface'])))
+							$input_errors[] = sprintf(gettext("The captive portal cannot be used on interface %s since it is used already on %s instance."), $cpbrif, $cp['zone']);
+					}
+				}
+			}
+		}
 
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
@@ -171,72 +201,110 @@ if ($_POST) {
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] < 4) || $_POST['maxprocperip'] > 100)) {
+	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
+		$input_errors[] = gettext("The total maximum number of concurrent connections must be between 4 and 100.");
+	}
+	$mymaxproc = $_POST['maxproc'] ? $_POST['maxproc'] : 16;
+	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] > $mymaxproc))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
 
 	if (!$input_errors) {
+		$newcp =& $a_cp[$cpzone];
+		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
+		if (empty($newcp['zoneid'])) {
+			$newcp['zoneid'] = 8000;
+			foreach ($a_cp as $keycpzone => $cp)
+				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
+					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
+		}
+		$oldifaces = $newcp['interface'];
 		if (is_array($_POST['cinterface']))
-			$config['captiveportal']['interface'] = implode(",", $_POST['cinterface']);
-		$config['captiveportal']['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
-		$config['captiveportal']['timeout'] = $_POST['timeout'];
-		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
-		$config['captiveportal']['freelogins_count'] = $_POST['freelogins_count'];
-		$config['captiveportal']['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
-		$config['captiveportal']['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
-		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
-		$config['captiveportal']['auth_method'] = $_POST['auth_method'];
-		$config['captiveportal']['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
-		$config['captiveportal']['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
-		$config['captiveportal']['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
-		$config['captiveportal']['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
-		$config['captiveportal']['reauthenticateacct'] = $_POST['reauthenticateacct'];
-		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
-		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
-		$config['captiveportal']['preauthurl'] = $_POST['preauthurl'];
-		$config['captiveportal']['peruserbw'] = $_POST['peruserbw'] ? true : false;
-		$config['captiveportal']['bwdefaultdn'] = $_POST['bwdefaultdn'];
-		$config['captiveportal']['bwdefaultup'] = $_POST['bwdefaultup'];
-		$config['captiveportal']['certificate'] = base64_encode($_POST['cert']);
-		$config['captiveportal']['cacertificate'] = base64_encode($_POST['cacert']);
-		$config['captiveportal']['private-key'] = base64_encode($_POST['key']);
-		$config['captiveportal']['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
-		$config['captiveportal']['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
-		$config['captiveportal']['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
-		$config['captiveportal']['redirurl'] = $_POST['redirurl'];
-		$config['captiveportal']['radiusip'] = $_POST['radiusip'];
-		$config['captiveportal']['radiusip2'] = $_POST['radiusip2'];
-		$config['captiveportal']['radiusport'] = $_POST['radiusport'];
-		$config['captiveportal']['radiusport2'] = $_POST['radiusport2'];
-		$config['captiveportal']['radiusacctport'] = $_POST['radiusacctport'];
-		$config['captiveportal']['radiuskey'] = $_POST['radiuskey'];
-		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
-		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
-		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
-		$config['captiveportal']['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
-		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
-		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
-		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+			$newcp['interface'] = implode(",", $_POST['cinterface']);
+		$newcp['maxproc'] = $_POST['maxproc'];
+		$newcp['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
+		$newcp['timeout'] = $_POST['timeout'];
+		$newcp['idletimeout'] = $_POST['idletimeout'];
+		$newcp['freelogins_count'] = $_POST['freelogins_count'];
+		$newcp['freelogins_resettimeout'] = $_POST['freelogins_resettimeout'];
+		$newcp['freelogins_updatetimeouts'] = $_POST['freelogins_updatetimeouts'] ? true : false;
+		if ($_POST['enable'])
+			$newcp['enable'] = true;
+		else
+			unset($newcp['enable']);
+		if ($_POST['pms_enabled'])
+			$newcp['pms_enabled'] = $_POST['pms_enabled'];
+		else
+			unset($newcp['pms_enabled']);
+		$newcp['auth_method'] = $_POST['auth_method'];
+		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
+		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
+		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
+		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
+		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
+		$newcp['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
+		$newcp['httpsname'] = $_POST['httpsname'];
+		$newcp['preauthurl'] = $_POST['preauthurl'];
+		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
+		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
+		$newcp['certificate'] = base64_encode($_POST['cert']);
+		$newcp['cacertificate'] = base64_encode($_POST['cacert']);
+		$newcp['private-key'] = base64_encode($_POST['key']);
+		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
+		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
+		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
+		$newcp['redirurl'] = $_POST['redirurl'];
+		$newcp['radiusip'] = $_POST['radiusip'];
+		$newcp['radiusip2'] = $_POST['radiusip2'];
+		$newcp['radiusport'] = $_POST['radiusport'];
+		$newcp['radiusport2'] = $_POST['radiusport2'];
+		$newcp['radiusacctport'] = $_POST['radiusacctport'];
+		$newcp['radiuskey'] = $_POST['radiuskey'];
+		$newcp['radiuskey2'] = $_POST['radiuskey2'];
+		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
+		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
+		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
+		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		if (!is_array($newcp['page']))
+			$newcp['page'] = array();
+		$newcp['timeout'] = 60;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
-			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
+			$newcp['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
-			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
+			$newcp['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['logoutfile']['tmp_name']))
-			$config['captiveportal']['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
+			$newcp['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
 
 		write_config();
 
-		$retval = 0;
-		$retval = captiveportal_configure();
+		if (!empty($oldifaces) && $oldifaces != $newcp['interface']) {
+			$ocpinterfaces = explode(",", $oldifaces);
+			foreach ($ocpinterfaces as $cpifgrp) {
+				$listrealif = get_real_interface($cpifgrp);
+				if (does_interface_exist($listrealif)) {
+					pfSense_interface_flags($listrealif, -IFF_IPFW_FILTER);
+					$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
+					if (!empty($carpif)) {
+						$carpsif = explode(" ", $carpif);
+						foreach ($carpsif as $cpcarp)
+							pfSense_interface_flags($cpcarp, -IFF_IPFW_FILTER);
+					}
+				}
+			}
+		}
 
-		$savemsg = get_std_save_message($retval);
-		
+		captiveportal_configure_zone($newcp);
+		filter_configure();
+		header("Location: services_captiveportal_zones.php");
+                exit;
+	} else {
 		if (is_array($_POST['cinterface']))
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
-
-		filter_configure();
 	}
 }
 include("head.inc");
@@ -250,6 +318,7 @@ function enable_change(enable_change) {
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 
 	document.iform.cinterface.disabled = endis;
+	//document.iform.maxproc.disabled = endis;
 	document.iform.maxprocperip.disabled = endis;
 	document.iform.idletimeout.disabled = endis;
 	document.iform.freelogins_count.disabled = endis;
@@ -272,6 +341,7 @@ function enable_change(enable_change) {
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
 	document.iform.auth_method[2].disabled = endis;
+	document.iform.auth_method[3].disabled = endis;
 	document.iform.radmac_enable.disabled = radius_endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.radmac_format.disabled = radius_endis;
@@ -308,12 +378,12 @@ function enable_change(enable_change) {
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), true, "services_captiveportal.php");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
-	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php");	
-	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");	
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
 ?>    </td></tr>
   <tr>
@@ -344,8 +414,7 @@ function enable_change(enable_change) {
 	  <td class="vtable">
 		<table cellpadding="0" cellspacing="0">
                  <tr>
-           			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" 
-value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client IP address (0 = no limit)"); ?></td>
+           			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client IP address (0 = no limit)"); ?></td>
                  </tr>
                </table>
 <?=gettext("This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in " .
@@ -456,6 +525,14 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
         </tr></table>
         <br>
         <?=gettext("If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit."); ?> </td>
+	</tr>
+	<tr>
+      <td valign="top" class="vncell"><?=gettext("PMS authentication"); ?> </td>
+      <td class="vtable">
+        <input name="pms_enabled" type="checkbox" class="formfld" id="pms_enabled" value="yes" <?php if ($pconfig['pms_enabled']) echo "checked"; ?>>
+        <strong><?=gettext("Enable PMS authentication"); ?></strong><br>
+    <?=gettext("If this option is set, users will be authenticated through the PMS backend if they fill the necessary information in the login page.");?>
+	</td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
@@ -586,8 +663,8 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 						$ipaddr = get_interface_ip($ifdesc);
 						if (is_ipaddr($ipaddr)) {
 							$selected = "";
-							if ($ifdesc == $pconfig['radiussrcip_attribute'])
-								$selected = "selected";
+							if ($ipaddr == $pconfig['radiussrcip_attribute'])
+								$ifdesc = "selected";
 							echo "<option value='{$ifdesc}' {$selected}>{$ifdescr} - {$ipaddr}</option>\n";
 						}
 					}
@@ -695,18 +772,18 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
     <?=gettext("Paste a certificate in X.509 PEM format here."); ?></td>
           </tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Portal page contents"); ?></td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Portal page contents"); ?></td>
 	  <td width="78%" class="vtable">
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld file" id="htmlfile"><br>
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
-			if(isset($config['captiveportal']['httpslogin'])) {
-				$href = "https://$host:8001";
+			if($pconfig['zoneid']) {
+				$href = "https://{$host}:{$pconfig['zoneid']}";
 			} else {
-				$href = "http://$host:8000";
+				$href = "http://{$host}:8000";
 			}
 		?>
-		<?php if ($config['captiveportal']['page']['htmltext']): ?>
+		<?php if ($pconfig['page']['htmltext']): ?>
 		<a href="<?=$href?>" target="_new"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
@@ -740,7 +817,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 		<?=gettext("contents"); ?></td>
 	  <td class="vtable">
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
-		<?php if ($config['captiveportal']['page']['errtext']): ?>
+		<?php if ($pconfig['page']['errtext']): ?>
 		<a href="?act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
@@ -754,7 +831,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 		<?=gettext("contents"); ?></td>
 	  <td class="vtable">
 		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
-		<?php if ($config['captiveportal']['page']['logouttext']): ?>
+		<?php if ($pconfig['page']['logouttext']): ?>
 		<a href="?act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
@@ -764,7 +841,9 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%">
+		<?php echo "<input name='zone' id='zone' type='hidden' value='{$cpzone}'/>"; ?>
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="enable_change(true)">
+		<a href="services_captiveportal_zones.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onClick="enable_change(true)"></a>
 	  </td>
 	</tr>
 	<tr>
@@ -785,4 +864,3 @@ enable_change(false);
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

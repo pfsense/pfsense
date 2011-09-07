@@ -44,6 +44,9 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
+$cpzone = $_REQUEST['zone'];
+$cpcfg = $config['captiveportal'][$cpzone];
+
 $orig_host = $_ENV['HTTP_HOST'];
 $orig_request = $_REQUEST['redirurl'];
 $clientip = $_SERVER['REMOTE_ADDR'];
@@ -56,36 +59,36 @@ if (!$clientip) {
 	exit;
 }
 
-if (isset($config['captiveportal']['httpslogin']))
-    $ourhostname = $config['captiveportal']['httpsname'] . ":8001";
+if (isset($config['captiveportal'][$cpzone]['httpslogin']))
+    $ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ($cpcfg['zoneid'] + 1);
 else {
     $ifip = portal_ip_from_client_ip($clientip);
     if (!$ifip)
-    	$ourhostname = $config['system']['hostname'] . ":8000";
+    	$ourhostname = $config['system'][$cpzone]['hostname'] . ":{$cpcfg['zoneid']}";
     else
-    	$ourhostname = "{$ifip}:8000";
+    	$ourhostname = "{$ifip}:{$cpcfg['zoneid']}";
 }
 
 if ($orig_host != $ourhostname) {
     /* the client thinks it's connected to the desired web server, but instead
        it's connected to us. Issue a redirect... */
 
-    if (isset($config['captiveportal']['httpslogin']))
-        header("Location: https://{$ourhostname}/index.php?redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
+    if (isset($config['captiveportal'][$cpzone]['httpslogin']))
+        header("Location: https://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
     else
-        header("Location: http://{$ourhostname}/index.php?redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
+        header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
 
     exit;
 }
-if (!empty($config['captiveportal']['redirurl']))
-	$redirurl = $config['captiveportal']['redirurl'];
+if (!empty($config['captiveportal'][$cpzone]['redirurl']))
+	$redirurl = $config['captiveportal'][$cpzone]['redirurl'];
 else if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 	$redirurl = urldecode($matches[1]);
 else if ($_REQUEST['redirurl'])
 	$redirurl = $_REQUEST['redirurl'];
 
-$macfilter = !isset($config['captiveportal']['nomacfilter']);
-$passthrumac = isset($config['captiveportal']['passthrumacadd']);
+$macfilter = !isset($config['captiveportal'][$cpzone]['nomacfilter']);
+$passthrumac = isset($config['captiveportal'][$cpzone]['passthrumacadd']);
 
 /* find MAC address for client */
 $clientmac = arp_get_mac_by_ip($clientip);
@@ -98,9 +101,9 @@ if (!$clientmac && ($macfilter || $passthrumac)) {
 }
 
 /* find out if we need RADIUS + RADIUSMAC or not */
-if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
+if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
     $radius_enable = TRUE;
-    if (isset($config['captiveportal']['radmac_enable']))
+    if (isset($config['captiveportal'][$cpzone]['radmac_enable']))
         $radmac_enable = TRUE;
 }
 
@@ -149,14 +152,14 @@ EOD;
             // YES: user is good for $timecredit minutes.
             captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
         } else {
-            portal_reply_page($redirurl, "error", $config['voucher']['msgexpired'] ? $config['voucher']['msgexpired']: $errormsg);
+            portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
         }
     } else if (-1 == $timecredit) {  // valid but expired
         captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
-        portal_reply_page($redirurl, "error", $config['voucher']['msgexpired'] ? $config['voucher']['msgexpired']: $errormsg);
+        portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
     } else {
         captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
-        portal_reply_page($redirurl, "error", $config['voucher']['msgnoaccess'] ? $config['voucher']['msgnoaccess'] : $errormsg);
+        portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgnoaccess'] ? $config['voucher'][$cpzone]['msgnoaccess'] : $errormsg);
     }
 
 } else if ($_POST['accept'] && $radius_enable) {
@@ -182,7 +185,7 @@ EOD;
         portal_reply_page($redirurl, "error", $errormsg);
     }
 
-} else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {
+} else if ($_POST['accept'] && $config['captiveportal'][$cpzone]['auth_method'] == "local") {
 
 	//check against local user manager
 	$loginok = local_backed($_POST['auth_user'], $_POST['auth_pass']);
@@ -193,7 +196,7 @@ EOD;
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
         portal_reply_page($redirurl, "error", $errormsg);
     }
-} else if ($_POST['accept'] && $clientip && $config['captiveportal']['auth_method'] == "none") {
+} else if ($_POST['accept'] && $clientip && $config['captiveportal'][$cpzone]['auth_method'] == "none") {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {

@@ -38,7 +38,7 @@ if(!function_exists('captiveportal_syslog'))
 	require_once("captiveportal.inc");
 
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
-	global $g, $config;
+	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
 		$url = "https://{$syncip}";
@@ -50,7 +50,8 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
-	voucher_expire('$vouchers');
+	\$cpzone = $cpzone;
+	voucher_expire(\$vouchers);
 
 EOF;
 
@@ -85,7 +86,7 @@ EOF;
 }
 
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = "1", $stop_time = null) {
-	global $g, $config;
+	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
 		$url = "https://{$syncip}";
@@ -97,6 +98,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
+	\$cpzone = $cpzone;
 	\$radiusservers = captiveportal_get_radius_servers();
 	captiveportal_disconnect(\$dbent, \$radiusservers, \$term_cause, \$stop_time);
 
@@ -133,7 +135,7 @@ EOF;
 }
 
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
-	global $g, $config;
+	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
 	if($port == "443") 
 		$url = "https://{$syncip}";
@@ -144,10 +146,11 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth('$voucher_received');
+	\$cpzone = $cpzone;
+	\$timeleft = voucher_auth({$voucher_received});
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
-	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
+	\$toreturn['voucher']['roll'] = \$config['voucher'][$cpzone]['roll'];
 
 EOF;
 
@@ -176,34 +179,34 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 	$toreturn =  XML_RPC_Decode($resp->value());
-	if (is_array($toreturn['voucher']) && (count($toreturn['voucher']['roll']) <> count($config['voucher']['roll']))) {
-		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
+	if (is_array($toreturn['voucher']) && (count($toreturn['voucher'][$cpzone]['roll']) <> count($config['voucher'][$cpzone]['roll']))) {
+		$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
-		voucher_configure(true);
+		voucher_configure_zone(true);
 	}
 
 	return $toreturn['timeleft'];
 }
 
 function voucher_expire($voucher_received) {
-	global $g, $config;
+	global $g, $config, $cpzone;
 
-	$voucherlck = lock('voucher', LOCK_EX);
+	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
 	// XMLRPC Call over to the master Voucher node
-	if(!empty($config['voucher']['vouchersyncdbip'])) {
-		$syncip   = $config['voucher']['vouchersyncdbip'];
-		$syncport = $config['voucher']['vouchersyncport'];
-		$syncpass = $config['voucher']['vouchersyncpass'];
-		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
+	if(!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
+		$syncport = $config['voucher'][$cpzone]['vouchersyncport'];
+		$syncpass = $config['voucher'][$cpzone]['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher'][$cpzone]['vouchersyncusername'];
 		xmlrpc_sync_voucher_expire($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();
 	$minutes_per_roll = array();
-	if (is_array($config['voucher']['roll'])) {
-		foreach ($config['voucher']['roll'] as $rollent) {
+	if (is_array($config['voucher'][$cpzone]['roll'])) {
+		foreach ($config['voucher'][$cpzone]['roll'] as $rollent) {
 			$tickets_per_roll[$rollent['number']] = $rollent['count'];
 			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
 		}
@@ -223,7 +226,7 @@ function voucher_expire($voucher_received) {
 		if (strlen($voucher) < 3)
 			continue;   // seems too short to be a voucher!
 
-		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
+		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -k {$g['varetc_path']}/voucher_{$cpzone}.public -- $v");
 		list($status, $roll, $nr) = explode(" ", $result);
 		if ($status == "OK") {
 			// check if we have this ticket on a registered roll for this ticket 
@@ -299,27 +302,27 @@ function voucher_expire($voucher_received) {
  * but return a more verbose error and result message back
  */
 function voucher_auth($voucher_received, $test = 0) {
-	global $g, $config;
+	global $g, $config, $cpzone, $dbc;
 
-	if (!isset($config['voucher']['enable']))
+	if (!isset($config['voucher'][$cpzone]['enable']))
 		return 0;
 
-	$voucherlck = lock('voucher', LOCK_EX);
+	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
 	// XMLRPC Call over to the master Voucher node
-	if(!empty($config['voucher']['vouchersyncdbip'])) {
-		$syncip   = $config['voucher']['vouchersyncdbip'];
-		$syncport = $config['voucher']['vouchersyncport'];
-		$syncpass = $config['voucher']['vouchersyncpass'];
-		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
+	if(!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
+		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
+		$syncport = $config['voucher'][$cpzone]['vouchersyncport'];
+		$syncpass = $config['voucher'][$cpzone]['vouchersyncpass'];
+		$vouchersyncusername = $config['voucher'][$cpzone]['vouchersyncusername'];
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();
 	$minutes_per_roll = array();
-	if (is_array($config['voucher']['roll'])) {
-		foreach ($config['voucher']['roll'] as $rollent) {
+	if (is_array($config['voucher'][$cpzone]['roll'])) {
+		foreach ($config['voucher'][$cpzone]['roll'] as $rollent) {
 			$tickets_per_roll[$rollent['number']] = $rollent['count'];
 			$minutes_per_roll[$rollent['number']] = $rollent['minutes'];
 		}
@@ -340,7 +343,7 @@ function voucher_auth($voucher_received, $test = 0) {
 		if (strlen($voucher) < 3)
 			continue;   // seems too short to be a voucher!
 
-		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher.cfg -k {$g['varetc_path']}/voucher.public -- $v");
+		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -k {$g['varetc_path']}/voucher_{$cpzone}.public -- $v");
 		list($status, $roll, $nr) = explode(" ", $result);
 		if ($status == "OK") {
 			if (!$first_voucher) {
@@ -415,7 +418,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	}
 
 	// If we did a XMLRPC sync earlier check the timeleft
-	if (!empty($config['voucher']['vouchersyncdbip'])) 
+	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) 
 		if($remote_time_used < $total_minutes) 
 			$total_minutes = $remote_time_used;
 
@@ -455,9 +458,20 @@ function voucher_auth($voucher_received, $test = 0) {
 }
 
 function voucher_configure($sync = false) {
-	global $config, $g;
+	global $config, $g, $cpzone;
 
-	if (!isset($config['voucher']['enable']))
+	if (is_array($config['voucher'])) {
+		foreach ($config['voucher'] as $voucherzone => $vcfg) {
+			$cpzone = $voucherzone;
+			voucher_configure_zone($sync);
+		}
+	}
+}
+
+function voucher_configure_zone($sync = false) {
+	global $config, $g, $cpzone;
+
+	if (!isset($config['voucher'][$cpzone]['enable']))
 		return 0;
 
         if ($g['booting'])
@@ -465,11 +479,11 @@ function voucher_configure($sync = false) {
 	if ($sync == true)
 	    captiveportal_syslog("Writing voucher db from sync data...");
 
-	$voucherlck = lock('voucher', LOCK_EX);
+	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
         /* write public key used to verify vouchers */
-        $pubkey = base64_decode($config['voucher']['publickey']);
-        $fd = fopen("{$g['varetc_path']}/voucher.public", "w");
+        $pubkey = base64_decode($config['voucher'][$cpzone]['publickey']);
+        $fd = fopen("{$g['varetc_path']}/voucher_{$cpzone}.public", "w");
         if (!$fd) {
             captiveportal_syslog("Voucher error: cannot write voucher.public\n");
 	    unlock($voucherlck);
@@ -477,26 +491,26 @@ function voucher_configure($sync = false) {
         }
         fwrite($fd, $pubkey);
         fclose($fd);
-        @chmod("{$g['varetc_path']}/voucher.public", 0600);
+        @chmod("{$g['varetc_path']}/voucher_{$cpzone}.public", 0600);
 
         /* write config file used by voucher binary to decode vouchers */
-        $fd = fopen("{$g['varetc_path']}/voucher.cfg", "w");
+        $fd = fopen("{$g['varetc_path']}/voucher_{$cpzone}.cfg", "w");
         if (!$fd) {
-            printf(gettext("Error: cannot write voucher.cfg") . "\n");
+	    printf(gettext("Error: cannot write voucher.cfg") . "\n");
 	    unlock($voucherlck);
             return 1;
         }
-        fwrite($fd, "{$config['voucher']['rollbits']},{$config['voucher']['ticketbits']},{$config['voucher']['checksumbits']},{$config['voucher']['magic']},{$config['voucher']['charset']}\n");
+        fwrite($fd, "{$config['voucher'][$cpzone]['rollbits']},{$config['voucher'][$cpzone]['ticketbits']},{$config['voucher'][$cpzone]['checksumbits']},{$config['voucher'][$cpzone]['magic']},{$config['voucher'][$cpzone]['charset']}\n");
         fclose($fd);
-        @chmod("{$g['varetc_path']}/voucher.cfg", 0600);
+        @chmod("{$g['varetc_path']}/voucher_{$cpzone}.cfg", 0600);
 	unlock($voucherlck);
 
-        if (($g['booting'] || $sync == true) && is_array($config['voucher']['roll'])) {
+        if (($g['booting'] || $sync == true) && is_array($config['voucher'][$cpzone]['roll'])) {
 
-		$voucherlck = lock('voucher', LOCK_EX);
+		$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
             // create active and used DB per roll on ramdisk from config
-            foreach ($config['voucher']['roll'] as $rollent) {
+            foreach ($config['voucher'][$cpzone]['roll'] as $rollent) {
 
                 $roll = $rollent['number'];
                 voucher_write_used_db($roll, $rollent['used']);
@@ -528,25 +542,25 @@ function voucher_configure($sync = false) {
  * Bitstring must already be base64_encoded!
  */
 function voucher_write_used_db($roll, $vdb) {
-	global $g;
+	global $g, $cpzone;
 
-	$fd = fopen("{$g['vardb_path']}/voucher_used_$roll.db", "w");
+	$fd = fopen("{$g['vardb_path']}/voucher_{$cpzone}_used_$roll.db", "w");
 	if ($fd) {
 		fwrite($fd, $vdb . "\n");
 		fclose($fd);
 	} else
-        	voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
+		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%s_used_%2$s.db'), $g['vardb_path'], $cpzone, $roll));
 }
 
 /* return assoc array of active vouchers with activation timestamp
  * voucher is index. 
  */
 function voucher_read_active_db($roll) {
-	global $g;
+	global $g, $cpzone;
 
 	$active = array();
 	$dirty = 0;
-	$file = "{$g['vardb_path']}/voucher_active_$roll.db";
+	$file = "{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db";
 	if (file_exists($file)) {
 		$fd = fopen($file, "r");
 		if ($fd) {
@@ -574,11 +588,11 @@ function voucher_read_active_db($roll) {
 
 /* store array of active vouchers back to DB */
 function voucher_write_active_db($roll, $active) {
-    global $g;
+    global $g, $cpzone;
 
 	if (!is_array($active))
 		return;
-    $fd = fopen("{$g['vardb_path']}/voucher_active_$roll.db", "w");
+    $fd = fopen("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", "w");
     if ($fd) {
         foreach($active as $voucher => $value)
             fwrite($fd, "$voucher,$value\n");
@@ -588,7 +602,7 @@ function voucher_write_active_db($roll, $active) {
 
 /* return how many vouchers are marked used on a roll */
 function voucher_used_count($roll) {
-    global $g;
+    global $g, $cpzone;
 
     $bitstring = voucher_read_used_db($roll);
     $max = strlen($bitstring) * 8;
@@ -604,26 +618,27 @@ function voucher_used_count($roll) {
 }
 
 function voucher_read_used_db($roll) {
-    global $g;
+    global $g, $cpzone;
 
     $vdb = "";
-    $file = "{$g['vardb_path']}/voucher_used_$roll.db";
+    $file = "{$g['vardb_path']}/voucher_{$cpzone}_used_$roll.db";
     if (file_exists($file)) {
         $fd = fopen($file, "r");
         if ($fd) {
             $vdb = trim(fgets($fd));
             fclose($fd);
         } else {
-            voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_used_%2$s.db'), $g['vardb_path'], $roll));
+	    voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%s_used_%2$s.db'), $g['vardb_path'], $cpzone, $roll));
+            voucher_log(LOG_ERR, "cant read {$g['vardb_path']}/voucher_{$cpzone}_used_$roll.db");
         }
     }
     return base64_decode($vdb);
 }
 
 function voucher_unlink_db($roll) {
-    global $g;
-    @unlink("{$g['vardb_path']}/voucher_used_$roll.db");
-    @unlink("{$g['vardb_path']}/voucher_active_$roll.db");
+    global $g, $cpzone;
+    @unlink("{$g['vardb_path']}/voucher_{$cpzone}_used_$roll.db");
+    @unlink("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db");
 }
 
 /* we share the log with captiveportal for now */
@@ -640,15 +655,26 @@ function voucher_log($priority, $message) {
  * Called during reboot -> system_reboot_cleanup() and every active voucher change
  */
 function voucher_save_db_to_config() {
-    global $config, $g;
+    global $config, $g, $cpzone;
+
+	if (is_array($config['voucher'])) {
+		foreach ($configure['voucher'] as $voucherzone => $vcfg) {
+			$cpzone = $voucherzone;
+			voucher_save_db_to_config_zone();
+		}
+	}
+}
+
+function voucher_save_db_to_confifg_zone() {
+    global $config, $g, $cpzone;
     
-    if (!isset($config['voucher']['enable']))
+    if (!isset($config['voucher'][$cpzone]['enable']))
         return;   // no vouchers or don't want to save DB's
 
-    $voucherlck = lock('voucher', LOCK_EX);
+    $voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
     // walk all active rolls and save runtime DB's to flash
-    $a_roll = &$config['voucher']['roll'];
+    $a_roll = &$config['voucher'][$cpzone]['roll'];
     while (list($key, $value) = each($a_roll)) {
         $rollent = &$a_roll[$key];
         $roll = $rollent['number'];

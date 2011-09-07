@@ -834,9 +834,9 @@ function system_generate_lighty_config($filename,
 		echo "system_generate_lighty_config() being called $mt\n";
 	}
 
-	if($captive_portal == true)  {
+	if($captive_portal != false)  {
 		$captiveportal = ",\"mod_rewrite\"";
-		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
+		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 		$captive_portal_module = "";
 		$maxprocperip = $config['captiveportal']['maxprocperip'];
 		if($maxprocperip and $maxprocperip > 0)
@@ -914,6 +914,10 @@ EOC;
 
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
+		if ($captive_portal != false)
+			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
+		else
+			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
 		$cgi_config = "";
 		$fastcgi_config = <<<EOD
 #### fastcgi module
@@ -921,7 +925,7 @@ EOC;
 fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
-			"socket" => "{$g['tmp_path']}/php-fastcgi.socket",
+			"socket" => "{$fast_cgi_path}",
 			"min-procs" => 0,
 			"max-procs" => {$max_procs},
 {$bin_environment}

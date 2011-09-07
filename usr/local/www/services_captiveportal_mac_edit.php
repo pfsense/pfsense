@@ -43,9 +43,9 @@ function passthrumacscmp($a, $b) {
 }
 
 function passthrumacs_sort() {
-        global $config;
+        global $config, $cpzone;
 
-        usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
+        usort($config['captiveportal'][$cpzone]['passthrumac'],"passthrumacscmp");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -59,14 +59,26 @@ require("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit pass-through MAC address"));
 
-if (!is_array($config['captiveportal']['passthrumac']))
-	$config['captiveportal']['passthrumac'] = array();
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
 
-$a_passthrumacs = &$config['captiveportal']['passthrumac'];
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
+
+if (!is_array($a_cp[$cpzone]['passthrumac']))
+	$a_cp[$cpzone]['passthrumac'] = array();
+$a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['mac'] = $a_passthrumacs[$id]['mac'];
@@ -138,11 +150,12 @@ if ($_POST) {
 		}
 		
 		$rules .= captiveportal_passthrumac_configure_entry($mac);
-		file_put_contents("{$g['tmp_path']}/tmpmacedit{$id}", $rules);
-		mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmpmacedit{$id}");
-		@unlink("{$g['tmp_path']}/tmpmacedit{$id}");
+		file_put_contents("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}", $rules);
+		captiveportal_ipfw_set_context($cpzone);
+		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
+		@unlink("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
 
-		header("Location: services_captiveportal_mac.php");
+		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;
 	}
 }
@@ -156,7 +169,7 @@ include("head.inc");
 		<tr>
                         <td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Pass-through MAC address");?></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
@@ -186,6 +199,7 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+                    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
                     <?php if (isset($id) && $a_passthrumacs[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>

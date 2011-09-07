@@ -42,10 +42,24 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"));
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"), $a_cp[$cpzone]['zone']);
 
 include("head.inc");
 include("fbegin.inc");
+
 ?>
 
 <form action="status_captiveportal_test.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -53,10 +67,10 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php");
-        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php");
-        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.php?zone={$cpzone}");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>
@@ -74,6 +88,7 @@ include("fbegin.inc");
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
+    <input name="zone" type="hidden" value="<?=$cpzone;?>">
     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
     </td>
   </tr>

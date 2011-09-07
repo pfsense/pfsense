@@ -41,24 +41,37 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Vouchers"));
+
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 
 function clientcmp($a, $b) {
     global $order;
     return strcmp($a[$order], $b[$order]);
 }
 
-if (!is_array($config['voucher']['roll'])) {
-    $config['voucher']['roll'] = array();
+if (!is_array($config['voucher'][$cpzone]['roll'])) {
+    $config['voucher'][$cpzone]['roll'] = array();
 }
-$a_roll = $config['voucher']['roll'];
+$a_roll = $config['voucher'][$cpzone]['roll'];
 
 $db = array();
 
 foreach($a_roll as $rollent) {
     $roll = $rollent['number'];
     $minutes = $rollent['minutes'];
-    $active_vouchers = file("{$g['vardb_path']}/voucher_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach($active_vouchers as $voucher => $line) {
         list($voucher,$timestamp, $minutes) = explode(",", $line);
         $remaining = (($timestamp + 60*$minutes) - time());
@@ -87,10 +100,10 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php");
-        $tab_array[] = array(gettext("Active Vouchers"), true, "status_captiveportal_vouchers.php");
-        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Active Vouchers"), true, "status_captiveportal_vouchers.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone={$cpzone}");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>

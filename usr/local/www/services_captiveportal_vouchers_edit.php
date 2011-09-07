@@ -47,28 +47,42 @@ require_once("voucher.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
 
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
 if (!is_array($config['voucher'])) {
     $config['voucher'] = array();
 }
 
-if (!is_array($config['voucher']['roll'])) {
-	$config['voucher']['roll'] = array();
+if (!is_array($config['voucher'][$cpzone]['roll'])) {
+	$config['voucher'][$cpzone]['roll'] = array();
 }
-$a_roll = &$config['voucher']['roll'];
+$a_roll = &$config['voucher'][$cpzone]['roll'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_roll[$id]) {
+	$pconfig['zone'] = $a_roll[$id]['zone'];
 	$pconfig['number'] = $a_roll[$id]['number'];
 	$pconfig['count'] = $a_roll[$id]['count'];
 	$pconfig['minutes'] = $a_roll[$id]['minutes'];
 	$pconfig['comment'] = $a_roll[$id]['comment'];
 }
 
-$maxnumber = (1<<$config['voucher']['rollbits']) -1;    // Highest Roll#
-$maxcount = (1<<$config['voucher']['ticketbits']) -1;   // Highest Ticket#
+$maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;    // Highest Roll#
+$maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;   // Highest Ticket#
 
 if ($_POST) {
 	
@@ -103,12 +117,13 @@ if ($_POST) {
         if (isset($id) && $a_roll[$id])
             $rollent = $a_roll[$id];
 
+        $rollent['zone']  = $_POST['zone'];
         $rollent['number']  = $_POST['number'];
         $rollent['minutes'] = $_POST['minutes'];
         $rollent['comment'] = $_POST['comment'];
 
         /* New Roll or modified voucher count: create bitmask */
-	$voucherlck = lock('voucher');
+	$voucherlck = lock("voucher{$cpzone}");
         if ($_POST['count'] != $rollent['count']) {
             $rollent['count'] = $_POST['count'];
             $len = ($rollent['count']>>3) + 1;   // count / 8 +1
@@ -142,7 +157,7 @@ if ($_POST) {
 
         write_config();
 
-        header("Location: services_captiveportal_vouchers.php");
+        header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
         exit;
     }
 }
@@ -190,6 +205,7 @@ include("head.inc");
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"> 
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
+		<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
 		<?php if (isset($id) && $a_roll[$id]): ?>
 		<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 		<?php endif; ?>

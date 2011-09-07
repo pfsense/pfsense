@@ -48,13 +48,13 @@ RADIUS AUTHENTICATION
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 
-    global $config;
+    global $config, $cpzone;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac(get_real_interface("wan")));
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
-    $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
+    $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     // Do we even need to set it to NULL?
     $retvalue['error'] = $retvalue['reply_message'] = $retvalue['url_redirection'] = $retvalue['session_timeout'] = $retvalue['idle_timeout'] = $retvalue['session_terminate_time'] = null;
 
@@ -65,10 +65,10 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
         	$callingstationid = $clientip;
         	break;
         default:
-		if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
-			$calledstationid = $config['captiveportal']['radiussrcip_attribute'];
+		if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute']))
+			$calledstationid = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
 		else
-        		$calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+        		$calledstationid = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
         	$callingstationid = $clientmac;
 		break;
     }

@@ -48,20 +48,30 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"));
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
 
-if (!is_array($config['captiveportal']['allowedip']))
-	$config['captiveportal']['allowedip'] = array();
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
 
-$a_allowedips = &$config['captiveportal']['allowedip'] ;
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 
 if ($_GET['act'] == "del") {
+	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
 		
-		if (isset($config['captiveportal']['enable'])) {
+		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			if (!empty($ipent['sn']))
 				$ipent['ip'] .= "/{$ipent['sn']}";
+			captiveportal_ipfw_set_context($cpzone);
 			mwexec("/sbin/ipfw table 3 delete " . $ipent['ip']);
 			mwexec("/sbin/ipfw table 4 delete " . $ipent['ip']);
 			mwexec("/sbin/ipfw table 5 delete " . $ipent['ip']);
@@ -74,7 +84,7 @@ if ($_GET['act'] == "del") {
 			
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
-		header("Location: services_captiveportal_ip.php");
+		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}
 }
@@ -85,17 +95,18 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_ip.php" method="post">
+<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
-	$tab_array[] = array(gettext("Allowed IP addresses"), true, "services_captiveportal_ip.php");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php");
-	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed IP addresses"), true, "services_captiveportal_ip.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
 ?>
   </td></tr>
@@ -103,19 +114,20 @@ include("head.inc");
   <td class="tabcont">
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-	  <td width="30%" class="listhdrr"><?=gettext("IP address"); ?></td>
-	  <td width="60%" class="listhdr"><?=gettext("Description"); ?></td>
+	  <td width="40%" class="listhdrr"><?=gettext("IP address"); ?></td>
+	  <td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 	  <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>
 	</tr>
-  <?php $i = 0; foreach ($a_allowedips as $ip): ?>
-	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
+<?php	if (is_array($a_cp[$cpzone]['allowedip'])):
+		$i = 0; foreach ($a_cp[$cpzone]['allowedip'] as $ip): ?>
+	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>'">
 	  <td class="listlr">
 		<?php
 		if($ip['dir'] == "to") {
@@ -138,17 +150,17 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="services_captiveportal_ip.php?zone=<?=$cpzone;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0"></a></td>
 	</tr>
-  <?php $i++; endforeach; ?>
+  <?php $i++; endforeach; endif; ?>
 	<tr>
 	  <td class="list" colspan="2">&nbsp;</td>
 	  <td class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_ip_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
 	  </td>

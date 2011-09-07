@@ -46,9 +46,9 @@ function allowedipscmp($a, $b) {
 }
 
 function allowedips_sort() {
-	global $g, $config;
+	global $g, $config, $cpzone;
 
-	usort($config['captiveportal']['allowedip'],"allowedipscmp");
+	usort($config['captiveportal'][$cpzone]['allowedip'],"allowedipscmp");
 }
 
 $statusurl = "status_captiveportal.php";
@@ -62,14 +62,26 @@ require("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed IP address"));
 
-if (!is_array($config['captiveportal']['allowedip']))
-	$config['captiveportal']['allowedip'] = array();
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+                        
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
 
-$a_allowedips = &$config['captiveportal']['allowedip'];
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
+
+if (!is_array($config['captiveportal'][$cpzone]['allowedip']))
+	$config['captiveportal'][$cpzone]['allowedip'] = array();
+$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];
@@ -135,17 +147,18 @@ if ($_POST) {
 		
 		write_config();
 
-		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
+		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
 			for ($i = 3; $i < 10; $i++)
 				$rules .= "table {$i} delete {$oldip}\n";
 			$rules .= captiveportal_allowedip_configure_entry($ip);
-			file_put_contents("{$g['tmp_path']}/allowedip_tmp{$id}", $rules);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedip_tmp{$id}");
-			@unlink("{$g['tmp_path']}/allowedip_tmp{$id}");
+			file_put_contents("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}", $rules);
+			captiveportal_ipfw_set_context($cpzone);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");
+			@unlink("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");
 		}
 		
-		header("Location: services_captiveportal_ip.php");
+		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}
 }
@@ -216,6 +229,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
 				<?php if (isset($id) && $a_allowedips[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>

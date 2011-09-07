@@ -41,12 +41,25 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Voucher Rolls"));
 
-if (!is_array($config['voucher']['roll'])) {
-    $config['voucher']['roll'] = array();
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
 }
-$a_roll = &$config['voucher']['roll'];
+
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Voucher Rolls"), $a_cp[$cpzone]['zone']);
+
+if (!is_array($config['voucher'][$cpzone]['roll'])) {
+    $config['voucher'][$cpzone]['roll'] = array();
+}
+$a_roll = &$config['voucher'][$cpzone]['roll'];
 
 include("head.inc");
 include("fbegin.inc");
@@ -57,10 +70,10 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php");
-        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php");
-        $tab_array[] = array(gettext("Voucher Rolls"), true, "status_captiveportal_voucher_rolls.php");
-        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php");
+        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Voucher Rolls"), true, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
+        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone={$cpzone}");
         display_top_tabs($tab_array);
 ?> 
 </td></tr>
@@ -78,7 +91,7 @@ include("fbegin.inc");
      <td class="listhdr"><?=gettext("ready"); ?></td>
   </tr>
 <?php 
-    $voucherlck = lock('voucher');
+    $voucherlck = lock("vouche{$cpzone}r");
     $i = 0; foreach($a_roll as $rollent): 
     $used = voucher_used_count($rollent['number']);
     $active = count(voucher_read_active_db($rollent['number']),$rollent['minutes']);

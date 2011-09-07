@@ -1574,7 +1574,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													if($i <> $number) {
 														echo "<option value=\"{$i}\" ";
 														if ($i == $pconfig['dhcp6-pd-sla-id']) echo "selected";
-														echo ">" . $i . "</option>";
+														echo ">" . dechex($i) . "</option>";
 													}
 													$i++;
 												}

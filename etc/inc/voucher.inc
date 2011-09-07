@@ -629,7 +629,6 @@ function voucher_read_used_db($roll) {
             fclose($fd);
         } else {
 	    voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%s_used_%2$s.db'), $g['vardb_path'], $cpzone, $roll));
-            voucher_log(LOG_ERR, "cant read {$g['vardb_path']}/voucher_{$cpzone}_used_$roll.db");
         }
     }
     return base64_decode($vdb);

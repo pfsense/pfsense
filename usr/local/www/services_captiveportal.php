@@ -109,11 +109,17 @@ if (isset($cpzone) && $a_cp[$cpzone]) {
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
 	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
+	$pconfig['radiusip3'] = $a_cp[$cpzone]['radiusip3'];
+	$pconfig['radiusip4'] = $a_cp[$cpzone]['radiusip4'];
 	$pconfig['radiusport'] = $a_cp[$cpzone]['radiusport'];
 	$pconfig['radiusport2'] = $a_cp[$cpzone]['radiusport2'];
+	$pconfig['radiusport3'] = $a_cp[$cpzone]['radiusport3'];
+	$pconfig['radiusport4'] = $a_cp[$cpzone]['radiusport4'];
 	$pconfig['radiusacctport'] = $a_cp[$cpzone]['radiusacctport'];
 	$pconfig['radiuskey'] = $a_cp[$cpzone]['radiuskey'];
 	$pconfig['radiuskey2'] = $a_cp[$cpzone]['radiuskey2'];
+	$pconfig['radiuskey3'] = $a_cp[$cpzone]['radiuskey3'];
+	$pconfig['radiuskey4'] = $a_cp[$cpzone]['radiuskey4'];
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
@@ -192,20 +198,28 @@ if ($_POST) {
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
+	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
+	}
+	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
+	}
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
+	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
+	}
+	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
+	}
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
-		$input_errors[] = gettext("The total maximum number of concurrent connections must be between 4 and 100.");
-	}
-	$mymaxproc = $_POST['maxproc'] ? $_POST['maxproc'] : 16;
-	if ($_POST['maxprocperip'] && (!is_numeric($_POST['maxprocperip']) || ($_POST['maxprocperip'] > $mymaxproc))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
 
@@ -255,13 +269,33 @@ if ($_POST) {
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
 		$newcp['redirurl'] = $_POST['redirurl'];
-		$newcp['radiusip'] = $_POST['radiusip'];
-		$newcp['radiusip2'] = $_POST['radiusip2'];
+		if (isset($_POST['radiusip']))
+			$config['captiveportal']['radiusip'] = $_POST['radiusip'];
+		else
+			unset($config['captiveportal']['radiusip3']);
+		if (isset($_POST['radiusip2']))
+			$config['captiveportal']['radiusip2'] = $_POST['radiusip2'];
+		else
+			unset($config['captiveportal']['radiusip2']);
+		if (isset($_POST['radiusip3']))
+			$config['captiveportal']['radiusip3'] = $_POST['radiusip3'];
+		else
+			unset($config['captiveportal']['radiusip3']);
+		if (isset($_POST['radiusip4']))
+			$config['captiveportal']['radiusip4'] = $_POST['radiusip4'];
+		else
+			unset($config['captiveportal']['radiusip4']);
 		$newcp['radiusport'] = $_POST['radiusport'];
 		$newcp['radiusport2'] = $_POST['radiusport2'];
+		if (isset($_POST['radiusport3']))
+			$config['captiveportal']['radiusport3'] = $_POST['radiusport3'];
+		if (isset($_POST['radiusport4']))
+			$config['captiveportal']['radiusport4'] = $_POST['radiusport4'];
 		$newcp['radiusacctport'] = $_POST['radiusacctport'];
 		$newcp['radiuskey'] = $_POST['radiuskey'];
 		$newcp['radiuskey2'] = $_POST['radiuskey2'];
+		$newcp['radiuskey3'] = $_POST['radiuskey3'];
+		$newcp['radiuskey4'] = $_POST['radiuskey4'];
 		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
@@ -329,10 +363,14 @@ function enable_change(enable_change) {
 	document.iform.redirurl.disabled = endis;
 	document.iform.radiusip.disabled = radius_endis;
 	document.iform.radiusip2.disabled = radius_endis;
+	document.iform.radiusip3.disabled = radius_endis;
+	document.iform.radiusip4.disabled = radius_endis;
 	document.iform.radiusport.disabled = radius_endis;
 	document.iform.radiusport2.disabled = radius_endis;
 	document.iform.radiuskey.disabled = radius_endis;
 	document.iform.radiuskey2.disabled = radius_endis;
+	document.iform.radiuskey3.disabled = radius_endis;
+	document.iform.radiuskey4.disabled = radius_endis;
 	document.iform.radacct_enable.disabled = radius_endis;
 	document.iform.peruserbw.disabled = endis;
 	document.iform.bwdefaultdn.disabled = endis;
@@ -596,6 +634,44 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
+				<td class="vtable"><input name="radiusip3" type="text" class="formfld unknown" id="radiusip3" size="20" value="<?=htmlspecialchars($pconfig['radiusip3']);?>"><br>
+				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here."); ?></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
+				<td class="vtable"><input name="radiusport3" type="text" class="formfld unknown" id="radiusport3" size="5" value="<?=htmlspecialchars($pconfig['radiusport3']);?>"></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
+				<td class="vtable"><input name="radiuskey3" type="text" class="formfld unknown" id="radiuskey3" size="16" value="<?=htmlspecialchars($pconfig['radiuskey3']);?>"></td>
+			</tr>
+			<tr>
+			  <td colspan="2" class="list" height="12"></td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Secondary RADIUS server"); ?></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
+				<td class="vtable"><input name="radiusip4" type="text" class="formfld unknown" id="radiusip4" size="20" value="<?=htmlspecialchars($pconfig['radiusip4']);?>"><br>
+				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here."); ?></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
+				<td class="vtable"><input name="radiusport4" type="text" class="formfld unknown" id="radiusport4" size="5" value="<?=htmlspecialchars($pconfig['radiusport4']);?>"></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
+				<td class="vtable"><input name="radiuskey4" type="text" class="formfld unknown" id="radiuskey4" size="16" value="<?=htmlspecialchars($pconfig['radiuskey4']);?>"></td>
+			</tr>
+			<tr>
+			  <td colspan="2" class="list" height="12"></td>
+			</tr>
+			<tr>
 				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Accounting"); ?></td>
 			</tr>
 			<tr>
@@ -664,7 +740,7 @@ function enable_change(enable_change) {
 						if (is_ipaddr($ipaddr)) {
 							$selected = "";
 							if ($ipaddr == $pconfig['radiussrcip_attribute'])
-								$ifdesc = "selected";
+								$selected= "selected";
 							echo "<option value='{$ifdesc}' {$selected}>{$ifdescr} - {$ipaddr}</option>\n";
 						}
 					}

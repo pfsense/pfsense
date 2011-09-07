@@ -107,6 +107,11 @@ if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
         $radmac_enable = TRUE;
 }
 
+/* find radius context */
+$radiusctx = 'first';
+if ($_POST['auth_user2'])
+	$radiusctx = 'second';
+
 if ($_POST['logout_id']) {
 	echo <<<EOD
 <HTML>
@@ -126,7 +131,7 @@ setTimeout('window.close();',5000) ;
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);
 	exit;
-} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
+} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip, $radiusctx)) {
     /* radius functions handle everything so we exit here since we're done */
     exit;
 
@@ -164,8 +169,15 @@ EOD;
 
 } else if ($_POST['accept'] && $radius_enable) {
 
-    if ($_POST['auth_user'] && $_POST['auth_pass']) {
-        $auth_list = radius($_POST['auth_user'],$_POST['auth_pass'],$clientip,$clientmac,"USER LOGIN");
+    if (($_POST['auth_user'] && $_POST['auth_pass']) || ($_POST['auth_user2'] && $_POST['auth_pass2'])) {
+	if (!empty($_POST['auth_user'])) {
+		$user = $_POST['auth_user'];
+		$paswd = $_POST['auth_pass'];
+	} else if (!empty($_POST['auth_user2'])) {
+		$user = $_POST['auth_user2'];
+		$paswd = $_POST['auth_pass2'];
+	}
+	$auth_list = radius($user,$paswd,$clientip,$clientmac,"USER LOGIN", $radiusctx);
 	$type = "error";
 	if (!empty($auth_list['url_redirection'])) {
 		$redirurl = $auth_list['url_redirection'];
@@ -173,15 +185,21 @@ EOD;
 	}
 
         if ($auth_list['auth_val'] == 1) {
-            captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR",$auth_list['error']);
+            captiveportal_logportalauth($user,$clientmac,$clientip,"ERROR",$auth_list['error']);
  	    portal_reply_page($redirurl, $type, $auth_list['error'] ? $auth_list['error'] : $errormsg);
         }
         else if ($auth_list['auth_val'] == 3) {
-            captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
+            captiveportal_logportalauth($user,$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
             portal_reply_page($redirurl, $type, $auth_list['reply_message'] ? $auth_list['reply_message'] : $errormsg);
         }
     } else {
-        captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
+	if (!empty($_POST['auth_user']))
+		$user = $_POST['auth_user'];
+	else if (!empty($_POST['auth_user2']))
+		$user = $_POST['auth_user2'];
+	else 
+		$user = 'unknown';
+	captiveportal_logportalauth($user ,$clientmac,$clientip,"ERROR");
         portal_reply_page($redirurl, "error", $errormsg);
     }
 

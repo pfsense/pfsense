@@ -739,7 +739,7 @@ function enable_change(enable_change) {
 						$ipaddr = get_interface_ip($ifdesc);
 						if (is_ipaddr($ipaddr)) {
 							$selected = "";
-							if ($ipaddr == $pconfig['radiussrcip_attribute'])
+							if ($ifdesc == $pconfig['radiussrcip_attribute'])
 								$selected= "selected";
 							echo "<option value='{$ifdesc}' {$selected}>{$ifdescr} - {$ipaddr}</option>\n";
 						}

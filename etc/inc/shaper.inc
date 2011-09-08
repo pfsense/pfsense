@@ -587,7 +587,7 @@ class altq_root_queue {
 		if ($altq)
 			$scheduler = ": " . $altq->GetScheduler();
 		$form = "<tr><td width=\"20%\" class=\"vtable\">";
-		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=". $this->GetInterface()."&action=show\">".$this->GetInterface().": ".$scheduler."</a>";
+		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=". $this->GetInterface()."&action=show\">". $shaperIFlist[$this->GetInterface()] .": ".$scheduler."</a>";
 		$form .= "</td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"50%\" class=\"vncellreq\">";
@@ -1196,7 +1196,7 @@ class priq_queue {
 		if ($altq)
 			$scheduler = ": " . $altq->GetScheduler();
 		$form = "<tr><td width=\"20%\" class=\"vtable\">";
-		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=" . $this->GetInterface()."&action=show\">".$this->GetInterface().": ".$scheduler."</a>";
+		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=" . $this->GetInterface()."&action=show\">". $shaperIFlist[$this->GetInterface()] .": ".$scheduler."</a>";
 		$form .= "</td></tr>";
 		/* 
 		 * XXX: Hack in sight maybe fix with a class that wraps all

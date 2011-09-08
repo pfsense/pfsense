@@ -116,9 +116,19 @@ include("head.inc");
     <td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr><td colspan="6" align="left">
-			<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a><br/><br/>
-		</td></tr>
+			<tr>
+				<td colspan="3" align="left" valign="middle">
+					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
+					<br/><br/>
+				</td>
+				<td colspan="3" align="right" valign="middle">
+					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+						<input id="filtertext" name="filtertext" class="formfld search" value="<?=gettext($filtertext);?>" />
+						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
+						<br/><br/>
+					</form>
+				</td>	
+			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
 ?>
@@ -197,13 +207,6 @@ include("head.inc");
 					<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
 				</form>
 			</td>
-			<td align="right" valign="top" colspan="3">
-				<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-					<input id="filtertext" name="filtertext" value="<?=gettext($filtertext);?>" />
-					<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-				</form>
-			</td>
-
 		</tr>
 		</table>
 		</div>

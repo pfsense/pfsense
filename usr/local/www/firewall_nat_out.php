@@ -138,7 +138,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 
 					/* PPTP subnet */
 					if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
-						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$config['pptpd']['n_pptp_units']));
+						$pptptopip = $config['pptpd']['n_pptp_units'] - 1; 
+						$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$pptptopip));
 						foreach ($pptp_subnets as $pptpsn) {
 							$natent = array();
 							$natent['source']['network'] = $pptpsn;

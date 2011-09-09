@@ -114,7 +114,7 @@ if ($_POST) {
 
 		if($_POST['preferoldsa_enable'] == "yes")
 			$config['ipsec']['preferoldsa'] = true;
-		else
+		elseif (isset($config['ipsec']['preferoldsa']))
 			unset($config['ipsec']['preferoldsa']);
 
 		$need_racoon_restart = false;

@@ -425,14 +425,14 @@
                         foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
                                 if ($realif == $ppp['if']) {
                                         $ifaces = explode(",", $ppp['ports']);
-                                        $wanif = $ifaces[0];
-					unset($config['ppps']['ppp'][$pppid]);
-					break;
+                                        $wanif = $ifaces[0]; $ppid = $pppid;
                                 }
                         }
                 }
-		if (!empty($wanif))
+		if (!empty($wanif)) {
 			$config['interfaces']['wan']['if'] = $wanif;
+			unset($config['ppps']['ppp'][$ppid]);
+		}
 
 		if ($type == "pppoe" || $type == "pptp") {
 			if ($type == "pptp") {

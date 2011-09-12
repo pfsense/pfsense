@@ -419,17 +419,23 @@
 			die;
 		}
 		$type = $_POST['selectedtype'];
-		if ($type == "pppoe" || $type == "pptp") {
-			if (!is_array($config['ppps']['ppp']))
-				$config['ppps']['ppp'] = array();
-			if (count($config['ppps']['ppp'])) {
-				foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-					if ($ppp['ptpid'] == "0") {
-						unset($config['ppps']['ppp'][$pppid]);
-						// break;
+
+		if (!is_array($config['ppps']['ppp']))
+			$config['ppps']['ppp'] = array();
+		if (count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($ppp['ptpid'] == "0") {
+					if ((substr($config['interfaces']['wan']['if'],0,5) == "pppoe") || (substr($config['interfaces']['wan']['if'],0,4) == "pptp")) {
+						$oldif = explode(",", $ppp['ports']);
+						$config['interfaces']['wan']['if'] = $oldif[0];
 					}
+					if ($type == "pppoe" || $type == "pptp")
+						unset($config['ppps']['ppp'][$pppid]);
 				}
 			}
+		}
+
+		if ($type == "pppoe" || $type == "pptp") {
 			if ($type == "pptp") {
 				$config['wizardtemp']['wan']['username'] = $config['wizardtemp']['wan']['pptpusername'];
 				$config['wizardtemp']['wan']['password'] = $config['wizardtemp']['wan']['pptppassword'];

@@ -37,6 +37,21 @@
 	require_once("shaper.inc");
 	require_once("rrd.inc");
 
+	function console_get_interface_from_ppp($realif) {
+		global $config;
+
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($realif == $ppp['if']) {
+					$ifaces = explode(",", $ppp['ports']);
+					return $ifaces[0];
+				}
+			}
+		}
+
+		return "";
+	}
+
 	function prompt_for_enable_dhcp_server() {
 		global $config, $fp, $interface;
 		if($interface == "wan") {
@@ -98,14 +113,17 @@
 		echo "Invalid interface!\n";
 		exit;
 	}
-		
+
+	$ifaceassigned = "";
 	do {
-		
 		if($interface == "wan") {
 			$upperifname = strtoupper($interface);
 			echo gettext("Configure {$upperifname} interface via DHCP?  [y|n]") . "\n> ";
 			$intdhcp = chop(fgets($fp));
 			if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
+				$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
+				if (!empty($ifppp))
+					$ifaceassigned = $ifppp;
 				$intip = "dhcp";
 				$intbits = "";
 				$isintdhcp = true;
@@ -131,12 +149,17 @@
 		  			$intbits = chop(fgets($fp));
 					$restart_dhcpd = true;
 		  		} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
-		  	} 
+		  	}
+			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
+			if (!empty($ifppp))
+				$ifaceassigned = $ifppp;
 		}
 
 
 	} while ($addr_blank);
 
+	if (!empty($ifaceassigned))
+		$config['interfaces'][$interface]['if'] = $ifaceassigned;
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
 	$config['interfaces'][$interface]['enable'] = true;

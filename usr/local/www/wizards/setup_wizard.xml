@@ -420,18 +420,18 @@
 		}
 		$type = $_POST['selectedtype'];
 
-		$wanif = ""; $ppid = "";
+		$wanif = "";
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
                         foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
                                 if ($realif == $ppp['if']) {
                                         $ifaces = explode(",", $ppp['ports']);
-                                        $wanif = $ifaces[0]; $ppid = $pppid;
+                                        $wanif = $ifaces[0];
                                 }
                         }
                 }
 		if (!empty($wanif)) {
 			$config['interfaces']['wan']['if'] = $wanif;
-			unset($config['ppps']['ppp'][$ppid]);
+			unset($config['ppps']['ppp'][$pppid]);
 		}
 
 		if ($type == "pppoe" || $type == "pptp") {

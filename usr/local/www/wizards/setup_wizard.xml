@@ -278,31 +278,31 @@
 		<field>
 			<name>PPPoE Username</name>
 			<type>input</type>
-			<bindstofield>interfaces->tmp->username</bindstofield>
+			<bindstofield>wizardtemp->wan->username</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Password</name>
 			<type>input</type>
-			<bindstofield>interfaces->tmp->password</bindstofield>
+			<bindstofield>wizardtemp->wan->password</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
 			<type>input</type>
 			<description>Hint: this field can usually be left empty</description>
-			<bindstofield>interfaces->tmp->provider</bindstofield>
+			<bindstofield>wizardtemp->wan->provider</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
-			<bindstofield>interfaces->tmp->ondemand</bindstofield>
+			<bindstofield>wizardtemp->wan->ondemand</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Idle timeout</name>
 			<type>input</type>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
-			<bindstofield>interfaces->tmp->idletimeout</bindstofield>
+			<bindstofield>wizardtemp->wan->idletimeout</bindstofield>
 		</field>
 		<field>
 			<name>PPTP configuration</name>
@@ -311,19 +311,19 @@
 		<field>
 			<name>PPTP Username</name>
 			<type>input</type>
-			<bindstofield>interfaces->tmp->pptpusername</bindstofield>
+			<bindstofield>wizardtemp->wan->pptpusername</bindstofield>
 		</field>
 		<field>
 			<name>PPTP Password</name>
 			<type>input</type>
-			<bindstofield>interfaces->tmp->pptppassword</bindstofield>
+			<bindstofield>wizardtemp->wan->pptppassword</bindstofield>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>
 			<name>PPTP Local IP Address</name>
 			<type>input</type>
 			<typehint> / </typehint>
-			<bindstofield>interfaces->tmp->localip</bindstofield>
+			<bindstofield>wizardtemp->wan->localip</bindstofield>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
 			<message>PPTP Local IP Address field is invalid</message>
 		</field>
@@ -332,12 +332,12 @@
 			<dontdisplayname>true</dontdisplayname>
 			<dontcombinecells>true</dontcombinecells>
 			<name>pptplocalsubnet</name>
-			<bindstofield>interfaces->tmp->subnet</bindstofield>
+			<bindstofield>wizardtemp->wan->subnet</bindstofield>
 			<type>subnet_select</type>
 		</field>
 		<field>
 			<name>PPTP Remote IP Address</name>
-			<bindstofield>interfaces->tmp->gateway</bindstofield>
+			<bindstofield>wizardtemp->wan->gateway</bindstofield>
 			<type>input</type>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
 			<message>PPTP Remote IP Address field is invalid</message>
@@ -346,13 +346,13 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<bindstofield>interfaces->tmp->pptpondemand</bindstofield>			
+			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>			
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
 			<type>input</type>			
-			<bindstofield>interfaces->tmp->pptpidletimeout</bindstofield>
+			<bindstofield>wizardtemp->wan->pptpidletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
 		<field>
@@ -386,8 +386,6 @@
 	</fields>
 	<stepbeforeformdisplay>
 		<![CDATA[
-		$config['interfaces']['tmp'] = array();
-
 		if (is_array($config['gateways']['gateway_item']))
 			foreach ($config['gateways']['gateway_item'] as $gw)
 				if ($gw['name'] == 'WANGW')
@@ -430,30 +428,29 @@
 						unset($config['ppps']['ppp'][$pppid]);
 						// break;
 					}
-					
 				}
 			}
 			if ($type == "pptp") {
-				$config['interfaces']['tmp']['username'] = $config['interfaces']['tmp']['pptpusername'];
-				$config['interfaces']['tmp']['password'] = $config['interfaces']['tmp']['pptppassword'];
-				$config['interfaces']['tmp']['ondemand'] = $config['interfaces']['tmp']['pptpondemand'];
-				$config['interfaces']['tmp']['idletimeout'] = $config['interfaces']['tmp']['pptpidletimeout'];
-				unset($config['interfaces']['tmp']['pptpusername']);
-				unset($config['interfaces']['tmp']['pptppassword']);
-				unset($config['interfaces']['tmp']['pptpondemand']);
-				unset($config['interfaces']['tmp']['pptpidletimeout']);
+				$config['wizardtemp']['wan']['username'] = $config['wizardtemp']['wan']['pptpusername'];
+				$config['wizardtemp']['wan']['password'] = $config['wizardtemp']['wan']['pptppassword'];
+				$config['wizardtemp']['wan']['ondemand'] = $config['wizardtemp']['wan']['pptpondemand'];
+				$config['wizardtemp']['wan']['idletimeout'] = $config['wizardtemp']['wan']['pptpidletimeout'];
+				unset($config['wizardtemp']['wan']['pptpusername']);
+				unset($config['wizardtemp']['wan']['pptppassword']);
+				unset($config['wizardtemp']['wan']['pptpondemand']);
+				unset($config['wizardtemp']['wan']['pptpidletimeout']);
 			}
-			$config['interfaces']['tmp']['password'] = base64_encode($config['interfaces']['tmp']['password']);
+			$config['wizardtemp']['wan']['password'] = base64_encode($config['wizardtemp']['wan']['password']);
 			$tmp = array();
 			$tmp['ptpid'] = "0";
 			$tmp['type'] = $type;
 			$tmp['if'] = $type . "0";
 			$tmp['ports'] = $config['interfaces']['wan']['if'];
-			$config['ppps']['ppp'][] = array_merge($tmp, $config['interfaces']['tmp']);
+			$config['ppps']['ppp'][] = array_merge($tmp, $config['wizardtemp']['wan']);
 			unset($tmp);
 			$config['interfaces']['wan']['if'] = $type."0";
 		}
-		unset($config['interfaces']['tmp']);
+		unset($config['wizardtemp']['wan']);
 		]]>
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>

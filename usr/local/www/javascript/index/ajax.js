@@ -141,7 +141,7 @@ function updateInterfaces(x){
 
 function widgetActive(x) {
 	var widget = $(x + '-container');
-	if (widget.style.display != "none")
+	if ((widget != null) && (widget.style.display != "none"))
 		return true;
 	else
 		return false;

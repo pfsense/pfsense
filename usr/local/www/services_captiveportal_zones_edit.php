@@ -76,6 +76,11 @@ if ($_POST) {
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];
 		write_config();
 
+		/* make sure ipfw is loaded */
+		if (!is_module_loaded("ipfw.ko"))
+			filter_load_ipfw();
+		mwexec("/usr/local/sbin/ipfw_context -a {$cpzone}", true);
+
 		header("Location: services_captiveportal.php?zone={$cpzone}");
 		exit;
 	}

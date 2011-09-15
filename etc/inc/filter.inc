@@ -2419,7 +2419,7 @@ EOD;
 		}
 		switch($oc['type6']) {
 		case "dhcp6":
-			$ipfrules = <<<EOD
+			$ipfrules .= <<<EOD
 
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"

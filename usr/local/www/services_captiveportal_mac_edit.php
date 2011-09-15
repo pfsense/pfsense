@@ -142,18 +142,20 @@ if ($_POST) {
 		
 		write_config();
 
-		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
-		if ($ruleno) {
-			captiveportal_free_ipfw_ruleno($ruleno);
-			$rules = "delete {$ruleno}\n";
-			$rules .= "delete " . ++$ruleno . "\n";
+		if (isset($config['captiveportal'][$cpzone]['enable'])) {
+			$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
+			if ($ruleno) {
+				captiveportal_free_ipfw_ruleno($ruleno);
+				$rules = "delete {$ruleno}\n";
+				$rules .= "delete " . ++$ruleno . "\n";
+			}
+			
+			$rules .= captiveportal_passthrumac_configure_entry($mac);
+			file_put_contents("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}", $rules);
+			captiveportal_ipfw_set_context($cpzone);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
+			@unlink("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
 		}
-		
-		$rules .= captiveportal_passthrumac_configure_entry($mac);
-		file_put_contents("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}", $rules);
-		captiveportal_ipfw_set_context($cpzone);
-		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
-		@unlink("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
 
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;

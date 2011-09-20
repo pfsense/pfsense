@@ -162,7 +162,7 @@ while($i < $leases_count) {
 	$duid_split = array();
 	preg_match('/ia-na "(.*)" { (.*)/ ', $leases_content[$i], $duid_split);
 	if (!empty($duid_split[1])) {
-		$leases[$l]['duid'] = "0x" . parse_duid($duid_split[1]);
+		$leases[$l]['duid'] = parse_duid($duid_split[1]);
 		$data = explode(" ", $duid_split[2]);
 	} else {
 		$data = explode(" ", $leases_content[$i]);

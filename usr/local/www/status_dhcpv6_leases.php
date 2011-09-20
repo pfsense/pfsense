@@ -91,22 +91,40 @@ include("head.inc");
 <?php
 
 function leasecmp($a, $b) {
-        return strcmp($a[$_GET['order']], $b[$_GET['order']]);
+	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
 }
 
 function adjust_gmt($dt) {
-        $ts = strtotime($dt . " GMT");
-        return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	$ts = strtotime($dt . " GMT");
+	return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }
 
-function remove_duplicate($array, $field)
-{
-  foreach ($array as $sub)
-   $cmp[] = $sub[$field];
-  $unique = array_unique(array_reverse($cmp,true));
-  foreach ($unique as $k => $rien)
-   $new[] = $array[$k];
-  return $new;
+function remove_duplicate($array, $field) {
+	foreach ($array as $sub)
+		$cmp[] = $sub[$field];
+	$unique = array_unique(array_reverse($cmp,true));
+	foreach ($unique as $k => $rien)
+		$new[] = $array[$k];
+	return $new;
+}
+
+function parse_duid($duid_string) {
+	$parsed_duid = array();
+	for ($i=0; $i < strlen($duid_string); $i++) {
+		$s = substr($duid_string, $i, 1);
+		if ($s == '\\') {
+			$n = substr($duid_string, $i+1, 1);
+			if (($n == '\\') || ($n == '"')) {
+				$parsed_duid[] = sprintf("%02x", ord($n));
+			} elseif (is_numeric($n)) {
+				$parsed_duid[] = sprintf("%02x", octdec(substr($duid_string, $i+1, 3)));
+				$i += 3;
+			}
+		} else {
+			$parsed_duid[] = sprintf("%02x", ord($s));
+		}
+	}
+	return implode("", $parsed_duid);
 }
 
 $awk = "/usr/bin/awk";
@@ -141,12 +159,19 @@ $p = 0;
 // Put everything together again
 while($i < $leases_count) {
 	/* split the line by space */
-	$data = explode(" ", $leases_content[$i]);
+	$duid_split = array();
+	preg_match('/ia-na "(.*)" { (.*)/ ', $leases_content[$i], $duid_split);
+	if (!empty($duid_split[1])) {
+		$leases[$l]['duid'] = "0x" . parse_duid($duid_split[1]);
+		$data = explode(" ", $duid_split[2]);
+	} else {
+		$data = explode(" ", $leases_content[$i]);
+	}
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
-	/* with less then 15 fields there is nothing useful */
-	if($fcount < 15) {
+	/* with less then 12 fields there is nothing useful */
+	if($fcount < 12) {
 		$i++;
 		continue;
 	}

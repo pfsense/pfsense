@@ -124,7 +124,9 @@ function parse_duid($duid_string) {
 			$parsed_duid[] = sprintf("%02x", ord($s));
 		}
 	}
-	return implode("", $parsed_duid);
+	$iaid = array_slice($parsed_duid, 0, 4);
+	$duid = array_slice($parsed_duid, 4);
+	return array($iaid, $duid);
 }
 
 $awk = "/usr/bin/awk";
@@ -162,7 +164,9 @@ while($i < $leases_count) {
 	$duid_split = array();
 	preg_match('/ia-na "(.*)" { (.*)/ ', $leases_content[$i], $duid_split);
 	if (!empty($duid_split[1])) {
-		$leases[$l]['duid'] = parse_duid($duid_split[1]);
+		$iaid_duid = parse_duid($duid_split[1]);
+		$leases[$l]['iaid'] = hexdec(implode("", array_reverse($iaid_duid[0])));
+		$leases[$l]['duid'] = implode("", $iaid_duid[1]);
 		$data = explode(" ", $duid_split[2]);
 	} else {
 		$data = explode(" ", $leases_content[$i]);
@@ -350,6 +354,7 @@ foreach ($pools as $data) {
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("DUID"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Hostname"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
@@ -391,6 +396,7 @@ foreach ($leases as $data) {
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}&nbsp;</td>\n";
 		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
 				if ($data['type'] != "static") {

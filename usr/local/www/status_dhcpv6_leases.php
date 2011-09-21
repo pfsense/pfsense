@@ -166,7 +166,7 @@ while($i < $leases_count) {
 	if (!empty($duid_split[1])) {
 		$iaid_duid = parse_duid($duid_split[1]);
 		$leases[$l]['iaid'] = hexdec(implode("", array_reverse($iaid_duid[0])));
-		$leases[$l]['duid'] = implode("", $iaid_duid[1]);
+		$leases[$l]['duid'] = implode(":", $iaid_duid[1]);
 		$data = explode(" ", $duid_split[2]);
 	} else {
 		$data = explode(" ", $leases_content[$i]);
@@ -298,14 +298,14 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 		is_array($config['dhcpdv6'][$ifname]['staticmap'])) {
 		foreach($config['dhcpdv6'][$ifname]['staticmap'] as $static) {
 			$slease = array();
-			$slease['ipv6'] = $static['ipaddr'];
+			$slease['ip'] = $static['ipaddrv6'];
 			$slease['type'] = "static";
-			$slease['mac'] = $static['mac'];
+			$slease['duid'] = $static['duid'];
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
-			$online = exec("/usr/sbin/ndp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+			$online = exec("/usr/sbin/ndp -an |/usr/bin/grep {$slease['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 			if ($online == 1) {
 				$slease['online'] = 'online';
 			} else {

@@ -374,7 +374,7 @@ foreach ($leases as $data) {
 		} else {
 			$fspans = $fspane = "";
 		}
-                // $lip = ip2ulong($data['ip']);
+
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 				if(is_array($dhcpifconf['staticmap'])) {
@@ -390,12 +390,7 @@ foreach ($leases as $data) {
 					break;
 			}
 		} else {
-                	foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {	
-                        	if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
-                                	$data['if'] = $dhcpif;
-                                	break;
-                        	}
-			}
+			$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";

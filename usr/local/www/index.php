@@ -261,24 +261,27 @@ function widgetAjax(widget) {
 	uri = "widgets/widgets/" + widget + ".widget.php";
 	var opt = {
 	    // Use GET
-	    method: 'get',
+	    type: 'get',
 		evalScripts: 'true',
-	    asynchronous: true,
+	    async: true,
 	    // Handle 404
-	    on404: function(t) {
-	        alert('Error 404: location "' + t.statusText + '" was not found.');
+	    statusCode: {
+	        404: function(t) {
+	            alert('Error 404: location "' + t.statusText + '" was not found.');
+	        }
 	    },
 	    // Handle other errors
-	    onFailure: function(t) {
+	    error: function(t) {
 	        alert('Error ' + t.status + ' -- ' + t.statusText);
 	    },
-		onSuccess: function(t) {
+		success: function(data) {
 			widget2 = widget + "-loader";
 			Effect.Fade(widget2, {queue:'front'});
 			Effect.Appear(widget, {queue:'end'});			
+			jQuery('#' + widget).html(data);
 	    }	
 	}
-	new Ajax.Updater(widget, uri, opt);
+	jQuery.ajax(uri, opt);
 }
 
 

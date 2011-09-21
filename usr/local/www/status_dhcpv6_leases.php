@@ -236,6 +236,8 @@ while($i < $leases_count) {
 				$f = $f+3;
 				break;
 			case "cltt":
+				$leases[$l]['start'] = $data[$f+2];
+				$leases[$l]['start'] .= " " . $data[$f+3];
 				$f = $f+3;
 				break;
 			case "binding":

@@ -33,7 +33,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/arp	/usr/bin/wc	/usr/bin/grep
+	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/ndp	/usr/bin/wc	/usr/bin/grep
 	pfSense_MODULE:	dhcpserver
 */
 
@@ -140,15 +140,15 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern} | /usr/bin/grep '^ia-na'", $leases_content);
 $leases_count = count($leases_content);
 exec("/usr/sbin/ndp -an", $rawdata);
-$arpdata = array();
+$ndpdata = array();
 foreach ($rawdata as $line) {
 	$elements = preg_split('/\s+/ ',$line);
 	if ($elements[1] != "(incomplete)") {
-		$arpent = array();
+		$ndpent = array();
 		$ip = trim(str_replace(array('(',')'),'',$elements[0]));
-		$arpent['mac'] = trim($elements[1]);
-		$arpent['interface'] = trim($elements[2]);
-		$arpdata[$ip] = $arpent;
+		$ndpent['mac'] = trim($elements[1]);
+		$ndpent['interface'] = trim($elements[2]);
+		$ndpdata[$ip] = $ndpent;
 	}
 }
 
@@ -209,7 +209,7 @@ while($i < $leases_count) {
 				break;
 			case "iaaddr":
 				$leases[$l]['ip'] = $data[$f+1];
-				if (in_array($leases[$l]['ip'], array_keys($arpdata))) {
+				if (in_array($leases[$l]['ip'], array_keys($ndpdata))) {
 					$leases[$l]['online'] = 'online';
 				} else {
 					$leases[$l]['online'] = 'offline';
@@ -305,7 +305,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
-			if (in_array($slease['ip'], array_keys($arpdata))) {
+			if (in_array($slease['ip'], array_keys($ndpdata))) {
 				$slease['online'] = 'online';
 			} else {
 				$slease['online'] = 'offline';
@@ -404,7 +404,7 @@ foreach ($leases as $data) {
 		if (!empty($data['hostname'])) {
 			echo htmlentities($data['hostname']) . "<br/>";
 		}
-		echo htmlentities($arpdata[$data['ip']]['mac']);
+		echo htmlentities($ndpdata[$data['ip']]['mac']);
 		echo "{$fspane}&nbsp;</td>\n";
 				if ($data['type'] != "static") {
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";

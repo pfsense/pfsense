@@ -145,10 +145,10 @@ foreach ($rawdata as $line) {
 	$elements = preg_split('/\s+/ ',$line);
 	if ($elements[1] != "(incomplete)") {
 		$arpent = array();
-		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[0]));
-		// $arpent['mac'] = trim($elements[3]);
-		// $arpent['interface'] = trim($elements[5]);
-	$arpdata[] = $arpent['ip'];
+		$ip = trim(str_replace(array('(',')'),'',$elements[0]));
+		$arpent['mac'] = trim($elements[1]);
+		$arpent['interface'] = trim($elements[2]);
+		$arpdata[$ip] = $arpent;
 	}
 }
 
@@ -209,7 +209,7 @@ while($i < $leases_count) {
 				break;
 			case "iaaddr":
 				$leases[$l]['ip'] = $data[$f+1];
-				if (in_array($leases[$l]['ip'], $arpdata)) {
+				if (in_array($leases[$l]['ip'], array_keys($arpdata))) {
 					$leases[$l]['online'] = 'online';
 				} else {
 					$leases[$l]['online'] = 'offline';
@@ -358,7 +358,7 @@ foreach ($pools as $data) {
     <td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("DUID"); ?></a></td>
-    <td class="listhdrr"><a href="#"><?=gettext("Hostname"); ?></a></td>
+    <td class="listhdrr"><a href="#"><?=gettext("Hostname/MAC"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Start"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("End"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("Online"); ?></a></td>
@@ -400,7 +400,12 @@ foreach ($leases as $data) {
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
 		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}&nbsp;</td>\n";
 		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listr\">{$fspans}";
+		if (!empty($data['hostname'])) {
+			echo htmlentities($data['hostname']) . "<br/>";
+		}
+		echo htmlentities($arpdata[$data['ip']]['mac']);
+		echo "{$fspane}&nbsp;</td>\n";
 				if ($data['type'] != "static") {
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";

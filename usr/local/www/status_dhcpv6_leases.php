@@ -209,6 +209,7 @@ while($i < $leases_count) {
 				break;
 			case "iaaddr":
 				$leases[$l]['ip'] = $data[$f+1];
+				$leases[$l]['type'] = "dynamic";
 				if (in_array($leases[$l]['ip'], array_keys($ndpdata))) {
 					$leases[$l]['online'] = 'online';
 				} else {

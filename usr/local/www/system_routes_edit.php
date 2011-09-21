@@ -179,10 +179,10 @@ include("head.inc");
 				  / 
                     <select name="network_subnet" class="formselect" id="network_subnet"
                       <?php
-			if(is_ipaddrv6($pconfig['network'])) {
-				$size = 128;
-			} else {
+			if(is_ipaddrv64($pconfig['network'])) {
 				$size = 32;
+			} else {
+				$size = 128;
 			}
 			for ($i = $size; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>

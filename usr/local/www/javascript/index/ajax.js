@@ -6,14 +6,14 @@
 var update_interval = 11000;
 
 function updateMeters() {
-	url = '/getstats.php'
+	url = '/getstats.php';
 
-	new Ajax.Request(url, {
-		method: 'get',
-		onSuccess: function(transport) {
-			response = transport.responseText || "";
+	jQuery.ajax(url, {
+		type: 'get',
+		success: function(data) {
+			response = data || "";
 			if (response != "")
-				stats(transport.responseText);
+				stats(data);
 		}
 	});
 	setTimeout('updateMeters()', update_interval);
@@ -41,21 +41,21 @@ function stats(x) {
 }
 
 function updateMemory(x) {
-	if($('memusagemeter'))
-		$("memusagemeter").value = x + '%';
-	if($('memwidtha'))
-		$("memwidtha").style.width = x + 'px';
-	if($('memwidthb'))
-		$("memwidthb").style.width = (100 - x) + 'px';
+	if(jQuery('#memusagemeter'))
+		jQuery("#memusagemeter").val(x + '%');
+	if(jQuery('#memwidtha'))
+		jQuery("#memwidtha").css('width',x + 'px');
+	if(jQuery('#memwidthb'))
+		jQuery("#memwidthb").css('width', (100 - x) + 'px');
 }
 
 function updateCPU(x) {
-	if($('cpumeter'))
-		$("cpumeter").value = x + '%';
-	if($('cpuwidtha'))
-		$("cpuwidtha").style.width = x + 'px';
-	if($('cpuwidthb'))
-		$("cpuwidthb").style.width = (100 - x) + 'px';
+	if(jQuery('#cpumeter'))
+		jQuery("#cpumeter").val(x + '%');
+	if(jQuery('#cpuwidtha'))
+		jQuery("#cpuwidtha").css('width',x + 'px');
+	if(jQuery('#cpuwidthb'))
+		jQuery("#cpuwidthb").css('width',(100 - x) + 'px');
 	/* Load CPU Graph widget if enabled */
 	if(widgetActive('cpu_graphs')) {
 		GraphValue(graph[0], x);
@@ -63,34 +63,34 @@ function updateCPU(x) {
 }
 
 function updateTemp(x) {
-	if($("tempmeter")) {
-		$("tempmeter").value = x + 'C';
-		$("tempwidtha").style.width = x + 'px';
-		$("tempwidthb").style.width = (100 - x) + 'px';
+	if(jQuery("#tempmeter")) {
+		jQuery("#tempmeter").val(x + 'C');
+		jQuery("#tempwidtha").css('width',x + 'px');
+		jQuery("#tempwidthb").css('width',(100 - x) + 'px');
 	}
 }
 
 function updateDateTime(x) {
-	if($('datetime')) 
-		$("datetime").firstChild.data = x;
+	if(jQuery('#datetime'))
+		jQuery("#datetime").html(x);
 }
 
 function updateUptime(x) {
-	if($('uptime'))
-		$("uptime").value = x;
+	if(jQuery('#uptime'))
+		jQuery("#uptime").val(x);
 }
 
 function updateState(x) {
-	if($('pfstate'))
-		$("pfstate").value = x;
+	if(jQuery('#pfstate'))
+		jQuery("#pfstate").val(x);
 }
 
 function updateGatewayStats(x){
 	if (widgetActive("gateways")){
 		gateways_split = x.split(",");
 		for (var y=0; y<gateways_split.length; y++){
-			if($('gateway' + (y + 1))) {
-				$('gateway' + (y + 1)).update(gateways_split[y]);
+			if(jQuery('#gateway' + (y + 1))) {
+				jQuery('#gateway' + (y + 1)).html(gateways_split[y]);
 			}
 		}
 	}
@@ -101,8 +101,8 @@ function updateInterfaceStats(x){
 		statistics_split = x.split(",");
 		var counter = 1;
 		for (var y=0; y<statistics_split.length-1; y++){
-			if($('stat' + counter)) {
-				$('stat' + counter).update(statistics_split[y]);
+			if(jQuery('#stat' + counter)) {
+				jQuery('#stat' + counter).html(statistics_split[y]);
 				counter++;	
 			}
 		}
@@ -116,23 +116,23 @@ function updateInterfaces(x){
 			details = iface.split(",");
 			switch(details[1]) {
 				case "up":
-					$(details[0] + '-up').style.display = "inline";
-					$(details[0] + '-down').style.display = "none";
-					$(details[0] + '-block').style.display = "none";
-					$(details[0] + '-ip').update(details[2]);
-					$(details[0] + '-media').update(details[3]);
+					jQuery('#' + details[0] + '-up').css("display","inline");
+					jQuery('#' + details[0] + '-down').css("display","none");
+					jQuery('#' + details[0] + '-block').css("display","none");
+					jQuery('#' + details[0] + '-ip').html(details[2]);
+					jQuery('#' + details[0] + '-media').html(details[3]);
 					break;
 				case "down":
-					$(details[0] + '-down').style.display = "inline";
-					$(details[0] + '-up').style.display = "none";
-					$(details[0] + '-block').style.display = "none";
-					$(details[0] + '-ip').update(details[2]);
-					$(details[0] + '-media').update(details[3]);
+					jQuery('#' + details[0] + '-down').css("display","inline");
+					jQuery('#' + details[0] + '-up').css("display","none");
+					jQuery('#' + details[0] + '-block').css("display","none");
+					jQuery('#' + details[0] + '-ip').html(details[2]);
+					jQuery('#' + details[0] + '-media').html(details[3]);
 					break;
 				case "block":
-						$(details[0] + '-block').style.display = "inline";
-						$(details[0] + '-down').style.display = "none";
-						$(details[0] + '-up').style.display = "none";
+						jQuery('#' + details[0] + '-block').css("display","inline");
+						jQuery('#' + details[0] + '-down').css("display","none");
+						jQuery('#' + details[0] + '-up').css("display","none");
 					break;
 			}
 		});
@@ -140,15 +140,15 @@ function updateInterfaces(x){
 }
 
 function widgetActive(x) {
-	var widget = $(x + '-container');
-	if ((widget != null) && (widget.style.display != "none"))
+	var widget = jQuery('#' + x + '-container');
+	if ((widget != null) && (widget.css('display') != "none"))
 		return true;
 	else
 		return false;
 }
 
 /* start updater */
-document.observe('dom:loaded', function(){
+jQuery(document).ready(function(){
 	setTimeout('updateMeters()', update_interval);
 });
 

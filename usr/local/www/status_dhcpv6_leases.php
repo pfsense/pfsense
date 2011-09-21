@@ -305,12 +305,12 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
-			$online = exec("/usr/sbin/ndp -an |/usr/bin/grep {$slease['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-			if ($online == 1) {
+			if (in_array($slease['ip'], array_keys($arpdata))) {
 				$slease['online'] = 'online';
 			} else {
 				$slease['online'] = 'offline';
 			}
+
 			$leases[] = $slease;
 		}
 	}

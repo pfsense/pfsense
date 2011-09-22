@@ -179,7 +179,7 @@ include("head.inc");
 				  / 
                     <select name="network_subnet" class="formselect" id="network_subnet"
                       <?php
-			if(is_ipaddrv64($pconfig['network'])) {
+			if(is_ipaddrv4($pconfig['network'])) {
 				$size = 32;
 			} else {
 				$size = 128;

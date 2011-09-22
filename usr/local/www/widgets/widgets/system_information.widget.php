@@ -257,19 +257,19 @@ $curcfg = $config['system']['firmware'];
 		scroll(0,0);
 		var url = "/widgets/widgets/system_information.widget.php";
 		var pars = 'getupdatestatus=yes';
-		var myAjax = new Ajax.Request(
+		jQuery.ajax(
 			url,
 			{
-				method: 'get',
-				parameters: pars,
-				onComplete: activitycallback
+				type: 'get',
+				data: pars,
+				complete: activitycallback
 			});
 	}
 	function activitycallback(transport) {
-		$('updatestatus').innerHTML = transport.responseText;
+		jQuery('#updatestatus').html(transport.responseText);
 	}
 	function swapuname() {
-		$('uname').innerHTML="<?php echo php_uname("a"); ?>";
+		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
 	}
 	setTimeout('getstatus()', 4000);
 </script>

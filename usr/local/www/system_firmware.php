@@ -111,6 +111,9 @@ if(is_subsystem_dirty('firmwarelock')) {
 	exit;
 }
 
+if($_POST['backupbeforeupgrade']) 
+	touch("/tmp/perform_full_backup.txt");
+
 if($_POST['kerneltype']) {
 	if($_POST['kerneltype'] == "single") 
 		system("touch /boot/kernel/pfsense_kernel.txt");
@@ -289,6 +292,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
 								*/
 							?>
+							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
+							<br><br>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>

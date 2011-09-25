@@ -398,6 +398,12 @@ pfSenseupgrade)
 
 	touch /var/run/firmwarelock.dirty
 
+	if [ -f /tmp/perform_full_backup.txt ]; then
+		echo "Performing full backup" >> /conf/upgrade_log.txt
+		/etc/rc.create_full_backup
+		rm /tmp/perform_full_backup.txt
+	fi
+
 	touch /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 

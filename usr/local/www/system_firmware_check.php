@@ -97,6 +97,9 @@ include("head.inc");
 		      <!-- command output box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
 		      </textarea>
+			  <div id='backupdiv' name='backupdiv' style='visibility:hidden'>
+			  	<br/><input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
+			  </div>
 		      </center>
  			<p>
 			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>">
@@ -162,6 +165,8 @@ if ($needs_system_upgrade == false) {
 }
 
 echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
+echo "\n<script>$('backupdiv').style.visibility = 'visible';</script>";
+
 $txt  = gettext("A new version is now available") . "\\n\\n";
 $txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
 if ($g['platform'] == "nanobsd") {

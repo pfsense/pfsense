@@ -53,6 +53,9 @@ if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 else
 	$updater_url = $g['update_url'];
+
+if($_POST['backupbeforeupgrade']) 
+	touch("/tmp/perform_full_backup.txt");
 	
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
 include("head.inc");

@@ -102,13 +102,22 @@ include("head.inc");
 <?php
 				chdir("/root");
 				$available_restore_files = glob("pfSense-full-backup-*");
+				$counter = 0;
 				foreach($available_restore_files as $arf) {
+					$counter++;
 					echo "<tr>";
 					echo "<td  class='listlr' width='60%' colspan='1'>";
 					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
 					echo "</td>";
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo date ("F d Y H:i:s.", filemtime($arf));
+					echo "</td>";
+					echo "</tr>";
+				}
+				if($counter == 0) {
+					echo "<tr>";
+					echo "<td  class='listlr' width='100%' colspan='2'>";
+					echo gettext("Could not locate any previous backups.");
 					echo "</td>";
 					echo "</tr>";
 				}

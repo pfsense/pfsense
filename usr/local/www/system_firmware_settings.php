@@ -110,6 +110,7 @@ function enable_altfirmwareurl(enable_over) {
 	$tab_array[0] = array(gettext("Manual Update"), false, "system_firmware.php");
 	$tab_array[1] = array(gettext("Auto Update"), false, "system_firmware_check.php");
 	$tab_array[2] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
+	$tab_array[3] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>

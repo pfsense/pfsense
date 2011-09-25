@@ -1,0 +1,143 @@
+<?php
+/* $Id$ */
+/*
+	system_firmware_restorefullbackup.php
+	Copyright (C) 2011 Scott Ullrich
+	All rights reserved.
+
+	originally part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/shutdown
+	pfSense_MODULE:	backup
+*/
+
+##|+PRIV
+##|*IDENT=page-diagnostics-restore-full-backup
+##|*NAME=Diagnostics: Restore full backup
+##|*DESCR=Allow access to the 'Diagnostics: Restore Full Backup' page.
+##|*MATCH=system_firmware_restorefullbackup.php
+##|-PRIV
+
+/* Allow additional execution time 0 = no limit. */
+ini_set('max_execution_time', '0');
+ini_set('max_input_time', '0');
+
+/* omit no-cache headers because it confuses IE with file downloads */
+$omit_nocacheheaders = true;
+$nocsrf = true;
+require("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
+
+if ($_POST['restorefile']) {
+	$filename = $_POST['restorefile'];
+	if(file_exists("/root/{$filename}")) {
+		mwexec_bg("/etc/rc.restore_full_backup /root/" . escapeshellcmd($filename));
+		$savemsg = gettext("The firewall is currently restoring $filename");
+	}
+}
+
+$pgtitle = array(gettext("Diagnostics"),gettext("Restore full backup"));
+include("head.inc");
+
+?>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if (is_subsystem_dirty('restore')): ?><p>
+<form action="reboot.php" method="post">
+<input name="Submit" type="hidden" value=" Yes ">
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
+</form>
+<?php endif; ?>
+<form action="system_firmware_restorefullbackup.php" method="post">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array(gettext("Manual Update"), false, "system_firmware.php");
+	$tab_array[1] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+	$tab_array[2] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+	$tab_array[3] = array(gettext("Restore Full Backup"), true, "system_firmware_restorefullbackup.php");
+	display_top_tabs($tab_array);
+?>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" class="listtopic"><?=gettext("Restore full backup"); ?></td>
+				</tr>
+<?php
+				chdir("/root");
+				$available_restore_files = glob("pfSense-full-backup-*");
+				foreach($available_restore_files as $arf) {
+					echo "<tr>";
+					echo "<td  class='listlr' width='60%' colspan='1'>";
+					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
+					echo "</td>";
+					echo "<td  class='listr' width='40%' colspan='1'>";
+					echo date ("F d Y H:i:s.", filemtime($arf));
+					echo "</td>";
+					echo "</tr>";
+				}
+ ?>
+				<tr>
+					<td width="78%" class="vtable" colspan="2">
+		  				<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>">
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+
+<script language="JavaScript">
+<!--
+encrypt_change();
+decrypt_change();
+//-->
+</script>
+
+<?php include("fend.inc"); ?>
+</body>
+</html>
+<?php
+
+if (is_subsystem_dirty('restore'))
+	system_reboot();
+
+?>

@@ -46,6 +46,7 @@ $d_isfwfile = 1;
 $nocsrf = true;
 
 require_once("globals.inc");
+require_once("functions.inc");
 require_once("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
@@ -237,6 +238,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 	$tab_array[0] = array(gettext("Manual Update"), true, "system_firmware.php");
 	$tab_array[1] = array(gettext("Auto Update"), false, "system_firmware_check.php");
 	$tab_array[2] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+	$tab_array[3] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
 	display_top_tabs($tab_array);
 ?>
 			</td>

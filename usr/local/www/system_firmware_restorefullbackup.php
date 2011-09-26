@@ -55,6 +55,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+if($_POST['overwriteconfigxml']) 
+	touch("/tmp/do_not_restore_config.xml");
+
 if ($_POST['restorefile']) {
 	$filename = $_POST['restorefile'];
 	if(file_exists("/root/{$filename}")) {
@@ -124,6 +127,9 @@ include("head.inc");
  ?>
 				<tr>
 					<td width="78%" class="vtable" colspan="2">
+						&nbsp;<br/>
+						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" CHECKED> do not restore config.xml.
+						<p/>
 		  				<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>">
 					</td>
 				</tr>

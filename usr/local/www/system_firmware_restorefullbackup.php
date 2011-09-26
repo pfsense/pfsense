@@ -47,9 +47,6 @@
 ini_set('max_execution_time', '0');
 ini_set('max_input_time', '0');
 
-/* omit no-cache headers because it confuses IE with file downloads */
-$omit_nocacheheaders = true;
-
 require_once("functions.inc");
 require("guiconfig.inc");
 require_once("filter.inc");
@@ -63,21 +60,27 @@ if($_GET['backupnow'])
 
 if($_GET['downloadbackup']) {
 	$filename = $_GET['downloadbackup'];
+	$path = "/root/{$filename}";
 	if(file_exists("/root/{$filename}")) {
+	    session_write_close();
+	    ob_end_clean();
 		session_cache_limiter('public');
-		$fd = fopen("/root/" . $filename, "rb");
+		//$fd = fopen("/root/{$filename}", "rb");
+		$filesize = filesize("/root/{$filename}");
+		header("Cache-Control: ");
+		header("Pragma: ");
 		header("Content-Type: application/octet-stream");
-		header("Content-Length: " . filesize("/root/" . $filename));
-		header("Content-Disposition: attachment; filename=\"" .
-			trim(htmlentities(basename($filename))) . "\"");
-		if (isset($_SERVER['HTTPS'])) {
-			header('Pragma: ');
-			header('Cache-Control: ');
-		} else {
-			header("Pragma: private");
-			header("Cache-Control: private, must-revalidate");
+		header("Content-Length: " .(string)(filesize($path)) );
+		header('Content-Disposition: attachment; filename="'.$name.'"');
+		header("Content-Transfer-Encoding: binary\n");
+		if($file = fopen("/root/{$filename}", 'rb')){
+	        while( (!feof($file)) && (connection_status()==0) ){
+	            print(fread($file, 1024*8));
+	            flush();
+	        }
+        	fclose($file);
 		}
-		fpassthru($fd);
+
 		exit;
 	}
 }
@@ -158,9 +161,9 @@ include("head.inc");
 					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
 					echo "</a> | ";
-					//echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
-					//echo gettext("Download");
-					//echo "</a>";
+					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
+					echo gettext("Download");
+					echo "</a>";
 					echo "</td>";
 					echo "</tr>";
 				}

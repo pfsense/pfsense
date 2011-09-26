@@ -100,7 +100,9 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" class="listtopic"><?=gettext("Restore full backup"); ?></td>
+					<td colspan="1" class="listtopic"><?=gettext("Filename"); ?></td>
+					<td colspan="1" class="listtopic"><?=gettext("Date"); ?></td>
+					<td colspan="1" class="listtopic"><?=gettext("Size"); ?></td>
 				</tr>
 <?php
 				chdir("/root");
@@ -108,6 +110,7 @@ include("head.inc");
 				$counter = 0;
 				foreach($available_restore_files as $arf) {
 					$counter++;
+					$size = exec("gzip -l /root/$arf | grep -v compressed | awk '{ print $2 }'");
 					echo "<tr>";
 					echo "<td  class='listlr' width='60%' colspan='1'>";
 					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
@@ -115,11 +118,14 @@ include("head.inc");
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo date ("F d Y H:i:s.", filemtime($arf));
 					echo "</td>";
+					echo "<td  class='listr' width='40%' colspan='1'>";
+					echo $size;
+					echo "</td>";
 					echo "</tr>";
 				}
 				if($counter == 0) {
 					echo "<tr>";
-					echo "<td  class='listlr' width='100%' colspan='2'>";
+					echo "<td  class='listlr' width='100%' colspan='3'>";
 					echo gettext("Could not locate any previous backups.");
 					echo "</td>";
 					echo "</tr>";

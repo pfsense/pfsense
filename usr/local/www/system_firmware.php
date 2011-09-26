@@ -253,28 +253,30 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 					<tr>
 		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   		<td width="78%" class="vtable">
-						<p>
-							<?php printf(gettext('Click "Enable firmware '.
-							'upload" below, then choose the image file (%s) '.
-							'to be uploaded.'),$g['firmware_update_text']);?>
-							<br>
-							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
-						</p>
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
+						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
+						<br/>
+							<?php printf(gettext('Click "Enable firmware '.
+							'upload", then choose the image file (%s) '.
+							'to be uploaded.'),$g['firmware_update_text']);?>
+						<br/>
 						<?php else: ?>
 				  			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
-							<br><br>
-							<strong><?=gettext("Firmware image file:");?> </strong>&nbsp;
+					</td>
+					</tr>
+					<tr>
+		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+                  		<td width="78%" class="vtable">
+							<?php 
+								if ($g['platform'] == "nanobsd") 
+									$type = "*.img.gz"; 
+								else
+									$type = "*.tgz"; 
+							 ?>
+							<strong><?=gettext("Firmware image file ($type):");?> </strong>
 							<input name="ulfile" type="file" class="formfld">
-							<br><br>
-							<?php if ($g['platform'] == "nanobsd"): ?>
-							<b><?=gettext("NOTE: You must upload a .img.gz image, not an uncompressed image!");?></b>
-							<?php else: ?>
-							<b><?=gettext("NOTE: You must upload a .tgz image, not an uncompressed image!");?></b>
-							<?php endif; ?>
-							<br><br>
+							<br>
 							<?php
 						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 						  			if($g['platform'] == "pfSense") { 
@@ -285,7 +287,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 										echo "<option value='wrap'>" . gettext("Embedded kernel") . "</option>";
 										echo "<option value='Developers'>" . gettext("Developers kernel") . "</option>";
 										echo "</select>";
-										echo "<br><br>";
+										echo "<br>";
 									}
 								}
 							?>
@@ -295,8 +297,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								*/
 							?>
 							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
-							<br><br>
+							<br>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
+							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
 						<?php endif; ?>
@@ -305,10 +308,18 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Warning:");?><br>
-				</strong></span><?=gettext("DO NOT abort the firmware upgrade once it " .
-				"has started. The firewall will reboot automatically after " .
-				"storing the new firmware. The configuration will be maintained.");?></span></td>
+				<td width="78%">
+					<span class="vexpl">
+						<span class="red">
+							<strong>
+								<?=gettext("Warning:");?><br>
+							</strong>
+						</span>
+						<?=gettext("DO NOT abort the firmware upgrade once it " .
+								   "has started. The firewall will reboot automatically after " .
+								   "storing the new firmware. The configuration will be maintained.");?>
+					</span>
+				</td>
 			</table>
 		</div>
 	</tr>

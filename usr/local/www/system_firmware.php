@@ -257,9 +257,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 						<?php if (!is_subsystem_dirty('firmware')): ?>
 						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
 						<br/>
-							<?php printf(gettext('Click "Enable firmware '.
-							'upload", then choose the image file (%s) '.
-							'to be uploaded.'),$g['firmware_update_text']);?>
+							<?php printf(gettext('Click "Enable firmware upload" to begin.'),$g['firmware_update_text']);?>
 						<br/>
 						<?php else: ?>
 				  			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">

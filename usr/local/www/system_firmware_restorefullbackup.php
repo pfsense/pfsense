@@ -71,7 +71,7 @@ if($_GET['downloadbackup']) {
 		header("Pragma: ");
 		header("Content-Type: application/octet-stream");
 		header("Content-Length: " .(string)(filesize($path)) );
-		header('Content-Disposition: attachment; filename="'.$name.'"');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		header("Content-Transfer-Encoding: binary\n");
 		if($file = fopen("/root/{$filename}", 'rb')){
 	        while( (!feof($file)) && (connection_status()==0) ){

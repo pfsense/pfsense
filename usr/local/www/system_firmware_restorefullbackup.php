@@ -132,7 +132,7 @@ include("head.inc");
 				}
  ?>
 				<tr>
-					<td width="78%" class="vtable" colspan="2">
+					<td width="78%" colspan="3">
 						&nbsp;<br/>
 						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" CHECKED> do not restore config.xml.
 						<p/>

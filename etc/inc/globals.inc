@@ -85,6 +85,7 @@ $g = array(
 	"product_website_footer" => "http://www.pfsense.org/?gui20",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
+	"hidedownloadbackup" => false,
 	"disablethemeselection" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,

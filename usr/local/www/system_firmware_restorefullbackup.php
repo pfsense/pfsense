@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/shutdown
+	pfSense_BUILDER_BINARIES:	/etc/rc.restore_full_backup
 	pfSense_MODULE:	backup
 */
 
@@ -49,7 +49,7 @@ ini_set('max_input_time', '0');
 
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
-$nocsrf = true;
+
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -57,6 +57,10 @@ require_once("shaper.inc");
 
 if($_POST['overwriteconfigxml']) 
 	touch("/tmp/do_not_restore_config.xml");
+
+if ($_GET['backupnow']) {
+	mwexec_bg("/etc/rc.create_full_backup");
+}
 
 if ($_GET['deletefile']) {
 	$filename = $_GET['deletefile'];
@@ -128,7 +132,7 @@ include("head.inc");
 					echo date ("F d Y H:i:s.", filemtime($arf));
 					echo "</td>";
 					echo "<td  class='listr' width='40%' colspan='1'>";
-					echo $size;
+					echo format_bytes($size);
 					echo "</td>";
 					echo "<td  class='listr' width='10%' colspan='1'>";
 					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this item?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";

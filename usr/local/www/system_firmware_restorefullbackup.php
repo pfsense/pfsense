@@ -50,8 +50,9 @@ ini_set('max_input_time', '0');
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
 
-require("guiconfig.inc");
+
 require_once("functions.inc");
+require("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
@@ -135,7 +136,7 @@ include("head.inc");
 					echo format_bytes($size);
 					echo "</td>";
 					echo "<td  class='listr' width='10%' colspan='1'>";
-					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this item?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
+					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
 					echo "</td>";
 					echo "</tr>";

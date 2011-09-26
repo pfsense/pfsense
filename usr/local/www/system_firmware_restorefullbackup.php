@@ -152,7 +152,7 @@ include("head.inc");
 					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
 					echo "</td>";
 					echo "<td  class='listr' width='30%' colspan='1'>";
-					echo date ("F d Y H:i:s.", filemtime($arf));
+					echo date ("F d Y H:i:s", filemtime($arf));
 					echo "</td>";
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo format_bytes($size);

@@ -309,6 +309,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
+						</span>
+						<?php if (is_subsystem_dirty('firmware')): ?>
 					<span class="vexpl">
 						<span class="red">
 							<strong>
@@ -319,6 +321,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								   "has started. The firewall will reboot automatically after " .
 								   "storing the new firmware. The configuration will be maintained.");?>
 					</span>
+						<?php endif; ?>
 				</td>
 			</table>
 		</div>

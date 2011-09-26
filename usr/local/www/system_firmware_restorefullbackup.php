@@ -138,7 +138,7 @@ include("head.inc");
 				}
 				if($counter == 0) {
 					echo "<tr>";
-					echo "<td  class='listlr' width='100%' colspan='3'>";
+					echo "<td  class='listlr' width='100%' colspan='4'>";
 					echo gettext("Could not locate any previous backups.");
 					echo "</td>";
 					echo "</tr>";

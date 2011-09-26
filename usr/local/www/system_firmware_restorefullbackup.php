@@ -58,6 +58,14 @@ require_once("shaper.inc");
 if($_POST['overwriteconfigxml']) 
 	touch("/tmp/do_not_restore_config.xml");
 
+if ($_GET['deletefile']) {
+	$filename = $_GET['deletefile'];
+	if(file_exists("/root/{$filename}")) {
+		unlink("/root/" . $filename);
+		$savemsg = gettext("$filename has been deleted.");
+	}
+}
+
 if ($_POST['restorefile']) {
 	$filename = $_POST['restorefile'];
 	if(file_exists("/root/{$filename}")) {
@@ -103,6 +111,7 @@ include("head.inc");
 					<td colspan="1" class="listtopic"><?=gettext("Filename"); ?></td>
 					<td colspan="1" class="listtopic"><?=gettext("Date"); ?></td>
 					<td colspan="1" class="listtopic"><?=gettext("Size"); ?></td>
+					<td colspan="1" class="listtopic"><?=gettext(""); ?></td>
 				</tr>
 <?php
 				chdir("/root");
@@ -115,11 +124,15 @@ include("head.inc");
 					echo "<td  class='listlr' width='60%' colspan='1'>";
 					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
 					echo "</td>";
-					echo "<td  class='listr' width='40%' colspan='1'>";
+					echo "<td  class='listr' width='30%' colspan='1'>";
 					echo date ("F d Y H:i:s.", filemtime($arf));
 					echo "</td>";
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo $size;
+					echo "</td>";
+					echo "<td  class='listr' width='10%' colspan='1'>";
+					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this item?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
+					echo gettext("Delete");
 					echo "</td>";
 					echo "</tr>";
 				}

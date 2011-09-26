@@ -66,9 +66,9 @@ if($_GET['downloadbackup']) {
 	session_cache_limiter('public');
 	$fd = fopen($filename, "rb");
 	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize($filename));
+	header("Content-Length: " . filesize("/root/" . $filename));
 	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($filename))) . "\"");
+		trim(htmlentities(basename("/root/" .$filename))) . "\"");
 	if (isset($_SERVER['HTTPS'])) {
 		header('Pragma: ');
 		header('Cache-Control: ');

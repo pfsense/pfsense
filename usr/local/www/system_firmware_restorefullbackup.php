@@ -63,21 +63,23 @@ if($_GET['backupnow'])
 
 if($_GET['downloadbackup']) {
 	$filename = $_GET['downloadbackup'];
-	session_cache_limiter('public');
-	$fd = fopen($filename, "rb");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " . filesize("/root/" . escapeshellcmd($filename)));
-	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename("/root/" . escapeshellcmd($filename)))) . "\"");
-	if (isset($_SERVER['HTTPS'])) {
-		header('Pragma: ');
-		header('Cache-Control: ');
-	} else {
-		header("Pragma: private");
-		header("Cache-Control: private, must-revalidate");
+	if(file_exists("/root/{$filename}")) {
+		session_cache_limiter('public');
+		$fd = fopen("/root/" . $filename, "rb");
+		header("Content-Type: application/octet-stream");
+		header("Content-Length: " . filesize("/root/" . $filename));
+		header("Content-Disposition: attachment; filename=\"" .
+			trim(htmlentities(basename($filename))) . "\"");
+		if (isset($_SERVER['HTTPS'])) {
+			header('Pragma: ');
+			header('Cache-Control: ');
+		} else {
+			header("Pragma: private");
+			header("Cache-Control: private, must-revalidate");
+		}
+		fpassthru($fd);
+		exit;
 	}
-	fpassthru($fd);
-	exit;
 }
 
 if ($_GET['deletefile']) {
@@ -156,9 +158,9 @@ include("head.inc");
 					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
 					echo "</a> | ";
-					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
-					echo gettext("Download");
-					echo "</a>";
+					//echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
+					//echo gettext("Download");
+					//echo "</a>";
 					echo "</td>";
 					echo "</tr>";
 				}

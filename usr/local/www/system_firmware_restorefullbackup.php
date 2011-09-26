@@ -50,7 +50,6 @@ ini_set('max_input_time', '0');
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
 
-
 require_once("functions.inc");
 require("guiconfig.inc");
 require_once("filter.inc");
@@ -59,8 +58,26 @@ require_once("shaper.inc");
 if($_POST['overwriteconfigxml']) 
 	touch("/tmp/do_not_restore_config.xml");
 
-if ($_GET['backupnow']) {
+if($_GET['backupnow']) 
 	mwexec_bg("/etc/rc.create_full_backup");
+
+if($_GET['downloadbackup']) {
+	$filename = $_GET['downloadbackup'];
+	session_cache_limiter('public');
+	$fd = fopen($filename, "rb");
+	header("Content-Type: application/octet-stream");
+	header("Content-Length: " . filesize($filename));
+	header("Content-Disposition: attachment; filename=\"" .
+		trim(htmlentities(basename($filename))) . "\"");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
+	fpassthru($fd);
+	exit;
 }
 
 if ($_GET['deletefile']) {
@@ -126,7 +143,7 @@ include("head.inc");
 					$counter++;
 					$size = exec("gzip -l /root/$arf | grep -v compressed | awk '{ print $2 }'");
 					echo "<tr>";
-					echo "<td  class='listlr' width='60%' colspan='1'>";
+					echo "<td  class='listlr' width='50%' colspan='1'>";
 					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
 					echo "</td>";
 					echo "<td  class='listr' width='30%' colspan='1'>";
@@ -135,9 +152,13 @@ include("head.inc");
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo format_bytes($size);
 					echo "</td>";
-					echo "<td  class='listr' width='10%' colspan='1'>";
+					echo "<td  class='listr' width='20%' colspan='1'><nobr>";
 					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
+					echo "</a> | ";
+					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
+					echo gettext("Download");
+					echo "</a>";
 					echo "</td>";
 					echo "</tr>";
 				}

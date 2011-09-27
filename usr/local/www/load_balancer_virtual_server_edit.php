@@ -194,7 +194,7 @@ document.observe("dom:loaded", function() {
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
+                    <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="39" maxlength="39">
 					<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
                   </td>
 			</tr>
@@ -257,22 +257,23 @@ document.observe("dom:loaded", function() {
                   </td>
 				</tr>
 -->
-                <tr id="relay" align="left" style="display:none;">
-		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Relay Protocol"); ?></td>
-                  <td width="78%" class="vtable" colspan="2">
-                  <select id="relay_protocol" name="relay_protocol">
-                <?php
-            				for ($i = 0; isset($config['load_balancer']['lbprotocol'][$i]); $i++) {
-            					$selected = "";
-            					if ( $config['load_balancer']['lbprotocol'][$i]['name'] == $pconfig['lbprotocol'] )
-            						$selected = " SELECTED";
-            					echo "<option value=\"{$config['load_balancer']['lbprotocol'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbprotocol'][$i]['name']}</option>";
-            				}
-            			?>
-            			</select>
-                  <br>
-                  </td>
-				</tr>
+		<tr id="relay" align="left">
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Relay Protocol"); ?></td>
+			<td width="78%" class="vtable" colspan="2">
+			<select id="relay_protocol" name="relay_protocol">
+			<?php
+				$lb_def_protos = array("tcp", "dns");
+				foreach ($lb_def_protos as $lb_proto) {
+					$selected = "";
+					if ( $pconfig['relay_protocol'] == $lb_proto )
+						$selected = " SELECTED";
+					echo "<option value=\"{$lb_proto}\"{$selected}>{$lb_proto}</option>";
+				}
+			?>
+			</select>
+			<br>
+			</td>
+		</tr>
                 <tr align="left">
                   <td align="left" valign="bottom">
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">

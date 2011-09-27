@@ -198,7 +198,7 @@ function update_description() {
 								<a href='#'onClick="selectAll();">Select all</a>
 								<script type="text/javascript">
 									function selectAll() {
-										var options = $$('select#sysprivs option');
+										var options = jQuery('select#sysprivs option');
 										var len = options.length;
 										for (var i = 0; i < len; i++) {
 										    options[i].selected = true;

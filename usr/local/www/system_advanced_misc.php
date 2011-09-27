@@ -192,9 +192,9 @@ include("head.inc");
 <script type="text/javascript" >
 function maxmss_checked(obj) {
 	if (obj.checked)
-		$('maxmss').enable();
+		jQuery('#maxmss').attr('disabled',false);
 	else
-		$('maxmss').disable();
+		jQuery('#maxmss').attr('disabled','true');
 }
 </script>
 	<form action="system_advanced_misc.php" method="post" name="iform" id="iform">

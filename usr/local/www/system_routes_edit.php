@@ -192,7 +192,7 @@ include("head.inc");
                     </select>
                     <br> <span class="vexpl"><?=gettext("Destination network for this static route"); ?></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable">
 			<select name="gateway" id="gateway" class="formselect">
@@ -288,7 +288,7 @@ include("head.inc");
 						document.getElementById("cancel").style.display = 'none';
 						document.getElementById("gwsave").style.display = '';
 						document.getElementById("gwcancel").style.display = '';
-						$('notebox').innerHTML="";
+						jQuery('#notebox').html("");
 					}
 					function hide_add_gateway() {
 						document.getElementById("addgateway").style.display = 'none';
@@ -301,34 +301,34 @@ include("head.inc");
 					}
 					function hide_add_gatewaysave() {
 						document.getElementById("addgateway").style.display = 'none';
-						$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> <?=gettext("One moment please..."); ?>';
-						var iface = $('addinterfacegw').getValue();
-						name = $('name').getValue();
-						var descr = $('gatewaydescr').getValue();
-						gatewayip = $('gatewayip').getValue();
-						addrtype = $('addrtype').getValue();
+						jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+						var iface = jQuery('#addinterfacegw').val();
+						name = jQuery('#name').val();
+						var descr = jQuery('#gatewaydescr').val();
+						gatewayip = jQuery('#gatewayip').val();
+						addrtype = jQuery('#addrtype').val();
 						var defaultgw = '';
-						if ($('defaultgw').checked)
+						if (jQuery('#defaultgw').checked)
 							defaultgw = 'yes';
 						var url = "system_gateways_edit.php";
 						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
-						var myAjax = new Ajax.Request(
+						jQuery.ajax(
 							url,
 							{
-								method: 'post',
-								parameters: pars,
-								onFailure: report_failure,
-								onComplete: save_callback
-							});	
+								type: 'post',
+								data: pars,
+								error: report_failure,
+								complete: save_callback
+							});
 					}
 					function addOption(selectbox,text,value)
 					{
 						var optn = document.createElement("OPTION");
 						optn.text = text;
 						optn.value = value;
-						selectbox.options.add(optn);
-						selectbox.selectedIndex = (selectbox.options.length-1);
-						$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?> </strong>";
+						selectbox.append(optn);
+						selectbox.prop('selectedIndex',selectbox.children('option').length-1);
+						jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?> </strong>");
 					}				
 					function report_failure() {
 						alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");
@@ -339,8 +339,8 @@ include("head.inc");
 						if (response) {
 							document.getElementById("addgateway").style.display = 'none';
 							hide_add_gateway();
-							$('status').innerHTML = '';
-							addOption($('gateway'), name, name);
+							jQuery('#status').html('');
+							addOption(jQuery('#gateway'), name, name);
 						} else {
 							report_failure();
 						}

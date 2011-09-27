@@ -275,9 +275,10 @@ function widgetAjax(widget) {
 	        alert('Error ' + t.status + ' -- ' + t.statusText);
 	    },
 		success: function(data) {
-			widget2 = widget + "-loader";
-			Effect.Fade(widget2, {queue:'front'});
-			Effect.Appear(widget, {queue:'end'});			
+			widget2 = '#' + widget + "-loader";
+			jQuery(widget2).fadeOut(1000,function(){
+				jQuery('#' + widget).show();
+			});
 			jQuery('#' + widget).html(data);
 	    }	
 	}

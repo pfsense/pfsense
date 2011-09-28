@@ -408,7 +408,7 @@ if (is_array($config['installedpackages']['carpsettings']) && is_array($config['
 			$cli->setCredentials($username, $carp['password']);
 			$resp = $cli->send($msg, "900");
 
-			if(!$resp) {
+			if(!is_object($resp)) {
 				$error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");

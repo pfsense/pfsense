@@ -42,6 +42,7 @@ require_once("captiveportal.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("vslb.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -101,6 +102,9 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 				}
 			}
 			break;
+		case 'relayd':
+			relayd_configure(true);
+			break;
 		default:
 			restart_service($_GET['service']);
 			break;
@@ -144,6 +148,9 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 				if (file_exists($configfile))
 					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
 			}
+			break;
+		case 'relayd':
+			relayd_configure();
 			break;
 		default:
 			start_service($_GET['service']);
@@ -200,6 +207,9 @@ if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
 			}
+			break;
+		case 'relayd':
+			mwexec('pkill relayd');
 			break;
 		default:
 			stop_service($_GET['service']);
@@ -335,6 +345,13 @@ foreach (array('server', 'client') as $mode) {
 			}
 		}
 	}
+}
+
+if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
+	$pconfig = array();
+	$pconfig['name'] = "relayd";
+	$pconfig['description'] = gettext("Server load balancing daemon");
+	$services[] = $pconfig;
 }
 
 function service_name_compare($a, $b) {

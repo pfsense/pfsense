@@ -159,7 +159,7 @@ function echo_lbaction($action) {
   return $ret;
 }
 
-function relayd_configure() {
+function relayd_configure($kill_first=false) {
   global $config, $g;
 
   $vs_a = $config['load_balancer']['virtual_server'];
@@ -281,8 +281,13 @@ function relayd_configure() {
 
 	if (is_process_running('relayd')) {
 		if (! empty($vs_a)) {
-			// it's running and there is a config, just reload
-			mwexec("/usr/local/sbin/relayctl reload");
+			if ($kill_first) {
+				mwexec('pkill relayd');
+				mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
+			} else {
+				// it's running and there is a config, just reload
+				mwexec("/usr/local/sbin/relayctl reload");
+			}
 		} else {
 			/*
 			 * XXX: Something breaks our control connection with relayd

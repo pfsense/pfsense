@@ -337,6 +337,8 @@ function uninstall_package($pkg_name) {
 		if (is_array($pkg_depends)) {
 			foreach ($pkg_depends as $pkg_depend)
 				delete_package($pkg_depend);
+		} else {
+			delete_package($pkg_depends);
 		}
 	}
 	delete_package_xml($pkg_name);

@@ -342,6 +342,11 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
+	if (empty($user['password'])) {
+		log_error("There is something wrong in your config because user {$user['name']} password is missing!");
+		return;
+	}
+
 	conf_mount_rw();
 
 	$home_base = "/home/";	

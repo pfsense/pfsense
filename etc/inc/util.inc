@@ -509,7 +509,7 @@ function is_subnet($subnet) {
 
 	list($hp,$np) = explode('/', $subnet);
 
-	if (!is_ipaddr($hp))
+	if (!is_ipaddrv4($hp))
 		return false;
 
 	if (!is_numeric($np) || ($np < 1) || ($np > 32))
@@ -517,6 +517,23 @@ function is_subnet($subnet) {
 
 	return true;
 }
+
+/* returns true if $subnet is a valid IPv6 subnet in CIDR format */
+function is_subnetv6($subnet) {
+	if (!is_string($subnet))
+		return false;
+
+	list($hp,$np) = explode('/', $subnet);
+
+	if (!is_ipaddrv6($hp))
+		return false;
+
+	if (!is_numeric($np) || ($np < 1) || ($np > 128))
+		return false;
+
+	return true;
+}
+
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {

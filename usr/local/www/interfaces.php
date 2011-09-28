@@ -1192,7 +1192,8 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
 							else echo '>';
 								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
-								print "<option value=\"\">Default</option>";
+								print "<option value=\"\">Default (no preference, typically autoselect)</option>";
+								print "<option value=\"\">------- Media Supported by this interface -------</option>";
 								foreach($mediaopts_list as $mediaopt){
 									if ($mediaopt != rtrim($mediaopt_from_config)){
 										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";
@@ -1201,7 +1202,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									}
 								}
 								echo '</select><br>';
-								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autonegotiate unless the port this interface connects to has its speed and duplex forced.");
+								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
 						echo '</tr>';

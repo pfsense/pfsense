@@ -452,7 +452,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 }
 
 /*
- * pkg_fetch_recursive: Download and install a FreeBSD package and its dependencies. This function provides output to
+ * pkg_fetch_recursive: Download and install a FreeBSD PBI package. This function provides output to
  * 			a progress bar and output window.
  */
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
@@ -499,8 +499,21 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	update_output_window($static_output);
 
 	$pkgaddout = "";
-	exec("{$pkgtmpdir}/usr/local/sbin/pbi_add {$pkgstaging} -fv {$fetchto} 2>&1", $pkgaddout);
+
+	exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
 	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
+
+	exec("/usr/local/bin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+	$pbidir = $pbidir[0];
+	$linkdirs = array('bin','sbin');
+	foreach($linkdirs as $dir) {
+		if(is_dir("{$pbidir}/{$dir}")) {
+			$files = scandir("{$pbidir}/{$dir}");
+			foreach($files as $f) {
+				symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+			}
+		}
+	}
 
 	return true;
 }

@@ -502,8 +502,19 @@ function is_ipaddroralias($ipaddr) {
 
 }
 
-/* returns true if $subnet is a valid subnet in CIDR format */
+/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format */
 function is_subnet($subnet) {
+	if(is_subnetv4($subnet)) {
+		return true;
+	}
+	if(is_subnetv6($subnet)) {
+		return true;
+	}
+	return false;
+}
+
+/* returns true if $subnet is a valid IPv4 subnet in CIDR format */
+function is_subnetv4($subnet) {
 	if (!is_string($subnet))
 		return false;
 

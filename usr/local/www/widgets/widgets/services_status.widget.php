@@ -152,6 +152,13 @@ foreach (array('server', 'client') as $mode) {
 	}
 }
 
+if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
+	$pconfig = array();
+	$pconfig['name'] = "relayd";
+	$pconfig['description'] = gettext("Server load balancing daemon");
+	$services[] = $pconfig;
+}
+
 if(isset($_POST['servicestatusfilter'])) {
 	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
 	write_config("Saved Service Status Filter via Dashboard");

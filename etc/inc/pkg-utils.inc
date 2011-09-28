@@ -99,7 +99,7 @@ conf_mount_ro();
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	exec("/usr/sbin/pkg_delete -x {$packagestring} 2>>/tmp/pkg_delete_errors.txt");
+	exec("/usr/local/sbin/pbi_delete {$packagestring} 2>>/tmp/pbi_delete_errors.txt");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -232,7 +232,7 @@ function is_freebsd_pkg_installed($pkg) {
 	if(!$pkg) 
 		return;
 	$output = "";
-	exec("/usr/sbin/pkg_info -E \"{$pkg}*\"", $output, $retval);
+	exec("/usr/local/sbin/pbi_info \"{$pkg}\"", $output, $retval);
 
 	return (intval($retval) == 0);
 }
@@ -331,7 +331,7 @@ function uninstall_package($pkg_name) {
 
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
-		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
+		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package_pbi'];
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
 		if (is_array($pkg_depends)) {
@@ -463,7 +463,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$pkgstagingdir = "/root/tmp";
 		if (!is_dir($pkgstagingdir))
 			mkdir($pkgstagingdir);
-		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
+		$pkgstaging = "-o {$pkgstagingdir}/instmp.XXXXXX";
 		$fetchdir = $pkgstagingdir;
 	} else {
 		$fetchdir = $g['tmp_path'];
@@ -497,29 +497,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	}
 	$static_output .= " (extracting)\n";
 	update_output_window($static_output);
-	$slaveout = "";
-	exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
-	$raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
-	if ($raw_depends_list != "") {
-		$pkg_extension = ".tbz";
-		foreach($raw_depends_list as $adepend) {
-			$working_depend = explode(" ", trim($adepend, "\n"));
-			if (substr($working_depend[1], -4) != ".tbz")
-				$depend_filename = $working_depend[1] . $pkg_extension;
-			else
-				$depend_filename = $working_depend[1];
-			if (!is_freebsd_pkg_installed($working_depend[1])) {
-				if (pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url) == false)
-					return false;
-			} else {
-				pkg_debug($working_depend[1] . "\n");
-			}
-		}
-	}
 
 	$pkgaddout = "";
-	exec("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -fv {$fetchto} 2>&1", $pkgaddout);
-	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npkg_add successfully completed.\n");
+	exec("{$pkgtmpdir}/usr/local/sbin/pbi_add {$pkgstaging} -fv {$fetchto} 2>&1", $pkgaddout);
+	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
 
 	return true;
 }
@@ -650,7 +631,7 @@ function install_package_xml($pkg) {
 		$static_orig = $static_output;
 		$static_output .= "\n";
 		update_output_window($static_output);
-		foreach((array) $pkg_info['depends_on_package'] as $pkgdep) {
+		foreach((array) $pkg_info['depends_on_package_pbi'] as $pkgdep) {
 			$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
 			$static_output = $static_orig . "\nChecking for package installation... ";
 			update_output_window($static_output);
@@ -876,28 +857,13 @@ function delete_package($pkg) {
 
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 
-	// If package has dependencies then skip it
-	if(does_package_depend($pkg)) {
-		$static_output .= sprintf(gettext("Skipping package deletion for %s because it is a dependency."),$pkg) . "\n";
-		update_output_window($static_output);
-		return;		
-	} else {
-		if($pkg)
-			$static_output .= sprintf(gettext("Starting package deletion for %s..."),$pkg);
-		update_output_window($static_output);		
-	}
+	if($pkg)
+		$static_output .= sprintf(gettext("Starting package deletion for %s..."),$pkg);
+	update_output_window($static_output);
 
-	$info = "";
-	exec("/usr/sbin/pkg_info -qrx {$pkg}", $info);
 	remove_freebsd_package($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
-	foreach($info as $line) {
-		$depend = trim(str_replace("@pkgdep ", "", $line), " \n");
-		// If package has dependencies then skip it
-		if(!does_package_depend($depend)) 			
-			delete_package($depend);
-	}
 
 	/* Rescan directories for what has been left and avoid fooling other programs. */
 	mwexec("/sbin/ldconfig");

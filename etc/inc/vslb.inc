@@ -341,24 +341,40 @@ Id   Type      Name                      Avlblty Status
 	$relay_a = array();
 	exec('/usr/local/sbin/relayctl show relays 2>&1', $relay_a);
 	$vs = array();
+	$cur_entry = "";
 	for ($i = 0; isset($rdr_a[$i]); $i++) {
 		$line = $rdr_a[$i];
 		if (preg_match("/^[0-9]+/", $line)) {
 			$regs = array();
 			if($x = preg_match("/^[0-9]+\s+redirect\s+([^\s]+)\s+([^\s]+)/", $line, $regs)) {
+				$cur_entry = trim($regs[1]);
 				$vs[trim($regs[1])] = array();
 				$vs[trim($regs[1])]['status'] = trim($regs[2]);
 			}
+		} elseif (($x = preg_match("/^\s+total:\s(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['total'] = trim($regs[1]);
+		} elseif (($x = preg_match("/^\s+last:\s(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['last'] = trim($regs[1]);
+		} elseif (($x = preg_match("/^\s+average:(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['average'] = trim($regs[1]);
 		}
 	}
+	$cur_entry = "";
 	for ($i = 0; isset($relay_a[$i]); $i++) {
 		$line = $relay_a[$i];
 		if (preg_match("/^[0-9]+/", $line)) {
 			$regs = array();
 			if($x = preg_match("/^[0-9]+\s+relay\s+([^\s]+)\s+([^\s]+)/", $line, $regs)) {
+				$cur_entry = trim($regs[1]);
 				$vs[trim($regs[1])] = array();
 				$vs[trim($regs[1])]['status'] = trim($regs[2]);
 			}
+		} elseif (($x = preg_match("/^\s+total:\s(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['total'] = trim($regs[1]);
+		} elseif (($x = preg_match("/^\s+last:\s(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['last'] = trim($regs[1]);
+		} elseif (($x = preg_match("/^\s+average:(.*)\ssessions/", $line, $regs)) && !empty($cur_entry)) {
+			$vs[$cur_entry]['average'] = trim($regs[1]);
 		}
 	}
 	return $vs;

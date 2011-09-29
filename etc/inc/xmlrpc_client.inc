@@ -559,8 +559,10 @@ class XML_RPC_Base {
     {
         include_once 'PEAR.inc';
         if (is_object(@$this)) {
+	    log_error(get_class($this) . ': ' . $msg . " {$code}")
             return PEAR::raiseError(get_class($this) . ': ' . $msg, $code);
         } else {
+	    log_error("XML_RPC: " . ': ' . $msg . " {$code}")
             return PEAR::raiseError('XML_RPC: ' . $msg, $code);
         }
     }

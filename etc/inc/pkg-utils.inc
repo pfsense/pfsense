@@ -99,6 +99,21 @@ conf_mount_ro();
  *   
  ******/
 function remove_freebsd_package($packagestring) {
+	exec("/usr/local/sbin/pbi_info {$packagestring} | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+	$pbidir = $pbidir[0];
+	$linkdirs = array('bin','sbin');
+	foreach($linkdirs as $dir) {
+		if(is_dir("{$pbidir}/{$dir}")) {
+			file_put_contents('/tmp/vcoque.debug',"{$pbidir}/{$dir}",FILE_APPEND);
+			$files = scandir("{$pbidir}/{$dir}");
+			foreach($files as $f) {
+				if($f != '.' && $f != '..') {
+					unlink("/usr/local/{$dir}/{$f}");
+				}
+			}
+		}
+	}
+
 	exec("/usr/local/sbin/pbi_delete {$packagestring} 2>>/tmp/pbi_delete_errors.txt");
 }
 

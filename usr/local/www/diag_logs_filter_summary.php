@@ -31,7 +31,7 @@
 	pfSense_MODULE:	filter
 */
 
-$pgtitle = gettext("Diagnostics").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
+$pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
 require_once("guiconfig.inc");
 include_once("filter_log.inc");
 

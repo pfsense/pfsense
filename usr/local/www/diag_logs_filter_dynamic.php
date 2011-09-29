@@ -58,7 +58,7 @@ if ($_POST['clear'])
 
 $filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
 
-$pgtitle = array(gettext("Diagnostics"),gettext("System logs"),gettext("Firewall"));
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall (Dynamic View)"));
 include("head.inc");
 
 ?>

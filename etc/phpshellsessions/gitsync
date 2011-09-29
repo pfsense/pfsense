@@ -35,7 +35,7 @@ if(!file_exists("/usr/local/bin/git")) {
 			mkdir($pkgstagingdir);
 		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
 	}
-	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r git");
+	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/ports/`uname -m`/packages-8.1-release/All/git-1.7.1.1.tbz");
 }
 
 # Remove mainline if exists (older)

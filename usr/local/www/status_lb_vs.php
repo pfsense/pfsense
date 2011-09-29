@@ -77,8 +77,8 @@ include("head.inc");
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
 				  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Servers"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Status"); ?></td>
-                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
+                  <td width="25%" class="listhdrr"><?=gettext("Status"); ?></td>
+                  <td width="25%" class="listhdr"><?=gettext("Description"); ?></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
                 <tr>
@@ -117,8 +117,18 @@ include("head.inc");
 					  $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
                   }
                   ?>
-                  <td class="listr">
-                  <table border="0" cellpadding="3" cellspacing="2"><tr><td bgcolor="<?=$bgcolor?>"> <?=$rdr_a[$vsent['name']]['status']?> </td></tr></table>
+                  <td class="listr" nowrap>
+			<table border="0" cellpadding="3" cellspacing="2">
+				<tr><td bgcolor="<?=$bgcolor?>"><?=$rdr_a[$vsent['name']]['status']?> </td></tr>
+			</table>
+			<?php
+			if (!empty($rdr_a[$vsent['name']]['total']))
+				echo "Total Sessions: {$rdr_a[$vsent['name']]['total']}\n";
+			if (!empty($rdr_a[$vsent['name']]['last']))
+				echo "<br/>Last: {$rdr_a[$vsent['name']]['last']}\n";
+			if (!empty($rdr_a[$vsent['name']]['average']))
+				echo "<br/>Average: {$rdr_a[$vsent['name']]['average']}\n";
+			?>
                   </td>
                   <td class="listbg" >
 						<?=$vsent['descr'];?>

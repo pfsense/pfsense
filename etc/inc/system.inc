@@ -450,7 +450,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps');
+		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps','relayd');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {

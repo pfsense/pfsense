@@ -63,6 +63,7 @@ $g = array(
 	"factory_shipped_password" => "pfsense",
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
+	"unbound_chroot_path" => "/var/unbound",
 	"varrun_path" => "/var/run",
 	"varetc_path" => "/var/etc",
 	"vardb_path" => "/var/db",

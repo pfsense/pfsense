@@ -450,7 +450,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps','relayd');
+		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -509,6 +509,8 @@ function system_syslogd_start() {
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/apinger.log\n";
 		$syslogconf .= "!relayd\n";
 		$syslogconf .= "*.* 						{$log_directive}{$g['varlog_path']}/relayd.log\n";
+		$syslogconf .= "!hostapd\n";
+		$syslogconf .= "*.* 						{$log_directive}{$g['varlog_path']}/wireless.log\n";
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD

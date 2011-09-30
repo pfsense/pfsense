@@ -257,6 +257,7 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	/usr/bin/touch /var/log/ipsec.log
 	/usr/bin/touch /var/log/ppp.log
 	/usr/bin/touch /var/log/relayd.log
+	/usr/bin/touch /var/log/wireless.log
 	/usr/bin/touch /var/log/lighttpd.log
 	/usr/bin/touch /var/log/ntpd.log
 	/usr/bin/touch /var/log/apinger.log
@@ -276,6 +277,7 @@ else
 		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ppp.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/wireless.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/apinger.log
@@ -295,6 +297,7 @@ else
 		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/relayd.log	
+		/usr/sbin/clog -i -s 65535 /var/log/wireles.log
 		/usr/sbin/clog -i -s 65535 /var/log/apinger.log	
 	fi
 fi 

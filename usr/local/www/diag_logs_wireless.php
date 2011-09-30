@@ -1,12 +1,12 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs.php
-	Copyright (C) 2004-2009 Scott Ullrich
-	All rights reserved.
+	diag_logs_wireless.php
+	part of pfSense
 
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
+	Copyright (C) 2008 Seth Mos <seth.mos@dds.nl>.
+	Copyright (C) 2011 Jim Pingle <jimp@pfsense.org>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -32,39 +32,36 @@
 */
 
 /*	
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk	
-	pfSense_MODULE:
+	pfSense_MODULE:	routing
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-ppp
-##|*NAME=Status: System logs: IPsec VPN page
-##|*DESCR=Allow access to the 'Status: System logs: IPsec VPN' page.
-##|*MATCH=diag_logs_ppp.php*
+##|*IDENT=page-status-systemlogs-wireless
+##|*NAME=Status: System logs: Wireless page
+##|*DESCR=Allow access to the 'Status: System logs: Wireless' page.
+##|*MATCH=diag_logs_wireless.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$ppp_logfile = "{$g['varlog_path']}/ppp.log";
+$wireless_logfile = "{$g['varlog_path']}/wireless.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) 
-	clear_log_file($ppp_logfile);
+	clear_log_file($wireless_logfile);
 
-$ppp_logarr = return_clog($ppp_logfile, $nentries);
-
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("PPP"));
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Wireless"));
 include("head.inc");
 
 ?>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
- 	<tr>
-		<td>
+  <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
@@ -72,53 +69,32 @@ include("head.inc");
 	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
 	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
 	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), true, "diag_logs_ppp.php");
+	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
 	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
 	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
 	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
 	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Wireless"), false, "diag_logs_wireless.php");
+	$tab_array[] = array(gettext("Wireless"), true, "diag_logs_wireless.php");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  		</td>
-	</tr>
-	<tr>
-    	<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-		  		<tr>
-					<td colspan="2" class="listtopic"><?php printf (gettext("Last $nentries PPP log entries"),$nentries);?></td>
-		  		</tr>
-				<?php
-				foreach($ppp_logarr as $logent){
-					if(isset($match)) {
-						$logent = preg_replace($search, $replace, $logent);
-					} else {
-						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
-						$logent = preg_replace($searchs, $replaces, $logent);
-					}
-					$logent = preg_split("/\s+/", $logent, 6);
-					echo "<tr valign=\"top\">\n";
-					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
-					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
-					echo "</tr>\n";
-				}
-				?>
-				<tr>
-					<td>
-						<br>
-						<form action="diag_logs_ppp.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
-						</form>
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
+  </td></tr>
+  <tr>
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+			<td colspan="2" class="listtopic">
+			  <?php printf(gettext("Wireless (hostapd) log entries"),$nentries);?></td>
+		  </tr>
+		  <?php dump_clog($wireless_logfile, $nentries); ?>
+		<tr><td><br><form action="diag_logs_wireless.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
+		</table>
+	</div>
+</form>
+	</td>
+  </tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

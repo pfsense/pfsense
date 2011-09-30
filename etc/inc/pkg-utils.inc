@@ -104,7 +104,6 @@ function remove_freebsd_package($packagestring) {
 	$linkdirs = array('bin','sbin');
 	foreach($linkdirs as $dir) {
 		if(is_dir("{$pbidir}/{$dir}")) {
-			file_put_contents('/tmp/vcoque.debug',"{$pbidir}/{$dir}",FILE_APPEND);
 			$files = scandir("{$pbidir}/{$dir}");
 			foreach($files as $f) {
 				if($f != '.' && $f != '..') {

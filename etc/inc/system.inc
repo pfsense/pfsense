@@ -484,9 +484,9 @@ function system_syslogd_start() {
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
 	if(is_process_running("syslogd"))
-		mwexec("/usr/bin/killall -9 syslogd");
+		pkill("syslogd");
 	if(is_process_running("fifolog_writer"))
-		mwexec("/usr/bin/killall -9 fifolog_writer");
+		pkill("fifolog_writer");
 	
 	// Define carious commands for logging
 	$fifolog_create = "/usr/sbin/fifolog_create -s ";
@@ -687,12 +687,13 @@ EOD;
 
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
-		else
-			$retval = system("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+			$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+		else {
+			$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
+		}
 
 	} else {
-		$retval = mwexec("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log");
+		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log");
 	}
 
 	if ($g['booting'])

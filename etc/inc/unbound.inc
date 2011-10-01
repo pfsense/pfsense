@@ -139,7 +139,7 @@ function unbound_fetch_root_hints() {
 
 	$hints = "{$g['unbound_chroot_path']}/etc/root.hints";
 	if (@filesize($hints) == 0 ) {
-		$returnvar = mwexec("/usr/bin/dig +tcp +nocmd +answer @`/usr/bin/dig +nocmd +noall +answer +short . NS | /usr/bin/head -1` . NS > {$hints}");
+		$returnvar = mwexec("/usr/bin/dig +tcp +nocmd +answer +time=1 +tries=1 +retry=1 @`/usr/bin/dig +nocmd +noall +answer +short +time=1 +tries=1 +retry=1 . NS | /usr/bin/head -1` . NS > {$hints}");
 
 		if ($returnvar != 0) {
 			mwexec("/bin/rm -f {$hints}");

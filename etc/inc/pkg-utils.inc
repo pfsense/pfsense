@@ -780,6 +780,18 @@ function install_package_xml($pkg) {
 			if($pkg_config['custom_php_install_command']) {
 				$static_output .= gettext("Executing custom_php_install_command()...");
 				update_output_window($static_output);
+				/* XXX: create symlinks for conf files into the PBI directories.
+				 *	change packages to store configs at /usr/pbi/pkg/etc and remove this
+				 */
+				eval_once($pkg_config['custom_php_install_command']);
+				exec("/usr/local/sbin/pbi_info | grep {$pkg} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidir);
+				$pbidir = $pbidir[0];
+				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
+				foreach($files as $f) {
+					$pbiconf = str_replace('/usr/local',$pbidir,$f);
+					unlink($pbiconf);
+					symlink($f,$pbiconf);
+				}
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= gettext("done.") . "\n";
 				update_output_window($static_output);

@@ -287,11 +287,22 @@ interface: ::0
 {$private_domains}
 
 # Static host entries
-include: {$g['unbound_chroot_path']}/etc/host_entries
+include: {$g['unbound_chroot_path']}/etc/host_entries.conf
 
 ###
 # Remote Control Config
 ###
+include: {$g['unbound_chroot_path']}/etc/remotecontrol.conf
+
+EOD;
+
+}
+
+function unbound_remote_control_setup() {
+	global $config, $g;
+
+	if(!file_exists("{$g['unbound_chroot_path']}/etc/remotecontrol.conf")) {
+		$remotcfg = <<<EOF
 remote-control:
 control-enable: yes
 control-interface: 127.0.0.1
@@ -300,9 +311,10 @@ server-key-file: "/etc/unbound_server.key"
 server-cert-file: "/etc/unbound_server.pem"
 control-key-file: "/etc/unbound_control.key"
 control-cert-file: "/etc/unbound_control.pem"
-EOD;
+EOF;
 
-
+		file_put_contents("{$g['unbound_chroot_path']}/etc/remotecontrol.conf", $remotcfg);
+	}
 }
 
 function unbound_add_host_entries() {
@@ -399,7 +411,7 @@ function unbound_add_host_entries() {
 	}
 
 	/* Write out entries */
-	file_put_contents("{$g['unbound_chroot_path']}/etc/host_entries", $unbound_entries);
+	file_put_contents("{$g['unbound_chroot_path']}/etc/host_entries.conf", $unbound_entries);
 }
 
 ?>

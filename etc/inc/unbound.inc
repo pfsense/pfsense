@@ -192,6 +192,8 @@ EOF;
 function unbound_resync_config() {
 	global $config,$g;
 
+	$unboundcfg = $config['config']['unbound'];
+
 	/* Setup optimization */
 	$optimization = unbound_optimization();
 
@@ -256,7 +258,7 @@ root-hints: "root.hints"
 pidfile: "/var/run/unbound.pid"
 use-syslog: yes
 port: 53
-verbosity: {$config['loglevel']}
+verbosity: {$unboundcfg['loglevel']}
 harden-referral-path: no
 do-ip4: yes
 do-ip6: yes
@@ -273,8 +275,8 @@ infra-cache-numhosts: 10000
 outgoing-num-tcp: 10
 incoming-num-tcp: 10
 edns-buffer-size: 4096
-cache-max-ttl: {$config['cache_max_ttl']}
-cache-min-ttl: {$config['cache_min_ttl']}
+cache-max-ttl: {$unboundcfg['cache_max_ttl']}
+cache-min-ttl: {$unboundcfg['cache_min_ttl']}
 harden-dnssec-stripped: yes
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
@@ -286,8 +288,8 @@ harden-dnssec-stripped: yes
 {$optimization['outgoing_range']}
 {$optimization['so_rcvbuf']}
 {$anchor_file}
-prefetch: {$config['prefetch']}
-prefetch-key: {$config['prefetch_key']}
+prefetch: {$unboundcfg['prefetch']}
+prefetch-key: {$unboundcfg['prefetch_key']}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to

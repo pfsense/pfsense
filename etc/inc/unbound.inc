@@ -39,7 +39,7 @@
 function unbound_add_domain_overrides($pvt=false) {
 	global $config;
 
-	$domains = $config['dns']['domainoverrides'];
+	$domains = $config['unbound']['domainoverrides'];
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();		
@@ -188,7 +188,7 @@ function unbound_statistics() {
 	/* XXX To do - add RRD graphs */
 	$stats = <<<EOF
 # Unbound Statistics
-statistics-interval: {$config['dns']['stats_interval']}
+statistics-interval: {$config['unbound']['stats_interval']}
 extended-statistics: yes
 statistics-cumulative: yes
 
@@ -242,7 +242,7 @@ EOF;
 	$statistics = unbound_statistics();
 
 	/* Add custom Unbound options */
-	if ($config['dns']['custom_options']) {
+	if ($config['unbound']['custom_options']) {
 		$custom_option = "# Unbound custom option"
 		foreach (preg_split('/\s+/', $config['dns']['custom_options']) as $ent)
 			$custom_option .= $ent."\n";
@@ -347,7 +347,7 @@ function unbound_add_host_entries() {
 
 	/* XXX: break this out into a separate config file and make use of include */
 	$syscfg = $config['system'];
-	$dnscfg = $config['dns'];
+	$dnscfg = $config['unbound'];
 
 	$dns_entries = "local-zone: \"{$syscfg['domain']}\" transparent\n";
 	// IPv4 entries

@@ -470,8 +470,8 @@ function unbound_setup() {
 	unbound_anchor_setup();
 	unbound_remote_control_setup();
 	unbound_keys_setup();
+	unbound_fetch_root_hints();
 	unbound_resync_config();
-
 }
 
 ?>

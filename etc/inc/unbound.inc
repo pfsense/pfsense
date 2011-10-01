@@ -73,6 +73,7 @@ function unbound_add_domain_overrides($pvt=false) {
 }
 
 
+/* Optimize Unbound for environment */
 function unbound_optimization() {
 	global $config;
 
@@ -87,7 +88,7 @@ function unbound_optimization() {
 	else
 		$optimization['number_threads'] = "num-threads: 1";
 	
-	// Slabs to help reduce lock contention.
+	/* Slabs to help reduce lock contention. */
 	if ($numprocs > 4) {
 		$optimization['msg_cache_slabs'] = "msg-cache-slabs: {$numprocs}";
 		$optimization['rrset_cache_slabs'] = "rrset-cache-slabs: {$numprocs}";
@@ -100,11 +101,11 @@ function unbound_optimization() {
 		$optimization['key_cache_slabs'] = "key-cache-slabs: 4";
 	}
 	
-	// Memory usage default of 4Mb
+	/* Memory usage default of 4MB */
 	$optimization['msg_cache_size'] = "msg-cache-size: 4m";
 	$optimization['rrset_cache_size'] = "rrset-cache-size: 8m";
 
-	// More outgoing connections per thread otherwise assign a default of 4096 for a single thread
+	/* More outgoing connections per thread otherwise assign a default of 4096 for a single thread */
 	if($numprocs > 0) {
 		$or = (1024/$numprocs) - 50;
 		$optimization['outgoing_range'] = "outgoing-range: {$or}";
@@ -112,8 +113,9 @@ function unbound_optimization() {
 		$optimization['outgoing_range'] = "outgoing-range: {4096}";
 	}
 
-	// Larger socket buffer for busy servers
-	// Check that it is set to 4MB (by default the OS has it configured to 4MB)
+	/* Larger socket buffer for busy servers
+	 * Check that it is set to 4MB (by default the OS has it configured to 4MB)
+	 */
 	foreach ($config['sysctl']['item'] as $tunable) {
 		if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
 			$so = floor(($tunable['value']/1024/1024)-1);
@@ -124,7 +126,7 @@ function unbound_optimization() {
 				unset($optimization['so_rcvbuf']);
 		}
 	}
-	// Safety check in case kern.ipc.maxsockbuf is deleted.
+	/* Safety check in case kern.ipc.maxsockbuf is not available. */
 	if(!isset($optimization['so_rcvbuf']))
 		$optimization['so_rcvbuf'] = "#so-rcvbuf: 4m";
 
@@ -169,16 +171,6 @@ function unbound_keys_setup() {
 
 	if (!file_exists("{$g['unbound_chroot_path']}/unbound_control.key"))
 		mwexec("/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}");	
-}
-
-function unbound_setup() {
-	global $config, $g;
-
-	unbound_anchor_setup();
-	unbound_remote_control_setup();
-	unbound_resync_config();
-	unbound_keys_setup();
-
 }
 
 /* Generation of Unbound statistics */
@@ -243,7 +235,7 @@ EOF;
 
 	/* Add custom Unbound options */
 	if ($config['unbound']['custom_options']) {
-		$custom_option = "# Unbound custom option"
+		$custom_option = "# Unbound custom option";
 		foreach (preg_split('/\s+/', $config['dns']['custom_options']) as $ent)
 			$custom_option .= $ent."\n";
 	}
@@ -466,4 +458,15 @@ function read_hosts() {
 	}
 	return $etc_hosts;
 }
+
+function unbound_setup() {
+	global $config, $g;
+
+	unbound_anchor_setup();
+	unbound_remote_control_setup();
+	unbound_keys_setup();
+	unbound_resync_config();
+
+}
+
 ?>

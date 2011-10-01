@@ -169,8 +169,11 @@ EOD;
 function unbound_keys_setup() {
 	global $g;
 
-	if (!file_exists("{$g['unbound_chroot_path']}/unbound_control.key"))
+	if (!file_exists("{$g['unbound_chroot_path']}/unbound_control.key")) {
 		mwexec("/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}/etc");
+		@chown("{$g['unbound_chroot_path']}/etc/unbound_*", "unbound");
+		@chgrp("{$g['unbound_chroot_path']}/etc/unbound_*", "wheel");
+	}
 }
 
 /* Generation of Unbound statistics */

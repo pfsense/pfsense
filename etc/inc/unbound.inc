@@ -242,10 +242,11 @@ EOF;
 	$statistics = unbound_statistics();
 
 	/* Add custom Unbound options */
-	//if ($config['unbound']['custom_options']) {
-	//	foreach (preg_split('/\s+/', $config['unbound']['custom_options']) as $c)
-	//
-	//}
+	if ($config['dns']['custom_options']) {
+		$custom_option = "# Unbound custom option"
+		foreach (preg_split('/\s+/', $config['dns']['custom_options']) as $ent)
+			$custom_option .= $ent."\n";
+	}
 
 	$unboundconf = <<<EOD
 ##########################
@@ -310,6 +311,8 @@ include: {$g['unbound_chroot_path']}/etc/host_entries.conf
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}/etc/domainoverrides.conf
+
+{$custom_options}
 
 ###
 # Remote Control Config

@@ -37,7 +37,7 @@
 
 /* Handle Domain overrides and DNS Rebinding domains */
 function unbound_add_domain_overrides($pvt=false) {
-	global $config;
+	global $config, $g;
 
 	$domains = $config['unbound']['domainoverrides'];
 

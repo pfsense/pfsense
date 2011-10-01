@@ -41,62 +41,58 @@
 ##|*MATCH=status_queues.php*
 ##|-PRIV
 
+header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
+header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
+header("Cache-Control: no-store, no-cache, must-revalidate" ); // HTTP/1.1
+header("Cache-Control: post-check=0, pre-check=0", FALSE );
+header("Pragma: no-cache"); // HTTP/1.0
+
 require("guiconfig.inc");
 
-if ($_REQUEST['getactivity']) {
-	$stats_array = gather_altq_queue_stats(true);
+if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid"))
+	mwexec("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
 
+$fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
+if (!$fd) {
+	log_error("Something wrong happened during comunication with stat gathering");
+	header("Location: /status_queues.php");
+	exit;
+}
+$stats = "";
+while(!feof($fd))
+	$stats .= fread($fd, 4096);
+fclose($fd);
+
+@file_put_contents("{$g['tmp_path']}/qstats", $stats);
+$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
+
+if ($_REQUEST['getactivity']) {
         /* calculate total packets being moved through all queues. */
         $total_packets_s = 0;
-        foreach($stats_array as $stats_line) {
-                $stat_line_split = split("\|", $stats_line);
-                $total_packets_s = $total_packets_s + intval($stat_line_split[2]);
+        foreach($altqstats['queue'] as $q) {
+		if (strstr($q['name'], "root_"))
+			continue;
+                $total_packets_s = $total_packets_s + intval($q['pkts']);
         }
 
-        $i = 0;
 	$finscript = "";
-        foreach($stats_array as $stats_line) {
-                if($stat_line_split[2] == "" and $counter > 1) {
-                        continue;
-                }
+        foreach($altqstats['queue'] as $q) {
+		if (strstr($q['name'], "root_"))
+			continue;
 
-                $stat_line_split = split("\|", $stats_line);
-                $packet_sampled = intval($stat_line_split[2]);
-                $speed = $stat_line_split[1];
-                $borrows = intval($stat_line_split[3]);
-                $suspends = intval($stat_line_split[4]);
-                $drops = intval($stat_line_split[5]);
+                $packet_s = round(400 * (1 - $q['pkts']/ $total_packets_s), 0);
 
-
-                $packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
-
-                $finscript .= "$('queue{$i}widthb').width='{$packet_s}';";
-                $finscript .= "$('queue{$i}widtha').width='" . (400 - $packet_s) . "';";
-                $borrows_txt = "{$borrows} borrows";
-                $suspends_txt = "{$suspends} suspends";
-                $drops_txt = "${drops} drops";
-                $finscript .= "$('queue{$i}pps').value = '{$packet_sampled}/pps';";
-                $finscript .= "$('queue{$i}bps').value = '{$speed}';";
-                $finscript .= "$('queue{$i}borrows').value = '{$borrows_txt}';";
-                $finscript .= "$('queue{$i}suspends').value = '{$suspends_txt}';";
-                $finscript .= "$('queue{$i}drops').value = '{$drops_txt}';";
-                $i++;
+                $finscript .= "$('queue{$q['name']}{$q['interface']}widthb').width='{$packet_s}';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}widtha').width='" . (400 - $packet_s) . "';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}pps').value = '{$q['measured']}/pps';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}bps').value = '{$q['measuredspeed']}';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}borrows').value = '{$q['borrows']} borrows';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}suspends').value = '{$q['suspends']} suspends';";
+                $finscript .= "$('queue{$q['name']}{$q['interface']}drops').value = '{$q['droppedpkts']} drops';";
         }
 	header("Content-type: text/javascript");
 	echo $finscript;
 	exit;
-}
-
-$a_queues = array();
-
-exec("/sbin/pfctl -vsq", $pfctl_vsq_array);
-foreach($pfctl_vsq_array as $pfctl) {
-	if (preg_match_all("/queue\s+(\w+)\s+(\w+)\s+(\w+)\s+/",$pfctl,$match_array)) {
-		if (stristr($match_array[1][0],"root_"))
-			continue;
-               $a_queues[] = $match_array[1][0] . " on " .
-				convert_real_interface_to_friendly_descr($match_array[3][0]);
-	}
 }
 
 $pgtitle = array(gettext("Status"),gettext("Traffic shaper"),gettext("Queues"));
@@ -139,28 +135,31 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
                         <td class="listhdr" colspan="1"><?=gettext("Queue"); ?></td>
 			<td class="listhdr" colspan="6"><?=gettext("Statistics"); ?></td>
                       </tr>
-                      <?php $i = 0; foreach ($a_queues as $queue): ?>
+                      <?php $i = 0; foreach ($altqstats['queue'] as $q): 
+				if (strstr($q['name'], "root_"))
+					continue;
+			?>
 		      <tr><td bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <tr valign="top">
                         <td bgcolor="#DDDDDD">
-                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?echo "<a href=\"firewall_shaper.php?id={$queue}\">" . htmlspecialchars($queue) . "</a>";?>&nbsp;&nbsp;&nbsp;</td>
+                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?echo "<a href=\"firewall_shaper.php?id={$q['name']}\">" . htmlspecialchars($q['name'] . " on " . convert_real_interface_to_friendly_descr($q['interface'])) . "</a>";?>&nbsp;&nbsp;&nbsp;</td>
 			<td bgcolor="#DDDDDD">
 			<nobr>
 <?php
 			$cpuUsage = 0;
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='absmiddle'> ";
 			echo "</nobr></td></tr>";
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
 			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			echo "<nobr>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}pps' id='queue{$i}pps' value='(" . gettext("Loading") . ")' align='left'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right'>";
 			echo "</nobr>";
 ?>
 
@@ -174,7 +173,6 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 		      <?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br>
                       <?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
 		    </p>
-            </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

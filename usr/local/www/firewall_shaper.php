@@ -311,6 +311,7 @@ if ($_GET) {
 		$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 		$dontshow = true;
 	}
+	mwexec("killall qstats");
 } else {
 	$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 	$dontshow = true;

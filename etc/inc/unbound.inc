@@ -195,7 +195,7 @@ EOF;
 function unbound_resync_config() {
 	global $config,$g;
 
-	$unboundcfg = $config['config']['unbound'];
+	$unboundcfg = $config['unbound'];
 
 	/* Setup optimization */
 	$optimization = unbound_optimization();

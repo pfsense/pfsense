@@ -172,9 +172,26 @@ function unbound_setup() {
 	global $config, $g;
 
 	unbound_anchor_setup();
+	unbound_remote_control_setup();
 	unbound_resync_config();
 	unbound_keys_setup();
 
+}
+
+/* Generation of Unbound statistics */
+function unbound_statistics() {
+	global $config;
+
+	/* XXX To do - add RRD graphs */
+	$stats = <<<EOF
+# Unbound Statistics
+statistics-interval: {$config['dns']['stats_interval']}
+extended-statistics: yes
+statistics-cumulative: yes
+
+EOF;
+
+	return $stats;
 }
 
 function unbound_resync_config() {
@@ -218,6 +235,8 @@ EOF;
 	/* Configure Domain Overrides */
 	$domain_overrides = unbound_add_domain_overrides();
 
+	/* Configure Unbound statistics */
+	$statistics = unbound_statistics();
 
 	/* Add custom Unbound options */
 	//if ($config['unbound']['custom_options']) {
@@ -278,7 +297,9 @@ harden-dnssec-stripped: yes
 {$anchor_file}
 prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
-
+# Statistics
+{$statistics}
+# Interfaces
 interface: 0.0.0.0
 interface: ::0
 
@@ -299,7 +320,7 @@ EOD;
 }
 
 function unbound_remote_control_setup() {
-	global $config, $g;
+	global $g;
 
 	if(!file_exists("{$g['unbound_chroot_path']}/etc/remotecontrol.conf")) {
 		$remotcfg = <<<EOF

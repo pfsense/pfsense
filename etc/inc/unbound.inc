@@ -286,6 +286,9 @@ interface: ::0
 {$private_addr}
 {$private_domains}
 
+# Static host entries
+include: {$g['unbound_chroot_path']}/etc/host_entries
+
 ###
 # Remote Control Config
 ###
@@ -303,7 +306,7 @@ EOD;
 }
 
 function unbound_add_host_entries() {
-	global $config;
+	global $config, $g;
 
 	/* XXX: break this out into a separate config file and make use of include */
 	$syscfg = $config['system'];
@@ -394,7 +397,9 @@ function unbound_add_host_entries() {
 		}
 		$unbound_entries .= $host_entries;
 	}
-	return $unbound_entries;
+
+	/* Write out entries */
+	file_put_contents("{$g['unbound_chroot_path']}/etc/host_entries", $unbound_entries);
 }
 
 ?>

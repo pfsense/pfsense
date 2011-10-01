@@ -321,6 +321,8 @@ include: {$g['unbound_chroot_path']}/etc/remotecontrol.conf
 
 EOD;
 
+	file_put_contents("{$g['unbound_chroot_path']}/etc/unbound.conf", $unboundconf);
+
 }
 
 function unbound_remote_control_setup() {

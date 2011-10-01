@@ -104,7 +104,6 @@ function remove_freebsd_package($packagestring) {
 	$linkdirs = array('bin','sbin');
 	foreach($linkdirs as $dir) {
 		if(is_dir("{$pbidir}/{$dir}")) {
-			file_put_contents('/tmp/vcoque.debug',"{$pbidir}/{$dir}",FILE_APPEND);
 			$files = scandir("{$pbidir}/{$dir}");
 			foreach($files as $f) {
 				if($f != '.' && $f != '..') {
@@ -520,7 +519,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
 	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
 
-	exec("/usr/local/bin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+	exec("/usr/local/sbin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 	$pbidir = $pbidir[0];
 	$linkdirs = array('bin','sbin');
 	foreach($linkdirs as $dir) {
@@ -781,6 +780,18 @@ function install_package_xml($pkg) {
 			if($pkg_config['custom_php_install_command']) {
 				$static_output .= gettext("Executing custom_php_install_command()...");
 				update_output_window($static_output);
+				/* XXX: create symlinks for conf files into the PBI directories.
+				 *	change packages to store configs at /usr/pbi/pkg/etc and remove this
+				 */
+				eval_once($pkg_config['custom_php_install_command']);
+				exec("/usr/local/sbin/pbi_info | grep {$pkg} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidir);
+				$pbidir = $pbidir[0];
+				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
+				foreach($files as $f) {
+					$pbiconf = str_replace('/usr/local',$pbidir,$f);
+					unlink($pbiconf);
+					symlink($f,$pbiconf);
+				}
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= gettext("done.") . "\n";
 				update_output_window($static_output);

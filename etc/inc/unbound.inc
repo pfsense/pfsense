@@ -442,7 +442,9 @@ function unbound_add_host_entries() {
 /* Read /etc/hosts */
 function read_hosts() {
 
-	// Open /etc/hosts and extract the only dhcpleases info
+	/* Open /etc/hosts and extract the only dhcpleases info
+	 * XXX - to convert to an unbound C library which reads /etc/hosts automatically
+	 */
 	$etc_hosts = array();
 	foreach (file('/etc/hosts') as $line) {
 		$d = preg_split('/\s/', $line, -1, PREG_SPLIT_NO_EMPTY);

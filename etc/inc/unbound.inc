@@ -128,5 +128,21 @@ function unbound_optimization() {
 	return $optimization;
 }
 
+function unbound_fetch_root_hints() {
+	global $g;
+
+	$hints = "{$g['unbound_chroot_path']}/etc/root.hints";
+	if (@filesize($hints) == 0 ) {
+		conf_mount_rw();
+		$returnvar = mwexec("/usr/bin/dig +tcp +nocmd +answer @`/usr/bin/dig +nocmd +noall +answer +short . NS | /usr/bin/head -1` . NS > {$hints}");
+		conf_mount_ro();
+		if ($returnvar != 0) {
+			mwexec("/bin/rm -f {$hints}");
+			return false;
+		} else
+			return true;
+	} else
+		return true;
+}
 
 ?>

@@ -303,7 +303,7 @@ else
 		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/relayd.log	
-		/usr/sbin/clog -i -s 65535 /var/log/wireles.log
+		/usr/sbin/clog -i -s 65535 /var/log/wireless.log
 		/usr/sbin/clog -i -s 65535 /var/log/apinger.log	
 	fi
 fi 

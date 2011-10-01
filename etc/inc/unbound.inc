@@ -439,4 +439,27 @@ function unbound_add_host_entries() {
 	file_put_contents("{$g['unbound_chroot_path']}/etc/host_entries.conf", $unbound_entries);
 }
 
+/* Read /etc/hosts */
+function read_hosts() {
+
+	// Open /etc/hosts and extract the only dhcpleases info
+	$etc_hosts = array();
+	foreach (file('/etc/hosts') as $line) {
+		$d = preg_split('/\s/', $line, -1, PREG_SPLIT_NO_EMPTY);
+		if (empty($d) || substr(reset($d), 0, 1) == "#")
+			continue;
+		if ($d[3] == "#") {
+			$ip = array_shift($d);
+			$fqdn = array_shift($d);
+			$name = array_shift($d);
+			if ($fqdn != "empty") {
+				if ($name != "empty")
+					array_push($etc_hosts, array(ipaddr => "$ip", fqdn => "$fqdn", name => "$name"));
+				else
+					array_push($etc_hosts, array(ipaddr => "$ip", fqdn => "$fqdn"));
+			}
+		}
+	}
+	return $etc_hosts;
+}
 ?>

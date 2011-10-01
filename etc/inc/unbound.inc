@@ -170,7 +170,7 @@ function unbound_keys_setup() {
 	global $g;
 
 	if (!file_exists("{$g['unbound_chroot_path']}/unbound_control.key"))
-		mwexec("/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}");	
+		mwexec("/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}/etc");
 }
 
 /* Generation of Unbound statistics */

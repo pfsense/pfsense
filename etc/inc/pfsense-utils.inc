@@ -476,36 +476,6 @@ function WakeOnLan($addr, $mac)
 }
 
 /*
- * gather_altq_queue_stats():  gather altq queue stats and return an array that
- *                             is queuename|qlength|measured_packets
- *                             NOTE: this command takes 5 seconds to run
- */
-function gather_altq_queue_stats($dont_return_root_queues) {
-	exec("/sbin/pfctl -vvsq", $stats_array);
-	$queue_stats = array();
-	foreach ($stats_array as $stats_line) {
-		$match_array = "";
-		if (preg_match_all("/queue\s+(\w+)\s+/",$stats_line,$match_array))
-			$queue_name = $match_array[1][0];
-		if (preg_match_all("/measured:\s+.*packets\/s\,\s(.*)\s+\]/",$stats_line,$match_array))
-			$speed = $match_array[1][0];
-		if (preg_match_all("/borrows:\s+(.*)/",$stats_line,$match_array))
-			$borrows = $match_array[1][0];
-		if (preg_match_all("/suspends:\s+(.*)/",$stats_line,$match_array))
-			$suspends = $match_array[1][0];
-		if (preg_match_all("/dropped pkts:\s+(.*)/",$stats_line,$match_array))
-			$drops = $match_array[1][0];
-		if (preg_match_all("/measured:\s+(.*)packets/",$stats_line,$match_array)) {
-			$measured = $match_array[1][0];
-			if($dont_return_root_queues == true)
-				if(stristr($queue_name,"root_") == false)
-					array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|{$drops}");
-		}
-	}
-	return $queue_stats;
-}
-
-/*
  * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle.
  *					 Useful for finding paths and stripping file extensions.
  */

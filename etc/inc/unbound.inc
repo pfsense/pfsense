@@ -35,11 +35,11 @@
 */
 
 
+/* Handle Domain overrides and DNS Rebinding domains */
 function unbound_add_domain_overrides($pvt=false) {
 	global $config;
 
-	$domains = $config['unbound']['domainoverrides'];
-
+	$domains = $config['dns']['domainoverrides'];
 
 	$sorted_domains = msort($domains, "domain");
 	$result = array();		
@@ -66,7 +66,10 @@ function unbound_add_domain_overrides($pvt=false) {
 			$domain_entries .= "\tstub-prime: no\n";
 		}
 	}
-	return $domain_entries;
+	if($pvt == true)
+		return $domain_entries;
+	else
+		file_put_contents("{$g['unbound_chroot_path']}/etc/domainoverrides.conf", $domain_entries);
 }
 
 
@@ -256,14 +259,12 @@ server:
 chroot: {$g['unbound_chroot_path']}
 username: "unbound"
 directory: "{$g['unbound_chroot_path']}/etc"
-pidfile: "/var/run/unbound.pid"
 root-hints: "root.hints"
-harden-referral-path: no
-prefetch: no
-prefetch-key: no
+pidfile: "/var/run/unbound.pid"
 use-syslog: yes
 port: 53
-verbosity: 1
+verbosity: {$config['loglevel']}
+harden-referral-path: no
 do-ip4: yes
 do-ip6: yes
 do-udp: yes
@@ -279,11 +280,8 @@ infra-cache-numhosts: 10000
 outgoing-num-tcp: 10
 incoming-num-tcp: 10
 edns-buffer-size: 4096
-statistics-interval: 7200
-extended-statistics: yes
-statistics-cumulative: yes
-cache-max-ttl: 86400
-cache-min-ttl: 0
+cache-max-ttl: {$config['cache_max_ttl']}
+cache-min-ttl: {$config['cache_min_ttl']}
 harden-dnssec-stripped: yes
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
@@ -295,11 +293,11 @@ harden-dnssec-stripped: yes
 {$optimization['outgoing_range']}
 {$optimization['so_rcvbuf']}
 {$anchor_file}
-prefetch: {$prefetch}
-prefetch-key: {$prefetch_key}
+prefetch: {$config['prefetch']}
+prefetch-key: {$config['prefetch_key']}
 # Statistics
 {$statistics}
-# Interfaces
+# Interface IP(s) to bind to
 interface: 0.0.0.0
 interface: ::0
 
@@ -309,6 +307,9 @@ interface: ::0
 
 # Static host entries
 include: {$g['unbound_chroot_path']}/etc/host_entries.conf
+
+# Domain overrides
+include: {$g['unbound_chroot_path']}/etc/domainoverrides.conf
 
 ###
 # Remote Control Config

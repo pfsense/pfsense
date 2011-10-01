@@ -162,7 +162,7 @@ EOD;
 	@chown("{$g['unbound_chroot_path']}/etc/root-trust-anchor", "unbound");
 	@chgrp("{$g['unbound_chroot_path']}/etc/root-trust-anchor", "wheel");
 	@chmod("{$g['unbound_chroot_path']}/etc/root-trust-anchor", 0600);
-
+	mwexec("/usr/local/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/etc/root-trust-anchor", true);
 }
 
 /* Setup Unbound Remote Control SSL keys */

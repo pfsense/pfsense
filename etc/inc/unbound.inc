@@ -134,11 +134,11 @@ function unbound_optimization() {
 }
 
 /* Fetch root name servers hints file */
-function unbound_fetch_root_hints() {
+function unbound_fetch_root_hints_using_dig() {
 	global $g;
 
 	$hints = "{$g['unbound_chroot_path']}/etc/root.hints";
-	if (@filesize($hints) == 0 ) {
+	if (@filesize($hints) == 0) {
 		$returnvar = mwexec("/usr/bin/dig +tcp +nocmd +answer +time=1 +tries=1 +retry=1 @`/usr/bin/dig +nocmd +noall +answer +short +time=1 +tries=1 +retry=1 . NS | /usr/bin/head -1` . NS > {$hints}");
 
 		if ($returnvar != 0) {
@@ -148,6 +148,30 @@ function unbound_fetch_root_hints() {
 			return true;
 	} else
 		return true;
+}
+
+function unbound_fetch_root_hints() {
+	global $g;
+
+	$destination_file = "{$g['unbound_chroot_path']}/etc/root.hints";
+	if (filesize($destination_file) == 0 ) {
+		$fout = fopen($destination_file, "w");
+		$url = "ftp://ftp.internic.net/domain/named.cache";
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '5');
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$data = curl_exec($ch);
+		curl_close($ch);
+
+		fwrite($fout, $data);
+		fclose($fout);
+
+		return ($http_code == 200) ? true : $http_code;
+	} else
+		return false;
 }
 
 /* Configure initial anchor to support DNSSEC */

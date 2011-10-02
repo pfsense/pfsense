@@ -154,7 +154,7 @@ function unbound_fetch_root_hints() {
 	global $g;
 
 	$destination_file = "{$g['unbound_chroot_path']}/etc/root.hints";
-	if (filesize($destination_file) == 0 ) {
+	if (@filesize($destination_file) == 0 ) {
 		$fout = fopen($destination_file, "w");
 		$url = "ftp://ftp.internic.net/domain/named.cache";
 
@@ -355,10 +355,10 @@ remote-control:
 control-enable: yes
 control-interface: 127.0.0.1
 control-port: 953
-server-key-file: "/etc/unbound_server.key"
-server-cert-file: "/etc/unbound_server.pem"
-control-key-file: "/etc/unbound_control.key"
-control-cert-file: "/etc/unbound_control.pem"
+server-key-file: "{$g['unbound_chroot_path']}/etc/unbound_server.key"
+server-cert-file: "{$g['unbound_chroot_path']}/etc/unbound_server.pem"
+control-key-file: "{$g['unbound_chroot_path']}/etc/unbound_control.key"
+control-cert-file: "{$g['unbound_chroot_path']}/etc/unbound_control.pem"
 EOF;
 
 		file_put_contents("{$g['unbound_chroot_path']}/etc/remotecontrol.conf", $remotcfg);

@@ -1043,78 +1043,77 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateType(t) {
 		switch(t) {
 			case "none": {
-				$('staticv4', 'dhcp', 'pppoe','pptp', 'ppp').invoke('hide');
+				jQuery('#staticv4, #dhcp, #pppoe, #pptp, #ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				$('none', 'dhcp', 'pppoe', 'pptp', 'ppp').invoke('hide');
+				jQuery('#none, #dhcp, #pppoe, #pptp, #ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				$('none', 'staticv4', 'pppoe', 'pptp', 'ppp').invoke('hide');
+				jQuery('#none, #staticv4, #pppoe, #pptp, #ppp').hide();
 				break;
 			}
 			case "ppp": {
-				$('none', 'staticv4', 'dhcp', 'pptp', 'pppoe').invoke('hide');
+				jQuery('#none, #staticv4, #dhcp, #pptp, #pppoe').hide();
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				$('none', 'staticv4', 'dhcp', 'pptp', 'ppp').invoke('hide');
+				jQuery('#none, #staticv4, #dhcp, #pptp, #ppp').hide();
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				$('none', 'staticv4', 'dhcp', 'pppoe', 'ppp').invoke('hide');
-				$('pptp').show();
+				jQuery('#none, #staticv4, #dhcp, #pppoe, #ppp').hide();
+				jQuery('#pptp').show();
 				break;
 			}
 		}
 		if (t != "l2tp" && t != "pptp")
-			$(t).show();
+			jQuery('#'+t).show();
 	}
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				$('staticv6', 'dhcp6').invoke('hide');
+				jQuery('#staticv6, #dhcp6').hide();
 				break;
 			}
 			case "staticv6": {
-				$('none', 'dhcp6').invoke('hide');
+				jQuery('#none, #dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				$('none', 'staticv6').invoke('hide');
+				jQuery('#none, #staticv6').hide();
 				break;
 			}
 		}
 		if (t != "l2tp" && t != "pptp")
-			$(t).show();
+			jQuery('#'+t).show();
 	}
 	function show_allcfg(obj) {
 		if (obj.checked)
-			$('allcfg').show();
+			jQuery('#allcfg').show();
 		else
-			$('allcfg').hide();
+			jQuery('#allcfg').hide();
 	}
 
 	function show_reset_settings(reset_type) {
 		if (reset_type == 'preset') {
-			Effect.Appear('pppoepresetwrap', { duration: 0.0 });
-			Effect.Fade('pppoecustomwrap', { duration: 0.0 });
+			jQuery('#pppoepresetwrap').show();
+			jQuery('#pppoecustomwrap').hide();
 		}
 		else if (reset_type == 'custom') {
-			Effect.Appear('pppoecustomwrap', { duration: 0.0 });
-			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+			jQuery('#pppoecustomwrap').show();
+			jQuery('#pppoepresetwrap').hide();
 		} else {
-			Effect.Fade('pppoecustomwrap', { duration: 0.0 });
-			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+			jQuery('#pppoecustomwrap').hide();
+			jQuery('#pppoepresetwrap').hide();
 		}
 	}
 	function show_mon_config() {
-		document.getElementById("showmonbox").innerHTML='';
-		aodiv = document.getElementById('showmon');
-		aodiv.style.display = "block";
+		jQuery("#showmonbox").html('');
+		jQuery('#showmon').css('display','block');
 	}
 
 	function openwindow(url) {
@@ -1125,52 +1124,54 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			return true;
 	}
 	function country_list() {
-		$('country').childElements().each(function(node) { node.remove(); });
-		$('provider').childElements().each(function(node) { node.remove(); });
-		$('providerplan').childElements().each(function(node) { node.remove(); });
-		new Ajax.Request("getserviceproviders.php",{
-			onSuccess: function(response) {
-				var responseTextArr = response.responseText.split("\n");
+		jQuery('#country').children().remove();
+		jQuery('#provider').children().remove();
+		jQuery('#providerplan').children().remove();
+		jQuery.ajax("getserviceproviders.php",{
+			success: function(response) {
+				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					var option = new Element('option');
 					country = value.split(":");
 					option.text = country[0];
 					option.value = country[1];
-					$('country').insert({ bottom : option });
+					jQuery('#country').append(option);
 				});
 			}
 		});
-		$('trcountry').setStyle({display : "table-row"});
+		jQuery('#trcountry').css('display',"table-row");
 	}
 
 	function providers_list() {
-		$('provider').childElements().each(function(node) { node.remove(); });
-		$('providerplan').childElements().each(function(node) { node.remove(); });
-		new Ajax.Request("getserviceproviders.php",{
-			parameters: {country : $F('country')},
-			onSuccess: function(response) {
-				var responseTextArr = response.responseText.split("\n");
+		jQuery('#provider').children().remove();
+		jQuery('#providerplan').children().remove();
+		jQuery.ajax("getserviceproviders.php",{
+			type: 'post',
+			data: {country : jQuery('#country').val()},
+			success: function(response) {
+				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					var option = new Element('option');
 					option.text = value;
 					option.value = value;
-					$('provider').insert({ bottom : option });
+					jQuery('#provider').append(option);
 				});
 			}
 		});
-		$('trprovider').setStyle({display : "table-row"});
-		$('trproviderplan').setStyle({display : "none"});
+		jQuery('#trprovider').css("display","table-row");
+		jQuery('#trproviderplan').css("display","none");
 	}
 
 	function providerplan_list() {
-		$('providerplan').childElements().each(function(node) { node.remove(); });
-		$('providerplan').insert( new Element('option') );
-		new Ajax.Request("getserviceproviders.php",{
-			parameters: {country : $F('country'), provider : $F('provider')},
-			onSuccess: function(response) {
-				var responseTextArr = response.responseText.split("\n");
+		jQuery('#providerplan').children().remove();
+		jQuery('#providerplan').append( new Element('option') );
+		jQuery.ajax("getserviceproviders.php",{
+			type: 'post',
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val()},
+			success: function(response) {
+				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					if(value != "") {
@@ -1179,31 +1180,34 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						var option = new Element('option');
 						option.text = providerplan[0] + " - " + providerplan[1];
 						option.value = providerplan[1];
-						$('providerplan').insert({ bottom : option });
+						jQuery('#providerplan').append(option);
 					}
 				});
 			}
 		});
-		$('trproviderplan').setStyle({display : "table-row"});
+		jQuery('#trproviderplan').css("display","table-row");
 	}
 
 	function prefill_provider() {
-		new Ajax.Request("getserviceproviders.php",{
-			parameters: {country : $F('country'), provider : $F('provider'), plan : $F('providerplan')},
-			onSuccess: function(response) {
+		jQuery.ajax("getserviceproviders.php",{
+			type: 'post',
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val(), plan : jQuery('#providerplan').val()},
+			success: function(data,textStatus,response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
-				$('username').setValue('');
-				$('password').setValue('');
+				jQuery('#username').val('');
+				jQuery('#password').val('');
 				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
-					$('phone').setValue('#777');
-					$('apn').setValue('');
+					jQuery('#phone').val('#777');
+					jQuery('#apn').val('');
 				} else {
-					$('phone').setValue('*99#');
-					$('apn').setValue(provider.getElementsByTagName('apn')[0].firstChild.data);
+					jQuery('#phone').val('*99#');
+					jQuery('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
-				$('username').setValue(provider.getElementsByTagName('username')[0].firstChild.data);
-				$('password').setValue(provider.getElementsByTagName('password')[0].firstChild.data);
+				username = provider.getElementsByTagName('username')[0].firstChild.data;
+				password = provider.getElementsByTagName('password')[0].firstChild.data;
+				jQuery('#username').val(username);
+				jQuery('#password').val(password);
 			}
 		});
 	}
@@ -2468,7 +2472,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("cancel").style.display = 'none';
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
-			$('notebox').innerHTML="";
+			jQuery('#notebox').html("");
 		}
 		function show_add_gateway_v6() {
 			document.getElementById("addgatewayv6").style.display = '';
@@ -2478,7 +2482,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("cancel").style.display = 'none';
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
-			$('noteboxv6').innerHTML="";
+			jQuery('#noteboxv6').html("");
 		}
 		function hide_add_gateway() {
 			document.getElementById("addgateway").style.display = 'none';
@@ -2500,40 +2504,40 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		function hide_add_gatewaysave() {
 			document.getElementById("addgateway").style.display = 'none';
-			$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
-			var iface = $F('if');
-			name = $('name').getValue();
-			var descr = $('gatewaydescr').getValue();
-			gatewayip = $('gatewayip').getValue();
-			var defaultgw = $('defaultgw').getValue();
+			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+			var iface = jQuery('#if').val();
+			name = jQuery('#name').val();
+			var descr = jQuery('#gatewaydescr').val();
+			gatewayip = jQuery('#gatewayip').val();
+			var defaultgw = jQuery('#defaultgw').val();
 			var url = "system_gateways_edit.php";
 			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-			var myAjax = new Ajax.Request(
+			jQuery.ajax(
 				url,
 				{
-					method: 'post',
-					parameters: pars,
-					onFailure: report_failure,
-					onComplete: save_callback
+					type: 'post',
+					data: pars,
+					error: report_failure,
+					complete: save_callback
 				});
 		}
 		function hide_add_gatewaysave_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
-			$('statusv6').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
-			var iface = $F('if');
-			name = $('namev6').getValue();
-			var descr = $('gatewaydescrv6').getValue();
-			gatewayip = $('gatewayipv6').getValue();
-			var defaultgw = $('defaultgwv6').getValue();
+			jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+			var iface = jQuery('#if').val();
+			name = jQuery('#namev6').val();
+			var descr = jQuery('#gatewaydescrv6').val();
+			gatewayip = jQuery('#gatewayipv6').val();
+			var defaultgw = jQuery('#defaultgwv6').val();
 			var url_v6 = "system_gateways_edit.php";
 			var pars_v6 = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-			var myAjax_v6 = new Ajax.Request(
+			jQuery.ajax(
 				url_v6,
 				{
-					method: 'post',
-					parameters: pars_v6,
-					onFailure: report_failure_v6,
-					onComplete: save_callback_v6
+					type: 'post',
+					data: pars_v6,
+					error: report_failure_v6,
+					complete: save_callback_v6
 				});
 		}
 		function addOption(selectbox,text,value)
@@ -2541,18 +2545,18 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			var optn = document.createElement("OPTION");
 			optn.text = text;
 			optn.value = value;
-			selectbox.options.add(optn);
-			selectbox.selectedIndex = (selectbox.options.length-1);
-			$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
+			selectbox.append(optn);
+			selectbox.prop('selectedIndex',selectbox.children().length-1);
+			jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
 		}
 		function addOption_v6(selectbox,text,value)
 		{
 			var optn = document.createElement("OPTION");
 			optn.text = text;
 			optn.value = value;
-			selectbox.options.add(optn);
-			selectbox.selectedIndex = (selectbox.options.length-1);
-			$('noteboxv6').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
+			selectbox.append(optn);
+			selectbox.prop('selectedIndex',selectbox.children().length-1);
+			jQuery('#noteboxv6').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
 		}
 		function report_failure() {
 			alert("Sorry, we could not create your IPv4 gateway at this time.");
@@ -2567,9 +2571,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			if(response) {
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
-				$('status').innerHTML = '';
+				jQuery('#status').html('');
 				var gwtext = escape(name) + " - " + gatewayip;
-				addOption($('gateway'), gwtext, name);
+				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();
 				//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
@@ -2587,9 +2591,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			if(response_v6) {
 				document.getElementById("addgatewayv6").style.display = 'none';
 				hide_add_gateway_v6();
-				$('statusv6').innerHTML = '';
+				jQuery('#statusv6').html('');
 				var gwtext_v6 = escape(name) + " - " + gatewayip;
-				addOption_v6($('gatewayv6'), gwtext_v6, name);
+				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
 				// Auto submit form?
 				//document.iform.submit();
 				//$('statusv6').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';

@@ -646,6 +646,7 @@ function ldap_test_connection($authcfg) {
 
 function ldap_setup_caenv($authcfg) {
 	global $g;
+	require_once("certs.inc");
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || !strstr($authcfg['ldap_urltype'], "SSL")) {

@@ -474,63 +474,65 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
 	global $static_output, $g;
 
-	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
-		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
-		$pkgstagingdir = "/root/tmp";
-		if (!is_dir($pkgstagingdir))
-			mkdir($pkgstagingdir);
-		$pkgstaging = "-o {$pkgstagingdir}/instmp.XXXXXX";
-		$fetchdir = $pkgstagingdir;
-	} else {
-		$fetchdir = $g['tmp_path'];
-	}
-
-	$osname = php_uname("s");
-	$arch =  php_uname("m");
-	$rel = strtolower(php_uname("r"));
-	if (substr_count($rel, '-') > 1)
-		$rel = substr($rel, 0, strrpos($rel, "-"));
-	$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/All";
-	if (empty($base_url))
-		$base_url = $priv_url;
-	if (substr($base_url, -1) == "/")
-		$base_url = substr($base_url, 0, -1);
-	$fetchto = "{$fetchdir}/apkg_{$filename}";
-	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
-	if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
-		if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
-			$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
-			update_output_window($static_output);
-			return false;
-		} else if ($base_url == $priv_url) {
-			$static_output .= " failed to download.\n";
-			update_output_window($static_output);
-			return false;
+	$pkgs = split(" ", $pkgname);
+	foreach($pkgs as $pkgname) {
+		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
+			$pkgstagingdir = "/root/tmp";
+			if (!is_dir($pkgstagingdir))
+				mkdir($pkgstagingdir);
+			$pkgstaging = "-o {$pkgstagingdir}/instmp.XXXXXX";
+			$fetchdir = $pkgstagingdir;
 		} else {
-			$static_output .= " [{$osname} repository]\n";
-			update_output_window($static_output);
+			$fetchdir = $g['tmp_path'];
 		}
-	}
-	$static_output .= " (extracting)\n";
-	update_output_window($static_output);
 
-	$pkgaddout = "";
+		$osname = php_uname("s");
+		$arch =  php_uname("m");
+		$rel = strtolower(php_uname("r"));
+		if (substr_count($rel, '-') > 1)
+			$rel = substr($rel, 0, strrpos($rel, "-"));
+		$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/All";
+		if (empty($base_url))
+			$base_url = $priv_url;
+		if (substr($base_url, -1) == "/")
+			$base_url = substr($base_url, 0, -1);
+		$fetchto = "{$fetchdir}/apkg_{$filename}";
+		$static_output .= "\n" . str_repeat(" ", $dependlevel * 2 + 1) . "Downloading {$base_url}/{$filename} ... ";
+		if (download_file_with_progress_bar("{$base_url}/{$filename}", $fetchto) !== true) {
+			if ($base_url != $priv_url && download_file_with_progress_bar("{$priv_url}/{$filename}", $fetchto) !== true) {
+				$static_output .= " could not download from there or {$priv_url}/{$filename}.\n";
+				update_output_window($static_output);
+				return false;
+			} else if ($base_url == $priv_url) {
+				$static_output .= " failed to download.\n";
+				update_output_window($static_output);
+				return false;
+			} else {
+				$static_output .= " [{$osname} repository]\n";
+				update_output_window($static_output);
+			}
+		}
+		$static_output .= " (extracting)\n";
+		update_output_window($static_output);
 
-	exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
-	pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
+		$pkgaddout = "";
 
-	exec("/usr/local/sbin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
-	$pbidir = $pbidir[0];
-	$linkdirs = array('bin','sbin');
-	foreach($linkdirs as $dir) {
-		if(is_dir("{$pbidir}/{$dir}")) {
-			$files = scandir("{$pbidir}/{$dir}");
-			foreach($files as $f) {
-				symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+		exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
+		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
+
+		exec("/usr/local/sbin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+		$pbidir = $pbidir[0];
+		$linkdirs = array('bin','sbin');
+		foreach($linkdirs as $dir) {
+			if(is_dir("{$pbidir}/{$dir}")) {
+				$files = scandir("{$pbidir}/{$dir}");
+				foreach($files as $f) {
+					symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+				}
 			}
 		}
 	}
-
 	return true;
 }
 

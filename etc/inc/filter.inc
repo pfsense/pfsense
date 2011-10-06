@@ -2331,9 +2331,10 @@ EOD;
 		/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
 		/* file is automatically in cron every 3000 minutes */
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
-			if($bogontableinstalled == 0)
+			if($bogontableinstalled == 0) {
 				$ipfrules .= "table <bogons> persist file \"/etc/bogons\"\n";
 				$ipfrules .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
+			}
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt

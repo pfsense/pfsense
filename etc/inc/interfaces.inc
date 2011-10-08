@@ -3990,6 +3990,8 @@ function is_altq_capable($int) {
 
         if (in_array($int_family[0], $capable))
                 return true;
+	else if (stristr($int, "l2tp")) /* VLANs are name $parent_$vlan now */
+		return true;
 	else if (stristr($int, "vlan")) /* VLANs are name $parent_$vlan now */
 		return true;
 	else if (stristr($int, "_wlan")) /* WLANs are name $parent_$wlan now */

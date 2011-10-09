@@ -657,7 +657,7 @@ function voucher_save_db_to_config() {
     global $config, $g, $cpzone;
 
 	if (is_array($config['voucher'])) {
-		foreach ($configure['voucher'] as $voucherzone => $vcfg) {
+		foreach ($config['voucher'] as $voucherzone => $vcfg) {
 			$cpzone = $voucherzone;
 			voucher_save_db_to_config_zone();
 		}

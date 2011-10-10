@@ -123,6 +123,7 @@ if($_GET['act']=="edit"){
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
+			$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
 			if ($pconfig['mode'] == "server_tls_user")
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 		} else
@@ -315,6 +316,7 @@ if ($_POST) {
 			$server['crlref'] = $pconfig['crlref'];
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
+			$server['cert_depth'] = $pconfig['cert_depth'];
 			if ($pconfig['mode'] == "server_tls_user")
 				$server['strictusercn'] = $pconfig['strictusercn'];
 		} else {
@@ -404,6 +406,7 @@ function mode_change() {
 			document.getElementById("tls_crl").style.display="";
 			document.getElementById("tls_cert").style.display="";
 			document.getElementById("tls_dh").style.display="";
+			document.getElementById("cert_depth").style.display="";
 			document.getElementById("strictusercn").style.display="none";
 			document.getElementById("psk").style.display="none";
 			break;
@@ -413,6 +416,7 @@ function mode_change() {
 			document.getElementById("tls_crl").style.display="";
 			document.getElementById("tls_cert").style.display="";
 			document.getElementById("tls_dh").style.display="";
+			document.getElementById("cert_depth").style.display="";
 			document.getElementById("strictusercn").style.display="";
 			document.getElementById("psk").style.display="none";
 			break;
@@ -422,6 +426,7 @@ function mode_change() {
 			document.getElementById("tls_crl").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
 			document.getElementById("tls_dh").style.display="none";
+			document.getElementById("cert_depth").style.display="none";
 			document.getElementById("strictusercn").style.display="none";
 			document.getElementById("psk").style.display="";
 			break;
@@ -915,6 +920,31 @@ if ($savemsg)
 								</option>
 								<?php endforeach; ?>
 							</select>
+						</td>
+					</tr>
+					<tr id="cert_depth">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Certificate Depth"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+							<tr><td>
+							<select name="cert_depth" class="formselect">
+								<option value="">Do Not Check</option>
+								<?php
+									foreach ($openvpn_cert_depths as $depth => $depthdesc):
+									$selected = '';
+									if ($depth == $pconfig['cert_depth'])
+										$selected = ' selected';
+								?>
+								<option value="<?= $depth ?>" <?= $selected ?>><?= $depthdesc ?></option>
+								<?php endforeach; ?>
+							</select>
+							</td></tr>
+							<tr><td>
+							<span class="vexpl">
+								<?=gettext("When a certificate-based client logs in, do not accept certificates below this depth. Useful for denying certificates made with intermediate CAs generated from the same CA as the server."); ?>
+							</span>
+							</td></tr>
+							</table>
 						</td>
 					</tr>
 					<tr id="strictusercn">

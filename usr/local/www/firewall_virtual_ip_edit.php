@@ -309,7 +309,7 @@ function enable_change(enable_over) {
                 document.iform.subnet_bits.disabled = 0;
 		document.iform.subnet.disabled = 0;
 		document.iform.noexpand.disabled = 1;
-		$('noexpandrow').style.display = 'none';
+		jQuery('#noexpandrow').css('display','none');
 		if (note.firstChild == null) {
 			note.appendChild(carpnote);
 		} else {
@@ -325,7 +325,7 @@ function enable_change(enable_over) {
                 document.iform.subnet_bits.disabled = 1;
 		document.iform.subnet.disabled = 0;
 		document.iform.noexpand.disabled = 0;
-		$('noexpandrow').style.display = '';
+		jQuery('#noexpandrow').css('display','');
 		if (note.firstChild == null) {
 			note.appendChild(proxyarpnote);
 		} else {
@@ -340,7 +340,7 @@ function enable_change(enable_over) {
 		}
 		document.iform.subnet.disabled = 0;
 		document.iform.noexpand.disabled = 1;
-		$('noexpandrow').style.display = 'none';
+		jQuery('#noexpandrow').css('display','none');
 	}
 	if (get_radio_value(document.iform.mode) == "ipalias") {
 		document.iform.type.disabled = 1;
@@ -349,7 +349,7 @@ function enable_change(enable_over) {
 		document.iform.subnet_bits.disabled = 0;
 		document.iform.subnet.disabled = 0;		
 		document.iform.noexpand.disabled = 1;
-		$('noexpandrow').style.display = 'none';
+		jQuery('#noexpandrow').css('display','none');
 	}
 	if (get_radio_value(document.iform.mode) == "carpdev-dhcp") {
 		document.iform.type.disabled = 1;
@@ -364,7 +364,7 @@ function enable_change(enable_over) {
         	document.iform.advskew.disabled = 0;
         	document.iform.advbase.disabled = 0;
 		document.iform.noexpand.disabled = 1;
-		$('noexpandrow').style.display = 'none';
+		jQuery('#noexpandrow').css('display','none');
 	}
 	typesel_change();
 }
@@ -374,13 +374,13 @@ function typesel_change() {
             document.iform.subnet.disabled = 0;
             if((get_radio_value(document.iform.mode) == "proxyarp")) document.iform.subnet_bits.disabled = 1;
 	    document.iform.noexpand.disabled = 1;
-	    $('noexpandrow').style.display = 'none';
+	    jQuery('#noexpandrow').css('display','none');
             break;
         case 1: // network
             document.iform.subnet.disabled = 0;
             document.iform.subnet_bits.disabled = 0;
 	    document.iform.noexpand.disabled = 0;
-	    $('noexpandrow').style.display = '';
+	    jQuery('#noexpandrow').css('display','');
             //document.iform.range_from.disabled = 1;
             //document.iform.range_to.disabled = 1;
             break;
@@ -388,7 +388,7 @@ function typesel_change() {
             document.iform.subnet.disabled = 1;
             document.iform.subnet_bits.disabled = 1;
 	    document.iform.noexpand.disabled = 1;
-	    $('noexpandrow').style.display = 'none';
+	    jQuery('#noexpandrow').css('display','none');
             //document.iform.range_from.disabled = 0;
             //document.iform.range_to.disabled = 0;
             break;
@@ -396,7 +396,7 @@ function typesel_change() {
             document.iform.subnet.disabled = 1;
             document.iform.subnet_bits.disabled = 0;
 	    document.iform.noexpand.disabled = 1;
-	    $('noexpandrow').style.display = 'none';
+	    jQuery('#noexpandrow').css('display','none');
             //document.iform.range_from.disabled = 0;
             //document.iform.range_to.disabled = 0;
             break;

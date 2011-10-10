@@ -373,21 +373,21 @@ function proto_change() {
 	}
 }
 function poolopts_change() {
-	if ($('target').options[$('target').selectedIndex].text.substring(0,4) == "Host") {
-		$('poolopts_tr').style.display = '';
-		$('target_network').style.display = 'none';
-	} else if ($('target').options[$('target').selectedIndex].text.substring(0,6) == "Subnet") {
-		$('poolopts_tr').style.display = '';
-		$('target_network').style.display = 'none';
-	} else if ($('target').options[$('target').selectedIndex].text.substring(0,5) == "Other") {
-		$('poolopts_tr').style.display = '';
-		$('target_network').style.display = '';
+	if (jQuery('#target option:selected').text().substring(0,4) == "Host") {
+		jQuery('#poolopts_tr').css('display','');
+		jQuery('#target_network').css('display','none');
+	} else if (jQuery('#target option:selected').text().substring(0,6) == "Subnet") {
+		jQuery('#poolopts_tr').css('display','');
+		jQuery('#target_network').css('display','none');
+	} else if (jQuery('#target option:selected').text().substring(0,5) == "Other") {
+		jQuery('#poolopts_tr').css('display','');
+		jQuery('#target_network').css('display','');
 	} else {
-		$('poolopts').selectedIndex = 0;
-		$('poolopts_tr').style.display = 'none';
-		$('target_network').style.display = 'none';
-		$('targetip').value = '';
-		$('targetip_subnet').value = '0';
+		jQuery('#poolopts').prop('selectedIndex',0);
+		jQuery('#poolopts_tr').css('display','none');
+		jQuery('#target_network').css('display','none');
+		jQuery('#targetip').val('');
+		jQuery('#targetip_subnet').val('0');
 	}
 }
 //-->

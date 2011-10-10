@@ -907,13 +907,13 @@ if($_REQUEST['undodrag']) {
 <?php endfor; ?>
 	function updateOrder(order) {
 		if(document.getElementById("redboxtable"))
-			$('redboxtable').hide();
-		$('loading').show();
+			jQuery('#redboxtable').hide();
+		jQuery('#loading').show();
 		document.body.style.cursor = 'wait';
 		document.location = 'firewall_rules.php?if=<?=htmlspecialchars($if);?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
 		return;
 	}
-	$('loading').hide();
+	jQuery('#loading').hide();
   </script>
 </form>
 <?php include("fend.inc"); ?>

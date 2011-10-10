@@ -30,6 +30,8 @@
 		pfSense_MODULE:	certificate_managaer
 */
 
+define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
+
 require_once("functions.inc");
 
 function & lookup_ca($refid) {
@@ -160,6 +162,7 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 function ca_create(& $ca, $keylen, $lifetime, $dn) {
 
 	$args = array(
+		"x509_extensions" => "v3_ca",
 		"digest_alg" => "sha1",
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
@@ -202,6 +205,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref) {
 	$signing_ca_serial = ++$signing_ca['serial'];
 
 	$args = array(
+		"x509_extensions" => "v3_ca",
 		"digest_alg" => "sha1",
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
@@ -263,6 +267,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 	$ca_serial = ++$ca['serial'];
 
 	$args = array(
+		"x509_extensions" => "usr_cert",
 		"digest_alg" => "sha1",
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
@@ -297,6 +302,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 function csr_generate(& $cert, $keylen, $dn) {
 
 	$args = array(
+		"x509_extensions" => "v3_req",
 		"digest_alg" => "sha1",
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,

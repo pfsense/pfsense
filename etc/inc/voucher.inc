@@ -664,7 +664,7 @@ function voucher_save_db_to_config() {
 	}
 }
 
-function voucher_save_db_to_confifg_zone() {
+function voucher_save_db_to_config_zone() {
     global $config, $g, $cpzone;
     
     if (!isset($config['voucher'][$cpzone]['enable']))

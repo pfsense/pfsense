@@ -333,7 +333,7 @@ include("head.inc");
 function generatenewkey() {
 	$('publickey').value = 'One moment please...';
 	$('privatekey').value = 'One moment please...';
-	new Ajax.Request("services_captiveportal_vouchers.php?generatekey=true", {
+	new Ajax.Request("services_captiveportal_vouchers.php?zone=<?php echo($cpzone); ?>&generatekey=true", {
 		method: 'get',
 		onSuccess: function(transport) {	
 			eval(transport.responseText);

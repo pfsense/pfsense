@@ -641,7 +641,7 @@ function enable_change(enable_change) {
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
 				<td class="vtable"><input name="radiusip3" type="text" class="formfld unknown" id="radiusip3" size="20" value="<?=htmlspecialchars($pconfig['radiusip3']);?>"><br>
-				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here."); ?></td>
+				<?=gettext("If you have a third RADIUS server, you can activate it by entering its IP address here."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
@@ -660,7 +660,7 @@ function enable_change(enable_change) {
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
 				<td class="vtable"><input name="radiusip4" type="text" class="formfld unknown" id="radiusip4" size="20" value="<?=htmlspecialchars($pconfig['radiusip4']);?>"><br>
-				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here."); ?></td>
+				<?=gettext("If you have a fourth RADIUS server, you can activate it by entering its IP address here."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>

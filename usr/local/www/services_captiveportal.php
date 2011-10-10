@@ -270,27 +270,27 @@ if ($_POST) {
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
-			$config['captiveportal']['radiusip'] = $_POST['radiusip'];
+			$newcp['captiveportal']['radiusip'] = $_POST['radiusip'];
 		else
-			unset($config['captiveportal']['radiusip3']);
+			unset($newcp['captiveportal']['radiusip3']);
 		if (isset($_POST['radiusip2']))
-			$config['captiveportal']['radiusip2'] = $_POST['radiusip2'];
+			$newcp['captiveportal']['radiusip2'] = $_POST['radiusip2'];
 		else
-			unset($config['captiveportal']['radiusip2']);
+			unset($newcp['captiveportal']['radiusip2']);
 		if (isset($_POST['radiusip3']))
-			$config['captiveportal']['radiusip3'] = $_POST['radiusip3'];
+			$newcp['captiveportal']['radiusip3'] = $_POST['radiusip3'];
 		else
-			unset($config['captiveportal']['radiusip3']);
+			unset($newcp['captiveportal']['radiusip3']);
 		if (isset($_POST['radiusip4']))
-			$config['captiveportal']['radiusip4'] = $_POST['radiusip4'];
+			$newcp['captiveportal']['radiusip4'] = $_POST['radiusip4'];
 		else
-			unset($config['captiveportal']['radiusip4']);
+			unset($newcp['captiveportal']['radiusip4']);
 		$newcp['radiusport'] = $_POST['radiusport'];
 		$newcp['radiusport2'] = $_POST['radiusport2'];
 		if (isset($_POST['radiusport3']))
-			$config['captiveportal']['radiusport3'] = $_POST['radiusport3'];
+			$newcp['captiveportal']['radiusport3'] = $_POST['radiusport3'];
 		if (isset($_POST['radiusport4']))
-			$config['captiveportal']['radiusport4'] = $_POST['radiusport4'];
+			$newcp['captiveportal']['radiusport4'] = $_POST['radiusport4'];
 		$newcp['radiusacctport'] = $_POST['radiusacctport'];
 		$newcp['radiuskey'] = $_POST['radiuskey'];
 		$newcp['radiuskey2'] = $_POST['radiuskey2'];
@@ -366,6 +366,8 @@ function enable_change(enable_change) {
 	document.iform.radiusip3.disabled = radius_endis;
 	document.iform.radiusip4.disabled = radius_endis;
 	document.iform.radiusport.disabled = radius_endis;
+	document.iform.radiusport3.disabled = radius_endis;
+	document.iform.radiusport4.disabled = radius_endis;
 	document.iform.radiusport2.disabled = radius_endis;
 	document.iform.radiuskey.disabled = radius_endis;
 	document.iform.radiuskey2.disabled = radius_endis;
@@ -634,7 +636,7 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Tertiary RADIUS server"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
@@ -653,7 +655,7 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Secondary RADIUS server"); ?></td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Quaternary RADIUS server"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>

@@ -270,27 +270,27 @@ if ($_POST) {
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
-			$newcp['captiveportal']['radiusip'] = $_POST['radiusip'];
+			$newcp['radiusip'] = $_POST['radiusip'];
 		else
-			unset($newcp['captiveportal']['radiusip3']);
+			unset($newcp['radiusip3']);
 		if (isset($_POST['radiusip2']))
-			$newcp['captiveportal']['radiusip2'] = $_POST['radiusip2'];
+			$newcp['radiusip2'] = $_POST['radiusip2'];
 		else
-			unset($newcp['captiveportal']['radiusip2']);
+			unset($newcp['radiusip2']);
 		if (isset($_POST['radiusip3']))
-			$newcp['captiveportal']['radiusip3'] = $_POST['radiusip3'];
+			$newcp['radiusip3'] = $_POST['radiusip3'];
 		else
-			unset($newcp['captiveportal']['radiusip3']);
+			unset($newcp['radiusip3']);
 		if (isset($_POST['radiusip4']))
-			$newcp['captiveportal']['radiusip4'] = $_POST['radiusip4'];
+			$newcp['radiusip4'] = $_POST['radiusip4'];
 		else
-			unset($newcp['captiveportal']['radiusip4']);
+			unset($newcp['radiusip4']);
 		$newcp['radiusport'] = $_POST['radiusport'];
 		$newcp['radiusport2'] = $_POST['radiusport2'];
 		if (isset($_POST['radiusport3']))
-			$newcp['captiveportal']['radiusport3'] = $_POST['radiusport3'];
+			$newcp['radiusport3'] = $_POST['radiusport3'];
 		if (isset($_POST['radiusport4']))
-			$newcp['captiveportal']['radiusport4'] = $_POST['radiusport4'];
+			$newcp['radiusport4'] = $_POST['radiusport4'];
 		$newcp['radiusacctport'] = $_POST['radiusacctport'];
 		$newcp['radiuskey'] = $_POST['radiuskey'];
 		$newcp['radiuskey2'] = $_POST['radiuskey2'];

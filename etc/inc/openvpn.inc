@@ -71,6 +71,14 @@ $openvpn_dev_mode = array("tun", "tap");
 $openvpn_dh_lengths = array(
 	1024, 2048, 4096 );
 
+$openvpn_cert_depths = array(
+	1 => "One (Client+Server)",
+	2 => "Two (Client+Intermediate+Server)",
+	3 => "Three (Client+2xIntermediate+Server)",
+	4 => "Four (Client+3xIntermediate+Server)",
+	5 => "Five (Client+4xIntermediate+Server)"
+);
+
 $openvpn_server_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
 	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )"),
@@ -446,6 +454,16 @@ function openvpn_reconfigure($mode, $settings) {
 					$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
 				}
 				break;
+		}
+		if (is_numeric($settings['cert_depth'])) {
+			$sed = "";
+			$cert = lookup_cert($settings['certref']);
+			$servercn = cert_get_cn($cert['crt']);
+			$sed .= "\$server_cn = \"{$servercn}\";\\\n";
+			$sed .= "\$allowed_depth = {$settings['cert_depth']};\\\n";
+			mwexec("/bin/cat /etc/inc/openvpn.tls-verify.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php");
+			mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php");
+			$conf .= "tls-verify {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php\n";
 		}
 
 		// The local port to listen on

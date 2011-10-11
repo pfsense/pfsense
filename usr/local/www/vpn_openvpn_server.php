@@ -95,6 +95,7 @@ if($_GET['act']=="new"){
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
+	$pconfig['cert_depth'] = 1;
 }
 
 if($_GET['act']=="edit"){
@@ -123,7 +124,10 @@ if($_GET['act']=="edit"){
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
-			$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
+			if (isset($a_server[$id]['cert_depth']))
+				$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
+			else
+				$pconfig['cert_depth'] = 1;
 			if ($pconfig['mode'] == "server_tls_user")
 				$pconfig['strictusercn'] = $a_server[$id]['strictusercn'];
 		} else

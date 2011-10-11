@@ -455,6 +455,8 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				break;
 		}
+		if (!isset($settings['cert_depth']) && (strstr($settings['mode'], 'tls')))
+			$settings['cert_depth'] = 1;
 		if (is_numeric($settings['cert_depth'])) {
 			$sed = "";
 			$cert = lookup_cert($settings['certref']);

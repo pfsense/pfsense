@@ -93,12 +93,12 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (($_POST['network'] && !is_ipaddr($_POST['network']))) {
-		$input_errors[] = gettext("A valid destination network must be specified.");
+		$input_errors[] = gettext("A valid IPv4 or IPv6 destination network must be specified.");
 	}
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
 		$input_errors[] = gettext("A valid destination network bit count must be specified.");
 	}
-	if ($_POST['gateway']) {
+	if (($_POST['gateway']) && is_ipaddr($_POST['network'])) {
 		if (!isset($a_gateways[$_POST['gateway']]))
 			$input_errors[] = gettext("A valid gateway must be specified.");
 		if(!validate_address_family($_POST['network'], lookup_gateway_ip_by_name($_POST['gateway'])))
@@ -144,8 +144,11 @@ if ($_POST) {
 		if (!empty($oroute)) {
 			$osn = explode('/', $oroute['network']);
 			$sn = explode('/', $route['network']);
-			if ($oroute['network'] <> $route['network'])
-				$toapplylist[] = "/sbin/route delete {$oroute['network']}"; 
+			if ($oroute['network'] <> $route['network']) {
+				if(is_ipaddrv6($oroute['network']))
+					$family = "-inet6";
+				$toapplylist[] = "/sbin/route delete {$family} {$oroute['network']}";
+			}
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 		staticroutes_sort();

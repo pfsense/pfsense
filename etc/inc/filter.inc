@@ -1823,7 +1823,7 @@ function filter_generate_user_rule($rule) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
 		} else {
 			if($rule['interface'] <> "pptp") {
-				log_error("Could not find gateway for interface({$rule['interface']}).");
+				//log_error("Could not find gateway for interface({$rule['interface']}).");
 			}
 		}
 	}

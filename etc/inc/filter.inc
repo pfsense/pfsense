@@ -430,7 +430,7 @@ function filter_generate_scrubing() {
 		if (!empty($config['system']['maxmss']))
 			$maxmss = $config['system']['maxmss'];
 
-		$scrubrules .= "scrub in from any to <vpns> max-mss {$maxmss}\n";
+		$scrubrules .= "scrub in from any to <vpn_networks> max-mss {$maxmss}\n";
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
@@ -760,6 +760,13 @@ function filter_get_direct_networks_list() {
 		$subnet = "{$ifcfg['sa']}/{$ifcfg['sn']}";
 		if(is_subnet($subnet)) {
 			$networks_arr[] = $subnet;
+		}
+	}
+	if(is_array($config['staticroutes']['route'])) {
+		foreach($config['staticroutes']['route'] as $netent) {
+			if(is_ipaddr($netent['network'])) {
+				$networks_arr[] = $netent['network'];
+			}
 		}
 	}
 	if(!empty($networks_arr)) {
@@ -1505,9 +1512,15 @@ function filter_nat_rules_generate() {
 	$vpns_list = filter_get_vpns_list();
 	$direct_networks_list = filter_get_direct_networks_list();
 	if($vpns_list)
-		$natrules .= "table <vpns> { $vpns_list }\n";
+		$natrules .= "table <vpn_networks> { $vpns_list }\n";
+	
+	/* add a Negate_networks table */
+	$natrules .= "table <negate_networks> {";
 	if($direct_networks_list)
-		$natrules .= "table <direct_networks> { $direct_networks_list }\n";
+		$natrules .= " $direct_networks_list ";
+	if($vpns_list)
+		$natrules .= " $vpns_list ";
+	$natrules .= "}\n";
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if(isset($config['diag']['ipv6nat']['enable']) &&
@@ -2159,14 +2172,14 @@ function filter_generate_user_rule($rule) {
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
 	if(($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) {
-		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
-		$vpns = " to <vpns> ";
+		/* negate VPN/PPTP/PPPoE/Static Route networks for load balancer/gateway rules */
+		$negate_networks = " to <negate_networks> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
-			$vpns . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
+			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
 			$aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
-			" label \"NEGATE_ROUTE: Negate policy route for vpn(s)\"\n";
+			" label \"NEGATE_ROUTE: Negate policy routing for vpn, static routes and direct networks\"\n";
 
 	}
 	/* piece together the actual user rule */

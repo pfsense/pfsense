@@ -95,27 +95,27 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 <script type="text/javascript">	
 	function loadFile() {
-		$("fileStatus").innerHTML = "<?=gettext("Loading file"); ?> ...";
-		Effect.Appear("fileStatusBox", { duration: 0.5 });
+		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
+		jQuery("#fileStatusBox").show(500);
 
-		new Ajax.Request(
+		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
-				method:     "post",
-				postBody:   "action=load&file=" + $("fbTarget").value,
-				onComplete: loadComplete
+				type: "post",
+				data: "action=load&file=" + jQuery("#fbTarget").val(),
+				complete: loadComplete
 			}
 		);
 	}
 
 	function loadComplete(req) {
-		Element.show("fileContent")
+		jQuery("#fileContent").show(1000);
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
 
 		if(values.shift() == "0") {
 			var file = values.shift();
-			$("fileStatus").innerHTML = "<?=gettext("File successfully loaded"); ?>.";
-			$("fileContent").value    = values.join("|");
+			jQuery("#fileStatus").html("<?=gettext("File successfully loaded"); ?>.");
+			jQuery("#fileContent").val(values.join("|"));
 
 			var lang = "none";
 				 if(file.indexOf(".php") > 0) lang = "php";
@@ -124,33 +124,33 @@ outputJavaScriptFileInline("javascript/base64.js");
 			else if(file.indexOf(".js" ) > 0) lang = "js";
 			else if(file.indexOf(".css") > 0) lang = "css";
 
-			if($("highlight").checked && lang != "none") {
-				$("fileContent").className = lang + ":showcolumns";
+			if(jQuery("#highlight").checked && lang != "none") {
+				jQuery("fileContent").prop("className",lang + ":showcolumns");
 				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
 			}
 		}
 		else {
-			$("fileStatus").innerHTML = values[0];
-			$("fileContent").value = "";
+			jQuery("#fileStatus").html(values[0]);
+			jQuery("#fileContent").val("");
 		}
-		new Effect.Appear("fileContent");
+		jQuery("#fileContent").show(1000);
 	}
 
 	function saveFile(file) {
-		$("fileStatus").innerHTML = "<?=gettext("Saving file"); ?> ...";
-		Effect.Appear("fileStatusBox", { duration: 0.5 });
+		jQuery("#fileStatus").html("<?=gettext("Saving file"); ?> ...");
+		jQuery("#fileStatusBox").show(500);
 		
-		var fileContent = Base64.encode($("fileContent").value);
+		var fileContent = Base64.encode(jQuery("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g,"%2B");
 		
-		new Ajax.Request(
+		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
-				method:     "post",
-				postBody:   "action=save&file=" + $("fbTarget").value +
+				type: "post",
+				data: "action=save&file=" + jQuery("#fbTarget").val() +
 							"&data=" + fileContent,
-				onComplete: function(req) {
+				complete: function(req) {
 					var values = req.responseText.split("|");
-					$("fileStatus").innerHTML = values[1];
+					jQuery("#fileStatus").html(values[1]);
 				}
 			}
 		);
@@ -213,10 +213,9 @@ outputJavaScriptFileInline("javascript/base64.js");
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
 <script type="text/javascript">
-	Event.observe(
-		window, "load",
+	jQuery(window).load(
 		function() {
-			$("fbTarget").focus();
+			jQuery("#fbTarget").focus();
 
 			NiftyCheck();
 			Rounded("div#fileStatusBox", "all", "#ffffff", "#eeeeee", "smooth");
@@ -224,10 +223,9 @@ outputJavaScriptFileInline("javascript/base64.js");
 	);
 
 	<?php if($_GET['action'] == "load"): ?>
-		Event.observe(
-			window, "load",
+		jQuery(window).load(
 			function() {
-				$("fbTarget").value = "<?=$_GET['path'];?>";
+				jQuery("#fbTarget").val("<?=$_GET['path'];?>");
 				loadFile();
 			}
 		);

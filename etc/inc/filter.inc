@@ -1236,7 +1236,9 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
-	$natrules = "nat-anchor \"natearly/*\"\n";
+	$natrules = "no nat proto carp\n";
+	$natrules .= "no rdr proto carp\n";
+	$natrules .= "nat-anchor \"natearly/*\"\n";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status(gettext("Creating 1:1 rules..."));

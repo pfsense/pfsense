@@ -1944,7 +1944,7 @@ function upgrade_054_to_055() {
 				log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 			}
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz /root/");
+			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
 		}
 	}
 

@@ -1221,7 +1221,7 @@ function apply_all_choosen_items() {
 				/* create VOIP rules */
 				$rule = array();
 				$rule['type'] = "match";
-			        $rule['interface'] = "wan";
+			        //$rule['interface'] = "wan";
 				$rule['descr'] = gettext("VOIP Adapter");
 				$rule['protocol'] = "udp";
 				$rule['defaultqueue'] = "qVoIP";

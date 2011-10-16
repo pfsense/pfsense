@@ -68,16 +68,16 @@ include("head.inc");
 	function getlimiteractivity() {
 		var url = "/diag_limiter_info.php";
 		var pars = 'getactivity=yes';
-		var myAjax = new Ajax.Request(
+		jQuery.ajax(
 			url,
 			{
-				method: 'post',
-				parameters: pars,
-				onComplete: activitycallback
+				type: 'post',
+				data: pars,
+				complete: activitycallback
 			});
 	}
 	function activitycallback(transport) {
-		$('limiteractivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>';
+		jQuery('#limiteractivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
 		setTimeout('getlimiteractivity()', 2000);		
 	}
 	setTimeout('getlimiteractivity()', 5000);	

@@ -67,17 +67,17 @@ else
 <script type="text/javascript">
 	function getcpuactivity() {
 		var url = "/diag_system_pftop.php";
-		var pars = 'getactivity=yes&sorttype=' + $('sorttype').value;
-		var myAjax = new Ajax.Request(
+		var pars = 'getactivity=yes&sorttype=' + jQuery('#sorttype').val();
+		jQuery.ajax(
 			url,
 			{
-				method: 'post',
-				parameters: pars,
-				onComplete: activitycallback
+				type: 'post',
+				data: pars,
+				complete: activitycallback
 			});
 	}
 	function activitycallback(transport) {
-		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>';
+		jQuery('#cpuactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
 		setTimeout('getcpuactivity()', 2500);		
 	}
 	setTimeout('getcpuactivity()', 1000);	

@@ -263,7 +263,7 @@ if ($savemsg)
 
 // Clear the loading indicator
 echo "<script type=\"text/javascript\">";
-echo "$('loading').innerHTML = '';";
+echo "jQuery('#loading').html('');";
 echo "</script>";	
 
 ?>

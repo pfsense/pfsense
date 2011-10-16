@@ -103,10 +103,13 @@ include("fbegin.inc");
 		window.location='diag_tables.php?type=' + entrytype;
 	}
 	function del_entry(entry) {
-		new Ajax.Request("diag_tables.php?type=<?php echo $tablename;?>&delete=" + entry, {
-		onComplete: function(response) {
-			if (200 == response.status) 
-				new Effect.Fade($(response.responseText), { duration: 1.0 } ); 
+		jQuery.ajax("diag_tables.php?type=<?php echo $tablename;?>&delete=" + entry, {
+		complete: function(response) {
+			if (200 == response.status) {
+				// Escape all dots to not confuse jQuery selectors
+				name = response.responseText.replace(/\./g,'\\.');
+				jQuery('#' + name).fadeOut(1000);
+			}
 		}
 		});
 	}

@@ -217,7 +217,7 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 			$input_errors[] = gettext("You can not assign the IPv4 Gateway to a IPv6 Filter rule");
 		}

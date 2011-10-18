@@ -1936,10 +1936,12 @@ function upgrade_054_to_055() {
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
 	if ($g['platform'] != "pfSense") {
 		/* restore the databases, if we have one */
 		if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-			exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);                        $rrdrestore = implode(" ", $rrdrestore);
+			exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
+                        $rrdrestore = implode(" ", $rrdrestore);
 			if($rrdreturn <> 0) {
 				log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 			}
@@ -1979,8 +1981,7 @@ function upgrade_054_to_055() {
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
 		$rrdold = $rrdold['rrd'];
 
 		$i = 0;
@@ -1994,10 +1995,11 @@ function upgrade_054_to_055() {
 			$i++;
 		}
 
-		$rrdxml = dump_xml_config_raw($rrdold, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdold, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-
+		
+		unset($rrdold);
+		unset($rrdxmlarray);
 	}
 	/* let apinger recreate required files */
 	setup_gateways_monitor();
@@ -2036,12 +2038,10 @@ function upgrade_054_to_055() {
 		/* create temporary xml from new RRD */
 		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
 
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
 		$rrdold = $rrdold['rrd'];
 
-		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
-		$rrdnew = xml2array($rrdnewxml, 1, "tag");
+		$rrdnew = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldumptmp}"), 1, "tag");
 		$rrdnew = $rrdnew['rrd'];
 
 		/* remove any MAX RRA's. Not needed for traffic. */
@@ -2054,9 +2054,11 @@ function upgrade_054_to_055() {
 		}
 
 		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+		unset($rrdold);
+		unset($rrdnew);
+		unset($rrdxmlarray);
 
 	}
 	enable_rrd_graphing();

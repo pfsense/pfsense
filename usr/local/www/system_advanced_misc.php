@@ -241,7 +241,7 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown">
 									<br />
-									<?=gettext("Proxy url for allowing {$g['product']} to use this proxy port to connect outside. Default is 8080 for http protocol or ssl for 443."); ?>
+									<?=gettext("Proxy port to use when {$g['product']} connects to the proxy URL configured above. Default is 8080 for http protocol or 443 for ssl."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -385,7 +385,7 @@ function maxmss_checked(obj) {
                                                                         <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
                                                                         <br />
 									<?=gettext("By default schedules clear the states of existing connections when expiry time has come. ".
-									"This option allows to override this setting by not clearing states for existing connections."); ?>
+									"This option overrides that behavior by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>
                                                         <tr>
@@ -400,7 +400,7 @@ function maxmss_checked(obj) {
                                                                         <input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked"; ?> />
                                                                         <br />
 									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
-									"This option allows to override this setting by not clearing states for existing connections."); ?>
+									"This option overrides that behavior by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>
 							<tr>

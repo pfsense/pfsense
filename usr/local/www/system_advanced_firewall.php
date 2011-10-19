@@ -255,7 +255,7 @@ function update_description(itemnum) {
 									<input name="scrubrnid" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked"; ?> />
 									<strong><?=gettext("Insert a stronger id into IP header of packets passing through the filter.");?></strong><br/>
 									<?=gettext("Replaces the IP identification field of packets with random values to " .
-									"compensate for operating systems that use predicatable values. " .
+									"compensate for operating systems that use predictable values. " .
 									"This option only applies to packets that are not fragmented after the " .
 									"optional packet reassembly.");?>
 								</td>

@@ -262,7 +262,7 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="disablelargereceiveoffloading" type="checkbox" id="disablelargereceiveoffloading" value="yes" <?php if (isset($config['system']['disablelargereceiveoffloading'])) echo "checked"; ?> />
 									<strong><?=gettext("Disable hardware large receive offload"); ?></strong><br>
-									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs.."); ?>
+									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
 								</td>
 							</tr>
 							<tr>

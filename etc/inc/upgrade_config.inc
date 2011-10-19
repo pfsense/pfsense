@@ -1979,8 +1979,7 @@ function upgrade_054_to_055() {
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
 		$rrdold = $rrdold['rrd'];
 
 		$i = 0;
@@ -1998,6 +1997,8 @@ function upgrade_054_to_055() {
 		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 
+		unset($rrdold);
+		unset($rrdxmlarray);
 	}
 	/* let apinger recreate required files */
 	setup_gateways_monitor();
@@ -2036,12 +2037,10 @@ function upgrade_054_to_055() {
 		/* create temporary xml from new RRD */
 		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
 
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
 		$rrdold = $rrdold['rrd'];
 
-		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
-		$rrdnew = xml2array($rrdnewxml, 1, "tag");
+		$rrdnew = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldumptmp}"), 1, "tag");
 		$rrdnew = $rrdnew['rrd'];
 
 		/* remove any MAX RRA's. Not needed for traffic. */
@@ -2058,6 +2057,9 @@ function upgrade_054_to_055() {
 		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 
+		unset($rrdold);
+		unset($rrdnew);
+		unset($rrdxmlarray);
 	}
 	enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */

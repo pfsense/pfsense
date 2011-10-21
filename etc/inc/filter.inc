@@ -2179,7 +2179,7 @@ function filter_generate_user_rule($rule) {
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
 			$aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
-			" label \"NEGATE_ROUTE: Negate policy routing for vpn, static routes and direct networks\"\n";
+			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
 
 	}
 	/* piece together the actual user rule */

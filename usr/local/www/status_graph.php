@@ -103,21 +103,20 @@ function bandwidthAjax(hostinterface) {
 	uri = "bandwidth_by_ip.php?if=" + hostinterface;
 	var opt = {
 	    // Use GET
-	    method: 'get',
-	    asynchronous: true,
-	    // Handle 404
-	    on404: function(t) {
-	        alert('Error 404: location "' + t.statusText + '" was not found.');
+	    type: 'get',
+	    error: function(req) {
+	        // Handle 404
+	        if(req.status == 404)
+	            alert('Error 404: location "' + uri + '" was not found.');
+	        // Handle other errors
+	        else
+	            alert('Error ' + req.status + ' -- ' + req.statusText);
 	    },
-	    // Handle other errors
-	    onFailure: function(t) {
-	        alert('Error ' + t.status + ' -- ' + t.statusText);
-	    },
-		onSuccess: function(t) {
-			updateBandwidthHosts(t.responseText);
+		success: function(data) {
+			updateBandwidthHosts(data);
 	    }
 	}
-	new Ajax.Request(uri, opt);
+	jQuery.ajax(uri, opt);
 }
 
 function updateBandwidthHosts(data){
@@ -145,21 +144,19 @@ function updateBandwidthHosts(data){
                 hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
 
                 //make the row appear if hidden
-                var rowid = "host" + y;
-                textlink = d.getElementById(rowid);
-                if (textlink.style.display == "none"){
+                var rowid = "#host" + y;
+                if (jQuery(rowid).css('dislay') == "none"){
                      //hide rows that contain no data
-                     Effect.Appear(rowid, {duration:1});
+                     jQuery(rowid).show(1000);
                 }
             }
         }
         else
         {
-            var rowid = "host" + y;
-            textlink = d.getElementById(rowid);
-            if (textlink.style.display != "none"){
+            var rowid = "#host" + y;
+            if (jQuery(rowid).css('dislay') != "none"){
                 //hide rows that contain no data
-                Effect.Fade(rowid, {duration:2});
+                jQuery(rowid).fadeOut(2000);
             }
         }
     }

@@ -82,13 +82,13 @@ if ($_REQUEST['getactivity']) {
 
                 $packet_s = round(400 * (1 - $q['pkts']/ $total_packets_s), 0);
 
-                $finscript .= "$('queue{$q['name']}{$q['interface']}widthb').width='{$packet_s}';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}widtha').width='" . (400 - $packet_s) . "';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}pps').value = '{$q['measured']}/pps';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}bps').value = '{$q['measuredspeed']}';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}borrows').value = '{$q['borrows']} borrows';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}suspends').value = '{$q['suspends']} suspends';";
-                $finscript .= "$('queue{$q['name']}{$q['interface']}drops').value = '{$q['droppedpkts']} drops';";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}widthb').width('{$packet_s}');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}widtha').width('" . (400 - $packet_s) . "');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}pps').val('{$q['measured']}/pps');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}bps').val('{$q['measuredspeed']}');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}borrows').val('{$q['borrows']} borrows');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}suspends').val('{$q['suspends']} suspends');";
+                $finscript .= "jQuery('#queue{$q['name']}{$q['interface']}drops').val('{$q['droppedpkts']} drops');";
         }
 	header("Content-type: text/javascript");
 	echo $finscript;
@@ -115,12 +115,12 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
         function getqueueactivity() {
                 var url = "/status_queues.php";
                 var pars = 'getactivity=yes';
-                var myAjax = new Ajax.Request(
+                jQuery.ajax(
                         url,
                         {
-                                method: 'post',
-                                parameters: pars,
-                                onComplete: activitycallback
+                                type: 'post',
+                                data: pars,
+                                complete: activitycallback
                         });
         }
         function activitycallback(transport) {

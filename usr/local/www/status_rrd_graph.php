@@ -605,9 +605,9 @@ function get_dates($curperiod, $graph) {
 									if($curperiod == "current") {
 										$end = $dates['end'];
 									}
-									/* generate update events utilizing prototype $('') feature */
+									/* generate update events utilizing jQuery('') feature */
 									echo "\n";
-									echo "\t\t\$('{$graph}-{$curoption}-{$curdatabase}').src='status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
+									echo "\t\tjQuery('#{$graph}-{$curoption}-{$curdatabase}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 									}
 								}
 							?>

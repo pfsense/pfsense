@@ -101,18 +101,18 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...';
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...');
 	} else {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...';
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...');
 	}
 	if(result_text == "Initializing") {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Initializing...';
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Initializing...');
 	} else if(result_text == "Done") {
 		new Effect.Highlight($('status'));
-		$('status').innerHTML = 'Done.  The filter rules have been reloaded.';
-		$('reloadinfo').style.visibility="hidden";
-		$('doneurl').style.visibility="visible";
-		$('doneurl').innerHTML = "<p/><a href='status_queues.php'>Queue Status</a>";
+		jQuery('#status').html('Done.  The filter rules have been reloaded.');
+		jQuery('#reloadinfo').css("visibility","hidden");
+		jQuery('#doneurl').css("visibility","visible");
+		jQuery('#doneurl').html("<p/><a href='status_queues.php'>Queue Status</a>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }

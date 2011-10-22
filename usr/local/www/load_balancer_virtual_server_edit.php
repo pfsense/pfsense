@@ -145,13 +145,13 @@ include("head.inc");
 function updateRelay(m) {
   switch (m) {
     case "relay": {
-      $('relay_protocol').enable();
-      $('relay').appear();
+      jQuery('#relay_protocol').removeProp('disabled');
+      jQuery('#relay').show();
       break;
     }
     case "redirect": {
-      $('relay_protocol').disable();
-      $('relay').hide();
+      jQuery('#relay_protocol').prop('disabled','');
+      jQuery('#relay').hide();
       break;
     }
   }
@@ -159,10 +159,10 @@ function updateRelay(m) {
 
 document.observe("dom:loaded", function() {
   // Setup some observers
-  $('redirect_mode').observe('click', function(){
+  jQuery('#redirect_mode').bind('click', function(){
       updateRelay('redirect');
   });
-  $('relay_mode').observe('click', function(){
+  jQuery('#relay_mode').bind('click', function(){
       updateRelay('relay');
   });
 

@@ -169,7 +169,7 @@ if ($_POST) {
 		break;
 	default:
 		if (substr($_POST['interface'], 0, 3) == "vip")
-			$input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
+			$input_errors[] = gettext("For this type of VIP, a CARP parent is not allowed.");
 		break;
 	}
 
@@ -515,7 +515,7 @@ function typesel_change() {
                             <?php endfor; ?>
                       		</select>
 				<br/><br/>
-				<?=gettext("The frequency that this machine will advertise.  0 means usually master. Otherwise the lowest combination of both values in the cluster detrmines the master.");?>
+				<?=gettext("The frequency that this machine will advertise.  0 means usually master. Otherwise the lowest combination of both values in the cluster determines the master.");?>
 				  </td>
 				</tr>
                 <tr>
@@ -540,7 +540,7 @@ function typesel_change() {
 				      		<span class="red">
 							<b><?=gettext("Note:");?><br></b>
 				      		</span>&nbsp;&nbsp;
-				      		<?=gettext("ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.");?>
+				      		<?=gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these cases.");?>
 				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></A>.
 						</span>
 					  </p>

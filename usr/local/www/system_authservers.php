@@ -794,7 +794,8 @@ function select_clicked() {
 server_typechange('<?=htmlspecialchars($pconfig['type']);?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();
-ldap_urlchange();
+if (document.getElementById("ldap_port").value == "")
+	ldap_urlchange();
 <?php if (!isset($id)): ?>
 ldap_tmplchange();
 <?php endif; ?>

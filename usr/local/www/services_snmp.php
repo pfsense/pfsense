@@ -163,8 +163,8 @@ include("head.inc");
 <script language="JavaScript">
 <!--
 function check_deps() {
-	if ($('hostres').checked == true) {
-		$('mibii').checked = true;
+	if (jQuery('#hostres').prop('checked') == true) {
+		jQuery('#mibii').prop('checked',true);
 	}
 }
 

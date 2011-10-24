@@ -66,8 +66,8 @@ if($_REQUEST['generatekey']) {
 	exec("rm /tmp/key64.private /tmp/key64.public");
 	$alertmessage = gettext("You will need to recreate any existing Voucher Rolls due to the public and private key changes. Click cancel if you do not wish to recreate the vouchers.");
 	echo <<<EOF
-		\$('publickey').value = '{$publickey}';
-		\$('privatekey').value = '{$privatekey}';
+		jQuery('#publickey').val('{$publickey}');
+		jQuery('#privatekey').val('{$privatekey}');
 		alert('{$alertmessage}');
 		new Effect.Highlight('publickey');
 		new Effect.Highlight('privatekey');
@@ -331,12 +331,12 @@ include("head.inc");
 <script type="text/javascript">
 <!--
 function generatenewkey() {
-	$('publickey').value = 'One moment please...';
-	$('privatekey').value = 'One moment please...';
-	new Ajax.Request("services_captiveportal_vouchers.php?zone=<?php echo($cpzone); ?>&generatekey=true", {
-		method: 'get',
-		onSuccess: function(transport) {	
-			eval(transport.responseText);
+	jQuery('#publickey').val('One moment please...');
+	jQuery('#privatekey').val('One moment please...');
+	jQuery.ajax("services_captiveportal_vouchers.php?zone=<?php echo($cpzone); ?>&generatekey=true", {
+		type: 'get',
+		success: function(data) {	
+			eval(data);
 		}
 	});		
 }
@@ -351,8 +351,8 @@ function before_save() {
 	document.iform.msgnoaccess.disabled = false;
 	document.iform.msgexpired.disabled = false;
 	for(var x=0; x < <?php echo count($a_roll); ?>; x++)
-		$('addeditdelete' + x).show();
-	$('addnewroll').show();
+		jQuery('#addeditdelete' + x).show();
+	jQuery('#addnewroll').show();
 }
 function enable_change(enable_change) {
 	var endis;
@@ -381,12 +381,12 @@ function enable_change(enable_change) {
 		document.iform.msgnoaccess.disabled = true;
 		document.iform.msgexpired.disabled = true;
 		for(var x=0; x < <?php echo count($a_roll); ?>; x++)
-			$('addeditdelete' + x).hide();
-		$('addnewroll').hide();
+			jQuery('#addeditdelete' + x).hide();
+		jQuery('#addnewroll').hide();
 	} else {
 		for(var x=0; x < <?php echo count($a_roll); ?>; x++)
-			$('addeditdelete' + x).show();
-		$('addnewroll').show();
+			jQuery('#addeditdelete' + x).show();
+		jQuery('#addnewroll').show();
 	}
 }
 //-->

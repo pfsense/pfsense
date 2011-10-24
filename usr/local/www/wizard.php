@@ -282,7 +282,7 @@ function showchange() {
                                 foreach($showfields as $showfield) {
                                         $showfield = strtolower($showfield);
                                         //print "\t\t" . 'document.iform.' . $showfield . ".display =\"none\";\n";
-					print "\t\t \$('". $showfield . "').hide();";
+					print "\t\t jQuery('#". $showfield . "').hide();";
                                 }
                         }
                         print "\t" . '} else {' . "\n";
@@ -291,7 +291,7 @@ function showchange() {
                                 foreach($showfields as $showfield) {
                                         $showfield = strtolower($showfield);
                                         #print "\t\t" . 'document.iform.' . $showfield . ".display =\"\";\n";
-					print "\t\t \$('". $showfield . "').show();";
+					print "\t\t jQuery('#". $showfield . "').show();";
                                 }
                         }
                         print "\t" . '}' . "\n";

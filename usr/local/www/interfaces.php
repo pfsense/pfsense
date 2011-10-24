@@ -2576,7 +2576,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+				//jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif">');
 			} else {
 				report_failure();
 			}
@@ -2596,7 +2596,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//$('statusv6').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+				//jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif">');
 			} else {
 				report_failure_v6();
 			}

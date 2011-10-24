@@ -312,10 +312,10 @@ function autokey_change() {
 
 function useproxy_changed() {
 
-	if ($('proxy_authtype').value != 'none') {
-                $('proxy_authtype_opts').show();
+	if (jQuery('#proxy_authtype').val() != 'none') {
+                jQuery('#proxy_authtype_opts').show();
         } else {
-                $('proxy_authtype_opts').hide();
+                jQuery('#proxy_authtype_opts').hide();
         }
 }
 

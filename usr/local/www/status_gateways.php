@@ -72,7 +72,9 @@ include("head.inc");
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Gateway"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Monitor"); ?></td>
-                  <td width="30%" class="listhdrr"><?=gettext("Status"); ?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("RTT"); ?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("Loss"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Status"); ?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
 		</tr>
 		  <?php foreach ($a_gateways as $gname => $gateway) {
@@ -91,6 +93,22 @@ include("head.inc");
 						echo $gateway['monitorip'];
 				?>
                   </td>
+		<td class="listr" align="center">
+		<?php	if ($gateways_status[$gname])
+				echo $gateways_status[$gname]['delay'];
+			else
+				echo gettext("Gathering data");
+		?>
+				<?php $counter++; ?>
+		</td>
+		<td class="listr" align="center">
+		<?php	if ($gateways_status[$gname])
+				echo $gateways_status[$gname]['loss'];
+			else
+				echo gettext("Gathering data");
+		?>
+				<?php $counter++; ?>
+		</td>
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php

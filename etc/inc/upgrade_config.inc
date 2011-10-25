@@ -2032,7 +2032,7 @@ function upgrade_054_to_055() {
 		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 
 		create_new_rrd("$rrdcreate");
 		/* create temporary xml from new RRD */
@@ -2055,7 +2055,12 @@ function upgrade_054_to_055() {
 
 		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
 		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
-		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+		/* we now have the rrd with the new fields, adjust the size now. */
+		/* RRA 2 is 60 minutes, RRA 3 is 720 minutes */
+		mwexec("/bin/sync");
+		mwexec("$rrdtool resize {$rrddbpath}/{$database} 2 GROW 1000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
+		mwexec("/bin/sync");
+		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database}2>&1");
 		unset($rrdold);
 		unset($rrdnew);
 		unset($rrdxmlarray);

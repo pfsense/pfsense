@@ -632,6 +632,8 @@ function ldap_test_connection($authcfg) {
                         $ldapproto = "ldaps";
                 $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
                 $ldapport           = $authcfg['ldap_port'];
+		if (!empty($ldapport))
+			$ldapserver .= ":{$ldapport}";
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
@@ -647,11 +649,8 @@ function ldap_test_connection($authcfg) {
 
         /* connect and see if server is up */
         $error = false;
-        if (empty($ldapport)) {
-                if (!($ldap = ldap_connect($ldapserver)))
-                        $error = true;
-        } else if (!($ldap = ldap_connect($ldapserver, $ldapport)))
-                $error = true;
+	if (!($ldap = ldap_connect($ldapserver)))
+		$error = true;
 
         if ($error == true) {
                 log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
@@ -700,6 +699,8 @@ function ldap_test_bind($authcfg) {
                         $ldapproto = "ldaps";
                 $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
                 $ldapport           = $authcfg['ldap_port'];
+		if (!empty($ldapport))
+			$ldapserver .= ":{$ldapport}";
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
@@ -720,11 +721,8 @@ function ldap_test_bind($authcfg) {
 
         /* connect and see if server is up */
         $error = false;
-        if (empty($ldapport)) {
-                if (!($ldap = ldap_connect($ldapserver)))
-                        $error = true;
-        } else if (!($ldap = ldap_connect($ldapserver, $ldapport)))
-                $error = true;
+	if (!($ldap = ldap_connect($ldapserver)))
+		$error = true;
 
         if ($error == true) {
                 log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
@@ -764,6 +762,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
                         $ldapproto = "ldaps";
                 $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
                 $ldapport           = $authcfg['ldap_port'];
+		if (!empty($ldapport))
+			$ldapserver .= ":{$ldapport}";
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
@@ -789,11 +789,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 
 	/* connect and see if server is up */
         $error = false;
-        if (empty($ldapport)) {
-                if (!($ldap = ldap_connect($ldapserver)))
-                        $error = true;
-        } else if (!($ldap = ldap_connect($ldapserver, $ldapport)))
-                $error = true;
+	if (!($ldap = ldap_connect($ldapserver)))
+		$error = true;
 
         if ($error == true) {
         log_error(sprintf(gettext("ERROR!  Could not connect to server %s."), $ldapname));
@@ -872,6 +869,8 @@ function ldap_get_groups($username, $authcfg) {
                         $ldapproto = "ldaps";
                 $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
                 $ldapport           = $authcfg['ldap_port'];
+		if (!empty($ldapport))
+			$ldapserver .= ":{$ldapport}";
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
@@ -902,11 +901,8 @@ function ldap_get_groups($username, $authcfg) {
 
 	/* connect and see if server is up */
 	$error = false;
-        if (empty($ldapport)) {
-                if (!($ldap = ldap_connect($ldapserver)))
-                        $error = true;
-        } else if (!($ldap = ldap_connect($ldapserver, $ldapport)))
-                $error = true;
+	if (!($ldap = ldap_connect($ldapserver)))
+		$error = true;
 
 	if ($error == true) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
@@ -988,6 +984,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 			$ldapproto = "ldaps";
 		$ldapserver         = "{$ldapproto}://{$authcfg['host']}";
 		$ldapport	    = $authcfg['ldap_port'];
+		if (!empty($ldapport))
+			$ldapserver .= ":{$ldapport}";
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
@@ -1035,10 +1033,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	/* Make sure we can connect to LDAP */
 	$error = false;
-	if (empty($ldapport)) {
-		if (!($ldap = ldap_connect($ldapserver)))
-			$error = true;
-	} else if (!($ldap = ldap_connect($ldapserver, $ldapport)))
+	if (!($ldap = ldap_connect($ldapserver)))
 		$error = true;
 
 	if ($error == true) {

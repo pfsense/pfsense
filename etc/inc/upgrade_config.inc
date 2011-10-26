@@ -2059,9 +2059,9 @@ function upgrade_054_to_055() {
 		/* we now have the rrd with the new fields, adjust the size now. */
 		/* RRA 2 is 60 minutes, RRA 3 is 720 minutes */
 		mwexec("/bin/sync");
-		mwexec("$rrdtool resize {$rrddbpath}/{$database} 2 GROW 1000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
+		mwexec("$rrdtool resize {$rrddbpath}/{$database} 2 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
 		mwexec("/bin/sync");
-		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database}2>&1");
+		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
 		unset($rrdold);
 		unset($rrdnew);
 		unset($rrdxmlarray);

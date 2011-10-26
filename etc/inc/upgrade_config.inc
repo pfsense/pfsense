@@ -2055,6 +2055,8 @@ function upgrade_054_to_055() {
 
 		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
 		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
+		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+
 		/* we now have the rrd with the new fields, adjust the size now. */
 		/* RRA 2 is 60 minutes, RRA 3 is 720 minutes */
 		mwexec("/bin/sync");

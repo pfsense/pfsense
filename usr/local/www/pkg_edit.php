@@ -785,6 +785,7 @@ if ($pkg['tabs'] <> "") {
 		<?php else: ?>
 			<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
 		<?php endif; ?>
+		<br><?php if($pkga['description'] != "") echo $pkga['description']; ?>
 		<script language="JavaScript">
 		<!--
 		field_counter_js = <?= $fieldcounter ?>;

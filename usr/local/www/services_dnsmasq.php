@@ -148,13 +148,18 @@ function show_advanced_dns() {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
-		<td class="vtable"><p>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("General DNS Forwarder Options");?></td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
+		<td width="78%" class="vtable"><p>
 			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
 			<strong><?=gettext("Enable DNS forwarder");?><br>
 			</strong></p></td>
 		</tr>
 	<tr>
-		<td class="vtable"><p>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
+		<td width="78%" class="vtable"><p>
 			<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
 			<strong><?=gettext("Register DHCP leases in DNS forwarder");?><br>
 			</strong><?php printf(gettext("If this option is set, then machines that specify".
@@ -165,7 +170,8 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<tr>
-		<td class="vtable"><p>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
+		<td width="78%" class="vtable"><p>
 			<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
 			<strong><?=gettext("Register DHCP static mappings in DNS forwarder");?><br>
 			</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
@@ -175,7 +181,8 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<tr>
-		<td class="vtable"><p>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
+		<td width="78%" class="vtable"><p>
 			<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
 			<strong><?=gettext("Resolve DHCP mappings first");?><br>
 			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
@@ -184,7 +191,8 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<tr>
-		<td class="vtable"><p>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
+		<td width="78%" class="vtable"><p>
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 			</div>
@@ -197,32 +205,39 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)">
 		</td>
 	</tr>
-	<tr>
-		<td>
-			<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
-			</strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
-			" service (if enabled) will automatically serve the LAN IP".
-			" address as a DNS server to DHCP clients so they will use".
-			" the forwarder. The DNS forwarder will use the DNS servers".
-			" entered in %sSystem: General setup%s".
-			" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-			" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-			" is checked. If you don't use that option (or if you use".
-			" a static IP address on WAN), you must manually specify at".
-			" least one DNS server on the %sSystem:".
-			"General setup%s page."),'<a href="system.php">','</a>','<a href="system.php">','</a>');?><br>
-			<br>
-			<?=gettext("You may enter records that override the results from the".
-			" forwarders below.");?></span></p>
-		</td>
-	</tr>
 </table>
+
+<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+</strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
+" service (if enabled) will automatically serve the LAN IP".
+" address as a DNS server to DHCP clients so they will use".
+" the forwarder. The DNS forwarder will use the DNS servers".
+" entered in %sSystem: General setup%s".
+" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
+" is checked. If you don't use that option (or if you use".
+" a static IP address on WAN), you must manually specify at".
+" least one DNS server on the %sSystem:".
+"General setup%s page."),'<a href="system.php">','</a>','<a href="system.php">','</a>');?><br>
+</span></p>
+
 &nbsp;<br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+<tr>
+	<td colspan="5" valign="top" class="listtopic"><?=gettext("Host Overrides");?></td>
+</tr>
+<tr>
+	<td><br/>
+	<?=gettext("Entries in this section override individual results from the forwarders.");?>
+	<?=gettext("Use these for changing DNS results or for adding custom DNS records.");?>
+	</td>
+</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable">
 	<thead>
 	<tr>
 		<td width="20%" class="listhdrr"><?=gettext("Host");?></td>
@@ -278,16 +293,19 @@ function show_advanced_dns() {
 	</tr>
 	</tfoot>
 </table>
-<!-- update to enable domain overrides -->
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
-	<tr><td>&nbsp;</td></tr>
+<br/>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+<tr>
+	<td colspan="5" valign="top" class="listtopic"><?=gettext("Domain Overrides");?></td>
+</tr>
+<tr>
 	<tr>
-		<td><p><?=gettext("Below you can override an entire domain by specifying an".
+		<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
 		" authoritative DNS server to be queried for that domain.");?></p></td>
 	</tr>
+</tr>
 </table>
-&nbsp;<br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable">
 	<thead>
 	<tr>
 		<td width="35%" class="listhdrr"><?=gettext("Domain");?></td>

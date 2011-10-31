@@ -961,12 +961,20 @@ function setup_serial_port() {
 			// Loop through and only add lines that are not empty, and which
 			//  do not contain a console directive.
 			foreach($boot_config_split as $bcs)
-				if(!empty($bcs) && (stripos($bcs, "console") === false))
+				if(!empty($bcs)
+					&& (stripos($bcs, "console") === false)
+					&& (stripos($bcs, "boot_multicons") === false)
+					&& (stripos($bcs, "boot_serial") === false))
 					$new_boot_config[] = $bcs;
 
-			if(isset($config['system']['enableserial']))
-				$new_boot_config[] = 'console="comconsole"';
-			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config));
+			if(isset($config['system']['enableserial'])) {
+				$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
+				$new_boot_config[] = 'boot_multicons="YES"';
+				$new_boot_config[] = 'boot_serial="YES"';
+				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+				$new_boot_config[] = 'console="comconsole,vidconsole"';
+			}
+			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config) . "\n");
 		}
 	}
 	$ttys = file_get_contents("/etc/ttys");

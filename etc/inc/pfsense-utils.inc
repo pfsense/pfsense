@@ -927,18 +927,23 @@ function auto_login() {
 	conf_mount_ro();
 }
 
-function setup_serial_port() {
+function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
+	$prefix = "";
+	if (($when == "upgrade") && (!empty($path)) && is_dir($path.'/boot/'))
+		$prefix = "/tmp/{$path}";
+	$boot_config_file = "{$path}/boot.config";
+	$loader_conf_file = "{$path}/boot/loader.conf";
 	/* serial console - write out /boot.config */
-	if(file_exists("/boot.config"))
-		$boot_config = file_get_contents("/boot.config");
+	if(file_exists($boot_config_file))
+		$boot_config = file_get_contents($boot_config_file);
 	else
 		$boot_config = "";
 
 	if($g['platform'] <> "cdrom") {
 		$boot_config_split = split("\n", $boot_config);
-		$fd = fopen("/boot.config","w");
+		$fd = fopen($boot_config_file,"w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
 				if(stristr($bcs, "-D")) {
@@ -954,7 +959,7 @@ function setup_serial_port() {
 			fclose($fd);
 		}
 		/* serial console - write out /boot/loader.conf */
-		$boot_config = file_get_contents("/boot/loader.conf");
+		$boot_config = file_get_contents($loader_conf_file);
 		$boot_config_split = explode("\n", $boot_config);
 		if(count($boot_config_split) > 0) {
 			$new_boot_config = array();
@@ -977,7 +982,7 @@ function setup_serial_port() {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 				$new_boot_config[] = 'console="comconsole"';
 			}
-			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config) . "\n");
+			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
 	}
 	$ttys = file_get_contents("/etc/ttys");

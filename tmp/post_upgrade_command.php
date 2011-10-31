@@ -18,7 +18,10 @@
 		write_config();
 	}
 
-	setup_serial_port();
+	$newslicedir = "";
+	if ($ARGV[1] != "")
+		$newslicedir = '/tmp' . $ARGV[1];
+	setup_serial_port("upgrade", $newslicedir);
 		
 	$files_to_process = split("\n", file_get_contents("/etc/pfSense.obsoletedfiles"));
 	foreach($files_to_process as $filename) 

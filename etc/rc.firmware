@@ -299,7 +299,7 @@ pfSenseNanoBSDupgrade)
 	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$GLABEL_SLICE/tmp/post_upgrade_command ]; then
-		sh /tmp/$GLABEL_SLICE/tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		sh /tmp/$GLABEL_SLICE/tmp/post_upgrade_command $GLABEL_SLICE >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# Update fstab

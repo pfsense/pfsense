@@ -967,12 +967,15 @@ function setup_serial_port() {
 					&& (stripos($bcs, "boot_serial") === false))
 					$new_boot_config[] = $bcs;
 
+			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
 			if(isset($config['system']['enableserial'])) {
-				$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 				$new_boot_config[] = 'console="comconsole,vidconsole"';
+			} elseif ($g['platform'] == "nanobsd") {
+				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+				$new_boot_config[] = 'console="comconsole"';
 			}
 			file_put_contents("/boot/loader.conf", implode("\n", $new_boot_config) . "\n");
 		}

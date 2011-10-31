@@ -485,10 +485,10 @@ function prot_change() {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communcations"); ?></td>
 							</tr>
+							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
@@ -497,6 +497,7 @@ function prot_change() {
 									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
 								</td>
 							</tr>
+							<?php endif; ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Speed")?></td>
 								<td width="78%" class="vtable">
@@ -508,13 +509,12 @@ function prot_change() {
 										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected";?>>57600</option>
 										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected";?>>115200</option>
 									</select> bps
-									<br/><?=gettext("Allows selection of different speeds for the serial console port, if enabled above."); ?>
+									<br/><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php endif; ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Console Options"); ?></td>
 							</tr>

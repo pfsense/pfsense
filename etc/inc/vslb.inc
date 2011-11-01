@@ -108,11 +108,11 @@ class SendMonitor extends Monitor {
 
 
 	private function data() {
-		return $this->config('send') != "" ? "{$this->config('send')}" : "";
+		return $this->config('send') != "" ? "\"{$this->config('send')}\"" : "\"\"";
 	}
 
 	private function pattern() {
-		return $this->config('expect') != "" ? "{$this->config('expect')}" : "";
+		return $this->config('expect') != "" ? "\"{$this->config('expect')}\"" : "\"\"";
 	}
 
 	private function ssl() {

@@ -733,8 +733,8 @@
 			<type>send</type>
 			<descr><![CDATA[Generic SMTP]]></descr>
 			<options>
-				<send>'EHLO nosuchhost'</send>
-				<expect>250-</expect>
+				<send></send>
+				<expect>220 *</expect>
 			</options>
 		</monitor_type>
 	</load_balancer>

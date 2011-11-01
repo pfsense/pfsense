@@ -2212,6 +2212,17 @@ function upgrade_060_to_061() {
 		$config['interfaces']['wan']['enable'] = true;
 	if (is_array($config['interfaces']['lan']))
 		$config['interfaces']['lan']['enable'] = true;
+
+	/* On 1.2.3 the "mtu" field adjusted MSS.
+	   On 2.x the "mtu" field is actually the MTU. Rename accordingly.
+	   See redmine ticket #1886
+	*/
+	foreach ($config['interfaces'] as $ifr => &$intf) {
+		if (isset($intf['mtu']) && is_numeric($intf['mtu'])) {
+			$intf['mss'] = $intf['mtu'];
+			unset($intf['mtu']);
+		}
+	}
 }
 
 function upgrade_061_to_062() {

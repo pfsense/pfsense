@@ -877,8 +877,8 @@ function upgrade_045_to_046() {
 			'type' => 'send',
 			'descr' => 'Generic SMTP',
 			'options' =>
-			array ( 'send' => 'EHLO nosuchhost',
-				'expect' => '250-',
+			array ( 'send' => '',
+				'expect' => '220 *',
 			),
 		),
 	);

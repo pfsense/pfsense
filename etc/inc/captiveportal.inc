@@ -884,10 +884,7 @@ function captiveportal_passthrumac_configure_entry($macent) {
 	$actionup = "allow";
 	$actiondown = "allow";
 
-	if ($enBwup && $enBwdown)
-		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
-	else
-		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, false);
+	$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
 
 	if ($enBwup) {
 		$bw_up = $ruleno + 20000;
@@ -1369,7 +1366,7 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
 	global $config, $g;
 
 	if(!isset($config['captiveportal']['enable']))
-				return NULL;
+		return NULL;
 
 	$cpruleslck = lock('captiveportalrules', LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportal.rules")) {

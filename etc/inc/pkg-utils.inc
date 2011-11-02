@@ -528,7 +528,9 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			if(is_dir("{$pbidir}/{$dir}")) {
 				$files = scandir("{$pbidir}/{$dir}");
 				foreach($files as $f) {
-					symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+					if(!file_exists("/usr/local/{$dir}/{$f}")) {
+						symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+					}
 				}
 			}
 		}

@@ -474,8 +474,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
 	global $static_output, $g;
 
-	$pkgs = split(" ", $pkgname);
-	foreach($pkgs as $pkgname) {
+	$pkgs = split(" ", $filename);
+	foreach($pkgs as $filename) {
 		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
 			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 			$pkgstagingdir = "/root/tmp";

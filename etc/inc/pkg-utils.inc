@@ -474,6 +474,11 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
 	global $static_output, $g;
 
+	// Clean up incoming filenames
+	$filename = str_replace("  ", " ", $filename);
+	$filename = str_replace("\n", " ", $filename);
+	$filename = str_replace("  ", " ", $filename);
+
 	$pkgs = split(" ", $filename);
 	foreach($pkgs as $filename) {
 		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {

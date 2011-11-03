@@ -45,7 +45,7 @@ require_once("guiconfig.inc");
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
 		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
-			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
+			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_GET['srcip']) . " -K " . escapeshellarg($_GET['dstip']));
 			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
@@ -56,13 +56,13 @@ if($_GET['action']) {
 
 /* get our states */
 if($_GET['filter']) {
-	exec("/sbin/pfctl -s state | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $states);
+	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
 }
 else {
-	exec("/sbin/pfctl -s state", $states);
+	exec("/sbin/pfctl -s Sources", $sources);
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"),gettext("Show Source Tracking"));
 include("head.inc");
 
 ?>
@@ -70,10 +70,10 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <script src="/javascript/sorttable.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
-<form action="diag_dump_states.php" method="get" name="iform">
+<form action="diag_dump_states_sources.php" method="get" name="iform">
 
 <script type="text/javascript">
-	function removeState(srcip, dstip) {
+	function removeSource(srcip, dstip) {
 		var busy = function(icon) {
 			icon.onclick      = "";
 			icon.src          = icon.src.replace("\.gif", "_d.gif");
@@ -107,9 +107,8 @@ include("head.inc");
 		<td>
 		<?php
 			$tab_array = array();
-			$tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-			if (isset($config['system']['lb_use_sticky']))
-				$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+			$tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
+			$tab_array[] = array(gettext("Source Tracking"), true, "diag_dump_states_sources.php");
 			$tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 			display_top_tabs($tab_array);
 		?>
@@ -121,17 +120,13 @@ include("head.inc");
 
 <!-- Start of tab content -->
 
-<?php
-	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
-?>
-
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td><?=gettext("Current state count:");?> <?=$current_statecount?></td>
+					<td>&nbsp;</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
@@ -147,51 +142,52 @@ include("head.inc");
 			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<thead>
 				<tr>
-					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
-					<th class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></th>
-					<th class="listhdr" width="24%"><?=gettext("State");?></th>
+					<th class="listhdrr" width="40%"><?=gettext("Source -> Destination");?></th>
+					<th class="listhdrr" width="15%"><?=gettext("# States");?></th>
+					<th class="listhdrr" width="15%"><?=gettext("# Connections");?></th>
+					<th class="listhdr" width="15%"><?=gettext("Rate");?></th>
 					<th class="list sort_ignore" width="1%"></th>
 				</tr>
 				</thead>
 				<tbody>
 <?php
 $row = 0;
-if(count($states) > 0) {
-	foreach($states as $line) {
+if(count($sources) > 0) {
+	foreach($sources as $line) {
 		if($row >= 1000)
 			break;
 
-		$line_split = preg_split("/\s+/", $line);
-		$type  = array_shift($line_split);
-		$proto = array_shift($line_split);
-		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
+		// 192.168.20.2 -> 216.252.56.1 ( states 10, connections 0, rate 0.0/0s )
 
-		/* break up info and extract $srcip and $dstip */
-		$ends = preg_split("/\<?-\>?/", $info);
-		$parts = split(":", $ends[0]);
-		$srcip = trim($parts[0]);
-		$parts = split(":", $ends[count($ends) - 1]);
-		$dstip = trim($parts[0]);
+		$source_split = "";
+		preg_match("/(.*)\s\(\sstates\s(.*),\sconnections\s(.*),\srate\s(.*)\s\)/", $line, $source_split);
+		list($all, $info, $numstates, $numconnections, $rate) = $source_split;
 
-		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>
-				<td class='listlr'>{$proto}</td>
-				<td class='listr'>{$info}</td>
-				<td class='listr'>{$state}</td>
+		$source_split = "";
+		preg_match("/(.*)\s\<?-\>?\s(.*)/", $info, $source_split);
+		list($all, $srcip, $dstip) = $source_split;
+
+		?>
+		<tr valign='top' name='r:<?php echo "{$srcip}:{$dstip}" ?>'>
+				<td class='listlr'><?php echo $info;?></td>
+				<td class='listr'><?php echo $numstates;?></td>
+				<td class='listr'><?php echo $numconnections;?></td>
+				<td class='listr'><?php echo $rate;?></td>
 				<td class='list'>
-				  <img src='/themes/{$g['theme']}/images/icons/icon_x.gif' height='17' width='17' border='0'
-				  	   onclick=\"removeState('{$srcip}', '{$dstip}');\" style='cursor:pointer;'
-				       name='i:{$srcip}:{$dstip}'
-				       title='" . gettext("Remove all state entries from") . " {$srcip} " . gettext("to") . " {$dstip}' alt='' />
+				<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
+					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;
+					name='i:<?php echo "{$srcip}:{$dstip}"; ?>
+					title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
 				</td>
-			  </tr>";
+			  </tr>
+		<?php
 		$row++;
 	}
 }
 else {
 	echo "<tr>
-			<td class='list' colspan='4' align='center' valign='top'>
-			  " . gettext("No states were found.") . "
+			<td class='list' colspan='5' align='center' valign='top'>
+			  " . gettext("No source tracking entries were found.") . "
 			</td>
 		  </tr>";
 }

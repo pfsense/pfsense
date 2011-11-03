@@ -53,6 +53,12 @@ if ($_POST) {
 			$savemsg .= " ";
 		$savemsg .= gettext("The state table has been flushed successfully.");
 	}
+	if ($_POST['sourcetracking']) {
+		mwexec("/sbin/pfctl -F Sources");
+		if ($savemsg)
+			$savemsg .= " <br/>";
+		$savemsg .= gettext("The source tracking table has been flushed successfully.");
+	}
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
@@ -68,8 +74,10 @@ include("head.inc");
 	<tr><td>
 	<?php
 		$tab_array = array();
-		$tab_array[0] = array(gettext("States"), false, "diag_dump_states.php");
-		$tab_array[1] = array(gettext("Reset States"), true, "diag_resetstate.php");
+		$tab_array[] = array(gettext("States"), false, "diag_dump_states.php");
+		if (isset($config['system']['lb_use_sticky']))
+			$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+		$tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
 		display_top_tabs($tab_array);
 	?>
 	</td></tr>
@@ -97,6 +105,22 @@ include("head.inc");
                       "Simply refresh the page to continue."); ?></span></p>
                     </td>
 				</tr>
+		<?php if (isset($config['system']['lb_use_sticky'])): ?>
+		<tr>
+			<td width="22%" valign="top" class="vtable">&nbsp;</td>
+			<td width="78%" class="vtable"><p>
+			<input name="sourcetracking" type="checkbox" id="sourcetracking" value="yes" checked>
+			<strong><?= gettext("Firewall Source Tracking"); ?></strong><br>
+			<span class="vexpl"><br>
+			<?=gettext("Resetting the source tracking table will remove all source/destination associations. " .
+			"This means that the \"sticky\" source/destination association " .
+			"will be cleared for all clients."); ?><br>
+			<br>
+			</span><span class="vexpl"><?=gettext("This does not clear active connection states, only source tracking."); ?><br>
+			</p>
+			</td>
+		</tr>
+		<?php endif; ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

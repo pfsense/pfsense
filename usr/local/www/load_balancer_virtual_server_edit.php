@@ -186,7 +186,7 @@ document.observe("dom:loaded", function() {
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
+		  			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
                   </td>

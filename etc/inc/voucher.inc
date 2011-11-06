@@ -462,8 +462,16 @@ function voucher_configure($sync = false) {
 
 	if (is_array($config['voucher'])) {
 		foreach ($config['voucher'] as $voucherzone => $vcfg) {
+			if ($g['booting'])
+			    echo gettext("Enabling voucher support... ");
 			$cpzone = $voucherzone;
-			voucher_configure_zone($sync);
+			$error = voucher_configure_zone($sync);
+			if ($g['booting']) {
+				if ($error)
+					echo "error\n";
+				else
+					echo "done\n";
+			}
 		}
 	}
 }
@@ -474,8 +482,6 @@ function voucher_configure_zone($sync = false) {
 	if (!isset($config['voucher'][$cpzone]['enable']))
 		return 0;
 
-        if ($g['booting'])
-            echo "Enabling voucher support... ";
 	if ($sync == true)
 	    captiveportal_syslog("Writing voucher db from sync data...");
 
@@ -531,8 +537,6 @@ function voucher_configure_zone($sync = false) {
             }
 
 		unlock($voucherlck);
-		if ($g['booting'])
-		    echo "done\n";
         }
 
 	return 0;

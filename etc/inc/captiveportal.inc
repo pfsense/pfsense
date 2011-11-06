@@ -293,7 +293,7 @@ function captiveportal_configure_zone($cpcfg) {
 		}
 
 		/* write error page */
-		if ($cpcfg['page']['errtext'])
+		if (is_array($cpcfg['page']) && $cpcfg['page']['errtext'])
 			$errtext = base64_decode($cpcfg['page']['errtext']);
 		else {
 			/* example page  */

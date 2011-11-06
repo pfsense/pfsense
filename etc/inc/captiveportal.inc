@@ -266,7 +266,7 @@ function captiveportal_configure_zone($cpcfg) {
 			$croninterval = 60;
 
 		/* write portal page */
-		if ($cpcfg['page']['htmltext'])
+		if (is_array($cpcfg['page']) && $cpcfg['page']['htmltext'])
 			$htmltext = base64_decode($cpcfg['page']['htmltext']);
 		else {
 			/* example/template page */
@@ -320,7 +320,7 @@ function captiveportal_configure_zone($cpcfg) {
 		}
 
 		/* write logout page */
-		if ($cpcfg['page']['logouttext'])
+		if (is_array($cpcfg['page']) && $cpcfg['page']['logouttext'])
 			$logouttext = base64_decode($cpcfg['page']['logouttext']);
 		else {
 			/* example page */

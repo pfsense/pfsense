@@ -461,7 +461,7 @@ function get_dates($curperiod, $graph) {
 						<?=gettext("Start:");?>
 						<input type="text" name="start" class="formfldunknown" length="32" value="<?php echo $start;?>">
 						<?=gettext("End:");?>
-						<input type="text" name="end" class="formfldunknown" length="32" value="<?php echo $now;?>">
+						<input type="text" name="end" class="formfldunknown" length="32" value="<?php echo $end;?>">
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
 						<?php
 						$curdatabase = $curoption;

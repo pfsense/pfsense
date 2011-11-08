@@ -2592,7 +2592,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (is_array($wancfg['wireless']))
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
-	if ($wancfg['spoofmac']) {
+	$mac = get_interface_mac($realhwif);
+	/*	Don't try to reapply the spoofed MAC if it's already applied.
+		When ifconfig link is used, it cycles the interface down/up, which triggers 
+		the interface config again, which attempts to spoof the MAC again, 
+		which cycles the link again... */
+	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 
@@ -2608,7 +2613,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
                         }
                 }
 	}  else {
-		$mac = get_interface_mac($realhwif);
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.

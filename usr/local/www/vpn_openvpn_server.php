@@ -137,6 +137,7 @@ if($_GET['act']=="edit"){
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
 		$pconfig['tunnel_networkv6'] = $a_server[$id]['tunnel_networkv6'];
+
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
 		$pconfig['gwredir'] = $a_server[$id]['gwredir'];
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
@@ -148,6 +149,11 @@ if($_GET['act']=="edit"){
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
+
+		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
+		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
+		$pconfig['serverbridge_dhcp_start'] = $a_server[$id]['serverbridge_dhcp_start'];
+		$pconfig['serverbridge_dhcp_end'] = $a_server[$id]['serverbridge_dhcp_end'];
 
 		$pconfig['dns_domain'] = $a_server[$id]['dns_domain'];
 		if ($pconfig['dns_domain'])
@@ -190,7 +196,6 @@ if($_GET['act']=="edit"){
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 	}
 }
-
 if ($_POST) {
 
 	unset($input_errors);
@@ -286,9 +291,20 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
-	$reqdfields[] = 'tunnel_network';
-	$reqdfieldsn[] = gettext('Tunnel network');
-
+	if ($pconfig['dev_mode'] != "tap") {
+		$reqdfields[] = 'tunnel_network';
+		$reqdfieldsn[] = gettext('Tunnel network');
+	} else {
+		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) 
+		|| (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end']))
+			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
+		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start'])))
+			$input_errors[] = gettext("Server Bridge DHCP Start must be an IPv4 address.");
+		if (($pconfig['serverbridge_dhcp_end'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_end'])))
+			$input_errors[] = gettext("Server Bridge DHCP End must be an IPv4 address.");
+		if (ip2ulong($pconfig['serverbridge_dhcp_start']) > ip2ulong($pconfig['serverbridge_dhcp_end']))
+			$input_errors[] = gettext("The Server Bridge DHCP range is invalid (start higher than end).");
+	}
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (!$input_errors) {
@@ -344,6 +360,11 @@ if ($_POST) {
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
+
+		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
+		$server['serverbridge_interface'] = $pconfig['serverbridge_interface'];
+		$server['serverbridge_dhcp_start'] = $pconfig['serverbridge_dhcp_start'];
+		$server['serverbridge_dhcp_end'] = $pconfig['serverbridge_dhcp_end'];
 
 		if ($pconfig['dns_domain_enable'])
 			$server['dns_domain'] = $pconfig['dns_domain'];
@@ -563,6 +584,58 @@ function netbios_change() {
 	}
 }
 
+function tuntap_change() {
+
+	mindex = document.iform.mode.selectedIndex;
+	mvalue = document.iform.mode.options[mindex].value;
+
+	switch(mvalue) {
+		case "p2p_tls":
+		case "p2p_shared_key":
+			p2p = true;
+			break;
+		default:
+			p2p = false;
+			break;
+	}
+
+	index = document.iform.dev_mode.selectedIndex;
+	value = document.iform.dev_mode.options[index].value;
+	switch(value) {
+		case "tun":
+			document.getElementById("ipv4_tunnel_network").style.display="";
+			document.getElementById("ipv6_tunnel_network").style.display="";
+			document.getElementById("serverbridge_dhcp").style.display="none";
+			document.getElementById("serverbridge_interface").style.display="none";
+			document.getElementById("serverbridge_dhcp_start").style.display="none";
+			document.getElementById("serverbridge_dhcp_end").style.display="none";
+			break;
+		case "tap":
+			document.getElementById("ipv4_tunnel_network").style.display="none";
+			document.getElementById("ipv6_tunnel_network").style.display="none";
+			if (!p2p) {
+				document.getElementById("serverbridge_dhcp").style.display="";
+				document.getElementById("serverbridge_interface").style.display="";
+				document.getElementById("serverbridge_dhcp_start").style.display="";
+				document.getElementById("serverbridge_dhcp_end").style.display="";
+				if (document.iform.serverbridge_dhcp.checked) {
+					document.iform.serverbridge_interface.disabled = false;
+					document.iform.serverbridge_dhcp_start.disabled = false;
+					document.iform.serverbridge_dhcp_end.disabled = false;
+				} else {
+					document.iform.serverbridge_interface.disabled = true;
+					document.iform.serverbridge_dhcp_start.disabled = true;
+					document.iform.serverbridge_dhcp_end.disabled = true;
+				}
+			} else {
+				document.iform.serverbridge_dhcp.disabled = true;
+				document.iform.serverbridge_interface.disabled = true;
+				document.iform.serverbridge_dhcp_start.disabled = true;
+				document.iform.serverbridge_dhcp_end.disabled = true;
+			}
+			break;
+	}
+}
 //-->
 </script>
 <?php
@@ -623,7 +696,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Mode");?></td>
 							<td width="78%" class="vtable">
-							<select name='mode' id='mode' class="formselect" onchange='mode_change()'>
+							<select name='mode' id='mode' class="formselect" onchange='mode_change(); tuntap_change()'>
 							<?php
 								foreach ($openvpn_server_modes as $name => $desc):
 									$selected = "";
@@ -670,7 +743,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Device Mode"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="dev_mode" class="formselect">
+							<select name="dev_mode" class="formselect" onchange='tuntap_change()'>
                                                         <?php
                                                                 foreach ($openvpn_dev_mode as $device):
                                                                        $selected = "";
@@ -979,7 +1052,7 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Tunnel Settings"); ?></td>
 					</tr>
-					<tr>
+					<tr id="ipv4_tunnel_network">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv4 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
@@ -993,7 +1066,7 @@ if ($savemsg)
 							"to connecting clients. (see Address Pool)"); ?>
 						</td>
 					</tr>
-					<tr>
+					<tr id="ipv6_tunnel_network">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>">
@@ -1005,6 +1078,76 @@ if ($savemsg)
 							"the	server virtual interface. The remaining " .
 							"network addresses can optionally be assigned " .
 							"to connecting clients. (see Address Pool)"); ?>
+						</td>
+					</tr>
+					<tr id="serverbridge_dhcp">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Bridge DHCP"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['serverbridge_dhcp'],$chk); ?>
+										<input name="serverbridge_dhcp" type="checkbox" value="yes" <?=$chk;?> onchange='tuntap_change()' />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Allow clients on the bridge to obtain DHCP."); ?><br>
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="serverbridge_interface">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Bridge Interface"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="serverbridge_interface" class="formselect">
+								<?php
+									$serverbridge_interface['none'] = "none";
+									$serverbridge_interface = array_merge($serverbridge_interface, get_configured_interface_with_descr());
+									$carplist = get_configured_carp_interface_list();
+									foreach ($carplist as $cif => $carpip)
+										$serverbridge_interface[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
+									$aliaslist = get_configured_ip_aliases_list();
+									foreach ($aliaslist as $aliasip => $aliasif)
+										$serverbridge_interface[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+									foreach ($serverbridge_interface as $iface => $ifacename):
+										$selected = "";
+										if ($iface == $pconfig['serverbridge_interface'])
+											$selected = "selected";
+								?>
+									<option value="<?=$iface;?>" <?=$selected;?>>
+										<?=htmlspecialchars($ifacename);?>
+									</option>
+								<?php endforeach; ?>
+							</select> <br>
+							<?=gettext("The interface to which this tap instance will be, " .
+							"bridged. This is not done automatically. You must assign this " .
+							"interface and create the bridge separately. " .
+							"This setting controls which existing IP address and subnet " .
+							"mask are used by OpenVPN for the bridge. Setting this to " .
+							"'none' will cause the Server Bridge DHCP settings below to be ignored."); ?>
+						</td>
+					</tr>
+					<tr id="serverbridge_dhcp_start">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Server Bridge DHCP Start"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="serverbridge_dhcp_start" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['serverbridge_dhcp_start']);?>">
+							<br>
+							<?=gettext("When using tap mode as multi-point server, " .
+							"you may optionally supply a DHCP range to use on the " .
+							"interface to which this tap instance is bridged. " .
+							"If these settings are left blank, DHCP will be passed " .
+							"through to the LAN, and the interface setting above " .
+							"will be ignored."); ?>
+						</td>
+					</tr>
+					<tr id="serverbridge_dhcp_end">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Server Bridge DHCP Start"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="serverbridge_dhcp_end" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['serverbridge_dhcp_end']);?>">
+							<br>
+							<?=gettext(""); ?>
 						</td>
 					</tr>
 					<tr id="gwredir_opts">
@@ -1518,6 +1661,7 @@ dns_server_change();
 wins_server_change();
 ntp_server_change();
 netbios_change();
+tuntap_change();
 //-->
 </script>
 </body>

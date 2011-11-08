@@ -409,23 +409,41 @@ function openvpn_reconfigure($mode, $settings) {
 				// If the CIDR is less than a /30, OpenVPN will complain if you try to
 				//  use the server directive. It works for a single client without it.
 				//  See ticket #1417
-				if ($cidr < 30) {
+				if (($settings['dev_mode'] != "tap") && ($cidr < 30)) {
 					$conf .= "server {$ip} {$mask}\n";
 					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 				}
 			case 'p2p_shared_key':
-				$baselong = ip2long32($ip) & ip2long($mask);
-				$ip1 = long2ip32($baselong + 1);
-				$ip2 = long2ip32($baselong + 2);
-				$conf .= "ifconfig $ip1 $ip2\n";
+				if ($settings['dev_mode'] != "tap") {
+					$baselong = ip2long32($ip) & ip2long($mask);
+					$ip1 = long2ip32($baselong + 1);
+					$ip2 = long2ip32($baselong + 2);
+					$conf .= "ifconfig $ip1 $ip2\n";
+				}
 				break;
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':
-				$conf .= "server {$ip} {$mask}\n";
-				if(is_ipaddr($ipv6))
-					$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
-				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+				if ($settings['dev_mode'] != "tap") {
+					$conf .= "server {$ip} {$mask}\n";
+					if(is_ipaddr($ipv6))
+						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
+					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+				} else {
+					if ($settings['serverbridge_dhcp']) {
+						if ((!empty($settings['serverbridge_interface'])) && (strcmp($settings['serverbridge_interface'], "none"))) {
+							$biface_ip=get_interface_ip($settings['serverbridge_interface']);
+							$biface_sm=gen_subnet_mask(get_interface_subnet($settings['serverbridge_interface']));
+							if (is_ipaddrv4($biface_ip) && is_ipaddrv4($settings['serverbridge_dhcp_start']) && is_ipaddrv4($settings['serverbridge_dhcp_end'])) {
+								$conf .= "server-bridge {$biface_ip} {$biface_sm} {$settings['serverbridge_dhcp_start']} {$settings['serverbridge_dhcp_end']}\n";
+							} else {
+								$conf .= "mode server\n";
+							}
+						} else {
+							$conf .= "mode server\n";
+						}
+					}
+				}
 				break;
 		}
 

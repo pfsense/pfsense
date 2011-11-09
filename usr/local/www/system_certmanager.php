@@ -47,6 +47,9 @@ $cert_methods = array(
 );
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
+$cert_types = array(	"ca" => "Certificate Authority",
+			"server" => "Server Certificate",
+			"user" => "User Certificate");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
@@ -101,6 +104,7 @@ if ($act == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
+	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }
 
@@ -170,12 +174,13 @@ if ($_POST) {
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
-					"descr caref keylen lifetime dn_country dn_state dn_city ".
+					"descr caref keylen type lifetime dn_country dn_state dn_city ".
 					"dn_organization dn_email dn_commonname");
 			$reqdfieldsn = array(
 					gettext("Descriptive name"),
 					gettext("Certificate authority"),
 					gettext("Key length"),
+					gettext("Certificate Type"),
 					gettext("Lifetime"),
 					gettext("Distinguished name Country Code"),
 					gettext("Distinguished name State or Province"),
@@ -255,7 +260,7 @@ if ($_POST) {
 						'commonName' => $pconfig['dn_commonname']);
 	
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn)){
+						$pconfig['lifetime'], $dn, $pconfig['type'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -579,6 +584,23 @@ function internalca_change() {
 							</td>
 						</tr>
 						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Type");?></td>
+							<td width="78%" class="vtable">
+								<select name='type' class="formselect">
+								<?php
+									foreach( $cert_types as $ct => $ctdesc ):
+									$selected = "";
+									if ($pconfig['type'] == $ct)
+										$selected = "selected";
+								?>
+									<option value="<?=$ct;?>"<?=$selected;?>><?=$ctdesc;?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/>
+								<?=gettext("Type of certificate to generate. Used for placing restrictions on the usage of the generated certificate.");?>
+							</td>
+						</tr>
+						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
 								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
@@ -897,6 +919,9 @@ function internalca_change() {
 										<?=$name;?>
 									</td>
 								</tr>
+								<?php if ($cert['type']): ?>
+								<tr><td colspan="2"><em><?php echo $cert_types[$cert['type']]; ?></em></td></tr>
+								<?php endif; ?>
 							</table>
 						</td>
 						<td class="listr"><?=$caname;?>&nbsp;</td>

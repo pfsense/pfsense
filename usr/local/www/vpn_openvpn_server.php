@@ -295,6 +295,8 @@ if ($_POST) {
 		$reqdfields[] = 'tunnel_network';
 		$reqdfieldsn[] = gettext('Tunnel network');
 	} else {
+		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network'])
+			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) 
 		|| (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end']))
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
@@ -603,16 +605,14 @@ function tuntap_change() {
 	value = document.iform.dev_mode.options[index].value;
 	switch(value) {
 		case "tun":
-			document.getElementById("ipv4_tunnel_network").style.display="";
-			document.getElementById("ipv6_tunnel_network").style.display="";
+			document.getElementById("ipv4_tunnel_network").className="vncellreq";
 			document.getElementById("serverbridge_dhcp").style.display="none";
 			document.getElementById("serverbridge_interface").style.display="none";
 			document.getElementById("serverbridge_dhcp_start").style.display="none";
 			document.getElementById("serverbridge_dhcp_end").style.display="none";
 			break;
 		case "tap":
-			document.getElementById("ipv4_tunnel_network").style.display="none";
-			document.getElementById("ipv6_tunnel_network").style.display="none";
+			document.getElementById("ipv4_tunnel_network").className="vncell";
 			if (!p2p) {
 				document.getElementById("serverbridge_dhcp").style.display="";
 				document.getElementById("serverbridge_interface").style.display="";
@@ -1052,8 +1052,8 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Tunnel Settings"); ?></td>
 					</tr>
-					<tr id="ipv4_tunnel_network">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv4 Tunnel Network"); ?></td>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq" id="ipv4_tunnel_network"><?=gettext("IPv4 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
 							<br>
@@ -1066,8 +1066,8 @@ if ($savemsg)
 							"to connecting clients. (see Address Pool)"); ?>
 						</td>
 					</tr>
-					<tr id="ipv6_tunnel_network">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 Tunnel Network"); ?></td>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>">
 							<br>

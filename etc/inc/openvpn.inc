@@ -409,12 +409,12 @@ function openvpn_reconfigure($mode, $settings) {
 				// If the CIDR is less than a /30, OpenVPN will complain if you try to
 				//  use the server directive. It works for a single client without it.
 				//  See ticket #1417
-				if (($settings['dev_mode'] != "tap") && ($cidr < 30)) {
+				if (!empty($ip) && !empty($mask) && ($cidr < 30)) {
 					$conf .= "server {$ip} {$mask}\n";
 					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 				}
 			case 'p2p_shared_key':
-				if ($settings['dev_mode'] != "tap") {
+				if (!empty($ip) && !empty($mask)) {
 					$baselong = ip2long32($ip) & ip2long($mask);
 					$ip1 = long2ip32($baselong + 1);
 					$ip2 = long2ip32($baselong + 2);
@@ -424,7 +424,7 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':
-				if ($settings['dev_mode'] != "tap") {
+				if (!empty($ip) && !empty($mask)) {
 					$conf .= "server {$ip} {$mask}\n";
 					if(is_ipaddr($ipv6))
 						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";

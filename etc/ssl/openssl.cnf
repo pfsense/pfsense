@@ -189,7 +189,7 @@ basicConstraints=CA:FALSE
 # keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 
 # This will be displayed in Netscape's comment listbox.
-nsComment                       = "OpenSSL Generated Certificate"
+nsComment                       = "OpenSSL Generated User Certificate"
 
 # PKIX recommendations harmless if included in all certificates.
 subjectKeyIdentifier=hash
@@ -211,6 +211,17 @@ authorityKeyIdentifier=keyid,issuer:always
 #nsRenewalUrl
 #nsCaPolicyUrl
 #nsSslServerName
+
+[ server ]
+
+# Make a cert with nsCertType=server
+basicConstraints=CA:FALSE
+nsCertType			= server
+nsComment			= "OpenSSL Generated Server Certificate"
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer:always
+extendedKeyUsage=serverAuth
+keyUsage = digitalSignature, keyEncipherment
 
 [ v3_req ]
 

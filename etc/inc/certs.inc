@@ -253,7 +253,7 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	return true;
 }
 
-function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
+function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user") {
 
 	$ca =& lookup_ca($caref);
 	if (!$ca)
@@ -266,8 +266,20 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 	if(!$ca_res_key) return false;
 	$ca_serial = ++$ca['serial'];
 
+	switch ($type) {
+		case "ca":
+			$cert_type = "v3_ca";
+			break;
+		case "server":
+			$cert_type = "server";
+			break;
+		default:
+			$cert_type = "usr_cert";
+			break;
+	}
+
 	$args = array(
-		"x509_extensions" => "usr_cert",
+		"x509_extensions" => $cert_type,
 		"digest_alg" => "sha1",
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
@@ -295,6 +307,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 	$cert['caref'] = $caref;
 	$cert['crt'] = base64_encode($str_crt);
 	$cert['prv'] = base64_encode($str_key);
+	$cert['type'] = $type;
 
 	return true;
 }

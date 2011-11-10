@@ -687,9 +687,10 @@ function openvpn_resync_csc(& $settings) {
 	if (!empty($settings['tunnel_network'])) {
 		list($ip, $mask) = explode('/', $settings['tunnel_network']);
 		$baselong = ip2long32($ip) & gen_subnet_mask_long($mask);
-		$ip1 = long2ip32($baselong + 1);
-		$ip2 = long2ip32($baselong + 2);
-		$conf .= "ifconfig-push {$ip1} {$ip2}\n";
+		$serverip = long2ip32($baselong + 1);
+		$clientip = long2ip32($baselong + 2);
+		/* Because this is being pushed, the order from the client's point of view. */
+		$conf .= "ifconfig-push {$clientip} {$serverip}\n";
 	}
 
 	openvpn_add_dhcpopts($settings, $conf);

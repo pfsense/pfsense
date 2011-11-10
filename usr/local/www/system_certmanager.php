@@ -887,6 +887,7 @@ function internalca_change() {
 							if ($cert['crt']) {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
+								$purpose = cert_get_purpose($cert['crt']);
 								if($subj==$issuer)
 								  $caname = "<em>" . gettext("self-signed") . "</em>";
 								else
@@ -919,8 +920,15 @@ function internalca_change() {
 										<?=$name;?>
 									</td>
 								</tr>
+								<tr><td>&nbsp;</td></tr>
 								<?php if ($cert['type']): ?>
 								<tr><td colspan="2"><em><?php echo $cert_types[$cert['type']]; ?></em></td></tr>
+								<?php endif; ?>
+								<?php if (is_array($purpose)): ?>
+								<tr><td colspan="2">
+									CA: <?php echo $purpose['ca']; ?>,
+									Server: <?php echo $purpose['server']; ?>
+								</td></tr>
 								<?php endif; ?>
 							</table>
 						</td>

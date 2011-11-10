@@ -458,6 +458,17 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt"){
 function csr_get_modulus($str_crt, $decode = true){
 	return cert_get_modulus($str_crt, $decode, "csr");
 }
+
+function cert_get_purpose($str_crt, $decode = true) {
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+	$crt_details = openssl_x509_parse($str_crt);
+	$purpose = array();
+	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
+	$purpose['server'] = ($crt_details['extensions']['nsCertType'] == "SSL Server") ? 'Yes': 'No';
+	return $purpose;
+}
+
 function prv_get_modulus($str_crt, $decode = true){
 	return cert_get_modulus($str_crt, $decode, "prv");
 }

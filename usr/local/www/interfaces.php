@@ -1568,20 +1568,17 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<?php
 												// Needs to check if the ID is not used on another interface
 												foreach($ifdescrs as $pdif => $pddescr) {
-													if($config['interfaces'][$pdif]['dhcp6-ia-pd-len'] > 0) {
+													if(is_numeric($config['interfaces'][$pdif]['dhcp6-ia-pd-len'])) {
 														$pdlen = $config['interfaces'][$pdif]['dhcp6-ia-pd-len'];
 														continue;
 													}
 												}
 												$numbers = pow(2, $pdlen);
-												$i = 0;
-												while($i < $numbers) {
-													if($i <> $number) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['dhcp6-pd-sla-id']) echo "selected";
-														echo ">" . dechex($i) . "</option>";
-													}
-													$i++;
+												for($i = 0;$i < $numbers; $i++) {
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['dhcp6-pd-sla-id'])
+														echo "selected";
+													echo ">" . dechex($i) . "</option>";
 												}
 												?> 
 											</select>

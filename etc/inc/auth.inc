@@ -684,8 +684,8 @@ function ldap_setup_caenv($authcfg) {
 		@chmod("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", 0600);
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
-		putenv("TLS_CACERTDIR={$g['varrun_path']}/certs");
-		putenv("TLS_CACERT={$g['varrun_path']}/certs/{$authcfg['name']}.ca");
+		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
+		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$authcfg['name']}.ca");
 	}
 }
 
@@ -1025,11 +1025,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return false;
 	}
 	
-	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
-
         /* Setup CA environment if needed. */
         ldap_setup_caenv($authcfg);
+
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* Make sure we can connect to LDAP */
 	$error = false;

@@ -113,19 +113,19 @@ function moveOptions(theSelFrom, theSelTo)
 function checkPoolControls() {
 	var active = document.iform.serversSelect;
 	var inactive = document.iform.serversDisabledSelect;
-	if ($("mode").value == "failover") {
-		if ($("serversSelect").length > 0) {
-			$("moveToEnabled").disabled=1;
+	if (jQuery("#mode").val() == "failover") {
+		if (jQuery("#serversSelect option").length > 0) {
+			jQuery("#moveToEnabled").prop("disabled",true);
 		} else {
-			$("moveToEnabled").disabled=0;
+			jQuery("#moveToEnabled").prop("disabled",false);
 		}
 	} else {
-		$("moveToEnabled").disabled=0;
+		jQuery("#moveToEnabled").prop("disabled",false);;
 	}
 }
 
 function enforceFailover() {
-	if ($("mode").value != "failover") {
+	if (jQuery("#mode").val() != "failover") {
 		return;
 	}
 	var active = document.iform.serversSelect;

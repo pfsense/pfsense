@@ -300,7 +300,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 

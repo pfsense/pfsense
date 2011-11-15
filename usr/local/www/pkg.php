@@ -180,7 +180,7 @@ if ($pkg['tabs'] <> "") {
 ?>
 <script>
 	function setFilter(filtertext) {
-		$('pkg_filter').value = filtertext;
+		jQuery('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
 	}
 </script>

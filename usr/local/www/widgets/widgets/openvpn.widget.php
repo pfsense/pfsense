@@ -63,18 +63,18 @@ $clients = openvpn_get_active_clients();
 <br/>
 <script type="text/javascript">
 	function killClient(mport, remipp) {
-		var busy = function(icon) {
-			icon.onclick      = "";
-			icon.src          = icon.src.replace("\.gif", "_d.gif");
-			icon.style.cursor = "wait";
+		var busy = function(index,icon) {
+			jQuery(icon).bind("onclick","");
+			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
+			jQuery(icon).css("cursor","wait");
 		}
 
-		$A(document.getElementsByName("i:" + mport + ":" + remipp)).each(busy);
+		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
-		new Ajax.Request(
+		jQuery.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
 				"?action=kill&port=" + mport + "&remipp=" + remipp,
-			{ method: "get", onComplete: killComplete }
+			{ type: "get", complete: killComplete }
 		);
 	}
 
@@ -85,8 +85,8 @@ $clients = openvpn_get_active_clients();
 			return;
 		}
 
-		$A(document.getElementsByName("r:" + values[1] + ":" + values[2])).each(
-			function(row) { Effect.Fade(row, { duration: 1.0 }); }
+		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
 </script>

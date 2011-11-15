@@ -56,6 +56,7 @@ $pconfig['proxyuser'] = $config['system']['proxyuser'];
 $pconfig['proxypass'] = $config['system']['proxypass'];
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
+$pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
@@ -102,9 +103,10 @@ if ($_POST) {
 		else
 			unset($config['system']['proxypass']);
 
-		if($_POST['lb_use_sticky'] == "yes")
+		if($_POST['lb_use_sticky'] == "yes") {
 			$config['system']['lb_use_sticky'] = true;
-		else
+			$config['system']['srctrack'] = $_POST['srctrack'];
+		} else
 			unset($config['system']['lb_use_sticky']);
 
 		if($_POST['gw_switch_default'] == "yes")
@@ -190,6 +192,12 @@ include("head.inc");
 		print_info_box($savemsg);
 ?>
 <script type="text/javascript" >
+function sticky_checked(obj) {
+	if (obj.checked)
+		jQuery('#srctrack').attr('disabled',false);
+	else
+		jQuery('#srctrack').attr('disabled','true');
+}
 function maxmss_checked(obj) {
 	if (obj.checked)
 		jQuery('#maxmss').attr('disabled',false);
@@ -266,7 +274,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
+									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> onClick="sticky_checked(this)" />
 									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
 									<?=gettext("Successive connections will be redirected to the servers " .
 									"in a round-robin manner with connections from the same " .
@@ -276,6 +284,12 @@ function maxmss_checked(obj) {
 									"the sticky connection. Further connections from that host " .
 									"will be redirected to the next web server in the round " .
 									"robin."); ?>
+									<br />
+									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo $pconfig['srctrack']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled"; ?>>
+									<br />
+									<?=gettext("Set the source tracking timeout for sticky connections. " .
+									"By default this is 0, so source tracking is removed as soon as the state expires. " .
+									"Setting this timeout higher will cause the source/destination relationship to persist for longer periods of time."); ?>
 								</td>
 							</tr>
 							<tr>

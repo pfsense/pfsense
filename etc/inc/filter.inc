@@ -280,6 +280,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		/* User defined maximum table entries in Advanced menu. */
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
+	if (isset($config['system']['lb_use_sticky']) && is_numeric($config['system']['srctrack']) && ($config['system']['srctrack'] > 0))
+		$rules .= "set timeout src.track {$config['system']['srctrack']}\n";
 
 	// Configure flowtable support if enabled.
 	flowtable_configure();

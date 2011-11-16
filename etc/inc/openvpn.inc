@@ -737,7 +737,10 @@ function openvpn_resync_csc(& $settings) {
 		$serverip = long2ip32($baselong + 1);
 		$clientip = long2ip32($baselong + 2);
 		/* Because this is being pushed, the order from the client's point of view. */
-		$conf .= "ifconfig-push {$clientip} {$serverip}\n";
+		if ($settings['dev_mode'] == 'tun')
+			$conf .= "ifconfig-push {$clientip} {$serverip}\n";
+		else
+			$conf .= "ifconfig-push {$clientip} {$mask}\n";
 	}
 
 	openvpn_add_dhcpopts($settings, $conf);

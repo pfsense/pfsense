@@ -129,6 +129,7 @@ if($_GET['act']=="edit"){
 
 		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
 		$pconfig['remote_network'] = $a_client[$id]['remote_network'];
+		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
 
@@ -190,6 +191,9 @@ if ($_POST) {
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
 		$input_errors[] = $result;
+
+	if (!empty($pconfig['use_shaper']) && (!is_numeric($pconfig['use_shaper']) || ($pconfig['use_shaper'] <= 0)))
+		$input_errors[] = gettext("The bandwidth limit must be a positive numeric value.");
 
     if ($pconfig['autokey_enable'])
         $pconfig['shared_key'] = openvpn_create_key();
@@ -259,6 +263,7 @@ if ($_POST) {
 
 		$client['tunnel_network'] = $pconfig['tunnel_network'];
 		$client['remote_network'] = $pconfig['remote_network'];
+		$client['use_shaper'] = $pconfig['use_shaper'];
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
 

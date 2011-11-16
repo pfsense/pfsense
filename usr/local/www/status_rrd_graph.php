@@ -156,9 +156,17 @@ if($end < $start) {
 }
 
 $seconds = $end - $start;
-					
+
+$styles = array('inverse' => gettext('Inverse'),
+		'absolute' => gettext('Absolute'));
+
+// Set default and override later
+$curstyle = "inverse";
+
 if ($_GET['style']) {
-	$curstyle = $_GET['style'];
+	foreach($styles as $style) 
+		if($style == $_GET['style']) 
+			$curstyle = $_GET['style'];
 } else {
 	if(! empty($config['rrd']['style'])) {
 		$curstyle = $config['rrd']['style'];
@@ -208,8 +216,6 @@ foreach($databases as $database) {
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
 
-$styles = array('inverse' => gettext('Inverse'),
-		'absolute' => gettext('Absolute'));
 $graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
 $periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 $graph_length = array(

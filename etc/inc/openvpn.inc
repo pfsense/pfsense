@@ -418,7 +418,10 @@ function openvpn_reconfigure($mode, $settings) {
 					$baselong = ip2long32($ip) & ip2long($mask);
 					$ip1 = long2ip32($baselong + 1);
 					$ip2 = long2ip32($baselong + 2);
-					$conf .= "ifconfig $ip1 $ip2\n";
+					if ($settings['dev_mode'] == 'tun')
+						$conf .= "ifconfig {$ip1} {$ip2}\n";
+					else
+						$conf .= "ifconfig {$ip1} {$mask}\n";
 				}
 				break;
 			case 'server_tls':
@@ -562,7 +565,10 @@ function openvpn_reconfigure($mode, $settings) {
 			$baselong = ip2long32($ip) & ip2long($mask);
 			$ip1 = long2ip32($baselong + 1);
 			$ip2 = long2ip32($baselong + 2);
-			$conf .= "ifconfig $ip2 $ip1\n";
+			if ($settings['dev_mode'] == 'tun')
+				$conf .= "ifconfig {$ip2} {$ip1}\n";
+			else
+				$conf .= "ifconfig {$ip2} {$mask}\n";
 		}
 
 		if ($settings['proxy_addr']) {

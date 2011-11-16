@@ -165,7 +165,7 @@ $curstyle = "inverse";
 
 if ($_GET['style']) {
 	foreach($styles as $style) 
-		if($style == $_GET['style']) 
+		if(strtoupper($style) == strtoupper($_GET['style'])) 
 			$curstyle = $_GET['style'];
 } else {
 	if(! empty($config['rrd']['style'])) {

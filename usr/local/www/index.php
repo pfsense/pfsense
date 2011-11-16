@@ -257,12 +257,11 @@ $jscriptstr = <<<EOD
 <script language="javascript" type="text/javascript">
 
 
-function widgetAjax(widget) {	
+function widgetAjax(widget) {
 	uri = "widgets/widgets/" + widget + ".widget.php";
 	var opt = {
 	    // Use GET
 	    type: 'get',
-		evalScripts: 'true',
 	    async: true,
 	    // Handle 404
 	    statusCode: {
@@ -280,46 +279,41 @@ function widgetAjax(widget) {
 				jQuery('#' + widget).show();
 			});
 			jQuery('#' + widget).html(data);
-	    }	
+	    }
 	}
 	jQuery.ajax(uri, opt);
 }
 
 
-function addWidget(selectedDiv){	
-	selectedDiv2 = selectedDiv + "-container";
-	d = document;
-	textlink = d.getElementById(selectedDiv2);
-	Effect.Appear(selectedDiv2, {duration:1});
-	if (textlink.style.display != "none")
+function addWidget(selectedDiv){
+	selectedDiv2 = '#' + selectedDiv + "-container";
+	if (jQuery(selectedDiv2).css('display') != "none")
 	{
-		Effect.Shake(selectedDiv2);	
+		jQuery(selectedDiv2).effect('shake',{times: 2}, 100);
 	}
 	else
 	{
+		jQuery(selectedDiv2).show('blind');
 		widgetAjax(selectedDiv);
 		selectIntLink = selectedDiv2 + "-input";
-		textlink = d.getElementById(selectIntLink);
-		textlink.value = "show";	
+		jQuery(selectIntLink).val("show");
 		showSave();
 	}
 }
 
 function configureWidget(selectedDiv){
-	selectIntLink = selectedDiv + "-settings";	
-	d = document;
-	textlink = d.getElementById(selectIntLink);
-	if (textlink.style.display == "none")
-		Effect.BlindDown(selectIntLink, {duration:1});
+	selectIntLink = '#' + selectedDiv + "-settings";
+	if (jQuery(selectIntLink).css('display') == "none")
+		jQuery(selectIntLink).show();
 	else
-		Effect.BlindUp(selectIntLink, {duration:1});
+		jQuery(selectIntLink).hide();
 }
 
 function showWidget(selectedDiv,swapButtons){
 	//appear element
-    Effect.BlindDown(selectedDiv, {duration:1});      
+    jQuery('#' + selectedDiv).show('blind');
     showSave();    
-	d = document;	
+	d = document;
     if (swapButtons){
 	    selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
@@ -333,15 +327,15 @@ function showWidget(selectedDiv,swapButtons){
     }
 	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
-	textlink.value = "show";	
+	textlink.value = "show";
     
 }
-	
+
 function minimizeWidget(selectedDiv,swapButtons){
 	//fade element
-    Effect.BlindUp(selectedDiv, {duration:1});      
+    jQuery('#' + selectedDiv).hide('blind');
     showSave();
-	d = document;	
+	d = document;
     if (swapButtons){
 	    selectIntLink = selectedDiv + "-open";
 		textlink = d.getElementById(selectIntLink);
@@ -350,34 +344,32 @@ function minimizeWidget(selectedDiv,swapButtons){
 	    selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
-    }  		
+    }
 	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "hide";	  
     
 }
 
-function closeWidget(selectedDiv){	
+function closeWidget(selectedDiv){
 	showSave();
-	selectedDiv = selectedDiv + "-container";
-	Effect.Fade(selectedDiv, {duration:1});
-	d = document;
-	selectIntLink = selectedDiv + "-input";
-	textlink = d.getElementById(selectIntLink);
-	textlink.value = "close";	
+	selectedDiv2 = "#" + selectedDiv + "-container";
+	jQuery(selectedDiv2).hide('blind');
+	selectIntLink = "#" + selectedDiv + "-container-input";
+	jQuery(selectIntLink).val("close");
 }
 
 function showSave(){
 	d = document;
 	selectIntLink = "submit";
 	textlink = d.getElementById(selectIntLink);
-	textlink.style.display = "inline";	
+	textlink.style.display = "inline";
 }
 
-function updatePref(){	
+function updatePref(){
 	var widgets = document.getElementsByClassName('widgetdiv');
 	var widgetSequence = "";
-	var firstprint = false;	
+	var firstprint = false;
 	d = document;
 	for (i=0; i<widgets.length; i++){
 		if (firstprint)
@@ -387,20 +379,20 @@ function updatePref(){
 		widget = widget + "-input";
 		textlink = d.getElementById(widget).value;
 		widgetSequence += textlink;
-		firstprint = true;		
+		firstprint = true;
 	}
 	selectLink = "sequence";
 	textlink = d.getElementById(selectLink);
 	textlink.value = widgetSequence;
-	return true;	
+	return true;
 }
 
-function hideAllWidgets(){		
-		Effect.Fade('niftyOutter', {to: 0.2});
+function hideAllWidgets(){
+		jQuery('#niftyOutter').fadeTo('slow',0.2);
 }
 
-function showAllWidgets(){		
-		Effect.Fade('niftyOutter', {to: 1.0});
+function showAllWidgets(){
+		jQuery('#niftyOutter').fadeTo('slow',1.0);
 }
 
 
@@ -423,27 +415,27 @@ function changeTabDIV(selectedDiv){
 			tab2 = tab.substring(0,dashpos) + "-active";
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "table-cell";
-			
+
 			//now show main div associated with link clicked
 			tabmain = d.getElementById(selectedDiv);
 			tabmain.style.display = "block";
 		}
 		else
-		{	
+		{
 			tab2 = tab.substring(0,dashpos) + "-deactive";
 			tablink = d.getElementById(tab2);
 			tablink.style.display = "table-cell";
 			tab2 = tab.substring(0,dashpos) + "-active";
 			tablink = d.getElementById(tab2);
-			tablink.style.display = "none";		
-			
+			tablink.style.display = "none";
+
 			//hide sections we don't want to see
 			tab2 = tab.substring(0,dashpos);
 			tabmain = d.getElementById(tab2);
 			tabmain.style.display = "none";
-				
+
 		}
-	}	
+	}
 }
 
 </script>
@@ -480,13 +472,13 @@ if ($savemsg)
 	print_info_box($savemsg); 
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
-	
+
 ?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php
 			$widgetfiles_add = $widgetfiles;
 			sort($widgetfiles_add);
-			foreach($widgetfiles_add as $widget) {			
+			foreach($widgetfiles_add as $widget) {	
 				if(!stristr($widget, "widget.php"))
 					continue;		
 				
@@ -722,10 +714,11 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-	document.observe('dom:loaded', function(in_event)
+	jQuery(document).ready(function(in_event)
 	{		
-			Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});	
-			Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});		
+			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+			jQuery('#col2').sortable({connectWith: '#col1', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+
 	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 			hideAllWidgets();		    
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		

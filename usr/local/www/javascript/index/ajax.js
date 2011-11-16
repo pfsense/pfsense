@@ -21,7 +21,7 @@ function updateMeters() {
 
 function stats(x) {
 	var values = x.split("|");
-	if (values.find(function(value){
+	if (jQuery.each(values,function(key,value){
 		if (value == 'undefined' || value == null)
 			return true;
 		else

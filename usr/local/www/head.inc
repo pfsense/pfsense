@@ -44,6 +44,7 @@ $pagetitle = gentitle( $pgtitle );
 		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all">
 		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";
 

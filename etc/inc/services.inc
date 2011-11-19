@@ -88,7 +88,7 @@ EOD;
 	/* Process all links which need the router advertise daemon */
 	$rtadvdnum = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-		if($dhcpv6ifconf['mode'] == "disabled")
+		if($dhcpv6ifconf['mode'] != "enable")
 			continue;
 
 		$realif = get_real_interface($dhcpv6if);
@@ -153,6 +153,10 @@ EOD;
 			continue;
 
 		$realif = get_real_interface($if);
+		/* prevent duplicate entries */
+		if(in_array($realif, $rtadvdifs))
+			continue;
+
 		$rtadvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($if);

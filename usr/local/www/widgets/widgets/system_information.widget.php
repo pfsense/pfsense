@@ -266,7 +266,9 @@ $curcfg = $config['system']['firmware'];
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#updatestatus').html(transport.responseText);
+		// .html() method process all script tags contained in responseText,
+		// to avoid this we set the innerHTML property
+		jQuery('#updatestatus').prop('innerHTML',transport.responseText);
 	}
 	function swapuname() {
 		jQuery('#uname').html("<?php echo php_uname("a"); ?>");

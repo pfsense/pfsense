@@ -37,11 +37,11 @@ if(is_file($path))
 <table width="100%">
 	<tr>
 		<td class="fbHome" width="25px" align="left">
-			<img onClick="$('fbTarget').value='<?=$realDir?>'; fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
+			<img onClick="jQuery('#fbTarget').val('<?=$realDir?>'); fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
 		<td><b><?=$path;?></b></td>
 		<td class="fbClose" align="right">
-			<img onClick="new Effect.Fade($('fbBrowser'));" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
+			<img onClick="jQuery('#fbBrowser').fadeOut();" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
 		</td>
 	</tr>
 	<tr>
@@ -74,7 +74,7 @@ foreach($dirs as $dir):
 	<tr>
 		<td></td>
 		<td class="fbDir vexpl" id="<?=$realDir;?>" align="left">
-			<div onClick="$('fbTarget').value='<?=$realDir?>'; fbBrowse('<?=$realDir?>');">
+			<div onClick="jQuery('#fbTarget').val('<?=$realDir?>'); fbBrowse('<?=$realDir?>');">
 				<img src="/filebrowser/images/folder_generic.gif" />
 				&nbsp;<?=$dir;?>
 			</div>
@@ -122,7 +122,7 @@ foreach($files as $file):
 		<td></td>
 		<td class="fbFile vexpl" id="<?=$fqpn;?>" align="left">
 			<?php $filename = str_replace("//","/", "{$path}/{$file}"); ?>
-			<div onClick="$('fbTarget').value='<?=$filename?>'; loadFile(); new Effect.Fade($('fbBrowser'));">
+			<div onClick="jQuery('#fbTarget').val('<?=$filename?>'); loadFile(); jQuery('#fbBrowser').fadeOut();">
 				<img src="/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
 				&nbsp;<?=$file;?>
 			</div>

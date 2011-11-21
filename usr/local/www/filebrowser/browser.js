@@ -2,47 +2,45 @@
 	pfSense_MODULE:	shell
 */
 
-Event.observe(
-	window, "load",
+jQuery(document).ready(
 	function() {
-		Event.observe(
-			"fbOpen", "click",
+		jQuery("#fbOpen").click(
 			function() {
-				Effect.Appear("fbBrowser", { duration: 0.75 });
-				fbBrowse($("fbTarget").value);
+				jQuery("#fbBrowser").fadeIn(750);
+				fbBrowse(jQuery("#fbTarget").val());
 			}
 		);
 	}
 );
 
 function fbBrowse(path) {
-	new Effect.Fade("fileContent");
+	jQuery("#fileContent").fadeOut();
 
-	if($("fbCurrentDir"))
-		$("fbCurrentDir").innerHTML = "Loading ...";
+	if(jQuery("#fbCurrentDir"))
+		jQuery("#fbCurrentDir").html("Loading ...");
 
-	new Ajax.Request(
+	jQuery.ajax(
 		"/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
-		{ method: "get", onComplete: fbComplete }
+		{ type: "get", complete: fbComplete }
 	);
 	
 }
 
 function fbComplete(req) {
-	$("fbBrowser").innerHTML = req.responseText;
+	jQuery("#fbBrowser").html(req.responseText);
 
 	var actions = {
 		fbHome:  function() { fbBrowse("/");                                },
-		fbClose: function() { Effect.Fade("fbBrowser", { duration: 0.75 }); },
+		fbClose: function() { jQuery("#fbBrowser").fadeOut(750); },
 		fbDir:   function() { fbBrowse(this.id);                            },
-		fbFile:  function() { $("fbTarget").value = this.id;                }
+		fbFile:  function() { jQuery("#fbTarget").val(this.id);             }
 	}
 
 	for(var type in actions) {
-		$A(Element.getElementsByClassName("fbBrowser", type)).each(
-			function(element) {
-				Event.observe(element, "click", actions[type]);
-				element.style.cursor = "pointer";
+		jQuery("#fbBrowser ." + type).each(
+			function() {
+				jQuery(this).click(actions[type]);
+				jQuery(this).css("cursor","pointer");
 			}
 		);
 	}

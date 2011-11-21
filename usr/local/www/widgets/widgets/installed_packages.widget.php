@@ -113,8 +113,8 @@ $updateavailable = false;
 	window.onload = function(in_event)
 	{
 		for (y=1; y<=<?php echo $y;?>; y++){
-			textID = "updatediv-" + y;
-			Effect.Pulsate(textID,{from:0.1});
+			textID = "#updatediv-" + y;
+			jQuery(textID).effect('pulsate');
 		}
 	}
 </script>

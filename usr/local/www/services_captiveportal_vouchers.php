@@ -69,8 +69,8 @@ if($_REQUEST['generatekey']) {
 		jQuery('#publickey').val('{$publickey}');
 		jQuery('#privatekey').val('{$privatekey}');
 		alert('{$alertmessage}');
-		new Effect.Highlight('publickey');
-		new Effect.Highlight('privatekey');
+		jQuery('#publickey').effect('highlight');
+		jQuery('#privatekey').effect('highlight');
 EOF;
 	exit;
 }

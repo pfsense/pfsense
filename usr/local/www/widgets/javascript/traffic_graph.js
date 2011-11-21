@@ -1,7 +1,7 @@
 function trafficshowDiv(incDiv,swapButtons){
 		//appear element
 	selectedDiv = incDiv + "graphdiv";
-    Effect.BlindDown(selectedDiv, {duration:1});      
+    jQuery('#' + selectedDiv).effect('blind',{mode:'show'},1000);      
     showSave();    
 	d = document;	
     if (swapButtons){
@@ -22,7 +22,7 @@ function trafficshowDiv(incDiv,swapButtons){
 function  trafficminimizeDiv(incDiv,swapButtons){
 	//fade element
 	selectedDiv = incDiv + "graphdiv";
-    Effect.BlindUp(selectedDiv, {duration:1});      
+    jQuery('#' + selectedDiv).effect('blind',{mode:'hide'},1000);
     showSave();
 	d = document;	
     if (swapButtons){

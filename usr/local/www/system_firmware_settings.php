@@ -125,7 +125,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Default Auto Update URLs"); ?></td>
 		<td class="vtable">
-			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; new Effect.Highlight(this.parentNode, { startcolor: '#ffff99', endcolor: '#fffffff' });">
+			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; jQuery('#preseturls').parent().effect('highlight');">
 					<option></option>
 				<?php 
 					foreach($preset_urls_split as $pus) {

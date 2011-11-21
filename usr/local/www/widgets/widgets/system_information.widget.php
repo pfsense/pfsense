@@ -66,7 +66,8 @@ if($_REQUEST['getupdatestatus']) {
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "<script type=\"text/javascript\">";
-				echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
+				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);";
+
 				echo "</script>";
 			} else
 				echo "<br />You are on the latest version.";

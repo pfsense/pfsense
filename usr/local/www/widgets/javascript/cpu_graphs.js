@@ -242,6 +242,6 @@ function GraphDraw(graph) {
 	for(var i = 0; i < count; i++)
 		graph['spans'][i].style.marginTop = getMargin(i);
 
-	Effect.Appear(graph['spans'][count - 1], { duration: 0.5 });
+	jQuery('#' + graph['spans'][count - 1]).fadeIn(500);
 }
 

@@ -108,7 +108,7 @@ function update_data(obj) {
 	if(result_text == "Initializing") {
 		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Initializing...');
 	} else if(result_text == "Done") {
-		new Effect.Highlight($('status'));
+		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
 		jQuery('#reloadinfo').css("visibility","hidden");
 		jQuery('#doneurl').css("visibility","visible");

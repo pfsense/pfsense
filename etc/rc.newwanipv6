@@ -136,6 +136,9 @@ services_dnsupdate_process($interface);
 /* signal dyndns update */
 services_dyndns_configure($interface);
 
+/* wait for the dhcp6c process to configure the LAN interface */
+sleep(5);
+
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();
 

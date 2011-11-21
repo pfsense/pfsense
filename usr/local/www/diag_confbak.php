@@ -150,7 +150,8 @@ include("head.inc");
 						<?php if (is_array($confvers)): ?>
 						<tr>
 							<td colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="<?=gettext("Diff"); ?>"></td>
-							<td width="30%" class="listhdrr"><?=gettext("Date");?></td>
+							<td width="22%" class="listhdrr"><?=gettext("Date");?></td>
+							<td width="8%" class="listhdrr"><?=gettext("Version");?></td>
 							<td width="70%" class="listhdrr"><?=gettext("Configuration Change");?></td>
 						</tr>
 						<tr valign="top">
@@ -159,6 +160,7 @@ include("head.inc");
 								<input type="radio" name="newtime" value="current">
 							</td>
 							<td class="listlr"> <?= date(gettext("n/j/y H:i:s"), $config['revision']['time']) ?></td>
+							<td class="listr"> <?= $config['version'] ?></td>
 							<td class="listr"> <?= $config['revision']['description'] ?></td>
 							<td colspan="3" valign="middle" class="list" nowrap><b><?=gettext("Current");?></b></td>
 						</tr>
@@ -169,7 +171,6 @@ include("head.inc");
 									$date = date(gettext("n/j/y H:i:s"), $version['time']);
 								else
 									$date = gettext("Unknown");
-								$desc = $version['description'];
 						?>
 						<tr valign="top">
 							<td class="list">
@@ -184,7 +185,8 @@ include("head.inc");
 								$c++; ?>
 							</td>
 							<td class="listlr"> <?= $date ?></td>
-							<td class="listr"> <?= $desc ?></td>
+							<td class="listr"> <?= $version['version'] ?></td>
+							<td class="listr"> <?= $version['description'] ?></td>
 							<td valign="middle" class="list" nowrap>
 							<a href="diag_confbak.php?newver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Revert to this configuration?");?>'")>
 							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>">

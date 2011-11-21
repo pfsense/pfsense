@@ -760,7 +760,9 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			}
 			if($newxml['revision']['description'] == "")
 				$newxml['revision']['description'] = "Unknown";
-			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+			if($newxml['version'] == "")
+				$newxml['version'] = "?";
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version']);
 		}
 	}
 	foreach($backups as $checkbak) {
@@ -771,7 +773,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			if($g['booting']) print " " . $tocheck . "r";
 		}
 	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version']);
 	if(is_int($revisions) and (count($tocache) > $revisions)) {
 		$toslice = array_slice(array_keys($tocache), 0, $revisions);
 		foreach($toslice as $sliced)
@@ -802,7 +804,7 @@ function get_backups() {
 		sort($bakvers);
 		// 	$bakvers = array_reverse($bakvers);
 		foreach(array_reverse($bakvers) as $bakver)
-			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description']);
+			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version']);
 	} else {
 		return false;
 	}

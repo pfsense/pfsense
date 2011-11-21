@@ -43,14 +43,14 @@ function killbypid($pidfile) {
 
 function isvalidpid($pid) {
 	$output = "";
-	exec("/bin/pgrep -F {$pid}", $output, $retval);
+	exec("/bin/pgrep -nF {$pid}", $output, $retval);
 
 	return (intval($retval) == 0);
 }
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -ax {$process}", $output, $retval);
+	exec("/bin/pgrep -anx {$process}", $output, $retval);
 
 	return (intval($retval) == 0);
 }

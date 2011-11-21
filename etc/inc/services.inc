@@ -172,7 +172,7 @@ EOD;
 			$rtadvdconf .= "\t:pltime=60:\\\n";
 			$rtadvdconf .= "\t:pltime=120:\\\n";
 			$rtadvdconf .= "\t:vltime=180:\\\n";
-			$rtadvdconf .= "\t::rtltime=60:\\\n";
+			$rtadvdconf .= "\t:rtltime=60:\\\n";
 			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";

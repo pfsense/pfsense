@@ -51,8 +51,11 @@ function services_rtadvd_configure() {
 		echo "services_rtadvd_configure() being called $mt\n";
 	}
 
+	/* we need to shut down the rtadvd cleanly, otherwise it will send out the prefix
+	 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
 	if(is_process_running("rtadvd")) {
-		mwexec("killall rtadvd", true);
+		log_error("Shutting down Router Advertisment daemon cleanly")
+		mwexec("killall rtadvd");
 	}
 
 	if (!is_array($config['dhcpdv6']))

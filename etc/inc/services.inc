@@ -52,7 +52,7 @@ function services_rtadvd_configure() {
 	}
 
 	if(is_process_running("rtadvd")) {
-		mwexec("killall -9 rtadvd", true);
+		mwexec("killall rtadvd", true);
 	}
 
 	if (!is_array($config['dhcpdv6']))
@@ -168,10 +168,14 @@ EOD;
 		if(is_ipaddrv6($subnetv6)) {
 			$rtadvdconf .= "# Generated for DHCP-PD delegation $if\n";
 			$rtadvdconf .= "{$realif}:\\\n";
+			/* use lower timers for dhcp-pd */
+			$rtadvdconf .= "\t:pltime=60:\\\n";
+			$rtadvdconf .= "\t:pltime=120:\\\n";
+			$rtadvdconf .= "\t:vltime=180:\\\n";
+			$rtadvdconf .= "\t::rtltime=60:\\\n";
 			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
 			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
-			$rtadvdconf .= "\t:tc=ether:\\\n";
 			if (isset($config['dnsmasq']['enable'])) {
 				$dnslist[] = get_interface_ipv6($dhcpv6if);
 			} elseif (!empty($config['system']['dnsserver'][0])) {
@@ -184,6 +188,7 @@ EOD;
 				$dnsstring = implode(",", $dnslist);
 				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
 			}
+			$rtadvdconf .= "\t:tc=ether:\\\n";
 			$rtadvdconf .= "\n\n"; 
 			$rtadvdnum++;
 		}

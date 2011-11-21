@@ -606,7 +606,7 @@ function reset_factory_defaults($lock = false) {
 	if (!$lock)
 		unlock($lockkey);
 	conf_mount_ro();
-
+	setup_serial_port();
 	return 0;
 }
 

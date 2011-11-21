@@ -6,7 +6,7 @@
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2010	Ermal Luçi
+	Copyright (C) 2010	Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ function services_rtadvd_configure() {
 	/* we need to shut down the rtadvd cleanly, otherwise it will send out the prefix
 	 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
 	if(is_process_running("rtadvd")) {
-		log_error("Shutting down Router Advertisment daemon cleanly")
+		log_error("Shutting down Router Advertisment daemon cleanly");
 		mwexec("killall rtadvd");
 	}
 

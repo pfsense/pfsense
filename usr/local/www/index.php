@@ -454,7 +454,7 @@ echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"><
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form action="index.php" method="post">
+
 <script language="javascript" type="text/javascript">
 // <![CDATA[
 columns = ['col1','col2'];
@@ -529,6 +529,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	</div>
 </div>
 
+<form action="index.php" method="post">
 <input type="hidden" value="" name="sequence" id="sequence">
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="<?=gettext("Click here to add widgets"); ?>" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
@@ -538,7 +539,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
 </p>
-
+</form>
 <div id="niftyOutter">
 	<?php
 	$totalwidgets = count($widgetfiles);
@@ -741,6 +742,6 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	}
 ?>
 </script>
-</form>
+
 </body>
 </html>

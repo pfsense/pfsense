@@ -73,7 +73,7 @@ function restore_history_backup($number) {
 			if(config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
 				echo "\n";
 				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
-				echo "\n\n";
+				echo "\n" . gettext("You may need to reboot the firewall or restart services before the restored configuration is fully active.") . "\n\n";
 			} else {
 				echo gettext("Unable to revert to the selected configuration.") . "\n";
 			}

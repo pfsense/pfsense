@@ -501,7 +501,7 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Peer Certificate Authority"); ?></td>
                                                         <td width="78%" class="vtable">
                                                         <?php if (count($a_ca)): ?>
-								<select name='ldap_caref' class="formselect">
+								<select id='ldap_caref' name='ldap_caref' class="formselect">
                                                         <?php
                                                                 foreach ($a_ca as $ca):
                                                                         $selected = "";

@@ -833,13 +833,16 @@ function backup_config() {
     } else {
             $bakdesc = $config['revision']['description'];
     }
+
+	$bakver = ($config['version'] == "") ? "?" : $config['version'];
+
     copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
     if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
             $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
     } else {
             $backupcache = array();
     }
-    $backupcache[$baktime] = array('description' => $bakdesc);
+    $backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver);
     $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
     fwrite($bakout, serialize($backupcache));
     fclose($bakout);

@@ -92,7 +92,10 @@ EOD;
 	$rtadvdnum = 0;
 	$rtadvdifs=array();
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-		if($dhcpv6ifconf['mode'] != "enable")
+		if($dhcpv6ifconf['mode'] == "disabled")
+			continue;
+
+		if(! isset($dhcpv6ifconf['enable'])
 			continue;
 
 		$realif = get_real_interface($dhcpv6if);

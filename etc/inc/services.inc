@@ -364,7 +364,7 @@ EOD;
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
-					$dhcpdconf .= "	option host-name {$dhhostname};\n";
+					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
 				}
 				if ($sm['netbootfile'])
 					$dhcpdconf .= "	filename \"{$sm['netbootfile']}\";\n";

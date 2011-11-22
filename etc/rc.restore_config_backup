@@ -1,0 +1,126 @@
+#!/usr/local/bin/php -q
+<?php
+require_once('config.inc');
+
+cleanup_backupcache();
+$confvers = get_backups();
+unset($confvers['versions']);
+
+$fp = fopen('php://stdin', 'r');
+
+function print_backup_info($backup_info, $number) {
+	if($backup_info['time'] != 0)
+		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
+	else
+		$date = gettext("Unknown");
+
+	list($page, $reason) = explode(": ", $backup_info['description'], 2);
+	if (empty($reason)) {
+		$reason = $page;
+		$page = gettext("Unknown Page");
+	}
+
+	echo sprintf("%02d", $number) . ". {$date}\tv{$backup_info['version']}\t{$page}\n";
+	if ($reason) {
+		echo "    {$reason}\n";
+	}
+}
+
+function list_backups($which="all", $return=false) {
+	global $confvers;
+
+	if (count($confvers) == 0) {
+		echo gettext("No backups found in the configuration history.");
+		return;
+	}
+
+	for ($c = count($confvers)-1; $c >= 0; $c--) {
+		if (is_numeric($which) && ($c != $which))
+			continue;
+		print_backup_info($confvers[$c], $c+1);
+		echo "\n";
+	}
+}
+
+function choose_backup() {
+	global $fp, $confvers;
+	if (count($confvers) == 0) {
+		echo gettext("No backups found in the configuration history.");
+		return -1;
+	}
+	echo gettext("Which configuration would you like to restore?") . "\n";
+	echo " 1-" . count($confvers) . " : ";
+	$number = strtoupper(chop(fgets($fp)));
+	if (is_numeric($number) && ($number > 0) && ($number < count($confvers))) {
+		return $number;
+	} else {
+		echo gettext("That is not a valid backup number.\n");
+		return -1;
+	}
+}
+
+function restore_history_backup($number) {
+	global $g, $fp, $confvers;
+	if (is_numeric($number) && ($number > 0) && ($number < count($confvers))) {
+		$realnumber = $number - 1;
+		echo "\n" . gettext("Is this the backup you wish to restore?") . "\n";
+		list_backups($realnumber);
+		$thisbackup = $confvers[$realnumber];
+		echo gettext("Y/N?") . " : ";
+		$confirm = strtoupper(chop(fgets($fp)));
+		if ($confirm == gettext("Y")) {
+			conf_mount_rw();
+			if(config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
+				echo "\n";
+				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
+				echo "\n\n";
+			} else {
+				echo gettext("Unable to revert to the selected configuration.") . "\n";
+			}
+			conf_mount_ro();
+		} else {
+			echo gettext("Restore canceled.") . "\n";
+		}
+	} else {
+		echo gettext("Restore canceled due to invalid input.") . "\n";
+	}
+}
+
+while (true) {
+
+	echo "\n";
+	echo gettext("Restore Backup from Configuration History") . "\n\n";
+	echo "1) " . gettext("List Backups") . "\n";
+	echo "2) " . gettext("Restore Backup") . "\n";
+	echo "Q) " . gettext("Quit") . "\n";
+	echo "\n\n";
+	echo gettext("Please select an option to continue") . ": ";
+
+	$command = strtolower(chop(fgets($fp)));
+
+	// Make sure we can detect a foreign language "quit" command.
+	if (strtolower($command) == gettext("quit"))
+		$command = "quit";
+
+	switch ($command) {
+		case "q":
+		case "quit":
+			echo "\n";
+			fclose($fp);
+			die;
+			break;
+		case "1":
+			list_backups();
+			break;
+		case "2":
+			$number = choose_backup();
+			restore_history_backup($number);
+			fclose($fp);
+			die;
+			break;
+	}
+}
+
+fclose($fp);
+die;
+?>

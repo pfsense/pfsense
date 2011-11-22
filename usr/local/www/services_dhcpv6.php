@@ -417,19 +417,20 @@ include("head.inc");
 		aodiv = document.getElementById('showddns');
 		aodiv.style.display = "block";
 	}
-
+	/*
 	function show_ntp_config() {
 		document.getElementById("showntpbox").innerHTML='';
 		aodiv = document.getElementById('showntp');
 		aodiv.style.display = "block";
 	}
-
+	*/
+	/*
 	function show_tftp_config() {
 		document.getElementById("showtftpbox").innerHTML='';
 		aodiv = document.getElementById('showtftp');
 		aodiv.style.display = "block";
 	}
-
+	*/
 	function show_ldap_config() {
 		document.getElementById("showldapbox").innerHTML='';
 		aodiv = document.getElementById('showldap');
@@ -660,6 +661,7 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
+			<!-- ISC dhcpd does not support ntp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 			<td width="78%" class="vtable">
@@ -672,6 +674,8 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
+			-->
+			<!-- ISC dhcpd does not support tftp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 			<td width="78%" class="vtable">
@@ -684,6 +688,7 @@ include("head.inc");
 			</div>
 			</td>
 			</tr>
+			-->
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("LDAP URI");?></td>
 			<td width="78%" class="vtable">

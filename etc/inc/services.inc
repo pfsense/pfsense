@@ -823,12 +823,16 @@ EOD;
 			$dhcpdv6conf .= "	max-lease-time {$dhcpv6ifconf['maxleasetime']};\n";
 
 		// ntp-servers
+		/* Not supported in ISC DHCPD yet, see redmine #2016
 		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0])
 			$dhcpdv6conf .= "	option ntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
+		*/
 
 		// tftp-server-name
-		if ($dhcpv6ifconf['tftp'] <> "")
+		/* Needs ISC DHCPD support
+		 if ($dhcpv6ifconf['tftp'] <> "")
 			$dhcpdv6conf .= "	option tftp-server-name \"{$dhcpv6ifconf['tftp']}\";\n";
+		*/
 
 		// Handle option, number rowhelper values
 		$dhcpdv6conf .= "\n";

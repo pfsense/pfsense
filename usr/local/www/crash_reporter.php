@@ -123,6 +123,8 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
 		exec("rm /var/crash/*");
+		// Erase the contents of the PHP error log
+		fclose(fopen("/tmp/PHP_errors.log", 'w'));
 		Header("Location: /");
 		exit;
 	} else {

@@ -197,18 +197,6 @@ if ($_POST) {
         }
 
 	if (!$input_errors) {
-		if (!($_POST['weight'] > 1 || $_POST['latencylow'] || $_POST['latencyhigh'] ||
-		    $_POST['losslow'] || $_POST['losshigh'] || $_POST['down'] ||
-		    $_POST['defaultgw'] || is_ipaddr($_POST['monitor']) || is_ipaddr($_POST['gateway']))) {
-		/* Delete from config if gw is dynamic and user is not saving any additional gateway data that system doesn't know */
-			if (isset($id) && $a_gateway_item[$id])
-				unset($a_gateway_item[$id]);
-			write_config();
-			header("Location: system_gateways.php");
-			exit;
-		}
-
-
 		$reloadif = "";
 		$gateway = array();
 

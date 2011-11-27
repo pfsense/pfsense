@@ -267,6 +267,32 @@ function return_gateways_status($byname = false) {
 		$status[$target]['status'] = trim($info[8]);
 	}
 
+	/* tack on any gateways that have monitoring disabled */
+	$gateways_arr = return_gateways_array();
+	foreach($gateways_arr as $gwitem) {
+		if(isset($gwitem['monitor_disable'])) {
+			if(!is_ipaddr($gwitem['monitorip'])) {
+				$realif = $gwitem['interface'];
+				$tgtip = get_interface_gateway($realif);
+				$srcip = find_interface_ip($realif);
+			} else {
+				$tgtip = $gwitem['monitorip'];
+				$srcip = find_interface_ip($realif);
+			}
+			if($byname == true)
+				$target = $gwitem['name'];
+			else
+				$target = $tgtip;
+
+			$status[$target]['monitorip'] = $tgtip;
+			$status[$target]['srcip'] = $srcip;
+			$status[$target]['name'] = $gwitem['name'];
+			$status[$target]['lastcheck'] = date('r');
+			$status[$target]['delay'] = "0.0ms";
+			$status[$target]['loss'] = "0.0%";
+			$status[$target]['status'] = "none";
+		}
+	}
 	return($status);
 }
 

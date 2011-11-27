@@ -689,7 +689,7 @@ function filter_generate_gateways() {
 	}
 
 	/* Create a global array to avoid errors on rulesets. */
-	$GatewaysList = array_merge($GatewaysList, $GatewayGroupsList);
+	$GatewaysList = $GatewaysList + $GatewayGroupsList;
 
 	$rules .= "\n";
 

@@ -92,6 +92,7 @@ $pconfig['bwdefaultdn'] = $config['captiveportal']['bwdefaultdn'];
 $pconfig['bwdefaultup'] = $config['captiveportal']['bwdefaultup'];
 $pconfig['nomacfilter'] = isset($config['captiveportal']['nomacfilter']);
 $pconfig['noconcurrentlogins'] = isset($config['captiveportal']['noconcurrentlogins']);
+$pconfig['radius_protocol'] = $config['captiveportal']['radius_protocol'];
 $pconfig['redirurl'] = $config['captiveportal']['redirurl'];
 $pconfig['radiusip'] = $config['captiveportal']['radiusip'];
 $pconfig['radiusip2'] = $config['captiveportal']['radiusip2'];
@@ -203,6 +204,7 @@ if ($_POST) {
 		$config['captiveportal']['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$config['captiveportal']['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$config['captiveportal']['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
+                $config['captiveportal']['radius_protocol'] = $_POST['radius_protocol'];
 		$config['captiveportal']['redirurl'] = $_POST['redirurl'];
 		$config['captiveportal']['radiusip'] = $_POST['radiusip'];
 		$config['captiveportal']['radiusip2'] = $_POST['radiusip2'];
@@ -272,6 +274,10 @@ function enable_change(enable_change) {
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
 	document.iform.auth_method[2].disabled = endis;
+	document.iform.radius_protocol[0].disabled = radius_endis;
+	document.iform.radius_protocol[1].disabled = radius_endis;
+	document.iform.radius_protocol[2].disabled = radius_endis;
+	document.iform.radius_protocol[3].disabled = radius_endis;
 	document.iform.radmac_enable.disabled = radius_endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.radmac_format.disabled = radius_endis;
@@ -476,6 +482,34 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
 		  </tr>
+                  <tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Radius Protocol"); ?></td>
+                  <td width="78%" class="vtable">
+                    <table cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="PAP" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']!="CHAP_MD5" && $pconfig['radius_protocol']!="MSCHAPv1" && $pconfig['radius_protocol']!="MSCHAPv2") echo "checked"; ?>>
+      <?=gettext("PAP"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="CHAP_MD5" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="CHAP_MD5") echo "checked"; ?>>
+      <?=gettext("CHAP_MD5"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="MSCHAPv1" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="MSCHAPv1") echo "checked"; ?>>
+      <?=gettext("MSCHAPv1"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="MSCHAPv2" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="MSCHAPv2") echo "checked"; ?>>
+      <?=gettext("MSCHAPv2"); ?></td>
+                      </tr><tr>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      </tr>
+                    </table>
+                  </tr><tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  </tr>
 		</table>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
         	<tr>
@@ -651,7 +685,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
                 echo "<option value=\"$macformat\">$macformat</option>\n";
         }
         ?>
-        </select></br>
+        </select><br/>
         <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
         <?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
         <?=gettext("default:"); ?> 00:11:22:33:44:55<br>

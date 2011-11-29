@@ -502,7 +502,7 @@ function step12_submitphpaction() {
 			'emailAddress' => $pconfig['step9']['email'],
 			'commonName' => $pconfig['step9']['certname']);
 
-		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn);
+		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server');
 		if (!is_array($config['cert']))
 			$config['cert'] = array();
 

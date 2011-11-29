@@ -417,9 +417,10 @@ function method_change() {
 
 					<?php if (!isset($id) || $act == "edit"): ?>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial for next certificate");?></td>
 							<td width="78%" class="vtable">
 								<input name="serial" type="text" class="formfld unknown" id="serial" size="20" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
+								<br/><?=gettext("Enter a decimal number to be used as the serial number for the next certificate to be created using this CA.");?>
 							</td>
 						</tr>
 					<?php endif; ?>

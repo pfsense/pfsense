@@ -86,6 +86,7 @@ PHPMODULES="$PHPMODULES gettext"
 # User manager
 PHPMODULES="$PHPMODULES ldap openssl pcntl"
 PHPMODULES="$PHPMODULES mhash"
+PHPMODULES="$PHPMODULES mcrypt"
 # Regexs, PERL style!
 PHPMODULES="$PHPMODULES pcre"
 # The mighty posix!

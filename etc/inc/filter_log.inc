@@ -169,6 +169,8 @@ function parse_filter_line($line) {
 
 function parse_ipport($addr) {
 	$addr = rtrim($addr, ":");
+	if (substr($addr, 0, 4) == "kip ")
+		$addr = substr($addr, 4);
 	$port = '';
 	if (substr_count($addr, '.') > 1) {
 		/* IPv4 */

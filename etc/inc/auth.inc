@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal LuÃi
 	All rights reserved.
 
 	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
@@ -815,8 +815,10 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
                 $ldapauthcont       = $authcfg['ldap_authcn'];
+				$ldapauthgroupcont  = $authcfg['ldap_authgroupcn'];
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
-                $ldapgroupattribute  = strtolower($authcfg['ldap_attr_member']);
+				$ldapgroupattribute = strtolower($authcfg['ldap_attr_group']);
+                $ldapmemberattribute= strtolower($authcfg['ldap_attr_member']);
                 $ldapfilter         = "({$ldapnameattribute}={$username})";
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
@@ -833,7 +835,9 @@ function ldap_get_groups($username, $authcfg) {
 	$ldapdn             = $_SESSION['ldapdn'];
 
 	/*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
-	$ldapgroupattribute = strtolower($ldapgroupattribute);
+	$ldapgroupattribute		= strtolower( $ldapgroupattribute	);
+	$ldapmemberattribute	= strtolower( $ldapmemberattribute	);
+
 	$memberof = array();
 
 	/* connect and see if server is up */
@@ -866,30 +870,94 @@ function ldap_get_groups($username, $authcfg) {
 		return memberof;
 	}
 
-	/* get groups from DN found */
-	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
-	/* since we know the DN is in $_SESSION['ldapdn'] */
-	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
-	if ($ldapscope == "one")
-                $ldapfunc = "ldap_list";
-        else
-                $ldapfunc = "ldap_search";
 
-	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
-	$info      = @ldap_get_entries($ldap, $search);
+	/* Search function depends on configured search depth. */
+	if ( $ldapscope == "one" )
+	{
+		$ldapfunc = "ldap_list";
+	}
+    else
+	{
+		$ldapfunc = "ldap_search";
+	}
 
-	$countem = $info["count"];	
-	
-	if(is_array($info[0][$ldapgroupattribute])) {
-		/* Iterate through the groups and throw them into an array */
-		foreach ($info[0][$ldapgroupattribute] as $member) {
-			if (stristr($member, "CN=") !== false) {
-				$membersplit = split(",", $member);
-				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
+	/* Search method is different if group container(s) are specified. */
+	if ( $ldapauthgroupcont != '' )
+	{
+		/*
+		 * Search for groups using the group container(s).
+		 */
+
+		/* Get LDAP Groupcontainers and split them up. */
+		$ldap_groupcontainers = split( ";", $ldapauthgroupcont );
+
+//		$ldapfilter = "({$ldapmemberattribute}={$username})";
+
+		/* Search each group container for the authenticating user. */
+		foreach ( $ldap_groupcontainers as $ldap_groupcontainer )
+		{
+			/* Support legacy auth container specification. */
+			if ( stristr ( $ldap_groupcontainer, "DC=" ) || empty ( $ldapbasedn ) )
+			{
+				$searchbase = $ldap_groupcontainer;
+			}
+			else
+			{
+				$searchbase = "{$ldap_groupcontainer},{$ldapbasedn}";
+			}
+
+			log_error ( "Now searching (new) '$searchbase' for '$ldapgroupattribute' filtered by '$ldapfilter'" );
+
+			/* Search this group container in the LDAP directory to find any groups listing the authenticating user as a member. */
+			$search	= @$ldapfunc( $ldap, $searchbase, $ldapfilter, array ( $ldapgroupattribute ) );
+
+			if ( false === $search)
+			{
+				/* Search failed (i.e. not simply no records found), so log an error. */
+				log_error ( "LDAP authentication : Search for user groups resulted in error: " . ldap_error ( $ldap ) );
+			}
+			else
+			{
+				/* Get the search results that were returned from the LDAP directory. */
+				$info = @ldap_get_entries( $ldap, $search );
+
+				/*
+				 * Remove the 'count' element from these	 to allow 'foreach' iteration over results.
+				*/
+				unset ( $info[ "count" ] );
+
+				/* Add any groups found for the authenticating user to $memberof. */
+				foreach ( $info as $groupdata )
+				{
+					$memberof[] = $groupdata[ $ldapgroupattribute ][ 0 ];
+//					log_error ( "DEGUG : Groups - '$username' is a member of '" . $groupdata[ $ldapgroupattribute ][ 0 ] . "'" );
+				}
 			}
 		}
 	}
-	
+	else
+	{
+		/*
+		 * Original search: Search for groups within the user record DN that was found.
+		 */
+
+		log_error ( "Now searching(old) '$ldapdn' for '$ldapmemberattribute' filtered by '$ldapfilter'" );
+		$search    = @$ldapfunc( $ldap, $ldapdn, $ldapfilter, array ( $ldapmemberattribute ) );
+		$info      = @ldap_get_entries( $ldap, $search );
+
+		$countem = $info["count"];	
+		
+		if(is_array($info[0][$ldapmemberattribute])) {
+			/* Iterate through the groups and throw them into an array */
+			foreach ($info[0][$ldapmemberattribute] as $member) {
+				if (stristr($member, "CN=") !== false) {
+					$membersplit = split(",", $member);
+					$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
+				}
+			}
+		}
+	}
+
 	/* Time to close LDAP connection */
 	@ldap_unbind($ldap);
 	

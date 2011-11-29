@@ -94,6 +94,7 @@ if ($act == "edit") {
 			$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
 			$pconfig['ldap_basedn'] = $a_server[$id]['ldap_basedn'];
 			$pconfig['ldap_authcn'] = $a_server[$id]['ldap_authcn'];
+			$pconfig['ldap_authgroupcn'] = $a_server[$id]['ldap_authgroupcn'];
 			$pconfig['ldap_binddn'] = $a_server[$id]['ldap_binddn'];
 			$pconfig['ldap_bindpw'] = $a_server[$id]['ldap_bindpw'];
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
@@ -229,6 +230,7 @@ if ($_POST) {
 			$server['ldap_scope'] = $pconfig['ldap_scope'];
 			$server['ldap_basedn'] = $pconfig['ldap_basedn'];
 			$server['ldap_authcn'] = $pconfig['ldapauthcontainers'];
+			$server['ldap_authgroupcn'] = $pconfig['ldapauthgroupcontainers'];
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
@@ -363,12 +365,11 @@ function radius_srvcschange(){
 	}
 }
 
-function select_clicked() {
+function select_clicked( container ) {
 	if (document.getElementById("ldap_port").value == '' ||
 	    document.getElementById("ldap_host").value == '' ||
 	    document.getElementById("ldap_scope").value == '' ||
-	    document.getElementById("ldap_basedn").value == '' ||
-	    document.getElementById("ldapauthcontainers").value == '') {
+	    document.getElementById("ldap_basedn").value == '' ) {
 		alert("<?=gettext("Please fill the required values.");?>");
 		return;
 	}
@@ -388,7 +389,8 @@ function select_clicked() {
         url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
         url += '&urltype=' + document.getElementById("ldap_urltype").value;
         url += '&proto=' + document.getElementById("ldap_protver").value;
-	url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
+	url += '&authcn=' + document.getElementById( container ).value;
+url += '&cnitem=' + container;
 
         var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined")
@@ -538,16 +540,35 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
-									<tr>
-										<td><?=gettext("Containers:");?> &nbsp;</td>
+<tr>
+<td></td>
+<td>
+      <?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
+<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
+<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+</td>
+</tr>
+<tr>
+										<td><?=gettext("Users:");?> &nbsp;</td>
 										<td>
 											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
-											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">
-											<br /><?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
-											<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
-											<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+											<input type="button" onClick="select_clicked('ldapauthcontainers');" value="<?=gettext("Select");?>">
 										</td>
 									</tr>
+<tr>
+<td></td>
+<td>
+<?=gettext("NOTE: Leave the following empty if group information is stored");?>
+<br /><?=gettext("within an attribute of the user's DN record.");?>
+</td>
+</tr>
+<tr>
+	<td><?=gettext("Groups:");?> &nbsp;</td>
+	<td>
+		<input name="ldapauthgroupcontainers" type="text" class="formfld unknown" id="ldapauthgroupcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authgroupcn']);?>"/>
+		<input type="button" onClick="select_clicked('ldapauthgroupcontainers');" value="<?=gettext("Select");?>">
+	</td>
+</tr>
 								</table>
 							</td>
 						</tr>

@@ -47,6 +47,7 @@ if($_GET) {
 	$authcfg['ldap_urltype'] = $_GET['urltype'];
 	$authcfg['ldap_protver'] = $_GET['proto'];
 	$authcfg['ldap_authcn'] = explode(";", $_GET['authcn']);
+	$authcfg['ldap_authcnitem'] = $_GET['cnitem'];
 	$ous = ldap_get_user_ous(true, $authcfg);
 }
 
@@ -73,16 +74,16 @@ if($_GET) {
             </STYLE>
         </head>
 <script language="JavaScript">
-function post_choices() {
+function post_choices( container ) {
 
 	var ous = <?php echo count($ous); ?>;
 	var i;
-		opener.document.forms[0].ldapauthcontainers.value="";
+		opener.document.getElementById( container ).value="";
 	for (i = 0; i < ous; i++) {
 		if (document.forms[0].ou[i].checked) {
-			if (opener.document.forms[0].ldapauthcontainers.value != "")
-				opener.document.forms[0].ldapauthcontainers.value+=";";
-			opener.document.forms[0].ldapauthcontainers.value+=document.forms[0].ou[i].value;
+			if (opener.document.getElementById( container ).value != "")
+				opener.document.getElementById( container ).value+=";";
+			opener.document.getElementById( container ).value+=document.forms[0].ou[i].value;
 		}
 	}
 	window.close();
@@ -120,7 +121,9 @@ function post_choices() {
 
 	<p/>
 
-	<input type='button' value='<?=gettext("Save");?>' onClick="post_choices();">
+<?php
+	echo "<input type='button' value='Save' onClick=\"post_choices( '{$authcfg['ldap_authcnitem']}' );\"";
+?>
 <?php endif; ?>
  </form>
  </body>

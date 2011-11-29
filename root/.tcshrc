@@ -3,3 +3,5 @@ set autologout="0"
 set autolist set color set colorcat
 setenv CLICOLOR "true"
 setenv LSCOLORS "exfxcxdxbxegedabagacad"
+setenv PACKAGESITE ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/ports/`uname -m`/packages-8.1-release/Latest/
+export PACKAGESITE

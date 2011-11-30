@@ -606,7 +606,7 @@
 	<stepbeforeformdisplay>
 	<![CDATA[
 		if($g['product_name'] <> 'pfSense') {
-			Header("Location: $myurl");
+			Header("Location: " . fixup_string("\$myurl"));
 			exit;
 		}	
 	]]>

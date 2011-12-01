@@ -516,8 +516,10 @@ EOD;
 
 		// net boot information
 		if(isset($dhcpifconf['netboot'])) {
-			if (($dhcpifconf['next-server'] <> "") && ($dhcpifconf['filename'] <> "")) {
-				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
+			if ($dhcpifconf['nextserver'] <> "") {
+				$dhcpdconf .= "	next-server {$dhcpifconf['nextserver']};\n";
+			}
+			if ($dhcpifconf['filename'] <> "") {
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
 			if ($dhcpifconf['rootpath'] <> "") {
@@ -548,8 +550,11 @@ EOD;
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
 				}
-				if ($sm['netbootfile'])
-					$dhcpdconf .= "	filename \"{$sm['netbootfile']}\";\n";
+				if ($sm['filename'])
+					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
+
+				if ($sm['rootpath'])
+					$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
 
 				$dhcpdconf .= "}\n";
 				$i++;
@@ -851,8 +856,10 @@ EOD;
 
 		// net boot information
 		if(isset($dhcpv6ifconf['netboot'])) {
-			if (($dhcpv6ifconf['next-server'] <> "") && ($dhcpv6ifconf['filename'] <> "")) {
-				$dhcpdv6conf .= "	next-server {$dhcpv6ifconf['next-server']};\n";
+			if ($dhcpv6ifconf['nextserver'] <> "") {
+				$dhcpdv6conf .= "	next-server {$dhcpv6ifconf['nextserver']};\n";
+			}
+			if ($dhcpv6ifconf['filename'] <> "") {
 				$dhcpdv6conf .= "	filename \"{$dhcpv6ifconf['filename']}\";\n";
 			}
 			if ($dhcpv6ifconf['rootpath'] <> "") {
@@ -862,6 +869,7 @@ EOD;
 		
 		$dhcpdv6conf .= <<<EOD
 }
+
 EOD;
 
 		/* add static mappings */
@@ -883,8 +891,11 @@ EOD;
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdv6conf .= "	option host-name {$dhhostname};\n";
 				}
-				if ($sm['netbootfile'])
-					$dhcpdv6conf .= "	filename \"{$sm['netbootfile']}\";\n";
+				if ($sm['filename'])
+					$dhcpdv6conf .= "	filename \"{$sm['filename']}\";\n";
+
+				if ($sm['rootpath'])
+					$dhcpdv6conf .= "	option root-path \"{$sm['rootpath']}\";\n";
 
 				$dhcpdv6conf .= "}\n";
 				$i++;

@@ -145,7 +145,7 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
 	$pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
-	$pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
+	$pconfig['nextserver'] = $config['dhcpd'][$if]['nextserver'];
 	$pconfig['filename'] = $config['dhcpd'][$if]['filename'];
 	$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
 	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
@@ -367,7 +367,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['tftp'] = $_POST['tftp'];
 		$config['dhcpd'][$if]['ldap'] = $_POST['ldap'];
 		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
-		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
+		$config['dhcpd'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 

@@ -87,12 +87,14 @@ if (isset($id) && $a_maps[$id]) {
         $pconfig['duid'] = $a_maps[$id]['duid'];
 	$pconfig['hostname'] = $a_maps[$id]['hostname'];
         $pconfig['ipaddrv6'] = $a_maps[$id]['ipaddrv6'];
-	$pconfig['netbootfile'] = $a_maps[$id]['netbootfile'];
+	$pconfig['filename'] = $a_maps[$id]['filename'];
+		$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
         $pconfig['duid'] = $_GET['duid'];
 	$pconfig['hostname'] = $_GET['hostname'];
-	$pconfig['netbootfile'] = $_GET['netbootfile'];
+	$pconfig['filename'] = $_GET['filename'];
+		$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
         $pconfig['descr'] = $_GET['descr'];
 }
 
@@ -148,7 +150,8 @@ if ($_POST) {
 		$mapent['ipaddrv6'] = $_POST['ipaddrv6'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
-		$mapent['netbootfile'] = $_POST['netbootfile'];
+		$mapent['filename'] = $_POST['filename'];
+		$mapent['rootpath'] = $_POST['rootpath'];
 
 		if (isset($id) && $a_maps[$id])
 			$a_maps[$id] = $mapent;
@@ -211,8 +214,14 @@ include("head.inc");
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Netboot filename</td>
 		  <td width="78%" class="vtable">
-		    <input name="netbootfile" type="text" class="formfld unknown" id="netbootfile" size="28" value="<?=htmlspecialchars($pconfig['netbootfile']);?>">
+		    <input name="filename" type="text" class="formfld unknown" id="filename" size="28" value="<?=htmlspecialchars($pconfig['filename']);?>">
 		    <br> <span class="vexpl">Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.</span></td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell">Root Path</td>
+		  <td width="78%" class="vtable">
+			<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>">
+		    <br> <span class="vexpl"><?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>, overrides setting on main page.</span></td>
 		</tr>
 		<?php } ?>
                 <tr> 

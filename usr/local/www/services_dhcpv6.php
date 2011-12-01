@@ -113,7 +113,7 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
 	$pconfig['netboot'] = isset($config['dhcpdv6'][$if]['netboot']);
-	$pconfig['nextserver'] = $config['dhcpdv6'][$if]['next-server'];
+	$pconfig['nextserver'] = $config['dhcpdv6'][$if]['nextserver'];
 	$pconfig['filename'] = $config['dhcpdv6'][$if]['filename'];
 	$pconfig['rootpath'] = $config['dhcpdv6'][$if]['rootpath'];
 	$pconfig['failover_peerip'] = $config['dhcpdv6'][$if]['failover_peerip'];
@@ -305,7 +305,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['tftp'] = $_POST['tftp'];
 		$config['dhcpdv6'][$if]['ldap'] = $_POST['ldap'];
 		$config['dhcpdv6'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
-		$config['dhcpdv6'][$if]['next-server'] = $_POST['nextserver'];
+		$config['dhcpdv6'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpdv6'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpdv6'][$if]['rootpath'] = $_POST['rootpath'];
 

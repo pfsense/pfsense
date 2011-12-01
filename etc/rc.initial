@@ -90,7 +90,8 @@ echo " 3) Reset webConfigurator password    11) Restart webConfigurator"
 echo " 4) Reset to factory defaults         12) ${product} Developer Shell"
 echo " 5) Reboot system                     13) Upgrade from console"
 echo " 6) Halt system                       ${sshd_option}"
-echo " 7) Ping host                         ${option98}"
+echo " 7) Ping host                         15) Restore recent configuration"
+echo " ${option98}"
 
 if [ "${option99}" != "" ]; then
 	/bin/echo "${option99}"
@@ -148,6 +149,9 @@ case ${opmode} in
 		php -f /etc/rc.initial.toggle_sshd
 		;;	
 15)
+		/etc/rc.restore_config_backup
+		;;
+16)
 		/etc/rc.banner
 		;;
 98)

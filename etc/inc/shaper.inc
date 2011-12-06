@@ -1191,12 +1191,13 @@ class priq_queue {
 	function build_shortform() {
 		/* XXX: Hacks in site. Mostly layer violations!  */
 		global $g, $altq_list_queues;
-
+		global $shaperIFlist;
+		
 		$altq =& $altq_list_queues[$this->GetInterface()];
 		if ($altq)
 			$scheduler = ": " . $altq->GetScheduler();
 		$form = "<tr><td width=\"20%\" class=\"vtable\">";
-		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=" . $this->GetInterface()."&action=show\">". $shaperIFlist[$this->GetInterface()] .": ".$scheduler."</a>";
+		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&queue=" . $this->GetQname()."&action=show\">". $shaperIFlist[$this->GetInterface()] .$scheduler."</a>";
 		$form .= "</td></tr>";
 		/* 
 		 * XXX: Hack in sight maybe fix with a class that wraps all
@@ -4039,12 +4040,13 @@ function filter_generate_dummynet_rules() {
 
 function build_iface_without_this_queue($iface, $qname) {
 	global $g, $altq_list_queues;
+	global $shaperIFlist;
 
 	$altq =& $altq_list_queues[$iface];
 	if ($altq)
 		$scheduler = ": " . $altq->GetScheduler();
 	$form = "<tr><td width=\"20%\" >";
-	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
+	$form .= "<a href=\"firewall_shaper.php?interface=" . $iface . "&queue=" . $iface."&action=show\">". $shaperIFlist[$iface] . $scheduler."</a>";
 	$form .= "</td></tr>";
 	$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
 	$form .= "<a href=\"firewall_shaper_queues.php?interface=";

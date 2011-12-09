@@ -819,16 +819,15 @@ EOD;
 		/* end racoon.conf */
 
 		/* generate IPsec policies */
+		/* generate spd.conf */
+		$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
+		if (!$fd) {
+			printf(gettext("Error: cannot open spd.conf in vpn_ipsec_configure().") . "\n");
+			return 1;
+		}
+
+		$spdconf = "";
 		if (is_array($a_phase2) && count($a_phase2)) {
-			/* generate spd.conf */
-			$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open spd.conf in vpn_ipsec_configure().") . "\n");
-				return 1;
-			}
-
-			$spdconf = "";
-
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
 			if ($config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
@@ -925,9 +924,9 @@ EOD;
 					mwexec("/sbin/route delete -host {$rgip}", true);
 			}
 
-			fwrite($fd, $spdconf);
-			fclose($fd);
 		}
+		fwrite($fd, $spdconf);
+		fclose($fd);
 
 		/* needed for racoonctl admin socket */
 		if (!is_dir("/var/db/racoon"))

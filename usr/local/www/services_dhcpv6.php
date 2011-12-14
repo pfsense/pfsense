@@ -502,7 +502,10 @@ include("head.inc");
 					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
-			<strong><?php printf(gettext("Select the Operating Mode for the router advertisement Daemon. Use \"Router Only\" to only advertise the router, \"Unmanaged\" for Router Advertising with Stateless Autoconfig, \"Managed\" for DHCPv6 only with router advertisements, \"Assisted\" for DHCPv6 Combined with Stateless Autoconfig"));?></strong></td>
+			<strong><?php printf(gettext("Select the Operating Mode for the router advertisement Daemon."))?></strong>
+			<?php printf(gettext("Use \"Router Only\" to only advertise this router, \"Unmanaged\" for Router Advertising with Stateless Autoconfig, \"Managed\" for assignment through (a) DHCPv6 Server, \"Assisted\" for DHCPv6 Server assignment combined with Stateless Autoconfig"));?>
+			<?php printf(gettext("It is not required to activate this DHCPv6 server when set to \"Managed\", this can be another host on the network")); ?>
+			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>

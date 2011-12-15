@@ -540,35 +540,35 @@ url += '&cnitem=' + container;
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
-<tr>
-<td></td>
-<td>
-      <?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
-<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
-<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
-</td>
-</tr>
-<tr>
+									<tr>
+										<td></td>
+										<td>
+											<?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
+											<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
+											<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+										</td>
+									</tr>
+									<tr>
 										<td><?=gettext("Users:");?> &nbsp;</td>
 										<td>
 											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onClick="select_clicked('ldapauthcontainers');" value="<?=gettext("Select");?>">
 										</td>
 									</tr>
-<tr>
-<td></td>
-<td>
-<?=gettext("NOTE: Leave the following empty if group information is stored");?>
-<br /><?=gettext("within an attribute of the user's DN record.");?>
-</td>
-</tr>
-<tr>
-	<td><?=gettext("Groups:");?> &nbsp;</td>
-	<td>
-		<input name="ldapauthgroupcontainers" type="text" class="formfld unknown" id="ldapauthgroupcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authgroupcn']);?>"/>
-		<input type="button" onClick="select_clicked('ldapauthgroupcontainers');" value="<?=gettext("Select");?>">
-	</td>
-</tr>
+									<tr>
+										<td></td>
+										<td>
+											<?=gettext("NOTE: Leave the following empty if group information is stored");?>
+											<br /><?=gettext("within an attribute of the user's DN record.");?>
+										</td>
+									</tr>
+									<tr>
+										<td><?=gettext("Groups:");?> &nbsp;</td>
+										<td>
+											<input name="ldapauthgroupcontainers" type="text" class="formfld unknown" id="ldapauthgroupcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authgroupcn']);?>"/>
+											<input type="button" onClick="select_clicked('ldapauthgroupcontainers');" value="<?=gettext("Select");?>">
+										</td>
+									</tr>
 								</table>
 							</td>
 						</tr>

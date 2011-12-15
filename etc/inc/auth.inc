@@ -891,7 +891,7 @@ function ldap_get_groups($username, $authcfg) {
 		/* Get LDAP Groupcontainers and split them up. */
 		$ldap_groupcontainers = split( ";", $ldapauthgroupcont );
 
-//		$ldapfilter = "({$ldapmemberattribute}={$username})";
+		$ldapfilter = "({$ldapmemberattribute}={$username})";
 
 		/* Search each group container for the authenticating user. */
 		foreach ( $ldap_groupcontainers as $ldap_groupcontainer )

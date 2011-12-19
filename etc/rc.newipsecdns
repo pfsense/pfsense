@@ -45,7 +45,8 @@
 	}
 	$ipseclck = lock('ipsecdns', LOCK_EX);
 	
-	log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
+	if(isset($config['ipsec']['enable']))
+		log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
 	/* We will walk the list of hostnames found in the ipsec tunnel
 	 * configuration. Since we are already triggered by filterdns
 	 * that a hostname has changed we can proceed to compare the 

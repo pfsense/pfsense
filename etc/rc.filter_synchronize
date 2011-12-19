@@ -276,7 +276,7 @@ if (is_array($config['installedpackages']['carpsettings']) && is_array($config['
 	update_filter_reload_status("Building CARP sync information");
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if (empty($carp['synchronizetoip'])) {
-			log_error("Config sync not being done because of missing sync IP (normally on secondary systems).");
+			log_error("Config sync not being done because of missing sync IP (this is normal on secondary systems).");
 			break;
 		}
 		/*

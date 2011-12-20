@@ -57,6 +57,7 @@ $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
+$pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 if (!isset($config['system']['enablebinatreflection']))
 	$pconfig['disablebinatreflection'] = "yes";
@@ -134,6 +135,11 @@ if ($_POST) {
                         $config['system']['disablereplyto'] = $_POST['disablereplyto'];
                 else
                         unset($config['system']['disablereplyto']);
+
+		if($_POST['disablenegate'] == "yes")
+                        $config['system']['disablenegate'] = $_POST['disablenegate'];
+                else
+                        unset($config['system']['disablenegate']);
 
 		if($_POST['enablenatreflectionhelper'] == "yes")
 			$config['system']['enablenatreflectionhelper'] = "yes";
@@ -353,6 +359,16 @@ function update_description(itemnum) {
 									<br />
 									<?=gettext("With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default. " .
 									"When using bridging, you must disable this behavior if the WAN gateway IP is different from the gateway IP of the hosts behind the bridged interface.");?>
+									<br />
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable Negate rules</td> 
+								<td width="78%" class="vtable">
+									<input name="disablenegate" type="checkbox" id="disablenegate" value="yes" <?php if ($pconfig['disablenegate']) echo "checked"; ?> />
+									<strong><?=gettext("Disable Negate rule on policy routing rules");?></strong>
+									<br />
+									<?=gettext("With Multi-WAN you generally want to ensure traffic reaches directly connected networks and VPN networks when using policy routing. You can disable this for special purposes but it requires manually creating rules for these networks");?>
 									<br />
 								</td>
 							</tr>

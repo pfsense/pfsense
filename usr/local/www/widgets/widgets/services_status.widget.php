@@ -162,7 +162,6 @@ if (count($config['load_balancer']['virtual_server']) && count($config['load_bal
 if(isset($_POST['servicestatusfilter'])) {
 	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
 	write_config("Saved Service Status Filter via Dashboard");
-	Header("Location: /");
 }
 ?>
 <input type="hidden" id="services_status-config" name="services_status-config" value="">

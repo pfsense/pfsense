@@ -579,14 +579,14 @@ function enable_change(enable_change) {
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Voucher sync username"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="vouchersyncusername" type="text" class="formfld" id="vouchersyncusername" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncusername']);?>">
+								<input name="vouchersyncusername" type="text" class="formfld" id="vouchersyncusername" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncusername']);?>" autocomplete="off">
 								<br><?=gettext("This is the username of the master voucher nodes webConfigurator."); ?>
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Voucher sync password"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="vouchersyncpass" type="password" class="formfld" id="vouchersyncpass" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncpass']);?>">
+								<input name="vouchersyncpass" type="password" class="formfld" id="vouchersyncpass" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncpass']);?>"  autocomplete="off">
 								<br><?=gettext("This is the password of the master voucher nodes webConfigurator."); ?>
 							</td>
 						</tr>

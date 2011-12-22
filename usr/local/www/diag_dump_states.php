@@ -54,6 +54,16 @@ if($_GET['action']) {
 	}
 }
 
+if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
+	if (is_ipaddr($_GET['filter'])) {
+		$tokill = $_GET['filter'] . "/32";
+	} elseif (is_subnet($_GET['filter'])) {
+		$tokill = $_GET['filter'];
+	}
+	$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
+	$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+}
+
 /* get our states */
 if($_GET['filter']) {
 	exec("/sbin/pfctl -s state | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $states);
@@ -131,11 +141,19 @@ include("head.inc");
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td><?=gettext("Current state count:");?> <?=$current_statecount?></td>
+					<td>
+						<?=gettext("Current state count");?>: <?= $current_statecount ?>
+						<?php if (!empty($_GET['filter'])): ?>
+							(<?=gettext("Matching filter")?>: <?= count($states) ?>)
+						<?php endif; ?>
+					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
+					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
+						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
+					<?php endif; ?>
 					<td>
 				</tr>
 			</table>

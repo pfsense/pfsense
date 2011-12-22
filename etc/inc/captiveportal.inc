@@ -1473,6 +1473,14 @@ function portal_ip_from_client_ip($cliip) {
 			return $ip;
 	}
 
+	$iface = exec_command("/sbin/route -n get {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
+	$iface = trim($iface, "\n");
+	if (!empty($iface)) {
+		$ip = find_interface_ip($iface);
+		if (is_ipaddr($ip))
+			return $ip;
+	}
+
 	// doesn't match up to any particular interface
 	// so let's set the portal IP to what PHP says 
 	// the server IP issuing the request is. 

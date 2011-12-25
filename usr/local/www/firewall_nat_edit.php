@@ -222,8 +222,8 @@ if ($_POST) {
 	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 
-	if (!isset($_POST['nordr']) && $_POST['localbeginport'] && !is_portoralias($_POST['localbeginport'])) {
-		$input_errors[] = sprintf(gettext("%s is not a valid local port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
+	if (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport'])) {
+		$input_errors[] = sprintf(gettext("A valid local port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */

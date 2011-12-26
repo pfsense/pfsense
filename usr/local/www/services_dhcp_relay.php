@@ -176,7 +176,7 @@ function enable_change(enable_over) {
                       <?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?></td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
+                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
                           <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>

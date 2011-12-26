@@ -20,6 +20,7 @@
 	 *    - Namecheap (namecheap.com)
 	 *    - HE.net (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
+	 *    - SelfHost (selfhost.de)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -53,6 +54,7 @@
 	 *  Namecheap	   - Last Tested: 31 August 2010
 	 *  HE.net         - Last Tested: NEVER
 	 *  HE.net Tunnel  - Last Tested: 28 June 2011
+	 *  SelfHost       - Last Tested: 26 December 2011
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -160,6 +162,7 @@
 				case 'opendns':
 				case 'namecheap':
 				case 'he-net':
+				case 'selfhost':
 					$this->_update();	
 					break;
 				case 'he-net-tunnelbroker':
@@ -406,6 +409,20 @@
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'tid=' . $this->_dnsHost);
+					break;
+				case 'selfhost':
+					$needsIP = FALSE;
+					//log_error("SelfHost: DNS update() starting.");
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://carol.selfhost.de/nic/update";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				default:
 					break;
@@ -783,6 +800,23 @@
 					        $status = "phpDynDNS: (Unknown Response)";
 					        log_error("phpDynDNS: PAYLOAD: {$data}");
 					        $this->_debug($data);
+					}
+					break;
+				case 'selfhost':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/noauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
+						$this->_debug($data);
 					}
 					break;
 			}

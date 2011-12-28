@@ -3733,7 +3733,7 @@ function is_jumbo_capable($iface) {
 
 	$iface = trim($iface);
 	$capable = pfSense_get_interface_addresses($iface);
-	if (isset($capable['caps'][$CAPABILITIES]))
+	if (isset($capable['caps']['vlanmtu']))
                 return true;
 
 	return false;

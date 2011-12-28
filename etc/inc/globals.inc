@@ -40,22 +40,6 @@ function remove_numbers($string) {
 	return $string;
 }
 
-function get_nics_with_capabilities($CAPABILITIES) {
-	$ifs = `/sbin/ifconfig -l`;
-	$if_list = split(" ", $ifs);
-	$vlan_native_supp = array();
-	foreach($if_list as $if => $iface) {
-		$iface = trim($iface);
-		$capable = pfSense_get_interface_addresses($iface);
-		if(isset($capable['caps'][$CAPABILITIES])) {
-			$interfacenonum = remove_numbers($iface);
-			if(!in_array($interfacenonum, $vlan_native_supp))
-				$vlan_native_supp[] = $interfacenonum;
-		}
-	}
-	return $vlan_native_supp;
-}
-
 $g = array(
 	"base_packages" => "siproxd", 
 	"event_address" => "unix:///var/run/check_reload_status",
@@ -109,10 +93,6 @@ $g = array(
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
 	"help_base_url" => "/help.php"
 );
-
-// Loop through and set vlan_long_frame VLAN_MTU
-$vlan_native_supp = get_nics_with_capabilities("vlanmtu");
-$g['vlan_long_frame'] = array_merge(array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le", "lem", "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg"), (array)$vlan_native_supp);
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");

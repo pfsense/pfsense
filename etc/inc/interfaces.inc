@@ -4134,15 +4134,14 @@ function generate_random_mac_address() {
  * RESULT
  *   boolean          - true or false
  ******/
-function is_jumbo_capable($int) {
-        global $g;
+function is_jumbo_capable($iface) {
 
-        $int_family = preg_split("/[0-9]+/", $int);
-
-        if (in_array($int_family[0], $g['vlan_long_frame']))
+	$iface = trim($iface);
+	$capable = pfSense_get_interface_addresses($iface);
+	if (isset($capable['caps'][$CAPABILITIES]))
                 return true;
-        else
-                return false;
+
+	return false;
 }
 
 function setup_pppoe_reset_file($pppif, $iface="") {

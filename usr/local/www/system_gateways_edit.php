@@ -449,21 +449,35 @@ function monitor_change() {
                                 </td>
                         </tr>
 			<tr>
-                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Down");?></td>
-                                <td width="78%" class="vtable">
-                                    <input name="down" type="text" class="formfld unknown" id="down" size="2"
-                                        value="<?=htmlspecialchars($pconfig['down']);?>">
-                                    <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire in seconds. Default is 10.");?></span></td>
-                                </td>
-                        </tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
+				<td width="78%" class="vtable">
+					<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
+						value="<?=htmlspecialchars($pconfig['interval']);?>">
+					<br><span class="vexpl">
+						<?=gettext("This defines how often that an icmp probe will be sent in seconds. Default is 1.");?><br/><br/>
+						<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the frequency probe is increased the accuracy of the quality graph is decreased.");?>
+					</span></td>
+				</td>
+			</tr>
 			<tr>
-                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
-                                <td width="78%" class="vtable">
-                                    <input name="interval" type="text" class="formfld unknown" id="interval" size="2"
-                                        value="<?=htmlspecialchars($pconfig['interval']);?>">
-                                    <br> <span class="vexpl"><?=gettext("This defines the frequency that an icmp probe will be sent in seconds. Default is 1.");?></span></td>
-                                </td>
-                        </tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Down");?></td>
+				<td width="78%" class="vtable">
+					<input name="down" type="text" class="formfld unknown" id="down" size="2"
+						value="<?=htmlspecialchars($pconfig['down']);?>">
+					<br> <span class="vexpl"><?=gettext("This defines the number of bad probes before the alarm will fire. Default is 10.");?></span></td>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<?= gettext("NOTE: The total time before a gateway is down is the product of the Frequency Probe and the Down fields. By default this is 1*10=10 seconds."); ?><br/>
+					<?php if (is_numeric($pconfig['interval']) || is_numeric($pconfig['down'])) {
+						echo "<br/>";
+						$interval = is_numeric($pconfig['interval']) ? $pconfig['interval'] : 1;
+						$down = is_numeric($pconfig['down']) ? $pconfig['down'] : 10;
+						echo gettext(sprintf("With the current configuration, the total time before this gateway would be considered down would be: %d*%d=%d seconds.", $interval, $down, $interval*$down));
+					} ?>
+				</td>
+			</tr>
                         </table>
 			</div>
 		   </td>

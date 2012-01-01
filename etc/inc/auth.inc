@@ -872,78 +872,65 @@ function ldap_get_groups($username, $authcfg) {
 
 
 	/* Search function depends on configured search depth. */
-	if ( $ldapscope == "one" )
-	{
+	if ($ldapscope == "one") {
 		$ldapfunc = "ldap_list";
-	}
-    else
-	{
+	} else {
 		$ldapfunc = "ldap_search";
 	}
 
 	/* Search method is different if group container(s) are specified. */
-	if ( $ldapauthgroupcont != '' )
-	{
+	if ($ldapauthgroupcont != '') {
 		/*
 		 * Search for groups using the group container(s).
 		 */
 
 		/* Get LDAP Groupcontainers and split them up. */
-		$ldap_groupcontainers = split( ";", $ldapauthgroupcont );
+		$ldap_groupcontainers = split(";", $ldapauthgroupcont);
 
 		$ldapfilter = "({$ldapmemberattribute}={$username})";
 
 		/* Search each group container for the authenticating user. */
-		foreach ( $ldap_groupcontainers as $ldap_groupcontainer )
-		{
+		foreach ($ldap_groupcontainers as $ldap_groupcontainer) {
 			/* Support legacy auth container specification. */
-			if ( stristr ( $ldap_groupcontainer, "DC=" ) || empty ( $ldapbasedn ) )
-			{
+			if (stristr($ldap_groupcontainer, "DC=") || empty($ldapbasedn)) {
 				$searchbase = $ldap_groupcontainer;
-			}
-			else
-			{
+			} else {
 				$searchbase = "{$ldap_groupcontainer},{$ldapbasedn}";
 			}
 
-			log_error ( "Now searching (new) '$searchbase' for '$ldapgroupattribute' filtered by '$ldapfilter'" );
+			log_error ("Now searching (new) '$searchbase' for '$ldapgroupattribute' filtered by '$ldapfilter'");
 
 			/* Search this group container in the LDAP directory to find any groups listing the authenticating user as a member. */
-			$search	= @$ldapfunc( $ldap, $searchbase, $ldapfilter, array ( $ldapgroupattribute ) );
+			$search	= @$ldapfunc($ldap, $searchbase, $ldapfilter, array($ldapgroupattribute));
 
-			if ( false === $search)
-			{
+			if (false === $search) {
 				/* Search failed (i.e. not simply no records found), so log an error. */
-				log_error ( "LDAP authentication : Search for user groups resulted in error: " . ldap_error ( $ldap ) );
-			}
-			else
-			{
+				log_error ("LDAP authentication : Search for user groups resulted in error: " . ldap_error($ldap));
+			} else {
 				/* Get the search results that were returned from the LDAP directory. */
-				$info = @ldap_get_entries( $ldap, $search );
+				$info = @ldap_get_entries($ldap, $search);
 
 				/*
 				 * Remove the 'count' element from these	 to allow 'foreach' iteration over results.
 				*/
-				unset ( $info[ "count" ] );
+				unset ($info[ "count" ]);
 
 				/* Add any groups found for the authenticating user to $memberof. */
-				foreach ( $info as $groupdata )
+				foreach ($info as $groupdata)
 				{
-					$memberof[] = $groupdata[ $ldapgroupattribute ][ 0 ];
+					$memberof[] = $groupdata[$ldapgroupattribute][0];
 //					log_error ( "DEGUG : Groups - '$username' is a member of '" . $groupdata[ $ldapgroupattribute ][ 0 ] . "'" );
 				}
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/*
 		 * Original search: Search for groups within the user record DN that was found.
 		 */
 
-		log_error ( "Now searching(old) '$ldapdn' for '$ldapmemberattribute' filtered by '$ldapfilter'" );
-		$search    = @$ldapfunc( $ldap, $ldapdn, $ldapfilter, array ( $ldapmemberattribute ) );
-		$info      = @ldap_get_entries( $ldap, $search );
+		log_error ("Now searching(old) '$ldapdn' for '$ldapmemberattribute' filtered by '$ldapfilter'");
+		$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapmemberattribute));
+		$info      = @ldap_get_entries($ldap, $search);
 
 		$countem = $info["count"];	
 		

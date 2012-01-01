@@ -2,7 +2,7 @@
 /*
     system_authservers.php
 
-    Copyright (C) 2010 Ermal LuÁi
+    Copyright (C) 2010 Ermal Lu√Åi
     Copyright (C) 2008 Shrew Soft Inc.
     All rights reserved.
 
@@ -365,7 +365,7 @@ function radius_srvcschange(){
 	}
 }
 
-function select_clicked( container ) {
+function select_clicked(container) {
 	if (document.getElementById("ldap_port").value == '' ||
 	    document.getElementById("ldap_host").value == '' ||
 	    document.getElementById("ldap_scope").value == '' ||
@@ -389,8 +389,8 @@ function select_clicked( container ) {
         url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
         url += '&urltype=' + document.getElementById("ldap_urltype").value;
         url += '&proto=' + document.getElementById("ldap_protver").value;
-	url += '&authcn=' + document.getElementById( container ).value;
-url += '&cnitem=' + container;
+	    url += '&authcn=' + document.getElementById(container).value;
+        url += '&cnitem=' + container;
 
         var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined")

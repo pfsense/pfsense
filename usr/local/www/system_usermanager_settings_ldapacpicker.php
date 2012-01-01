@@ -74,16 +74,16 @@ if($_GET) {
             </STYLE>
         </head>
 <script language="JavaScript">
-function post_choices( container ) {
+function post_choices(container) {
 
 	var ous = <?php echo count($ous); ?>;
 	var i;
-		opener.document.getElementById( container ).value="";
+		opener.document.getElementById(container).value="";
 	for (i = 0; i < ous; i++) {
 		if (document.forms[0].ou[i].checked) {
-			if (opener.document.getElementById( container ).value != "")
-				opener.document.getElementById( container ).value+=";";
-			opener.document.getElementById( container ).value+=document.forms[0].ou[i].value;
+			if (opener.document.getElementById(container).value != "")
+				opener.document.getElementById(container).value+=";";
+			opener.document.getElementById(container).value+=document.forms[0].ou[i].value;
 		}
 	}
 	window.close();

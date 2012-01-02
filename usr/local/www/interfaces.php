@@ -4,7 +4,7 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008-2010 Ermal Luçi
+	Copyright (C) 2008-2010 Ermal Lu?i
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -194,6 +194,7 @@ switch($wancfg['ipaddr']) {
 		break;
 	case "carpdev-dhcp":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
+
 		$pconfig['ipaddr'] = "";
 		break;
 	case "pppoe":
@@ -280,6 +281,7 @@ if (isset($wancfg['wireless'])) {
 	if (isset($wancfg['wireless']['puren']['enable']))
 		$pconfig['puremode'] = '11n';
 	else if (isset($wancfg['wireless']['pureg']['enable']))
+
 		$pconfig['puremode'] = '11g';
 	else
 		$pconfig['puremode'] = 'any';
@@ -289,6 +291,11 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['auth_server_addr'] = $wancfg['wireless']['auth_server_addr'];
 	$pconfig['auth_server_port'] = $wancfg['wireless']['auth_server_port'];
 	$pconfig['auth_server_shared_secret'] = $wancfg['wireless']['auth_server_shared_secret'];
+	$pconfig['auth_server_addr2'] = $wancfg['wireless']['auth_server_addr2'];
+	$pconfig['auth_server_port2'] = $wancfg['wireless']['auth_server_port2'];
+	$pconfig['auth_server_shared_secret2'] = $wancfg['wireless']['auth_server_shared_secret2'];
+	
+
 	if (is_array($wancfg['wireless']['wpa'])) {
 		$pconfig['debug_mode'] = $wancfg['wireless']['wpa']['debug_mode'];
 		$pconfig['macaddr_acl'] = $wancfg['wireless']['wpa']['macaddr_acl'];
@@ -341,6 +348,7 @@ if ($_POST['apply']) {
 					}
 					interface_reconfigure($ifapply, true);
 				} else {
+
 					interface_bring_down($ifapply);
 				}
 			}
@@ -630,6 +638,7 @@ if ($_POST['apply']) {
 		if (isset($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
+
 		unset($wancfg['remote']);
 		unset($a_ppps[$pppid]['apn']);
 		unset($a_ppps[$pppid]['phone']);
@@ -885,6 +894,10 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_addr'] = $_POST['auth_server_addr'];
 	$wancfg['wireless']['auth_server_port'] = $_POST['auth_server_port'];
 	$wancfg['wireless']['auth_server_shared_secret'] = $_POST['auth_server_shared_secret'];
+	$wancfg['wireless']['auth_server_addr2'] = $_POST['auth_server_addr2'];
+	$wancfg['wireless']['auth_server_port2'] = $_POST['auth_server_port2'];
+	$wancfg['wireless']['auth_server_shared_secret2'] = $_POST['auth_server_shared_secret2'];
+	
 	if ($_POST['persistcommonwireless'] == "yes") {
 		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
@@ -1085,12 +1098,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			}
 			case "dhcp6": {
 				jQuery('#none, #staticv6').hide();
+
 				break;
 			}
 		}
 		if (t != "l2tp" && t != "pptp")
 			jQuery('#'+t).show();
 	}
+
 	function show_allcfg(obj) {
 		if (obj.checked)
 			jQuery('#allcfg').show();
@@ -1114,6 +1129,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function show_mon_config() {
 		jQuery("#showmonbox").html('');
 		jQuery('#showmon').css('display','block');
+
+
 	}
 
 	function openwindow(url) {
@@ -1387,6 +1404,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													if(count($a_gateways) > 0) {
 														foreach ($a_gateways as $gateway) {
 															if(($gateway['interface'] == $if)  && (is_ipaddrv4($gateway['gateway']))) {
+
 													?>
 															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
 																<?=htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']);?>
@@ -1439,6 +1457,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
+
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
@@ -2390,6 +2409,27 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 						</tr>
 						<tr>
+					<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server IP Address"); ?></td>
+							<td class="vtable">
+								<input name="auth_server_addr2" id="auth_server_addr2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr2']);?>">
+								<br/><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
+							<td class="vtable">
+								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>">
+								<br/><?=gettext("Leave blank for the default 1812 port."); ?>
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Shared Secret"); ?></td>
+							<td class="vtable">
+								<input name="auth_server_shared_secret2" id="auth_server_shared_secret2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret2']);?>">
+								<br/>
+							</td>
+						</tr>
+						<tr>
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
 							<td class="vtable">
 								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <? if ($pconfig['rsn_preauth']) echo "checked"; ?>>
@@ -2480,6 +2520,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
 			jQuery('#noteboxv6').html("");
+
 		}
 		function hide_add_gateway() {
 			document.getElementById("addgateway").style.display = 'none';
@@ -2503,13 +2544,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("addgateway").style.display = 'none';
 			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
 			var iface = jQuery('#if').val();
+
 			name = jQuery('#name').val();
 			var descr = jQuery('#gatewaydescr').val();
 			gatewayip = jQuery('#gatewayip').val();
+
 			var defaultgw = jQuery('#defaultgw').val();
 			var url = "system_gateways_edit.php";
 			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 			jQuery.ajax(
+
 				url,
 				{
 					type: 'post',
@@ -2533,6 +2577,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				{
 					type: 'post',
 					data: pars_v6,
+
 					error: report_failure_v6,
 					complete: save_callback_v6
 				});
@@ -2570,6 +2615,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				hide_add_gateway();
 				jQuery('#status').html('');
 				var gwtext = escape(name) + " - " + gatewayip;
+
 				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();

@@ -3,7 +3,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008-2009 Ermal Luçi
+	Copyright (C) 2008-2009 Ermal LuÃ§i
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -854,6 +854,9 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		interfaces_bring_up($gifif);
 	else
 		log_error(gettext("could not bring gifif up -- variable not defined"));
+
+
+
 
 	$iflist = get_configured_interface_list();
 	foreach($iflist as $ifname) {
@@ -1995,6 +1998,7 @@ function interface_carp_configure(&$vip) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
+
 	$advbase = "";
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
@@ -2458,15 +2462,21 @@ EOD;
 
 }
 				if($wlcfg['auth_server_addr'] && $wlcfg['auth_server_shared_secret']) {
-					$auth_server_port = "1812";
-					if($wlcfg['auth_server_port']) 
-						$auth_server_port = $wlcfg['auth_server_port'];
+					$auth_server_port1 = "1812";
+					if($wlcfg['auth_server_port1']) 
+						$auth_server_port1 = $wlcfg['auth_server_port1'];
+					$auth_server_port2 = "1812";
+					if($wlcfg['auth_server_port2']) 
+						$auth_server_port2 = $wlcfg['auth_server_port2'];
 					$wpa .= <<<EOD
 
 ieee8021x=1
-auth_server_addr={$wlcfg['auth_server_addr']}
-auth_server_port={$auth_server_port}
-auth_server_shared_secret={$wlcfg['auth_server_shared_secret']}
+auth_server_addr={$wlcfg['auth_server_addr1']}
+auth_server_port={$auth_server_port1}
+auth_server_shared_secret={$wlcfg['auth_server_shared_secret1']}
+auth_server_addr={$wlcfg['auth_server_addr2']}
+auth_server_port={$auth_server_port2}
+auth_server_shared_secret={$wlcfg['auth_server_shared_secret2']}
 
 EOD;
 				} else {
@@ -2675,11 +2685,19 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!$g['booting'] && !substr($realif, 0, 4) == "ovpn") {
 		/* remove all IPv4 and IPv6 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
+
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
+
+
+
+
+
+
 			interface_bring_down($interface);
+
 		}
 	}
 
@@ -2708,6 +2726,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
                         }
                 }
 	}  else {
+
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
@@ -3462,6 +3481,7 @@ function find_carp_interface($ip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
 				if(is_ipaddrv4($ip)) {
 					$carp_ip = get_interface_ip($vip['interface']);
+
 				}
 				if(is_ipaddrv6($ip)) {
 					$carp_ip = get_interface_ipv6($vip['interface']);
@@ -4136,10 +4156,15 @@ function generate_random_mac_address() {
  ******/
 function is_jumbo_capable($iface) {
 
+
+
+
+
 	$iface = trim($iface);
 	$capable = pfSense_get_interface_addresses($iface);
 	if (isset($capable['caps']['vlanmtu']))
                 return true;
+
 
 	return false;
 }

@@ -3,7 +3,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008-2009 Ermal Luçi
+	Copyright (C) 2008-2009 Ermal Lu?i
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -408,6 +408,7 @@ function interfaces_create_wireless_clones() {
 	}
 	if($g['booting'])
 		echo " " . gettext("done.") . "\n";
+
 }
 
 function interfaces_bridge_configure($checkmember = 0) {
@@ -869,6 +870,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		}
 	}
 
+
 	if(is_ipaddrv4($gif['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
 	if(is_ipaddrv6($gif['tunnel-remote-addr']))
@@ -917,6 +919,7 @@ function interfaces_configure() {
 		} else {
 			if ($g['booting'])
 				printf(gettext("Configuring %s interface..."), $ifname);
+
 			if($g['debug'])
 				log_error(sprintf(gettext("Configuring %s"), $ifname));
 			interface_configure($if, $reload);
@@ -1995,6 +1998,7 @@ function interface_carp_configure(&$vip) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
+
 	$advbase = "";
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
@@ -2461,12 +2465,18 @@ EOD;
 					$auth_server_port = "1812";
 					if($wlcfg['auth_server_port']) 
 						$auth_server_port = $wlcfg['auth_server_port'];
+					$auth_server_port2 = "1812";
+					if($wlcfg['auth_server_port2']) 
+						$auth_server_port2 = $wlcfg['auth_server_port2'];
 					$wpa .= <<<EOD
 
 ieee8021x=1
 auth_server_addr={$wlcfg['auth_server_addr']}
 auth_server_port={$auth_server_port}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret']}
+auth_server_addr={$wlcfg['auth_server_addr2']}
+auth_server_port={$auth_server_port2}
+auth_server_shared_secret={$wlcfg['auth_server_shared_secret2']}
 
 EOD;
 				} else {
@@ -2679,7 +2689,16 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
+
+
+
+
+
+
+
+
 			interface_bring_down($interface);
+
 		}
 	}
 
@@ -2708,6 +2727,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
                         }
                 }
 	}  else {
+
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
@@ -3476,6 +3496,7 @@ function find_carp_interface($ip) {
 						continue;
 					}
 				}
+
 				if ($if)
 					return $if;
 			}
@@ -4136,10 +4157,15 @@ function generate_random_mac_address() {
  ******/
 function is_jumbo_capable($iface) {
 
+
 	$iface = trim($iface);
 	$capable = pfSense_get_interface_addresses($iface);
 	if (isset($capable['caps']['vlanmtu']))
                 return true;
+
+
+
+
 
 	return false;
 }

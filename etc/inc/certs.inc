@@ -528,12 +528,27 @@ function is_webgui_cert($certref) {
 		return true;
 }
 
+function is_ca_cert($certref) {
+	global $config;
+	
+	if(!empty($config['ca']))
+	{
+		foreach($config['ca'] as $vCA):
+		{
+			if ($vCA['refid'] == $certref) { return true; }
+		}endforeach;
+	}
+
+	return false;
+}
+
 function cert_in_use($certref) {
 	return (is_webgui_cert($certref) ||
 		is_user_cert($certref) ||
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref));
+		is_ca_cert($certref));
 }
 
 /*

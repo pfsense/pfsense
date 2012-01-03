@@ -57,7 +57,7 @@ if [ "$BOGON_MD5" = "$ON_DISK_MD5" ]; then
 	egrep -v "^#" /tmp/bogonsv6 > /etc/bogonsv6
 	/etc/rc.conf_mount_ro
 	RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
-	rm /tmp/bogons
+	rm /tmp/bogonsv6
 	echo "Bogons files downloaded:  $RESULT" | logger
 else
 	echo "Could not download http://files.pfsense.org/mirrors/fullbogons-ipv6.txt.md5 (md5 mismatch)" | logger

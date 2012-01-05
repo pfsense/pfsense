@@ -106,6 +106,7 @@ if (isset($cpzone) && $a_cp[$cpzone]) {
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
 	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
+        $pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
 	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
@@ -268,6 +269,7 @@ if ($_POST) {
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
+                $newcp['radius_protocol'] = $_POST['radius_protocol'];
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
 			$newcp['radiusip'] = $_POST['radiusip'];
@@ -381,7 +383,10 @@ function enable_change(enable_change) {
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
 	document.iform.auth_method[2].disabled = endis;
-	document.iform.auth_method[3].disabled = endis;
+	document.iform.radius_protocol[0].disabled = radius_endis;
+	document.iform.radius_protocol[1].disabled = radius_endis;
+	document.iform.radius_protocol[2].disabled = radius_endis;
+	document.iform.radius_protocol[3].disabled = radius_endis;
 	document.iform.radmac_enable.disabled = radius_endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.radmac_format.disabled = radius_endis;
@@ -593,7 +598,35 @@ function enable_change(enable_change) {
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
 		  </tr>
-		</table>
+                  <tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Radius Protocol"); ?></td>
+                  <td width="78%" class="vtable">
+                    <table cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="PAP" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']!="CHAP_MD5" && $pconfig['radius_protocol']!="MSCHAPv1" && $pconfig['radius_protocol']!="MSCHAPv2") echo "checked"; ?>>
+      <?=gettext("PAP"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="CHAP_MD5" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="CHAP_MD5") echo "checked"; ?>>
+      <?=gettext("CHAP_MD5"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="MSCHAPv1" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="MSCHAPv1") echo "checked"; ?>>
+      <?=gettext("MSCHAPv1"); ?></td>
+                      </tr>
+                    <tr>
+                      <td colspan="2"><input name="radius_protocol" type="radio" id="radius_protocol" value="MSCHAPv2" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius" && $pconfig['radius_protocol']=="MSCHAPv2") echo "checked"; ?>>
+      <?=gettext("MSCHAPv2"); ?></td>
+                      </tr><tr>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      </tr>
+                    </table>
+                  </tr><tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  </tr>
+                </table>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
         	<tr>
             	<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>

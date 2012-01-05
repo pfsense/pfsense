@@ -46,6 +46,8 @@ RADIUS AUTHENTICATION
 ---------------------
 */
 
+require_once("CHAP.inc");
+
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 
     global $config, $cpzone;
@@ -55,6 +57,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
+    $radius_protocol = $config['captiveportal'][$cpzone]['radius_protocol'];
     // Do we even need to set it to NULL?
     $retvalue['error'] = $retvalue['reply_message'] = $retvalue['url_redirection'] = $retvalue['session_timeout'] = $retvalue['idle_timeout'] = $retvalue['session_terminate_time'] = null;
 
@@ -74,7 +77,8 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     }
 
     // Create our instance
-    $rauth = new Auth_RADIUS_PAP($username, $password);
+    $classname = 'Auth_RADIUS_' . $radius_protocol;
+    $rauth = new $classname($username, $password);
 
     /*
      * Add support for more then one radiusserver. 
@@ -89,7 +93,37 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
 
     // Construct data package
     $rauth->username = $username;
-    $rauth->password = $password;
+    switch ($radius_protocol) {
+        case 'CHAP_MD5':
+        case 'MSCHAPv1':
+            $classname = $radius_protocol == 'MSCHAPv1' ? 'Crypt_CHAP_MSv1' : 'Crypt_CHAP_MD5';
+            $crpt = new $classname;
+            $crpt->username = $username;
+            $crpt->password = $password;
+            $rauth->challenge = $crpt->challenge;
+            $rauth->chapid = $crpt->chapid;
+            $rauth->response = $crpt->challengeResponse();
+            $rauth->flags = 1;
+            // If you must use deprecated and weak LAN-Manager-Responses use this:
+            //$rauth->lmResponse = $crpt->lmChallengeResponse();
+            //$rauth->flags = 0;
+            break;
+
+        case 'MSCHAPv2':
+            // Construct data package
+            $crpt = new Crypt_CHAP_MSv2;
+            $crpt->username = $username;
+            $crpt->password = $password;
+            $rauth->challenge = $crpt->authChallenge;
+            $rauth->peerChallenge = $crpt->peerChallenge;
+            $rauth->chapid = $crpt->chapid;
+            $rauth->response = $crpt->challengeResponse();
+            break;
+
+        default:
+            $rauth->password = $password;
+            break;
+    }
 
     if (PEAR::isError($rauth->start())) {
         $retvalue['auth_val'] = 1;

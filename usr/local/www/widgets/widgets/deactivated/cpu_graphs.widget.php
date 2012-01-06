@@ -61,12 +61,12 @@ require_once("functions.inc");
 <script language="javascript" type="text/javascript">
 
     // Graph 1
-    graph[0]         = GraphInitialize('GraphOutput', 200, 50, 2);
+    graph[0]         = GraphInitialize('GraphOutput', 200, 50, 4);
     graph_dir[0]     = GL_END;
     last_val[0]      = Math.floor(Math.random() * 50);
     last_val_span[0] = document.getElementById('LastValue0');
 
-    //GraphSetVMax(graph[0], 100);
-    //GraphDynamicScale(graph[0]);
+    GraphSetVMax(graph[0], 100);
+    GraphDynamicScale(graph[0]);
 
 </script>

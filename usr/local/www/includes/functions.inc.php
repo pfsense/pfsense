@@ -96,21 +96,15 @@ function get_uptime() {
 		$uptimestr .= "1 Day ";
 
         if ($uphours > 1)
-           $hours = "Hours";
-        else if ($uphours > 0)
-           $hours = "Hour";
-
+           $hours = "s";
+        
         if ($upmins > 1)
-           $minutes = "Minutes";
-        else if ($uphours > 0)
-           $minutes = "Minute";
-
+           $minutes = "s";
+        
         if ($upmins > 1)
-           $seconds = "Seconds";
-        else if ($uphours > 0)
-           $seconds = "Second";
-
-	$uptimestr .= sprintf("%02d $hours %02d $minutes %02d $seconds", $uphours, $upmins, $upsecs);
+           $seconds = "s";
+        
+	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
 	return $uptimestr;
 }
 

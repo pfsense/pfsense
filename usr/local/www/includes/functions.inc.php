@@ -160,12 +160,12 @@ function get_hwtype() {
 }
 
 function get_temp() {
-	/*switch(get_hwtype()) {
-		default:
-			return;
-	}
-
-	return $ret; */
+//	switch(get_hwtype()) {
+//		default:
+//			return;
+//	}
+//
+//	return $ret;
 
          $temp_out = "";
 	 exec("/sbin/sysctl dev.cpu.0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);

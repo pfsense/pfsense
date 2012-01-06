@@ -56,7 +56,7 @@ $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 $userid = $_GET['userid'];
 if (isset($_POST['userid']))
 	$userid = $_POST['userid'];
-if ($userid) {
+if (is_numeric($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
 	if (!is_array($config['system']['user']))
 		$config['system']['user'] = array();

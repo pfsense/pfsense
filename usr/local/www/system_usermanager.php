@@ -566,7 +566,7 @@ function sshkeyClicked(obj) {
 							</td>
 						</tr>
 
-						<?php if ($pconfig['uid']): ?>
+						<?php if (isset($pconfig['uid'])): ?>
 
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>

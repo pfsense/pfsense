@@ -1545,7 +1545,7 @@ function services_dnsupdate_process($int = "") {
 				   this is dumb - public and private keys are the same for HMAC-MD5,
 				   but nsupdate insists on having both */
 				$fd = fopen("{$g['varetc_path']}/K{$i}{$keyname}+157+00000.private", "w");
-				$privkey .= <<<EOD
+				$privkey = <<<EOD
 Private-key-format: v1.2
 Algorithm: 157 (HMAC)
 Key: {$dnsupdate['keydata']}

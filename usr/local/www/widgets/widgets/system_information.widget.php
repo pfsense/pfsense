@@ -157,7 +157,7 @@ $curcfg = $config['system']['firmware'];
 		<?php endif; ?>
 		<tr>
 			<td width="25%" class="vncellt">Uptime</td>
-			<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
+			<td width="75%" class="listr"><input style="border: 0px solid white;" size="50" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
 		</tr>
         <tr>
             <td width="25%" class="vncellt"><?=gettext("Current date/time");?></td>

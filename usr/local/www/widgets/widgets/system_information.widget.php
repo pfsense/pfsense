@@ -200,6 +200,15 @@ $curcfg = $config['system']['firmware'];
 				<?= $mbufs_total ?>/<?= $mbufs_max ?>
 			</td>
 		</tr>
+                <tr>
+                        <td width="25%" class="vncellt">Temperature</td>
+			<td width="75%" class="listr">
+				<?php $TempMeter = "0"; $temp = "0"; ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $TempMeter; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $TempMeter); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				&nbsp;
+				<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."&#176;C"; ?>" />
+			</td>
+                </tr>
 		<tr>
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">

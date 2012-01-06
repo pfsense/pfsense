@@ -1,0 +1,11 @@
+global $config;
+
+$config = parse_config(true);
+
+$config['system']['webgui']['nohttpreferercheck'] = true;
+
+echo "Disabling HTTP referer check...";
+
+write_config("PHP shell disabled HTTP referer check");
+
+echo "done.\n";

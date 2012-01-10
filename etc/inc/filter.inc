@@ -1832,7 +1832,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && $type != "match") {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		$rg = get_interface_gateway($rule['interface']);
 		if(is_ipaddr($rg)) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";

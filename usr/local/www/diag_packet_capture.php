@@ -88,7 +88,7 @@ if ($_POST) {
 			exec("kill $process_id");
 		}
 
-	} else {
+	} elseif ($_POST['downloadbtn']!= "") {
 		//download file
 		$fs = filesize($fp.$fn);
 		header("Content-Type: application/octet-stream");
@@ -222,8 +222,9 @@ include("fbegin.inc");
 				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";
 			}
 			if (file_exists($fp.$fn) and $processisrunning != true) {
+				echo "<input type=\"submit\" name=\"viewbtn\" value=\"" . gettext("View Capture") . "\">&nbsp;";
 				echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\">";
-				echo "&nbsp;&nbsp;(" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
+				echo "<br/>" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn));
 			}
 ?>
 			</td>

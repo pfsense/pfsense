@@ -157,7 +157,7 @@ $curcfg = $config['system']['firmware'];
 		<?php endif; ?>
 		<tr>
 			<td width="25%" class="vncellt">Uptime</td>
-			<td width="75%" class="listr"><input style="border: 0px solid white;" size="50" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
+			<td width="75%" class="listr" id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
 		</tr>
         <tr>
             <td width="25%" class="vncellt"><?=gettext("Current date/time");?></td>
@@ -185,7 +185,7 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt">State table size</td>
 			<td width="75%" class="listr">
-				<input style="border: 0px solid white;" size="30" name="pfstate" id="pfstate" value="<?= htmlspecialchars(get_pfstate()); ?>" />
+				<span id="pfstate"><?= htmlspecialchars(get_pfstate()); ?></span>
 		    	<br />
 		    	<a href="diag_dump_states.php">Show states</a>
 			</td>
@@ -207,7 +207,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $TempMeter = $temp = get_temp(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $TempMeter; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $TempMeter); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."&#176;C"; ?>" />
+				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
 			</td>
                 </tr>
                 <?php endif; ?>
@@ -217,7 +217,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $cpuUsage = "0"; ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 10 seconds)" />
+				<span id="cpumeter" value="(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
@@ -226,7 +226,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $memUsage = mem_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
+				<span id="memusagemeter"><?= $memUsage.'%'; ?></span>
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
@@ -236,7 +236,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $swapusage = swap_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
+				<span id="swapusagemeter"><?= $swapusage.'%'; ?></span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -249,7 +249,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $temp = get_temp(); ?>
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."C"; ?>" />
+				<span id="tempmeter"><?= $temp."C"; ?></span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -259,7 +259,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $diskusage = disk_usage(); ?>
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
+				<span id="diskusagemeter"><?= $diskusage.'%'; ?></span>
 			</td>
 		</tr>
 	</tbody>

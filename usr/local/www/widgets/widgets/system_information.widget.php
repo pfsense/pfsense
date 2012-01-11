@@ -217,7 +217,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $cpuUsage = "0"; ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<span id="cpumeter" value="(Updating in 10 seconds)</span>
+				<br/><span id="cpumeter">(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
@@ -226,7 +226,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $memUsage = mem_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<span id="memusagemeter"><?= $memUsage.'%'; ?></span>
+				<br/><span id="memusagemeter"><?= $memUsage.'%'; ?></span>
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
@@ -236,7 +236,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $swapusage = swap_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<span id="swapusagemeter"><?= $swapusage.'%'; ?></span>
+				<br/><span id="swapusagemeter"><?= $swapusage.'%'; ?></span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -246,7 +246,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $diskusage = disk_usage(); ?>
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<span id="diskusagemeter"><?= $diskusage.'%'; ?></span>
+				<br/><span id="diskusagemeter"><?= $diskusage.'%'; ?></span>
 			</td>
 		</tr>
 	</tbody>

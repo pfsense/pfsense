@@ -86,13 +86,25 @@ function get_uptime() {
 	$uphours = (int)($uptime / 3600);
 	$uptime %= 3600;
 	$upmins = (int)($uptime / 60);
+        $uptime %= 60;
+	$upsecs = (int)($uptime);
 
 	$uptimestr = "";
 	if ($updays > 1)
-		$uptimestr .= "$updays days, ";
+		$uptimestr .= "$updays Days ";
 	else if ($updays > 0)
-		$uptimestr .= "1 day, ";
-	$uptimestr .= sprintf("%02d:%02d", $uphours, $upmins);
+		$uptimestr .= "1 Day ";
+
+        if ($uphours > 1)
+           $hours = "s";
+        
+        if ($upmins > 1)
+           $minutes = "s";
+        
+        if ($upmins > 1)
+           $seconds = "s";
+        
+	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
 	return $uptimestr;
 }
 
@@ -148,12 +160,22 @@ function get_hwtype() {
 }
 
 function get_temp() {
-	switch(get_hwtype()) {
-		default:
-			return;
-	}
+//	switch(get_hwtype()) {
+//		default:
+//			return;
+//	}
+//
+//	return $ret;
 
-	return $ret;
+         $temp_out = "";
+	 exec("/sbin/sysctl dev.cpu.0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
+         $temp_out = trim($dfout[0]);
+         if ($temp_out == "") {
+           exec("/sbin/sysctl hw.acpi.thermal.tz0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
+   	   $temp_out = trim($dfout[0]);
+         }
+
+	 return $temp_out;
 }
 
 function disk_usage()

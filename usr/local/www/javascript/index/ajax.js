@@ -1,9 +1,9 @@
-
 /*   Most widgets update their backend data every 10 seconds.  11 seconds
  *   will ensure that we update the GUI right after the stats are updated.
  *   Seconds * 1000 = value
  */
-var update_interval = 11000;
+var Seconds = 11;
+var update_interval = (Math.abs(Math.ceil(Seconds))-1)*1000 + 990;
 
 function updateMeters() {
 	url = '/getstats.php';
@@ -16,7 +16,11 @@ function updateMeters() {
 				stats(data);
 		}
 	});
-	setTimeout('updateMeters()', update_interval);
+        setTimer();
+}
+
+function setTimer() { 
+         timeout = window.setTimeout('updateMeters()', update_interval); 
 }
 
 function stats(x) {
@@ -27,17 +31,16 @@ function stats(x) {
 		else
 			return false;
 	}))
-		return;
 
-	updateCPU(values[0]);
-	updateMemory(values[1]);
-	updateUptime(values[2]);
-	updateState(values[3]);
-	updateTemp(values[4]);
-	updateDateTime(values[5]);
-	updateInterfaceStats(values[6]);
-	updateInterfaces(values[7]);
-	updateGatewayStats(values[8]);
+        updateUptime(values[2]);
+        updateDateTime(values[5]);
+        updateCPU(values[0]);
+        updateMemory(values[1]);
+        updateState(values[3]);
+        updateTemp(values[4]);
+        updateInterfaceStats(values[6]);
+        updateInterfaces(values[7]);
+        updateGatewayStats(values[8]);
 }
 
 function updateMemory(x) {
@@ -63,11 +66,12 @@ function updateCPU(x) {
 }
 
 function updateTemp(x) {
-	if(jQuery("#tempmeter")) {
-		jQuery("#tempmeter").val(x + 'C');
+	if(jQuery("#tempmeter"))
+		jQuery("#tempmeter").val(x + '\u00B0' + 'C');
+        if(jQuery('#tempwidtha'))
 		jQuery("#tempwidtha").css('width',x + 'px');
+        if(jQuery('#tempwidthb'))
 		jQuery("#tempwidthb").css('width',(100 - x) + 'px');
-	}
 }
 
 function updateDateTime(x) {
@@ -111,8 +115,8 @@ function updateInterfaceStats(x){
 
 function updateInterfaces(x){
 	if (widgetActive("interfaces")){
-		interfaces = x.split("~");
-		interfaces.each(function(iface){
+		interfaces_split = x.split("~");
+		interfaces_split.each(function(iface){
 			details = iface.split(",");
 			switch(details[1]) {
 				case "up":
@@ -149,6 +153,5 @@ function widgetActive(x) {
 
 /* start updater */
 jQuery(document).ready(function(){
-	setTimeout('updateMeters()', update_interval);
+	setTimer();
 });
-

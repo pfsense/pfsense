@@ -240,19 +240,6 @@ $curcfg = $config['system']['firmware'];
 			</td>
 		</tr>
 		<?php endif; ?>
-<?php
-		if(has_temp()):
-?>
-		<tr>
-			<td width='25%' class='vncellt'>Temperature</td>
-			<td width='75%' class='listr'>
-				<?php $temp = get_temp(); ?>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<span id="tempmeter"><?= $temp."C"; ?></span>
-			</td>
-		</tr>
-		<?php endif; ?>
 		<tr>
 			<td width="25%" class="vncellt">Disk usage</td>
 			<td width="75%" class="listr">

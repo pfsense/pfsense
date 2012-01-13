@@ -81,6 +81,11 @@ if ($_GET['if']) {
 } else {
 	$curif = "wan";
 }
+if ($_GET['sort']) {
+	$cursort = $_GET['sort'];
+} else {
+	$cursort = "";
+}
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
@@ -96,27 +101,28 @@ include("head.inc");
 
 function updateBandwidth(){
     var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
-    bandwidthAjax(hostinterface);
+    bandwidthAjax(hostinterface, "<?php echo htmlspecialchars($cursort); ?>");
 }
 
-function bandwidthAjax(hostinterface) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface;
+function bandwidthAjax(hostinterface, cursort) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + cursort;
 	var opt = {
 	    // Use GET
-	    type: 'get',
-	    error: function(req) {
-	        // Handle 404
-	        if(req.status == 404)
-	            alert('Error 404: location "' + uri + '" was not found.');
-	        // Handle other errors
-	        else
-	            alert('Error ' + req.status + ' -- ' + req.statusText);
+	    method: 'get',
+	    asynchronous: true,
+	    // Handle 404
+	    on404: function(t) {
+	        alert('Error 404: location "' + t.statusText + '" was not found.');
 	    },
-		success: function(data) {
-			updateBandwidthHosts(data);
+	    // Handle other errors
+	    onFailure: function(t) {
+	        alert('Error ' + t.status + ' -- ' + t.statusText);
+	    },
+		onSuccess: function(t) {
+			updateBandwidthHosts(t.responseText);
 	    }
 	}
-	jQuery.ajax(uri, opt);
+	new Ajax.Request(uri, opt);
 }
 
 function updateBandwidthHosts(data){
@@ -144,19 +150,21 @@ function updateBandwidthHosts(data){
                 hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
 
                 //make the row appear if hidden
-                var rowid = "#host" + y;
-                if (jQuery(rowid).css('dislay') == "none"){
+                var rowid = "host" + y;
+                textlink = d.getElementById(rowid);
+                if (textlink.style.display == "none"){
                      //hide rows that contain no data
-                     jQuery(rowid).show(1000);
+                     Effect.Appear(rowid, {duration:1});
                 }
             }
         }
         else
         {
-            var rowid = "#host" + y;
-            if (jQuery(rowid).css('dislay') != "none"){
+            var rowid = "host" + y;
+            textlink = d.getElementById(rowid);
+            if (textlink.style.display != "none"){
                 //hide rows that contain no data
-                jQuery(rowid).fadeOut(2000);
+                Effect.Fade(rowid, {duration:2});
             }
         }
     }
@@ -185,6 +193,11 @@ foreach ($ifdescrs as $ifn => $ifd) {
 	echo ">" . htmlspecialchars($ifd) . "</option>\n";
 }
 ?>
+</select>
+, Sort by: 
+<select name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">Bandwidth In</option>
+	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
 </select>
 </form>
 <p><form method="post" action="status_graph.php">

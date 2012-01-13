@@ -136,7 +136,7 @@ function easyrule_block_alias_getid($int = 'wan') {
 function easyrule_block_alias_add($host, $int = 'wan') {
 	global $blockaliasname, $config;
 	/* If the host isn't a valid IP address, bail */
-	if (!is_ipaddr($host))
+	if (!is_ipaddr($host) && !is_subnet($host))
 		return false;
 
 	/* If there are no aliases, start an array */
@@ -152,16 +152,24 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 
 	$alias = array();
 
+	if (is_subnet($host)) {
+		list($host, $mask) = explode("/", $host);
+	} elseif (is_specialnet($host)) {
+		$mask = 0;
+	} else {
+		$mask = 32;
+	}
+
 	if (isset($id) && $a_aliases[$id]) {
 		/* Make sure this IP isn't already in the list. */
-		if (in_array($host.'/32', explode(" ", $a_aliases[$id]['address'])))
+		if (in_array($host.'/'.$mask, explode(" ", $a_aliases[$id]['address'])))
 			return true;
 		/* Since the alias already exists, just add to it. */
 		$alias['name']    = $a_aliases[$id]['name'];
 		$alias['type']    = $a_aliases[$id]['type'];
 		$alias['descr']   = $a_aliases[$id]['descr'];
 
-		$alias['address'] = $a_aliases[$id]['address'] . ' ' . $host . '/32';
+		$alias['address'] = $a_aliases[$id]['address'] . ' ' . $host . '/' . $mask;
 		$alias['detail']  = $a_aliases[$id]['detail'] . gettext('Entry added') . ' ' . date('r') . '||';
 	} else {
 		/* Create a new alias with all the proper information */
@@ -169,7 +177,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	 	$alias['type']    = 'network';
 		$alias['descr']   = gettext("Hosts blocked from Firewall Log view");
 
-		$alias['address'] = $host . '/32';
+		$alias['address'] = $host . '/' . $mask;
 		$alias['detail']  = gettext('Entry added') . ' ' . date('r') . '||';
 	}
 
@@ -188,7 +196,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 function easyrule_block_host_add($host, $int = 'wan') {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
-	if (!is_ipaddr($host))
+	if (!is_ipaddr($host) && !is_subnet($host))
 		return false;
 
 	/* Flag whether or not we need to reload the filter */
@@ -258,8 +266,24 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	if ($proto == "icmp")
 		$filterent['icmptype'] = 'echoreq';
 
-	pconfig_to_address($filterent['source'], $srchost, 32);
-	pconfig_to_address($filterent['destination'], $dsthost, 32, '', $dstport, $dstport);
+	if (is_subnet($srchost)) {
+		list($srchost, $srcmask) = explode("/", $srchost);
+	} elseif (is_specialnet($srchost)) {
+		$srcmask = 0;
+	} else {
+		$srcmask = 32;
+	}
+
+	if (is_subnet($dsthost)) {
+		list($dsthost, $dstmask) = explode("/", $dsthost);
+	} elseif (is_specialnet($dsthost)) {
+		$dstmask = 0;
+	} else {
+		$dstmask = 32;
+	}
+
+	pconfig_to_address($filterent['source'], $srchost, $srcmask);
+	pconfig_to_address($filterent['destination'], $dsthost, $dstmask, '', $dstport, $dstport);
 
 	$a_filter[] = $filterent;
 
@@ -273,10 +297,9 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	}
 }
 
-function easyrule_parse_block($int, $src, $ipproto) {
-	$filterent['ipprotocol'] = $ipproto;
+function easyrule_parse_block($int, $src) {
 	if (!empty($src) && !empty($int)) {
-		if (!is_ipaddr($src)) {
+		if (!is_ipaddr($src) && !is_subnet($src)) {
 			return gettext("Tried to block invalid IP:") . ' ' . htmlspecialchars($src);
 		}
 		$int = easyrule_find_rule_interface($int);
@@ -305,17 +328,17 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 		if (getprotobyname($proto) == -1) {
 			return gettext("Invalid protocol for pass rule:") . ' ' . htmlspecialchars($proto);
 		}
-		if (!is_ipaddr($src)) {
+		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !is_specialnet($src)) {
 			return gettext("Tried to pass invalid source IP:") . ' ' . htmlspecialchars($src);
 		}
-		if (!is_ipaddr($dst)) {
+		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !is_specialnet($dst)) {
 			return gettext("Tried to pass invalid destination IP:") . ' ' . htmlspecialchars($dst);
 		}
 		if (in_array($proto, $protocols_with_ports)) {
 			if (empty($dstport)) {
 				return gettext("Missing destination port:") . ' ' . htmlspecialchars($dstport);
 			}
-			if (!is_port($dstport)) {
+			if (!is_port($dstport) && ($dstport != "any")) {
 				return gettext("Tried to pass invalid destination port:") . ' ' . htmlspecialchars($dstport);
 			}
 		} else {

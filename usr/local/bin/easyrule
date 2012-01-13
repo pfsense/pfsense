@@ -35,6 +35,11 @@ require_once("shaper.inc");
 
 $message = "";
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$ifdisp = get_configured_interface_with_descr();
+foreach ($ifdisp as $kif => $kdescr) {
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
+}
 
 /* Borrow this function from guiconfig.inc since we can't include it for use at the CLI
 

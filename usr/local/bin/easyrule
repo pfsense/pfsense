@@ -111,7 +111,7 @@ if (($argc > 1) && !empty($argv[1])) {
 	echo " Pass example (protocol with port):\n";
 	echo "     " . basename($argv[0]) . " pass wan tcp 1.2.3.4 192.168.0.4 80\n";
 	echo "\n";
-	echo " Block example (protocol without port):\n";
+	echo " Pass example (protocol without port):\n";
 	echo "     " . basename($argv[0]) . " pass wan icmp 1.2.3.4 192.168.0.4\n";
 	echo "\n";
 }

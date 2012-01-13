@@ -467,7 +467,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Method"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked"; ?> />
-									<strong><?=gettext("Disable password login for Secure Shell (RSA key only)"); ?></strong>
+									<strong><?=gettext("Disable password login for Secure Shell (RSA/DSA key only)"); ?></strong>
 									<br/>
 									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
 									<a href="system_usermanager.php"><?=gettext("user"); ?></a>

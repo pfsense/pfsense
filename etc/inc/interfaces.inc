@@ -777,7 +777,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} {$gre['remote-addr']}");
-	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+	if((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
+		mwexec("/sbin/ifconfig {$greif} inet6 {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} prefixlen /{$gre['tunnel-remote-net']} ");
+	} else {
+		mwexec("/sbin/ifconfig {$greif} {$gif['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+	}
 	if (isset($gre['link0']) && $gre['link0'])
 		pfSense_interface_flags($greif, IFF_LINK0);
 	if (isset($gre['link1']) && $gre['link1'])

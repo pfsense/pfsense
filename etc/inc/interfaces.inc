@@ -3729,8 +3729,7 @@ function find_interface_ipv6($interface, $flush = false)
  */
 function find_interface_ipv6_ll($interface, $flush = false)
 {
-	global $interface_ipv6_arr_cache;
-	global $interface_snv6_arr_cache;
+	global $interface_llv6_arr_cache;
 	global $config;
 	
 	$interface = str_replace("\n", "", $interface);
@@ -3739,7 +3738,7 @@ function find_interface_ipv6_ll($interface, $flush = false)
 		return;
 
 	/* Setup IP cache */
-	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
+	if (!isset($interface_llv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
 		// FIXME: Add IPv6 support to the pfSense module
 		exec("/sbin/ifconfig {$interface} inet6", $output);
@@ -3747,21 +3746,14 @@ function find_interface_ipv6_ll($interface, $flush = false)
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
 				if(preg_match("/fe80::/", $parts[1])) {
-					$ifinfo['ipaddrv6'] = $parts[1];
-					if($parts[2] == "-->") {
-						$parts[5] = "126";
-						$ifinfo['subnetbitsv6'] = $parts[5];
-					} else {
-						$ifinfo['subnetbitsv6'] = $parts[3];
-					}
+					$partsaddress = explode("%", $parts[1]);
+					$ifinfo['linklocal'] = $partsaddress[0];
 				}
 			}
 		}
-		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
-		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+		$interface_llv6_arr_cache[$interface] = $ifinfo['linklocal'];
 	}
-
-	return $interface_ipv6_arr_cache[$interface];
+	return $interface_llv6_arr_cache[$interface];
 }
 
 function find_interface_subnet($interface, $flush = false)
@@ -3869,6 +3861,25 @@ function get_interface_ipv6($interface = "wan")
 	}
 
 	$curip = find_interface_ipv6($realif);
+	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
+		return $curip;
+	else
+		return null;
+}
+
+function get_interface_linklocal($interface = "wan")
+{
+	$realif = get_real_interface($interface);
+	if (!$realif) {
+		if (preg_match("/^carp/i", $interface))
+			$realif = $interface;
+		else if (preg_match("/^vip/i", $interface))
+			$realif = $interface;
+		else
+			return null;
+	}
+
+	$curip = find_interface_ipv6_ll($realif);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
 		return $curip;
 	else

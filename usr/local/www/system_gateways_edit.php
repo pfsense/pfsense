@@ -128,9 +128,12 @@ if ($_POST) {
 			if(empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
 			} else {
-				$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
-				if(!ip_in_subnet($_POST['gateway'], $subnet))
-					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+				/* do not do a subnet match on a link local address, it's valid */
+				if(! preg_match("/fe80::/", $_POST['gateway'])) {
+					$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
+					if(!ip_in_subnet($_POST['gateway'], $subnet))
+						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+				}
 			}
 		}
 

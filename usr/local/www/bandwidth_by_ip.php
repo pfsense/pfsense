@@ -22,11 +22,27 @@ $interface = $_GET['if'];
 $real_interface = convert_friendly_interface_to_real_interface_name($interface);
 $intip = find_interface_ip($real_interface);
 $intip = explode (".", $intip);
+//get interface netmask
+$netmask = find_interface_subnet($real_interface);
+//get the sort method
+$sort = $_GET['sort'];
+if ($sort == "out") 
+	{$sort_method = "-T";}
+else
+	{$sort_method = "-R";}
 
-//use class A subnet to make sure we capture all traffic on specified interface
-$intsubnet = $intip[0] . ".0.0.0/8";
+//use the same class of the specified interface
+if ($netmask >= 24) {
+	$intsubnet = $intip[0] . "." . $intip[1] . "." . $intip[2] . ".0/24";
+}
+elseif ($netmask >=16){
+	$intsubnet = $intip[0] . "." . $intip[1] . ".0.0/16";
+}
+else {
+	$intsubnet = $intip[0] . ".0.0.0/8";
+}
 
-exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 unset($bandwidthinfo);
 unset($receivebytesarray);

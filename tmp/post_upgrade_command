@@ -33,14 +33,9 @@ if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then
 fi
 
 # Detect interactive logins and display the shell
-echo "if [ \`env | grep SSH_TTY | wc -l\` -gt 0 ] || [ \`env | grep cons25 | wc -l\` -gt 0 ]; then" > $CVS_CO_DIR/root/.shrc
-echo "        /etc/rc.initial" >> $CVS_CO_DIR/root/.shrc
-echo "        exit" >> $CVS_CO_DIR/root/.shrc
-echo "fi" >> $CVS_CO_DIR/root/.shrc
-echo "if [ \`env | grep SSH_TTY | wc -l\` -gt 0 ] || [ \`env | grep cons25 | wc -l\` -gt 0 ]; then" >> $CVS_CO_DIR/root/.profile
-echo "        /etc/rc.initial" >> $CVS_CO_DIR/root/.profile
-echo "        exit" >> $CVS_CO_DIR/root/.profile
-echo "fi" >> $CVS_CO_DIR/root/.profile
+detect_command='[ -n "$SSH_TTY" -o "$TERM" = "cons25" ] && exec /etc/rc.initial'
+echo "$detect_command" > $CVS_CO_DIR/root/.shrc
+echo "$detect_command" >> $CVS_CO_DIR/root/.profile
 
 # Now turn on or off serial console as needed
 /tmp/post_upgrade_command.php $1

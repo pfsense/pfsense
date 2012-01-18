@@ -1571,4 +1571,5 @@ function openntpd_get_listen_ips() {
 	$listenips[] = $tmp;
 	return $listenips;
 }
+
 ?>

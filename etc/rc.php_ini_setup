@@ -27,7 +27,6 @@
 
 # Set our operating platform
 PLATFORM=`/bin/cat /etc/platform`
-EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 
 if [ -d /usr/local/lib/php/20090626 ]; then
 	EXTENSIONSDIR="/usr/local/lib/php/20090626/"

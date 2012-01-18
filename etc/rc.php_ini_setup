@@ -31,7 +31,6 @@ EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 
 if [ -d /usr/local/lib/php/20090626 ]; then
 	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
-	
 else
 	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 fi

@@ -496,7 +496,7 @@ function local_user_set_password(& $user, $password) {
 	}
 
 	// Generate the NT-HASH from the unicode string
-	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
+       $user['nt-hash'] = bin2hex(hash("md4", $ustr));
 }
 
 function local_user_get_groups($user, $all = false) {

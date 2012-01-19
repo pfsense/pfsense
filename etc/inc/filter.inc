@@ -331,7 +331,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 */
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-		$line_error = split("\:", $rules_error);
+		$line_error = explode("\:", $rules_error);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
@@ -464,7 +464,7 @@ function filter_generate_scrubing() {
 function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
 	global $aliastable, $filterdns;
 
-	$addresses = split(" ", $alias);
+	$addresses = explode(" ", $alias);
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -595,9 +595,9 @@ function filter_generate_aliases() {
 					foreach ($config['openvpn']['user'] as $openvpn)
 						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
 				}
-				$vpn_lines = split("\n", $addrlist);
+				$vpn_lines = explode("\n", $addrlist);
 				foreach ($vpn_lines as $vpn_line) {
-					$vpn_address_split = split(" ", $vpn_line);
+					$vpn_address_split = explode(" ", $vpn_line);
 					foreach($vpn_address_split as $vpnsplit) {
 						if(isset($openvpncfg[$vpnsplit])) {
 							$newaddress .= " ";
@@ -2856,7 +2856,7 @@ function filter_tdr_day($schedule) {
 	if($weekday == 0)
 		$weekday = 7;
 	$date = date("d");
-	$defined_days = split(",", $schedule);
+	$defined_days = explode(",", $schedule);
 	if($g['debug'])
 		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
 	foreach($defined_days as $dd) {
@@ -2868,7 +2868,7 @@ function filter_tdr_day($schedule) {
 function filter_tdr_hour($schedule) {
 	global $g;
 	/* $schedule should be a string such as 16:00-19:00 */
-	$tmp = split("-", $schedule);
+	$tmp = explode("-", $schedule);
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
@@ -2893,7 +2893,7 @@ function filter_tdr_position($schedule) {
 		log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
 	if($weekday == 0)
 		$weekday = 7;
-	$schedule_days = split(",", $schedule);
+	$schedule_days = explode(",", $schedule);
 	foreach($schedule_days as $day) {
 		if($day == $weekday)
 			return true;
@@ -2907,7 +2907,7 @@ function filter_tdr_month($schedule) {
 	 * Calculate month
 	 */
 	$todays_month = date("n");
-	$months = split(",", $schedule);
+	$months = explode(",", $schedule);
 	if($g['debug'])
 		log_error("[TDR DEBUG] filter_tdr_month($schedule)");
 	foreach($months as $month) {

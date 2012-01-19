@@ -57,7 +57,7 @@ require_once("shaper.inc");
 
 function add_base_packages_menu_items() {
 	global $g, $config;
-	$base_packages = split($g['base_packages'], ",");
+	$base_packages = explode($g['base_packages'], ",");
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";
@@ -226,7 +226,7 @@ if ($_POST) {
 				 */
 				if(!$_POST['donotbackuprrd']) {
 					$data = str_replace("</" . $g['xml_rootobj'] . ">", "\t<rrddata>", $data);
-					$rrd_files_var_db_rrd = split("\n",`cd /var/db/rrd && ls *.rrd`);
+					$rrd_files_var_db_rrd = explode("\n",`cd /var/db/rrd && ls *.rrd`);
 					foreach($rrd_files_var_db_rrd as $rrd) {
 						if($rrd) {
 							$rrd_data = file_get_contents("{$g['vardb_path']}/rrd/{$rrd}");

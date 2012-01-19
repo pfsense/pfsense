@@ -525,7 +525,7 @@
 				case 'dhs':
 					break;
 				case 'noip':
-					list($ip,$code) = split(":",$data);
+					list($ip,$code) = explode(":",$data);
 					switch ($code) {
 						case 0:
 							$status = "phpDynDNS: (Success) IP address is current, no update performed.";
@@ -900,7 +900,7 @@
 
 			if (file_exists($this->_cacheFile)) {
 				$contents = file_get_contents($this->_cacheFile);
-				list($cacheIP,$cacheTime) = split(':', $contents);
+				list($cacheIP,$cacheTime) = explode(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;
 				$log_error .= "Cached IP: {$cacheIP} ";

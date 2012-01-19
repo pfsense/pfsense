@@ -329,7 +329,7 @@ function get_carp_status() {
 
  */
 function convert_ip_to_network_format($ip, $subnet) {
-	$ipsplit = split('[.]', $ip);
+	$ipsplit = explode('[.]', $ip);
 	$string = $ipsplit[0] . "." . $ipsplit[1] . "." . $ipsplit[2] . ".0/" . $subnet;
 	return $string;
 }
@@ -898,7 +898,7 @@ function auto_login() {
 		$status = true;
 
 	$gettytab = file_get_contents("/etc/gettytab");
-	$getty_split = split("\n", $gettytab);
+	$getty_split = explode("\n", $gettytab);
 	conf_mount_rw();
 	$fd = false;
 	$tries = 0;
@@ -942,7 +942,7 @@ function setup_serial_port($when="save", $path="") {
 		$boot_config = "";
 
 	if($g['platform'] <> "cdrom") {
-		$boot_config_split = split("\n", $boot_config);
+		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
@@ -986,7 +986,7 @@ function setup_serial_port($when="save", $path="") {
 		}
 	}
 	$ttys = file_get_contents("/etc/ttys");
-	$ttys_split = split("\n", $ttys);
+	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
 	foreach($ttys_split as $tty) {
 		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
@@ -1597,6 +1597,7 @@ function update_progress_bar($percent) {
 /* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
 if(!function_exists("split")) {
 	function split($seperator, $haystack, $limit = null) {
+		log_error("deprecated split() call with seperator '{$seperator}'");
 		return preg_split($seperator, $haystack, $limit);
 	}
 }
@@ -1669,11 +1670,11 @@ function update_alias_url_data() {
 			if(file_exists("{$temp_filename}/aliases")) {
 				$file_contents = file_get_contents("{$temp_filename}/aliases");
 				$file_contents = str_replace("#", "\n#", $file_contents);
-				$file_contents_split = split("\n", $file_contents);
+				$file_contents_split = explode("\n", $file_contents);
 				foreach($file_contents_split as $fc) {
 					$tmp = trim($fc);
 					if(stristr($fc, "#")) {
-						$tmp_split = split("#", $tmp);
+						$tmp_split = explode("#", $tmp);
 						$tmp = trim($tmp_split[0]);
 					}
 					if(trim($tmp) <> "") {

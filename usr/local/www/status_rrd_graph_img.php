@@ -127,7 +127,7 @@ foreach($scales as $scalelength => $value) {
 // log_error("start $start, end $end, archivestart $archivestart, average $average, scale $scale, seconds $seconds");
 
 /* Deduce a interface if possible and use the description */
-$curif = split("-", $curdatabase);
+$curif = explode("-", $curdatabase);
 $curif = "$curif[0]";
 $friendly = convert_friendly_interface_to_friendly_descr(strtolower($curif));
 if($friendly == "") {

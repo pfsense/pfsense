@@ -825,7 +825,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	if (is_array($info)) {
 		foreach ($info as $inf) {
 			if (!$show_complete_ou) {
-				$inf_split = split(",", $inf['dn']);
+				$inf_split = explode(",", $inf['dn']);
 				$ou = $inf_split[0];
 				$ou = str_replace("OU=","", $ou);
 				$ou = str_replace("CN=","", $ou);
@@ -852,12 +852,12 @@ function ldap_get_groups($username, $authcfg) {
 		return false;
 
 	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
+		$username_split = explode("\@", $username);
 		$username = $username_split[0];		
 	}
 
 	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
+		$username_split = explode("\\", $username);
 		$username = $username_split[0];        
 	}    
 	
@@ -943,7 +943,7 @@ function ldap_get_groups($username, $authcfg) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($info[0][$ldapgroupattribute] as $member) {
 			if (stristr($member, "CN=") !== false) {
-				$membersplit = split(",", $member);
+				$membersplit = explode(",", $member);
 				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
 			}
 		}
@@ -969,11 +969,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return;
 
 	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
+		$username_split = explode("\@", $username);
 		$username = $username_split[0];        
 	}
 	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
+		$username_split = explode("\\", $username);
 		$username = $username_split[0];        
 	}
 
@@ -1056,7 +1056,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	}
 	
 	/* Get LDAP Authcontainers and split em up. */
-	$ldac_splits = split(";", $ldapauthcont);
+	$ldac_splits = explode(";", $ldapauthcont);
 	
 	/* setup the usercount so we think we havn't found anyone yet */
 	$usercount  = 0;
@@ -1357,7 +1357,7 @@ function session_auth() {
 		/* and destroy it */
 		session_destroy();
 
-		$scriptName = split("/", $_SERVER["SCRIPT_FILENAME"]);
+		$scriptName = explode("/", $_SERVER["SCRIPT_FILENAME"]);
 		$scriptElms = count($scriptName);
 		$scriptName = $scriptName[$scriptElms-1];
 

@@ -56,7 +56,7 @@ if(!function_exists("readline")) {
 
 function more($text, $count=24) {
         $counter=0;
-        $lines = split("\n", $text);
+        $lines = explode("\n", $text);
         foreach($lines as $line) {
                 if($counter > $count) {
                         echo "Press RETURN to continue ...";
@@ -211,7 +211,7 @@ $tccommands[] = "RELENG_1_2";
 while($shell_active == true) {
 	$command = readline("{$g['product_name']} shell: ");
 	readline_add_history($command);
-    $command_split = split(" ", $command);
+    $command_split = explode(" ", $command);
     $first_command = $command_split[0];	
 	if($first_command == "playback" || $first_command == "run") {
 		$playback_file = $command_split[1];
@@ -310,7 +310,7 @@ function str_replace_all($search,$replace,$subject) {
 }
 
 function playback_text($playback_file_contents) {
-	$playback_file_split = split("\n", $playback_file_contents);
+	$playback_file_split = explode("\n", $playback_file_contents);
 	$playback_text  = "require_once('functions.inc');\n";
 	$playback_text .= "require_once('globals.inc');\n";
 	$playback_text .= "require_once('config.inc');\n";

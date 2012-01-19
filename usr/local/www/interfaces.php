@@ -132,7 +132,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 			}
 			log_error("ResetTime:".$resetTime);
 			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
-				$resetTime_a = split(" ", $resetTime);
+				$resetTime_a = explode(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
 				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
 				$pconfig['pppoe_resethour'] = $resetTime_a[1];

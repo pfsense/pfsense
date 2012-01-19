@@ -43,7 +43,7 @@ if($_POST['rssfeed']) {
 
 // Use saved feed and max items
 if($config['widgets']['rssfeed']) 
-	$rss_feed_s = split(",", $config['widgets']['rssfeed']);	
+	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);	
 
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];

@@ -1505,14 +1505,14 @@ function getVolume($ip) {
 	captiveportal_ipfw_set_context($cpzone);
 	exec("/sbin/ipfw table 1 entrystats {$ip}", $ipfwin);
 	if ($ipfwin[0]) {
-		$ipfwin = split(" ", $ipfwin[0]);
+		$ipfwin = explode(" ", $ipfwin[0]);
 		$volume['input_pkts'] = $ipfwin[2];
 		$volume['input_bytes'] = $ipfwin[3];
 	}
 
 	exec("/sbin/ipfw table 2 entrystats {$ip}", $ipfwout);
 	if ($ipfwout[0]) {
-		$ipfwout = split(" ", $ipfwout[0]);
+		$ipfwout = explode(" ", $ipfwout[0]);
 		$volume['output_pkts'] = $ipfwout[2];
 		$volume['output_bytes'] = $ipfwout[3];
 	}

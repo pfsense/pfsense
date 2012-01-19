@@ -125,7 +125,7 @@ if ($_POST && !$input_errors) {
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
-	$field_split = split("->",$field);
+	$field_split = explode("->",$field);
 	foreach ($field_split as $f)
 		$field_conv .= "['" . $f . "']";
 	if($field_conv == "")
@@ -359,7 +359,7 @@ function showchange() {
 		    if($field['bindstofield'] <> "") {
 				$arraynum = "";
 				$field_conv = "";
-				$field_split = split("->", $field['bindstofield']);
+				$field_split = explode("->", $field['bindstofield']);
 				// arraynum is used in cases where there is an array of the same field
 				// name such as dnsserver (2 of them)
 				if($field['arraynum'] <> "")
@@ -855,7 +855,7 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 				foreach ($field['options']['option'] as $opt) {
 					if($opt['enablefields'] <> "") {
 						echo "\t\tcase " . $idcounter . ":\n";
-						$enablefields_split = split(",", $opt['enablefields']);
+						$enablefields_split = explode(",", $opt['enablefields']);
 						foreach ($enablefields_split as $efs) {
 							$fieldname = ereg_replace(" ", "", $efs);
 							$fieldname = strtolower($fieldname);

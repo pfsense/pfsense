@@ -131,7 +131,7 @@ include("head.inc");
 				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . ".cache";
 				$ipaddr = dyndnsCheckIP($if);
 				if(file_exists($filename)) {
-					$cached_ip_s = split(":", file_get_contents($filename));
+					$cached_ip_s = explode(":", file_get_contents($filename));
 					$cached_ip = $cached_ip_s[0];
 					if($ipaddr <> $cached_ip) 
 						echo "<font color='red'>";

@@ -49,7 +49,7 @@ function get_disk_slices($disk) {
 	$slices = str_replace("/dev/", "", $slices);
 	if($slices == "ls: No match.") 
 		return;
-	$slices_array = split(" ", $slices);
+	$slices_array = explode(" ", $slices);
 	return $slices_array;
 }
 

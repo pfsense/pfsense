@@ -126,7 +126,7 @@ function parse_filter_line($line) {
 
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
 
-	$tmp = split("/", $rule);
+	$tmp = explode("/", $rule);
 	$flent['rulenum'] = $tmp[0];
 
 	$proto = array(" ", "(?)");
@@ -144,13 +144,13 @@ function parse_filter_line($line) {
 	} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
 		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
 	}
-	$proto = split(" ", trim($proto[1]));
+	$proto = explode(" ", trim($proto[1]));
 	$flent['proto'] = rtrim($proto[0], ",");
 
 	/* If we're dealing with TCP, try to determine the flags/control bits */
 	$flent['tcpflags'] = "";
 	if ($flent['proto'] == "TCP") {
-		$flags = split('[\, ]', $leftovers);
+		$flags = explode('[\, ]', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	} elseif ($flent['proto'] == "Options") {
 		$flent['proto'] = "none";
@@ -174,21 +174,21 @@ function parse_ipport($addr) {
 	$port = '';
 	if (substr_count($addr, '.') > 1) {
 		/* IPv4 */
-		$addr_split = split("\.", $addr);
+		$addr_split = explode("\.", $addr);
 		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
 
 		if ($ip == "...")
 			return array($addr, '');
 
 		if($addr_split[4] != "") {
-			$port_split = split("\:", $addr_split[4]);
+			$port_split = explode("\:", $addr_split[4]);
 			$port = $port_split[0];
 		}
 	} else {
 		/* IPv6 */
-		$addr = split(" ", $addr);
+		$addr = explode(" ", $addr);
 		$addr = rtrim($addr[0], ":");
-		$addr_split = split("\.", $addr);
+		$addr_split = explode("\.", $addr);
 		if (count($addr_split) > 1) {
 			$ip   = $addr_split[0];
 			$port = $addr_split[1];

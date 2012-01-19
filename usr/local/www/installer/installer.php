@@ -205,16 +205,16 @@ function installer_find_first_disk() {
 
 function pcsysinstall_get_disk_info($diskname) {
 	global $g, $fstype, $savemsg;
-	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
+	$disk = explode("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
-		$disks_info = split(":", $d);
+		$disks_info = explode(":", $d);
 		$tmp_array = array();
 		if($disks_info[0] == $diskname) {
-			$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
-			$disk_info_split = split("=", $disk_info);
+			$disk_info = explode("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
+			$disk_info_split = explode("=", $disk_info);
 			foreach($disk_info as $di) { 
-				$di_s = split("=", $di);
+				$di_s = explode("=", $di);
 				if($di_s[0])
 					$tmp_array[$di_s[0]] = $di_s[1];
 			}
@@ -229,16 +229,16 @@ function pcsysinstall_get_disk_info($diskname) {
 // Return an array with all disks information.
 function installer_find_all_disks() {
 	global $g, $fstype, $savemsg;
-	$disk = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
+	$disk = explode("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-list`);
 	$disks_array = array();
 	foreach($disk as $d) {
 		if(!$d) 
 			continue;
-		$disks_info = split(":", $d);
+		$disks_info = explode(":", $d);
 		$tmp_array = array();
-		$disk_info = split("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
+		$disk_info = explode("\n", `/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh disk-info {$disks_info[0]}`);
 		foreach($disk_info as $di) { 
-			$di_s = split("=", $di);
+			$di_s = explode("=", $di);
 			if($di_s[0])
 				$tmp_array[$di_s[0]] = $di_s[1];
 		}

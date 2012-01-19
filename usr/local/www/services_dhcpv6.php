@@ -133,7 +133,7 @@ $ifcfgsn = get_interface_subnetv6($if);
  */
 
 $dhcrelay_enabled = false;
-$dhcrelaycfg = $config['dhcrelay'];
+$dhcrelaycfg = $config['dhcrelay6'];
 
 if(is_array($dhcrelaycfg)) {
 	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {

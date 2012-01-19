@@ -30,6 +30,7 @@
 
 /* XXX: needs some reducing on include. */
 /* include all configuration functions. */
+require_once("globals.inc");
 require_once("functions.inc");
 require_once("util.inc");
 require_once("notices.inc");

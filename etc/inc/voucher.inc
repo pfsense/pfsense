@@ -647,7 +647,6 @@ function voucher_unlink_db($roll) {
 /* we share the log with captiveportal for now */
 function voucher_log($priority, $message) {
 
-    define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
     syslog($priority, sprintf(gettext("Voucher: %s"),$message));

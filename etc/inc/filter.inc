@@ -331,7 +331,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 */
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-		$line_error = explode("\:", $rules_error);
+		$line_error = explode(":", $rules_error);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))

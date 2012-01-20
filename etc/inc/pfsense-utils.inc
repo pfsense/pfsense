@@ -329,7 +329,7 @@ function get_carp_status() {
 
  */
 function convert_ip_to_network_format($ip, $subnet) {
-	$ipsplit = explode('[.]', $ip);
+	$ipsplit = explode('.', $ip);
 	$string = $ipsplit[0] . "." . $ipsplit[1] . "." . $ipsplit[2] . ".0/" . $subnet;
 	return $string;
 }

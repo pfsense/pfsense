@@ -1876,7 +1876,7 @@ function upgrade_053_to_054() {
 				$gateway_group['item'] = array();
 				$i = 0;
 				foreach($lbpool['servers'] as $member) {
-					$split = explode("\|", $member);
+					$split = explode("|", $member);
 					$interface = $split[0];
 					$monitor = $split[1];
 					/* on static upgraded configuration we automatically prepend GW_ */

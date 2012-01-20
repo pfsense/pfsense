@@ -852,7 +852,7 @@ function ldap_get_groups($username, $authcfg) {
 		return false;
 
 	if(stristr($username, "@")) {
-		$username_split = explode("\@", $username);
+		$username_split = explode("@", $username);
 		$username = $username_split[0];		
 	}
 
@@ -969,7 +969,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return;
 
 	if(stristr($username, "@")) {
-		$username_split = explode("\@", $username);
+		$username_split = explode("@", $username);
 		$username = $username_split[0];        
 	}
 	if(stristr($username, "\\")) {

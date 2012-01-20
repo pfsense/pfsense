@@ -150,7 +150,7 @@ function parse_filter_line($line) {
 	/* If we're dealing with TCP, try to determine the flags/control bits */
 	$flent['tcpflags'] = "";
 	if ($flent['proto'] == "TCP") {
-		$flags = explode('[\, ]', $leftovers);
+		$flags = preg_split('/[, ]/', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	} elseif ($flent['proto'] == "Options") {
 		$flent['proto'] = "none";
@@ -174,21 +174,21 @@ function parse_ipport($addr) {
 	$port = '';
 	if (substr_count($addr, '.') > 1) {
 		/* IPv4 */
-		$addr_split = explode("\.", $addr);
+		$addr_split = explode(".", $addr);
 		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
 
 		if ($ip == "...")
 			return array($addr, '');
 
 		if($addr_split[4] != "") {
-			$port_split = explode("\:", $addr_split[4]);
+			$port_split = explode(":", $addr_split[4]);
 			$port = $port_split[0];
 		}
 	} else {
 		/* IPv6 */
 		$addr = explode(" ", $addr);
 		$addr = rtrim($addr[0], ":");
-		$addr_split = explode("\.", $addr);
+		$addr_split = explode(".", $addr);
 		if (count($addr_split) > 1) {
 			$ip   = $addr_split[0];
 			$port = $addr_split[1];

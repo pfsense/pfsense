@@ -42,6 +42,33 @@
 	pfSense_MODULE:	captiveportal
 */
 
+/**
+ * Get the NAS-IP-Address based on the current wan address
+ *
+ * Use functions in interfaces.inc to find this out
+ *
+ */
+if (!function_exists('getNasIP')) {
+        function getNasIP()
+        {
+                global $config, $cpzone;
+
+                if (empty($config['captiveportal'][$cpzone]['radiussrcip_attribute'])) {
+                                $nasIp = get_interface_ip();
+                } else {
+                        if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute']))
+                                $nasIp = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
+                        else
+                                $nasIp = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
+                }
+
+                if(!is_ipaddr($nasIp))
+                        $nasIp = "0.0.0.0";
+
+                return $nasIp;
+        }
+}
+
 /*
 RADIUS ACCOUNTING START 
 -----------------------
@@ -67,12 +94,9 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
         break;
 
         default:
-	if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
-            $calledstationid = $config['captiveportal']['radiussrcip_attribute'];
-        else
-                $calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
-            $callingstationid = $clientmac;
+	$calledstationid = getNasIP();
         $callingstationid = $clientmac;
+	break;
     }
 
     // Create our instance
@@ -189,8 +213,9 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
         break;
 
         default:
-        $calledstationid = get_interface_ip("wan");
+        $calledstationid = getNasIP();
         $callingstationid = $clientmac;
+	break;
     }
 
     // Create our instance, see if we should use Accounting Interim Updates or Accounting STOP messages

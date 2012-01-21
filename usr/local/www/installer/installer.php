@@ -258,8 +258,9 @@ function update_installer_status() {
 	$status = `cat /tmp/.pc-sysinstall/pc-sysinstall.log`;
 	$status = str_replace("\n", "\\n", $status);
 	$status = str_replace("\n", "\\r", $status);
-	echo "this.document.forms[0].installeroutput.value='$status';\n";
-	echo "this.document.forms[0].installeroutput.scrollTop = this.document.forms[0].installeroutput.scrollHeight;\n";	
+	$status = str_replace("'", "\\'", $status);
+	echo "document.forms[0].installeroutput.value='$status';\n";
+	echo "document.forms[0].installeroutput.scrollTop = document.forms[0].installeroutput.scrollHeight;\n";	
 	// Find out installer progress
 	$progress = "5";
 	if(strstr($status, "Running: dd")) 
@@ -319,8 +320,8 @@ function update_installer_status() {
 	// Check for error and bail if we see one.
 	if(stristr($status, "error")) {
 		$error = true;
-		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href=\"/installer\">Back</a> to webInstaller'; ";
-		echo "\$('progressbar').style.width='100%';\n";
+		echo "\$('#installerrunning').html('<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"2\"><b>An error occurred.  Aborting installation.  <a href=\"/installer\">Back</a> to webInstaller'); ";
+		echo "\$('#progressbar').css('width','100%');\n";
 		unlink_if_exists("/tmp/install_complete");
 		return;
 	}
@@ -328,7 +329,7 @@ function update_installer_status() {
 	if($installer_running <> "running") {
 		$ps_running = exec("/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep 'sh /tmp/installer.sh'");
 		if($ps_running)	{
-			$running = "\$('installerrunning').innerHTML='<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'; ";
+			$running = "\$('#installerrunning').html('<table><tr><td valign=\"middle\"><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\"></td><td valign=\"middle\">&nbsp;<font size=\"2\"><b>Installer running ({$progress}% completed)...</td></tr></table>'); ";
 			if($running_old <> $running) {
 				echo $running;
 				file_put_contents("/tmp/installer_installer_running", "$running");			
@@ -336,10 +337,10 @@ function update_installer_status() {
 		}
 	}
 	if($progress) 
-		echo "\$('progressbar').style.width='{$progress}%';\n";
+		echo "\$('#progressbar').css('width','{$progress}%');\n";
 	if(file_exists("/tmp/install_complete")) {
-		echo "\$('installerrunning').innerHTML='<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"/reboot.php\">reboot</a> to continue';\n";
-		echo "\$('pbdiv').Fade();\n";
+		echo "\$('#installerrunning').html('<img class=\"infoboxnpimg\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\"> <font size=\"+1\">Installation completed.  Please <a href=\"/reboot.php\">reboot</a> to continue');\n";
+		echo "\$('#pbdiv').fadeOut();\n";
 		unlink_if_exists("/tmp/installer.sh");
 		file_put_contents("/tmp/installer_installer_running", "finished");
 	}
@@ -348,7 +349,7 @@ function update_installer_status() {
 function update_installer_status_win($status) {
 	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
-	echo "	\$('installeroutput').value = '" . str_replace(htmlentities($status), "\n", "") . "';\n";
+	echo "	\$('#installeroutput').val('" . str_replace(htmlentities($status), "\n", "") . "');\n";
 	echo "</script>\n";
 }
 
@@ -410,8 +411,8 @@ function body_html() {
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-	<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
 	<script type="text/javascript">
 		function getinstallerprogress() {
 			url = '/installer/installer.php';
@@ -419,12 +420,12 @@ function body_html() {
 			callajax(url, pars, installcallback);
 		}
 		function callajax(url, pars, activitycallback) {
-			var myAjax = new Ajax.Request(
+			jQuery.ajax(
 				url,
 				{
-					method: 'post',
-					parameters: pars,
-					onComplete: activitycallback
+					type: 'post',
+					data: pars,
+					complete: activitycallback
 				});
 		}
 		function installcallback(transport) {
@@ -773,77 +774,77 @@ function installer_custom() {
 				{$disk_sizes_js_txt}
 				// Run through all rows and process data
 				for(var x = 0; x<99; x++) { //optimize me better
-					if(\$('fstype' + x)) {
-						if(\$('size' + x).value == '')
-							\$('size' + x).value = disk_sizes[\$('disk' + x).value];
-						var fstype = \$F('fstype' + x);
+					if(\$('#fstype' + x).length) {
+						if(\$('#size' + x).val() == '')
+							\$('#size' + x).val(disk_sizes[\$('disk' + x).value]);
+						var fstype = \$('#fstype' + x).val();
 						if(fstype.substring(fstype.length - 4) == ".eli") {
-							\$('encpass' + x).disabled = 0;
+							\$('#encpass' + x).prop('disabled',false);
 							if(!encryption_warning_shown) {
 								alert('NOTE: If you define a disk encryption password you will need to enter it on *EVERY* bootup!');
 								encryption_warning_shown = true;
 							}
 						} else { 
-							\$('encpass' + x).disabled = 1;
+							\$('#encpass' + x).prop('disabled',true);
 						}
 					}
 					// Calculate size allocations
-					if(\$('size' + x)) {
-						if(parseInt($('size' + x).value) > 0)
-							totalsize += parseInt($('size' + x).value);
+					if(\$('#size' + x).length) {
+						if(parseInt($('#size' + x).val()) > 0)
+							totalsize += parseInt($('#size' + x).val());
 					}
 				}
 				// If the totalsize element exists, set it and disable
-				if(\$('totalsize')) {
-					if(\$('totalsize').value != totalsize) {
+				if(\$('#totalsize').length) {
+					if(\$('#totalsize').val() != totalsize) {
 						// When size allocation changes, draw attention.
- 						new Effect.Highlight('totalsize');
-						\$('totalsize').value = totalsize;
+ 						jQuery('#totalsize').effect('highlight');
+						\$('#totalsize').val(totalsize);
 					}
-					\$('totalsize').disabled = 1;
+					\$('#totalsize').prop('disabled',true);
 				}
-				if(\$('disktotals')) {
+				if(\$('#disktotals').length) {
 					var disks_seen = new Array();
 					var tmp_sizedisks = 0;
 					var disksseen = 0;
 					for(var xx = 0; xx<99; xx++) {
-						if(\$('disk' + xx)) {
-							if(!disks_seen.in_array(\$('disk' + xx).value)) {
-								tmp_sizedisks += parseInt(disk_sizes[\$('disk' + xx).value]);
-								disks_seen[disksseen] = \$('disk' + xx).value;
+						if(\$('#disk' + xx).length) {
+							if(!disks_seen.in_array(\$('#disk' + xx).val())) {
+								tmp_sizedisks += parseInt(disk_sizes[\$('#disk' + xx).val()]);
+								disks_seen[disksseen] = \$('#disk' + xx).val();
 								disksseen++;
 							}
 						}
-					\$('disktotals').value = tmp_sizedisks;
-					\$('disktotals').disabled = 1;
-					\$('disktotals').setStyle({color:'#000000'});
-					var remaining = parseInt(\$('disktotals').value) - parseInt(\$('totalsize').value);
+					\$('#disktotals').val(tmp_sizedisks);
+					\$('#disktotals').prop('disabled',true);
+					\$('#disktotals').css('color','#000000');
+					var remaining = parseInt(\$('#disktotals').val()) - parseInt(\$('#totalsize').val());
 						if(remaining == 0) {
-							if(\$('totalsize'))
-								\$('totalsize').setStyle({
-									background:'#00FF00',
-									color:'#000000'
+							if(\$('#totalsize').length)
+								\$('#totalsize').css({
+									'background':'#00FF00',
+									'color':'#000000'
 								});
 						} else {
-							if(\$('totalsize'))
-								\$('totalsize').setStyle({
-									background:'#FFFFFF',
-									color:'#000000'
+							if(\$('#totalsize').length)
+								\$('#totalsize').css({
+									'background':'#FFFFFF',
+									'color':'#000000'
 								});
 						}
-						if(parseInt(\$('totalsize').value) > parseInt(\$('disktotals').value)) {
-							if(\$('totalsize'))
-								\$('totalsize').setStyle({
-									background:'#FF0000',
-									color:'#000000'
+						if(parseInt(\$('#totalsize').val()) > parseInt(\$('#disktotals').val())) {
+							if(\$('#totalsize'))
+								\$('#totalsize').css({
+									'background':'#FF0000',
+									'color':'#000000'
 								});							
 						}
-						if(\$('availalloc')) {
-							\$('availalloc').disabled = 1;
-							\$('availalloc').value = remaining;
-								\$('availalloc').setStyle({
-									background:'#FFFFFF',
-									color:'#000000'
+						if(\$('#availalloc').length) {
+							\$('#availalloc').prop('disabled',true);
+							\$('#availalloc').val(remaining);
+								\$('#availalloc').css({
+									'background':'#FFFFFF',
+									'color':'#000000'
 								});							
 						}
 					}
@@ -1016,7 +1017,7 @@ EOF;
 												<tr>
 													<td colspan='4'>
 													<script type="text/javascript">
-														\$('loadingdiv').style.visibility='hidden';
+														\$('#loadingdiv').css('visibility','hidden');
 													</script>
 													<div id='contentdiv' style="display:none;">
 														<p/>
@@ -1027,7 +1028,7 @@ EOF;
 													</div>
 													<script type="text/javascript">
 														var encryption_warning_shown = false;
-														\$('contentdiv').appear();
+														\$('#contentdiv').fadeIn();
 														row_helper_dynamic_custom();
 													</script>
 												</center>

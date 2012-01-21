@@ -117,8 +117,8 @@ function display_error_form($http_code, $desc) {
 		<!--
 			function page_load() {}
 			function clearError() {
-				if($('inputerrors'))
-				$('inputerrors').innerHTML='';
+				if($('#inputerrors'))
+				$('#inputerrors').html('');
 			}
 			<?php
 				require("headjs.php");
@@ -221,8 +221,8 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		<!--
 			function page_load() {}
 			function clearError() {
-				if($('inputerrors'))
-				$('inputerrors').innerHTML='';
+				if($('#inputerrors'))
+				$('#inputerrors').html('');
 			}
 			<?php
 				require("headjs.php");

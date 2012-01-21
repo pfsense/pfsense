@@ -1585,10 +1585,12 @@ function filter_nat_rules_generate() {
 				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
-					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
-					$natrules .= "\n";
-					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
-					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+					if(!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
+						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+						$natrules .= "\n";
+						$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+					}
 				}
 				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";

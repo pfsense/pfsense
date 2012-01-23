@@ -396,12 +396,13 @@ function local_user_set(& $user) {
 	}
 
 	/* read from pw db */
-	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
+	$fd = popen("/usr/sbin/pw usershow -n {$user_name} 2>&1", "r");
 	$pwread = fgets($fd);
 	pclose($fd);
+	$userattrs = explode(":", trim($pwread));
 
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3)) {
+	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
 		$user_op = "useradd -m -k /etc/skel -o";
 	} else {
 		$user_op = "usermod";
@@ -454,8 +455,19 @@ function local_user_del($user) {
 	if ($user['uid'] != 0)
 		$rmhome = "-r";
 
+	/* read from pw db */
+	$fd = popen("/usr/sbin/pw usershow -n {$user['name']} 2>&1", "r");
+	$pwread = fgets($fd);
+	pclose($fd);
+	$userattrs = explode(":", trim($pwread));
+
+	if ($userattrs[0] != $user['name']) {
+		log_error("Tried to remove user {$user['name']} but got user {$userattrs[0]} instead. Bailing.");
+		return;
+	}
+
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel {$user['name']} {$rmhome}";
+	$cmd = "/usr/sbin/pw userdel -n {$user['name']} {$rmhome}";
 
 	if($debug)
 		log_error("Running: {$cmd}");

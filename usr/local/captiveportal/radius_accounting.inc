@@ -51,15 +51,15 @@
 if (!function_exists('getNasIP')) {
         function getNasIP()
         {
-                global $config, $cpzone;
+                global $config;
 
-                if (empty($config['captiveportal'][$cpzone]['radiussrcip_attribute'])) {
+                if (empty($config['captiveportal']['radiussrcip_attribute'])) {
                                 $nasIp = get_interface_ip();
                 } else {
-                        if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute']))
-                                $nasIp = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
+                        if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
+                                $nasIp = $config['captiveportal']['radiussrcip_attribute'];
                         else
-                                $nasIp = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
+                                $nasIp = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
                 }
 
                 if(!is_ipaddr($nasIp))

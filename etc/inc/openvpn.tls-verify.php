@@ -70,7 +70,7 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 }
 
 // Debug
-syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
+//syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
 
 exit(0);
 

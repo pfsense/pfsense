@@ -1278,7 +1278,8 @@ function services_dnsmasq_configure() {
 	}
 
 	/* kill any running dnsmasq */
-	sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
+	if (file_exists("{$g['varrun_path']}/dnsmasq.pid"))
+		sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
 
 	if (isset($config['dnsmasq']['enable'])) {
 

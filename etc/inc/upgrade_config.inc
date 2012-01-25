@@ -1558,7 +1558,7 @@ function upgrade_051_to_052() {
 			$server['dh_length'] = 1024;
 			unset($server['dh_params']);
 			if (!$server['interface'])
-				$server['interface'] = 'wan';
+				$server['interface'] = 'any';
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
 			if (isset($server['use_lzo'])) {

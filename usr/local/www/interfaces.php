@@ -1729,7 +1729,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="78%" class="vtable">
 											<input name="prefix-6rd" type="text" class="formfld unknown" id="prefix-6rd" size="40" value="<?=htmlspecialchars($pconfig['prefix-6rd']);?>">
 											<br>
-											<?=gettext("The value in this field is 6RD prefix assigned by your ISP") ?><br />
+											<?=gettext("The value in this field is the 6RD IPv6 prefix assigned by your ISP. e.g. '2001:db8::/32'") ?><br />
 										</td>
 									</tr>
 									<tr>
@@ -1737,7 +1737,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="78%" class="vtable">
 											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>">
 											<br>
-											<?=gettext("The value in this field is 6RD gateway assigned by your ISP") ?><br />
+											<?=gettext("The value in this field is 6RD IPv4 gateway address assigned by your ISP") ?><br />
 										</td>
 									</tr>
 									<tr>

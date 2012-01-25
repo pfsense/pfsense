@@ -1561,7 +1561,7 @@ function upgrade_051_to_052() {
 				$server['interface'] = 'any';
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
-			if (isset($server['use_lzo'])) {
+			if (isset($server['use_lzo']) && ($server['use_lzo'] == "on")) {
 				$server['compression'] = "on";
 				unset($server['use_lzo']);
 			}
@@ -1714,7 +1714,7 @@ function upgrade_051_to_052() {
 			unset($client['serverport']);
 			$client['proxy_addr'] = $client['poxy_hostname'];
 			unset($client['proxy_addr']);
-			if (isset($client['use_lzo'])) {
+			if (isset($client['use_lzo']) && ($client['use_lzo'] == "on")) {
 				$client['compression'] = "on";
 				unset($client['use_lzo']);
 			}

@@ -287,13 +287,9 @@ function local_sync_accounts() {
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":",fgets($fd));
-			if (!strncmp($line[0], "_", 1))
+			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin"))
 				continue;
-			if ($line[2] < 2000)
-				continue;
-			if ($line[2] > 65000)
-				continue;
-			$cmd = "/usr/sbin/pw userdel {$line[2]}";
+			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
 			if($debug)
 				log_error("Running: {$cmd}");
 			mwexec($cmd);

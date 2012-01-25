@@ -1572,10 +1572,23 @@ function upgrade_051_to_052() {
 			unset($server['nopool']);
 			$server['dns_domain'] = $server['dhcp_domainname'];
 			unset($server['dhcp_domainname']);
-			$server['dns_server1'] = $server['dhcp_dns'];
+
+			$tmparr = explode(";", $server['dhcp_dns'], 4);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["dns_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_dns']);
-			$server['ntp_server1'] = $server['dhcp_ntp'];
+
+			$tmparr = explode(";", $server['dhcp_ntp'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["ntp_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_ntp']);
+
 			if ($server['dhcp_nbtdisable'])
 				$server['netbios_enable'] = false;
 			else
@@ -1585,9 +1598,21 @@ function upgrade_051_to_052() {
 			unset($server['dhcp_nbttype']);
 			$server['netbios_scope'] = $server['dhcp_nbtscope'];
 			unset($server['dhcp_nbtscope']);
-			$server['nbdd_server1'] = $server['dhcp_nbdd'];
+
+			$tmparr = explode(";", $server['dhcp_nbdd'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["nbdd_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_nbdd']);
-			$server['wins_server1'] = $server['dhcp_wins'];
+
+			$tmparr = explode(";", $server['dhcp_wins'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["wins_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_wins']);
 
 			if (!empty($server['disable']))
@@ -1755,10 +1780,23 @@ function upgrade_051_to_052() {
 			unset($csc['ifconfig_push']);
 			$csc['dns_domain'] = $csc['dhcp_domainname'];
 			unset($csc['dhcp_domainname']);
-			$csc['dns_server1'] = $csc['dhcp_dns'];
+
+			$tmparr = explode(";", $csc['dhcp_dns'], 4);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["dns_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_dns']);
-			$csc['ntp_server1'] = $csc['dhcp_ntp'];
+
+			$tmparr = explode(";", $csc['dhcp_ntp'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["ntp_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_ntp']);
+
 			if ($csc['dhcp_nbtdisable'])
 				$csc['netbios_enable'] = false;
 			else
@@ -1768,9 +1806,21 @@ function upgrade_051_to_052() {
 			unset($csc['dhcp_nbttype']);
 			$csc['netbios_scope'] = $csc['dhcp_nbtscope'];
 			unset($csc['dhcp_nbtscope']);
-			$csc['nbdd_server1'] = $csc['dhcp_nbdd'];
+
+			$tmparr = explode(";", $csc['dhcp_nbdd'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["nbdd_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_nbdd']);
-			$csc['wins_server1'] = $csc['dhcp_wins'];
+
+			$tmparr = explode(";", $csc['dhcp_wins'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["wins_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_wins']);
 
 			if (!empty($csc['disable']))

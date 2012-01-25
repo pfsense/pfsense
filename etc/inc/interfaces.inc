@@ -2936,6 +2936,43 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	return 0;
 }
 
+function interface_6rd_configure($interface = "wan"){
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	/* because this is a tunnel interface we can only function 
+	 *	with a public IPv4 address on the interface */
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		// return false;
+	}
+
+	/* setup the stf interface */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$wancfg['prefix-6rd']}");
+
+	/* Example 6RD setup steps
+		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
+		# ifconfig fxp1 inet 192.0.2.2/24
+		# ifconfig stf0 create
+		# ifconfig stf0 inet6 2001:db8:c000:0202::/32
+		# route add -inet6 default 2001:db8:c000:0201::1
+	*/
+	
+	return 0;
+
+}
+
 function interface_dhcpv6_configure($interface = "wan") {
 	global $config, $g;
 	$iflist = get_configured_interface_with_descr(false, true);

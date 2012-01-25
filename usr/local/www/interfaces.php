@@ -235,6 +235,7 @@ switch($wancfg['ipaddrv6']) {
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
 			$pconfig['dhcp6-pd-sla-id'] = $wancfg['dhcp6-pd-sla-id'];
+			$pconfig['prefix-6rd-id'] = $wancfg['prefix-6rd-id'];
 		} else
 			$pconfig['type6'] = "none";
 		break;
@@ -638,6 +639,7 @@ if ($_POST['apply']) {
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-len']);
 		unset($wancfg['gateway-6rd']);
+		unset($wancfg['prefix-6rd-id']);
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -788,6 +790,7 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
 				$wancfg['dhcp6-pd-sla-id'] = $_POST['dhcp6-pd-sla-id'];
+				$wancfg['prefix-6rd-id'] = $_POST['prefix-6rd-id'];
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -1603,7 +1606,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation ID"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="dhcp6-pd-sla-id" class="formselect" id="dhcp6-pd-sla-id">
-												<option value="none" selected><?=gettext("None"); ?></option>
 												<?php
 												// Needs to check if the ID is not used on another interface
 												foreach($ifdescrs as $pdif => $pddescr) {
@@ -1612,16 +1614,49 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														continue;
 													}
 												}
+												
+												if($pconfig['dhcp6-pd-sla-id'] == "none")
+													$selected = "selected";
+												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
 												$numbers = pow(2, $pdlen);
 												for($i = 0;$i < $numbers; $i++) {
 													echo "<option value=\"{$i}\" ";
-													if ($i == $pconfig['dhcp6-pd-sla-id'])
+													if ("$i" == $pconfig['dhcp6-pd-sla-id']) {
 														echo "selected";
+													}
 													echo ">" . dechex($i) . "</option>";
 												}
 												?> 
 											</select>
 											<?=gettext("This ID sets the delegated DHCP-PD prefix number which will be used to setup the interface.");?>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Rapid Deployment network ID"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="prefix-6rd-id" class="formselect" id="prefix-6rd-id">
+												<?php
+												// Needs to check if the ID is not used on another interface
+												foreach($ifdescrs as $rdif => $rddescr) {
+													if(is_numeric($config['interfaces'][$rdif]['prefix-6rd-len'])) {
+														$rdlen = $config['interfaces'][$rdif]['prefix-6rd-len'];
+														continue;
+													}
+												}
+												if($pconfig['prefix-6rd-id'] == "none")
+													$selected = "selected";
+												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
+												$numbers = pow(2, $rdlen);
+												for($i = 0;$i < $numbers; $i++) {
+													echo "<option value=\"{$i}\" ";
+													if ("$i" == $pconfig['prefix-6rd-id']) {
+														echo "selected";
+													}
+													echo ">" . dechex($i) . "</option>";
+												}
+												?> 
+											</select>
+											<?=gettext("This ID sets the 6RD network prefix which will be used to setup the interface.");?>
 										</td>
 									</tr>
 								</table>

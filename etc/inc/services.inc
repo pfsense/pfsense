@@ -91,6 +91,8 @@ EOD;
 	/* Process all links which need the router advertise daemon */
 	$rtadvdnum = 0;
 	$rtadvdifs=array();
+
+	/* handle manually configured DHCP6 settings first */
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
@@ -155,6 +157,7 @@ EOD;
 		$rtadvdnum++;
 	}
 
+	/* handle DHCP-PD prefixes */
 	foreach ($Iflist as $if => $ifdescr) {
 		if(!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id']))
 			continue;
@@ -182,6 +185,77 @@ EOD;
 			$rtadvdconf .= "\t:rtltime=60:\\\n";
 			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
 			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
+			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
+			if (isset($config['dnsmasq']['enable'])) {
+				$dnslist[] = get_interface_ipv6($dhcpv6if);
+			} elseif (!empty($config['system']['dnsserver'][0])) {
+				foreach($config['system']['dnsserver'] as $server) {
+					if(is_ipaddrv6($server))
+						$dnslist[] = $server;
+				}
+			}
+			if(!empty($dnslist)) {
+				$dnsstring = implode(",", $dnslist);
+				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
+			}
+			$rtadvdconf .= "\t:tc=ether:\\\n";
+			$rtadvdconf .= "\n\n"; 
+			$rtadvdnum++;
+		}
+	}
+
+	/* Handle 6RD prefix assignment */
+	foreach ($Iflist as $if => $ifdescr) {
+		if(!is_numeric($config['interfaces'][$if]['prefix-6rd-id']))
+			continue;
+
+		echo "rtadvd config for {$if}\n";
+
+		$realif = get_real_interface($if);
+		/* prevent duplicate entries */
+		if(in_array($realif, $rtadvdifs))
+			continue;
+
+		$rtadvdifs[] = $realif;
+		
+		/* find the interface which has the 6RD prefix defined and it's IPv4 address */
+		foreach($Iflist as $rdif => $rdifdescr) {
+			if($config['interfaces'][$rdif]['ipaddrv6'] == "6rd") {
+				$realrdif = get_real_interface("$rdif");
+				$ip4address = find_interface_ip($realrdif);
+				echo "rtadvd config found 6RD if {$rdif} address {$ip4address}\n";
+				if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+					log_error("The interface IPv4 '{$ip4address}' address on interface '{$rdif}' is not public, not configuring 6RD prefix on {$if}");
+					// continue;
+				}
+				/* calculate the IPv6 prefix from the public IPv4 address */
+				$ip4arr = explode(".", $ip4address);
+				$rd6prefix = explode("/", $config['interfaces'][$rdif]['prefix-6rd']);
+				$rd6prefix = explode(":", $rd6prefix[0]);
+				if($config['interfaces'][$rdif]['prefix-6rd-len'] == 0) {
+					$rd6lanprefixlen = 64;
+				} else {
+					log_error("We only support a 64 bit subnet currently");
+					continue;
+				}
+				$rd6lanprefix = sprintf("{$rd6prefix[0]}:{$rd6prefix[1]}:%02x%02x:%02x%02x::", $ip4arr[0], $ip4arr[1], $ip4arr[2], $ip4arr[3]);
+				$subnetv6 = "{$rd6lanprefix}/{$rd6lanprefixlen}";
+				// mwexec("/sbin/ifconfig {$realif} inet6 {$rd6lanprefix}1 prefixlen {$rd6lanprefixlen}");
+			}
+		}
+
+
+		$dnslist = array();
+		if(is_ipaddrv6($subnetv6)) {
+			$rtadvdconf .= "# Generated for 6RD on $if\n";
+			$rtadvdconf .= "{$realif}:\\\n";
+			/* use lower timers for 6RD prefixes */
+			$rtadvdconf .= "\t:pltime=60:\\\n";
+			$rtadvdconf .= "\t:pltime=120:\\\n";
+			$rtadvdconf .= "\t:vltime=180:\\\n";
+			$rtadvdconf .= "\t:rtltime=60:\\\n";
+			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
+			$rtadvdconf .= "\t:prefixlen#{$rd6lanprefixlen}:\\\n";
 			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
 			if (isset($config['dnsmasq']['enable'])) {
 				$dnslist[] = get_interface_ipv6($dhcpv6if);

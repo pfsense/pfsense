@@ -2953,7 +2953,7 @@ function interface_6rd_configure($interface = "wan"){
 	$ip4address = find_interface_ip($wanif);
 	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
-		// return false;
+		return false;
 	}
 
 	/* setup the stf interface */

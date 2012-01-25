@@ -240,7 +240,7 @@ switch($wancfg['ipaddrv6']) {
 		break;
 }
 
-print_r($pconfig);
+// print_r($pconfig);
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);

@@ -3010,7 +3010,6 @@ function interface_dhcpv6_configure($interface = "wan") {
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
 	if(!empty($out)) {
-		echo "Output from rtsol {$wanif}\n";
 		foreach($out as $line) {
 			if(stristr($line, "received")) {
 				$parts = explode(" ", $line);

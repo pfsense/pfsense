@@ -237,10 +237,10 @@ function GraphDraw(graph) {
 			return (h - Math.round((h - v) * s)) + 'px';
 		}
 
-	Element.hide(graph['spans'][count - 1]);
+	graph['spans'][count - 1].css("display", "none");
 
 	for(var i = 0; i < count; i++)
-		graph['spans'][i].style.marginTop = getMargin(i);
+		graph['spans'][i].css("marginTop", getMargin(i));
 
 //	jQuery('#' + graph['spans'][count - 1]).fadeIn(500);
 }

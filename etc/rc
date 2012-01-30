@@ -80,6 +80,9 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 	fi
 fi
 
+# Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
+/etc/rc.disable_hdd_apm
+
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -fy
 if grep -q cf /etc/fstab; then

@@ -168,38 +168,39 @@ function vpn_ipsec_configure($ipchg = false)
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
 				/* step through each phase2 entry */
-				foreach ($a_phase2 as $ph2ent) {
+				if (is_array($a_phase2)) {
+					foreach ($a_phase2 as $ph2ent) {
 
-					$ikeid = $ph2ent['ikeid'];
+						$ikeid = $ph2ent['ikeid'];
 
-					if (isset($ph2ent['disabled']))
-						continue;
+						if (isset($ph2ent['disabled']))
+							continue;
 
-					if ($ikeid != $ph1ent['ikeid'])
-						continue;
+						if ($ikeid != $ph1ent['ikeid'])
+							continue;
 
-					/* add an ipsec pinghosts entry */
-					if ($ph2ent['pinghost']) {
-						$iflist = get_configured_interface_list();
-						foreach ($iflist as $ifent => $ifname) {
-							$interface_ip = get_interface_ip($ifent);
-							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-							if (ip_in_subnet($interface_ip, $local_subnet)) {
-								$srcip = $interface_ip;
-								break;
+						/* add an ipsec pinghosts entry */
+						if ($ph2ent['pinghost']) {
+							$iflist = get_configured_interface_list();
+							foreach ($iflist as $ifent => $ifname) {
+								$interface_ip = get_interface_ip($ifent);
+								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+								if (ip_in_subnet($interface_ip, $local_subnet)) {
+									$srcip = $interface_ip;
+									break;
+								}
 							}
+							$dstip = $ph2ent['pinghost'];
+							if (is_ipaddr($srcip))
+								$ipsecpinghosts .= "{$srcip}|{$dstip}|3\n";
 						}
-						$dstip = $ph2ent['pinghost'];
-						if (is_ipaddr($srcip))
-							$ipsecpinghosts .= "{$srcip}|{$dstip}|3\n";
+					}
+					$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "w");
+					if ($pfd) {
+						fwrite($pfd, $ipsecpinghosts);
+						fclose($pfd);
 					}
 				}
-				$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "w");
-				if ($pfd) {
-					fwrite($pfd, $ipsecpinghosts);
-					fclose($pfd);
-				}
-				
 			}
 		}
 

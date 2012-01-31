@@ -170,55 +170,54 @@ function vpn_ipsec_configure($ipchg = false)
 				}
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
-				/* step through each phase2 entry */
-				foreach ($a_phase2 as $ph2ent) {
+				if (is_array($a_phase2)) {
+					/* step through each phase2 entry */
+					foreach ($a_phase2 as $ph2ent) {
+						$ikeid = $ph2ent['ikeid'];
 
-					$ikeid = $ph2ent['ikeid'];
+						if (isset($ph2ent['disabled']))
+							continue;
 
-					if (isset($ph2ent['disabled']))
-						continue;
+						if ($ikeid != $ph1ent['ikeid'])
+							continue;
 
-					if ($ikeid != $ph1ent['ikeid'])
-						continue;
-
-					$ph2ent['localid']['mode'] = $ph2ent['mode'];
-					/* add an ipsec pinghosts entry */
-					if ($ph2ent['pinghost']) {
-						$iflist = get_configured_interface_list();
-						foreach ($iflist as $ifent => $ifname) {
-							if(is_ipaddrv6($ph2ent['pinghost'])) {
-								$interface_ip = get_interface_ipv6($ifent);
-								if(!is_ipaddrv6($interface_ip))
-									continue;
-								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-								if (ip_in_subnet($interface_ip, $local_subnet)) {
-									$srcip = $interface_ip;
-									break;
-								}
-							} else {
-								$interface_ip = get_interface_ip($ifent);
-								if(!is_ipaddrv4($interface_ip))
-									continue;
-								$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-								if (ip_in_subnet($interface_ip, $local_subnet)) {
-									$srcip = $interface_ip;
-									break;
+						$ph2ent['localid']['mode'] = $ph2ent['mode'];
+						/* add an ipsec pinghosts entry */
+						if ($ph2ent['pinghost']) {
+							$iflist = get_configured_interface_list();
+							foreach ($iflist as $ifent => $ifname) {
+								if(is_ipaddrv6($ph2ent['pinghost'])) {
+									$interface_ip = get_interface_ipv6($ifent);
+									if(!is_ipaddrv6($interface_ip))
+										continue;
+									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+									if (ip_in_subnet($interface_ip, $local_subnet)) {
+										$srcip = $interface_ip;
+										break;
+									}
+								} else {
+									$interface_ip = get_interface_ip($ifent);
+									if(!is_ipaddrv4($interface_ip))
+										continue;
+									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+									if (ip_in_subnet($interface_ip, $local_subnet)) {
+										$srcip = $interface_ip;
+										break;
+									}
 								}
 							}
+							$dstip = $ph2ent['pinghost'];
+							if(is_ipaddrv6($dstip)) {
+								$family = "inet6";
+							} else {
+								$family = "inet";
+							}
+							if (is_ipaddr($srcip))
+								$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
 						}
-						$dstip = $ph2ent['pinghost'];
-						if(is_ipaddrv6($dstip)) {
-							$family = "inet6";
-						} else {
-							$family = "inet";
-						}
-						if (is_ipaddr($srcip))
-							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
-
 					}
+					file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
 				}
-				file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
-				
 			}
 		}
 

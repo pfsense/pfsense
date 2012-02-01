@@ -193,6 +193,7 @@ switch($wancfg['ipaddr']) {
 		$pconfig['type'] = "dhcp";
 		break;
 	case "carpdev-dhcp":
+
 		$pconfig['ipaddr'] = "";
 		break;
 	case "pppoe":
@@ -561,7 +562,9 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$reqdfields = explode(" ", "mode ssid");
+		$reqdfields = "mode";
+		if($_POST['mode'] == 'hostap') { $reqdfields += " ssid"; }
+		$reqdfields = explode(" ", $reqdfields);
 		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
@@ -649,6 +652,7 @@ if ($_POST['apply']) {
 		if (isset($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
+
 
 		unset($wancfg['remote']);
 		unset($a_ppps[$pppid]['apn']);
@@ -1141,18 +1145,26 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 	function show_reset_settings(reset_type) {
 		if (reset_type == 'preset') {
+
+
 			jQuery('#pppoepresetwrap').show();
 			jQuery('#pppoecustomwrap').hide();
 		}
 		else if (reset_type == 'custom') {
+
+
 			jQuery('#pppoecustomwrap').show();
 			jQuery('#pppoepresetwrap').hide();
 		} else {
+
+
 			jQuery('#pppoecustomwrap').hide();
 			jQuery('#pppoepresetwrap').hide();
 		}
 	}
 	function show_mon_config() {
+
+
 		jQuery("#showmonbox").html('');
 		jQuery('#showmon').css('display','block');
 	}
@@ -1165,6 +1177,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			return true;
 	}
 	function country_list() {
+
+
 		jQuery('#country').children().remove();
 		jQuery('#provider').children().remove();
 		jQuery('#providerplan').children().remove();
@@ -1185,6 +1199,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	}
 
 	function providers_list() {
+
 		jQuery('#provider').children().remove();
 		jQuery('#providerplan').children().remove();
 		jQuery.ajax("getserviceproviders.php",{
@@ -1480,6 +1495,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
+
 
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
@@ -2289,6 +2305,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
 							<td class="vtable">
 								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
+								<br/>
+								<?=gettext("Note: Only required in Access Point mode. If left blank in Ad-hoc or Infrastructure mode, this interface will connect to any available SSID"); ?>
 							</td>
 						</tr>
 						<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
@@ -2646,13 +2664,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			var descr = jQuery('#gatewaydescr').val();
 			gatewayip = jQuery('#gatewayip').val();
 
+
 			var defaultgw = jQuery('#defaultgw').val();
 			var url = "system_gateways_edit.php";
 			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+
 			jQuery.ajax(
 				url,
 				{
 					type: 'post',
+
 					data: pars,
 					error: report_failure,
 					complete: save_callback
@@ -2708,6 +2729,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			if(response) {
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
+
 				jQuery('#status').html('');
 				var gwtext = escape(name) + " - " + gatewayip;
 				addOption(jQuery('#gateway'), gwtext, name);

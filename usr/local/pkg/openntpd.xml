@@ -17,7 +17,7 @@
 			<default_value>lan</default_value>
 			<multiple/>
 			<type>select_source</type>
-			<source><![CDATA[openntpd_get_listen_ips()]]></source>
+			<source><![CDATA[get_possible_listen_ips()]]></source>
 			<source_name>name</source_name>
 			<source_value>value</source_value>
 

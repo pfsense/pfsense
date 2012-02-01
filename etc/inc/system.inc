@@ -1552,7 +1552,7 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
-function openntpd_get_listen_ips() {
+function get_possible_listen_ips() {
 	$interfaces = get_configured_interface_with_descr();
 	$carplist = get_configured_carp_interface_list();
 	$listenips = array();

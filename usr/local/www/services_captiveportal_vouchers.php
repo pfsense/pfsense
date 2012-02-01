@@ -225,6 +225,13 @@ if ($_POST) {
 			$newvoucher['enable'] = true;
 		else
 			unset($newvoucher['enable']);
+			
+			// Always write these; otherwise we can never disable voucher sync
+		$config['voucher']['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
+		$config['voucher']['vouchersyncport'] = $_POST['vouchersyncport'];
+		$config['voucher']['vouchersyncusername'] = $_POST['vouchersyncusername'];
+		$config['voucher']['vouchersyncpass'] = $_POST['vouchersyncpass'];
+		
 		if (empty($_POST['vouchersyncusername'])) {
 			$newvoucher['charset'] = $_POST['charset'];
 			$newvoucher['rollbits'] = $_POST['rollbits'];
@@ -239,10 +246,6 @@ if ($_POST) {
 			write_config();
 			voucher_configure_zone();
 		} else {
-			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
-			$newvoucher['vouchersyncport'] = $_POST['vouchersyncport'];
-			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
-			$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
 			if($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] && 
 			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node

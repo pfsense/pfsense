@@ -2997,8 +2997,6 @@ function interface_6rd_configure($interface = "wan"){
 	mwexec("/sbin/ifconfig stf0 create");
 	mwexec("/sbin/ifconfig stf0 inet6 {$rd6wanprefix}/{$rd6prefixlen}");
 
-	/* FIXME, do we want to automagically inject a route here? */
-	
 	/* Example 6RD setup steps
 		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
 		# ifconfig fxp1 inet 192.0.2.2/24
@@ -3007,9 +3005,44 @@ function interface_6rd_configure($interface = "wan"){
 		# route add -inet6 default 2001:db8:c000:0201::1
 	*/
 	
+	/* default gateway would be */
+	$ip4arr = explode(".", $wancfg['gateway-6rd']);
+	$rd6gwarr = array();
+	$length = $rd6prefixlen;
+	foreach($rd6arr as $element) {
+		if(($length < 0) && (empty($ip4arr))) {
+			$rd6gwarr[] = 0;
+			continue;
+		}
+		/* more then 16 bits left, just add element */
+		if($length >= 16)
+			$rd6gwarr[] = $element;
+		/* less then 16 bits, add ip4 octet */
+		if(($length <= 16) && ($length >= 8) && (count($ip4arr) > 0)) {
+			$rd6gwarr[] = dechex(hexdec($element) + $ip4arr[0]);
+			array_shift($ip4arr);
+		}
+		if(($length < 0) && (count($ip4arr) > 0)) {
+			$rd6el = array();
+			$rd6el[] = dechex($ip4arr[0]);
+			$rd6el[] = dechex($ip4arr[1]);
+
+			$rd6gwarr[] = $rd6el[0] . $rd6el[1];
+			array_shift($ip4arr);
+			array_shift($ip4arr);
+		}
+		$length = $length - 16;
+	}
+	/* gateway is ::1 */
+	$rd6gwarr[7] = 1;
+	$rd6wangw = implode(":", $rd6gwarr);
+
+	// echo "route add -inet6 default {$rd6wangw}";
+
 	return 0;
 
 }
+
 
 function interface_dhcpv6_configure($interface = "wan") {
 	global $config, $g;

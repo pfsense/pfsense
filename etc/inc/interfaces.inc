@@ -2956,11 +2956,49 @@ function interface_6rd_configure($interface = "wan"){
 		return false;
 	}
 
+	/* calculate the IPv6 prefix from the public IPv4 address */
+	$ip4arr = explode(".", $ip4address);
+	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
+	$rd6prefixlen = $rd6prefix[1];
+	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
+
+	$rd6arr = explode(":", $rd6prefix);
+	$rd6wanarr = array();
+	$length = $rd6prefixlen;
+	foreach($rd6arr as $element) {
+		if(($length < 0) && (empty($ip4arr))) {
+			$rd6wanarr[] = 0;
+			continue;
+		}
+		/* more then 16 bits left, just add element */
+		if($length >= 16)
+			$rd6wanarr[] = $element;
+		/* less then 16 bits, add ip4 octet */
+		if(($length <= 16) && ($length >= 8) && (count($ip4arr) > 0)) {
+			$rd6wanarr[] = dechex(hexdec($element) + $ip4arr[0]);
+			array_shift($ip4arr);
+		}
+		if(($length < 0) && (count($ip4arr) > 0)) {
+			$rd6el = array();
+			$rd6el[] = dechex($ip4arr[0]);
+			$rd6el[] = dechex($ip4arr[1]);
+
+			$rd6wanarr[] = $rd6el[0] . $rd6el[1];
+			array_shift($ip4arr);
+			array_shift($ip4arr);
+		}
+		$length = $length - 16;
+	}	
+
+	$rd6wanprefix = implode(":", $rd6wanarr);
+
 	/* setup the stf interface */
 	mwexec("/sbin/ifconfig stf0 destroy");
 	mwexec("/sbin/ifconfig stf0 create");
-	mwexec("/sbin/ifconfig stf0 inet6 {$wancfg['prefix-6rd']}");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6wanprefix}/{$rd6prefixlen}");
 
+	/* FIXME, do we want to automagically inject a route here? */
+	
 	/* Example 6RD setup steps
 		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
 		# ifconfig fxp1 inet 192.0.2.2/24

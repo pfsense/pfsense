@@ -1501,6 +1501,10 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
+		if (isset($config['snmpd']['bindlan'])) {
+			$config['snmpd']['bindip'] = 'lan';
+			unset($config['snmpd']['bindlan']);
+		}
 		$bind_to_ip = "0.0.0.0";
 		if(isset($config['snmpd']['bindip'])) {
 			if (is_ipaddr($config['snmpd']['bindip'])) {

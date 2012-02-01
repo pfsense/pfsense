@@ -2602,6 +2602,7 @@ function upgrade_076_to_077() {
 }
 
 function upgrade_077_to_078() {
+	global $config;
 	if (is_array($config['pptpd']) && is_array($config['pptpd']['radius'])
 		&& !is_array($config['pptpd']['radius']['server'])) {
 		$radarr = array();

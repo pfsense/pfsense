@@ -75,7 +75,7 @@ $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
 $pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
 $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
-$pconfig['bindlan'] = isset($config['snmpd']['bindlan']);
+$pconfig['bindip'] = isset($config['snmpd']['bindip']);
 
 if ($_POST) {
 
@@ -146,7 +146,7 @@ if ($_POST) {
 		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
 		$config['snmpd']['modules']['hostres'] = $_POST['hostres'] ? true : false;
 		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
-		$config['snmpd']['bindlan'] = $_POST['bindlan'] ? true : false;
+		$config['snmpd']['bindip'] = $_POST['bindip'];
 			
 		write_config();
 		
@@ -207,7 +207,6 @@ function enable_change(whichone) {
 	    document.iform.syscontact.disabled = false;
 	    document.iform.rocommunity.disabled = false;
 	    document.iform.trapenable.disabled = false;
-	    //document.iform.bindlan.disabled = false;
 	    /* disabled until some docs show up on what this does.
 	    document.iform.rwenable.disabled = false;
 	    if( document.iform.rwenable.checked == true )
@@ -257,7 +256,6 @@ function enable_change(whichone) {
             document.iform.pf.disabled = true;
             document.iform.hostres.disabled = true;
             //document.iform.bridge.disabled = true;
-	    //document.iform.bindlan.disabled = true;
 	}
 }
 //-->
@@ -384,16 +382,32 @@ function enable_change(whichone) {
 		    <input name="hostres" type="checkbox" id="hostres" value="yes" onClick="check_deps()" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources (Requires MibII)");?>
 		  </td>
 		</tr>
-<?php if($config['interfaces']['lan']): ?>
-		 <tr> 
-		   <td width="22%" valign="top" class="vtable"></td>
-		   <td width="78%" class="vtable"> 
-		     <input name="bindlan" type="checkbox" value="yes" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong><?=gettext("Bind to LAN interface only");?></strong>
-		     <br>
-		     <?=gettext("This option can be useful when trying to access the SNMP agent".
-            	    " by the LAN interface's IP address through a VPN tunnel terminated on the WAN interface.");?></td>
-		 </tr>
-<?php endif; ?>
+
+		<tr><td>&nbsp;</td></tr>
+
+		<tr>
+			<td colspan="2" valign="top" class="optsect_t">
+			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+				<tr><td class="optsect_s"><strong><?=gettext("Interface Binding");?></strong></td>
+				<td align="right" class="optsect_s">&nbsp;</td></tr>
+			</table></td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Bind Interface"); ?></td>
+			<td width="78%" class="vtable">
+				<select name="bindip" class="formselect">
+					<option value="">All</option>
+				<?php  $listenips = get_possible_listen_ips();
+					foreach ($listenips as $lip):
+						$selected = "";
+						if ($lip['value'] == $pconfig['bindip'])
+							$selected = "selected";
+				?>
+					<option value="<?=$lip['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($lip['name']);?>
+					</option>
+				<?php endforeach; ?>
+		</tr>
 		 <tr> 
 		   <td width="22%" valign="top">&nbsp;</td>
 		   <td width="78%"> 

@@ -771,10 +771,15 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		if(isset($config['snmpd']['bindlan'])) {
-			$bind_to_ip = get_interface_ip("lan");
-		} else {
-			$bind_to_ip = "0.0.0.0";
+		$bind_to_ip = "0.0.0.0";
+		if(isset($config['snmpd']['bindip'])) {
+			if (is_ipaddr($config['snmpd']['bindip'])) {
+				$bind_to_ip = $config['snmpd']['bindip'];
+			} else {
+				$if = get_real_interface($config['snmpd']['bindip']);
+				if (does_interface_exist($if))
+					$bind_to_ip = find_interface_ip($if);
+			}
 		}
 
 		if(is_port( $config['snmpd']['pollport'] )) {

@@ -153,10 +153,10 @@ foreach (array('server', 'client') as $mode) {
 }
 
 if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
-	$pconfig = array();
-	$pconfig['name'] = "relayd";
-	$pconfig['description'] = gettext("Server load balancing daemon");
-	$services[] = $pconfig;
+	$svcconfig = array();
+	$svcconfig['name'] = "relayd";
+	$svcconfig['description'] = gettext("Server load balancing daemon");
+	$services[] = $svcconfig;
 }
 
 if(isset($_POST['servicestatusfilter'])) {

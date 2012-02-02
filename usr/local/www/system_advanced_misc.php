@@ -49,6 +49,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("vslb.inc");
 
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];
@@ -103,11 +104,19 @@ if ($_POST) {
 		else
 			unset($config['system']['proxypass']);
 
+		$need_relayd_restart = false;
 		if($_POST['lb_use_sticky'] == "yes") {
-			$config['system']['lb_use_sticky'] = true;
-			$config['system']['srctrack'] = $_POST['srctrack'];
-		} else
-			unset($config['system']['lb_use_sticky']);
+			if (!isset($config['system']['lb_use_sticky'])) {
+				$config['system']['lb_use_sticky'] = true;
+				$config['system']['srctrack'] = $_POST['srctrack'];
+				$need_relayd_restart = true;
+			}
+		} else {
+			if (isset($config['system']['lb_use_sticky'])) {
+				unset($config['system']['lb_use_sticky']);
+				$need_relayd_restart = true;
+			}
+		}
 
 		if($_POST['gw_switch_default'] == "yes")
 			$config['system']['gw_switch_default'] = true;
@@ -283,7 +292,7 @@ function maxmss_checked(obj) {
 									"refer to this connection. Once the states expire, so will " .
 									"the sticky connection. Further connections from that host " .
 									"will be redirected to the next web server in the round " .
-									"robin."); ?>
+									"robin. Changing this option will restart the Load Balancing service."); ?>
 									<br />
 									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo $pconfig['srctrack']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled"; ?>>
 									<br />

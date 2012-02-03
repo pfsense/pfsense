@@ -44,7 +44,8 @@ $counter = 1;
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
                   <td width="10%" class="listhdrr">Gateway</td>
-                  <td width="10%" class="listhdrr">RTT / Loss</td>
+                  <td width="10%" class="listhdrr">RTT</td>
+                  <td width="10%" class="listhdrr">Loss</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
          <?php foreach ($a_gateways as $gname => $gateway) { ?>
@@ -68,7 +69,8 @@ $counter = 1;
 				echo gettext("Gathering data");
 		?>
 				<?php $counter++; ?>
-		 / 
+		  </td>
+                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
 		<?php	if ($gateways_status[$gname])
 				echo $gateways_status[$gname]['loss'];
 			else

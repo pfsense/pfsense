@@ -35,7 +35,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/pgrep	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/rtadvd
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/rtadvd	/usr/local/sbin/unbound
 	pfSense_MODULE:	utils
 */
 

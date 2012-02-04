@@ -901,7 +901,7 @@ function filter_get_reflection_interfaces($natif = "") {
 }
 
 function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
-	global $config;
+	global $config, $FilterIflist;
 
 	if(!isset($config['system']['enablenatreflectionhelper']))
 		return "";
@@ -941,8 +941,25 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 			$subnet_split = explode("/", $subnet);
 			$subnet_if = $fields[6];
 			if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
-				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
-				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$subnet_if}{$static_port}\n";
+				$ifsubnet_ip = "";
+				foreach ($FilterIflist as $ifent => $ifname) {
+					if(ip_in_subnet($ifname['ip'], $subnet) && $ifname['if'] == $subnet_if) {
+						$ifsubnet_ip = $ifname['ip'];
+						break;
+					}
+				}
+				if(empty($ifsubnet_ip)) {
+					foreach(get_configured_ip_aliases_list() as $subnet_ip => $ifent) {
+						if(ip_in_subnet($subnet_ip, $subnet) && $FilterIflist[$ifent]['if'] == $subnet_if) {
+							$ifsubnet_ip = $subnet_ip;
+							break;
+						}
+					}
+				}
+				if(!empty($ifsubnet_ip)) {
+					$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+				}
 			}
 		}
 	}

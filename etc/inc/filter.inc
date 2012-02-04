@@ -958,12 +958,17 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$route_table = array();
 		/* create a route table we can search */
 		exec("netstat -rnWf inet", $route_table);
+		foreach($route_table as $rt_key => $line) {
+			if(preg_match("/^[0-9]+(?:\.[0-9]+){3}\/[0-9]+[ ]+(?:[0-9]+(?:\.[0-9]+){3}|link[#])/", $line))
+				$route_table[$rt_key] = preg_split("/[ ]+/", $line);
+			else
+				unset($route_table[$rt_key]);
+		}
 	}
 
 	/* Search for matching subnets in the routing table */
-	foreach($route_table as $line) {
-		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|link[#])/", $line)) {
-			$fields = preg_split("/[ ]+/", $line);
+	foreach($route_table as $fields) {
+		if(is_subnet($fields[0])) {
 			$subnet = $fields[0];
 			$subnet_split = explode("/", $subnet);
 			$subnet_if = $fields[6];
@@ -984,6 +989,13 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 					}
 				}
 				if(!empty($ifsubnet_ip)) {
+					$subnets = array($subnet);
+					foreach($route_table as $rtentry) {
+						if(is_subnet($rtentry[0]) && is_ipaddr($rtentry[1]) && ip_in_subnet($rtentry[1], $subnet) && $rtentry[6] == $subnet_if)
+							$subnets[] = $rtentry[0];
+					}
+					if(count($subnets) > 1)
+						$subnet = "{ " . implode(" ", $subnets) . " }";
 					$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
 					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
 				}

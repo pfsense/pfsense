@@ -939,6 +939,18 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		}
 	}
 
+	/* Check if the target is accessed through a static route */
+	foreach($route_table as $fields) {
+		if(is_subnet($fields[0]) && is_ipaddr($fields[1])) {
+			$subnet_split = explode("/", $fields[0]);
+			if(in_array($fields[6], $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+				$target_ip = $fields[1];
+				$target_subnet = 32;
+				break;
+			}
+		}
+	}
+
 	/* Search for matching subnets in the routing table */
 	foreach($route_table as $fields) {
 		if(is_subnet($fields[0])) {

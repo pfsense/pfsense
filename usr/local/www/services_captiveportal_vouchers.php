@@ -211,6 +211,10 @@ if ($_POST) {
 		else
 			unset($config['voucher']['enable']);
 		if (empty($_POST['vouchersyncusername'])) {
+			unset($config['voucher']['vouchersyncdbip']);
+			unset($config['voucher']['vouchersyncport']);
+			unset($config['voucher']['vouchersyncusername']);
+			unset($config['voucher']['vouchersyncpass']);
 			$config['voucher']['charset'] = $_POST['charset'];
 			$config['voucher']['rollbits'] = $_POST['rollbits'];
 			$config['voucher']['ticketbits'] = $_POST['ticketbits'];

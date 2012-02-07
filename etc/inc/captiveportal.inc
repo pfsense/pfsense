@@ -1742,7 +1742,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		if (empty($cpentry[10]))
 			$cpentry[10] = 'first';
 		/* on the same ip */
-		if($cpentry[2] == $clientip) {
+		if ($cpentry[2] == $clientip && (isset($config['captiveportal'][$cpzone]['nomacfilter']) || empty($cpentry[3]) || $cpentry[3] == $clientmac)) {
 			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
 			$sessionid = $sid;
 			break;

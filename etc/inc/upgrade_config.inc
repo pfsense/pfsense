@@ -2738,5 +2738,12 @@ function upgrade_082_to_083() {
 		$config['captiveportal']['cpZone'] = $tmpcp;
 		$config['captiveportal']['cpZone']['zoneid'] = 8000;
 	}
+	if (!empty($config['voucher'])) {
+		$tmpcp = $config['voucher'];
+		$config['voucher'] = array();
+		$config['voucher']['cpZone'] = array();
+		$config['voucher']['cpZone'] = $tmpcp;
+	}
 }
+
 ?>

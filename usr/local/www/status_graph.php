@@ -190,10 +190,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p>
 <div id="niftyOutter">
     <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
-            <param name="src" value="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" />
-            <?=gettext("Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin"); ?>.
-        </object>
+        <embed src="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
     </div>
     <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">

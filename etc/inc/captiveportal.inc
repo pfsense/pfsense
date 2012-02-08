@@ -548,8 +548,6 @@ add 65303 set 1 pass layer2 mac-type 0x88c7
 add 65304 set 1 pass layer2 mac-type 0x8863
 # PPP Over Ethernet Session Stage
 add 65305 set 1 pass layer2 mac-type 0x8864
-# Allow WPA
-add 65306 set 1 pass layer2 mac-type 0x888e
 
 # layer 2: block anything else non-IP
 add 65307 set 1 deny layer2 not mac-type ip

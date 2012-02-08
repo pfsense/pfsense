@@ -1259,7 +1259,8 @@ function authenticate_user($username, $password, $authcfg = NULL) {
 function session_auth() {
 	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
 
-	session_start();
+	if (!session_id())
+		session_start();
 
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {

@@ -3017,6 +3017,7 @@ function interface_6rd_configure($interface = "wan"){
 	$rd6lanbinarr = str_split($rd6lanbin, 16);
 	foreach($rd6lanbinarr as $bin)
 		$rd6lanarr[] = dechex(bindec($bin));
+	$rd6lanpr = Net_IPv6::compress(implode(":", $rd6lanarr));
 	$rd6lanarr[7] = 1;
 	$rd6lan = Net_IPv6::compress(implode(":", $rd6lanarr));
 	// echo "6RD LAN prefix $rd6lan length 64\n";
@@ -3025,7 +3026,7 @@ function interface_6rd_configure($interface = "wan"){
 	/* setup the stf interface */
 	mwexec("/sbin/ifconfig stf0 destroy");
 	mwexec("/sbin/ifconfig stf0 create");
-	mwexec("/sbin/ifconfig stf0 inet6 {$rd6lanarr}/{$rd6prefixlen}");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6lanpr}/{$rd6prefixlen}");
 
 	/* Example 6RD setup steps
 		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64

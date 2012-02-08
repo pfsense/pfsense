@@ -2955,47 +2955,77 @@ function interface_6rd_configure($interface = "wan"){
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
 		return false;
 	}
+	
+	if(!is_numeric($wancfg['prefixlenv4-6rd']))
+		$v4prefixlen = 0;
+	else
+		$v4prefixlen = $wancfg['prefixlenv4-6rd'];	
 
-	/* calculate the IPv6 prefix from the public IPv4 address */
-	$ip4arr = explode(".", $ip4address);
+	/* create the long prefix notation for math, save the prefix length */
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
-
 	$rd6arr = explode(":", $rd6prefix);
-	$rd6wanarr = array();
-	$length = $rd6prefixlen;
+	// echo "6RD prefix {$wancfg['prefix-6rd']} length {$rd6prefixlen}\n";
+
+	/* we need the hex form of the interface IPv4 address */
+	// $ip4address = "178.196.136.54";
+	$ip4arr = explode(".", $ip4address);
+	$hexwanv4 = "";
+	foreach($ip4arr as $octet)
+		$hexwanv4 .= sprintf("%02x", $octet);
+
+	/* we need the hex form of the broker IPv4 address */
+	$ip4arr = explode(".", $wancfg['gateway-6rd']);
+	$hexbrv4 = "";
+	foreach($ip4arr as $octet)
+		$hexbrv4 .= sprintf("%02x", $octet);
+	
+	/* binary presentation of the prefix for all 128 bits. */
+	$rd6prefixbin = "";
 	foreach($rd6arr as $element) {
-		if(($length < 0) && (empty($ip4arr))) {
-			$rd6wanarr[] = 0;
-			continue;
-		}
-		/* more then 16 bits left, just add element */
-		if($length >= 16)
-			$rd6wanarr[] = $element;
-		/* less then 16 bits, add ip4 octet */
-		if(($length <= 16) && ($length >= 8) && (count($ip4arr) > 0)) {
-			$rd6wanarr[] = dechex(hexdec($element) + $ip4arr[0]);
-			array_shift($ip4arr);
-		}
-		if(($length < 0) && (count($ip4arr) > 0)) {
-			$rd6el = array();
-			$rd6el[] = dechex($ip4arr[0]);
-			$rd6el[] = dechex($ip4arr[1]);
+		$rd6prefixbin .= sprintf("%016b", hexdec($element));
+	}
+	/* just save the left prefix length bits */
+	$rd6prefixstartbin = substr($rd6prefixbin, 0, $rd6prefixlen);
 
-			$rd6wanarr[] = $rd6el[0] . $rd6el[1];
-			array_shift($ip4arr);
-			array_shift($ip4arr);
-		}
-		$length = $length - 16;
-	}	
+	// echo "$rd6prefixstartbin\n";
+	
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$rd6brokerbin = substr(sprintf("%032b", hexdec($hexbrv4)), $v4prefixlen, 32);
+	// echo "$rd6prefixstartbin . $rd6brokerbin\n";
+	$rd6brokerbin = str_pad($rd6prefixstartbin . $rd6brokerbin, 128, "0", STR_PAD_RIGHT);;
 
-	$rd6wanprefix = implode(":", $rd6wanarr);
+	/* for the local subnet too. */
+	$rd6lanbin = substr(sprintf("%032b", hexdec($hexwanv4)), $v4prefixlen, 32);
+	// echo "$rd6prefixstartbin . $rd6lanbin\n";
+	$rd6lanbin = str_pad($rd6prefixstartbin . $rd6lanbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6brarr = array();
+	$rd6brbinarr = array();
+	$rd6brbinarr = str_split($rd6brokerbin, 16);
+	foreach($rd6brbinarr as $bin)
+		$rd6brarr[] = dechex(bindec($bin));
+	$rd6brarr[7] = 1;
+	$rd6brgw = Net_IPv6::compress(implode(":", $rd6brarr));
+	// echo "6RD stf gateway $rd6brgw length {$rd6prefixlen}\n";
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6lanarr = array();
+	$rd6lanbinarr = array();
+	$rd6lanbinarr = str_split($rd6lanbin, 16);
+	foreach($rd6lanbinarr as $bin)
+		$rd6lanarr[] = dechex(bindec($bin));
+	$rd6lanarr[7] = 1;
+	$rd6lan = Net_IPv6::compress(implode(":", $rd6lanarr));
+	// echo "6RD LAN prefix $rd6lan length 64\n";
+
 
 	/* setup the stf interface */
 	mwexec("/sbin/ifconfig stf0 destroy");
 	mwexec("/sbin/ifconfig stf0 create");
-	mwexec("/sbin/ifconfig stf0 inet6 {$rd6wanprefix}/{$rd6prefixlen}");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6lanarr}/{$rd6prefixlen}");
 
 	/* Example 6RD setup steps
 		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
@@ -3004,40 +3034,9 @@ function interface_6rd_configure($interface = "wan"){
 		# ifconfig stf0 inet6 2001:db8:c000:0202::/32
 		# route add -inet6 default 2001:db8:c000:0201::1
 	*/
+
 	
-	/* default gateway would be */
-	$ip4arr = explode(".", $wancfg['gateway-6rd']);
-	$rd6gwarr = array();
-	$length = $rd6prefixlen;
-	foreach($rd6arr as $element) {
-		if(($length < 0) && (empty($ip4arr))) {
-			$rd6gwarr[] = 0;
-			continue;
-		}
-		/* more then 16 bits left, just add element */
-		if($length >= 16)
-			$rd6gwarr[] = $element;
-		/* less then 16 bits, add ip4 octet */
-		if(($length <= 16) && ($length >= 8) && (count($ip4arr) > 0)) {
-			$rd6gwarr[] = dechex(hexdec($element) + $ip4arr[0]);
-			array_shift($ip4arr);
-		}
-		if(($length < 0) && (count($ip4arr) > 0)) {
-			$rd6el = array();
-			$rd6el[] = dechex($ip4arr[0]);
-			$rd6el[] = dechex($ip4arr[1]);
-
-			$rd6gwarr[] = $rd6el[0] . $rd6el[1];
-			array_shift($ip4arr);
-			array_shift($ip4arr);
-		}
-		$length = $length - 16;
-	}
-	/* gateway is ::1 */
-	$rd6gwarr[7] = 1;
-	$rd6wangw = implode(":", $rd6gwarr);
-
-	// echo "route add -inet6 default {$rd6wangw}";
+	log_error("would have run: route add -inet6 default {$rd6brgw}");
 
 	return 0;
 

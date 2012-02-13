@@ -1167,7 +1167,7 @@ EOD;
 				$authport = (isset($pptpdcfg['radius']['server2']['port']) && strlen($pptpdcfg['radius']['server2']['port']) > 1) ? $pptpdcfg['radius']['server2']['port'] : 1812;
 				$acctport = $authport + 1;
 				$mpdconf .=<<<EOD
-	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret']}" {$authport} {$acctport}
+	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret2']}" {$authport} {$acctport}
 
 EOD;
 			}

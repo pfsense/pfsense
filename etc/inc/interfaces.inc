@@ -413,18 +413,14 @@ function interfaces_bridge_configure($checkmember = 0) {
                 foreach ($config['bridges']['bridged'] as $bridge) {
                         if(empty($bridge['bridgeif']))
                                 $bridge['bridgeif'] = "bridge{$i}";
-			if ($checkmember == 1 && (strstr($bridge['members'], "gif") || strstr($bridge['members'], "gre")))
-				continue;
-			if ($checkmember == 2 && !strstr($bridge['members'], "gif") && !strstr($bridge['members'], "gre"))
-				continue;
                         /* XXX: Maybe we should report any errors?! */
-                        interface_bridge_configure($bridge);
+                        interface_bridge_configure($bridge, $checkmember);
                         $i++;
                 }
         }
 }
 
-function interface_bridge_configure(&$bridge) {
+function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	global $config, $g;
 
 	if (!is_array($bridge))
@@ -439,25 +435,22 @@ function interface_bridge_configure(&$bridge) {
 	if (!count($members))
 		return -1;
 
-	$checklist = get_configured_interface_list();
-
-	if ($g['booting'] || !empty($bridge['bridgeif'])) {
-		pfSense_interface_destroy($bridge['bridgeif']);
-		pfSense_interface_create($bridge['bridgeif']);
-		$bridgeif = $bridge['bridgeif'];
-	} else
-		$bridgeif = pfSense_interface_create("bridge");
-
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
 	$commonrx = true;
 	$commontx = true;
+	$foundgif = false;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
 		$opts = pfSense_get_interface_addresses($realif);
 		$mtu = $opts['mtu'];
-		if (substr($realif, 0, 3) == "gif" && $mtu <= 1500)
-			continue;
+		if (substr($realif, 0, 3) == "gif") {
+			$foundgif = true;
+			if ($checkmember == 1)
+				return;
+			if ($mtu <= 1500)
+				continue;
+		}
 		if (!isset($opts['encaps']['txcsum']))
 			$commontx = false;
 		if (!isset($opts['encaps']['rxcsum']))
@@ -473,7 +466,9 @@ function interface_bridge_configure(&$bridge) {
 		else if (!empty($mtu) && $mtu < $smallermtu)
 			$smallermtu = $mtu;
 	}
-	 
+	if ($foundgif == false && $checkmember == 2)
+		return;
+
 	/* Just in case anything is not working well */
 	if ($smallermtu == 0)
 		$smallermtu = 1500; 
@@ -489,7 +484,16 @@ function interface_bridge_configure(&$bridge) {
 		$flags |= IFCAP_TSO6;
 	if ($commonlro === false)
 		$flags |= IFCAP_LRO;
-		
+
+	if ($g['booting'] || !empty($bridge['bridgeif'])) {
+		pfSense_interface_destroy($bridge['bridgeif']);
+		pfSense_interface_create($bridge['bridgeif']);
+		$bridgeif = $bridge['bridgeif'];
+	} else
+		$bridgeif = pfSense_interface_create("bridge");
+
+	$checklist = get_configured_interface_list();
+
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
@@ -669,8 +673,6 @@ function interface_lagg_configure(&$lagg) {
 	if (!count($members))
 		return -1;
 	
-	$checklist = get_interface_list();
-
 	if ($g['booting'] || !(empty($lagg['laggif']))) {
 		pfSense_interface_destroy($lagg['laggif']);
 		pfSense_interface_create($lagg['laggif']);
@@ -714,6 +716,8 @@ function interface_lagg_configure(&$lagg) {
                 $flags |= IFCAP_TSO6;
         if ($commonlro === false)
                 $flags |= IFCAP_LRO;
+
+	$checklist = get_interface_list();
 
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))

@@ -144,6 +144,28 @@ if ($act == "key") {
 	exit;
 }
 
+if ($act == "p12") {
+	if (!$a_cert[$id]) {
+		pfSenseHeader("system_certmanager.php");
+		exit;
+	}
+
+	$exp_name = urlencode("{$a_cert[$id]['descr']}.p12");
+
+	$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
+	$res_key = openssl_pkey_get_private(array(0 => base64_decode($a_cert[$id]['prv']) , 1 => ""));
+
+	$exp_data = "";
+	openssl_pkcs12_export($res_crt, $exp_data, $res_key, null);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 if ($act == "csr") {
 
 	if (!$a_cert[$id]) {
@@ -960,6 +982,9 @@ function internalca_change() {
 							</a>
 							<a href="system_certmanager.php?act=key&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
+							</a>
+							<a href="system_certmanager.php?act=p12&id=<?=$i;?>">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert+key in .p12");?>" alt="<?=gettext("export cert+key in .p12");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if (!cert_in_use($cert['refid'])): ?>
 							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onClick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">

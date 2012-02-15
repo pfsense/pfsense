@@ -184,6 +184,8 @@ if ($_POST) {
 		vpn_ipsec_configure_preferoldsa();
 		if ($need_racoon_restart)
 			vpn_ipsec_force_reload();
+		if ($need_relayd_restart)
+			relayd_configure();
 	}
 }
 

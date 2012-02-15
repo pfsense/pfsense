@@ -231,22 +231,18 @@ if ($_POST) {
 
 	/*
 	 * Check for a valid expirationdate if one is set at all (valid means,
-	 * strtotime() puts out a time stamp so any strtotime compatible time
+	 * DateTime puts out a time stamp so any DateTime compatible time
 	 * format may be used. to keep it simple for the enduser, we only
 	 * claim to accept MM/DD/YYYY as inputs. Advanced users may use inputs
 	 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
 	 * Otherwhise such an entry would lead to an invalid expiration data.
 	 */
 	if ($_POST['expires']){
-		if(strtotime($_POST['expires']) > 0){
-			if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($_POST['expires'])))) {
-				// Allow items to lie in the past which ends up disabling.
-			} else {
-				//convert from any strtotime compatible date to MM/DD/YYYY
-				$expdate = strtotime($_POST['expires']);
-				$_POST['expires'] = date("m/d/Y",$expdate);
-			}
-		} else {
+		try {
+			$expdate = new DateTime($_POST['expires']);
+			//convert from any DateTime compatible date to MM/DD/YYYY
+			$_POST['expires'] = $expdate->format("m/d/Y");
+		} catch ( Exception $ex ) {
 			$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
 		}
 	}

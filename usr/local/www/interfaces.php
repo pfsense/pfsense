@@ -563,7 +563,6 @@ if ($_POST['apply']) {
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = "mode";
 		if($_POST['mode'] == 'hostap') { $reqdfields += " ssid"; }
-		$reqdfields = explode(" ", $reqdfields);
 		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();

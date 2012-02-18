@@ -76,7 +76,7 @@ include("head.inc");
 
 exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
 if(file_exists("/tmp/manifest")) {
-	$preset_urls_split = split("\n", file_get_contents("/tmp/manifest"));
+	$preset_urls_split = explode("\n", file_get_contents("/tmp/manifest"));
 }
 
 ?>
@@ -129,7 +129,7 @@ function enable_altfirmwareurl(enable_over) {
 					<option></option>
 				<?php 
 					foreach($preset_urls_split as $pus) {
-						$pus_text = split("\t", $pus);
+						$pus_text = explode("\t", $pus);
 						if($pus_text[0])
 							echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
 					}

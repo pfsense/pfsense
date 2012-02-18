@@ -132,7 +132,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 			}
 			log_error("ResetTime:".$resetTime);
 			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
-				$resetTime_a = split(" ", $resetTime);
+				$resetTime_a = explode(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
 				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
 				$pconfig['pppoe_resethour'] = $resetTime_a[1];
@@ -193,7 +193,6 @@ switch($wancfg['ipaddr']) {
 		$pconfig['type'] = "dhcp";
 		break;
 	case "carpdev-dhcp":
-		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
 		$pconfig['ipaddr'] = "";
 		break;
 	case "pppoe":
@@ -221,6 +220,14 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";
 		break;
+	case "6rd":
+		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
+		if($wancfg['prefix-6rd-len'] == "")
+			$wancfg['prefix-6rd-len'] = "0";
+		$pconfig['prefix-6rd-len'] = $wancfg['prefix-6rd-len'];
+		$pconfig['type6'] = "6rd";
+		$pconfig['gateway-6rd'] = $wancfg['gateway-6rd'];
+		break;
 	default:
 		if(is_ipaddr($wancfg['ipaddrv6'])) {
 			$pconfig['type6'] = "staticv6";
@@ -228,6 +235,7 @@ switch($wancfg['ipaddrv6']) {
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
 			$pconfig['dhcp6-pd-sla-id'] = $wancfg['dhcp6-pd-sla-id'];
+			$pconfig['prefix-6rd-id'] = $wancfg['prefix-6rd-id'];
 		} else
 			$pconfig['type6'] = "none";
 		break;
@@ -488,6 +496,10 @@ if ($_POST['apply']) {
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
+		case "6rd":
+			if (in_array($wancfg['ipaddrv6'], array()))
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+			break;
 	}
 
 	
@@ -549,7 +561,9 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$reqdfields = explode(" ", "mode ssid");
+		$reqdfields = "mode";
+		if($_POST['mode'] == 'hostap') { $reqdfields += " ssid"; }
+		$reqdfields = explode(" ", $reqdfields);
 		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
@@ -624,7 +638,10 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-pd-sla-id']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
-		unset($wancfg['pppoe_username']);
+		unset($wancfg['prefix-6rd']);
+		unset($wancfg['prefix-6rd-len']);
+		unset($wancfg['gateway-6rd']);
+		unset($wancfg['prefix-6rd-id']);
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -634,7 +651,7 @@ if ($_POST['apply']) {
 		if (isset($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
-
+		
 		unset($wancfg['remote']);
 		unset($a_ppps[$pppid]['apn']);
 		unset($a_ppps[$pppid]['phone']);
@@ -775,6 +792,7 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
 				$wancfg['dhcp6-pd-sla-id'] = $_POST['dhcp6-pd-sla-id'];
+				$wancfg['prefix-6rd-id'] = $_POST['prefix-6rd-id'];
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -783,6 +801,15 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
+				if($gateway_item) {
+					$a_gateways[] = $gateway_item;
+				}
+				break;
+			case "6rd":
+				$wancfg['ipaddrv6'] = "6rd";
+				$wancfg['prefix-6rd'] = $_POST['prefix-6rd'];
+				$wancfg['prefix-6rd-len'] = $_POST['prefix-6rd-len'];
+				$wancfg['gateway-6rd'] = $_POST['gateway-6rd'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -1039,7 +1066,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6RD"));
 
 ?>
 
@@ -1085,15 +1112,20 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6').hide();
+				jQuery('#staticv6, #dhcp6', '#6rd').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6').hide();
+				jQuery('#none, #dhcp6', '#6rd').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6').hide();
+				jQuery('#none, #staticv6', '#6rd').hide();
+
+				break;
+			}
+			case "6rd": {
+				jQuery('#none, #dhcp6', '#staticv6').hide();
 
 				break;
 			}
@@ -1451,6 +1483,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																		<center>
 																			<div id='savebuttondiv'>
 
+
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
@@ -1576,7 +1609,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation ID"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="dhcp6-pd-sla-id" class="formselect" id="dhcp6-pd-sla-id">
-												<option value="none" selected><?=gettext("None"); ?></option>
 												<?php
 												// Needs to check if the ID is not used on another interface
 												foreach($ifdescrs as $pdif => $pddescr) {
@@ -1585,16 +1617,49 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														continue;
 													}
 												}
+												
+												if($pconfig['dhcp6-pd-sla-id'] == "none")
+													$selected = "selected";
+												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
 												$numbers = pow(2, $pdlen);
 												for($i = 0;$i < $numbers; $i++) {
 													echo "<option value=\"{$i}\" ";
-													if ($i == $pconfig['dhcp6-pd-sla-id'])
+													if ("$i" == $pconfig['dhcp6-pd-sla-id']) {
 														echo "selected";
+													}
 													echo ">" . dechex($i) . "</option>";
 												}
 												?> 
 											</select>
 											<?=gettext("This ID sets the delegated DHCP-PD prefix number which will be used to setup the interface.");?>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Rapid Deployment network ID"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="prefix-6rd-id" class="formselect" id="prefix-6rd-id">
+												<?php
+												// Needs to check if the ID is not used on another interface
+												foreach($ifdescrs as $rdif => $rddescr) {
+													if(is_numeric($config['interfaces'][$rdif]['prefix-6rd-len'])) {
+														$rdlen = $config['interfaces'][$rdif]['prefix-6rd-len'];
+														continue;
+													}
+												}
+												if($pconfig['prefix-6rd-id'] == "none")
+													$selected = "selected";
+												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
+												$numbers = pow(2, $rdlen);
+												for($i = 0;$i < $numbers; $i++) {
+													echo "<option value=\"{$i}\" ";
+													if ("$i" == $pconfig['prefix-6rd-id']) {
+														echo "selected";
+													}
+													echo ">" . dechex($i) . "</option>";
+												}
+												?> 
+											</select>
+											<?=gettext("This ID sets the 6RD network prefix which will be used to setup the interface.");?>
 										</td>
 									</tr>
 								</table>
@@ -1685,6 +1750,50 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</select>
 											<br>
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
+										</td>
+									</tr>
+									
+								</table>
+							</td>
+						</tr>
+						<tr style="display:none;" name="6rd" id="6rd">
+							<td colspan="2" style="padding: 0px;">
+								<table width="100%" border="0" cellpadding="6" cellspacing="0">
+									<tr>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("6RD Rapid Deployment"); ?></td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD prefix"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="prefix-6rd" type="text" class="formfld unknown" id="prefix-6rd" size="40" value="<?=htmlspecialchars($pconfig['prefix-6rd']);?>">
+											<br>
+											<?=gettext("The value in this field is the 6RD IPv6 prefix assigned by your ISP. e.g. '2001:db8::/32'") ?><br />
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD gateway"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>">
+											<br>
+											<?=gettext("The value in this field is 6RD IPv4 gateway address assigned by your ISP") ?><br />
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Prefix length"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="prefix-6rd-len" class="formselect" id="prefix-6rd-len">
+												<?php
+												$sizes = array(16 => "48", 12 => "52", 8 => "56", 4 => "60", 2 => "62", 1 => "63", 0 => "64");
+												rsort($sizes);
+												foreach($sizes as $bits => $length) {
+													echo "<option value=\"{$bits}\" ";
+													if (is_numeric($pconfig['prefix-6rd-len']) && ($bits == $pconfig['prefix-6rd-len'])) echo "selected";
+													echo ">" . $length . "</option>";
+												}
+												?>
+											</select>
+											<br>
+											<?=gettext("The value in this field is the 6RD prefix length. Normally specified by the ISP. A value of 0 for a single subnet is safe."); ?>
 										</td>
 									</tr>
 									
@@ -2183,6 +2292,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
 							<td class="vtable">
 								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
+								<br/>
+								<?=gettext("Note: Only required in Access Point mode. If left blank in Ad-hoc or Infrastructure mode, this interface will connect to any available SSID"); ?>
 							</td>
 						</tr>
 						<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>

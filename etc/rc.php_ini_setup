@@ -27,7 +27,12 @@
 
 # Set our operating platform
 PLATFORM=`/bin/cat /etc/platform`
-EXTENSIONSDIR="/usr/local/lib/php/20060613/"
+
+if [ -d /usr/local/lib/php/20090626 ]; then
+	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
+else
+	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
+fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
@@ -85,7 +90,7 @@ PHPMODULES="$PHPMODULES curl date"
 PHPMODULES="$PHPMODULES gettext"
 # User manager
 PHPMODULES="$PHPMODULES ldap openssl pcntl"
-PHPMODULES="$PHPMODULES mhash"
+PHPMODULES="$PHPMODULES hash"
 PHPMODULES="$PHPMODULES mcrypt"
 # Regexs, PERL style!
 PHPMODULES="$PHPMODULES pcre"
@@ -161,8 +166,8 @@ set_time_limit = 0
 register_argc_argv = On
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}
-upload_max_filesize = 100M
-post_max_size = 100M
+upload_max_filesize = 128M
+post_max_size = 128M
 html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1

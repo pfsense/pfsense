@@ -64,7 +64,7 @@ else
 	$id = $_GET['id'];
 
 function return_first_two_octets($ip) {
-	$ip_split = split("\.", $ip);
+	$ip_split = explode(".", $ip);
 	return $ip_split[0] . "." . $ip_split[1];
 }
 

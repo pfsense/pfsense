@@ -3,17 +3,17 @@
 	status_wireless.php
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	notice, this list of conditions and the following disclaimer in the
 	documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -87,25 +87,24 @@ display_top_tabs($tab_array);
 ?>
 </td></tr>
 <tr><td>
-<div id="mainarea">
-<table class="tabcont" colspan="3" cellpadding="3" width="100%">
+<div id="mainarea" class="tabcont">
+<input type="hidden" name="if" id="if" value="<?php echo $if; ?>">
+<b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br/><br/>
+<b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
+<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
+	<thead>
+		<tr bgcolor='#990000'>
+			<td><b><font color='#ffffff'>SSID</font></b></td>
+			<td><b><font color='#ffffff'>BSSID</font></b></td>
+			<td><b><font color='#ffffff'>CHAN</font></b></td>
+			<td><b><font color='#ffffff'>RATE</font></b></td>
+			<td><b><font color='#ffffff'>RSSI</font></b></td>
+			<td><b><font color='#ffffff'>INT</font></b></td>
+			<td><b><font color='#ffffff'>CAPS</font></b></td>
+		</tr>
+	</thead>
+	<tbody>
 <?php
-
-	/* table header */
-	print "<input type=\"hidden\" name=\"if\" id=\"if\" value=\"{$if}\">\n";
-	print "<tr><td colspan=7><b><input type=\"submit\" name=\"rescanwifi\" id=\"rescanwifi\" value=\"Rescan\"><br/></td></tr>\n";
-	print "<tr><td colspan=7><b>" . gettext("Nearby access points or ad-hoc peers") . ".<br/></td></tr>\n";
-	print "\n<tr>";
-	print "<tr bgcolor='#990000'>";
-	print "<td><b><font color='#ffffff'>SSID</td>";
-	print "<td><b><font color='#ffffff'>BSSID</td>";
-	print "<td><b><font color='#ffffff'>CHAN</td>";
-	print "<td><b><font color='#ffffff'>RATE</td>";
-	print "<td><b><font color='#ffffff'>RSSI</td>";
-	print "<td><b><font color='#ffffff'>INT</td>";
-	print "<td><b><font color='#ffffff'>CAPS</td>";
-	print "</tr>\n\n";
-
 	exec("/sbin/ifconfig {$rwlif} list scan 2>&1", $states, $ret);
 	/* Skip Header */
 	array_shift($states);
@@ -135,25 +134,28 @@ display_top_tabs($tab_array);
 		print "<td>{$caps}</td>";
 		print "</tr>\n";
 	}
+?>
+	</tbody>
+</table>
+<b><?php echo gettext("Associated or ad-hoc peers"); ?></b><br/>
+<table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
+	<thead>
+		<tr bgcolor='#990000'>
+			<td><b><font color='#ffffff'>ADDR</font></b></td>
+			<td><b><font color='#ffffff'>AID</font></b></td>
+			<td><b><font color='#ffffff'>CHAN</font></b></td>
+			<td><b><font color='#ffffff'>RATE</font></b></td>
+			<td><b><font color='#ffffff'>RSSI</font></b></td>
+			<td><b><font color='#ffffff'>IDLE</font></b></td>
+			<td><b><font color='#ffffff'>TXSEQ</font></b></td>
+			<td><b><font color='#ffffff'>RXSEQ</font></b></td>
+			<td><b><font color='#ffffff'>CAPS</font></b></td>
+			<td><b><font color='#ffffff'>ERP</font></b></td>
+		</tr>
+	</thead>
+	<tbody>
 
-	print "</table><table class=\"tabcont\" colspan=\"3\" cellpadding=\"3\" width=\"100%\">";
-
-	/* table header */
-        print "\n<tr>";
-        print "<tr><td colspan=7><b>" . gettext("Associated or ad-hoc peers") . "<br/></td></tr>\n";
-	print "<tr bgcolor='#990000'>";
-	print "<td><b><font color='#ffffff'>ADDR</td>";
-	print "<td><b><font color='#ffffff'>AID</td>";
-	print "<td><b><font color='#ffffff'>CHAN</td>";
-	print "<td><b><font color='#ffffff'>RATE</td>";
-	print "<td><b><font color='#ffffff'>RSSI</td>";
-	print "<td><b><font color='#ffffff'>IDLE</td>";
-	print "<td><b><font color='#ffffff'>TXSEQ</td>";
-	print "<td><b><font color='#ffffff'>RXSEQ</td>";
-	print "<td><b><font color='#ffffff'>CAPS</td>";
-	print "<td><b><font color='#ffffff'>ERP</td>";
-	print "</tr>\n\n";
-
+<?php
 	$states = array();
 	exec("/sbin/ifconfig {$rwlif} list sta 2>&1", $states, $ret);
 	array_shift($states);
@@ -176,14 +178,15 @@ display_top_tabs($tab_array);
 		print "</tr>\n";
 	}
 
-/* XXX: what stats to we get for adhoc mode? */ 
+/* XXX: what stats to we get for adhoc mode? */
 
 ?>
+	</tbody>
 </table>
 </div><br>
-                  <b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br>
-                  <b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
-                  	S = Short preamble, s = Short slot time
+	<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br>
+	<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
+		S = Short preamble, s = Short slot time
 </td></tr>
 </table>
 

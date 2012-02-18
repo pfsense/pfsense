@@ -45,7 +45,7 @@ function stats(x) {
 
 function updateMemory(x) {
 	if(jQuery('#memusagemeter'))
-		jQuery("#memusagemeter").val(x + '%');
+		jQuery("#memusagemeter").html(x + '%');
 	if(jQuery('#memwidtha'))
 		jQuery("#memwidtha").css('width',x + 'px');
 	if(jQuery('#memwidthb'))
@@ -54,7 +54,7 @@ function updateMemory(x) {
 
 function updateCPU(x) {
 	if(jQuery('#cpumeter'))
-		jQuery("#cpumeter").val(x + '%');
+		jQuery("#cpumeter").html(x + '%');
 	if(jQuery('#cpuwidtha'))
 		jQuery("#cpuwidtha").css('width',x + 'px');
 	if(jQuery('#cpuwidthb'))
@@ -67,7 +67,7 @@ function updateCPU(x) {
 
 function updateTemp(x) {
 	if(jQuery("#tempmeter"))
-		jQuery("#tempmeter").val(x + '\u00B0' + 'C');
+		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
         if(jQuery('#tempwidtha'))
 		jQuery("#tempwidtha").css('width',x + 'px');
         if(jQuery('#tempwidthb'))
@@ -81,12 +81,12 @@ function updateDateTime(x) {
 
 function updateUptime(x) {
 	if(jQuery('#uptime'))
-		jQuery("#uptime").val(x);
+		jQuery("#uptime").html(x);
 }
 
 function updateState(x) {
 	if(jQuery('#pfstate'))
-		jQuery("#pfstate").val(x);
+		jQuery("#pfstate").html(x);
 }
 
 function updateGatewayStats(x){

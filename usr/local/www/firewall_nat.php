@@ -290,7 +290,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					<?php
 						$localport = $natent['local-port'];
 
-						list($dstbeginport, $dstendport) = split("-", $natent['destination']['port']);
+						list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
 
 						if ($dstendport) {
 							$localendport = $natent['local-port'] + $dstendport - $dstbeginport;

@@ -384,7 +384,7 @@ function get_dates($curperiod, $graph) {
 
 					if($curcat == "custom") {
 						foreach ($custom_databases as $db => $database) {
-							$optionc = split("-", $database);
+							$optionc = explode("-", $database);
 							$search = array("-", ".rrd", $optionc);
 							$replace = array(" :: ", "", $friendly);
 							echo "<option value=\"{$database}\"";
@@ -399,7 +399,7 @@ function get_dates($curperiod, $graph) {
 						if(! preg_match("/($curcat)/i", $database)) {
 							continue;
 						}
-						$optionc = split("-", $database);
+						$optionc = explode("-", $database);
 						$search = array("-", ".rrd", $optionc);
 						$replace = array(" :: ", "", $friendly);
 
@@ -487,7 +487,7 @@ function get_dates($curperiod, $graph) {
 								if(! preg_match("/($curcat)/i", $curdatabase)) {
 									continue;
 								}
-								$optionc = split("-", $curdatabase);
+								$optionc = explode("-", $curdatabase);
 								$search = array("-", ".rrd", $optionc);
 								$replace = array(" :: ", "", $friendly);
 								switch($curoption) {
@@ -562,7 +562,7 @@ function get_dates($curperiod, $graph) {
 									if(! stristr($curdatabase, $curcat)) {
 										continue;
 									}
-									$optionc = split("-", $curdatabase);
+									$optionc = explode("-", $curdatabase);
 									$search = array("-", ".rrd", $optionc);
 									$replace = array(" :: ", "", $friendly);
 									switch($curoption) {

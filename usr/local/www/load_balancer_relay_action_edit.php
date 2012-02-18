@@ -197,31 +197,31 @@ function updateProtocol(m) {
   }
 	switch (m) {
 		case "dns": {
-			$('type_row').hide();
-			$('tcp_options_row').hide();
-			$('ssl_options_row').hide();
-			$('direction_row').hide();
-			$('action_row').hide();
+			jQuery('#type_row').hide();
+			jQuery('#tcp_options_row').hide();
+			jQuery('#ssl_options_row').hide();
+			jQuery('#direction_row').hide();
+			jQuery('#action_row').hide();
 			break;
 		}
 		case "tcp": {
-			$('type_row').hide();
-			$('tcp_options_row').appear();
-			$('ssl_options_row').hide();
-			$('direction_row').hide();
-			$('action_row').hide();
+			jQuery('#type_row').hide();
+			jQuery('#tcp_options_row').show();
+			jQuery('#ssl_options_row').hide();
+			jQuery('#direction_row').hide();
+			jQuery('#action_row').hide();
 			break;
 		}
 		case "http": {
-			$('type_row').appear();
-			$('tcp_options_row').hide();
-			$('ssl_options_row').appear();
-			$('direction_row').appear();
-			$('direction').enable();
-			$('type_' + $('direction').getValue()).enable();
-			$('type_' + $('direction').getValue()).appear();
-			$('action_row').appear();
-<?
+			jQuery('#type_row').show();
+			jQuery('#tcp_options_row').hide();
+			jQuery('#ssl_options_row').show();
+			jQuery('#direction_row').show();
+			jQuery('#direction').prop('disabled',false);
+			jQuery('#type_' + jQuery('#direction').val()).prop('disabled',false);
+			jQuery('#type_' + jQuery('#direction').val()).show();
+			jQuery('#action_row').show();
+<?php
   /* Generate lots of .appear() entries for the action row select list
    * based on what's been either preconfigured or "defaults"
    * This really did have to be done in PHP.
@@ -236,7 +236,7 @@ function updateProtocol(m) {
 	foreach ($actions['direction'][$ddir] as $type => $tv) {
 		foreach ($actions['direction'][$ddir][$type] as $action => $av ) {
 			if($dtype == $type) {
- 				echo "$('{$ddir}_{$type}_{$action}').appear();";
+				echo "jQuery('#{$ddir}_{$type}_{$action}').show();";
  			}
 		}
 	}
@@ -255,17 +255,17 @@ function updateDirection(d) {
 
   switch (d) {
     case "request": {
-      $('type_response').disable();
-      $('type_response').hide();
-      $('type_request').enable();
-      $('type_request').appear();
-      break;    
+      jQuery('#type_response').prop('disabled',true);
+      jQuery('#type_response').hide();
+      jQuery('#type_request').prop('disabled',false);
+      jQuery('#type_request').show();
+      break;
     }
     case "response": {
-      $('type_request').disable();    
-      $('type_request').hide();    
-      $('type_response').enable();    
-      $('type_response').appear();    
+      jQuery('#type_request').prop('disabled',true);
+      jQuery('#type_request').hide();
+      jQuery('#type_response').prop('disabled',false);
+      jQuery('#type_response').show();
       break;
     }
   }
@@ -287,14 +287,14 @@ function updateType(t){
 		$t = $types;
 		foreach ($t as $k => $v) {
 			if ($k != $key) {
-				echo "			$('{$k}').hide();\n";
+				echo "			jQuery('#{$k}').hide();\n";
 			}
 		}
 		echo "		}\n";
 	}
 ?>
 	}
-	$(t).appear();	
+	jQuery('#' + t).show();
 }
 
 
@@ -303,83 +303,82 @@ function updateAction(a) {
   if (a == "") {
     a = "change";
   }
-
   switch(a) {
     case "append": {
-      $('input_action_value').appear();
-      $('option_action_value').enable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("&nbsp;to&nbsp;");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').show();
+      jQuery('#option_action_value').prop('disabled',false);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("&nbsp;to&nbsp;");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "change": {
-      $('input_action_value').appear();
-      $('option_action_value').enable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("&nbsp;of&nbsp;");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').show();
+      jQuery('#option_action_value').prop('disabled',false);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("&nbsp;of&nbsp;");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "expect": {
-      $('input_action_value').appear();
-      $('option_action_value').enable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("&nbsp;from&nbsp;");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').show();
+      jQuery('#option_action_value').prop('disabled',false);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "filter": {
-      $('input_action_value').appear();
-      $('option_action_value').enable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("&nbsp;from&nbsp;");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').show();
+      jQuery('#option_action_value').prop('disabled',false);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "hash": {
-      $('input_action_value').hide();
-      $('option_action_value').disable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').hide();
+      jQuery('#option_action_value').prop('disabled',true);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "log": {
-      $('input_action_value').hide();
-      $('option_action_value').disable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').hide();
-      $('option_action_id').disable();
-      $('action_action_value').update("");
-      $('action_action_id').update("");
+      jQuery('#input_action_value').hide();
+      jQuery('#option_action_value').prop('disabled',true);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').hide();
+      jQuery('#option_action_id').prop('disabled',true);
+      jQuery('#action_action_value').html("");
+      jQuery('#action_action_id').html("");
       break;
     }
     case "mark": {
-      $('input_action_value').appear();
-      $('option_action_value').enable();
-      $('input_action_key').appear();
-      $('option_action_key').enable();
-      $('input_action_id').appear();
-      $('option_action_id').enable();
-      $('action_action_value').update("&nbsp;from&nbsp;");
-      $('action_action_id').update("&nbsp;with&nbsp;");
+      jQuery('#input_action_value').show();
+      jQuery('#option_action_value').prop('disabled',false);
+      jQuery('#input_action_key').show();
+      jQuery('#option_action_key').prop('disabled',false);
+      jQuery('#input_action_id').show();
+      jQuery('#option_action_id').prop('disabled',false);
+      jQuery('#action_action_value').html("&nbsp;from&nbsp;");
+      jQuery('#action_action_id').html("&nbsp;with&nbsp;");
       break;
     }
   }
@@ -387,11 +386,11 @@ function updateAction(a) {
 
 
 function num_options() {
-	return $('options_table').childElements().length - 1;
+	return jQuery('#options_table').children().length - 1;
 }
 
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
   updateProtocol('<?=htmlspecialchars($pconfig['protocol'])?>');  
   updateDirection('<?=htmlspecialchars($pconfig['direction'])?>');  
   updateType('<?=htmlspecialchars($pconfig['type'])?>');  

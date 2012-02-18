@@ -548,8 +548,6 @@ add 65303 set 1 pass layer2 mac-type 0x88c7
 add 65304 set 1 pass layer2 mac-type 0x8863
 # PPP Over Ethernet Session Stage
 add 65305 set 1 pass layer2 mac-type 0x8864
-# Allow WPA
-add 65306 set 1 pass layer2 mac-type 0x888e
 
 # layer 2: block anything else non-IP
 add 65307 set 1 deny layer2 not mac-type ip
@@ -1247,7 +1245,6 @@ function captiveportal_logportalauth($user,$mac,$ip,$status, $message = null) {
 
 /* log simple messages to syslog */
 function captiveportal_syslog($message) {
-	define_syslog_variables();
 	$message = trim($message);
 	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
@@ -1505,14 +1502,14 @@ function getVolume($ip) {
 	captiveportal_ipfw_set_context($cpzone);
 	exec("/sbin/ipfw table 1 entrystats {$ip}", $ipfwin);
 	if ($ipfwin[0]) {
-		$ipfwin = split(" ", $ipfwin[0]);
+		$ipfwin = explode(" ", $ipfwin[0]);
 		$volume['input_pkts'] = $ipfwin[2];
 		$volume['input_bytes'] = $ipfwin[3];
 	}
 
 	exec("/sbin/ipfw table 2 entrystats {$ip}", $ipfwout);
 	if ($ipfwout[0]) {
-		$ipfwout = split(" ", $ipfwout[0]);
+		$ipfwout = explode(" ", $ipfwout[0]);
 		$volume['output_pkts'] = $ipfwout[2];
 		$volume['output_bytes'] = $ipfwout[3];
 	}
@@ -1743,8 +1740,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		if (empty($cpentry[10]))
 			$cpentry[10] = 'first';
 		/* on the same ip */
-		if($cpentry[2] == $clientip) {
-			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
+		if ($cpentry[2] == $clientip) {
+			if (isset($config['captiveportal']['nomacfilter']) || $cpentry[3] == $clientmac)   
+				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
+			else
+				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");
 			$sessionid = $sid;
 			break;
 		}

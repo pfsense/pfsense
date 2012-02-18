@@ -58,7 +58,6 @@ nanobsd_detect_slice_info();
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 
 <?php include("fbegin.inc"); ?>
 

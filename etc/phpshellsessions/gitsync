@@ -52,8 +52,9 @@ if(is_dir("/root/pfsense/HEAD"))
 
 /* NOTE: Set branches here */
 $branches = array(
-	"master" => "2.0 development branch",
-	"RELENG_1_2" => "1.2* release branch",
+	"master" => "2.1 development branch",
+	"RELENG_2_0" => "2.0.* release branch",
+	"RELENG_1_2" => "1.2.* release branch",
 	"build_commit" => "The commit originally used to build the image"
 );
 

@@ -36,7 +36,7 @@ var GL_DYNAMIC = 1;
 function GraphInitialize(element_id, width, height, bar_width) {
 	// Find the page element which will contain the graph
 	var owner;
-	if((owner = $(element_id)) == null) {
+	if((owner = jQuery('#' + element_id)) == null) {
 		alert("GraphLink Error: Element ID '" + element_id + "' not found.");
 		return false;
 	}
@@ -71,14 +71,13 @@ function GraphInitialize(element_id, width, height, bar_width) {
 	}
 
 	graph_html += '</div>';
-	owner.innerHTML = graph_html;
-	graph['element_id'] = $('GraphLinkData' + graph['id']);
+	owner.html(graph_html);
+	graph['element_id'] = jQuery('#GraphLinkData' + graph['id']);
 
 	for(i = 0; i < bar_count; i++) {
-		graph['spans'][i] = $('GraphLinkBar' + graph['id'] +
-													'_' + i);
-		graph['spans'][i].style.width     = bar_width + 'px';
-		graph['spans'][i].style.marginTop = height + 'px';
+		graph['spans'][i] = jQuery('#GraphLinkBar' + graph['id'] + '_' + i);
+		graph['spans'][i].css('width',bar_width + 'px');
+		graph['spans'][i].css('margin-top',height + 'px');
 	}
 
 	return graph;

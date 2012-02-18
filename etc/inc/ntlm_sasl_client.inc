@@ -19,11 +19,11 @@ class ntlm_sasl_client_class
 	Function Initialize(&$client)
 	{
 		if(!function_exists($function="mcrypt_encrypt")
-		|| !function_exists($function="mhash"))
+               || !function_exists($function="hash"))
 		{
 			$extensions=array(
 				"mcrypt_encrypt"=>"mcrypt",
-				"mhash"=>"mhash"
+                               "hash"=>"hash"
 			);
 			$client->error="the extension ".$extensions[$function]." required by the NTLM SASL client class is not available in this PHP configuration";
 			return(0);
@@ -62,7 +62,7 @@ class ntlm_sasl_client_class
 	Function NTLMResponse($challenge,$password)
 	{
 		$unicode=$this->ASCIIToUnicode($password);
-		$md4=mhash(MHASH_MD4,$unicode);
+               $md4=hash("md4", $unicode);
 		$padded=$md4.str_repeat(chr(0),21-strlen($md4));
 		$iv_size=mcrypt_get_iv_size(MCRYPT_DES,MCRYPT_MODE_ECB);
 		$iv=mcrypt_create_iv($iv_size,MCRYPT_RAND);

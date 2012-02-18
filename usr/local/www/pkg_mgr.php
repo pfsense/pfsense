@@ -44,6 +44,12 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+$timezone = $syscfg['timezone'];
+if (!$timezone)
+	$timezone = "Etc/UTC";
+
+date_default_timezone_set($timezone);
+
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"),gettext("Package Manager"));

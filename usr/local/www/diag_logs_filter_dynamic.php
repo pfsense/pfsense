@@ -64,8 +64,6 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <script language="javascript">
 	lastsawtime = '<?php echo time(); ?>;';
 	var lines = Array();

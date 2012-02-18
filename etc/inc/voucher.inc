@@ -213,7 +213,7 @@ function voucher_expire($voucher_received) {
 	}
 
 	// split into an array. Useful for multiple vouchers given
-	$a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
+	$a_vouchers_received = preg_split("/[\t\n\r ]+/s", $voucher_received); 
 	$active_dirty = false;
 
 	$cpdb = captiveportal_read_db(false, 4); /* Indexed by Voucher */
@@ -329,7 +329,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	}
 
 	// split into an array. Useful for multiple vouchers given
-	$a_vouchers_received = split("[\t\n\r ]+",$voucher_received); 
+	$a_vouchers_received = preg_split("/[\t\n\r ]+/s", $voucher_received); 
 	$error = 0;
 	$test_result = array();     // used to display for voucher test option in GUI
 	$total_minutes = 0;
@@ -647,7 +647,6 @@ function voucher_unlink_db($roll) {
 /* we share the log with captiveportal for now */
 function voucher_log($priority, $message) {
 
-    define_syslog_variables();
     $message = trim($message);
     openlog("logportalauth", LOG_PID, LOG_LOCAL4);
     syslog($priority, sprintf(gettext("Voucher: %s"),$message));

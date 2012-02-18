@@ -274,7 +274,7 @@ if ($_POST) {
 		if (isset($_POST['radiusip']))
 			$newcp['radiusip'] = $_POST['radiusip'];
 		else
-			unset($newcp['radiusip3']);
+			unset($newcp['radiusip']);
 		if (isset($_POST['radiusip2']))
 			$newcp['radiusip2'] = $_POST['radiusip2'];
 		else

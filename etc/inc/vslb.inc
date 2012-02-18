@@ -385,7 +385,7 @@ function get_lb_summary() {
 	exec('/usr/local/sbin/relayctl show summary 2>&1', $relayctl);
 	$relay_hosts=Array();
 	foreach( (array) $relayctl as $line) {
-		$t=split("\t", $line);
+		$t = explode("\t", $line);
 		switch (trim($t[1])) {
 			case "table":
 				$curpool=trim($t[2]);

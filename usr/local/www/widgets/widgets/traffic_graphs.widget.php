@@ -45,7 +45,7 @@ $ifdescrs = get_configured_interface_with_descr();
 	//set variables for traffic graph
 	$width = "100%";
 	$height = "150";
-	$showngraphlist = explode(",", $pconfig['traffic_graphs-config']);
+	$showngraphlist = explode(",", $config['widgets']['traffic_graphs-config']);
 	$graphcounter = 0;
 	if($config['widgets']['traffic_graphs-config']) {
 		$graphlistcount = count($showngraphlist);

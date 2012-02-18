@@ -187,9 +187,9 @@ if(count($states) > 0) {
 
 		/* break up info and extract $srcip and $dstip */
 		$ends = preg_split("/\<?-\>?/", $info);
-		$parts = split(":", $ends[0]);
+		$parts = explode(":", $ends[0]);
 		$srcip = trim($parts[0]);
-		$parts = split(":", $ends[count($ends) - 1]);
+		$parts = explode(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 
 		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>

@@ -72,7 +72,6 @@ function unbound_add_domain_overrides($pvt=false) {
 		file_put_contents("{$g['unbound_chroot_path']}/etc/domainoverrides.conf", $domain_entries);
 }
 
-
 /* Optimize Unbound for environment */
 function unbound_optimization() {
 	global $config;
@@ -150,6 +149,7 @@ function unbound_fetch_root_hints_using_dig() {
 		return true;
 }
 
+/* Fetch root name servers hints file */
 function unbound_fetch_root_hints() {
 	global $g;
 
@@ -216,7 +216,8 @@ EOF;
 	return $stats;
 }
 
-function unbound_resync_config() {
+/* Generate Unbound configuration */
+function unbound_generate_config() {
 	global $config,$g;
 
 	$unboundcfg = $config['unbound'];
@@ -225,7 +226,7 @@ function unbound_resync_config() {
 	$optimization = unbound_optimization();
 
 	/* Setup DNSSEC support */
-	if($unbound_config['dnssec_status'] == "on") {
+	if($unboundcfg['dnssec_status'] == "on") {
 		$module_config = "validator iterator";
 		$anchor_file = "auto-trust-anchor-file: /etc/root-trust-anchor";
 	} else
@@ -246,7 +247,7 @@ EOF;
 	}
 
 	/* Allow DNS Rebind for forwarded domains */
-	if (isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) {
+	if (isset($unboundcfg['domainoverrides']) && is_array($unboundcfg['domainoverrides'])) {
 		if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
 			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address";
 			$private_domains .= unbound_add_domain_overrides(true);
@@ -263,9 +264,9 @@ EOF;
 	$statistics = unbound_statistics();
 
 	/* Add custom Unbound options */
-	if ($config['unbound']['custom_options']) {
+	if ($unboundcfg['custom_options']) {
 		$custom_option = "# Unbound custom option";
-		foreach (preg_split('/\s+/', $config['dns']['custom_options']) as $ent)
+		foreach (preg_split('/\s+/', $unboundcfg['custom_options']) as $ent)
 			$custom_option .= $ent."\n";
 	}
 
@@ -344,6 +345,7 @@ EOD;
 
 	file_put_contents("{$g['unbound_chroot_path']}/etc/unbound.conf", $unboundconf);
 
+	return 0;
 }
 
 function unbound_remote_control_setup() {

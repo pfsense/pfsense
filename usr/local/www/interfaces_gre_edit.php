@@ -177,15 +177,14 @@ include("head.inc");
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
-                                        for ($i = 32; $i > 0; $i--) {
-                                                if($i <> 31) {
-                                                        echo "<option value=\"{$i}\" ";
-                                                        if ($i == $pconfig['tunnel-remote-net']) echo "selected";
-                                                        echo ">" . $i . "</option>";
-                                                }
+                                        for ($i = 128; $i > 0; $i--) {
+						echo "<option value=\"{$i}\" ";
+						if ($i == $pconfig['tunnel-remote-net'])
+							echo "selected";
+						echo ">" . $i . "</option>";
                                         }
                                         ?>
-                    </select>					
+                    </select>
                     <br/>
                     <span class="vexpl"><?=gettext("Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.");?></span></td>
 			    </tr>

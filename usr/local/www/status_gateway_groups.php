@@ -62,7 +62,7 @@ include("head.inc");
 <?php
 			$tab_array = array();
 			$tab_array[0] = array(gettext("Gateways"), false, "status_gateways.php");
-			$tab_array[1] = array(gettext("Groups"), true, "status_gateway_groups.php");
+			$tab_array[1] = array(gettext("Gateway Groups"), true, "status_gateway_groups.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>

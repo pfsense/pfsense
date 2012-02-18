@@ -210,8 +210,15 @@ include("head.inc");
 			<?=htmlspecialchars($ifinfo['gateway']);?>
 		</td>
 	</tr>
-	<?php endif; ?>
-	<?php if ($ifinfo['ipaddrv6']): ?>
+	<?php endif; ?><?php if ($ifinfo['linklocal']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("IPv6 Link Local");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['linklocal']);?>
+			&nbsp; 
+		</td>
+	</tr>
+	<?php endif; ?><?php if ($ifinfo['ipaddrv6']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("IPv6 address");?></td>
 		<td width="78%" class="listr">

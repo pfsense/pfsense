@@ -96,7 +96,6 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form method='post'>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 
 <script language="javascript">
 	function method_change(entrytype) {
@@ -116,7 +115,7 @@ include("fbegin.inc");
 </script>
 	
 <?=gettext("Table:");?> 
-<select id='type' onChange='method_change($F("type"));' name='type'>
+<select id='type' onChange='method_change(jQuery("#type").val());' name='type'>
 	<?php foreach ($tables as $table) {
 		echo "<option name='{$table}' value='{$table}'";
 		if ($tablename == $table)

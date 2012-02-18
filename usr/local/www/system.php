@@ -109,7 +109,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = split(" ", "hostname domain");
+	$reqdfields = explode(" ", "hostname domain");
 	$reqdfieldsn = array(gettext("Hostname"),gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

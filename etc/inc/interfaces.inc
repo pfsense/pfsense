@@ -419,18 +419,14 @@ function interfaces_bridge_configure($checkmember = 0) {
                 foreach ($config['bridges']['bridged'] as $bridge) {
                         if(empty($bridge['bridgeif']))
                                 $bridge['bridgeif'] = "bridge{$i}";
-			if ($checkmember == 1 && (strstr($bridge['members'], "gif") || strstr($bridge['members'], "gre")))
-				continue;
-			if ($checkmember == 2 && !strstr($bridge['members'], "gif") && !strstr($bridge['members'], "gre"))
-				continue;
                         /* XXX: Maybe we should report any errors?! */
-                        interface_bridge_configure($bridge);
+                        interface_bridge_configure($bridge, $checkmember);
                         $i++;
                 }
         }
 }
 
-function interface_bridge_configure(&$bridge) {
+function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	global $config, $g;
 
 	if (!is_array($bridge))
@@ -445,25 +441,22 @@ function interface_bridge_configure(&$bridge) {
 	if (!count($members))
 		return -1;
 
-	$checklist = get_configured_interface_list();
-
-	if ($g['booting'] || !empty($bridge['bridgeif'])) {
-		pfSense_interface_destroy($bridge['bridgeif']);
-		pfSense_interface_create($bridge['bridgeif']);
-		$bridgeif = $bridge['bridgeif'];
-	} else
-		$bridgeif = pfSense_interface_create("bridge");
-
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
 	$commonrx = true;
 	$commontx = true;
+	$foundgif = false;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
 		$opts = pfSense_get_interface_addresses($realif);
 		$mtu = $opts['mtu'];
-		if (substr($realif, 0, 3) == "gif" && $mtu <= 1500)
-			continue;
+		if (substr($realif, 0, 3) == "gif") {
+			$foundgif = true;
+			if ($checkmember == 1)
+				return;
+			if ($mtu <= 1500)
+				continue;
+		}
 		if (!isset($opts['encaps']['txcsum']))
 			$commontx = false;
 		if (!isset($opts['encaps']['rxcsum']))
@@ -479,7 +472,9 @@ function interface_bridge_configure(&$bridge) {
 		else if (!empty($mtu) && $mtu < $smallermtu)
 			$smallermtu = $mtu;
 	}
-	 
+	if ($foundgif == false && $checkmember == 2)
+		return;
+
 	/* Just in case anything is not working well */
 	if ($smallermtu == 0)
 		$smallermtu = 1500; 
@@ -495,7 +490,16 @@ function interface_bridge_configure(&$bridge) {
 		$flags |= IFCAP_TSO6;
 	if ($commonlro === false)
 		$flags |= IFCAP_LRO;
-		
+
+	if ($g['booting'] || !empty($bridge['bridgeif'])) {
+		pfSense_interface_destroy($bridge['bridgeif']);
+		pfSense_interface_create($bridge['bridgeif']);
+		$bridgeif = $bridge['bridgeif'];
+	} else
+		$bridgeif = pfSense_interface_create("bridge");
+
+	$checklist = get_configured_interface_list();
+
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
@@ -675,8 +679,6 @@ function interface_lagg_configure(&$lagg) {
 	if (!count($members))
 		return -1;
 	
-	$checklist = get_interface_list();
-
 	if ($g['booting'] || !(empty($lagg['laggif']))) {
 		pfSense_interface_destroy($lagg['laggif']);
 		pfSense_interface_create($lagg['laggif']);
@@ -720,6 +722,8 @@ function interface_lagg_configure(&$lagg) {
                 $flags |= IFCAP_TSO6;
         if ($commonlro === false)
                 $flags |= IFCAP_LRO;
+
+	$checklist = get_interface_list();
 
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
@@ -777,7 +781,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} {$gre['remote-addr']}");
-	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+	if((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
+		mwexec("/sbin/ifconfig {$greif} inet6 {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} prefixlen /{$gre['tunnel-remote-net']} ");
+	} else {
+		mwexec("/sbin/ifconfig {$greif} {$gif['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
+	}
 	if (isset($gre['link0']) && $gre['link0'])
 		pfSense_interface_flags($greif, IFF_LINK0);
 	if (isset($gre['link1']) && $gre['link1'])
@@ -2932,6 +2940,114 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	return 0;
 }
 
+function interface_6rd_configure($interface = "wan"){
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	/* because this is a tunnel interface we can only function 
+	 *	with a public IPv4 address on the interface */
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	
+	if(!is_numeric($wancfg['prefixlenv4-6rd']))
+		$v4prefixlen = 0;
+	else
+		$v4prefixlen = $wancfg['prefixlenv4-6rd'];	
+
+	/* create the long prefix notation for math, save the prefix length */
+	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
+	$rd6prefixlen = $rd6prefix[1];
+	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
+	$rd6arr = explode(":", $rd6prefix);
+	// echo "6RD prefix {$wancfg['prefix-6rd']} length {$rd6prefixlen}\n";
+
+	/* we need the hex form of the interface IPv4 address */
+	// $ip4address = "178.196.136.54";
+	$ip4arr = explode(".", $ip4address);
+	$hexwanv4 = "";
+	foreach($ip4arr as $octet)
+		$hexwanv4 .= sprintf("%02x", $octet);
+
+	/* we need the hex form of the broker IPv4 address */
+	$ip4arr = explode(".", $wancfg['gateway-6rd']);
+	$hexbrv4 = "";
+	foreach($ip4arr as $octet)
+		$hexbrv4 .= sprintf("%02x", $octet);
+	
+	/* binary presentation of the prefix for all 128 bits. */
+	$rd6prefixbin = "";
+	foreach($rd6arr as $element) {
+		$rd6prefixbin .= sprintf("%016b", hexdec($element));
+	}
+	/* just save the left prefix length bits */
+	$rd6prefixstartbin = substr($rd6prefixbin, 0, $rd6prefixlen);
+
+	// echo "$rd6prefixstartbin\n";
+	
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$rd6brokerbin = substr(sprintf("%032b", hexdec($hexbrv4)), $v4prefixlen, 32);
+	// echo "$rd6prefixstartbin . $rd6brokerbin\n";
+	$rd6brokerbin = str_pad($rd6prefixstartbin . $rd6brokerbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* for the local subnet too. */
+	$rd6lanbin = substr(sprintf("%032b", hexdec($hexwanv4)), $v4prefixlen, 32);
+	// echo "$rd6prefixstartbin . $rd6lanbin\n";
+	$rd6lanbin = str_pad($rd6prefixstartbin . $rd6lanbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6brarr = array();
+	$rd6brbinarr = array();
+	$rd6brbinarr = str_split($rd6brokerbin, 16);
+	foreach($rd6brbinarr as $bin)
+		$rd6brarr[] = dechex(bindec($bin));
+	$rd6brarr[7] = 1;
+	$rd6brgw = Net_IPv6::compress(implode(":", $rd6brarr));
+	// echo "6RD stf gateway $rd6brgw length {$rd6prefixlen}\n";
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6lanarr = array();
+	$rd6lanbinarr = array();
+	$rd6lanbinarr = str_split($rd6lanbin, 16);
+	foreach($rd6lanbinarr as $bin)
+		$rd6lanarr[] = dechex(bindec($bin));
+	$rd6lanpr = Net_IPv6::compress(implode(":", $rd6lanarr));
+	$rd6lanarr[7] = 1;
+	$rd6lan = Net_IPv6::compress(implode(":", $rd6lanarr));
+	// echo "6RD LAN prefix $rd6lan length 64\n";
+
+
+	/* setup the stf interface */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6lanpr}/{$rd6prefixlen}");
+
+	/* Example 6RD setup steps
+		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
+		# ifconfig fxp1 inet 192.0.2.2/24
+		# ifconfig stf0 create
+		# ifconfig stf0 inet6 2001:db8:c000:0202::/32
+		# route add -inet6 default 2001:db8:c000:0201::1
+	*/
+
+	
+	log_error("would have run: route add -inet6 default {$rd6brgw}");
+
+	return 0;
+
+}
+
+
 function interface_dhcpv6_configure($interface = "wan") {
 	global $config, $g;
 	$iflist = get_configured_interface_with_descr(false, true);
@@ -3006,7 +3122,6 @@ function interface_dhcpv6_configure($interface = "wan") {
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
 	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
 	if(!empty($out)) {
-		echo "Output from rtsol {$wanif}\n";
 		foreach($out as $line) {
 			if(stristr($line, "received")) {
 				$parts = explode(" ", $line);
@@ -3729,8 +3844,7 @@ function find_interface_ipv6($interface, $flush = false)
  */
 function find_interface_ipv6_ll($interface, $flush = false)
 {
-	global $interface_ipv6_arr_cache;
-	global $interface_snv6_arr_cache;
+	global $interface_llv6_arr_cache;
 	global $config;
 	
 	$interface = str_replace("\n", "", $interface);
@@ -3739,7 +3853,7 @@ function find_interface_ipv6_ll($interface, $flush = false)
 		return;
 
 	/* Setup IP cache */
-	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
+	if (!isset($interface_llv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
 		// FIXME: Add IPv6 support to the pfSense module
 		exec("/sbin/ifconfig {$interface} inet6", $output);
@@ -3747,21 +3861,14 @@ function find_interface_ipv6_ll($interface, $flush = false)
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
 				if(preg_match("/fe80::/", $parts[1])) {
-					$ifinfo['ipaddrv6'] = $parts[1];
-					if($parts[2] == "-->") {
-						$parts[5] = "126";
-						$ifinfo['subnetbitsv6'] = $parts[5];
-					} else {
-						$ifinfo['subnetbitsv6'] = $parts[3];
-					}
+					$partsaddress = explode("%", $parts[1]);
+					$ifinfo['linklocal'] = $partsaddress[0];
 				}
 			}
 		}
-		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
-		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+		$interface_llv6_arr_cache[$interface] = $ifinfo['linklocal'];
 	}
-
-	return $interface_ipv6_arr_cache[$interface];
+	return $interface_llv6_arr_cache[$interface];
 }
 
 function find_interface_subnet($interface, $flush = false)
@@ -3869,6 +3976,25 @@ function get_interface_ipv6($interface = "wan")
 	}
 
 	$curip = find_interface_ipv6($realif);
+	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
+		return $curip;
+	else
+		return null;
+}
+
+function get_interface_linklocal($interface = "wan")
+{
+	$realif = get_real_interface($interface);
+	if (!$realif) {
+		if (preg_match("/^carp/i", $interface))
+			$realif = $interface;
+		else if (preg_match("/^vip/i", $interface))
+			$realif = $interface;
+		else
+			return null;
+	}
+
+	$curip = find_interface_ipv6_ll($realif);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
 		return $curip;
 	else

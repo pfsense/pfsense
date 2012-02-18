@@ -212,14 +212,14 @@ function updateType(t){
 		$t = $types;
 		foreach ($t as $k => $v) {
 			if ($k != $key) {
-				echo "			$('{$k}').hide();\n";
+				echo "			jQuery('#{$k}').hide();\n";
 			}
 		}
 		echo "		}\n";
 	}
 ?>
 	}
-	$(t).appear();	
+	jQuery('#' + t).show();
 }
 </script>
 

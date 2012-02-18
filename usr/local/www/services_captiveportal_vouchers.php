@@ -226,6 +226,10 @@ if ($_POST) {
 		else
 			unset($newvoucher['enable']);
 		if (empty($_POST['vouchersyncusername'])) {
+			unset($newvoucher['vouchersyncdbip']);
+			unset($newvoucher['vouchersyncport']);
+			unset($newvoucher['vouchersyncusername']);
+			unset($newvoucher['vouchersyncpass']);
 			$newvoucher['charset'] = $_POST['charset'];
 			$newvoucher['rollbits'] = $_POST['rollbits'];
 			$newvoucher['ticketbits'] = $_POST['ticketbits'];

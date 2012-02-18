@@ -190,7 +190,7 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
-        $backups = split("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}'`);
+        $backups = explode("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}'`);
 	$last_backup = "";
         foreach($backups as $backup)
         	if($backup)

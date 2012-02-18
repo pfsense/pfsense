@@ -48,7 +48,7 @@ if($_GET['createalias'] == "true") {
 	if($resolved) {
 		$host = trim($_POST['host']);
 		$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
-		$resolved = split("\n", $dig);
+		$resolved = explode("\n", $dig);
 		$isfirst = true;
 		foreach($resolved as $re) {
 			if($re <> "") {
@@ -132,7 +132,7 @@ if ($_POST) {
 			$resolved = gethostbyname($host);
 			if($resolved) {
 				$dig=`dig $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
-				$resolved = split("\n", $dig);
+				$resolved = explode("\n", $dig);
 			}
 			$hostname = $host;
 			if ($host != $resolved)

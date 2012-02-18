@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ATAIDLE=/usr/local/sbin/ataidle
+for i in /dev/ad?; do
+	SUPPORTED=`${ATAIDLE} ${i} | grep "APM Supported" | awk '{print $3;}'`
+	if [ "${SUPPORTED}" = "yes" ] ; then
+		echo Disabling APM on $i
+		${ATAIDLE} -P 0 ${i}
+	fi
+done

@@ -213,14 +213,14 @@ if ($_POST) {
 				if(file_exists("{$temp_filename}/aliases")) {
 					$file_contents = file_get_contents("{$temp_filename}/aliases");
 					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = split("\n", $file_contents);
+					$file_contents_split = explode("\n", $file_contents);
 					foreach($file_contents_split as $fc) {
 						// Stop at 3000 items, aliases larger than that tend to break both pf and the WebGUI.
 						if ($address_count >= 3000)
 							break;
 						$tmp = trim($fc);
 						if(stristr($fc, "#")) {
-							$tmp_split = split("#", $tmp);
+							$tmp_split = explode("#", $tmp);
 							$tmp = trim($tmp_split[0]);
 						}
 						$tmp = trim($tmp);

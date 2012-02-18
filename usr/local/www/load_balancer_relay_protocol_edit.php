@@ -154,22 +154,22 @@ function updateType(t){
 		$t = $types;
 		foreach ($t as $k => $v) {
 			if ($k != $key) {
-				echo "			$('{$k}').hide();\n";
+				echo "			jQuery('#{$k}').hide();\n";
 			}
 		}
 		echo "		}\n";
 	}
 ?>
 	}
-	$(t).appear();	
+	jQuery('#' + t).show();
 }
 
 function num_options() {
-	return $('options_table').childElements().length - 1;
+	return jQuery('#options_table').children().length - 1;
 }
 
 /*
-document.observe('dom:loaded', function(){
+jQuery(document).ready(function(){
   $$('.action').each(function(action) {
     new Draggable(action, {revert: true, ghosting: true});
   });

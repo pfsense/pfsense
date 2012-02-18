@@ -176,14 +176,13 @@ include("head.inc");
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 128; $i > 0; $i--) {
-                                                if($i <> 31) {
-                                                        echo "<option value=\"{$i}\" ";
-                                                        if ($i == $pconfig['tunnel-remote-net']) echo "selected";
-                                                        echo ">" . $i . "</option>";
-                                                }
+						echo "<option value=\"{$i}\" ";
+						if ($i == $pconfig['tunnel-remote-net'])
+							echo "selected";
+						echo ">" . $i . "</option>";
                                         }
                                         ?>
-                    </select>					
+                    </select>
                     <br/>
                     <span class="vexpl"><?=gettext("Remote gif address endpoint. The subnet part is used for determining the network that is tunnelled."); ?></span></td>
 			    </tr>

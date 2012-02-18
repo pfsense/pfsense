@@ -35,6 +35,11 @@ require_once("shaper.inc");
 
 $message = "";
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$ifdisp = get_configured_interface_with_descr();
+foreach ($ifdisp as $kif => $kdescr) {
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
+}
 
 /* Borrow this function from guiconfig.inc since we can't include it for use at the CLI
 
@@ -111,7 +116,7 @@ if (($argc > 1) && !empty($argv[1])) {
 	echo " Pass example (protocol with port):\n";
 	echo "     " . basename($argv[0]) . " pass wan tcp 1.2.3.4 192.168.0.4 80\n";
 	echo "\n";
-	echo " Block example (protocol without port):\n";
+	echo " Pass example (protocol without port):\n";
 	echo "     " . basename($argv[0]) . " pass wan icmp 1.2.3.4 192.168.0.4\n";
 	echo "\n";
 }

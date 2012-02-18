@@ -121,7 +121,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	$a_passthrumacs =& $a_cp[$cpzone];
+	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 	if ($a_passthrumacs[$_GET['id']]) {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
 		if ($ruleno) {

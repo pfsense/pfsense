@@ -304,13 +304,9 @@ function local_sync_accounts() {
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":",fgets($fd));
-			if (!strncmp($line[0], "_", 1))
+			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin"))
 				continue;
-			if ($line[2] < 2000)
-				continue;
-			if ($line[2] > 65000)
-				continue;
-			$cmd = "/usr/sbin/pw userdel {$line[2]}";
+			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
 			if($debug)
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			mwexec($cmd);
@@ -413,12 +409,13 @@ function local_user_set(& $user) {
 	}
 
 	/* read from pw db */
-	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
+	$fd = popen("/usr/sbin/pw usershow -n {$user_name} 2>&1", "r");
 	$pwread = fgets($fd);
 	pclose($fd);
+	$userattrs = explode(":", trim($pwread));
 
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3)) {
+	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
 		$user_op = "useradd -m -k /etc/skel -o";
 	} else {
 		$user_op = "usermod";
@@ -471,8 +468,19 @@ function local_user_del($user) {
 	if ($user['uid'] != 0)
 		$rmhome = "-r";
 
+	/* read from pw db */
+	$fd = popen("/usr/sbin/pw usershow -n {$user['name']} 2>&1", "r");
+	$pwread = fgets($fd);
+	pclose($fd);
+	$userattrs = explode(":", trim($pwread));
+
+	if ($userattrs[0] != $user['name']) {
+		log_error("Tried to remove user {$user['name']} but got user {$userattrs[0]} instead. Bailing.");
+		return;
+	}
+
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel {$user['name']} {$rmhome}";
+	$cmd = "/usr/sbin/pw userdel -n {$user['name']} {$rmhome}";
 
 	if($debug)
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -496,7 +504,7 @@ function local_user_set_password(& $user, $password) {
 	}
 
 	// Generate the NT-HASH from the unicode string
-	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
+       $user['nt-hash'] = bin2hex(hash("md4", $ustr));
 }
 
 function local_user_get_groups($user, $all = false) {
@@ -825,7 +833,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	if (is_array($info)) {
 		foreach ($info as $inf) {
 			if (!$show_complete_ou) {
-				$inf_split = split(",", $inf['dn']);
+				$inf_split = explode(",", $inf['dn']);
 				$ou = $inf_split[0];
 				$ou = str_replace("OU=","", $ou);
 				$ou = str_replace("CN=","", $ou);
@@ -852,12 +860,12 @@ function ldap_get_groups($username, $authcfg) {
 		return false;
 
 	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
+		$username_split = explode("@", $username);
 		$username = $username_split[0];		
 	}
 
 	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
+		$username_split = explode("\\", $username);
 		$username = $username_split[0];        
 	}    
 	
@@ -943,7 +951,7 @@ function ldap_get_groups($username, $authcfg) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($info[0][$ldapgroupattribute] as $member) {
 			if (stristr($member, "CN=") !== false) {
-				$membersplit = split(",", $member);
+				$membersplit = explode(",", $member);
 				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
 			}
 		}
@@ -969,11 +977,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return;
 
 	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
+		$username_split = explode("@", $username);
 		$username = $username_split[0];        
 	}
 	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
+		$username_split = explode("\\", $username);
 		$username = $username_split[0];        
 	}
 
@@ -1056,7 +1064,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	}
 	
 	/* Get LDAP Authcontainers and split em up. */
-	$ldac_splits = split(";", $ldapauthcont);
+	$ldac_splits = explode(";", $ldapauthcont);
 	
 	/* setup the usercount so we think we havn't found anyone yet */
 	$usercount  = 0;
@@ -1279,7 +1287,8 @@ function authenticate_user($username, $password, $authcfg = NULL) {
 function session_auth() {
 	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
 
-	session_start();
+	if (!session_id())
+		session_start();
 
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {
@@ -1357,7 +1366,7 @@ function session_auth() {
 		/* and destroy it */
 		session_destroy();
 
-		$scriptName = split("/", $_SERVER["SCRIPT_FILENAME"]);
+		$scriptName = explode("/", $_SERVER["SCRIPT_FILENAME"]);
 		$scriptElms = count($scriptName);
 		$scriptName = $scriptName[$scriptElms-1];
 

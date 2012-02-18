@@ -126,7 +126,7 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
         function activitycallback(transport) {
                 setTimeout('getqueueactivity()', 5100);
         }
-        document.observe('dom:loaded', function(){
+        jQuery(document).ready(function(){
           setTimeout('getqueueactivity()', 150);
         });
 </script>

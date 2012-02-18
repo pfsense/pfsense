@@ -157,7 +157,7 @@ function updateRelay(m) {
   }
 }
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready( function() {
   // Setup some observers
   jQuery('#redirect_mode').bind('click', function(){
       updateRelay('redirect');

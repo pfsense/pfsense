@@ -130,6 +130,16 @@ if ($_POST) {
 				break;
 		}
 
+		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
+		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
+			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
+			$address = get_interface_ip($pconfig['localid_type']);
+			$netbits = get_interface_subnet($pconfig['localid_type']);
+
+			if (empty($address) || empty($netbits))
+				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
+		}
+
 		switch ($pconfig['remoteid_type']) {
 			case "network":
 				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numeric($pconfig['remoteid_netbits']))

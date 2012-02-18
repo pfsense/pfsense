@@ -331,7 +331,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 */
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-		$line_error = split("\:", $rules_error);
+		$line_error = explode(":", $rules_error);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
@@ -464,7 +464,7 @@ function filter_generate_scrubing() {
 function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
 	global $aliastable, $filterdns;
 
-	$addresses = split(" ", $alias);
+	$addresses = explode(" ", $alias);
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -595,9 +595,9 @@ function filter_generate_aliases() {
 					foreach ($config['openvpn']['user'] as $openvpn)
 						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
 				}
-				$vpn_lines = split("\n", $addrlist);
+				$vpn_lines = explode("\n", $addrlist);
 				foreach ($vpn_lines as $vpn_line) {
-					$vpn_address_split = split(" ", $vpn_line);
+					$vpn_address_split = explode(" ", $vpn_line);
 					foreach($vpn_address_split as $vpnsplit) {
 						if(isset($openvpncfg[$vpnsplit])) {
 							$newaddress .= " ";
@@ -928,7 +928,7 @@ function filter_get_reflection_interfaces($natif = "") {
 }
 
 function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
-	global $config;
+	global $config, $FilterIflist;
 
 	if(!isset($config['system']['enablenatreflectionhelper']))
 		return "";
@@ -958,18 +958,59 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 		$route_table = array();
 		/* create a route table we can search */
 		exec("netstat -rnWf inet", $route_table);
+		foreach($route_table as $rt_key => $line) {
+			if(preg_match("/^[0-9]+(?:\.[0-9]+){3}\/[0-9]+[ ]+(?:[0-9]+(?:\.[0-9]+){3}|link[#])/", $line))
+				$route_table[$rt_key] = preg_split("/[ ]+/", $line);
+			else
+				unset($route_table[$rt_key]);
+		}
+	}
+
+	/* Check if the target is accessed through a static route */
+	foreach($route_table as $fields) {
+		if(is_subnet($fields[0]) && is_ipaddr($fields[1])) {
+			$subnet_split = explode("/", $fields[0]);
+			if(in_array($fields[6], $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
+				$target_ip = $fields[1];
+				$target_subnet = 32;
+				break;
+			}
+		}
 	}
 
 	/* Search for matching subnets in the routing table */
-	foreach($route_table as $line) {
-		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|link[#])/", $line)) {
-			$fields = preg_split("/[ ]+/", $line);
+	foreach($route_table as $fields) {
+		if(is_subnet($fields[0])) {
 			$subnet = $fields[0];
 			$subnet_split = explode("/", $subnet);
 			$subnet_if = $fields[6];
 			if(in_array($subnet_if, $nat_ifs) && check_subnets_overlap($target_ip, $target_subnet, $subnet_split[0], $subnet_split[1])) {
-				$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
-				$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$subnet_if}{$static_port}\n";
+				$ifsubnet_ip = "";
+				foreach ($FilterIflist as $ifent => $ifname) {
+					if(ip_in_subnet($ifname['ip'], $subnet) && $ifname['if'] == $subnet_if) {
+						$ifsubnet_ip = $ifname['ip'];
+						break;
+					}
+				}
+				if(empty($ifsubnet_ip)) {
+					foreach(get_configured_ip_aliases_list() as $subnet_ip => $ifent) {
+						if(ip_in_subnet($subnet_ip, $subnet) && $FilterIflist[$ifent]['if'] == $subnet_if) {
+							$ifsubnet_ip = $subnet_ip;
+							break;
+						}
+					}
+				}
+				if(!empty($ifsubnet_ip)) {
+					$subnets = array($subnet);
+					foreach($route_table as $rtentry) {
+						if(is_subnet($rtentry[0]) && is_ipaddr($rtentry[1]) && ip_in_subnet($rtentry[1], $subnet) && $rtentry[6] == $subnet_if)
+							$subnets[] = $rtentry[0];
+					}
+					if(count($subnets) > 1)
+						$subnet = "{ " . implode(" ", $subnets) . " }";
+					$natrules .= "no nat on {$subnet_if}{$protocol_text} from {$subnet_if} to {$target}\n";
+					$natrules .= "nat on {$subnet_if}{$protocol_text} from {$subnet} to {$target} -> {$ifsubnet_ip}{$static_port}\n";
+				}
 			}
 		}
 	}
@@ -1641,10 +1682,12 @@ function filter_nat_rules_generate() {
 				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
-					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
-					$natrules .= "\n";
-					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
-					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+					if(!empty($rule_interface_ip) && !empty($rule_interface_subnet)) {
+						$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+						$natrules .= "\n";
+						$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
+						$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
+					}
 				}
 				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
@@ -1945,7 +1988,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && $type != "match") {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		if($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if(is_ipaddrv6($rg)) {
@@ -2856,7 +2899,7 @@ function filter_tdr_day($schedule) {
 	if($weekday == 0)
 		$weekday = 7;
 	$date = date("d");
-	$defined_days = split(",", $schedule);
+	$defined_days = explode(",", $schedule);
 	if($g['debug'])
 		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
 	foreach($defined_days as $dd) {
@@ -2868,7 +2911,7 @@ function filter_tdr_day($schedule) {
 function filter_tdr_hour($schedule) {
 	global $g;
 	/* $schedule should be a string such as 16:00-19:00 */
-	$tmp = split("-", $schedule);
+	$tmp = explode("-", $schedule);
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
@@ -2893,7 +2936,7 @@ function filter_tdr_position($schedule) {
 		log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
 	if($weekday == 0)
 		$weekday = 7;
-	$schedule_days = split(",", $schedule);
+	$schedule_days = explode(",", $schedule);
 	foreach($schedule_days as $day) {
 		if($day == $weekday)
 			return true;
@@ -2907,7 +2950,7 @@ function filter_tdr_month($schedule) {
 	 * Calculate month
 	 */
 	$todays_month = date("n");
-	$months = split(",", $schedule);
+	$months = explode(",", $schedule);
 	if($g['debug'])
 		log_error("[TDR DEBUG] filter_tdr_month($schedule)");
 	foreach($months as $month) {
@@ -3113,7 +3156,7 @@ function discover_pkg_rules($ruletype) {
 			if ($status <> 0) {
 				$errorrules = sprintf(gettext("There was an error while parsing the package filter rules for %s."), $pkg_inc) . "\n";
 				log_error($errorrules);
-				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n");
+				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n{$tmprules}\n");
 				continue;
 			}
 			$rules .= $tmprules;

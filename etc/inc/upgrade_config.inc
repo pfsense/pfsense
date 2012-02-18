@@ -1558,10 +1558,10 @@ function upgrade_051_to_052() {
 			$server['dh_length'] = 1024;
 			unset($server['dh_params']);
 			if (!$server['interface'])
-				$server['interface'] = 'wan';
+				$server['interface'] = 'any';
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
-			if (isset($server['use_lzo'])) {
+			if (isset($server['use_lzo']) && ($server['use_lzo'] == "on")) {
 				$server['compression'] = "on";
 				unset($server['use_lzo']);
 			}
@@ -1572,10 +1572,23 @@ function upgrade_051_to_052() {
 			unset($server['nopool']);
 			$server['dns_domain'] = $server['dhcp_domainname'];
 			unset($server['dhcp_domainname']);
-			$server['dns_server1'] = $server['dhcp_dns'];
+
+			$tmparr = explode(";", $server['dhcp_dns'], 4);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["dns_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_dns']);
-			$server['ntp_server1'] = $server['dhcp_ntp'];
+
+			$tmparr = explode(";", $server['dhcp_ntp'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["ntp_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_ntp']);
+
 			if ($server['dhcp_nbtdisable'])
 				$server['netbios_enable'] = false;
 			else
@@ -1585,9 +1598,21 @@ function upgrade_051_to_052() {
 			unset($server['dhcp_nbttype']);
 			$server['netbios_scope'] = $server['dhcp_nbtscope'];
 			unset($server['dhcp_nbtscope']);
-			$server['nbdd_server1'] = $server['dhcp_nbdd'];
+
+			$tmparr = explode(";", $server['dhcp_nbdd'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["nbdd_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_nbdd']);
-			$server['wins_server1'] = $server['dhcp_wins'];
+
+			$tmparr = explode(";", $server['dhcp_wins'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$server["wins_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($server['dhcp_wins']);
 
 			if (!empty($server['disable']))
@@ -1601,12 +1626,12 @@ function upgrade_051_to_052() {
 			if (!empty($server['custom_options'])) {
 				$cstmopts = array();
 				$tmpcstmopts = explode(";", $server['custom_options']);
-				$assigned = false;
+				$assigned_if = "";
 				$tmpstr = "";
 				foreach ($tmpcstmopts as $tmpcstmopt) {
 					$tmpstr = str_replace(" ", "", $tmpcstmopt);
 					if (substr($tmpstr,0 ,6) == "devtun") {
-						$assigned = true;
+						$assigned_if = substr($tmpstr, 3);
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
 						$localip = substr($tmpstr, 5);
@@ -1615,10 +1640,9 @@ function upgrade_051_to_052() {
 						$cstmopts[] = $tmpcstmopt;
 				}
 				$server['custom_options'] = implode(";", $cstmopts);
-				if ($assigned == true) {
-					$realif = substr($tmpstr, 3);
+				if (!empty($assigned_if)) {
 					foreach ($config['interfaces'] as $iface => $cfgif) {
-						if ($cfgif['if'] == $realif) {
+						if ($cfgif['if'] == $assigned_if) {
 							$config['interfaces'][$iface]['if'] = "ovpns{$server['vpnid']}";
 							break;
 						}
@@ -1690,7 +1714,7 @@ function upgrade_051_to_052() {
 			unset($client['serverport']);
 			$client['proxy_addr'] = $client['poxy_hostname'];
 			unset($client['proxy_addr']);
-			if (isset($client['use_lzo'])) {
+			if (isset($client['use_lzo']) && ($client['use_lzo'] == "on")) {
 				$client['compression'] = "on";
 				unset($client['use_lzo']);
 			}
@@ -1703,12 +1727,12 @@ function upgrade_051_to_052() {
 			if (!empty($client['custom_options'])) {
 				$cstmopts = array();
 				$tmpcstmopts = explode(";", $client['custom_options']);
-				$assigned = false;
+				$assigned_if = "";
 				$tmpstr = "";
 				foreach ($tmpcstmopts as $tmpcstmopt) {
 					$tmpstr = str_replace(" ", "", $tmpcstmopt);
 					if (substr($tmpstr,0 ,6) == "devtun") {
-						$assigned = true;
+						$assigned_if = substr($tmpstr, 3);
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
                                                 $localip = substr($tmpstr, 5);
@@ -1717,10 +1741,9 @@ function upgrade_051_to_052() {
 						$cstmopts[] = $tmpcstmopt;
 				}
 				$client['custom_options'] = implode(";", $cstmopts);
-				if ($assigned == true) {
-					$realif = substr($tmpstr, 3);
+				if (!empty($assigned_if)) {
 					foreach ($config['interfaces'] as $iface => $cfgif) {
-						if ($cfgif['if'] == $realif) {
+						if ($cfgif['if'] == $assigned_if) {
 							$config['interfaces'][$iface]['if'] = "ovpnc{$client['vpnid']}";
 							break;
 						}
@@ -1755,10 +1778,23 @@ function upgrade_051_to_052() {
 			unset($csc['ifconfig_push']);
 			$csc['dns_domain'] = $csc['dhcp_domainname'];
 			unset($csc['dhcp_domainname']);
-			$csc['dns_server1'] = $csc['dhcp_dns'];
+
+			$tmparr = explode(";", $csc['dhcp_dns'], 4);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["dns_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_dns']);
-			$csc['ntp_server1'] = $csc['dhcp_ntp'];
+
+			$tmparr = explode(";", $csc['dhcp_ntp'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["ntp_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_ntp']);
+
 			if ($csc['dhcp_nbtdisable'])
 				$csc['netbios_enable'] = false;
 			else
@@ -1768,9 +1804,21 @@ function upgrade_051_to_052() {
 			unset($csc['dhcp_nbttype']);
 			$csc['netbios_scope'] = $csc['dhcp_nbtscope'];
 			unset($csc['dhcp_nbtscope']);
-			$csc['nbdd_server1'] = $csc['dhcp_nbdd'];
+
+			$tmparr = explode(";", $csc['dhcp_nbdd'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["nbdd_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_nbdd']);
-			$csc['wins_server1'] = $csc['dhcp_wins'];
+
+			$tmparr = explode(";", $csc['dhcp_wins'], 2);
+			$d=1;
+			foreach ($tmparr as $tmpa) {
+				$csc["wins_server{$d}"] = $tmpa;
+				$d++;
+			}
 			unset($csc['dhcp_wins']);
 
 			if (!empty($csc['disable']))
@@ -1876,7 +1924,7 @@ function upgrade_053_to_054() {
 				$gateway_group['item'] = array();
 				$i = 0;
 				foreach($lbpool['servers'] as $member) {
-					$split = split("\|", $member);
+					$split = explode("|", $member);
 					$interface = $split[0];
 					$monitor = $split[1];
 					/* on static upgraded configuration we automatically prepend GW_ */
@@ -2554,6 +2602,7 @@ function upgrade_076_to_077() {
 }
 
 function upgrade_077_to_078() {
+	global $config;
 	if (is_array($config['pptpd']) && is_array($config['pptpd']['radius'])
 		&& !is_array($config['pptpd']['radius']['server'])) {
 		$radarr = array();
@@ -2689,5 +2738,12 @@ function upgrade_082_to_083() {
 		$config['captiveportal']['cpZone'] = $tmpcp;
 		$config['captiveportal']['cpZone']['zoneid'] = 8000;
 	}
+	if (!empty($config['voucher'])) {
+		$tmpcp = $config['voucher'];
+		$config['voucher'] = array();
+		$config['voucher']['cpZone'] = array();
+		$config['voucher']['cpZone'] = $tmpcp;
+	}
 }
+
 ?>

@@ -1092,4 +1092,10 @@ function rule_popup($src,$srcport,$dst,$dstport){
   	}
 }
 
+$timezone = $syscfg['timezone'];
+if (!$timezone)
+	$timezone = "Etc/UTC";
+
+date_default_timezone_set($timezone);
+
 ?>

@@ -47,6 +47,9 @@ $fn = "packetcapture.cap";
 $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
+$fams = array('ip', 'ip6');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'vrrp', 'esp');
+
 if ($_POST) {
 	$do_tcpdump = true;
 	$host = $_POST['host'];
@@ -56,6 +59,7 @@ if ($_POST) {
 	$port = $_POST['port'];
 	$detail = $_POST['detail'];
 	$fam = $_POST['fam'];
+	$proto = $_POST['proto'];
 
 	conf_mount_rw();
 
@@ -88,7 +92,7 @@ if ($_POST) {
 			exec("kill $process_id");
 		}
 
-	} else {
+	} elseif ($_POST['downloadbtn']!= "") {
 		//download file
 		$fs = filesize($fp.$fn);
 		header("Content-Type: application/octet-stream");
@@ -150,6 +154,22 @@ include("fbegin.inc");
 				<option value="ip6" <?php if ($fam == "ip6") echo "selected"; ?>>IPv6 Only</option>
 			</select>
 			<br/><?=gettext("Select the type of traffic to be captured, either Any, IPv4 only or IPv6 only.");?>
+			</td>
+		</tr>
+		<tr>
+			<td width="17%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
+			<td width="83%" class="vtable">
+			<select name="proto">
+				<option value="">Any</option>
+				<option value="icmp" <?php if ($proto == "icmp") echo "selected"; ?>>ICMP</option>
+				<option value="icmp6" <?php if ($proto == "icmp6") echo "selected"; ?>>ICMPv6</option>
+				<option value="tcp" <?php if ($proto == "tcp") echo "selected"; ?>>TCP</option>
+				<option value="udp" <?php if ($proto == "udp") echo "selected"; ?>>UDP</option>
+				<option value="arp" <?php if ($proto == "arp") echo "selected"; ?>>ARP</option>
+				<option value="vrrp" <?php if ($proto == "vrrp") echo "selected"; ?>>VRRP (CARP)</option>
+				<option value="esp" <?php if ($proto == "esp") echo "selected"; ?>>ESP</option>
+			</select>
+			<br/><?=gettext("Select the protocol to capture, or Any.");?>
 			</td>
 		</tr>
 		<tr>
@@ -222,8 +242,9 @@ include("fbegin.inc");
 				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";
 			}
 			if (file_exists($fp.$fn) and $processisrunning != true) {
+				echo "<input type=\"submit\" name=\"viewbtn\" value=\"" . gettext("View Capture") . "\">&nbsp;";
 				echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\">";
-				echo "&nbsp;&nbsp;(" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
+				echo "<br/>" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn));
 			}
 ?>
 			</td>
@@ -241,8 +262,11 @@ include("fbegin.inc");
 		if ($do_tcpdump) {
 			$matches = array();
 
-			if (($fam == "ip6") || ($fam == "ip"))
+			if (in_array($fam, $fams))
 				$matches[] = $fam;
+
+			if (in_array($proto, $protos))
+				$matches[] = $proto;
 
 			if ($port != "")
 				$matches[] = "port ".$port;

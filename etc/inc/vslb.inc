@@ -197,14 +197,24 @@ function relayd_configure($kill_first=false) {
     }
   }
 
-
+  
   $fd = fopen("{$g['varetc_path']}/relayd.conf", "w");
+  $conf .= "log updates \n";
+
+  /* Global timeout and interval settings
+     if not specified by the user, use a 1000 ms timeout value as in pfsense 2.0.1 and above */
+  if (isset($setting['timeout']) && !empty($setting['timeout'])) {
+  	$conf .= "timeout ".$setting['timeout']." \n";
+  } else {
+	$conf .= "timeout 1000 \n";
+  }
+
+  if (isset($setting['interval']) && !empty($setting['interval'])) {
+  	$conf .= "interval ".$setting['interval']." \n";
+  }
 
   /* reindex pools by name as we loop through the pools array */
   $pools = array();
-  $conf .= "log updates \n";
-  $conf .= "timeout ".$setting['timeout']." \n";
-  $conf .= "interval ".$setting['interval']." \n";
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {

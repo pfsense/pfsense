@@ -61,16 +61,27 @@ if ($_POST) {
                 $savemsg = get_std_save_message($retval);
                 clear_subsystem_dirty('loadbalancer');
         } else {
+		unset($input_errors);
 		$pconfig = $_POST;
+	
+		/* input validation */
+		if ($_POST['timeout'] && !is_numeric($_POST['timeout'])) {
+			$input_errors[] = gettext("Timeout must be a numeric value");
+		}
 
-		$lbsetting['timeout'] = $_POST['timeout'];
-		$lbsetting['interval'] = $_POST['interval'];
+                if ($_POST['interval'] && !is_numeric($_POST['interval'])) {
+                        $input_errors[] = gettext("Interval must be a numeric value");
+                }
 
-        	write_config();
-        	mark_subsystem_dirty('loadbalancer');
+		/* update config if user entry is valid */
+		if (!$input_errors) {
+			$lbsetting['timeout'] = $_POST['timeout'];
+			$lbsetting['interval'] = $_POST['interval'];
+
+        		write_config();
+        		mark_subsystem_dirty('loadbalancer');
+		}
 	}
-        header("Location: load_balancer_setting.php");
-        exit;
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Settings"));

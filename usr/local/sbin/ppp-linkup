@@ -5,7 +5,7 @@
 /bin/echo $3 > /tmp/$1_ip
 /usr/bin/touch /tmp/$1up
 
-ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
+ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
 if [ $ALLOWOVERRIDE -gt 0 ]; then
 	# write nameservers to file
 	if [ $6 = "dns1" ]; then

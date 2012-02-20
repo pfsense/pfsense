@@ -315,7 +315,7 @@ function notify_via_smtp($message) {
 		"From: {$from}",
 		"To: {$to}",
 		"Subject: {$config['system']['hostname']}.{$config['system']['domain']} - Notification",
-		"Date: ".strftime("%a, %d %b %Y %H:%M:%S %Z")
+		"Date: ".date("r")
 	);
 
 	/* Store last message sent to avoid spamming */

@@ -118,6 +118,7 @@ include("head.inc");
         $tab_array[] = array(gettext("Pools"), true, "load_balancer_pool.php");
         $tab_array[] = array(gettext("Virtual Servers"), false, "load_balancer_virtual_server.php");
         $tab_array[] = array(gettext("Monitors"), false, "load_balancer_monitor.php");
+        $tab_array[] = array(gettext("Settings"), false, "load_balancer_setting.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

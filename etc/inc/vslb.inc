@@ -165,6 +165,7 @@ function relayd_configure($kill_first=false) {
   $vs_a = $config['load_balancer']['virtual_server'];
   $pool_a = $config['load_balancer']['lbpool'];
   $protocol_a = $config['load_balancer']['lbprotocol'];
+  $setting = $config['load_balancer']['setting'];
 
   $check_a = array();
 
@@ -202,7 +203,8 @@ function relayd_configure($kill_first=false) {
   /* reindex pools by name as we loop through the pools array */
   $pools = array();
   $conf .= "log updates \n";
-  $conf .= "timeout 1000 \n";
+  $conf .= "timeout ".$setting['timeout']." \n";
+  $conf .= "interval ".$setting['interval']." \n";
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {

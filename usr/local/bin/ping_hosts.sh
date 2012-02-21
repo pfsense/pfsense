@@ -75,7 +75,7 @@ for TOPING in $PINGHOSTS ; do
 	fi
 	echo Processing $DSTIP
 	# Look for a service being down
-	$PINGCMD -c $COUNT -S $SRCIP $DSTIP
+	$PINGCMD -c $COUNT -t 2 $DSTIP
 	if [ $? -eq 0 ]; then
 		# Host is up
 		# Read in previous status
@@ -104,7 +104,7 @@ for TOPING in $PINGHOSTS ; do
 	fi
 	echo "Checking ping time $DSTIP"
 	# Look at ping values themselves
-	PINGTIME=`$PINGCMD -c 1 -S $SRCIP $DSTIP | awk '{ print $7 }' | grep time | cut -d "=" -f2`
+	PINGTIME=`$PINGCMD -c 1 -t 2 $DSTIP | awk '{ print $7 }' | grep time | cut -d "=" -f2`
 	echo "Ping returned $?"
 	echo $PINGTIME > /var/db/pingmsstatus/$DSTIP
 	if [ "$THRESHOLD" != "" ]; then

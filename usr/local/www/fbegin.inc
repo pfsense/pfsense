@@ -181,7 +181,7 @@ $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
 
 // Diagnostics
 $diagnostics_menu = array();
-$diagnostics_menu[] = array("ARP Tables", "/diag_arp.php");
+$diagnostics_menu[] = array("ARP Table", "/diag_arp.php");
 $diagnostics_menu[] = array("Authentication", "/diag_authentication.php");
 $diagnostics_menu[] = array("Backup/Restore", "/diag_backup.php");
 $diagnostics_menu[] = array("Command Prompt", "/exec.php");

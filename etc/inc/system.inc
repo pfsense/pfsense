@@ -359,8 +359,9 @@ function system_routing_configure($interface = "") {
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd']) {
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if($olsrd['enabledyngw'] == "on") {
+			if(($olsrd['enabledyngw'] == "on") && ($olsrd['enable'] == "on")) {
 				$dont_add_route = true;
+				log_error("Not adding default route because OLSR dynamic gateway is enabled.")
 				break;
 			}
 		}

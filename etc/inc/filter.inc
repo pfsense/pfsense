@@ -1154,14 +1154,16 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 							if($reflect_proto == "udp") {
 								$socktype = "dgram";
 								$dash_u = "-u ";
+								$wait = "wait\t";
 							} else {
 								$socktype = "stream";
 								$dash_u = "";
+								$wait = "nowait/0";
 							}
 							foreach ($rtarget as $targip) {
 								if (empty($targip))
 									continue;
-								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
+								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\t{$wait}\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
 							}
 						}
 						$inetdport++;

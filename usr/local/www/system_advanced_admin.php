@@ -292,7 +292,7 @@ function prot_change() {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("Note:"); ?>&nbsp</strong>
+								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
@@ -401,7 +401,7 @@ function prot_change() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Showtdown Sound"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Shutdown Sound"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked"; ?>  />
 									<strong><?=gettext("Disable the startup/shutdown beep"); ?></strong>

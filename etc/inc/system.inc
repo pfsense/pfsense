@@ -361,7 +361,7 @@ function system_routing_configure($interface = "") {
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if(($olsrd['enabledyngw'] == "on") && ($olsrd['enable'] == "on")) {
 				$dont_add_route = true;
-				log_error("Not adding default route because OLSR dynamic gateway is enabled.")
+				log_error("Not adding default route because OLSR dynamic gateway is enabled.");
 				break;
 			}
 		}

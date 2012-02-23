@@ -485,6 +485,18 @@ function is_ipaddrv4($ipaddr) {
 		return false;
 }
 
+function is_ipaddrwithport($ipport) {
+	$parts = explode(":", $ipport);
+	$port = array_pop($parts);
+	if (count($parts) == 1) {
+		return is_ipaddrv4($parts[0]) && is_port($port);
+	} elseif (count($parts) > 1) {
+		return is_ipaddrv6(implode(":", $parts)) && is_port($port);
+	} else {
+		return false;
+	}
+}
+
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
 	global $config;

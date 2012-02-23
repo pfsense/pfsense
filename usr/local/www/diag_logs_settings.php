@@ -75,17 +75,14 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #1.");
+	if ($_POST['enable'] && (!is_ipaddr($_POST['remoteserver']) && !is_ipaddrwithport($_POST['remoteserver']))) {
+		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #1.");
 	}
-	if ($_POST['enable'] && $_POST['remoteserver2'] && !is_ipaddr($_POST['remoteserver2'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #2.");
+	if ($_POST['enable'] && $_POST['remoteserver2'] && (!is_ipaddr($_POST['remoteserver2']) && !is_ipaddrwithport($_POST['remoteserver2']))) {
+		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #2.");
 	}
-	if ($_POST['enable'] && $_POST['remoteserver3'] && !is_ipaddr($_POST['remoteserver3'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #3.");
-	}
-	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if ($_POST['enable'] && $_POST['remoteserver3'] && (!is_ipaddr($_POST['remoteserver3']) && !is_ipaddrwithport($_POST['remoteserver3']))) {
+		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #3.");
 	}
 
 	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
@@ -293,7 +290,7 @@ function check_everything() {
 										&nbsp;
 									</td>
 									<td>
-										<?=gettext("IP addresses of remote syslog servers");?>
+										<?=gettext("IP addresses of remote syslog servers, or an IP:port.");?>
 									</td>
 							</table>
 					 	  <input name="system" id="system" type="checkbox" value="yes" onclick="enable_change(false)" <?php if ($pconfig['system']) echo "checked"; ?>>
@@ -325,7 +322,7 @@ function check_everything() {
                         <td width="22%" height="53" valign="top">&nbsp;</td>
 						<td width="78%"><strong><span class="red"><?=gettext("Note:")?></span></strong><br>
                           <?=gettext("syslog sends UDP datagrams to port 514 on the specified " .
-                          "remote syslog server. Be sure to set syslogd on the " .
+                          "remote syslog server, unless another port is specified. Be sure to set syslogd on the " .
 						  "remote server to accept syslog messages from");?> <?=$g['product_name']?>.
                         </td>
                       </tr>

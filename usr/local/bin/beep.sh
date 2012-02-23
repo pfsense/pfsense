@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -f /etc/disable_beep ]; then
+	exit;
+fi
+
 # Standard note length
 NOTELENGTH="25"
 

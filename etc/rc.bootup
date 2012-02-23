@@ -360,6 +360,9 @@ system_set_harddisk_standby();
 /* lock down console if necessary */
 auto_login();
 
+/* disable beep.sh if configured */
+setup_beep();
+
 /* load graphing functions */
 enable_rrd_graphing();
 

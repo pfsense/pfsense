@@ -40,7 +40,7 @@
 
 	echo <<<EOD
 
-{$g['product_name']} will reboot. This may take one minute.
+{$g['product_name']} will reboot. This may take a few minutes, depending on your hardware.
 
 Do you want to proceed [y|n]? 
 EOD;

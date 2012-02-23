@@ -42,7 +42,7 @@ require("captiveportal.inc");
 
 if ($_POST) {
 	if ($_POST['Submit'] == gettext(" Yes ")) {
-		$rebootmsg = gettext("The system is rebooting now. This may take one minute.");
+		$rebootmsg = gettext("The system is rebooting now. This may take a few minutes, depending on your hardware.");
 	} else {
 		Header("Location: /");
 	}
@@ -73,7 +73,7 @@ if ($_POST) {
 	if ($_POST['Submit'] == $reply) {
 		echo "<meta http-equiv=\"refresh\" content=\"70;url=/\">";
 		system_reboot();
-		$rebootmsg = gettext("The system is rebooting now. This may take one minute.");
+		$rebootmsg = gettext("The system is rebooting now. This may take a few minutes, depending on your hardware.");
 	} else {
 		exit;
 	}

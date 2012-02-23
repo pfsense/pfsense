@@ -48,7 +48,7 @@ if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
 		reset_factory_defaults();
 		system_reboot();
-		$rebootmsg = gettext("The system has been reset to factory defaults and is now rebooting. This may take one minute.");
+		$rebootmsg = gettext("The system has been reset to factory defaults and is now rebooting. This may take a few minutes, depending on your hardware.");
 	} else {
 		header("Location: index.php");
 		exit;

@@ -49,7 +49,7 @@ require("captiveportal.inc");
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
 		system_halt();
-		$rebootmsg = gettext("The system is halting now. This may take one minute.");
+		$rebootmsg = gettext("The system is halting now. This may take a few minutes, depending on your hardware.");
 	} else {
 		header("Location: index.php");
 		exit;

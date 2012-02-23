@@ -94,7 +94,7 @@
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
-				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '') {
+				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false) {
 			
 			global $config, $g;
 			
@@ -140,7 +140,7 @@
 
 			$this->_debugID = rand(1000000, 9999999);
 			
-			if ($this->_detectChange() == false) {
+			if ($forceUpdate == false && $this->_detectChange() == false) {
 				$this->_error(10);
 			} else {
 				switch ($this->_dnsService) {

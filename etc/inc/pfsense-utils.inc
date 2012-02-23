@@ -927,29 +927,6 @@ function auto_login() {
 	conf_mount_ro();
 }
 
-function setup_beep() {
-	global $config;
-
-	if(isset($config['system']['disablebeep']))
-		$status = false;
-	else
-		$status = true;
-
-	$beep_file = "/etc/disable_beep";
-	
-	conf_mount_rw();
-	
-	if($status == false) {
-		touch($beep_file);
-	} else {
-		if (file_exists($beep_file)) {
-			unlink($beep_file);
-		}
-	}
-	
-	conf_mount_ro();
-}
-
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();

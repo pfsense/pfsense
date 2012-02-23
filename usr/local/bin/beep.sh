@@ -1,6 +1,8 @@
 #!/bin/sh
 
-if [ -f /etc/disable_beep ]; then
+
+BEEP=`/usr/bin/grep -c disablebeep /conf/config.xml`
+if [ $BEEP -gt 0 ]; then
 	exit;
 fi
 

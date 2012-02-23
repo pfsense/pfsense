@@ -142,13 +142,10 @@ if ($_POST) {
 			auto_login();
 		}
 
-		if($_POST['disablebeep'] == "yes") {
+		if($_POST['disablebeep'] == "yes")
 			$config['system']['disablebeep'] = true;
-			setup_beep();
-		} else {
+		else
 			unset($config['system']['disablebeep']);
-			setup_beep();
-		}
 		
 		if ($_POST['noantilockout'] == "yes")
 			$config['system']['webgui']['noantilockout'] = true;

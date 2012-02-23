@@ -1309,8 +1309,12 @@ function services_dyndns_configure_client($conf) {
 		$dnsPass = $conf['password'],
 		$dnsWilcard = $conf['wildcard'],
 		$dnsMX = $conf['mx'], 
-		$dnsIf = "{$conf['interface']}");
-
+		$dnsIf = "{$conf['interface']}",
+		$dnsBackMX = NULL,
+		$dnsServer = NULL,
+		$dnsPort = NULL,
+		$dnsUpdateURL = NULL,
+		$forceUpdate = $conf['force']);
 }
 
 function services_dyndns_configure($int = "") {

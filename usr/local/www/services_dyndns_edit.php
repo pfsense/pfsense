@@ -104,6 +104,7 @@ if ($_POST) {
 		$dyndns['enable'] = $_POST['enable'] ? false : true;
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
+		$dyndns['force'] = isset($_POST['force']);
 		
 		if($dyndns['username'] == "none")
 			$dyndns['username'] = "";
@@ -115,15 +116,7 @@ if ($_POST) {
 
 		write_config();
 
-		$retval = 0;
-
-		conf_mount_rw();
-
-		unlink("{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}{$dyndns['host']}.cache");
-
-		$retval = services_dyndns_configure_client($dyndns);
-
-		conf_mount_ro();
+		services_dyndns_configure_client($dyndns);
 
 		header("Location: services_dyndns.php");
 		exit;
@@ -237,6 +230,7 @@ include("head.inc");
 					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
 					<?php if (isset($id) && $a_dyndns[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+						<input name="force" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onClick="enable_change(true)">
 					<?php endif; ?>
                   </td>
                 </tr>

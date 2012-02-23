@@ -789,8 +789,12 @@ if($_REQUEST['undodrag']) {
 			  <td class="listt"></td>
 			  <td class="listlr" colspan="10" align="center" valign="middle">
 			  <span class="gray">
-			  <?=gettext("No rules are currently defined for this interface"); ?><br>
-			  <?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br><br>
+			<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
+			  <?=gettext("No floating rules are currently defined."); ?><br/><br/>
+			<?php else: ?>
+			  <?=gettext("No rules are currently defined for this interface"); ?><br/>
+			  <?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
+			<?php endif; ?>
 			  <?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
 			  </td>
 			  <?php endif; ?>

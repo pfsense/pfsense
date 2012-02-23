@@ -267,7 +267,7 @@ function prot_change() {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("Note:"); ?>&nbsp</strong>
+								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>

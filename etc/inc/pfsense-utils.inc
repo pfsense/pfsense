@@ -930,7 +930,7 @@ function auto_login() {
 function setup_beep() {
 	global $config;
 
-	if(isset($config['system']['disablebeep']))
+	if(isset($config['notifications']['disablebeep']))
 		$status = false;
 	else
 		$status = true;

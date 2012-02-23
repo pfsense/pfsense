@@ -55,7 +55,6 @@ $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['sy
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
-$pconfig['disablebeep'] = isset($config['system']['disablebeep']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
@@ -140,14 +139,6 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disableconsolemenu']);
 			auto_login();
-		}
-
-		if($_POST['disablebeep'] == "yes") {
-			$config['system']['disablebeep'] = true;
-			setup_beep();
-		} else {
-			unset($config['system']['disablebeep']);
-			setup_beep();
 		}
 		
 		if ($_POST['noantilockout'] == "yes")
@@ -401,15 +392,6 @@ function prot_change() {
 									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
 									"will not be logged.");
 									?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Showtdown Sound"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked"; ?>  />
-									<strong><?=gettext("Disable the startup/shutdown beep"); ?></strong>
-									<br/>
-									<span class="vexpl"><?=gettext("When this is checked, startup and shutdown sounds will no longer play."); ?></span>
 								</td>
 							</tr>
 							<tr>

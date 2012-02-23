@@ -73,6 +73,9 @@ if($config['notifications']['smtp']['password'])
 if($config['notifications']['smtp']['fromaddress']) 
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
+// System Sounds
+$pconfig['disablebeep'] = isset($config['notifications']['disablebeep']);
+	
 if ($_POST) {
 
 	unset($input_errors);
@@ -107,6 +110,15 @@ if ($_POST) {
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
+		
+		// System Sounds
+		if($_POST['disablebeep'] == "yes") {
+			$config['notifications']['disablebeep'] = true;
+			setup_beep();
+		} else {
+			unset($config['notifications']['disablebeep']);
+			setup_beep();
+		}
 
 		write_config();
 
@@ -243,6 +255,19 @@ include("head.inc");
 							<td width="78%" class="vtable">
 								<input name='smtppassword' type='password' value='<?php echo $pconfig['smtppassword']; ?>'><br/>
 								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
+							</td>
+						</tr>
+						<!-- System Sounds -->
+						<tr>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("System Sounds"); ?></td>
+						</tr>						
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Startup/Showtdown Sound"); ?></td>
+							<td width="78%" class="vtable">
+								<input name="disablebeep" type="checkbox" id="disablebeep" value="yes" <?php if ($pconfig['disablebeep']) echo "checked"; ?>  />
+								<strong><?=gettext("Disable the startup/shutdown beep"); ?></strong>
+								<br/>
+								<span class="vexpl"><?=gettext("When this is checked, startup and shutdown sounds will no longer play."); ?></span>
 							</td>
 						</tr>
 						<tr>

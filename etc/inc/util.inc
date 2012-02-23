@@ -497,6 +497,16 @@ function is_ipaddrwithport($ipport) {
 	}
 }
 
+function is_hostnamewithport($hostport) {
+	$parts = explode(":", $hostport);
+	$port = array_pop($parts);
+	if (count($parts) == 1) {
+		return is_hostname($parts[0]) && is_port($port);
+	} else {
+		return false;
+	}
+}
+
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
 	global $config;

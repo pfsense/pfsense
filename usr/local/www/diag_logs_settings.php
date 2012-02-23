@@ -69,20 +69,27 @@ $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']
 if (!$pconfig['nentries'])
 	$pconfig['nentries'] = 50;
 
+function is_valid_syslog_server($target) {
+	return (is_ipaddr($target)
+		|| is_ipaddrwithport($target)
+		|| is_hostname($target)
+		|| is_hostnamewithport($target));
+}
+
 if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['enable'] && (!is_ipaddr($_POST['remoteserver']) && !is_ipaddrwithport($_POST['remoteserver']))) {
-		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #1.");
+	if ($_POST['enable'] && !is_valid_syslog_server($_POST['remoteserver'])) {
+		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #1.");
 	}
-	if ($_POST['enable'] && $_POST['remoteserver2'] && (!is_ipaddr($_POST['remoteserver2']) && !is_ipaddrwithport($_POST['remoteserver2']))) {
-		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #2.");
+	if ($_POST['enable'] && $_POST['remoteserver2'] && !is_valid_syslog_server($_POST['remoteserver2'])) {
+		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #2.");
 	}
-	if ($_POST['enable'] && $_POST['remoteserver3'] && (!is_ipaddr($_POST['remoteserver3']) && !is_ipaddrwithport($_POST['remoteserver3']))) {
-		$input_errors[] = gettext("A valid IP address or IP:Port must be specified for remote syslog server #3.");
+	if ($_POST['enable'] && $_POST['remoteserver3'] && !is_valid_syslog_server($_POST['remoteserver3'])) {
+		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #3.");
 	}
 
 	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {

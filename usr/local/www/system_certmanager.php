@@ -701,6 +701,8 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='csr_keylen' class="formselect">
 								<?php
+									if (!isset($pconfig['keylen']) && isset($pconfig['csr_keylen']))
+										$pconfig['keylen'] = $pconfig['csr_keylen'];
 									foreach( $cert_keylens as $len):
 									$selected = "";
 									if ($pconfig['keylen'] == $len)

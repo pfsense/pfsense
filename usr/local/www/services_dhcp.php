@@ -231,6 +231,16 @@ if ($_POST) {
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+		if ($_POST['domainsearchlist']) {
+			$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
+			foreach ($domain_array as $curdomain) {
+				if (!is_domain($curdomain)) {
+					$input_errors[] = gettext("A valid domain search list must be specified.");
+					break;
+				}
+			}
+		}
+			
 		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
@@ -669,7 +679,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-				<?=gettext("The DHCP server can optionally provide a domain search list.");?>
+				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon as seperator ");?>
 			</td>
 			</tr>
 			<tr>

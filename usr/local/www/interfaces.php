@@ -222,9 +222,9 @@ switch($wancfg['ipaddrv6']) {
 		break;
 	case "6rd":
 		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
-		if($wancfg['prefix-6rd-len'] == "")
-			$wancfg['prefix-6rd-len'] = "0";
-		$pconfig['prefix-6rd-len'] = $wancfg['prefix-6rd-len'];
+		if($wancfg['prefix-6rd-v4plen'] == "")
+			$wancfg['prefix-6rd-v4plen'] = "0";
+		$pconfig['prefix-6rd-v4plen'] = $wancfg['prefix-6rd-v4plen'];
 		$pconfig['type6'] = "6rd";
 		$pconfig['gateway-6rd'] = $wancfg['gateway-6rd'];
 		break;
@@ -561,12 +561,10 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$reqdfields = array("mode");
-		$reqdfieldsn = array(gettext("Mode"));
-		if ($_POST['mode'] == 'hostap') {
-			$reqdfields[] = "ssid";
-			$reqdfieldsn[] = gettext("SSID");
-		}
+		$reqdfields = "mode";
+		if($_POST['mode'] == 'hostap') { $reqdfields += " ssid"; }
+		$reqdfields = explode(" ", $reqdfields);
+		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
 		/* loop through keys and enforce size */
@@ -641,7 +639,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['prefix-6rd']);
-		unset($wancfg['prefix-6rd-len']);
+		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
 		unset($wancfg['prefix-6rd-id']);
 		unset($wancfg['pppoe_password']);
@@ -810,7 +808,7 @@ if ($_POST['apply']) {
 			case "6rd":
 				$wancfg['ipaddrv6'] = "6rd";
 				$wancfg['prefix-6rd'] = $_POST['prefix-6rd'];
-				$wancfg['prefix-6rd-len'] = $_POST['prefix-6rd-len'];
+				$wancfg['prefix-6rd-v4plen'] = $_POST['prefix-6rd-v4plen'];
 				$wancfg['gateway-6rd'] = $_POST['gateway-6rd'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -1068,7 +1066,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6RD"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "srd" => gettext("6RD"));
 
 ?>
 
@@ -1114,19 +1112,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6', '#6rd').hide();
+				jQuery('#staticv6, #dhcp6', '#srd').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6', '#6rd').hide();
+				jQuery('#none, #dhcp6', '#srd').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6', '#6rd').hide();
+				jQuery('#none, #staticv6', '#srd').hide();
 
 				break;
 			}
-			case "6rd": {
+			case "srd": {
 				jQuery('#none, #dhcp6', '#staticv6').hide();
 
 				break;
@@ -1643,8 +1641,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<?php
 												// Needs to check if the ID is not used on another interface
 												foreach($ifdescrs as $rdif => $rddescr) {
-													if(is_numeric($config['interfaces'][$rdif]['prefix-6rd-len'])) {
-														$rdlen = $config['interfaces'][$rdif]['prefix-6rd-len'];
+													if(is_numeric($config['interfaces'][$rdif]['prefix-6rd-v4plen'])) {
+														$rdlen = $config['interfaces'][$rdif]['prefix-6rd-v4plen'];
 														continue;
 													}
 												}
@@ -1758,7 +1756,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="6rd" id="6rd">
+						<tr style="display:none;" name="srd" id="srd">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
@@ -1773,7 +1771,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("6RD gateway"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Border Relay"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>">
 											<br>
@@ -1781,21 +1779,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Prefix length"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("6RD IPv4 Prefix length"); ?></td>
 										<td width="78%" class="vtable">
-											<select name="prefix-6rd-len" class="formselect" id="prefix-6rd-len">
+											<select name="prefix-6rd-v4plen" class="formselect" id="prefix-6rd-v4plen">
 												<?php
-												$sizes = array(16 => "48", 12 => "52", 8 => "56", 4 => "60", 2 => "62", 1 => "63", 0 => "64");
-												rsort($sizes);
-												foreach($sizes as $bits => $length) {
-													echo "<option value=\"{$bits}\" ";
-													if (is_numeric($pconfig['prefix-6rd-len']) && ($bits == $pconfig['prefix-6rd-len'])) echo "selected";
-													echo ">" . $length . "</option>";
+												for ($i = 0; $i < 32; $i++) {
+													echo "<option value=\"{$i}\" ";
+													if (is_numeric($pconfig['prefix-6rd-v4plen']) && ($i == $pconfig['prefix-6rd-v4plen'])) echo "selected";
+													echo ">" . $i . " bits</option>";
 												}
 												?>
 											</select>
 											<br>
-											<?=gettext("The value in this field is the 6RD prefix length. Normally specified by the ISP. A value of 0 for a single subnet is safe."); ?>
+											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
 										</td>
 									</tr>
 									

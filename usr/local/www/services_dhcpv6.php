@@ -119,6 +119,7 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['failover_peerip'] = $config['dhcpdv6'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpdv6'][$if]['netmask'];
 	$pconfig['numberoptions'] = $config['dhcpdv6'][$if]['numberoptions'];
+	$pconfig['timeformatchangev6'] = $config['system']['timeformatchangev6'];
 	if (!is_array($config['dhcpdv6'][$if]['staticmap']))
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
@@ -318,6 +319,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpdv6'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpdv6'][$if]['rootpath'] = $_POST['rootpath'];
+		$config['system']['timeformatchangev6'] = $_POST['timeformatchangev6'];
 
 		// Handle the custom options rowhelper
 		if(isset($config['dhcpdv6'][$if]['numberoptions']['item']))
@@ -657,6 +659,31 @@ include("head.inc");
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="28" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Time format change"); ?></td>
+				<td width="78%" class="vtable">
+				<table>
+					<tr>
+					<td>
+						<input name="timeformatchangev6" type="checkbox" id="timeformatchangev6" value="yes" <?php if ($pconfig['timeformatchangev6']) echo "checked"; ?>>
+					</td>
+					<td>
+						<strong>
+							<?=gettext("Change DHCPv6 display lease time from UTC to local time."); ?>
+						</strong>
+					</td>
+					</tr>
+					<tr>
+					<td>&nbsp;</td>
+					<td>
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCPv6 leases are displayed in UTC time.  By checking this 
+						box DHCPv6 lease time will be displayed in local time and set to time zone selected.  This will be used for all DHCPv6 interfaces lease time."); ?>
+					
+					</td>
+					</tr>
+				</table>
+				</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>

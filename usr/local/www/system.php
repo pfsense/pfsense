@@ -58,6 +58,7 @@ $pconfig['dns4gw'] = $config['system']['dns4gw'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['timezone'] = $config['system']['timezone'];
+$pconfig['timeformatchange'] = $config['system']['timeformatchange'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['theme'] = $config['system']['theme'];
@@ -167,6 +168,7 @@ if ($_POST) {
 		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
 
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
+		update_if_changed("timeformatchange", $config['system']['timeformatchange'], $_POST['timeformatchange']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
@@ -375,6 +377,20 @@ include("head.inc");
 					<br/>
 					<span class="vexpl">
 						<?=gettext("Select the location closest to you"); ?>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Time format change"); ?></td>
+				<td width="78%" class="vtable">
+					<input name="timeformatchange" type="checkbox" id="timeformatchange" value="yes" <?php if ($pconfig['timeformatchange']) echo "checked"; ?>>
+					<strong>
+						<?=gettext("Change DHCP display lease time from UTC to local time."); ?>
+					</strong>
+					<br/>
+					<span class="vexpl">
+						<?=gettext("By default DHCP leases are displayed in UTC time.  By checking this 
+						box DHCP lease time will be displayed in local time and set to time zone selected."); ?>
 					</span>
 				</td>
 			</tr>

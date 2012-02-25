@@ -151,6 +151,7 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 	$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
+	$pconfig['timeformatchange'] = $config['system']['timeformatchange'];
 	if (!is_array($config['dhcpd'][$if]['staticmap']))
 		$config['dhcpd'][$if]['staticmap'] = array();
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
@@ -380,6 +381,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
+		$config['system']['timeformatchange'] = $_POST['timeformatchange'];
 
 		// Handle the custom options rowhelper
 		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
@@ -727,6 +729,31 @@ include("head.inc");
 					</tr>
 				</table>
 			</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Time format change"); ?></td>
+				<td width="78%" class="vtable">
+				<table>
+					<tr>
+					<td>
+						<input name="timeformatchange" type="checkbox" id="timeformatchange" value="yes" <?php if ($pconfig['timeformatchange']) echo "checked"; ?>>
+					</td>
+					<td>
+						<strong>
+							<?=gettext("Change DHCP display lease time from UTC to local time."); ?>
+						</strong>
+					</td>
+					</tr>
+					<tr>
+					<td>&nbsp;</td>
+					<td>
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCP leases are displayed in UTC time.  By checking this 
+						box DHCP lease time will be displayed in local time and set to time zone selected.  This will be used for all DHCP interfaces lease time."); ?>
+					
+					</td>
+					</tr>
+				</table>
+				</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>

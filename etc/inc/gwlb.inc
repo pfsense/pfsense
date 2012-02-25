@@ -421,7 +421,17 @@ function return_gateways_array($disabled = false) {
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet6";
 		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
-		$gateway['interface'] = get_real_interface($ifname);
+		/* XXX Add stf and friends in the future ? */
+		switch($ifcfg['ipaddrv6']) {
+			case "6rd":
+				$gateway['interface'] = "srd0";
+				$gateway['dynamic'] = "default";
+				$gateway['gateway'] = "::1";
+				break;
+			default:
+				$gateway['interface'] = get_real_interface($ifname);
+				break;
+		}
 		$gateway['friendlyiface'] = $ifname;
 		$gateway['name'] = "{$friendly}_v6";
 		$gateway['attribute'] = "system";

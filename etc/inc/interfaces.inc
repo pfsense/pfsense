@@ -4108,6 +4108,9 @@ function interface_has_gatewayv6($friendly) {
 			case "dhcp6":
 				return true;
 			break;
+			case "6rd":
+				return true;
+			break;
 			default:
 				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
 					return true;

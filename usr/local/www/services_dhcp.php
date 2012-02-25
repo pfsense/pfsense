@@ -679,7 +679,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon as seperator ");?>
+				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as seperator ");?>
 			</td>
 			</tr>
 			<tr>

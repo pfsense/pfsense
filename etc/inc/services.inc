@@ -499,7 +499,7 @@ EOPP;
 		}
 		
     		if($dhcpifconf['domainsearchlist'] <> "") {
-			$dnscfg .= "    option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpifconf['domainsearchlist'])) . "\";\n";
+			$dnscfg .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpifconf['domainsearchlist'])) . "\";\n";
     		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
@@ -833,7 +833,7 @@ EOPP;
 		}
 		
     		if($dhcpv6ifconf['domainsearchlist'] <> "") {
-			$dnscfgv6 .= "	option domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
+			$dnscfgv6 .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
     		}
 
 		if (isset($dhcpv6ifconf['ddnsupdate'])) {

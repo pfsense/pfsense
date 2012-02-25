@@ -3048,8 +3048,11 @@ function interface_6rd_configure($interface = "wan"){
 		srd0: flags=1<UP> metric 0 mtu 1280
 		srd: v4plen 20 pfix fc00:0:0:1000:: plen 52 braddr 10.0.0.1
 	*/
-	return 0;
 
+	/* write out a default router file */
+	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "::1 -ifp srd0\n");
+	
+	return 0;
 }
 
 function interface_dhcpv6_configure($interface = "wan") {

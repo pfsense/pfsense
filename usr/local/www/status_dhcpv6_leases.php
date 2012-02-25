@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("config.inc");
 
 $pgtitle = array(gettext("Status"),gettext("DHCPv6 leases"));
 
@@ -95,8 +96,20 @@ function leasecmp($a, $b) {
 }
 
 function adjust_gmt($dt) {
+	global $config;
+	$sysctl = $config['system'];
+	$timezone = $sysctl['timezone'];
+	$timeformatchangev6 = $sysctl['timeformatchangev6'];
 	$ts = strtotime($dt . " GMT");
-	return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	if ($timeformatchangev6 == "yes") {
+		$this_tz = new DateTimeZone($timezone); 
+		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
+		$offset = $this_tz->getOffset($dhcp_lt);
+		$ts = $ts + $offset;
+		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
+        }
+	else
+		return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }
 
 function remove_duplicate($array, $field) {

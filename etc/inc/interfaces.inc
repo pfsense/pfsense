@@ -1121,6 +1121,13 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
+	case "6rd":
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+		}		
+		break;
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -2862,6 +2869,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		case 'dhcp6':
 			interface_dhcpv6_configure($interface);
 			break;
+		case '6rd':
+			interface_6rd_configure($interface);
+			break;
 		default:
 			if (is_ipaddr($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
@@ -2960,20 +2970,18 @@ function interface_6rd_configure($interface = "wan"){
 		return false;
 	}
 	
-	if(!is_numeric($wancfg['prefixlenv4-6rd']))
+	if(!is_numeric($wancfg['prefix-6rd-v4plen']))
 		$v4prefixlen = 0;
 	else
-		$v4prefixlen = $wancfg['prefixlenv4-6rd'];	
+		$v4prefixlen = $wancfg['prefix-6rd-v4plen'];	
 
 	/* create the long prefix notation for math, save the prefix length */
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 	$rd6arr = explode(":", $rd6prefix);
-	// echo "6RD prefix {$wancfg['prefix-6rd']} length {$rd6prefixlen}\n";
 
 	/* we need the hex form of the interface IPv4 address */
-	// $ip4address = "178.196.136.54";
 	$ip4arr = explode(".", $ip4address);
 	$hexwanv4 = "";
 	foreach($ip4arr as $octet)
@@ -2993,16 +3001,12 @@ function interface_6rd_configure($interface = "wan"){
 	/* just save the left prefix length bits */
 	$rd6prefixstartbin = substr($rd6prefixbin, 0, $rd6prefixlen);
 
-	// echo "$rd6prefixstartbin\n";
-	
 	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
 	$rd6brokerbin = substr(sprintf("%032b", hexdec($hexbrv4)), $v4prefixlen, 32);
-	// echo "$rd6prefixstartbin . $rd6brokerbin\n";
 	$rd6brokerbin = str_pad($rd6prefixstartbin . $rd6brokerbin, 128, "0", STR_PAD_RIGHT);;
 
 	/* for the local subnet too. */
 	$rd6lanbin = substr(sprintf("%032b", hexdec($hexwanv4)), $v4prefixlen, 32);
-	// echo "$rd6prefixstartbin . $rd6lanbin\n";
 	$rd6lanbin = str_pad($rd6prefixstartbin . $rd6lanbin, 128, "0", STR_PAD_RIGHT);;
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
@@ -3013,7 +3017,6 @@ function interface_6rd_configure($interface = "wan"){
 		$rd6brarr[] = dechex(bindec($bin));
 	$rd6brarr[7] = 1;
 	$rd6brgw = Net_IPv6::compress(implode(":", $rd6brarr));
-	// echo "6RD stf gateway $rd6brgw length {$rd6prefixlen}\n";
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
 	$rd6lanarr = array();
@@ -3024,29 +3027,30 @@ function interface_6rd_configure($interface = "wan"){
 	$rd6lanpr = Net_IPv6::compress(implode(":", $rd6lanarr));
 	$rd6lanarr[7] = 1;
 	$rd6lan = Net_IPv6::compress(implode(":", $rd6lanarr));
-	// echo "6RD LAN prefix $rd6lan length 64\n";
-
 
 	/* setup the stf interface */
-	mwexec("/sbin/ifconfig stf0 destroy");
-	mwexec("/sbin/ifconfig stf0 create");
-	mwexec("/sbin/ifconfig stf0 inet6 {$rd6lanpr}/{$rd6prefixlen}");
+	mwexec("/sbin/ifconfig srd0 destroy");
+	mwexec("/sbin/ifconfig srd0 create");
+	mwexec("/sbin/ifconfig srd0 v4plen {$v4prefixlen} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
+	mwexec("/sbin/ifconfig srd0 inet6 {$rd6lanpr} prefixlen 128");
 
-	/* Example 6RD setup steps
-		# ifconfig fxp0 inet6 2001:db8:c000:0202::1/64
-		# ifconfig fxp1 inet 192.0.2.2/24
-		# ifconfig stf0 create
-		# ifconfig stf0 inet6 2001:db8:c000:0202::/32
-		# route add -inet6 default 2001:db8:c000:0201::1
-	*/
-
+	log_error("Created 6rd interface srd0 v4plen {$v4prefixlen} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
+	log_error("Set IPv6 address inet6 {$rd6lanpr} prefixlen 128 for srd0");
 	
-	log_error("would have run: route add -inet6 default {$rd6brgw}");
-
+	/* Example 6RD setup steps
+	# ifconfig srd0 create
+	# ifconfig srd0
+	srd0: flags=0<> metric 0 mtu 1280
+		srd: v4plen 0 pfix :: plen 0 braddr 0.0.0.0
+	# ifconfig srd0 up
+	# ifconfig srd0 v4plen 20 pfix fc00:0:0:1000:: plen 52 braddr 10.0.0.1
+	# ifconfig srd0
+		srd0: flags=1<UP> metric 0 mtu 1280
+		srd: v4plen 20 pfix fc00:0:0:1000:: plen 52 braddr 10.0.0.1
+	*/
 	return 0;
 
 }
-
 
 function interface_dhcpv6_configure($interface = "wan") {
 	global $config, $g;

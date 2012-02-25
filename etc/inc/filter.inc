@@ -546,7 +546,11 @@ function filter_generate_aliases() {
 				$aliases .= " }\"\n";
 			}
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
-			$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
+			/* XXX possibly add 6to4 in the future as well, stf0 */
+			if ($ifcfg['type6'] == '6rd')
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} srd0 ";
+			else 
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 			$aliases .= " }\"\n";
 		}
 	}
@@ -2487,6 +2491,16 @@ EOD;
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
 pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
+
+EOD;
+			break;
+		case "6rd":
+			print_r($oc);
+			$ipfrules .= <<<EOD
+
+# allow our proto 41 traffic from the 6RD border relay in
+pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to {$oc['ip']} label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
 
 EOD;
 			break;

@@ -96,12 +96,16 @@ function leasecmp($a, $b) {
 }
 
 function adjust_gmt($dt) {
-	global $config;
-	$sysctl = $config['system'];
-	$timezone = $sysctl['timezone'];
-	$timeformatchangev6 = $sysctl['timeformatchangev6'];
+	global $config; 
+	$dhcpdv6 = $config['dhcpdv6'];
+	foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
+		$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
+		if ($dhcpv6leaseinlocaltime == "yes") 
+			break;
+	}
+        $timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
-	if ($timeformatchangev6 == "yes") {
+	if ($dhcpv6leaseinlocaltime == "yes") {
 		$this_tz = new DateTimeZone($timezone); 
 		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
 		$offset = $this_tz->getOffset($dhcp_lt);

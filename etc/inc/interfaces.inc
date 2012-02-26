@@ -2025,7 +2025,7 @@ function interface_carp_configure(&$vip) {
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
-		/* make sure to add a link local address too
+		/* make sure to add a link local address too */
 		mwexec("/sbin/ifconfig {$vipif} inet6 fe80::5:{$vip['vhid']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 

@@ -561,10 +561,12 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$reqdfields = "mode";
-		if($_POST['mode'] == 'hostap') { $reqdfields += " ssid"; }
-		$reqdfields = explode(" ", $reqdfields);
-		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
+		$reqdfields = array("mode");
+		$reqdfieldsn = array(gettext("Mode"));
+		if ($_POST['mode'] == 'hostap') {
+			$reqdfields[] = "ssid";
+			$reqdfieldsn[] = gettext("SSID");
+		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
 		/* loop through keys and enforce size */

@@ -95,18 +95,19 @@ function leasecmp($a, $b) {
 }
 
 function adjust_gmt($dt) {
-	global $config;
-	$sysctl = $config['system'];
-	$timezone = $sysctl['timezone'];
-	$timeformatchange = $sysctl['timeformatchange'];
+	global $config; 
+	$dhcpd = $config['dhcpd'];
+	foreach ($dhcpd as $dhcpleaseinlocaltime)
+		$dhcpleaseinlocaltime = $dhcpleaseinlocaltime['dhcpleaseinlocaltime'];
+	$timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
-	if ($timeformatchange == "yes") {
+	if ($dhcpleaseinlocaltime == "yes") {
 		$this_tz = new DateTimeZone($timezone); 
 		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
 		$offset = $this_tz->getOffset($dhcp_lt);
 		$ts = $ts + $offset;
 		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-        }
+	}
 	else
 		return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }

@@ -1153,9 +1153,34 @@ EOD;
 	if ($captive_portal == false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
 		if($lighty_port != "443") 
 			$redirectport = ":{$lighty_port}";
+		$syscfg = $config['system'];
+		$dyndns = $config['dyndnses']['dyndns'];
+		$dyndns_domainname = "";
+		foreach ($dyndns as $host) {
+			$domain_split = explode(".", $host['host']);
+			$domain_string = "";
+			for ($i = 0; $i < count($domain_split); $i++) {
+				$domain_string .= "\." . $domain_split[$i];
+			}
+			$dyndns_domainname .= <<<EOD
+	else \$HTTP["host"] =~ "(^|.*\.|\.){$domain_string}$" {
+		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
+	}
+
+EOD;
+		}
+		$domain_split = explode(".", $syscfg['domain']);
+		$domain_string = "";
+		for ($i = 0; $i < count($domain_split); $i++) {
+			$domain_string .= "\." . $domain_split[$i];
+		}
 		$lighty_config .= <<<EOD
 \$SERVER["socket"] == ":80" {
 	\$HTTP["host"] =~ "(.*)" {
+		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
+	}
+	{$dyndns_domainname}
+	else \$HTTP["host"] =~ "(^|.*\.|\.){$syscfg['hostname']}{$domain_string}$" {
 		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
 	}
 }

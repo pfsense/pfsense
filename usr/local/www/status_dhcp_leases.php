@@ -97,8 +97,11 @@ function leasecmp($a, $b) {
 function adjust_gmt($dt) {
 	global $config; 
 	$dhcpd = $config['dhcpd'];
-	foreach ($dhcpd as $dhcpleaseinlocaltime)
+	foreach ($dhcpd as $dhcpleaseinlocaltime) {
 		$dhcpleaseinlocaltime = $dhcpleaseinlocaltime['dhcpleaseinlocaltime'];
+		if ($dhcpleaseinlocaltime == "yes") 
+			break;
+	}
 	$timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
 	if ($dhcpleaseinlocaltime == "yes") {

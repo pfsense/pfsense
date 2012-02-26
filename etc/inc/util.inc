@@ -253,54 +253,19 @@ function gen_subnet_max($ipaddr, $bits) {
 	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
 }
 
-/* Generate end number for a given ipv6 subnet mask
- * no, it does not perform math */
+/* Generate end number for a given ipv6 subnet mask */
 function gen_subnetv6_max($ipaddr, $bits) {
 	if(!is_ipaddrv6($ipaddr))
 		return false;
 	
-	$subnetstart = gen_subnetv6($ipaddr, $bits);
-	/* we should have a expanded full ipv6 subnet starting at 0.
-	 * Now split those by the semicolon so we can do 16 bit math */
-	$parts = explode(":", $subnetstart);
-	if(count($parts) <> 8)
-		return false;
+	$mask = Net_IPv6::getNetmask('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF',$bits);
 	
-	$result = array();
-	/* set the itteration count properly */
-	$bitsleft = $bits;
-	$i = 0;
-	foreach($parts as $part) {
-		/* if we have more then 16 bits we just append the part to the result */
-		if($bitsleft >= 16) {
-			$result[$i] = $parts[$i];
-			$bitsleft = $bitsleft - 16;
-			$i++;
-			continue;
-		}
-		/* if we have less then 16 bits we need to calculate the other bits */
-		if(($bitsleft < 16) && ($bitsleft > 0)) {
-			$result[$i] = dechex(pow(2, (16 - $bitsleft)) -1) ;
-			$integer = pow(2, (16 - $bitsleft));
-			$strlen = strlen($result[$i]);
-			while($strlen < 4) {
-				$result[$i] = 0 . $result[$i];
-				$strlen++;
-			}
-			$bitsleft = 0;
-			$i++;
-			continue;
-		}
-		/* counter is zero, append quad F */
-		if($bitsleft == 0) {
-			$result[$i] = "ffff";
-			$i++;
-			continue;
-		}
-		$i++;
-	}
-	$subnet_end = implode(":", $result);
-	return $subnet_end;
+	$inet_ip = (binary)inet_pton($ipaddr);
+	$inet_mask = (binary)inet_pton($mask);
+
+	$inet_end = $inet_ip | ~$inet_mask;
+
+	return(Net_IPv6::uncompress(inet_ntop($inet_end)));
 }
 
 /* returns a subnet mask (long given a bit count) */

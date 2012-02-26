@@ -557,8 +557,7 @@ include("head.inc");
 			?>
 			-
 			<?php
-				/* FIXME end of subnet calculation here */
-				$range_to = gen_subnetv6_max($ifcfgip, $ifcfgsn);;
+				$range_to = gen_subnetv6_max($ifcfgip, $ifcfgsn);
 				echo $range_to;
 			?>
 			</td>

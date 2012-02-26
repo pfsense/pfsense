@@ -100,7 +100,7 @@ PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
 # Extra sanity seatbelts
-PHPMODULES="$PHPMODULES suhosin"
+#PHPMODULES="$PHPMODULES suhosin"
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
 # Config read/write

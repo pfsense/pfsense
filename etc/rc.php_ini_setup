@@ -27,7 +27,11 @@
 
 # Set our operating platform
 PLATFORM=`/bin/cat /etc/platform`
-EXTENSIONSDIR="/usr/local/lib/php/20060613/"
+if [ -f "/usr/local/lib/php/20090626/xml.so" ]; then
+	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
+else
+	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
+fi
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then

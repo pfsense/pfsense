@@ -428,7 +428,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		$ifdescr = strtoupper($ifname);
 	?>
   <tr> 
-	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
+	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></strong></td>
 	  <td valign="middle" class="listr">
 		<select onChange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>

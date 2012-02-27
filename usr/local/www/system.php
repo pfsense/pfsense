@@ -61,6 +61,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['theme'] = $config['system']['theme'];
+$pconfig['language'] = $config['system']['language'];
 
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
@@ -169,6 +170,11 @@ if ($_POST) {
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
+
+		if($_POST['language'] && $_POST['language'] != $config['system']['language']) {
+			$config['system']['language'] = $_POST['language'];
+			set_language($config['system']['language']);
+		}
 
 		/* pfSense themes */
 		if (! $g['disablethemeselection']) {
@@ -401,6 +407,24 @@ include("head.inc");
 						"required). Remember to set up at least one DNS server " .
 						"if you enter a host name here!"); ?>
 					</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?php echo gettext("Language");?></td>
+				<td width="78%" class="vtable">
+					<select name="language">
+						<?php
+						foreach(get_locale_list() as $lcode => $ldesc) {
+							$selected = ' selected';
+							if($lcode != $pconfig['language'])
+								$selected = '';
+							echo "<option value=\"{$lcode}\"{$selected}>{$ldesc}</option>";
+						}
+						?>
+					</select>
+					<strong>
+						<?=gettext("Choose a language for the webConfigurator"); ?>
+					</strong>
 				</td>
 			</tr>
 			<tr>

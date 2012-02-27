@@ -2291,4 +2291,19 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
+function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
+	putenv("LANG={$lang}.{$encoding}");
+	setlocale(LC_ALL, "{$lang}.{$encoding}");
+	textdomain("pfSense");
+	bindtextdomain("pfSense","/usr/share/locale");
+	bind_textdomain_codeset("pfSense","{$lang}.{$encoding}");
+}
+
+function get_locale_list() {
+	$locales = array(
+		"en_US" => gettext("English"),
+	);
+	asort($locales);
+	return $locales;
+}
 ?>

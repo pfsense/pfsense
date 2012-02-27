@@ -78,6 +78,15 @@ foreach($apple_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = "pfsense";
 
+/* Set the default interface language */
+if($config['system']['language'] <> "") {
+	$g['language'] = $config['system']['language'];
+} elseif ($g['language'] == "") {
+	$g['language'] = 'en_US';
+}
+
+set_language($g['language']);
+
 /* used by progress bar */
 $lastseen = "-1";
 

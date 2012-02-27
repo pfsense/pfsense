@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
+	$pconfig['enablehostredirect'] = isset($a_dyndns[$id]['enablehostredirect']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -101,6 +102,7 @@ if ($_POST) {
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
+		$dyndns['enablehostredirect'] = $_POST['enablehostredirect'] ? true : false;
 		$dyndns['enable'] = $_POST['enable'] ? false : true;
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
@@ -202,6 +204,18 @@ include("head.inc");
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
                     <?=gettext("Enable ");?><?=gettext("Wildcard"); ?></td>
 				</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("WebGUI URL redirect"); ?></td>
+		  <td width="78%" class="vtable">
+		    <input name="enablehostredirect" type="checkbox" id="enablehostredirect" value="yes" <?php if ($pconfig['enablehostredirect']) echo "checked"; ?> />
+		    <strong><?=gettext("Enable webConfigurator redirect of domain name for router"); ?></strong>
+		    <br/>
+		    <?php echo gettext("When this is checked, access to the webConfigurator URL will be redirected from HTTP to HTTPS" .
+		      " if the webConfigurator Protocol is set to HTTPS. The domain name is the Dynamic DNS client Hostname.  " .
+		      "Check this box to ensable domain name redirect to be added to the redirect rule. (NOTE: To redirect Domain name for Remote firewall Administration create NAT rule for ports 80 to 443.)");
+		    ?>
+		  </td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">

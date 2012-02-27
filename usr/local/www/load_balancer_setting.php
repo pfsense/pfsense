@@ -70,13 +70,24 @@ if ($_POST) {
 		}
 
                 if ($_POST['interval'] && !is_numeric($_POST['interval'])) {
-                        $input_errors[] = gettext("Interval must be a numeric value");
+			$input_errors[] = gettext("Interval must be a numeric value");
                 }
+
+		if ($_POST['prefork']) { 
+			if (!is_numeric($_POST['prefork'])) {
+				$input_errors[] = gettext("Prefork must be a numeric value");
+			} else {
+				if (($_POST['prefork']<=0) || ($_POST['prefork']>32)) {
+					$input_errors[] = gettext("Prefork value must be between 1 and 32");
+				}
+			}
+		}
 
 		/* update config if user entry is valid */
 		if (!$input_errors) {
 			$lbsetting['timeout'] = $_POST['timeout'];
 			$lbsetting['interval'] = $_POST['interval'];
+			$lbsetting['prefork'] = $_POST['prefork'];
 
         		write_config();
         		mark_subsystem_dirty('loadbalancer');
@@ -121,7 +132,7 @@ include("head.inc");
                  <td colspan="2" valign="top" class="listtopic"><?=gettext("Relayd global settings"); ?></td>
               </tr>
 	      <tr>
-	         <td width="22%" valign="top" class="vncell"><?=gettext("Pool member timeout") ; ?></td>
+	         <td width="22%" valign="top" class="vncell"><?=gettext("timeout") ; ?></td>
                  <td width="78%" class="vtable">
                    <input name="timeout" id="timeout" value="<?php if ($lbsetting['timeout'] <> "") echo $lbsetting['timeout']; ?>" class="formfld unknown">
                    <br />
@@ -129,11 +140,19 @@ include("head.inc");
                  </td>
               </tr>
 	      <tr>
-	         <td width="22%" valign="top" class="vncell"><?=gettext("Pool member check interval") ; ?></td>
+	         <td width="22%" valign="top" class="vncell"><?=gettext("interval") ; ?></td>
                  <td width="78%" class="vtable">
                    <input name="interval" id="interval" value="<?php if ($lbsetting['interval'] <> "") echo $lbsetting['interval']; ?>" class="formfld unknown">
                    <br />
                    <?=gettext("Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds"); ?>
+                </td>
+             </tr>
+              <tr>
+                 <td width="22%" valign="top" class="vncell"><?=gettext("prefork") ; ?></td>
+                 <td width="78%" class="vtable">
+                   <input name="prefork" id="prefork" value="<?php if ($lbsetting['prefork'] <> "") echo $lbsetting['prefork']; ?>" class="formfld unknown">
+                   <br />
+                   <?=gettext("Number of processes used by relayd. Leave blank to use the default value of 5 processes"); ?>
                 </td>
              </tr>
              <tr>

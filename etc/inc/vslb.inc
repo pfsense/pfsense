@@ -201,8 +201,11 @@ function relayd_configure($kill_first=false) {
   $fd = fopen("{$g['varetc_path']}/relayd.conf", "w");
   $conf .= "log updates \n";
 
-  /* Global timeout and interval settings
-     if not specified by the user, use a 1000 ms timeout value as in pfsense 2.0.1 and above */
+  /* Global timeout, interval and prefork settings
+     if not specified by the user:
+     - use a 1000 ms timeout value as in pfsense 2.0.1 and above
+     - leave interval and prefork empty, relayd will use its default values */
+     
   if (isset($setting['timeout']) && !empty($setting['timeout'])) {
   	$conf .= "timeout ".$setting['timeout']." \n";
   } else {
@@ -211,6 +214,10 @@ function relayd_configure($kill_first=false) {
 
   if (isset($setting['interval']) && !empty($setting['interval'])) {
   	$conf .= "interval ".$setting['interval']." \n";
+  }
+
+  if (isset($setting['prefork']) && !empty($setting['prefork'])) {
+	$conf .= "prefork ".$setting['prefork']." \n";
   }
 
   /* reindex pools by name as we loop through the pools array */

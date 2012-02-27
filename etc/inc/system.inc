@@ -1154,33 +1154,42 @@ EOD;
 		if($lighty_port != "443") 
 			$redirectport = ":{$lighty_port}";
 		$syscfg = $config['system'];
-		$dyndns = $config['dyndnses']['dyndns'];
-		$dyndns_domainname = "";
-		foreach ($dyndns as $host) {
-			$domain_split = explode(".", $host['host']);
+		$setelse = "";
+		if (isset($config['system']['webgui']['enableurlredirect'])) {
+			$domain_split = explode(".", $syscfg['domain']);
 			$domain_string = "";
 			for ($i = 0; $i < count($domain_split); $i++) {
 				$domain_string .= "\." . $domain_split[$i];
 			}
-			$dyndns_domainname .= <<<EOD
-	else \$HTTP["host"] =~ "(^|.*\.|\.){$domain_string}$" {
+			$router_domainname = <<<EOD
+\$HTTP["host"] =~ "(^|.*\.|\.)\.{$syscfg['hostname']}{$domain_string}$" {
+		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
+	}
+EOD;
+			$setelse = "else ";	
+		}
+		$dyndns = $config['dyndnses']['dyndns'];
+		foreach ($dyndns as $host) {
+			if (isset($host['enablehostredirect'])) {
+				$domain_split = explode(".", $host['host']);
+				$domain_string = "";
+				for ($i = 0; $i < count($domain_split); $i++) {
+					$domain_string .= "\." . $domain_split[$i];
+				}
+				$dyndns_domainname .= <<<EOD
+{$setelse}\$HTTP["host"] =~ "(^|.*\.|\.){$domain_string}$" {
 		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
 	}
 
 EOD;
-		}
-		$domain_split = explode(".", $syscfg['domain']);
-		$domain_string = "";
-		for ($i = 0; $i < count($domain_split); $i++) {
-			$domain_string .= "\." . $domain_split[$i];
+				$setelse = "else ";
+			}
 		}
 		$lighty_config .= <<<EOD
 \$SERVER["socket"] == ":80" {
-	\$HTTP["host"] =~ "(.*)" {
-		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
-	}
+	{$router_domainname}
 	{$dyndns_domainname}
-	else \$HTTP["host"] =~ "(^|.*\.|\.){$syscfg['hostname']}{$domain_string}$" {
+	{$setelse}\$HTTP["host"] =~ "(.*)" {
 		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
 	}
 }

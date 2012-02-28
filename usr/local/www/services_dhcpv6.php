@@ -119,7 +119,7 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['failover_peerip'] = $config['dhcpdv6'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpdv6'][$if]['netmask'];
 	$pconfig['numberoptions'] = $config['dhcpdv6'][$if]['numberoptions'];
-	$pconfig['timeformatchangev6'] = $config['system']['timeformatchangev6'];
+	$pconfig['dhcpv6leaseinlocaltime'] = $config['dhcpdv6'][$if]['dhcpv6leaseinlocaltime'];
 	if (!is_array($config['dhcpdv6'][$if]['staticmap']))
 		$config['dhcpdv6'][$if]['staticmap'] = array();
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
@@ -319,7 +319,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpdv6'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpdv6'][$if]['rootpath'] = $_POST['rootpath'];
-		$config['system']['timeformatchangev6'] = $_POST['timeformatchangev6'];
+		$config['dhcpdv6'][$if]['dhcpv6leaseinlocaltime'] = $_POST['dhcpv6leaseinlocaltime'];
 
 		// Handle the custom options rowhelper
 		if(isset($config['dhcpdv6'][$if]['numberoptions']['item']))
@@ -401,15 +401,16 @@ include("head.inc");
 		document.iform.dns2.disabled = endis;
 		document.iform.deftime.disabled = endis;
 		document.iform.maxtime.disabled = endis;
-		document.iform.gateway.disabled = endis;
+		//document.iform.gateway.disabled = endis;
 		document.iform.failover_peerip.disabled = endis;
+		document.iform.dhcpv6leaseinlocaltime.disabled = endis;
 		document.iform.domain.disabled = endis;
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
-		document.iform.ntp1.disabled = endis;
-		document.iform.ntp2.disabled = endis;
-		document.iform.tftp.disabled = endis;
+		//document.iform.ntp1.disabled = endis;
+		//document.iform.ntp2.disabled = endis;
+		//document.iform.tftp.disabled = endis;
 		document.iform.ldap.disabled = endis;
 		document.iform.netboot.disabled = endis;
 		document.iform.nextserver.disabled = endis;
@@ -665,7 +666,7 @@ include("head.inc");
 				<table>
 					<tr>
 					<td>
-						<input name="timeformatchangev6" type="checkbox" id="timeformatchangev6" value="yes" <?php if ($pconfig['timeformatchangev6']) echo "checked"; ?>>
+						<input name="dhcpv6leaseinlocaltime" type="checkbox" id="dhcpv6leaseinlocaltime" value="yes" <?php if ($pconfig['dhcpv6leaseinlocaltime']) echo "checked"; ?>>
 					</td>
 					<td>
 						<strong>

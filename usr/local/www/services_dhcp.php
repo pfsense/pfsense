@@ -151,7 +151,7 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 	$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
-	$pconfig['timeformatchange'] = $config['system']['timeformatchange'];
+	$pconfig['dhcpleaseinlocaltime'] = $config['dhcpd'][$if]['dhcpleaseinlocaltime'];
 	if (!is_array($config['dhcpd'][$if]['staticmap']))
 		$config['dhcpd'][$if]['staticmap'] = array();
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
@@ -381,7 +381,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['nextserver'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
-		$config['system']['timeformatchange'] = $_POST['timeformatchange'];
+		$config['dhcpd'][$if]['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
 
 		// Handle the custom options rowhelper
 		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
@@ -480,6 +480,7 @@ include("head.inc");
 		document.iform.domain.disabled = endis;
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.staticarp.disabled = endis;
+		document.iform.dhcpleaseinlocaltime.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
 		document.iform.ntp1.disabled = endis;
@@ -736,7 +737,7 @@ include("head.inc");
 				<table>
 					<tr>
 					<td>
-						<input name="timeformatchange" type="checkbox" id="timeformatchange" value="yes" <?php if ($pconfig['timeformatchange']) echo "checked"; ?>>
+						<input name="dhcpleaseinlocaltime" type="checkbox" id="dhcpleaseinlocaltime" value="yes" <?php if ($pconfig['dhcpleaseinlocaltime']) echo "checked"; ?>>
 					</td>
 					<td>
 						<strong>

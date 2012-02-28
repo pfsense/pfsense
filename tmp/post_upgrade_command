@@ -3,29 +3,63 @@
 /etc/rc.conf_mount_rw
 
 PFSENSETYPE=`cat /etc/platform`
-KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
+OLDKERNEL=`cat /boot/kernel/pfsense_kernel.txt`
 
-if [ $KERNELTYPE = "wrap" ]; then
-	if [ -f /kernels/kernel_wrap.gz ]; then 
-		tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
-		cp /etc/ttys_wrap /etc/ttys
-	fi
-fi
-if [ $KERNELTYPE = "Developers" ]; then
-	if [ -f /kernels/kernel_Dev.gz ]; then 
-		tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/
-		cp  /boot/kernel/kernel.gz
-	fi
-fi
-if [ $KERNELTYPE = "SMP" ]; then
-	if [ -f /kernels/kernel_SMP.gz ]; then 
-		tar xzpf /kernels/kernel_SMP.gz --exclude loader.conf -C /boot/
-	fi
-fi
-if [ $KERNELTYPE = "UP" ]; then
-	if [ -f /kernels/kernel_SMP.gz ]; then 
-		tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
-	fi
+# Massage the existing kernel into one that actually exists.
+#	Leaving old entries so we can bring back other kernels later if desired.
+case "$OLDKERNEL" in
+	"wrap")
+	KERNELTYPE=wrap
+	;;
+	"Developers")
+	KERNELTYPE=SMP
+	;;
+	"UP")
+	KERNELTYPE=SMP
+	;;
+	"SMP")
+	KERNELTYPE=SMP
+	;;
+	*)
+	KERNELTYPE=SMP
+	;;
+esac
+
+# Overwrite the old kernel type with what we're using now to reflect what is about to be written out.
+echo ${KERNELTYPE} > /boot/kernel/pfsense_kernel.txt
+HAVE_KERNEL=false
+
+case "$KERNELTYPE" in
+	"wrap")
+		if [ -f /kernels/kernel_wrap.gz ]; then
+			HAVE_KERNEL=true
+			tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
+			cp /etc/ttys_wrap /etc/ttys
+		fi
+		;;
+	"Developers")
+		if [ -f /kernels/kernel_Dev.gz ]; then
+			HAVE_KERNEL=true
+			tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/
+		fi
+		;;
+	"UP")
+		if [ -f /kernels/kernel_UP.gz ]; then
+			HAVE_KERNEL=true
+			tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
+		fi
+		;;
+	"SMP")
+		if [ -f /kernels/kernel_SMP.gz ]; then
+			HAVE_KERNEL=true
+			tar xzpf /kernels/kernel_SMP.gz --exclude loader.conf -C /boot/
+		fi
+		;;
+esac
+
+if [ ${HAVE_KERNEL} = "false" ]; then
+	echo "ERROR: Unable to locate a kernel upgrade file!"
+	sleep 5
 fi
 
 if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then

@@ -293,6 +293,12 @@ exec("mv $CODIR/pfSenseGITREPO/gitsync_temp.git $CODIR/pfSenseGITREPO/pfSenseGIT
 // Reset the repository to restore the deleted files
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");
 
+// Remove obsolete files
+$files_to_remove = file("/etc/pfSense.obsoletedfiles");
+foreach($files_to_remove as $file_to_remove) 
+	if(file_exists($file_to_remove)) 
+		exec("/bin/rm -f $file_to_remove");
+
 if(!$upgrading)
 	post_cvssync_commands();
 

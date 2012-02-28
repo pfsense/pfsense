@@ -44,7 +44,7 @@ case "$KERNELTYPE" in
 		fi
 		;;
 	"UP")
-		if [ -f /kernels/kernel_UP.gz ]; then
+		if [ -f /kernels/kernel_uniprocessor.gz ]; then
 			HAVE_KERNEL=true
 			tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
 		fi

@@ -1272,6 +1272,12 @@ function get_interface_info($ifdescr) {
 				else
 					$ifinfo['ssid'] = $matches[1];
 			}
+			if (preg_match("/laggproto (.*)$/", $ici, $matches)) {
+				$ifinfo['laggproto'] = $matches[1];
+			}
+			if (preg_match("/laggport: (.*)$/", $ici, $matches)) {
+				$ifinfo['laggport'][] = $matches[1];
+			}
 		}
 		foreach($wifconfiginfo as $ici) {
 			$elements = preg_split("/[ ]+/i", $ici);

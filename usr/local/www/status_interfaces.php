@@ -260,6 +260,22 @@ include("head.inc");
 			<?=htmlspecialchars($ifinfo['media']);?>
 		</td>
 	</tr>
+	<?php endif; if ($ifinfo['laggproto']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("LAGG Protocol");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['laggproto']);?>
+		</td>
+	</tr>
+	<?php endif; if (is_array($ifinfo['laggport'])): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("LAGG Ports");?></td>
+		<td width="78%" class="listr">
+			<?php 	foreach ($ifinfo['laggport'] as $laggport) { ?>
+					<?php echo htmlspecialchars($laggport); ?><br/>
+			<?php	} ?>
+		</td>
+	</tr>
 <?php endif; ?><?php if ($ifinfo['channel']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Channel");?></td>

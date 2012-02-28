@@ -74,7 +74,7 @@ if($config['notifications']['smtp']['fromaddress'])
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
 // System Sounds
-$pconfig['disablebeep'] = isset($config['notifications']['disablebeep']);
+$pconfig['disablebeep'] = isset($config['system']['disablebeep']);
 
 if ($_POST) {
 
@@ -113,9 +113,9 @@ if ($_POST) {
 
 		// System Sounds
 		if($_POST['disablebeep'] == "yes")
-			$config['notifications']['disablebeep'] = true;
+			$config['system']['disablebeep'] = true;
 		else
-			unset($config['notifications']['disablebeep']);
+			unset($config['system']['disablebeep']);
 
 		write_config();
 
@@ -254,6 +254,9 @@ include("head.inc");
 								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
 							</td>
 						</tr>
+						<tr>
+							<td colspan="2" class="list" height="12">&nbsp;</td>
+						</tr>	
 						<!-- System Sounds -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("System Sounds"); ?></td>
@@ -268,11 +271,13 @@ include("head.inc");
 							</td>
 						</tr>
 						<tr>
+							<td colspan="2" class="list" height="12">&nbsp;</td>
+						</tr>	
+						<tr>
 							<td valign="top" class="">
 								&nbsp;
 							</td>
 							<td>
-								<br/>
 								<input type='submit' id='Submit' name='Submit' value='<?=gettext("Save"); ?>'></form>
 							</td>
 						</tr>

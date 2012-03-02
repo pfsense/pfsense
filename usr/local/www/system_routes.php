@@ -60,7 +60,7 @@ if ($_POST) {
 		$retval = 0;
 
 		if (file_exists("{$g['tmp_path']}/.system_routes.apply")) {
-                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
 			foreach ($toapplylist as $toapply)
 				mwexec("{$toapply}");
 			
@@ -138,21 +138,32 @@ include("head.inc");
 		</tr>
                 <tr>
 			<?php $i = 0; foreach ($a_routes as $route): ?>
+			<?php
+				if (isset($route['disabled'])) {
+					$textss = "<span class=\"gray\">";
+					$textse = "</span>";
+				} else
+					$textss = $textse = "";
+			?>
                   <td class="listlr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-                    <?=strtolower($route['network']);?>
+                    <?=$textss;?><?=strtolower($route['network']);?><?=$textse;?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
+					<?=$textss;?>
 			<?php
 				echo htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway']);
 			?>
+					<?=$textse;?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
+					<?=$textss;?>
 			<?php
 				echo convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface']) . " ";
 			?>
+					<?=$textse;?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($route['descr']);?>&nbsp;
+                    <?=$textss;?><?=htmlspecialchars($route['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">

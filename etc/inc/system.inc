@@ -440,6 +440,11 @@ function system_routing_configure($interface = "") {
 			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
 
+			if(isset($rtent['disabled'])) {
+				mwexec("/sbin/route delete " . escapeshellarg($rtent['network']), true);
+				continue;
+			}
+
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 

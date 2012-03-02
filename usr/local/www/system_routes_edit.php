@@ -73,6 +73,7 @@ if (isset($id) && $a_routes[$id]) {
 		explode('/', $a_routes[$id]['network']);
 	$pconfig['gateway'] = $a_routes[$id]['gateway'];
 	$pconfig['descr'] = $a_routes[$id]['descr'];
+	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
 }
 
 if (isset($_GET['dup']))
@@ -130,6 +131,10 @@ if ($_POST) {
 		$route['network'] = $osn;
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
+		if ($_POST['disabled'])
+			$route['disabled'] = true;
+		else
+			unset($route['disabled']);
 
 		if (!isset($id))
                         $id = count($a_routes);
@@ -263,6 +268,14 @@ include("head.inc");
 									<p/>
 								</div>
                 </tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
+			<td width="78%" class="vtable">
+				<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+				<strong><?=gettext("Disable this static route");?></strong><br />
+				<span class="vexpl"><?=gettext("Set this option to disable this static route without removing it from the list.");?></span>
+			</td>
+		</tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 

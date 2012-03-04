@@ -144,9 +144,8 @@ if(is_array($dhcrelaycfg)) {
 	}
 }
 
-/* FIXME needs v6 code, use in subnet v6? */
 function is_inrange($test, $start, $end) {
-	if ( (ip2ulong($test) < ip2ulong($end)) && (ip2ulong($test) > ip2ulong($start)) )
+	if ( (inet_pton($test) < inet_pton($end)) && (inet_pton($test) > inet_pton($start)) )
 		return true;
 	else
 		return false;
@@ -233,38 +232,40 @@ if ($_POST) {
 					$noip = true;
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			/* FIXME change for ipv6 subnet */
 			$subnet_start = gen_subnetv6($ifcfgip, $ifcfgsn);
 			$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
 
-			if((! ip_in_subnet($_POST['range_from'], $subnet_start)) || (! ip_in_subnet($_POST['range_to'], $subnet_start))) {
+			if ((! is_inrange($_POST['range_from'], $subnet_start, $subnet_end)) ||
+			    (! is_inrange($_POST['range_to'], $subnet_start, $subnet_end))) {
 				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 
-			/* no idea how to do this yet 
-			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
+			/* "from" cannot be higher than "to" */
+			if (inet_pton($_POST['range_from']) > inet_pton($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
-			*/
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
 
-			// $dynsubnet_start = ip2ulong($_POST['range_from']);
-			// $dynsubnet_end = ip2ulong($_POST['range_to']);
-			/* FIX later. Also applies to prefix delegation
+
+			/* Verify static mappings do not overlap:
+			   - available DHCP range
+			   - prefix delegation range (FIXME: still need to be completed) */
+			$dynsubnet_start = inet_pton($_POST['range_from']);
+			$dynsubnet_end = inet_pton($_POST['range_to']);
+
 			if(is_array($a_maps)) {
 				foreach ($a_maps as $map) {
 					if (empty($map['ipaddrv6']))
 						continue;
-					if ((ip2ulong($map['ipaddrv6']) > $dynsubnet_start) &&
-						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+					if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
+						(inet_pton($map['ipaddr']) < $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}
 				}
 			}
-			*/
 		}
 	}
 

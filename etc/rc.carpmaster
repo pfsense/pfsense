@@ -32,10 +32,20 @@
 require_once("functions.inc");
 require_once("config.inc");
 require_once("notices.inc");
+require_once("openvpn.inc");
 
 $notificationmsg = "A carp cluster member has resumed the state 'MASTER'";
 
 notify_via_smtp($notificationmsg);
 notify_via_growl($notificationmsg);
+
+/* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
+global $config;
+foreach ($config['openvpn']['openvpn-client'] as $settings) {
+	if ($settings['interface'] == $argv[1]) {
+		log_error("Starting OpenVPN instance on {$settings['interface']} because of transition to CARP master.");
+		openvpn_restart('client', $settings);
+	}
+}
 
 ?>

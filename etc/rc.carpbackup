@@ -41,11 +41,14 @@ notify_via_growl($notificationmsg);
 
 /* Stop OpenVPN clients running on this VIP, since multiple active OpenVPN clients on a CARP cluster can be problematic. */
 global $config;
-foreach ($config['openvpn']['openvpn-client'] as $settings) {
-	if ($settings['interface'] == $argv[1]) {
-		log_error("Stopping OpenVPN instance on {$settings['interface']} because of transition to CARP backup.");
-		openvpn_restart('client', $settings);
+if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
+	foreach ($config['openvpn']['openvpn-client'] as $settings) {
+		if ($settings['interface'] == $argv[1]) {
+			log_error("Stopping OpenVPN instance on {$settings['interface']} because of transition to CARP backup.");
+			openvpn_restart('client', $settings);
+		}
 	}
 }
+
 
 ?>

@@ -41,10 +41,12 @@ notify_via_growl($notificationmsg);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
-foreach ($config['openvpn']['openvpn-client'] as $settings) {
-	if ($settings['interface'] == $argv[1]) {
-		log_error("Starting OpenVPN instance on {$settings['interface']} because of transition to CARP master.");
-		openvpn_restart('client', $settings);
+if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
+	foreach ($config['openvpn']['openvpn-client'] as $settings) {
+		if ($settings['interface'] == $argv[1]) {
+			log_error("Starting OpenVPN instance on {$settings['interface']} because of transition to CARP master.");
+			openvpn_restart('client', $settings);
+		}
 	}
 }
 

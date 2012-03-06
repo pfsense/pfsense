@@ -672,6 +672,10 @@ function openvpn_restart($mode, $settings) {
 	if (isset($settings['disable']))
 		return;
 
+	/* Do not start if we are a CARP backup on this vip! */
+	if ((substr($settings['interface'], 0, 3) == "vip") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
+		return;
+
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	mwexec_bg("/usr/local/sbin/openvpn --config {$fpath}");

@@ -97,9 +97,6 @@ EOD;
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
 
-		if(! isset($dhcpv6ifconf['enable']))
-			continue;
-
 		$realif = get_real_interface($dhcpv6if);
 		$rtadvdifs[] = $realif;
 

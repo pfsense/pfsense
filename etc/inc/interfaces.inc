@@ -530,13 +530,13 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		}
 		if (!empty($bridge['maxage']))
 			mwexec("/sbin/ifconfig {$bridgeif} maxage {$bridge['maxage']}");
-		if (!empty($brige['fwdelay']))
+		if (!empty($bridge['fwdelay']))
 			mwexec("/sbin/ifconfig {$bridgeif} fwddelay {$bridge['fwdelay']}");
-		if (!empty($brige['hellotime']))
+		if (!empty($bridge['hellotime']))
                         mwexec("/sbin/ifconfig {$bridgeif} hellotime {$bridge['hellotime']}");
-		if (!empty($brige['priority']))
+		if (!empty($bridge['priority']))
                         mwexec("/sbin/ifconfig {$bridgeif} priority {$bridge['priority']}");
-		if (!empty($brige['holdcount']))
+		if (!empty($bridge['holdcount']))
                         mwexec("/sbin/ifconfig {$bridgeif} holdcnt {$bridge['holdcnt']}");
 		if (!empty($bridge['ifpriority'])) {
 			$pconfig = explode(",", $bridge['ifpriority']);
@@ -630,7 +630,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	if (!does_interface_exist($bridgeif) || !does_interface_exist($interface))
 		return;
 
-	$mtu = get_interface_mtu($brigeif);
+	$mtu = get_interface_mtu($bridgeif);
 	$mtum = get_interface_mtu($interface);
 	
 	if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500))

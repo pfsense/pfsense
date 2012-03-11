@@ -444,7 +444,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	}
 
 	$active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
-	voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
+	voucher_write_active_db($first_voucher_roll, $active_vouchers[$first_voucher_roll]);
 
 	/* Triger a sync of the vouchers on config */
 	send_event("service sync vouchers");

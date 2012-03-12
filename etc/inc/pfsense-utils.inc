@@ -1852,12 +1852,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");
 		conf_mount_ro();
-		if (filesize($urltable_filename)) {
-			return true;
-		} else {
-			// If it's unfetchable or an empty file, bail
-			return false;
-		}
+		return true;
 	} else {
 		// File exists, and it doesn't need updated.
 		return -1;

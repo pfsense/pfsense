@@ -404,10 +404,11 @@ function local_user_set(& $user) {
 		$user_op = "usermod";
 	}
 
+	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']); 
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($user['descr'])." -H 0 2>&1";
+			" -c ".escapeshellarg($comment)." -H 0 2>&1";
 
 	if($debug)
 		log_error("Running: {$cmd}");

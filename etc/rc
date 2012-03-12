@@ -81,7 +81,9 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
-/etc/rc.disable_hdd_apm
+if [ -f /etc/rc.disable_hdd_apm ]; then
+	/etc/rc.disable_hdd_apm
+fi
 
 if [ ! "$PLATFORM" = "jail" ]; then
 	# Check to see if a compact flash mountpoint exists

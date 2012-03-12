@@ -1846,8 +1846,11 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
 		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
 		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
-		mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
-		unlink_if_exists($urltable_filename . ".tmp");
+		if (file_exists($urltable_filename . ".tmp")) {
+			mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			unlink_if_exists($urltable_filename . ".tmp");
+		} else
+			mwexec("/usr/bin/touch {$urltable_filename}");
 		conf_mount_ro();
 		if (filesize($urltable_filename)) {
 			return true;

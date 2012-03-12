@@ -485,8 +485,7 @@ function captiveportal_init_rules($reinit = false) {
 	captiveportal_init_ipfw_ruleno();
 
 	/* make sure ipfw is loaded */
-	if (!is_module_loaded("ipfw.ko"))
-		filter_load_ipfw();
+	filter_load_ipfw();
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
 	if (!is_module_loaded("dummynet.ko"))
 		mwexec("/sbin/kldload dummynet");

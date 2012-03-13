@@ -256,8 +256,8 @@ if [ "$PLATFORM" != "pfSense" ]; then
 fi
 
 echo -n "."
-DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
-ENABLEFIFOLOG=`cat /cf/conf/config.xml | grep usefifolog | wc -l | awk '{ print $1 }'`
+DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
+ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
 LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd apinger"
 for logfile in $LOG_FILES; do
 	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 

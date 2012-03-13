@@ -409,8 +409,8 @@ include("head.inc");
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
-		//document.iform.ntp1.disabled = endis;
-		//document.iform.ntp2.disabled = endis;
+		document.iform.ntp1.disabled = endis;
+		document.iform.ntp2.disabled = endis;
 		//document.iform.tftp.disabled = endis;
 		document.iform.ldap.disabled = endis;
 		document.iform.netboot.disabled = endis;
@@ -431,13 +431,11 @@ include("head.inc");
 		aodiv = document.getElementById('showddns');
 		aodiv.style.display = "block";
 	}
-	/*
 	function show_ntp_config() {
 		document.getElementById("showntpbox").innerHTML='';
 		aodiv = document.getElementById('showntp');
 		aodiv.style.display = "block";
 	}
-	*/
 	/*
 	function show_tftp_config() {
 		document.getElementById("showtftpbox").innerHTML='';
@@ -702,7 +700,6 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
-			<!-- ISC dhcpd does not support ntp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 			<td width="78%" class="vtable">
@@ -715,7 +712,6 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
-			-->
 			<!-- ISC dhcpd does not support tftp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>

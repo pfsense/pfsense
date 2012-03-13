@@ -872,11 +872,6 @@ EOPP;
 		if (isset($dhcpv6ifconf['denyunknown']))
 		   $dhcpdv6conf .= "		deny unknown-clients;\n";
 
-		if ($dhcpv6ifconf['gateway'])
-			$routersv6 = $dhcpv6ifconf['gateway'];
-		else
-			$routersv6 = $ifcfgipv6;
-
 		if($dhcpv6ifconf['failover_peerip'] <> "") {
 			$dhcpdv6conf .= "		failover peer \"dhcpv6{$dhcpv6num}\";\n";
 			$dhcpv6num++;
@@ -884,7 +879,6 @@ EOPP;
 
 		$dhcpdv6conf .= <<<EOD
 	range6 {$dhcpv6ifconf['range']['from']} {$dhcpv6ifconf['range']['to']};
-	# Not supported in IPv6; option dhcp6.routers {$routersv6};
 $dnscfgv6
 
 EOD;
@@ -902,11 +896,15 @@ EOD;
 			$dhcpdv6conf .= "	max-lease-time {$dhcpv6ifconf['maxleasetime']};\n";
 
 		// ntp-servers
-		/* Not supported in ISC DHCPD yet, see redmine #2016
-		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0])
-			$dhcpdv6conf .= "	option ntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
-		*/
-
+		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0]) {
+			$ntpservers = array();
+			foreach($dhcpv6ifconf['ntpserver'] as $ntpserver) {
+				if(is_ipaddrv6($ntpserver))
+					$ntpservers[] = $ntpserver;
+			}
+			if(count($ntpservers) > 0 )
+				$dhcpdv6conf .= "       option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
+		}
 		// tftp-server-name
 		/* Needs ISC DHCPD support
 		 if ($dhcpv6ifconf['tftp'] <> "")

@@ -54,6 +54,7 @@ $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['max_procs'] = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttpredirect']);
+$pconfig['enableurlredirect'] = isset($config['system']['webgui']['enableurlredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
@@ -127,6 +128,15 @@ if ($_POST) {
 			unset($config['system']['webgui']['disablehttpredirect']);
 			$restart_webgui = true;
 		}
+		
+		if ($_POST['enableurlredirect'] == "yes") {
+			$config['system']['webgui']['enableurlredirect'] = true;
+			$restart_webgui = true;
+		} else {
+			unset($config['system']['webgui']['enableurlredirect']);
+			$restart_webgui = true;
+		}
+		
 		if ($_POST['quietlogin'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {
@@ -368,6 +378,18 @@ function prot_change() {
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is always permitted even on port 80, regardless of the listening port configured. " .
 									"Check this box to disable this automatically added redirect rule. ");
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI URL redirect"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="enableurlredirect" type="checkbox" id="enableurlredirect" value="yes" <?php if ($pconfig['enableurlredirect']) echo "checked"; ?> />
+									<strong><?=gettext("Enable webConfigurator redirect of domain name for router"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is checked, access to the webConfigurator URL will be redirected from HTTP to HTTPS" .
+									" if the webConfigurator Protocol is set to HTTPS. The domain name is comprised of Hostname treated as a sub domain plus Domain name settings from the General Setup page.  " .
+									"Check this box to ensable domain name redirect to be added to the redirect rule. (NOTE: To redirect Domain name for Remote firewall Administration create NAT rule for ports 80 to 443.)");
 									?>
 								</td>
 							</tr>

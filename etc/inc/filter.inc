@@ -1972,7 +1972,7 @@ function filter_generate_user_rule($rule) {
 	$type = $rule['type'];
 	if($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {
 		/* default (for older rules) is pass */
-		$type = "pass ";
+		$type = "pass";
 	}
 	if($type == "reject") {
 		$aline['type'] = "block return ";

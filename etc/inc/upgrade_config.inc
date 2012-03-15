@@ -2101,8 +2101,9 @@ function upgrade_054_to_055() {
 		}
 
 		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		unset($rrdold);
+		unset($rrdnew);
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 		/* we now have the rrd with the new fields, adjust the size now. */
 		/* RRA 2 is 60 minutes, RRA 3 is 720 minutes */
@@ -2110,8 +2111,6 @@ function upgrade_054_to_055() {
 		mwexec("$rrdtool resize {$rrddbpath}/{$database} 2 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
 		mwexec("/bin/sync");
 		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
-		unset($rrdold);
-		unset($rrdnew);
 		unset($rrdxmlarray);
 	}
 	enable_rrd_graphing();
@@ -2690,12 +2689,10 @@ function upgrade_080_to_081() {
 		/* create temporary xml from new RRD */
 		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
 
-		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
-		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
 		$rrdold = $rrdold['rrd'];
 
-		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
-		$rrdnew = xml2array($rrdnewxml, 1, "tag");
+		$rrdnew = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldumptmp}"), 1, "tag");
 		$rrdnew = $rrdnew['rrd'];
 
 		/* remove any MAX RRA's. Not needed for traffic. */
@@ -2708,9 +2705,11 @@ function upgrade_080_to_081() {
 		}
 
 		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		unset($rrdold);
+		unset($rrdnew);
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+		unset($rrdxmlarray);
 
 	}
 	enable_rrd_graphing();

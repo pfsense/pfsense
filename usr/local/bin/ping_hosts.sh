@@ -85,10 +85,10 @@ for TOPING in $PINGHOSTS ; do
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
+				echo "UP" > /var/db/pingstatus/$DSTIP
 				sh -c $SERVICERESTOREDSCRIPT
 			fi
 		fi
-		echo "UP" > /var/db/pingstatus/$DSTIP
 	else
 		# Host is down
 		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
@@ -97,10 +97,10 @@ for TOPING in $PINGHOSTS ; do
 			if [ "$FAILURESCRIPT" != "" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
+				echo "DOWN" > /var/db/pingstatus/$DSTIP
 				sh -c $FAILURESCRIPT
 			fi
 		fi
-		echo "DOWN" > /var/db/pingstatus/$DSTIP
 	fi
 	echo "Checking ping time $DSTIP"
 	# Look at ping values themselves

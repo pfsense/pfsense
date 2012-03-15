@@ -2041,12 +2041,10 @@ function upgrade_054_to_055() {
 			$i++;
 		}
 
-		$rrdxml = dump_xml_config_raw($rrdold, "rrd");
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdold, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 
 		unset($rrdold);
-		unset($rrdxmlarray);
 	}
 	/* let apinger recreate required files */
 	setup_gateways_monitor();
@@ -2100,10 +2098,7 @@ function upgrade_054_to_055() {
 			$i++;
 		}
 
-		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		unset($rrdold);
-		unset($rrdnew);
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw(migrate_rrd_format($rrdold, $rrdnew), "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 		/* we now have the rrd with the new fields, adjust the size now. */
 		/* RRA 2 is 60 minutes, RRA 3 is 720 minutes */
@@ -2704,12 +2699,8 @@ function upgrade_080_to_081() {
 			$i++;
 		}
 
-		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
-		unset($rrdold);
-		unset($rrdnew);
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw($rrdxmlarray, "rrd"));
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw(migrate_rrd_format($rrdold, $rrdnew);, "rrd"));
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-		unset($rrdxmlarray);
 
 	}
 	enable_rrd_graphing();

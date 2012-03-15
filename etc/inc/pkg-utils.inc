@@ -176,6 +176,18 @@ function get_pkg_sizes($pkgs = 'all') {
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	$cli = new XML_RPC_Client($g['xmlrpcpath'], $xmlrpc_base_url);
+	// If the ALT PKG Repo has a username/password set, use it.
+	if($config['system']['altpkgrepo']['username'] && 
+	   $config['system']['altpkgrepo']['password']) {
+		$username = $config['system']['altpkgrepo']['username'];
+		$password = $config['system']['altpkgrepo']['password'];
+		$cli->setCredentials($username, $password);
+	}
+	elseif($g['xmlrpcauthuser'] && $g['xmlrpcauthpass']) {
+		$username = $g['xmlrpcauthuser'];
+		$password = $g['xmlrpcauthpass'];
+		$cli->setCredentials($username, $password);
+	}
 	$resp = $cli->send($msg, 10);
 	if(!is_object($resp))
 		log_error("Could not get response from XMLRPC server!");

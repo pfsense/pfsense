@@ -724,6 +724,11 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 		$password = $config['system']['altpkgrepo']['password'];
 		$cli->setCredentials($username, $password);
 	}
+	elseif($g['xmlrpcauthuser'] && $g['xmlrpcauthpass']) {
+		$username = $g['xmlrpcauthuser'];
+		$password = $g['xmlrpcauthpass'];
+		$cli->setCredentials($username, $password);
+	}
 	$resp = $cli->send($msg, $timeout);
 	if(!is_object($resp)) {
 		log_error("XMLRPC communication error: " . $cli->errstr);

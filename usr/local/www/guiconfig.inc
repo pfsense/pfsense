@@ -294,14 +294,18 @@ function verify_gzip_file($fname) {
 		return 1;
 }
 
-function print_info_box_np($msg, $name="apply",$value="Apply changes") {
+function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
+
+	if(empty($value)) {
+		$value = gettext("Apply changes");
+	}
 
 	// Set the Nifty background color if one is not set already (defaults to white)
 	if($nifty_background == "")
 		$nifty_background = "#FFF";
 
-	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false) {
+	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		if($_POST['if']) 

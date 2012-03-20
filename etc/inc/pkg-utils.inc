@@ -8,7 +8,7 @@
  *   $Id$
  ******
  *
- * Copyright (C) 2010 Ermal Luçi
+ * Copyright (C) 2010 Ermal Luï¿½i
  * Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -794,11 +794,11 @@ function install_package_xml($pkg) {
 				 *	change packages to store configs at /usr/pbi/pkg/etc and remove this
 				 */
 				eval_once($pkg_config['custom_php_install_command']);
-				exec("/usr/local/sbin/pbi_info | grep {$pkg} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidir);
-				$pbidir = $pbidir[0];
+				exec("/usr/local/sbin/pbi_info | grep {$pkg}- | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
+				$pbidir0 = $pbidirarray[0];
 				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
 				foreach($files as $f) {
-					$pbiconf = str_replace('/usr/local',$pbidir,$f);
+					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
 					unlink($pbiconf);
 					symlink($f,$pbiconf);
 				}

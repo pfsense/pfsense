@@ -1350,7 +1350,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
 								<?=gettext("If you leave this field blank, the adapter's default MTU will " .
-								"be used. This is typically 1500 bytes but can vary on some hardware."); ?>
+								"be used. This is typically 1500 bytes but can vary in some circumstances."); ?>
 							</td>
 						</tr>
 						<tr>

@@ -816,7 +816,7 @@ function install_package_xml($pkg) {
 				// e.g. "squidguard-1.4_4-i386" so feed lowercase to pbi_info below.
 				// Also add the "-" so that examples like "squid-" do not match "squidguard-".
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
-				exec("/usr/local/sbin/pbi_info | grep {$pkg_name_for_pbi_match}- | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
+				exec("/usr/local/sbin/pbi_info | grep {$pkg_name_for_pbi_match} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
 				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
 				foreach($files as $f) {

@@ -1114,21 +1114,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6', '#srd').hide();
+				jQuery('#staticv6, #dhcp6, #srd').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6', '#srd').hide();
+				jQuery('#none, #dhcp6, #srd').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6', '#srd').hide();
-
+				jQuery('#none, #staticv6, #srd').hide();
 				break;
 			}
 			case "srd": {
-				jQuery('#none, #dhcp6', '#staticv6').hide();
-
+				jQuery('#none, #dhcp6, #staticv6').hide();
 				break;
 			}
 		}

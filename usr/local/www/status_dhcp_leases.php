@@ -55,7 +55,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	killbyname("dhcpd");
 
 	/* Read existing leases */
-	$leases_contents = explode("\n", file_get_contents($leasesfile));
+	$leases_contents = file($leasesfile);
 	$newleases_contents = array();
 	$i=0;
 	while ($i < count($leases_contents)) {
@@ -146,7 +146,7 @@ foreach ($rawdata as $line) {
 	$arpdata[] = $arpent['ip'];
 	}
 }
-
+unset($rawdata);
 $pools = array();
 $leases = array();
 $i = 0;
@@ -154,9 +154,9 @@ $l = 0;
 $p = 0;
 
 // Put everything together again
-while($i < $leases_count) {
+foreach($leases_content as $lease) {
 	/* split the line by space */
-	$data = explode(" ", $leases_content[$i]);
+	$data = explode(" ", $lease);
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
@@ -258,7 +258,11 @@ while($i < $leases_count) {
 	}
 	$l++;
 	$i++;
+	/* slowly chisel away at the source array */
+	array_shift($leases_content);
 }
+/* remove the old array */
+unset($lease_content);
 
 /* remove duplicate items by mac address */
 if(count($leases) > 0) {

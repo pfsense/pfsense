@@ -435,8 +435,8 @@ if ($_POST['apply']) {
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vip) {
-					if ($vip['interface'] == $if)
-						$input_errors[] = gettext("This interface is referenced by VIPs please delete those before setting the interface to 'none' configuration.");
+					if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if)
+						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 		case "dhcp":
@@ -488,8 +488,8 @@ if ($_POST['apply']) {
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vip) {
-					if ($vip['interface'] == $if)
-						$input_errors[] = gettext("This interface is referenced by VIPs please delete those before setting the interface to 'none' configuration.");
+					if (is_ipaddrv6($vip['subnet']) && $vip['interface'] == $if)
+						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 		case "dhcp6":

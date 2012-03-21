@@ -1645,4 +1645,18 @@ function array_merge_recursive_unique($array0, $array1) {
 	return $result;
 }
 
+/*
+ * converts a string like "a,b,c,d"
+ * into an array like array("a" => "b", "c" => "d")
+ */
+function explode_assoc($delimiter, $string) {
+	$array = explode($delimiter, $string);
+	$result = array();
+	$numkeys = floor(count($array) / 2);
+	for ($i = 0; $i < $numkeys; $i += 1) {
+		$result[$array[$i * 2]] = $array[$i * 2 + 1];
+	}
+	return $result;
+}
+
 ?>

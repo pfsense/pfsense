@@ -45,6 +45,7 @@
 /* include all configuration functions */
 require_once("globals.inc");
 require_once("cmd_chain.inc");
+require_once("util.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {
@@ -542,7 +543,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			$pconfig = explode(",", $bridge['ifpriority']);
 			$ifpriority = array();
 			foreach ($pconfig as $cfg) {
-				$embcfg = explode(":", $cfg);
+				$embcfg = explode_assoc(":", $cfg);
 				foreach ($embcfg as $key => $value)
 					$ifpriority[$key] = $value;
 			}
@@ -555,7 +556,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			$pconfig = explode(",", $bridges['ifpathcost']);
 			$ifpathcost = array();
 			foreach ($pconfig as $cfg) {
-				$embcfg = explode(":", $cfg);
+				$embcfg = explode_assoc(":", $cfg);
 				foreach ($embcfg as $key => $value)
 					$ifpathcost[$key] = $value;
 			}

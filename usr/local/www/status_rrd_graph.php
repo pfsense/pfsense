@@ -43,6 +43,8 @@ require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
 
+unset($input_errors);
+
 /* if the rrd graphs are not enabled redirect to settings page */
 if(! isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
@@ -134,17 +136,29 @@ if ($_GET['option']) {
 $now = time();
 if($curcat == "custom") {
 	if (is_numeric($_GET['start'])) {
-			if($start < ($now - (3600 * 24 * 365 * 5))) {
-					$start = $now - (8 * 3600);
-			}
-			$start = $_GET['start'];
-	} else {
+		if($start < ($now - (3600 * 24 * 365 * 5))) {
 			$start = $now - (8 * 3600);
+		}
+		$start = $_GET['start'];
+	} else if ($_GET['start']) {
+		$start = strtotime($_GET['start']);
+		if ($start === FALSE || $start === -1) {
+			$input_errors[] = gettext("Invalid start date/time:") . " '{$_GET['start']}'";
+			$start = $now - (8 * 3600);
+		}
+	} else {
+		$start = $now - (8 * 3600);
 	}
 }
 
 if (is_numeric($_GET['end'])) {
         $end = $_GET['end'];
+} else if ($_GET['end']) {
+	$end = strtotime($_GET['end']);
+	if ($end === FALSE || $end === -1) {
+		$input_errors[] = gettext("Invalid end date/time:") . " '{$_GET['end']}'";
+		$end = $now;
+	}
 } else {
         $end = $now;
 }
@@ -324,6 +338,7 @@ function get_dates($curperiod, $graph) {
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php if ($input_errors && count($input_errors)) { print_input_errors($input_errors); } ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
@@ -463,11 +478,15 @@ function get_dates($curperiod, $graph) {
 					<?php
 
 					if($curcat == "custom") {
+						$tz = date_default_timezone_get();
+						$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
+						$start_fmt = strftime("%m/%d/%Y %H:%M:%S %Z", $start);
+						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S %Z", $end);
 						?>
 						<?=gettext("Start:");?>
-						<input type="text" name="start" class="formfldunknown" length="32" value="<?php echo $start;?>">
+						<input title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="32" length="32" value="<?= htmlentities($start_fmt); ?>">
 						<?=gettext("End:");?>
-						<input type="text" name="end" class="formfldunknown" length="32" value="<?php echo $end;?>">
+						<input title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="32" length="32" value="<?= htmlentities($end_fmt); ?>">
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
 						<?php
 						$curdatabase = $curoption;

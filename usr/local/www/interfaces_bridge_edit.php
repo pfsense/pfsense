@@ -74,22 +74,30 @@ if (isset($id) && $a_bridges[$id]) {
 	$pconfig['priority'] = $a_bridges[$id]['priority'];
 	$pconfig['proto'] = $a_bridges[$id]['proto'];
 	$pconfig['holdcount'] = $a_bridges[$id]['holdcount'];
-	$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
-	$ifpriority = array();
-	foreach ($pconfig['ifpriority'] as $cfg) {
-		$embcfg = explode(":", $cfg);
-		foreach ($embcfg as $key => $value)
-			$ifpriority[$key] = $value;
+	if (!empty($a_bridges[$id]['ifpriority'])) {
+		$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
+		$ifpriority = array();
+		foreach ($pconfig['ifpriority'] as $cfg) {
+			list ($key, $value)  = explode(":", $cfg);
+			$embprioritycfg[$key] = $value;
+			foreach ($embprioritycfg as $key => $value) {
+				$ifpriority[$key] = $value;
+			}
+		}
+		$pconfig['ifpriority'] = $ifpriority;
 	}
-	$pconfig['ifpriority'] = $ifpriority;
-	$pconfig['ifpathcost'] = explode(",", $a_bridges[$id]['ifpathcost']);
-	$ifpathcost = array();
-	foreach ($pconfig['ifpathcost'] as $cfg) {
-		$embcfg = explode(":", $cfg);
-		foreach ($embcfg as $key => $value)
-			$ifpathcost[$key] = $value;
+	if (!empty($a_bridges[$id]['ifpathcost'])) {
+		$pconfig['ifpathcost'] = explode(",", $a_bridges[$id]['ifpathcost']);
+		$ifpathcost = array();
+		foreach ($pconfig['ifpathcost'] as $cfg) {
+			list ($key, $value)  = explode(":", $cfg);
+			$embpathcfg[$key] = $value;
+			foreach ($embpathcfg as $key => $value) {
+				$ifpathcost[$key] = $value;
+			}
+		}
+		$pconfig['ifpathcost'] = $ifpathcost;
 	}
-	$pconfig['ifpathcost'] = $ifpathcost;
 	$pconfig['span'] = $a_bridges[$id]['span'];
 	if (isset($a_bridges[$id]['edge']))
 		$pconfig['edge'] = $a_bridges[$id]['edge'];
@@ -178,15 +186,16 @@ if ($_POST) {
 					$ifpriority .= ",";
 				$ifpriority .= $ifn.":".$_POST[$ifn];
 			}
-			if ($_POST["{$ifn}{$i}"] <> "") {
+			if ($_POST["{$ifn}0"] <> "") {
 				if ($i > 0)
 					$ifpathcost .= ",";
-				$ifpathcost .= $ifn.":".$_POST[$ifn];
+				$ifpathcost .= $ifn.":".$_POST["{$ifn}0"];
 			}
 			$i++;
 		}
 		$bridge['ifpriority'] = $ifpriority;
 		$bridge['ifpathcost'] = $ifpathcost;
+
 		if ($_POST['span'] != "none")
 			$bridge['span'] = $_POST['span'];
 		else 
@@ -380,7 +389,7 @@ function show_source_port_range() {
 					<br/>
 					<span class="vexpl" > 
 	     <?=gettext("Set the Spanning Tree priority of interface to value.  The " .
-	     "default is 128.  The minimum is 0 and the maximum is 240."); ?>		
+	     "default is 128.  The minimum is 0 and the maximum is 240.  Increments of 16."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Path cost"); ?></td>

@@ -553,7 +553,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			}
 		}
 		if (!empty($bridge['ifpathcost'])) {
-			$pconfig = explode(",", $bridges['ifpathcost']);
+			$pconfig = explode(",", $bridge['ifpathcost']);
 			$ifpathcost = array();
 			foreach ($pconfig as $cfg) {
 				$embcfg = explode_assoc(":", $cfg);

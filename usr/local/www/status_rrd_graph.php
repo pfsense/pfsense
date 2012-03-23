@@ -242,7 +242,30 @@ $graph_length = array(
 	"4year" => 126489600);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
+
+$closehead = false;
 include("head.inc");
+?>
+
+<?php if ($curcat === "custom") { ?>
+	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
+	<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
+	<script type="text/javascript">
+		jQuery(function ($) {
+			var options = {
+				dateFormat: 'mm/dd/yy',
+				timeFormat: 'hh:mm:ss',
+				showSecond: true
+			};
+			$("#startDateTime").datetimepicker(options);
+			$("#endDateTime").datetimepicker(options);
+		});
+	</script>
+	</head>
+<?php } ?>
+
+<?php
 
 function get_dates($curperiod, $graph) {
 	global $graph_length;
@@ -480,13 +503,13 @@ function get_dates($curperiod, $graph) {
 					if($curcat == "custom") {
 						$tz = date_default_timezone_get();
 						$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
-						$start_fmt = strftime("%m/%d/%Y %H:%M:%S %Z", $start);
-						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S %Z", $end);
+						$start_fmt = strftime("%m/%d/%Y %H:%M:%S", $start);
+						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
 						?>
 						<?=gettext("Start:");?>
-						<input title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="32" length="32" value="<?= htmlentities($start_fmt); ?>">
+						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" length="32" value="<?= htmlentities($start_fmt); ?>">
 						<?=gettext("End:");?>
-						<input title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="32" length="32" value="<?= htmlentities($end_fmt); ?>">
+						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" length="32" value="<?= htmlentities($end_fmt); ?>">
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
 						<?php
 						$curdatabase = $curoption;

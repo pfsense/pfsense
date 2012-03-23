@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_hasync.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	part of pfSense (http://www.pfsense.org/)
 
 	Copyright (C) 2012 Darren Embry <dse@webonastick.com>.
 	All rights reserved.

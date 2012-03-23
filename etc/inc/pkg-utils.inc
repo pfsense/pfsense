@@ -110,11 +110,18 @@ function remove_freebsd_package($packagestring) {
 	else {
 		$linkdirs = array('bin','sbin');
 		foreach($linkdirs as $dir) {
-			if(is_dir("{$pbidir}/{$dir}")) {
-				$files = scandir("{$pbidir}/{$dir}");
+			$target_dir = $pbidir . "/" . $dir;
+			if(is_dir($target_dir)) {
+				$files = scandir($target_dir);
 				foreach($files as $f) {
 					if($f != '.' && $f != '..') {
-						unlink("/usr/local/{$dir}/{$f}");
+						// Only try to unlink the file if it is a link to the expected pbi dir.
+						$local_name = "/usr/local/{$dir}/{$f}";
+						if(is_link($local_name)) {
+							if(substr(readlink($local_name),0,strlen($target_dir)) == $target_dir) {
+								unlink($local_name);
+							}
+						}
 					}
 				}
 			}
@@ -553,7 +560,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				$files = scandir("{$pbidir}/{$dir}");
 				foreach($files as $f) {
 					if(!file_exists("/usr/local/{$dir}/{$f}")) {
-						symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+						symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
 					}
 				}
 			}
@@ -816,15 +823,19 @@ function install_package_xml($pkg) {
 				// e.g. "squidguard-1.4_4-i386" so feed lowercase to pbi_info below.
 				// Also add the "-" so that examples like "squid-" do not match "squidguard-".
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
-				exec("/usr/local/sbin/pbi_info | grep {$pkg_name_for_pbi_match} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
+				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
 				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
 				foreach($files as $f) {
 					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
-					if (is_file($pbiconf) || is_link($pbiconf)) {
+					if(is_file($pbiconf) || is_link($pbiconf)) {
 						unlink($pbiconf);
 					}
-					symlink($f,$pbiconf);
+					if(is_dir(dirname($pbiconf))) {
+						symlink($f,$pbiconf);
+					} else {
+						log_error("The dir for {$pbiconf} does not exist. Cannot add symlink to {$f}.");
+					}
 				}
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= gettext("done.") . "\n";

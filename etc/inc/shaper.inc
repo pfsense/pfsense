@@ -2990,8 +2990,8 @@ class dnpipe_class extends dummynet_class {
 			default:
 				break;
 			}
-			$pfq_rule .= "\n";
     		}            
+		$pfq_rule .= "\n";
 
 		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
 			foreach ($this->subqueues as $q)

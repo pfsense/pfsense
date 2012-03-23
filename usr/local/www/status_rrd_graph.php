@@ -249,7 +249,11 @@ include("head.inc");
 
 <?php if ($curcat === "custom") { ?>
 	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-	<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui.custom.css")) { ?>
+		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui.custom.css" />
+	<?php } else { ?>
+		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+	<?php } ?>
 	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
 	<script type="text/javascript">
 		jQuery(function ($) {

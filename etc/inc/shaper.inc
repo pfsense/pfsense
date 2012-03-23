@@ -2991,12 +2991,12 @@ class dnpipe_class extends dummynet_class {
 				break;
 			}
 			$pfq_rule .= "\n";
-
-			if (!empty($this->subqueues) && count($this->subqueues) > 0) {
-       			        foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
-               		}
     		}            
+
+		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
+			foreach ($this->subqueues as $q)
+			$pfq_rule .= $q->build_rules();
+		}
 		$pfq_rule .= " \n";
 
 		return $pfq_rule;

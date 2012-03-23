@@ -1132,28 +1132,26 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-    $mac =explode(":", $clientmac);
-
     global $config;
 
+    $mac = explode(":", $clientmac);
     $mac_format = $config['captiveportal']['radmac_format'] ? $config['captiveportal']['radmac_format'] : false;
 
     switch($mac_format) {
-
         case 'singledash':
-        return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
+		return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
 
         case 'ietf':
-        return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
+		return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
 
         case 'cisco':
-        return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
+		return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
 
         case 'unformatted':
-        return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
+		return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
 
         default:
-        return $clientmac;
+		return $clientmac;
     }
 }
 

@@ -45,12 +45,8 @@ require("xmlrpc.inc");
 require("array_intersect_key.inc");
 
 /* grab sync to ip if enabled */
-if($config['installedpackages']['carpsettings']) {
-	if ($config['installedpackages']['carpsettings']['config']) {
-		foreach ($config['installedpackages']['carpsettings']['config'] as $carp) {
-			$synchronizetoip = $carp['synchronizetoip'];
-		}
-	}
+if ($config['hasync']) {
+	$synchronizetoip = $hasync['synchronizetoip'];
 }
 
 if($synchronizetoip) {

@@ -170,7 +170,7 @@ include("head.inc");
         /* active tabs */
         $tab_array = array();
         $tab_array[] = array(gettext("Virtual IPs"), true, "firewall_virtual_ip.php");
-        $tab_array[] = array(gettext("CARP Settings"), false, "pkg_edit.php?xml=carp_settings.xml&id=0");
+        $tab_array[] = array(gettext("CARP Settings"), false, "system_hasync.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

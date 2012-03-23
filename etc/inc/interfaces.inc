@@ -1723,15 +1723,11 @@ function interfaces_carp_setup() {
 	}
 
 	/* suck in configuration items */
-	if($config['installedpackages']['carpsettings']) {
-		if($config['installedpackages']['carpsettings']['config']) {
-			foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
-				$pfsyncenabled = $carp['pfsyncenabled'];
-				$balanacing = $carp['balancing'];
-				$pfsyncinterface = $carp['pfsyncinterface'];
-				$pfsyncpeerip = $carp['pfsyncpeerip'];
-			}
-		}
+	if($config['hasync']) {
+		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
+		$balanacing = $config['hasync']['balancing'];
+		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
+		$pfsyncpeerip = $config['hasync']['pfsyncpeerip'];
 	} else {
 		unset($pfsyncinterface);
 		unset($balanacing);

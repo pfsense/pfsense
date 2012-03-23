@@ -70,7 +70,7 @@ include("head.inc");
 <br/>
 <form action="status_filter_reload.php" method="POST" name="filter">
 <input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
-<?php if (is_array($config["installedpackages"]["carpsettings"]) && is_array($config["installedpackages"]["carpsettings"]["config"][0]) && $config["installedpackages"]["carpsettings"]["config"][0]["synchronizetoip"] != ""): ?>
+<?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter">
 <? endif; ?>

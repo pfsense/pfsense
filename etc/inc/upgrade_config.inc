@@ -2736,4 +2736,22 @@ function upgrade_082_to_083() {
 	}
 }
 
+function upgrade_083_to_084() {
+	global $config;
+	if (!isset($config['hasync'])) {
+		if (!empty($config['installedpackages']) &&
+		    !empty($config['installedpackages']['carpsettings']) &&
+		    !empty($config['installedpackages']['carpsettings']['config'])) {
+			$config['hasync'] = $config['installedpackages']['carpsettings']['config'][0];
+			unset($config['installedpackages']['carpsettings']);
+		}
+		if (empty($config['installedpackages']['carpsettings'])) {
+			unset($config['installedpackages']['carpsettings']);
+		}
+		if (empty($config['installedpackages'])) {
+			unset($config['installedpackages']);
+		}
+	}
+}
+
 ?>

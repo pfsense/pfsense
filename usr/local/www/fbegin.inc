@@ -83,6 +83,7 @@ $system_menu = array();
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Firmware"), "/system_firmware.php");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
+$system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 $system_menu[] = array(gettext("Logout"), "/index.php?logout");
 if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 	$system_menu[] = array(gettext("Packages"), "/pkg_mgr_installed.php");

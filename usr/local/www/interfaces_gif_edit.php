@@ -172,8 +172,8 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel remote address "); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
-                    <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
+                    <select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 128; $i > 0; $i--) {
 						echo "<option value=\"{$i}\" ";

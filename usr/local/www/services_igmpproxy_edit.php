@@ -137,11 +137,11 @@ include("head.inc");
 
 <script type="text/javascript">
 	rowname[0] = "address";
-	rowtype[0] = "textbox";
+	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
 
 	rowname[1] = "address_subnet";
-	rowtype[1] = "select";
+	rowtype[1] = "select,ipv4v6";
 	rowsize[1] = "1";
 
 	rowname[2] = "detail";

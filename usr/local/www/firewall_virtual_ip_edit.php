@@ -465,8 +465,8 @@ function typesel_change() {
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>">
-                          /<select name="subnet_bits" class="formselect" id="select">
+                        <td><input name="subnet" type="text" class="formfld unknown ipv4v6" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>">
+                          /<select name="subnet_bits" class="formselect ipv4v6" id="select">
                             <?php for ($i = 128; $i >= 1; $i--): ?>
                             <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['subnet']) && $i == 32)) echo "selected"; ?>>
                             <?=$i;?>

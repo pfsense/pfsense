@@ -78,15 +78,6 @@ foreach($apple_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = "pfsense";
 
-/* Set the default interface language */
-if($config['system']['language'] <> "") {
-	$g['language'] = $config['system']['language'];
-} elseif ($g['language'] == "") {
-	$g['language'] = 'en_US';
-}
-
-set_language($g['language']);
-
 /* used by progress bar */
 $lastseen = "-1";
 
@@ -202,6 +193,7 @@ $wkports = array(
 	110 => "POP3",
 	995 => "POP3/S",
 	1723 => "PPTP",	
+	1723 => "PPTP-Client",
 	1812 => "RADIUS",
 	1813 => "RADIUS accounting",
 	5004 => "RTP",
@@ -220,7 +212,7 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 
-$specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array("pptp" => "PPTP clients", "pptp-client" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 
 $spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -294,18 +286,14 @@ function verify_gzip_file($fname) {
 		return 1;
 }
 
-function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
+function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
-
-	if(empty($value)) {
-		$value = gettext("Apply changes");
-	}
 
 	// Set the Nifty background color if one is not set already (defaults to white)
 	if($nifty_background == "")
 		$nifty_background = "#FFF";
 
-	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
+	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		if($_POST['if']) 
@@ -328,7 +316,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}	
 		
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
 	}
 
 	echo <<<EOFnp
@@ -391,7 +379,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 	
 		
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
 	}
 
 	echo <<<EOFnp
@@ -1104,11 +1092,5 @@ function rule_popup($src,$srcport,$dst,$dstport){
         	return $descriptions;
   	}
 }
-
-$timezone = $syscfg['timezone'];
-if (!$timezone)
-	$timezone = "Etc/UTC";
-
-date_default_timezone_set($timezone);
 
 ?>

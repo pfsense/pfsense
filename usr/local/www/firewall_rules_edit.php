@@ -894,8 +894,8 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
-							<select <?=$edit_disabled;?> name="srcmask" class="formselect" id="srcmask">
+							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+							<select <?=$edit_disabled;?> name="srcmask" class="formselect ipv4v6" id="srcmask">
 <?php						for ($i = 127; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
@@ -987,9 +987,9 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
-							<select <?=$edit_disabled;?> name="dstmask" class="formselect" id="dstmask">
+							<select <?=$edit_disabled;?> name="dstmask" class="formselect ipv4v6" id="dstmask">
 <?php
 							for ($i = 127; $i > 0; 
 $i--): ?>

@@ -1072,6 +1072,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 ?>
 
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
 <link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>

@@ -539,6 +539,8 @@ EOD;
 	echo $jscriptstr;
 ?>
 
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
+</script>
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 <script type="text/javascript" src="/javascript/autosuggest.js">

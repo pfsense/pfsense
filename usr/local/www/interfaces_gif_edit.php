@@ -128,6 +128,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_gif_edit.php" method="post" name="iform" id="iform">

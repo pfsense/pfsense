@@ -284,6 +284,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--

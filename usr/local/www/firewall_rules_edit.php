@@ -639,6 +639,7 @@ include("head.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_input_errors"); ?>

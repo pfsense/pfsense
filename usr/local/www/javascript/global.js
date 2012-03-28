@@ -41,17 +41,3 @@ var AjaxQueue = {
 	}
 };
 
-(function ($) {
-	$.fn.extend({
-		"ipv4v6ify": function () {
-			return this.each(function () {
-				var $inputs = $(this).find(":input.ipv4v6");
-				
-			});
-		}
-	});
-	$(function () {
-		$(document).ipv4v6ify();
-	});
-})(jQuery);
-

@@ -129,6 +129,8 @@ include("head.inc");
 	include("fbegin.inc");
 ?>
 
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
+</script>
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 

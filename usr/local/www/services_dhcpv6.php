@@ -260,7 +260,7 @@ if ($_POST) {
 					if (empty($map['ipaddrv6']))
 						continue;
 					if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
-						(inet_pton($map['ipaddr']) < $dynsubnet_end)) {
+						(inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}

@@ -1,6 +1,11 @@
 <?php
 /* $Id$ */
 /*
+
+    interfaces_ppps_edit.php
+    modified by Ben Phillips
+    based on:
+    
 	interfaces_ppps_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
@@ -36,8 +41,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit
-##|*NAME=Interfaces: PPPs: Edit page
-##|*DESCR=Allow access to the 'Interfaces: PPPs: Edit' page.
+##|*NAME=Interfaces: PPTP Client: Edit page
+##|*DESCR=Allow access to the 'Interfaces: PPTP Clients: Edit' page.
 ##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV
 
@@ -105,6 +110,44 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
 			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			break;
+		case "pptp-client":
+			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
+			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			
+			$pconfig['routenet'] = $a_ppps[$id]['routenet'];
+			$pconfig['routesubnet'] = $a_ppps[$id]['routesubnet'];
+			$pconfig['proxyarp'] = $a_ppps[$id]['proxyarp'];
+			$pconfig['local_ep'] = $a_ppps[$id]['local_ep'];
+			$pconfig['local_ep_sn'] = $a_ppps[$id]['local_ep_sn'];
+			$pconfig['remote_ep'] = $a_ppps[$id]['remote_ep'];
+			$pconfig['remote_ep_sn'] = $a_ppps[$id]['remote_ep_sn'];
+			$pconfig['require-dns'] = $a_ppps[$id]['require-dns'];
+			$pconfig['mppc-enable'] = $a_ppps[$id]['mppc-enable'];
+			$pconfig['pred1'] = $a_ppps[$id]['pred1'];
+			$pconfig['deflate'] = $a_ppps[$id]['deflate'];
+			$pconfig['mppe-enable'] = $a_ppps[$id]['mppe-enable'];
+			$pconfig['mppe-enforce'] = $a_ppps[$id]['mppe-enforce'];
+			$pconfig['bundle-comp-enable'] = $a_ppps[$id]['bundle-comp-enable'];
+			$pconfig['bundle-crypt-enable'] = $a_ppps[$id]['bundle-crypt-enable'];
+			$pconfig['mppe-40'] = $a_ppps[$id]['mppe-40'];
+			$pconfig['mppe-56'] = $a_ppps[$id]['mppe-56'];
+			$pconfig['mppe-128'] = $a_ppps[$id]['mppe-128'];
+			$pconfig['mppec-stateless'] = $a_ppps[$id]['mppec-stateless'];
+			$pconfig['mppec-policy'] = $a_ppps[$id]['mppec-policy'];
+			$pconfig['dese-bis'] = $a_ppps[$id]['dese-bis'];
+			$pconfig['dese-old'] = $a_ppps[$id]['dese-old'];
+			$pconfig['keep-alive-int'] = $a_ppps[$id]['keep-alive-int'];
+			$pconfig['keep-alive-max'] = $a_ppps[$id]['keep-alive-max'];
+			$pconfig['max-redial'] = $a_ppps[$id]['max-redial'];
+			$pconfig['mschap_v1'] = $a_ppps[$id]['mschap_v1'];
+			$pconfig['mschap_v2'] = $a_ppps[$id]['mschap_v2'];
+			$pconfig['mschap_md5'] = $a_ppps[$id]['mschap_md5'];
+			$pconfig['pap'] = $a_ppps[$id]['pap'];
+			$pconfig['enable-passive'] = $a_ppps[$id]['enable-passive'];
+			
+			break;
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			if (isset($a_ppps[$id]['provider']) and empty($a_ppps[$id]['provider']))
@@ -124,7 +167,7 @@ if (isset($id) && $a_ppps[$id]) {
 				}
 				
 				if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
-					$resetTime_a = explode(" ", $resetTime);
+					$resetTime_a = split(" ", $resetTime);
 					$pconfig['pppoe_pr_custom'] = true;
 					$pconfig['pppoe_resetminute'] = $resetTime_a[0];
 					$pconfig['pppoe_resethour'] = $resetTime_a[1];
@@ -194,7 +237,17 @@ if ($_POST) {
 			break;
 		case "l2tp":
 		case "pptp":
-			if ($_POST['ondemand']) {
+		    if ($_POST['ondemand']) {
+				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
+			} else {
+				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
+				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
+			}
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
+		case "pptp-client":
+		    if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
 			} else {
@@ -328,11 +381,50 @@ if ($_POST) {
 					unset($ppp['pppoe-reset-type']);
 				
 				break;
-			case "pptp":
+			case "pptp":			
 			case "l2tp":
 				$ppp['localip'] = implode(',',$port_data['localip']);
 				$ppp['subnet'] = implode(',',$port_data['subnet']);
 				$ppp['gateway'] = implode(',',$port_data['gateway']);
+				break;
+		    case "pptp-client":
+		        $ppp['localip'] = implode(',',$port_data['localip']);
+				$ppp['subnet'] = implode(',',$port_data['subnet']);
+				$ppp['gateway'] = implode(',',$port_data['gateway']);
+				
+				$ppp['routenet'] = $_POST['routenet'];
+				$ppp['routesubnet'] = $_POST['routesubnet'];
+				$ppp['proxyarp'] = $_POST['proxyarp'] ? true : false;
+				$ppp['local_ep'] = $_POST['local_ep'];
+				$ppp['local_ep_sn'] = $_POST['local_ep_sn'];
+				$ppp['remote_ep'] = $_POST['remote_ep'];
+				$ppp['remote_ep_sn'] = $_POST['remote_ep_sn'];
+				$ppp['require-dns'] = $_POST['require-dns'] ? true : false;
+				//$ppp['enable-comp'] = $_POST['enable-comp'] ? true : false;
+				//$ppp['enable-crypt'] = $_POST['enable-crypt'] ? true : false;
+				$ppp['mppc-enable'] = $_POST['mppc-enable'] ? true : false;
+				$ppp['pred1'] = $_POST['pred1'] ? true : false;
+				$ppp['deflate'] = $_POST['deflate'] ? true : false;
+				$ppp['mppe-enable'] = $_POST['mppe-enable'] ? true : false;
+				$ppp['mppe-enforce'] = $_POST['mppe-enforce'] ? true : false;
+				$ppp['bundle-comp-enable'] = $_POST['bundle-comp-enable'] ? true : false;
+				$ppp['bundle-crypt-enable'] = $_POST['bundle-crypt-enable'] ? true : false;
+				$ppp['mppe-40'] = $_POST['mppe-40'] ? true : false;
+				$ppp['mppe-56'] = $_POST['mppe-56'] ? true : false;
+				$ppp['mppe-128'] = $_POST['mppe-128'] ? true : false;
+				$ppp['mppec-stateless'] = $_POST['mppec-stateless'] ? true : false;
+				$ppp['mppec-policy'] = $_POST['mppec-policy'] ? true : false;
+				$ppp['dese-bis'] = $_POST['dese-bis'] ? true : false;
+				$ppp['dese-old'] = $_POST['dese-old'] ? true : false;
+				$ppp['keep-alive-int'] = $_POST['keep-alive-int'];
+				$ppp['keep-alive-max'] = $_POST['keep-alive-max'];
+				$ppp['max-redial'] = $_POST['max-redial'];
+				$ppp['mschap_v1'] = $_POST['mschap_v1'] ? true : false;
+				$ppp['mschap_v2'] = $_POST['mschap_v2'] ? true : false;
+				$ppp['mschap_md5'] = $_POST['mschap_md5'] ? true : false;
+				$ppp['pap'] = $_POST['pap'] ? true : false;
+				$ppp['enable-passive'] = $_POST['enable-passive'] ? true : false;
+				
 				break;
 			default:
 				break;
@@ -378,7 +470,7 @@ $closehead = false;
 $pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
 include("head.inc");
 
-$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
+$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP", "pptp-client" => "PPTP-Client",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
 ?>
 	<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
@@ -386,7 +478,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 	<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
 	<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript" >
-		jQuery(document).ready(function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
+		document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
 	</script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
@@ -506,6 +598,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
 			</td>
 		</tr>
+		
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
 			<td width="78%" class="vtable">
@@ -644,15 +737,14 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					</tr>
 				</table>
 			</td>
-		</tr>
-
+		</tr>		
+		
 		<?php for($j=0; $j < $port_count; $j++) : ?>
 		
 		<tr style="display:none" id="gw_fields<?=$j;?>">
 			<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
 			<td width="78%" class="vtable"> 
 				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>">
-				/
 				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
 				<?php for ($i = 31; $i > 0; $i--): ?>
 					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
@@ -674,8 +766,170 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td colspan="2" valign="top" class="listtopic"><?= gettext("Advanced Options"); ?></td>
 		</tr>
+		
+		<tr style="display:none;font-size:110%;" name="pptp-client" id="pptp-client">
+			<td colspan="2" style="padding:0px;">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				    
+    				<? /* Install route to remote network */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+            			<td width="22%" id="route" valign="top" class="vncell"><?= gettext("Route"); ?></td>
+                 		<td width="78%" class="vtable"> 
+                 			<input name="routenet" type="text" class="formfld unknown" id="rnetwork" value="<?=htmlspecialchars($pconfig['routenet']);?>">
+                 			<select name="routesubnet" class="formselect" id="rsubnet">
+                 			<?php for ($i = 31; $i > 0; $i--): ?>
+                 				<option value="<?=$i;?>"<?php if ($i == $pconfig['routesubnet']) echo " selected"; ?>><?=$i;?></option>
+                 			<?php endfor; ?>
+                 			</select> <?= gettext("Remote network"); ?>
+                 		</td>
+                 	</tr>
+                 	
+                 	<? /* Enable proxy ARP */ ?>
+                 	<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                	    <td valign="top" class="vncell"><?= gettext("Enable ProxyARP"); ?></td>
+                		<td class="vtable">
+                			<input type="checkbox" value="on" id="proxarp" name="proxyarp" <?php if (isset($pconfig['proxyarp'])) echo "checked"; ?>> <?= gettext("Enable ProxyARP"); ?> 
+                		</td>
+                	</tr>
+                	
+    				<? /* Acceptable local tunnel endpoint address range */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+            			<td width="22%" id="endpoint_ranges" valign="top" class="vncell"><?= gettext("Tunnel Endpoint IP Addresses"); ?> </td>
+                 		<td width="78%" class="vtable"> 
+                 			<input name="local_ep" type="text" class="formfld unknown" id="localep" size="20"  value="<?=htmlspecialchars($pconfig['local_ep']);?>">
+                 			<select name="local_ep_sn" class="formselect" id="localepsn">
+                 			<?php for ($i = 31; $i > 0; $i--): ?>
+                 				<option value="<?=$i;?>"<?php if ($i == $pconfig['local_ep_sn']) echo " selected"; ?>><?=$i;?></option>
+                 			<?php endfor; ?>
+                 			</select> <?= gettext("Local EP Addr "); ?>
+                 			<input name="remote_ep" type="text" class="formfld unknown" id="remoteep" size="20"  value="<?=htmlspecialchars($pconfig['remote_ep']);?>">
+                 			<select name="remote_ep_sn" class="formselect" id="remoteepsn">
+                 			<?php for ($i = 31; $i > 0; $i--): ?>
+                 				<option value="<?=$i;?>"<?php if ($i == $pconfig['remote_ep_sn']) echo " selected"; ?>><?=$i;?></option>
+                 			<?php endfor; ?>
+                 			</select> <?= gettext("Remote EP Addr "); ?>
+                 		</td>
+                 	</tr>
+                 	<? /* Require DNS Information from the PPTP server */ ?>
+                 	<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                	    <td valign="top" class="vncell"><?= gettext("Require DNS Exchange"); ?></td>
+                		<td class="vtable">
+                			<input type="checkbox" value="on" id="req-dns" name="require-dns" <?php if (isset($pconfig['require-dns'])) echo "checked"; ?>> <?= gettext("Require DNS Exchange"); ?> 
+                			<br/> <span class="vexpl"><?= gettext("Get DNS address from the PPTP server."); ?> </span>
+                		</td>
+                	</tr>
+                	
+                	<? /* Authentication */ ?>
+                	<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                	    <td width="22%" class="vncell"><?= gettext("Authentication"); ?></td>
+                		<td width="78%" class="vtable">
+                			<input type="checkbox" value="on" id="pap" name="pap" <?php if (isset($pconfig['pap'])) echo "checked"; ?>> <?= gettext("PAP"); ?> 
+                				
+                			<input type="checkbox" value="on" id="mschap_v1" name="mschap_v1" <?php if (isset($pconfig['mschap_v1'])) echo "checked"; ?>> <?= gettext("MSCHAP_v1"); ?> 
+    
+                			<input type="checkbox" value="on" id="mschap_v2" name="mschap_v2" <?php if (isset($pconfig['mschap_v2'])) echo "checked"; ?>> <?= gettext("MSCHAP_v2"); ?>
+                				
+                			<input type="checkbox" value="on" id="mschap_md5" name="mschap_md5" <?php if (isset($pconfig['mschap_md5'])) echo "checked"; ?>> <?= gettext("MSCHAP_md5"); ?>
+                			
+                			<br/> <span class="vexpl"><?= gettext("Allowed authentication methods."); ?> </span>
+                		</td>
+                	</tr>
+                		
+                	<? /* Enable payload compression */ ?>
+                	<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                	    <td valign="top" class="vncell"><?= gettext("Payload Compression"); ?></td>
+                		<td class="vtable">
+                			<span class="vexpl"><?= gettext("Bundle Compression options"); ?> </span> <br/>
+                			<input type="checkbox" value="on" id="bundle_comp_enable" name="bundle-comp-enable" <?php if (isset($pconfig['bundle-comp-enable'])) echo "checked"; ?>> <?= gettext("Use Bundle Compression"); ?>
+                			
+                			<br/> <br/> <span class="vexpl"><?= gettext("-------------------------------------------------------------------------------------------"); ?> </span> <br/> <br/>
+                			
+                			<span class="vexpl"><?= gettext("Microsoft Point to Point Compression options"); ?> </span> <br/>
+                			
+                			<input type="checkbox" value="on" id="mppc_enable" name="mppc-enable" <?php if (isset($pconfig['mppc-enable'])) echo "checked"; ?>/> <?= gettext("MPPC"); ?> 
+                				
+                			<input type="checkbox" value="on" id="mppc_pred1" name="pred1" <?php if (isset($pconfig['pred1'])) echo "checked"; ?>/> <?= gettext("Pred1"); ?> 
+    
+                			<input type="checkbox" value="on" id="mppc_deflate" name="deflate" <?php if (isset($pconfig['deflate'])) echo "checked"; ?>/> <?= gettext("Deflate"); ?> 
+
+                		</td>
+                	</tr>
+    									
+    				<? /* Enable payload encryption */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                	    <td valign="top" class="vncell"><?= gettext("Payload Encryption"); ?></td>
+                		<td class="vtable">
+                		
+                			<span class="vexpl"><?= gettext("Bundle Encryption options"); ?> </span> <br/>
+                			<input type="checkbox" value="on" id="bundle_crypt_enable" name="bundle-crypt-enable" <?php if (isset($pconfig['bundle-crypt-enable'])) echo "checked"; ?>> <?= gettext("Use Bundle Encryption"); ?>
+                			<br/> <span class="vexpl"><?= gettext("CAUTION: This is NOT compatible with MPPE and must be disabled for MPPE to work correctly."); ?> </span> <br/> <br/>
+                			
+                			<span class="vexpl"><?= gettext("-------------------------------------------------------------------------------------------"); ?> </span> <br/> <br/>
+
+											<span class="vexpl"><?= gettext("Microsoft Point to Point Encryption options"); ?> </span> <br/>
+                			<input type="checkbox" value="on" id="mppe_enable" name="mppe-enable" <?php if (isset($pconfig['mppe-enable'])) echo "checked"; ?>> <?= gettext("Use MPPE"); ?> 
+                			
+                			<input type="checkbox" value="on" id="mppe_enforce" name="mppe-enforce" <?php if (isset($pconfig['mppe-enforce'])) echo "checked"; ?>> <?= gettext("Enforce MPPE"); ?>
+                			
+                			<br/> 
+                				
+                			<input type="checkbox" value="on" id="mppe_40" name="mppe-40" <?php if (isset($pconfig['mppe-40'])) echo "checked"; ?>> <?= gettext("40 bit"); ?> 
+    
+                			<input type="checkbox" value="on" id="mppe_56" name="mppe-56" <?php if (isset($pconfig['mppe-56'])) echo "checked"; ?>> <?= gettext("56 bit"); ?> 
+                				
+                			<input type="checkbox" value="on" id="mppe_128" name="mppe-128" <?php if (isset($pconfig['mppe-128'])) echo "checked"; ?>> <?= gettext("128 bit"); ?>
+                			
+                			<br/> 
+                			
+                			<input type="checkbox" value="on" id="mppec_policy" name="mppec-policy" <?php if (isset($pconfig['mppec-policy'])) echo "checked"; ?>/> <?= gettext("Policy"); ?>
+                			
+                			<input type="checkbox" value="on" id="mppec_stateless" name="mppec-stateless" <?php if (isset($pconfig['mppec-stateless'])) echo "checked"; ?>/> <?= gettext("Stateless"); ?>
+                			
+                			<br/> <span class="vexpl"><?= gettext("Enable Use MPPE to request MPPE encryption from the server. Use enfoce MPPE to disconnect if the server refuses MPPE negotiation."); ?> </span> <br/>
+                			
+                			<br/> <span class="vexpl"><?= gettext("-------------------------------------------------------------------------------------------"); ?> </span> <br/> <br/>
+                			
+                			<span class="vexpl"><?= gettext("DESE (rfc 1969) Encryption options"); ?> </span> <br/>
+                			
+                			<input type="checkbox" value="on" id="dese_bis" name="dese-bis" <?php if (isset($pconfig['dese-bis'])) echo "checked"; ?>> <?= gettext("Enable DESE-bis"); ?> 
+                				
+                			<input type="checkbox" value="on" id="dese_old" name="dese-old" <?php if (isset($pconfig['dese-old'])) echo "checked"; ?>> <?= gettext("Enable DESE-old"); ?> 
+                			<br/> <span class="vexpl"><?= gettext("This option enables DESE (rfc 1969) encryption. This algorithm implemented in user-level, so require much CPU power on fast (>10Mbit/s) links.
+    
+    Note: DESE protocol is deprecated. Because of data padding to the next 8 octets boundary, required by block nature of DES encryption, dese-old option can have interoperability issues with other protocols which work over it. As example, it is incompatible with Predictor-1 and Deflate compressions."); ?> </span>
+                		</td>
+                	</tr>
+                		
+                	<? /* Enable passive mode */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+                		<td valign="top" class="vncell"><?= gettext("Passive Mode"); ?></td>
+                		<td class="vtable">
+                			<input type="checkbox" value="on" id="enable_passive" name="enable-passive" <?php if (isset($pconfig['enable-passive'])) echo "checked"; ?>> <?= gettext("Enable passive mode"); ?> 
+                  		</td>
+                	</tr>
+    				
+    				<? /* Keep alive (Dead peer detection) */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+    						<td width="22%" valign="top" class="vncell"><?= gettext("Keep Alive (DPD)"); ?></td>
+    						<td width="78%" class="vtable">
+    							<input name="keep-alive-int" type="text" class="formfld unknown" id="keep_alive_int" size="6" value="<?=htmlspecialchars($pconfig['keep-alive-int']);?>"> <?= gettext("Interval"); ?>
+    							<input name="keep-alive-max" type="text" class="formfld unknown" id="keep_alive_max" size="6" value="<?=htmlspecialchars($pconfig['keep-alive-max']);?>"> <?= gettext("Timeout"); ?>
+    						</td>
+    				</tr>
+    				
+    				<? /* Redial attempts */ ?>
+    				<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+    						<td width="22%" valign="top" class="vncell"><?= gettext("Max Redial Attempts"); ?></td>
+    						<td width="78%" class="vtable">
+    							<input name="max-redial" type="text" class="formfld unknown" id="max_redial" size="6" value="<?=htmlspecialchars($pconfig['max-redial']);?>">
+    						</td>
+    				</tr>
+				</table>
+			</td>
+		</tr>
+		
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
+		    <td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
 			<td class="vtable">
 				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> <?= gettext("Enable Dial-on-Demand mode"); ?> 
 				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode. Do NOT enable if you want your link to be always up. " .  
@@ -690,8 +944,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<br/><?=gettext("When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed."); ?></span>
 			</td>
 		</tr>
+				
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
-			<td width="22%" valign="top" class="vncell"><?= gettext("Compression"); ?></td>
+			<td width="22%" valign="top" class="vncell"><?= gettext("Van Jacobson Compression"); ?></td>
 			<td width="78%" class="vtable">
 				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable vjcomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?=gettext("This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. " .
@@ -793,3 +1048,4 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 <?php include("fend.inc"); ?>
 </body>
 </html>
+

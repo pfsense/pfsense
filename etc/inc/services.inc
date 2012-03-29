@@ -39,11 +39,16 @@
 	pfSense_MODULE:	utils
 */
 
+function strify($str) {
+   return '"' . $str . '"';
+};
+
+
 /* implement ipv6 route advertising deamon */
 function services_rtadvd_configure() {
 	global $config, $g;
-	
-	if ($g['platform'] == 'jail') 
+
+	if ($g['platform'] == 'jail')
 		return;
 
 	if(isset($config['system']['developerspew'])) {
@@ -122,7 +127,7 @@ EOD;
 				break;
 			default:
 				$rtadvdconf .= "\t:raflags#0:\\\n";
-				break;				
+				break;
 
 		}
 		$rtadvdconf .= "\t:tc=ether:\\\n";
@@ -196,7 +201,7 @@ EOD;
 				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
 			}
 			$rtadvdconf .= "\t:tc=ether:\\\n";
-			$rtadvdconf .= "\n\n"; 
+			$rtadvdconf .= "\n\n";
 			$rtadvdnum++;
 		}
 	}
@@ -214,7 +219,7 @@ EOD;
 			continue;
 
 		$rtadvdifs[] = $realif;
-		
+
 		/* find the interface which has the 6RD prefix defined and it's IPv4 address */
 		foreach($Iflist as $rdif => $rdifdescr) {
 			if($config['interfaces'][$rdif]['ipaddrv6'] == "6rd") {
@@ -267,7 +272,7 @@ EOD;
 				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
 			}
 			$rtadvdconf .= "\t:tc=ether:\\\n";
-			$rtadvdconf .= "\n\n"; 
+			$rtadvdconf .= "\n\n";
 			$rtadvdnum++;
 		}
 	}
@@ -313,15 +318,15 @@ function services_dhcpd_configure() {
 }
 function services_dhcpdv4_configure() {
 	global $config, $g;
-	
-	if($g['services_dhcp_server_enable'] == false) 
+
+	if($g['services_dhcp_server_enable'] == false)
 		return;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcpdv4_configure($if) being called $mt\n";
 	}
-	
+
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
@@ -357,7 +362,7 @@ function services_dhcpdv4_configure() {
 		$config['dhcpd'] = array();
 	$dhcpdcfg = $config['dhcpd'];
 	$Iflist = get_configured_interface_list();
-		
+
 	if ($g['booting'])
 		echo gettext("Starting DHCP service...");
 	else
@@ -371,7 +376,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$custoptions = "";
-	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 		if(is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
 			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
 				if(!empty($item['type']))
@@ -384,7 +389,7 @@ function services_dhcpdv4_configure() {
 	}
 
 	$dhcpdconf = <<<EOD
-	
+
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
@@ -402,7 +407,7 @@ EOD;
 	if(!isset($dhcpifconf['disableauthoritative']))
 		$dhcpdconf .= "authoritative;\n";
 
-	if(isset($dhcpifconf['alwaysbroadcast'])) 
+	if(isset($dhcpifconf['alwaysbroadcast']))
 		$dhcpdconf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
@@ -494,9 +499,11 @@ EOPP;
 		if ($dhcpifconf['domain']) {
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
-		
+
     		if($dhcpifconf['domainsearchlist'] <> "") {
 			$dnscfg .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpifconf['domainsearchlist'])) . "\";\n";
+                        $domains = implode(',', array_map(strify, explode(' ', $dhcpifconf['domainsearchlist'])));
+                        $dnscfg .= "   option domain-search {$domains};\n";
     		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
@@ -597,7 +604,7 @@ EOD;
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
       		}
 		}
-		
+
 		$dhcpdconf .= <<<EOD
 }
 
@@ -640,7 +647,7 @@ EOD;
 
 	/* create an empty leases database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-	
+
 
 	/* fire up dhcpd in a chroot */
 	if(count($dhcpdifs) > 0) {
@@ -657,15 +664,15 @@ EOD;
 
 function services_dhcpdv6_configure() {
 	global $config, $g;
-	
-	if($g['services_dhcp_server_enable'] == false) 
+
+	if($g['services_dhcp_server_enable'] == false)
 		return;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
-	
+
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
@@ -701,7 +708,7 @@ function services_dhcpdv6_configure() {
 		$config['dhcpdv6'] = array();
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
-		
+
 	if ($g['booting'])
 		echo "Starting DHCPv6 service...";
 	else
@@ -715,7 +722,7 @@ function services_dhcpdv6_configure() {
 	}
 
 	$custoptionsv6 = "";
-	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {	
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if(is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
 			foreach($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
 				$custoptionsv6 .= "option custom-{$dhcpv6if}-{$itemv6idx} code {$itemv6['number']} = text;\n";
@@ -724,7 +731,7 @@ function services_dhcpdv6_configure() {
 	}
 
 	$dhcpdv6conf = <<<EOD
-	
+
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
@@ -742,7 +749,7 @@ EOD;
 	if(!isset($dhcpv6ifconf['disableauthoritative']))
 		$dhcpdv6conf .= "authoritative;\n";
 
-	if(isset($dhcpv6ifconf['alwaysbroadcast'])) 
+	if(isset($dhcpv6ifconf['alwaysbroadcast']))
 		$dhcpdv6conf .= "always-broadcast on\n";
 
 	$dhcpdv6ifs = array();
@@ -828,7 +835,7 @@ EOPP;
 		if ($dhcpv6ifconf['domain']) {
 			$dnscfgv6 .= "	option domain-name \"{$dhcpv6ifconf['domain']}\";\n";
 		}
-		
+
     		if($dhcpv6ifconf['domainsearchlist'] <> "") {
 			$dnscfgv6 .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
     		}
@@ -935,7 +942,7 @@ EOD;
 				$dhcpdv6conf .= "	option root-path \"{$dhcpv6ifconf['rootpath']}\";\n";
       		}
 	}
-		
+
 		$dhcpdv6conf .= <<<EOD
 }
 
@@ -970,7 +977,7 @@ EOD;
 				$i++;
 			}
 		}
-		
+
 		if($config['dhcpdv6'][$dhcpv6if]['mode'] <> "unmanaged") {
 			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
 			$dhcpdv6ifs[] = $realif;
@@ -987,7 +994,7 @@ EOD;
 	fclose($fdv6);
 	/* create an empty leases v6 database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
-	
+
 
 	/* fire up dhcpd in a chroot */
 	if(count($dhcpdv6ifs) > 0) {
@@ -1093,7 +1100,7 @@ function services_dhcrelay_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 	}
 
-	/* 
+	/*
 	 * In order for the relay to work, it needs to be active
 	 * on the interface in which the destination server sits.
 	 */
@@ -1138,7 +1145,7 @@ function services_dhcrelay_configure() {
 				}
         		}
 		}
-	
+
 		if (!isset($destif)) {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
@@ -1146,7 +1153,7 @@ function services_dhcrelay_configure() {
 						$a_gateways = return_gateways_array(true);
                                         	$destif = $a_gateways[$rtent['gateway']]['interface'];
 						break;
-					}		
+					}
 				}
 			} else
 				$destif = get_real_interface("wan");
@@ -1209,7 +1216,7 @@ function services_dhcrelay6_configure() {
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 	}
 
-	/* 
+	/*
 	 * In order for the relay to work, it needs to be active
 	 * on the interface in which the destination server sits.
 	 */
@@ -1254,7 +1261,7 @@ function services_dhcrelay6_configure() {
 				}
         		}
 		}
-	
+
 		if (!isset($destif)) {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
@@ -1262,7 +1269,7 @@ function services_dhcrelay6_configure() {
 						$a_gateways = return_gateways_array(true);
                                         	$destif = $a_gateways[$rtent['gateway']]['interface'];
 						break;
-					}		
+					}
 				}
 			} else
 				$destif = get_real_interface("wan");
@@ -1303,7 +1310,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWilcard = $conf['wildcard'],
-		$dnsMX = $conf['mx'], 
+		$dnsMX = $conf['mx'],
 		$dnsIf = "{$conf['interface']}",
 		$dnsBackMX = NULL,
 		$dnsServer = NULL,
@@ -1322,7 +1329,7 @@ function services_dyndns_configure($int = "") {
 	$dyndnscfg = $config['dyndnses']['dyndns'];
 
 	if (is_array($dyndnscfg)) {
-		if ($g['booting']) 
+		if ($g['booting'])
 			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
@@ -1344,7 +1351,7 @@ function services_dyndns_configure($int = "") {
 function services_dnsmasq_configure() {
 	global $config, $g;
 	$return = 0;
-	
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dnsmasq_configure() being called $mt\n";
@@ -1370,7 +1377,7 @@ function services_dnsmasq_configure() {
 		if (isset($config['dnsmasq']['regdhcp'])) {
 			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
 		}
-		
+
 		/* Setup forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {
@@ -1455,7 +1462,7 @@ function services_snmpd_configure() {
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
 	sleep(2);
-	if(is_process_running("bsnmpd")) 
+	if(is_process_running("bsnmpd"))
 		mwexec("/usr/bin/killall bsnmpd", true);
 
 	if (isset($config['snmpd']['enable'])) {
@@ -1705,7 +1712,7 @@ EOD;
 				if (isset($dnsupdate['usetcp']))
 					$cmd .= " -v";
 				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
-	
+
 				mwexec_bg($cmd);
 			}
 		}
@@ -2008,7 +2015,7 @@ function configure_cron() {
 	conf_mount_rw();
 	/* preserve existing crontab entries */
 	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	
+
 	for ($i = 0; $i < count($crontab_contents); $i++) {
 		$cron_item =& $crontab_contents[$i];
 		if (strpos($cron_item, "# pfSense specific crontab entries") !== false) {
@@ -2017,8 +2024,8 @@ function configure_cron() {
 		}
 	}
 	$crontab_contents = implode("\n", $crontab_contents) . "\n";
-	
-	
+
+
 	if (is_array($config['cron']['item'])) {
 		$crontab_contents .= "#\n";
 		$crontab_contents .= "# " . gettext("pfSense specific crontab entries") . "\n";
@@ -2034,13 +2041,13 @@ function configure_cron() {
 			$crontab_contents .= "{$item['who']}\t";
 			$crontab_contents .= "{$item['command']}";
 		}
-    
+
 		$crontab_contents .= "\n#\n";
 		$crontab_contents .= "# " . gettext("If possible do not add items to this file manually.") . "\n";
 		$crontab_contents .= "# " . gettext("If you do so, this file must be terminated with a blank line (e.g. new line)") . "\n";
 		$crontab_contents .= "#\n\n";
 	}
-	
+
 	/* please maintain the newline at the end of file */
 	file_put_contents("/etc/crontab", $crontab_contents);
 

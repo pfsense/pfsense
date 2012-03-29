@@ -67,6 +67,7 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[] = array(gettext("DynDns"), false, "services_dyndns.php");
 	$tab_array[] = array(gettext("RFC 2136"), true, "services_rfc2136.php");
+	$tab_array[] = array(gettext("Route 53"), false, "services_route53.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

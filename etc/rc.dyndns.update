@@ -41,9 +41,11 @@ $argument = trim($argv[1], " \n");
 if(empty($argument)) {
 	services_dyndns_configure();
 	services_dnsupdate_process();
+        services_route53update_process();
 } else {
 	services_dyndns_configure($argument);
 	services_dnsupdate_process($argument);
+        services_route53update_process($argument);
 }
 
 ?>

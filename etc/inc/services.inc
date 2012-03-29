@@ -1721,6 +1721,81 @@ EOD;
 	return 0;
 }
 
+function services_route53update_process($int = "") {
+        global $config, $g;
+        if(isset($config['system']['developerspew'])) {
+                $mt = microtime();
+                echo "services_route53update_process() being called $mt\n";
+        }
+
+        /* Route 53 DNS updating active? */
+        if (is_array($config['route53updates']['route53update'])) {
+                /* Include Route 53 Library Class */
+                require_once('/etc/inc/r53.php');
+
+                /* Function to find old values of records in Route 53 */
+		function SearchRecords($records, $name) {
+		$result = array();
+		foreach($records as $record) {
+			if(strtolower($record['Name']) == strtolower($name)) {
+				$result [] = $record;
+				}
+			}
+		return ($result) ? $result : false;
+		}
+
+                foreach ($config['route53updates']['route53update'] as $i => $route53update) {
+                        if (!isset($route53update['enable']))
+                                continue;
+                        if (!empty($int) && $int != $route53update['interface'])
+                                continue;
+
+                        /* determine interface name */
+                        $if = get_real_interface($route53update['interface']);
+                        $wanip = get_interface_ip($route53update['interface']);
+                        if ($wanip) {
+                        	/* Set Amazon AWS Credentials for this record */
+                                $r53 = new Route53($route53update['accesskeyid'], $route53update['secretaccesskey']);
+				$zoneid=$route53update['zoneid'];
+				$hostname="$route53update[host].$route53update[domain].";
+				$NewTTL=$route53update['ttl'];
+				$interface=$route53update['interface'];
+                                $records = $r53->listResourceRecordSets("/hostedzone/$zoneid");
+                        	/* Get IP for your hostname in Route 53 */
+				if(false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
+					$OldTTL=$a_result[0][TTL];
+					$OldIP=$a_result[0][ResourceRecords][0];
+				} else {
+					$OldIP="";
+				}
+				/* Check if we need update DNS Record */
+				if ($OldIP !== $wanip) {
+					if(!empty($OldIP)) {
+						/* Your Hostname already exist, deleting and creating it again */
+						$changes = array();
+						$changes[] = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
+						$changes[] = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $wanip);
+						$result = $r53->changeResourceRecordSets("/hostedzone/$zoneid", $changes);
+					} else {
+						/* Your Hostname dosent exist yet, creating it */
+						$changes = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $wanip);
+						$result = $r53->changeResourceRecordSets("/hostedzone/$zoneid", $changes);
+					}
+				}
+				/* Write IP to cache file */
+				$date=time();
+				$cachefile = "/conf/route53-$interface-$hostname".ipcheck;
+				$fh = fopen($cachefile, 'w') or die("can't open file");
+				$stringData = "$OldIP:$date";
+				fwrite($fh, $stringData);
+				fclose($fh);
+                        }
+                }
+        }
+
+        return 0;
+}
+
 function setup_wireless_olsr() {
 	global $config, $g;
 	if ($g['platform'] == 'jail' || !$config['installedpackages']['olsrd'] || !$config['installedpackages'])

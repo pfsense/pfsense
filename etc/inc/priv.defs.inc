@@ -114,6 +114,24 @@ $priv_list['page-diagnostics-logs-firewall']['descr'] = gettext("Allow access to
 $priv_list['page-diagnostics-logs-firewall']['match'] = array();
 $priv_list['page-diagnostics-logs-firewall']['match'][] = "diag_logs_filter.php*";
 
+$priv_list['page-diagnostics-logs-gateways'] = array();
+$priv_list['page-diagnostics-logs-gateways']['name'] = gettext("WebCfg - Diagnostics: Logs: Gateways page");
+$priv_list['page-diagnostics-logs-gateways']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: System: Gateways' page.");
+$priv_list['page-diagnostics-logs-gateways']['match'] = array();
+$priv_list['page-diagnostics-logs-gateways']['match'][] = "diag_logs_gateways.php*";
+
+$priv_list['page-diagnostics-logs-resolver'] = array();
+$priv_list['page-diagnostics-logs-resolver']['name'] = gettext("WebCfg - Diagnostics: Logs: Resolver page");
+$priv_list['page-diagnostics-logs-resolver']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: System: Resolver' page.");
+$priv_list['page-diagnostics-logs-resolver']['match'] = array();
+$priv_list['page-diagnostics-logs-resolver']['match'][] = "diag_logs_resolver.php*";
+
+$priv_list['page-diagnostics-logs-wireless'] = array();
+$priv_list['page-diagnostics-logs-wireless']['name'] = gettext("WebCfg - Diagnostics: Logs: Wireless page");
+$priv_list['page-diagnostics-logs-wireless']['descr'] = gettext("Allow access to the 'Diagnostics: Logs: System: Wireless' page.");
+$priv_list['page-diagnostics-logs-wireless']['match'] = array();
+$priv_list['page-diagnostics-logs-wireless']['match'][] = "diag_logs_wireless.php*";
+
 $priv_list['page-hidden-nolongerincluded'] = array();
 $priv_list['page-hidden-nolongerincluded']['name'] = gettext("WebCfg - Hidden: No longer included page");
 $priv_list['page-hidden-nolongerincluded']['descr'] = gettext("Allow access to the 'Hidden: No longer included' page.");

@@ -35,7 +35,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/pgrep	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/rtadvd	/usr/local/sbin/unbound
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/radvd		/usr/local/sbin/unbound
 	pfSense_MODULE:	utils
 */
 
@@ -45,22 +45,22 @@ function strify($str) {
 
 
 /* implement ipv6 route advertising deamon */
-function services_rtadvd_configure() {
+function services_radvd_configure() {
 	global $config, $g;
-
-	if ($g['platform'] == 'jail')
+	
+	if ($g['platform'] == 'jail') 
 		return;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_rtadvd_configure() being called $mt\n";
+		echo "services_radvd_configure() being called $mt\n";
 	}
 
-	/* we need to shut down the rtadvd cleanly, otherwise it will send out the prefix
+	/* we need to shut down the radvd cleanly, it will send out the prefix
 	 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
-	if(is_process_running("rtadvd")) {
+	if(is_process_running("radvd")) {
 		log_error("Shutting down Router Advertisment daemon cleanly");
-		mwexec("killall rtadvd");
+		mwexec("killall radvd");
 	}
 
 	if (!is_array($config['dhcpdv6']))
@@ -69,68 +69,73 @@ function services_rtadvd_configure() {
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 
-	/* write rtadvd.conf */
-	$fd = fopen("{$g['varetc_path']}/rtadvd.conf", "w");
+	/* write radvd.conf */
+	$fd = fopen("{$g['varetc_path']}/radvd.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open rtadvd.conf in services_rtadvd_configure().\n");
+		printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
 		return 1;
 	}
 
-	/* raflags, other o, managed=64 m, stateful=128, both=192 */
-	/* pinfoflags 0 = disable slaac */
-
-	$rtadvdconf = "# Automatically Generated, do not edit\n";
-	$rtadvdconf = <<<EOD
-
-#
-# common definitions.
-#
-default:\
-        :raflags#0:rltime#3600:\
-        :vltime#360000:pltime#360000:mtu#1500:
-ether:\
-        :mtu#1280:tc=default:
-
-EOD;
+	$radvdconf = "# Automatically Generated, do not edit\n";
 
 	/* Process all links which need the router advertise daemon */
-	$rtadvdnum = 0;
-	$rtadvdifs=array();
+	$radvdnum = 0;
+	$radvdifs = array();
 
-	/* handle manually configured DHCP6 settings first */
+	/* handle manually configured DHCP6 server settings first */
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		/* are router advertisements enabled? */
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
-
+			
 		$realif = get_real_interface($dhcpv6if);
-		$rtadvdifs[] = $realif;
+		$radvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
-		$rtadvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
-		$rtadvdconf .= "{$realif}:\\\n";
-		$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
-		$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
+		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
+		$radvdconf .= "interface {$realif} {\n";
+		$radvdconf .= "\tAdvSendAdvert on;\n";
+		$radvdconf .= "\tMinRtrAdvInterval 3;\n";
+		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		$radvdconf .= "\tAdvLinkMTU 1280;\n";
+		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch($dhcpv6ifconf['mode']) {
 			case "managed":
-				$rtadvdconf .= "\t:raflags=\"m\":\\\n";
-				$rtadvdconf .= "\t:pinfoflags=\"\":\\\n";
-				break;
-			case "router":
-				$rtadvdconf .= "\t:pinfoflags=\"\":\\\n";
+				$radvdconf .= "\tAdvManagedFlag on;\n";
 				break;
 			case "assist":
-				$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
+				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
-			default:
-				$rtadvdconf .= "\t:raflags#0:\\\n";
-				break;
-
 		}
-		$rtadvdconf .= "\t:tc=ether:\\\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		switch($dhcpv6ifconf['mode']) {
+			case "managed":
+				$radvdconf .= "\t\tAdvOnLink on;\n";
+				$radvdconf .= "\t\tAdvAutonomous off;\n";
+				$radvdconf .= "\t\tAdvRouterAddr on;\n";
+				break;
+			case "router":
+				$radvdconf .= "\t\tAdvOnLink off;\n";
+				$radvdconf .= "\t\tAdvAutonomous off;\n";
+				$radvdconf .= "\t\tAdvRouterAddr on;\n";
+				break;
+			case "assist":
+				$radvdconf .= "\t\tAdvOnLink on;\n";
+				$radvdconf .= "\t\tAdvAutonomous on;\n";
+				$radvdconf .= "\t\tAdvRouterAddr on;\n";
+				break;
+			case "unmanaged":
+				$radvdconf .= "\t\tAdvOnLink on;\n";
+				$radvdconf .= "\t\tAdvAutonomous on;\n";
+				$radvdconf .= "\t\tAdvRouterAddr on;\n";
+				break;				
+		}
+		$radvdconf .= "\t};\n";
+
 		/* add DNS servers */
 		$dnslist = array();
 		if(!empty($dhcpv6ifconf['dnsserver'][0])) {
@@ -146,142 +151,108 @@ EOD;
 					$dnslist[] = $server;
 			}
 		}
-		if(!empty($dnslist)) {
-			$dnsstring = implode(",", $dnslist);
-			$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
+		if(count($dnslist) > 0) {
+			$dnsstring = implode(" ", $dnslist);
+			if($dnsstring <> "")
+				$radvdconf .= "\tRDDNS {$dnsstring} { }\n";
 		}
 		if($dhcpv6ifconf['domain'] <> "") {
-			$rtadvdconf .= "\t:dnssl=\"{$dhcpv6ifconf['domain']}\":\n";
+			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { }\n";
 		} elseif ($config['system']['domain'] <> "") {
-			$rtadvdconf .= "\t:dnssl=\"{$config['system']['domain']}\":\n";
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} { }\n";
 		}
-		$rtadvdconf .= "\n\n";
-		$rtadvdnum++;
+		$radvdconf .= "};\n";
+		$radvdnum++;
 	}
 
-	/* handle DHCP-PD prefixes */
+	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
 	foreach ($Iflist as $if => $ifdescr) {
-		if(!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id']))
+		if((!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id'])) && (!is_numeric($config['interfaces'][$if]['prefix-6rd-id'])))
 			continue;
-
+			
 		$realif = get_real_interface($if);
-		/* prevent duplicate entries */
-		if(in_array($realif, $rtadvdifs))
+		/* prevent duplicate entries, manual overrides */
+		if(in_array($realif, $radvdifs))
 			continue;
 
-		$rtadvdifs[] = $realif;
+		$radvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($if);
 		$ifcfgsnv6 = get_interface_subnetv6($if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
-
-		$dnslist = array();
-		if(is_ipaddrv6($subnetv6)) {
-			$rtadvdconf .= "# Generated for DHCP-PD delegation $if\n";
-			$rtadvdconf .= "{$realif}:\\\n";
-			/* use lower timers for dhcp-pd */
-			$rtadvdconf .= "\t:pltime=60:\\\n";
-			$rtadvdconf .= "\t:pltime=120:\\\n";
-			$rtadvdconf .= "\t:vltime=180:\\\n";
-			$rtadvdconf .= "\t:rtltime=60:\\\n";
-			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
-			$rtadvdconf .= "\t:prefixlen#{$ifcfgsnv6}:\\\n";
-			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
-			if (isset($config['dnsmasq']['enable'])) {
-				$dnslist[] = get_interface_ipv6($dhcpv6if);
-			} elseif (!empty($config['system']['dnsserver'][0])) {
-				foreach($config['system']['dnsserver'] as $server) {
-					if(is_ipaddrv6($server))
-						$dnslist[] = $server;
-				}
-			}
-			if(!empty($dnslist)) {
-				$dnsstring = implode(",", $dnslist);
-				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
-			}
-			$rtadvdconf .= "\t:tc=ether:\\\n";
-			$rtadvdconf .= "\n\n";
-			$rtadvdnum++;
-		}
-	}
-
-	/* Handle 6RD prefix assignment */
-	foreach ($Iflist as $if => $ifdescr) {
-		if(!is_numeric($config['interfaces'][$if]['prefix-6rd-id']))
-			continue;
-
-		echo "rtadvd config for {$if}\n";
-
-		$realif = get_real_interface($if);
-		/* prevent duplicate entries */
-		if(in_array($realif, $rtadvdifs))
-			continue;
-
-		$rtadvdifs[] = $realif;
-
-		/* find the interface which has the 6RD prefix defined and it's IPv4 address */
-		foreach($Iflist as $rdif => $rdifdescr) {
-			if($config['interfaces'][$rdif]['ipaddrv6'] == "6rd") {
-				$realrdif = get_real_interface("$rdif");
-				$ip4address = find_interface_ip($realrdif);
-				echo "rtadvd config found 6RD if {$rdif} address {$ip4address}\n";
-				if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
-					log_error("The interface IPv4 '{$ip4address}' address on interface '{$rdif}' is not public, not configuring 6RD prefix on {$if}");
-					// continue;
-				}
-				/* calculate the IPv6 prefix from the public IPv4 address */
-				$ip4arr = explode(".", $ip4address);
-				$rd6prefix = explode("/", $config['interfaces'][$rdif]['prefix-6rd']);
-				$rd6prefix = explode(":", $rd6prefix[0]);
-				if($config['interfaces'][$rdif]['prefix-6rd-len'] == 0) {
+		$autotype = "DHCP-PD";
+		/* 6rd on this interface? */
+		if(is_numeric($config['interfaces'][$if]['prefix-6rd-id'])) {
+			/* find the interface which has the 6RD prefix defined and it's IPv4 address */
+			foreach($Iflist as $rdif => $rdifdescr) {
+				if($config['interfaces'][$rdif]['ipaddrv6'] == "6rd") {
+					$realrdif = get_real_interface("$rdif");
+					$ip4address = find_interface_ip($realrdif);
+					log_error("radvd config found 6RD if {$rdif} address {$ip4address} for interface {$if}");
+					if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+						log_error("The interface IPv4 '{$ip4address}' address on interface '{$rdif}' is not public, not configuring 6RD prefix on {$if}");
+						// continue;
+					}
+					/* calculate the IPv6 prefix from the public IPv4 address */
+					$ip4arr = explode(".", $ip4address);
+					$rd6prefix = explode("/", $config['interfaces'][$rdif]['prefix-6rd']);
+					$rd6prefix = explode(":", $rd6prefix[0]);
 					$rd6lanprefixlen = 64;
-				} else {
-					log_error("We only support a 64 bit subnet currently");
-					continue;
+					$rd6lanprefix = sprintf("{$rd6prefix[0]}:{$rd6prefix[1]}:%02x%02x:%02x%02x::", $ip4arr[0], $ip4arr[1], $ip4arr[2], $ip4arr[3]);
+					$ifcfgsnv6 = "{$rd6lanprefixlen}";
+					$subnetv6 = "{$rd6lanprefix}";
+					$autotype = "6rd";
+					break;
 				}
-				$rd6lanprefix = sprintf("{$rd6prefix[0]}:{$rd6prefix[1]}:%02x%02x:%02x%02x::", $ip4arr[0], $ip4arr[1], $ip4arr[2], $ip4arr[3]);
-				$subnetv6 = "{$rd6lanprefix}/{$rd6lanprefixlen}";
-				// mwexec("/sbin/ifconfig {$realif} inet6 {$rd6lanprefix}1 prefixlen {$rd6lanprefixlen}");
 			}
 		}
-
+		
+		log_error("configuring interface {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
 		$dnslist = array();
 		if(is_ipaddrv6($subnetv6)) {
-			$rtadvdconf .= "# Generated for 6RD on $if\n";
-			$rtadvdconf .= "{$realif}:\\\n";
-			/* use lower timers for 6RD prefixes */
-			$rtadvdconf .= "\t:pltime=60:\\\n";
-			$rtadvdconf .= "\t:pltime=120:\\\n";
-			$rtadvdconf .= "\t:vltime=180:\\\n";
-			$rtadvdconf .= "\t:rtltime=60:\\\n";
-			$rtadvdconf .= "\t:addr=\"{$subnetv6}\":\\\n";
-			$rtadvdconf .= "\t:prefixlen#{$rd6lanprefixlen}:\\\n";
-			$rtadvdconf .= "\t:raflags=\"mo\":\\\n";
-			if (isset($config['dnsmasq']['enable'])) {
-				$dnslist[] = get_interface_ipv6($dhcpv6if);
-			} elseif (!empty($config['system']['dnsserver'][0])) {
-				foreach($config['system']['dnsserver'] as $server) {
-					if(is_ipaddrv6($server))
-						$dnslist[] = $server;
+			$radvdconf .= "# Generated for DHCP-PD delegation $if\n";
+			$radvdconf .= "interface {$realif} {\n";
+				$radvdconf .= "\tAdvSendAdvert on;\n";
+				$radvdconf .= "\tMinRtrAdvInterval 3;\n";
+				$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+				$radvdconf .= "\tAdvLinkMTU 1280;\n";
+				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
+					$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+					$radvdconf .= "\t\tAdvOnLink on;\n";
+					$radvdconf .= "\t\tAdvAutonomous on;\n";
+					$radvdconf .= "\t\tAdvRouterAddr on;\n";
+				$radvdconf .= "\t};\n";
+
+				/* add DNS servers */
+				$dnslist = array();
+				if (isset($config['dnsmasq']['enable'])) {
+						$dnslist[] = $ifcfgipv6;
+				} elseif (!empty($config['system']['dnsserver'][0])) {
+					foreach($config['system']['dnsserver'] as $server) {
+						if(is_ipaddrv6($server))
+							$dnslist[] = $server;
+					}
 				}
-			}
-			if(!empty($dnslist)) {
-				$dnsstring = implode(",", $dnslist);
-				$rtadvdconf .= "\t:rdnss=\"{$dnsstring}\":\\\n";
-			}
-			$rtadvdconf .= "\t:tc=ether:\\\n";
-			$rtadvdconf .= "\n\n";
-			$rtadvdnum++;
+				if(count($dnslist) > 0) {
+					$dnsstring = implode(" ", $dnslist);
+					if($dnsstring <> "")
+						$radvdconf .= "\tRDDNS {$dnsstring} { };\n";
+				}
+				if ($config['system']['domain'] <> "") {
+					$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+				}
+			$radvdconf .= "};\n";
+			$radvdnum++;
 		}
 	}
 
-	fwrite($fd, $rtadvdconf);
+	fwrite($fd, $radvdconf);
 	fclose($fd);
 
-	if(count($rtadvdifs) > 0) {
-		mwexec("/usr/sbin/rtadvd -c {$g['varetc_path']}/rtadvd.conf " . join(" ", $rtadvdifs));
+	if(count($radvdifs) > 0) {
+		mwexec("/usr/local/sbin/radvd -C {$g['varetc_path']}/radvd.conf -m syslog");
 	}
 	return 0;
 }
@@ -312,7 +283,7 @@ function services_dhcpd_configure() {
 
 	services_dhcpdv4_configure();
 	services_dhcpdv6_configure();
-	services_rtadvd_configure();
+	services_radvd_configure();
 	return;
 
 }

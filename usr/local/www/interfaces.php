@@ -1068,7 +1068,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "srd" => gettext("6RD"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6RD"));
 
 ?>
 
@@ -1115,18 +1115,18 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #srd').hide();
+				jQuery('#staticv6, #dhcp6, #6rd').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #srd').hide();
+				jQuery('#none, #dhcp6, #6rd').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #srd').hide();
+				jQuery('#none, #staticv6, #6rd').hide();
 				break;
 			}
-			case "srd": {
+			case "6rd": {
 				jQuery('#none, #dhcp6, #staticv6').hide();
 				break;
 			}
@@ -1757,7 +1757,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="srd" id="srd">
+						<tr style="display:none;" name="6rd" id="6rd">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>

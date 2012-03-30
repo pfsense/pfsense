@@ -154,7 +154,7 @@ function services_radvd_configure() {
 		if(count($dnslist) > 0) {
 			$dnsstring = implode(" ", $dnslist);
 			if($dnsstring <> "")
-				$radvdconf .= "\tRDDNS {$dnsstring} { }\n";
+				$radvdconf .= "\tRDNSS {$dnsstring} { }\n";
 		}
 		if($dhcpv6ifconf['domain'] <> "") {
 			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { }\n";
@@ -238,7 +238,7 @@ function services_radvd_configure() {
 				if(count($dnslist) > 0) {
 					$dnsstring = implode(" ", $dnslist);
 					if($dnsstring <> "")
-						$radvdconf .= "\tRDDNS {$dnsstring} { };\n";
+						$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 				}
 				if ($config['system']['domain'] <> "") {
 					$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";

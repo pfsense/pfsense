@@ -1300,6 +1300,16 @@ function upgrade_047_to_048() {
 		unset($config['dnsupdate']);
 	}
 
+        if (!empty($config['route53update'])) {
+                $pconfig = $config['route53update'][0];
+                if (!$pconfig['ttl'])
+                        $pconfig['ttl'] = 60;
+                $pconfig['interface'] = "wan";
+                $config['route53updates']['route53update'][] = $pconfig;
+                unset($config['route53update']);
+        }
+
+
 	if (is_array($config['pppoe']) && is_array($config['pppoe'][0])) {
 		$pconfig = array();
 		$pconfig['username'] = $config['pppoe'][0]['username'];

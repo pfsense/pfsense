@@ -220,6 +220,9 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";
 		break;
+	case "6to4":
+		$pconfig['type6'] = "6to4";
+		break;
 	case "6rd":
 		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
 		if($wancfg['prefix-6rd-v4plen'] == "")
@@ -500,6 +503,10 @@ if ($_POST['apply']) {
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
+		case "6to4":
+			if (in_array($wancfg['ipaddrv6'], array()))
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+			break;
 	}
 
 	
@@ -669,6 +676,7 @@ if ($_POST['apply']) {
 		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
 		 * log messages from appearing. They can also manually add these items */
 		/* 1st added gateway gets a default bit */
+		/* FIXME: Add address family check here! */
 		if(!empty($a_gateways)) {
 			$gateway_item = array();
 			/* check for duplicates */
@@ -815,6 +823,9 @@ if ($_POST['apply']) {
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
+				break;
+			case "6to4":
+				$wancfg['ipaddrv6'] = "6to4";
 				break;
 			case "none":
 				break;
@@ -1068,7 +1079,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6RD"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6rd"), "6to4" => gettext("6to4"));
 
 ?>
 
@@ -1115,19 +1126,23 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #6rd').hide();
+				jQuery('#staticv6, #dhcp6, #6rd, #6to4').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #6rd').hide();
+				jQuery('#none, #dhcp6, #6rd, #6to4').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #6rd').hide();
+				jQuery('#none, #staticv6, #6rd, #6to4').hide();
 				break;
 			}
 			case "6rd": {
-				jQuery('#none, #dhcp6, #staticv6').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6to4').hide();
+				break;
+			}
+			case "6to4": {
+				jQuery('#none, #dhcp6, #staticv6, #6rd').hide();
 				break;
 			}
 		}

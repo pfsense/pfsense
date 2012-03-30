@@ -1129,6 +1129,13 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 				pfSense_interface_flags($realif, -IFF_UP);
 		}		
 		break;
+	case "6to4":
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+		}		
+		break;
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -2871,6 +2878,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		case '6rd':
 			interface_6rd_configure($interface);
 			break;
+		case '6to4':
+			interface_6to4_configure($interface);
+			break;
 		default:
 			if (is_ipaddr($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
@@ -3050,6 +3060,93 @@ function interface_6rd_configure($interface = "wan"){
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "::1 -ifp srd0\n");
+	
+	return 0;
+}
+
+function interface_6to4_configure($interface = "wan"){
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	/* because this is a tunnel interface we can only function 
+	 *	with a public IPv4 address on the interface */
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	
+	/* create the long prefix notation for math, save the prefix length */
+	$stfprefixlen = 16;
+	$stfprefix = Net_IPv6::uncompress("2002::");
+	$stfarr = explode(":", $stfprefix);
+	$v4prefixlen = "0";
+	
+	/* we need the hex form of the interface IPv4 address */
+	$ip4arr = explode(".", $ip4address);
+	$hexwanv4 = "";
+	foreach($ip4arr as $octet)
+		$hexwanv4 .= sprintf("%02x", $octet);
+
+	/* we need the hex form of the broker IPv4 address */
+	$ip4arr = explode(".", "192.88.99.1");
+	$hexbrv4 = "";
+	foreach($ip4arr as $octet)
+		$hexbrv4 .= sprintf("%02x", $octet);
+	
+	/* binary presentation of the prefix for all 128 bits. */
+	$stfprefixbin = "";
+	foreach($stfarr as $element) {
+		$stfprefixbin .= sprintf("%016b", hexdec($element));
+	}
+	/* just save the left prefix length bits */
+	$stfprefixstartbin = substr($stfprefixbin, 0, $stfprefixlen);
+
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$stfbrokerbin = substr(sprintf("%032b", hexdec($hexbrv4)), $v4prefixlen, 32);
+	$stfbrokerbin = str_pad($stfprefixstartbin . $stfbrokerbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* for the local subnet too. */
+	$stflanbin = substr(sprintf("%032b", hexdec($hexwanv4)), $v4prefixlen, 32);
+	$stflanbin = str_pad($stfprefixstartbin . $stflanbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$stfbrarr = array();
+	$stfbrbinarr = array();
+	$stfbrbinarr = str_split($stfbrokerbin, 16);
+	foreach($stfbrbinarr as $bin)
+		$stfbrarr[] = dechex(bindec($bin));
+	$stfbrarr[7] = 1;
+	$stfbrgw = Net_IPv6::compress(implode(":", $stfbrarr));
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$stflanarr = array();
+	$stflanbinarr = array();
+	$stflanbinarr = str_split($stflanbin, 16);
+	foreach($stflanbinarr as $bin)
+		$stflanarr[] = dechex(bindec($bin));
+	$stflanpr = Net_IPv6::compress(implode(":", $stflanarr));
+	$stflanarr[7] = 1;
+	$stflan = Net_IPv6::compress(implode(":", $stflanarr));
+
+	/* setup the stf interface */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$stflanpr} prefixlen 16");
+
+	log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for stf0, route {$stfbrgw}");
+	
+	/* write out a default router file */
+	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
+	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$stfbrgw}");
 	
 	return 0;
 }

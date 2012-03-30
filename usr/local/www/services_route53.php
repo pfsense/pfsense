@@ -44,8 +44,50 @@ if (!is_array($config['route53updates']['route53update']))
 $a_route53 = &$config['route53updates']['route53update'];
 
 if ($_GET['act'] == "del") {
-		unset($a_route53[$_GET['id']]);
 
+                /* Include Route 53 Library Class */
+                require_once('/etc/inc/r53.php');
+
+                /* Function to find old values of records in Route 53 */
+                function SearchRecords($records, $name) {
+                $result = array();
+                foreach($records as $record) {
+                        if(strtolower($record['Name']) == strtolower($name)) {
+                                $result [] = $record;
+                                }
+                        }
+                return ($result) ? $result : false;
+                }
+
+                /* Set Amazon AWS Credentials for this record */
+                $r53 = new Route53($a_route53[$_GET['id']]['accesskeyid'], $a_route53[$_GET['id']]['secretaccesskey']);
+
+                /* Set variables for this record */
+		$zoneid=$a_route53[$_GET['id']]['zoneid'];
+		$hostname="{$a_route53[$_GET['id']]['host']}.{$a_route53[$_GET['id']]['domain']}.";
+		$records = $r53->listResourceRecordSets("/hostedzone/$zoneid");
+
+                /* Get IP for hostname to be deleted in Route 53 */
+                if(false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
+			$OldTTL=$a_result[0][TTL];
+			$OldIP=$a_result[0][ResourceRecords][0];
+                } else {
+                        $OldIP="";
+                }
+
+                if(!empty($OldIP)) {
+                /* Your Hostname in Route 53 exist and will be deleted */
+                $changes = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
+                $result = $r53->changeResourceRecordSets("/hostedzone/$zoneid", $changes);
+                }
+
+                /* Remove IP cache file for your old DNS record */
+                $filetoremove = "/conf/route53-{$a_route53[$_GET['id']]['interface']}-{$a_route53[$_GET['id']]['host']}.{$a_route53[$_GET['id']]['domain']}.ipcheck";
+                $fh = fopen($filetoremove, 'w') or die("can't open file");
+                unlink($filetoremove);
+
+		/* Remove dns record from config file */
+		unset($a_route53[$_GET['id']]);
 		write_config();
 
 		header("Location: services_route53.php");

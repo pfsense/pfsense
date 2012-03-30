@@ -154,12 +154,12 @@ function services_radvd_configure() {
 		if(count($dnslist) > 0) {
 			$dnsstring = implode(" ", $dnslist);
 			if($dnsstring <> "")
-				$radvdconf .= "\tRDNSS {$dnsstring} { }\n";
+				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 		}
 		if($dhcpv6ifconf['domain'] <> "") {
-			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { }\n";
+			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { };\n";
 		} elseif ($config['system']['domain'] <> "") {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} { }\n";
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 		}
 		$radvdconf .= "};\n";
 		$radvdnum++;

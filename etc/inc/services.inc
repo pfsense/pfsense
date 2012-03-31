@@ -40,7 +40,7 @@
 */
 
 function strify($str) {
-   return '"' . $str . '"';
+	return '"' . $str . '"';
 };
 
 
@@ -86,11 +86,11 @@ function services_radvd_configure() {
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
-			
+								
 		/* are router advertisements enabled? */
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
-
+			
 		$realif = get_real_interface($dhcpv6if);
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
@@ -102,7 +102,7 @@ function services_radvd_configure() {
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
 		$radvdifs[] = $realif;
-
+		
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
@@ -174,9 +174,8 @@ function services_radvd_configure() {
 
 	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
 	foreach ($Iflist as $if => $ifdescr) {
-		if((!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id'])) && (!is_numeric($config['interfaces'][$if]['prefix-6rd-id'])))
+		if(!isset($config['interfaces'][$if]['track6-interface']))
 			continue;
-
 		if(!isset($config['interfaces'][$if]['enable']))
 			continue;
 			
@@ -192,40 +191,16 @@ function services_radvd_configure() {
 		$ifcfgsnv6 = get_interface_subnetv6($if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
+		$trackif = $config['interfaces'][$if]['track6-interface'];
 		$radvdifs[] = $realif;
 
-		$autotype = "DHCP-PD";
-		/* 6rd on this interface? */
-		if(is_numeric($config['interfaces'][$if]['prefix-6rd-id'])) {
-			/* find the interface which has the 6RD prefix defined and it's IPv4 address */
-			foreach($Iflist as $rdif => $rdifdescr) {
-				if($config['interfaces'][$rdif]['ipaddrv6'] == "6rd") {
-					$realrdif = get_real_interface("$rdif");
-					$ip4address = find_interface_ip($realrdif);
-					log_error("radvd config found 6RD if {$rdif} address {$ip4address} for interface {$if}");
-					if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
-						log_error("The interface IPv4 '{$ip4address}' address on interface '{$rdif}' is not public, not configuring 6RD prefix on {$if}");
-						// continue;
-					}
-					/* calculate the IPv6 prefix from the public IPv4 address */
-					$ip4arr = explode(".", $ip4address);
-					$rd6prefix = explode("/", $config['interfaces'][$rdif]['prefix-6rd']);
-					$rd6prefix = explode(":", $rd6prefix[0]);
-					$rd6lanprefixlen = 64;
-					$rd6lanprefix = sprintf("{$rd6prefix[0]}:{$rd6prefix[1]}:%02x%02x:%02x%02x::", $ip4arr[0], $ip4arr[1], $ip4arr[2], $ip4arr[3]);
-					$ifcfgsnv6 = "{$rd6lanprefixlen}";
-					$subnetv6 = "{$rd6lanprefix}";
-					$autotype = "6rd";
-					break;
-				}
-			}
-		}
-		
-		log_error("configuring interface {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
+		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
+	
+		log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
 		$dnslist = array();
 		if(is_ipaddrv6($subnetv6)) {
-			$radvdconf .= "# Generated for DHCP-PD delegation $if\n";
+			$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
 			$radvdconf .= "interface {$realif} {\n";
 				$radvdconf .= "\tAdvSendAdvert on;\n";
 				$radvdconf .= "\tMinRtrAdvInterval 3;\n";

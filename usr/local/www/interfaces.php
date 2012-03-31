@@ -223,6 +223,11 @@ switch($wancfg['ipaddrv6']) {
 	case "6to4":
 		$pconfig['type6'] = "6to4";
 		break;
+	case "track6":
+		$pconfig['type6'] = "track6";
+		$pconfig['track6-interface'] = $wancfg['track6-interface'];
+		$pconfig['track6-prefix-id'] = $wancfg['track6-prefix-id'];
+		break;
 	case "6rd":
 		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
 		if($wancfg['prefix-6rd-v4plen'] == "")
@@ -237,8 +242,6 @@ switch($wancfg['ipaddrv6']) {
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
-			$pconfig['dhcp6-pd-sla-id'] = $wancfg['dhcp6-pd-sla-id'];
-			$pconfig['prefix-6rd-id'] = $wancfg['prefix-6rd-id'];
 		} else
 			$pconfig['type6'] = "none";
 		break;
@@ -507,6 +510,11 @@ if ($_POST['apply']) {
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
+		case "track6":
+			/* needs to check if $track6-prefix-id is used on another interface */
+			if (in_array($wancfg['ipaddrv6'], array()))
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+			break;
 	}
 
 	
@@ -644,13 +652,13 @@ if ($_POST['apply']) {
 		unset($wancfg['subnetv6']);
 		unset($wancfg['gatewayv6']);
 		unset($wancfg['dhcphostname']);
-		unset($wancfg['dhcp6-pd-sla-id']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
+		unset($wancfg['track6-interface']);
+		unset($wancfg['track6-prefix-id']);		
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
-		unset($wancfg['prefix-6rd-id']);
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -676,21 +684,31 @@ if ($_POST['apply']) {
 		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
 		 * log messages from appearing. They can also manually add these items */
 		/* 1st added gateway gets a default bit */
-		/* FIXME: Add address family check here! */
+		/* FIXME: Add address family check here! IPv6 needs a gateway bit too */
 		if(!empty($a_gateways)) {
 			$gateway_item = array();
 			/* check for duplicates */
 			$skip = false;
 			foreach($a_gateways as $item) {
-				if(($item['interface'] == "$if") && (preg_match("/dynamic/", $item['gateway']))) {
-					$skip = true;
+				if(($item['interface'] == "$if") && (trim($item['gateway']) == "dynamic")) {
+					$skip4 = true;
+				}
+				if(($item['interface'] == "$if") && (trim($item['gateway']) == "dynamic6")) {
+					$skip6 = true;
 				}
 			}
-			if($skip == false) {
+			if($skip4 == false) {
 				$gateway_item['gateway'] = "dynamic";
-				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic gateway"),$if);
+				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic IPv4 gateway"),$if);
 				$gateway_item['name'] = "GW_" . strtoupper($if);
 				$gateway_item['interface'] = "{$if}";
+				$gateway_item['family'] = "inet";
+			} elseif($skip6 == false) {
+				$gateway_item['gateway'] = "dynamic6";
+				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic IPv6 gateway"),$if);
+				$gateway_item['name'] = "GW_" . strtoupper($if) ."_v6";
+				$gateway_item['interface'] = "{$if}";
+				$gateway_item['family'] = "inet6";
 			} else {
 				unset($gateway_item);
 			}
@@ -801,8 +819,6 @@ if ($_POST['apply']) {
 			case "staticv6":
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
-				$wancfg['dhcp6-pd-sla-id'] = $_POST['dhcp6-pd-sla-id'];
-				$wancfg['prefix-6rd-id'] = $_POST['prefix-6rd-id'];
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -826,6 +842,11 @@ if ($_POST['apply']) {
 				break;
 			case "6to4":
 				$wancfg['ipaddrv6'] = "6to4";
+				break;
+			case "track6":
+				$wancfg['ipaddrv6'] = "track6";
+				$wancfg['track6-interface'] = $_POST['track6-interface'];
+				$wancfg['track6-prefix-id'] = $_POST['track6-prefix-id'];
 				break;
 			case "none":
 				break;
@@ -1079,7 +1100,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6rd"), "6to4" => gettext("6to4"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6rd"), "6to4" => gettext("6to4"), "track6" => gettext("Track Interface"));
 
 ?>
 
@@ -1126,23 +1147,27 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #6rd, #6to4').hide();
+				jQuery('#staticv6, #dhcp6, #6rd, #6to4, #track6').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #6rd, #6to4').hide();
+				jQuery('#none, #dhcp6, #6rd, #6to4, #track6').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #6rd, #6to4').hide();
+				jQuery('#none, #staticv6, #6rd, #6to4, #track6').hide();
 				break;
 			}
 			case "6rd": {
-				jQuery('#none, #dhcp6, #staticv6, #6to4').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6to4, #track6').hide();
 				break;
 			}
 			case "6to4": {
-				jQuery('#none, #dhcp6, #staticv6, #6rd').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6rd, #track6').hide();
+				break;
+			}
+			case "track6": {
+				jQuery('#none, #dhcp6, #staticv6, #6rd, #6to4').hide();
 				break;
 			}
 		}
@@ -1621,63 +1646,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 										</td>
 									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation ID"); ?></td>
-										<td width="78%" class="vtable">
-											<select name="dhcp6-pd-sla-id" class="formselect" id="dhcp6-pd-sla-id">
-												<?php
-												// Needs to check if the ID is not used on another interface
-												foreach($ifdescrs as $pdif => $pddescr) {
-													if(is_numeric($config['interfaces'][$pdif]['dhcp6-ia-pd-len'])) {
-														$pdlen = $config['interfaces'][$pdif]['dhcp6-ia-pd-len'];
-														continue;
-													}
-												}
-												
-												if($pconfig['dhcp6-pd-sla-id'] == "none")
-													$selected = "selected";
-												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
-												$numbers = pow(2, $pdlen);
-												for($i = 0;$i < $numbers; $i++) {
-													echo "<option value=\"{$i}\" ";
-													if ("$i" == $pconfig['dhcp6-pd-sla-id']) {
-														echo "selected";
-													}
-													echo ">" . dechex($i) . "</option>";
-												}
-												?> 
-											</select>
-											<?=gettext("This ID sets the delegated DHCP-PD prefix number which will be used to setup the interface.");?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Rapid Deployment network ID"); ?></td>
-										<td width="78%" class="vtable">
-											<select name="prefix-6rd-id" class="formselect" id="prefix-6rd-id">
-												<?php
-												// Needs to check if the ID is not used on another interface
-												foreach($ifdescrs as $rdif => $rddescr) {
-													if(is_numeric($config['interfaces'][$rdif]['prefix-6rd-v4plen'])) {
-														$rdlen = $config['interfaces'][$rdif]['prefix-6rd-v4plen'];
-														continue;
-													}
-												}
-												if($pconfig['prefix-6rd-id'] == "none")
-													$selected = "selected";
-												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
-												$numbers = pow(2, $rdlen);
-												for($i = 0;$i < $numbers; $i++) {
-													echo "<option value=\"{$i}\" ";
-													if ("$i" == $pconfig['prefix-6rd-id']) {
-														echo "selected";
-													}
-													echo ">" . dechex($i) . "</option>";
-												}
-												?> 
-											</select>
-											<?=gettext("This ID sets the 6RD network prefix which will be used to setup the interface.");?>
-										</td>
-									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1736,6 +1704,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP6 client configuration"); ?></td>
 									</tr>
+									<!--- Leave commented out for now
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Unique Identifier (DUID)"); ?></td>
 										<td width="78%" class="vtable">
@@ -1751,6 +1720,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											
 										</td>
 									</tr>
+									-->
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation size"); ?></td>
 										<td width="78%" class="vtable">
@@ -1808,6 +1778,91 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</select>
 											<br>
 											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
+										</td>
+									</tr>
+									
+								</table>
+							</td>
+						</tr>
+						<tr style="display:none;" name="track6" id="track6">
+							<td colspan="2" style="padding: 0px;">
+								<table width="100%" border="0" cellpadding="6" cellspacing="0">
+									<tr>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("Track IPv6 Interface"); ?></td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Interface"); ?></td>
+										<td width="78%" class="vtable">
+										<select name='track6-interface' class='formselect' >
+										<?php 
+											$interfaces = get_configured_interface_with_descr(false, true);
+											$dynv6ifs = array();
+											foreach ($interfaces as $iface => $ifacename) {
+												switch($config['interfaces'][$iface]['ipaddrv6']) {
+													case "6to4":
+													case "6rd":
+													case "dhcp6":
+														$dynv6ifs[$iface] = $ifacename;
+														break;
+													default:
+														continue;
+												}
+											}
+											foreach($dynv6ifs as $iface => $ifacename) {
+												echo "<option value=\"{$iface}\"";
+												if ($iface == $pconfig['track6-interface'])
+													echo " selected";
+												echo ">" . htmlspecialchars($ifacename) . "</option>";
+											}
+										  ?>
+										</select> <br>
+											<br>
+											<?=gettext("This selects the dynamic IPv6 WAN interface to track for configuration") ?><br />
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Prefix ID"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="track6-prefix-id" class="formselect" id="track6-prefix-id">
+												<?php
+												/* DHCP-PD is variable, calculate from the prefix-len on the WAN interface */
+												/* 6rd is variable, calculate from 64 - (v6 prefixlen - (32 - v4 prefixlen)) */
+												/* 6to4 is 16 bits, e.g. 65535 */
+												
+												switch($config['interfaces'][$pconfig['track6-interface']]['ipaddrv6']) {
+													case "6to4":
+														$pdlen = 16;
+														break;
+													case "6rd":
+														$rd6cfg = $config['interfaces'][$pconfig['track6-interface']];
+														$rd6plen = explode("/", $rd6cfg['prefix-6rd']);
+														$pdlen = (64 - ($rd6plen[1] + (32 - $rd6cfg['prefix-6rd-v4plen'])));
+														break;
+													case "dhcp6":
+														$dhcp6cfg = $config['interfaces'][$pconfig['track6-interface']];
+														$pdlen = $dhcp6cfg['dhcp6-ia-pd-len'];
+														break;
+													default:
+														$pdlen = 0;
+														break;
+												}
+												print_r($pconfig['track6-interface']);
+												if($pconfig['track6-prefix-id'] == "none")
+													$selected = "selected";
+												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
+												$numbers = pow(2, $pdlen);
+												for($i = 0;$i < $numbers; $i++) {
+													echo "<option value=\"{$i}\" ";
+													if ("$i" == $pconfig['track6-prefix-id']) {
+														echo "selected";
+													}
+													echo ">" . dechex($i) . "</option>\n";
+												}
+												?> 
+											</select>
+											<?=gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+										</td>
+									</tr>
 										</td>
 									</tr>
 									

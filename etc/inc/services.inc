@@ -89,12 +89,16 @@ function services_radvd_configure() {
 			continue;
 			
 		$realif = get_real_interface($dhcpv6if);
-		$radvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
+
+		$radvdifs[] = $realif;
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
@@ -175,12 +179,15 @@ function services_radvd_configure() {
 		if(in_array($realif, $radvdifs))
 			continue;
 
-		$radvdifs[] = $realif;
-
 		$ifcfgipv6 = get_interface_ipv6($if);
+		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+
 		$ifcfgsnv6 = get_interface_subnetv6($if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
+		$radvdifs[] = $realif;
+
 		$autotype = "DHCP-PD";
 		/* 6rd on this interface? */
 		if(is_numeric($config['interfaces'][$if]['prefix-6rd-id'])) {

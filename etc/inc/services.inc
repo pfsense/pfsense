@@ -84,10 +84,13 @@ function services_radvd_configure() {
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
+			continue;
+			
 		/* are router advertisements enabled? */
 		if($dhcpv6ifconf['mode'] == "disabled")
 			continue;
-			
+
 		$realif = get_real_interface($dhcpv6if);
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
@@ -172,6 +175,9 @@ function services_radvd_configure() {
 	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
 	foreach ($Iflist as $if => $ifdescr) {
 		if((!is_numeric($config['interfaces'][$if]['dhcp6-pd-sla-id'])) && (!is_numeric($config['interfaces'][$if]['prefix-6rd-id'])))
+			continue;
+
+		if(!isset($config['interfaces'][$if]['enable']))
 			continue;
 			
 		$realif = get_real_interface($if);

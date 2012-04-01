@@ -2981,19 +2981,22 @@ function interface_track6_configure($interface = "lan") {
 	}
 	log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$config['interfaces'][$wancfg['track6-interface']]['ipaddrv6']}");
 
-	
-	switch($config['interfaces'][$wancfg['track6-interface']]['ipaddrv6']) {
+	$type = $config['interfaces'][$wancfg['track6-interface']]['ipaddrv6'];
+	switch($type) {
 		case "6to4":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 			interface_track6_6to4_configure($interface);
 			break;
 		case "6rd":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 			interface_track6_6rd_configure($interface);
 			break;
 		case "dhcp6":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 			interface_track6_dhcp6_configure($interface);
 			break;
 		default:
-			log_error("Interface {$interface} configured via {$wancfg['track6-interface']} but unknown type {$config['interfaces'][$wancfg['track6-interface']]['ipaddrv6']}");
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']} but unknown type {$type}");
 			break;
 	}
 	return 0;
@@ -3169,6 +3172,12 @@ function interface_6rd_configure($interface = "wan") {
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$rd6brgw}\n");
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
 	
 	return 0;
 }
@@ -3256,6 +3265,12 @@ function interface_6to4_configure($interface = "wan"){
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$stfbrgw}");
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
 	
 	return 0;
 }
@@ -3340,6 +3355,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 				if(is_ipaddrv6($parts[3])) {
 					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
 					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
+					file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$parts[3]}\n");
 				}
 			}
 		}
@@ -3347,6 +3363,13 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* sleep a few seconds before returning to give the client some time
 	 * to configure a lan interface with a prefix */
 	sleep(5);
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
+
 	return 0;
 }
 

@@ -1275,7 +1275,9 @@ function services_dyndns_configure_client($conf) {
 		$dnsServer = NULL,
 		$dnsPort = NULL,
 		$dnsUpdateURL = NULL,
-		$forceUpdate = $conf['force']);
+		$forceUpdate = $conf['force'],
+                $dnsZoneID=$conf['zoneid'],
+                $dnsTTL=$conf['ttl']);
 }
 
 function services_dyndns_configure($int = "") {

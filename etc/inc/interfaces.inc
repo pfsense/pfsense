@@ -4315,16 +4315,19 @@ function interface_has_gatewayv6($friendly) {
 		switch ($ifname['ipaddrv6']) {
 			case "dhcp6":
 				return true;
-			break;
+				break;
+			case "6to4":
+				return true;
+				break;
 			case "6rd":
 				return true;
-			break;
+				break;
 			default:
 				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
 					return true;
 				if (!empty($ifname['gatewayv6']))
 					return true;
-			break;
+				break;
 		}
 	}
 

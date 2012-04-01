@@ -3151,23 +3151,39 @@ function interface_6rd_configure($interface = "wan") {
 	
 	/* binary presentation of the prefix for all 128 bits. */
 	$rd6prefixbin = convert_ipv6_to_128bit($rd6prefix);
-	
+		
+	/* just save the left prefix length bits */
+	$rd6brprefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$rd6brprefixbin .= substr(sprintf("%032b", hexdec($hexbrv4)), $wancfg['prefix-6rd-v4plen'], 32);
+	/* fill out the rest with 0's */
+	$rd6brprefixbin = str_pad($rd6brprefixbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6brgw = convert_128bit_to_ipv6($rd6brprefixbin);
+
 	/* just save the left prefix length bits */
 	$rd6prefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
 	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
-	$rd6prefixbin .= substr(sprintf("%032b", hexdec($hexbrv4)), $wancfg['prefix-6rd-v4plen'], 32);
+	$rd6prefixbin .= substr(sprintf("%032b", hexdec($hexwanv4)), $wancfg['prefix-6rd-v4plen'], 32);
 	/* fill out the rest with 0's */
 	$rd6prefixbin = str_pad($rd6prefixbin, 128, "0", STR_PAD_RIGHT);;
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
-	$rd6brgw = convert_128bit_to_ipv6($rd6prefixbin);
+	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
 	/* setup the stf interface */
+	/* use the srd device
 	mwexec("/sbin/ifconfig srd0 destroy");
 	mwexec("/sbin/ifconfig srd0 create");
 	mwexec("/sbin/ifconfig srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
-
 	log_error("Created 6rd interface srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
+	*/
+	/* stf approach only works when embedding the entire 32 bits of the v4 */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6prefix}/{$rd6prefixlen}");
+	log_error("Created 6rd interface stf0 {$rd6prefix}/{$rd6prefixlen}");
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");

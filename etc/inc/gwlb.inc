@@ -423,7 +423,6 @@ function return_gateways_array($disabled = false) {
 		if(!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
 			continue;
 
-		echo "process if $ifname for v6 gateway\n";
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet6";

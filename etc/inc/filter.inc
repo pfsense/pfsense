@@ -2522,8 +2522,10 @@ EOD;
 # allow access to DHCPv6 server on {$oc['descr']}
 anchor "dhcpv6server{$oc['descr']}"
 # We need inet6 icmp for stateless autoconfig and dhcpv6
-pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
-pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
+pass log on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 label "allow access to DHCPv6 server"
+pass log on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
+pass log on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
+pass log on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 label "allow access to DHCPv6 server"
 pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
 pass out on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
 

@@ -3350,7 +3350,7 @@ function interface_dhcpv6_configure($interface = "wan") {
  	$dhcp6cconf .= "interface {$wanif} {\n";
 	$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
 	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
-		$dhcp6cconf .= " 	send ia-pd 0;	# request prefix delegation\n";
+		$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
 	}
 	$dhcp6cconf .= "request domain-name-servers;\n";
 	$dhcp6cconf .= "request domain-name;\n";
@@ -3360,9 +3360,9 @@ function interface_dhcpv6_configure($interface = "wan") {
 	$dhcp6cconf .= "id-assoc na 0 { };\n";
 	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 		/* Setup the prefix delegation */
-		$dhcp6cconf .= "	id-assoc pd 0 {\n";
-		foreach($iflist as $friendly) {
-			if($config['interfaces'][$friendly]['xtrack6-interface'] != $interface)
+		$dhcp6cconf .= "id-assoc pd 0 {\n";
+		foreach($iflist as $friendly => $ifdescr) {
+			if($config['interfaces'][$friendly]['track6-interface'] != $interface)
 				continue;
 			if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
 				log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");

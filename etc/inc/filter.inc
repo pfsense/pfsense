@@ -2289,11 +2289,11 @@ block out $log inet6 all label "Default deny rule IPv6"
 pass quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} keep state
 
 # Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
 
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any

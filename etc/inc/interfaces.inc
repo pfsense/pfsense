@@ -3361,12 +3361,14 @@ function interface_dhcpv6_configure($interface = "wan") {
 	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 		/* Setup the prefix delegation */
 		$dhcp6cconf .= "	id-assoc pd 0 {\n";
-		foreach($iflist as $friendly => $pdinterface) {
-			// log_error("setting up $friendly - $pdinterface - {$pdinterface['dhcp6-pd-sla-id']}");
-			if(is_numeric($config['interfaces'][$friendly]['dhcp6-pd-sla-id'])) {
+		foreach($iflist as $friendly) {
+			if($config['interfaces'][$friendly]['xtrack6-interface'] != $interface)
+				continue;
+			if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
+				log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");
 				$realif = get_real_interface($friendly);
 				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-				$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['dhcp6-pd-sla-id']};\n";
+				$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['track6-prefix-id']};\n";
 				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
 				$dhcp6cconf .= "	};\n";
 			}

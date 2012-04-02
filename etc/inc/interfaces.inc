@@ -1655,10 +1655,18 @@ EOD;
 		
 EOD;
 			
+			if (isset($ppp['enable-passive'])) {
+				$mpdconf .= <<<EOD
+			
+	set link enable passive
+				
+EOD;
+			}
+			
 			if (isset($ppp['shortseq'])) {
 				$mpdconf .= <<<EOD
 			
-	set link no shortseq;
+	set link no shortseq
 				
 EOD;
 			}

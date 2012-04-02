@@ -880,6 +880,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
                 		<td valign="top" class="vncell"><?= gettext("Passive Mode"); ?></td>
                 		<td class="vtable">
                 			<input type="checkbox" value="on" id="enable_passive" name="enable-passive" <?php if (isset($pconfig['enable-passive'])) echo "checked"; ?>> <?= gettext("Enable passive mode"); ?> 
+                  		<br/> <span class="vexpl"><?= gettext("Enables passive mode for this link. This is useful on some full time connections. See RFC 1661 for more information about this option."); ?> </span>
                   		</td>
                 	</tr>
     				

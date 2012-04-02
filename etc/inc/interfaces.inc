@@ -1113,7 +1113,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
 			mwexec("/bin/kill {$pidv6}");
-		sleep(1);
+		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -2682,9 +2682,9 @@ function find_dhclient_process($interface) {
 
 function find_dhcp6c_process($interface) {
 	if ($interface)
-		$pid = `/bin/ps auxw|grep "dhcp6c" |grep "{$interface}"|awk '{print $2}'`;
+		$pid = `/bin/ps auxw|grep "[d]hcp6c" |grep "{$interface}"|awk '{print $2}'`;
 	else
-		$pid = 0;
+		return(false);
 
 	return intval($pid);
 }
@@ -2979,7 +2979,6 @@ function interface_track6_configure($interface = "lan") {
 	if(!$wancfg['track6-interface'] <> "") {
 		return(false);
 	}
-	log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$config['interfaces'][$wancfg['track6-interface']]['ipaddrv6']}");
 
 	$type = $config['interfaces'][$wancfg['track6-interface']]['ipaddrv6'];
 	switch($type) {

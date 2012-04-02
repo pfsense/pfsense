@@ -3117,6 +3117,44 @@ function interface_track6_6to4_configure($interface = "lan") {
 	return 0;
 }
 
+function interface_track6_dhcp6_configure($interface = "lan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$lancfg = $config['interfaces'][$interface];
+	$lanif = $lancfg['if'];
+	if (empty($lancfg))
+		$lancfg = array();
+
+	$lanif = get_real_interface($interface);
+	
+	/* If the interface is not configured via another, exit */
+	if(!$lancfg['track6-interface'] <> "") {
+		return(false);
+	}
+	if(!is_numeric($lancfg['track6-prefix-id']))
+		$lancfg['track6-prefix-id'] = 0;
+	
+	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+	
+	
+	$ifcfgipv6 = find_interface_ipv6($lanif);
+	if(is_ipaddrv6($ifcfgipv6)) {
+		$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
+		unset($dhcp6lanarr[4]);
+		unset($dhcp6lanarr[5]);
+		unset($dhcp6lanarr[6]);
+		$dhcp6lanarr[7] = 1;
+		$dhcp6lan =  Net_IPv6::uncompress(implode(":", $dhcp6lanarr));
+		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
+	}
+	return 0;
+}
+
 function interface_6rd_configure($interface = "wan") {
 	global $config, $g;
 	$iflist = get_configured_interface_with_descr(false, true);

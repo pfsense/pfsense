@@ -193,7 +193,6 @@ $wkports = array(
 	110 => "POP3",
 	995 => "POP3/S",
 	1723 => "PPTP",	
-	1723 => "PPTP-Client",
 	1812 => "RADIUS",
 	1813 => "RADIUS accounting",
 	5004 => "RTP",
@@ -212,7 +211,7 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 
-$specialnets = array("pptp" => "PPTP clients", "pptp-client" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 
 $spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -915,7 +914,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		}
 
 		if ($tab_array_char_limit == '') {
-			$tab_array_char_limit = 92;
+			$tab_array_char_limit = 82;
 		}
 
         $tab_temp = array ();

@@ -167,14 +167,6 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 		$pconfig['pptp_remote'] = explode(",",$a_ppps[$pppid]['gateway']);
 		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
-	} else if ($a_ppps[$pppid]['type'] == "pptp-client"){
-		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
-		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
-		$pconfig['pptp_local'] = explode(",",$a_ppps[$pppid]['localip']);
-		$pconfig['pptp_subnet'] = explode(",",$a_ppps[$pppid]['subnet']);
-		$pconfig['pptp_remote'] = explode(",",$a_ppps[$pppid]['gateway']);
-		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
-		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 	}
 } else {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
@@ -205,7 +197,6 @@ switch($wancfg['ipaddr']) {
 		break;
 	case "pppoe":
 	case "pptp":
-	case "pptp-client":
 	case "l2tp":
 	case "ppp":
 		$pconfig['type'] = $wancfg['ipaddr'];
@@ -426,16 +417,6 @@ if ($_POST['apply']) {
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
-		case "pptp-client":
-			if ($_POST['pptp_dialondemand']) {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
-				$reqdfieldsn = array(gettext("PPTP-Client username"),gettext("PPTP-Client password"),gettext("PPTP-Client local IP address"),gettext("PPTP-Client subnet"),gettext("PPTP-Client remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
-			} else {
-				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
-				$reqdfieldsn = array(gettext("PPTP-Client username"),gettext("PPTP-Client password"),gettext("PPTP-Client local IP address"),gettext("PPTP-Client subnet"),gettext("PPTP-Client remote IP address"));
-			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-			break;
 		case "l2tp":
 			if ($_POST['pptp_dialondemand']) {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote pptp_dialondemand pptp_idletimeout");
@@ -545,7 +526,7 @@ if ($_POST['apply']) {
 	}
 	if (!$input_errors) {
 		if ($wancfg['ipaddr'] != $_POST['type']) {
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "pptp-client", "l2tp"))) {
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
 				unset($a_ppps[$pppid]);
 			} else if ($wancfg['ipaddr'] == "dhcp") {
@@ -645,7 +626,7 @@ if ($_POST['apply']) {
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
 				unset($a_ppps[$pppid]['ondemand']);
-				//unset($a_ppps[$pppid]['idletimeout']);
+				unset($a_ppps[$pppid]['idletimeout']);
 				break;
 
 			case "pppoe":
@@ -661,12 +642,12 @@ if ($_POST['apply']) {
 				if (!empty($_POST['provider']))
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				else
-					$a_ppps[$pppid]['provider'] = true;
+					unset($a_ppps[$pppid]['provider']);
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
-				//else
-				//	unset($a_ppps[$pppid]['idletimeout']);
+				else
+					unset($a_ppps[$pppid]['idletimeout']);
 
 				if (!empty($_POST['pppoe-reset-type']))
 					$a_ppps[$pppid]['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
@@ -694,34 +675,10 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
 				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
 				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-				if (!empty($_POST['idletimeout']))
+				if (!empty($_POST['pptp_idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
-				//else
-					//unset($a_ppps[$pppid]['idletimeout']);
-				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
-				$wancfg['ipaddr'] = $_POST['type'];
-				if($gateway_item) {
-					$a_gateways[] = $gateway_item;
-				}
-				break;
-			case "pptp-client":
-				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
-				$a_ppps[$pppid]['type'] = $_POST['type'];
-				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
-				if (isset($_POST['ppp_port']))
-					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
 				else
-					$a_ppps[$pppid]['ports'] = $wancfg['if'];
-				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
-				$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
-				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
-				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
-				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-				if (!empty($_POST['idletimeout']))
-					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
-				//else
-				//	unset($a_ppps[$pppid]['idletimeout']);
+					unset($a_ppps[$pppid]['idletimeout']);
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
 				if($gateway_item) {
@@ -969,7 +926,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "pptp-client" => gettext("PPTP-Client"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
+$types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
 
 ?>
 
@@ -982,35 +939,34 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 	function updateType(t) {
 		switch(t) {
 			case "none": {
-				$('static','dhcp','pppoe','pptp','pptp-client', 'ppp').invoke('hide');
+				$('static','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "static": {
-				$('none','dhcp','pppoe','pptp','pptp-client', 'ppp').invoke('hide');
+				$('none','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "dhcp": {
-				$('none','static','pppoe','pptp','pptp-client', 'ppp').invoke('hide');
+				$('none','static','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "ppp": {
-				$('none','static','dhcp','pptp','pptp-client', 'pppoe').invoke('hide');
+				$('none','static','dhcp','pptp', 'pppoe').invoke('hide');
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				$('none','static','dhcp','pptp','pptp-client', 'ppp').invoke('hide');
+				$('none','static','dhcp','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "l2tp":
-			case "pptp-client":
 			case "pptp": {
 				$('none','static','dhcp','pppoe', 'ppp').invoke('hide');
 				$('pptp').show();
 				break;
 			}
 		}
-		if (t != "l2tp" && t != "pptp" && t != "pptp-client")
+		if (t != "l2tp" && t != "pptp")
 			$(t).show();
 	}
 
@@ -1236,8 +1192,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
 							else echo '>';
 								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
-								print "<option value=\"\">Default (no preference, typically autoselect)</option>";
-								print "<option value=\"\">------- Media Supported by this interface -------</option>";
+								print "<option value=\"\">Default</option>";
 								foreach($mediaopts_list as $mediaopt){
 									if ($mediaopt != rtrim($mediaopt_from_config)){
 										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";
@@ -1246,7 +1201,7 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 									}
 								}
 								echo '</select><br>';
-								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.");
+								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autonegotiate unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
 						echo '</tr>';
@@ -1675,75 +1630,6 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here");?></a>
 											<?=gettext("for advanced PPTP and L2TP configuration options");?>.
-											</td>
-										<?php endif; ?>
-									</tr>
-								</table>
-							</td>
-						</tr>
-						
-						<tr style="display:none;" name="pptp-client" id="pptp-client">
-							<td colspan="2" style="padding:0px;">
-								<table width="100%" border="0" cellpadding="6" cellspacing="0">
-									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPTP Client configuration"); ?></td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Local IP address"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>">
-											/
-											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
-												<?php for ($i = 31; $i > 0; $i--): ?>
-													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected"; ?>>
-														<?=$i;?></option>
-												<?php endfor; ?>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Remote IP address"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>">
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
-											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
-											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
-										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
-										</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
-										<?php if (isset($pconfig['pppid'])): ?>
-											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here");?></a>
-											<?=gettext("for additional PPTP Client configuration options. Save first if you made changes.");?>
-											</td>
-										<?php else: ?>
-											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here");?></a>
-											<?=gettext("for advanced PPTP Client configuration options");?>.
 											</td>
 										<?php endif; ?>
 									</tr>

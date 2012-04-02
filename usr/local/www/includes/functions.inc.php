@@ -156,7 +156,8 @@ function get_temp() {
 	return $ret;
 }
 
-function disk_usage() {
+function disk_usage()
+{
 	$dfout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
@@ -164,7 +165,8 @@ function disk_usage() {
 	return $diskusage;
 }
 
-function swap_usage() {
+function swap_usage()
+{
 	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/awk '{print $5;'}|/usr/bin/grep '%'`;
 	$swapUsage = ereg_replace('%', "", $swapUsage);
 	$swapUsage = rtrim($swapUsage);

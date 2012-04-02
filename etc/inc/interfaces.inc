@@ -149,7 +149,6 @@ function interface_netgraph_needed($interface = "wan") {
 			case "ppp":
 			case "pppoe":
 			case "l2tp":
-			case "pptp-client":
 			case "pptp":
 				$found = true;
 				break;
@@ -457,7 +456,7 @@ function interface_bridge_configure(&$bridge) {
 		$realif = get_real_interface($member);
 		$opts = pfSense_get_interface_addresses($realif);
 		$mtu = $opts['mtu'];
-		if (substr($realif, 0, 3) == "gif" && $mtu <= 1500)
+		if (substr($realif, 0, 3) == "gif" && $mtu < 1500)
 			continue;
 		if (!isset($opts['encaps']['txcsum']))
 			$commontx = false;
@@ -624,7 +623,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	$mtu = get_interface_mtu($brigeif);
 	$mtum = get_interface_mtu($interface);
 	
-	if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500))
+	if ($mtu != $mtum)
 		pfSense_interface_mtu($interface, $mtu);
 
 	$options = pfSense_get_interface_addresses($bridgeif);
@@ -1019,7 +1018,6 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	case "ppp":
 	case "pppoe":
 	case "pptp":
-	case "pptp-client":
 	case "l2tp":
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
@@ -1277,7 +1275,6 @@ function interface_ppps_configure($interface) {
 				pfSense_ngctl_attach(".", $port);
 				break;
 			case "pptp":
-			case "pptp-client":
 			case "l2tp":
 				/* configure interface */
 				if(is_ipaddr($localips[$pid])){
@@ -1364,7 +1361,7 @@ function interface_ppps_configure($interface) {
 
 	if (isset($ppp['mrru']))
 		$mrrus = explode(',',$ppp['mrru']);
-		
+
 //##########################################
 
 	if (isset($ppp['ondemand']))
@@ -1419,8 +1416,8 @@ function interface_ppps_configure($interface) {
 	###############################################################################################################################################
 	###############################################################################################################################################
 	###############################################################################################################################################
-	
-	if ($ppp['type'] == 'pptp-client') {	
+
+	if ($ppp['type'] == 'pptp') {	
 
 		foreach($ports as $pid => $port){
 			$port = get_real_interface($port);
@@ -1823,8 +1820,8 @@ EOD;
 ##################################################################################################################
 
 	} else {
-			// Construct the mpd.conf file
-			$mpdconf = <<<EOD
+	// Construct the mpd.conf file
+	$mpdconf = <<<EOD
 startup:
 	# configure the console
 	set console close
@@ -1832,90 +1829,80 @@ startup:
 	set web close
 
 default:
-
 {$ppp['type']}client:
-
 	create bundle static {$interface}
 	set iface name {$pppif}
 
 EOD;
-			$setdefaultgw = false;
-			$founddefaultgw = false;
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach($config['gateways']['gateway_item'] as $gateway) {
-					if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
-						$setdefaultgw = true;
-						break;
-					} else if (isset($gateway['defaultgw']) && !empty($gateway['interface'])) {
-						$founddefaultgw = true;
-						break;
-					}
-				}
-			}
-			
-			if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true) {
+	$setdefaultgw = false;
+	$founddefaultgw = false;
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
 				$setdefaultgw = true;
-				$mpdconf .= <<<EOD
+				break;
+			} else if (isset($gateway['defaultgw']) && !empty($gateway['interface'])) {
+				$founddefaultgw = true;
+				break;
+			}
+		}
+	}
+	
+	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true){
+		$setdefaultgw = true;
+		$mpdconf .= <<<EOD
 	set iface route default
 
 EOD;
-			}
-			
-			$mpdconf .= <<<EOD
+	}
+	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$ppp['idletimeout']}
 
 EOD;
-			
-			if (isset($ppp['ondemand'])) {
-				$mpdconf .= <<<EOD
+
+	if (isset($ppp['ondemand']))
+		$mpdconf .= <<<EOD
 	set iface addrs 10.10.1.1 10.10.1.2
 
 EOD;
-			}
-			
-			if (isset($ppp['tcpmssfix'])) {
-				$tcpmss = "disable";
-			} else {
-				$tcpmss = "enable";
-				$mpdconf .= <<<EOD
+	
+	if (isset($ppp['tcpmssfix']))
+		$tcpmss = "disable";
+	else
+		$tcpmss = "enable";
+		$mpdconf .= <<<EOD
 	set iface {$tcpmss} tcpmssfix
 
 EOD;
-			}
-			
-			$mpdconf .= <<<EOD
+
+	$mpdconf .= <<<EOD
 	set iface up-script /usr/local/sbin/ppp-linkup
 	set iface down-script /usr/local/sbin/ppp-linkdown
 	set ipcp ranges {$ranges}
 
 EOD;
-			if (isset($ppp['vjcomp'])) {
-				$mpdconf .= <<<EOD
+	if (isset($ppp['vjcomp']))
+		$mpdconf .= <<<EOD
 	set ipcp no vjcomp
 
 EOD;
-			}
-			
-			if (isset($config['system']['dnsallowoverride'])) {
-				$mpdconf .= <<<EOD
+
+	if (isset($config['system']['dnsallowoverride']))
+		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
 	set ipcp enable req-sec-dns
 
 EOD;
-			}
-			
-			if (!isset($ppp['verbose_log'])) {
-				$mpdconf .= <<<EOD
+	if (!isset($ppp['verbose_log']))
+		$mpdconf .= <<<EOD
 	#log -bund -ccp -chat -iface -ipcp -lcp -link
-		
+
 EOD;
-			}
-			
-			foreach($ports as $pid => $port){
-				$port = get_real_interface($port);
-				$mpdconf .= <<<EOD
-		
+	foreach($ports as $pid => $port){
+		$port = get_real_interface($port);
+		$mpdconf .= <<<EOD
+
 	create link static {$interface}_link{$pid} {$type}
 	set link action bundle {$interface}
 	set link {$multilink} multilink
@@ -1923,64 +1910,64 @@ EOD;
 	set link max-redial 0
 
 EOD;
-			if (isset($ppp['shortseq']))
-				$mpdconf .= <<<EOD
+		if (isset($ppp['shortseq']))
+			$mpdconf .= <<<EOD
 	set link no shortseq
 
 EOD;
-		
-			if (isset($ppp['acfcomp']))
-				$mpdconf .= <<<EOD
+
+		if (isset($ppp['acfcomp']))
+			$mpdconf .= <<<EOD
 	set link no acfcomp
 
 EOD;
-		
-			if (isset($ppp['protocomp']))
-					$mpdconf .= <<<EOD
+
+		if (isset($ppp['protocomp']))
+			$mpdconf .= <<<EOD
 	set link no protocomp
 
 EOD;
-		
-			$mpdconf .= <<<EOD
+
+		$mpdconf .= <<<EOD
 	set link disable chap pap
 	set link accept chap pap eap
 	set link disable incoming
 
 EOD;
-			
-			
-			if (!empty($bandwidths[$pid]))
-				$mpdconf .= <<<EOD
+
+
+		if (!empty($bandwidths[$pid]))
+			$mpdconf .= <<<EOD
 	set link bandwidth {$bandwidths[$pid]}
 
 EOD;
-			
-			if (empty($mtus[$pid]))
-				$mtus[$pid] = "1492";
-				$mpdconf .= <<<EOD
+
+		if (empty($mtus[$pid]))
+			$mtus[$pid] = "1492";
+			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
 
 EOD;
-		
-			if (!empty($mrus[$pid]))
-				$mpdconf .= <<<EOD
+
+		if (!empty($mrus[$pid]))
+			$mpdconf .= <<<EOD
 	set link mru {$mrus[$pid]}
 
 EOD;
-		
-			if (!empty($mrrus[$pid]))
-				$mpdconf .= <<<EOD
+
+		if (!empty($mrrus[$pid]))
+			$mpdconf .= <<<EOD
 	set link mrru {$mrrus[$pid]}
 
 EOD;
-		
-			$mpdconf .= <<<EOD
+
+		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}
 
 EOD;
-			if ($type == "modem") {
-				$mpdconf .= <<<EOD
+		if ($type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem device {$ppp['ports']}
 	set modem script DialPeer
 	set modem idle-script Ringback
@@ -1989,56 +1976,48 @@ EOD;
 	set modem var \$Telephone "{$ppp['phone']}"
 
 EOD;
-			}
-				
-			if (isset($ppp['connect-timeout']) && $type == "modem") {
-				$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['connect-timeout']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$ConnectTimeout "{$ppp['connect-timeout']}"
 
 EOD;
-			}
-				
-			if (isset($ppp['initstr']) && $type == "modem") {
-				$initstr = base64_decode($ppp['initstr']);
-				$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['initstr']) && $type == "modem") {
+			$initstr = base64_decode($ppp['initstr']);
+			$mpdconf .= <<<EOD
 	set modem var \$InitString "{$initstr}"
 
 EOD;
-			}
-				
-			if (isset($ppp['simpin']) && $type == "modem") {
-				$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['simpin']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$SimPin "{$ppp['simpin']}"
 	set modem var \$PinWait "{$ppp['pin-wait']}"
 
 EOD;
-			}
-				
-			if (isset($ppp['apn']) && $type == "modem") {
-				$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['apn']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$APN "{$ppp['apn']}"
 	set modem var \$APNum "{$ppp['apnum']}"
 
 EOD;
-			}
-				
-			if ($type == "pppoe") {
-				// Send a null service name if none is set.
-				$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
-				$mpdconf .= <<<EOD
-	set pppoe service "{$provider}"
+		}
+		if (isset($ppp['provider']) && $type == "pppoe") {
+			$mpdconf .= <<<EOD
+	set pppoe service "{$ppp['provider']}"
 
 EOD;
-			}
-				
-			if ($type == "pppoe")
-				$mpdconf .= <<<EOD
+		}
+		if ($type == "pppoe")
+			$mpdconf .= <<<EOD
 	set pppoe iface {$port}
 
 EOD;
-		
-			if ($type == "pptp" || $type == "l2tp") {
-				$mpdconf .= <<<EOD
+
+		if ($type == "l2tp") {
+			$mpdconf .= <<<EOD
 	set {$type} self {$localips[$pid]}
 	set {$type} peer {$gateways[$pid]}
 
@@ -2055,6 +2034,7 @@ EOD;
 ###############################################################################################################################################
 ###############################################################################################################################################
 ###############################################################################################################################################
+
 
 	/* Generate mpd.conf. If mpd_[interface].conf exists in the conf path, then link to it instead of generating a fresh conf file. */
 	if (file_exists("{$g['conf_path']}/mpd_{$interface}.conf"))
@@ -2167,17 +2147,6 @@ function interfaces_carp_setup() {
 			$cmdchain->add("Bring up pfsync0 syncdev", "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);			
 	} else
 		$cmdchain->add("Bring up pfsync0", "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
-
-	sleep(1);
-
-	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issuese
-	 * for exiting sessions.
-	 */
-	$i = 0;
-	while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
-		$i++;
-		sleep(1);
-	}
 
 	if($config['virtualip']['vip'])
 		$cmdchain->add("Allow CARP.", "/sbin/sysctl net.inet.carp.allow=1", true);				
@@ -3064,7 +3033,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			case 'pppoe':
 			case 'l2tp':
 			case 'pptp':
-			case 'pptp-client':
 			case 'ppp':
 				break;
 			default:
@@ -3077,12 +3045,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (is_array($wancfg['wireless']))
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
-	$mac = get_interface_mac($realhwif);
-	/*	Don't try to reapply the spoofed MAC if it's already applied.
-		When ifconfig link is used, it cycles the interface down/up, which triggers 
-		the interface config again, which attempts to spoof the MAC again, 
-		which cycles the link again... */
-	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
+	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 
@@ -3098,6 +3061,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
                         }
                 }
 	}  else {
+		$mac = get_interface_mac($realhwif);
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
@@ -3194,7 +3158,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		case 'pppoe':
 		case 'l2tp':
 		case 'pptp':
-		case 'pptp-client':
 		case 'ppp':
 			interface_ppps_configure($interface);
 			break;
@@ -3237,7 +3200,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if (!empty($gif))
                        	array_walk($gif, 'interface_gif_configure');
 
-		if ($linkupevent == false || substr($realif, 0, 4) == "ovpn") {
+		if ($linkupevent == false) {
 			unset($bridgetmp);
 			$bridgetmp = link_interface_to_bridge($interface);
 			if (!empty($bridgetmp))
@@ -3450,9 +3413,6 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 	case "pptp":
 		$ifdesc = "PPTP";
 		break;
-	case "pptp-client":
-		$ifdesc = "pptp-client";
-		break;
 	case "pppoe":
 		$ifdesc = "PPPoE";
 		break;
@@ -3533,7 +3493,6 @@ function get_parent_interface($interface) {
 			case "ppp":
 			case "pppoe":
 			case "pptp":
-			case "pptp-client":
 			case "l2tp":
 				if (empty($parents))
 					if (is_array($config['ppps']['ppp']))
@@ -3603,9 +3562,6 @@ function get_real_interface($interface = "wan") {
 	case "pptp":
 		$wanif = "pptp";
 		break;
-	case "pptp-client":
-		$wanif = "pptp-client";
-		break;
 	case "pppoe":
 		$wanif = "pppoe";
 		break;
@@ -3662,7 +3618,6 @@ function get_real_interface($interface = "wan") {
 				break;
 			case "pppoe": 
 			case "pptp": 
-			case "pptp-client":
 			case "l2tp": 
 			case "ppp":
 				$wanif = $cfg['if'];
@@ -4017,7 +3972,6 @@ function get_interfaces_with_gateway() {
 			case "ppp";
 			case "pppoe":
 			case "pptp":
-			case "pptp-client":
 			case "l2tp":
 			case "ppp";
 				$ints[$ifdescr] = $ifdescr;
@@ -4043,7 +3997,6 @@ function interface_has_gateway($friendly) {
 			case "carpdev-dhcp":
 			case "pppoe":
 			case "pptp":
-			case "pptp-client":
 			case "l2tp":
 			case "ppp";
 				return true;
@@ -4079,15 +4032,13 @@ function is_altq_capable($int) {
 			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
-			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "pptp-client", "ng",
+			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp");
 
         $int_family = preg_split("/[0-9]+/", $int);
 
         if (in_array($int_family[0], $capable))
                 return true;
-	else if (stristr($int, "l2tp")) /* VLANs are name $parent_$vlan now */
-		return true;
 	else if (stristr($int, "vlan")) /* VLANs are name $parent_$vlan now */
 		return true;
 	else if (stristr($int, "_wlan")) /* WLANs are name $parent_$wlan now */

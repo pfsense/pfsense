@@ -638,14 +638,8 @@ function services_dhcpdv6_configure() {
 	}
 
 	/* DHCP enabled on any interfaces? */
-	if (!is_dhcp_server_enabled())
+	if (!is_dhcpv6_server_enabled())
 		return 0;
-
-	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if($config['installedpackages']['olsrd'])
-		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
-				if($olsrd['enable'])
-					$is_olsr_enabled = true;
 
 	if ($g['booting']) {
 		if ($g['platform'] != "pfSense") {
@@ -672,6 +666,57 @@ function services_dhcpdv6_configure() {
 		echo "Starting DHCPv6 service...";
 	else
 		sleep(1);
+
+	/* we add a fake entry for interfaces that are set to track6 another WAN */
+	foreach($Iflist as $ifname) {
+		$realif = get_real_interface($ifname);
+		$ifcfgipv6 = Net_IPv6::getNetmask(find_interface_ipv6($realif), 64);
+		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
+			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
+			$trackcfg = $config['interfaces'][$trackifname];
+			/* determine possible prefix length */
+			switch($trackcfg['ipaddrv6']) {
+				case "6to4":
+					$pdlen = 48;
+					break;
+				case "6rd":
+					$rd6plen = explode("/", $rd6cfg['prefix-6rd']);
+					$pdlen =(64 - ($rd6plen[1] + (32 - $trackcfg['prefix-6rd-v4plen'])));
+					break;
+				case "dhcp6":
+					$pdlen = $trackcfg['dhcp6-ia-pd-len'];
+					break;
+			}
+			$ifcfgipv6arr =explode(":", $ifcfgipv6);
+			$dhcpdv6cfg[$ifname] = array();
+			$dhcpdv6cfg[$ifname]['enable'] = true;
+			/* range */
+			$ifcfgipv6arr[7] = "1000";
+			$dhcpdv6cfg[$ifname]['range']['from'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
+			$ifcfgipv6arr[7] = "2000";
+			$dhcpdv6cfg[$ifname]['range']['to'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));;
+			/* prefix length > 0? We can add dhcp6 prefix delegation server */
+			if($pdlen > 2) {
+				$pdlenmax = 64 - $pdlen;
+				$range = Net_IPv6::parseAddress($ifcfgipv6, $pdlenmax);
+				/* use a fraction of the possible prefix for delegation */
+				$pdlenmin = 64 - round($pdlen / 2);
+				$range = Net_IPv6::parseAddress($range['end'], $pdlenmin);
+				$dhcpdv6cfg[$ifname]['prefixrange']['from'] = Net_IPv6::compress($range['start']);
+				$range['end'] = Net_IPv6::getNetmask($range['end'], 64);
+				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
+				if($pdlenmin > 60)
+					$pdlenmin = 64;
+				$dhcpdv6cfg[$ifname]['prefixrange']['prefixlength'] = $pdlenmin;
+			}
+
+		}
+	}
+
+	print_r($dhcpdv6cfg);
+
 
 	/* write dhcpdv6.conf */
 	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");

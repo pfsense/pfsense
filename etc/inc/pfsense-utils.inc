@@ -1023,7 +1023,7 @@ function is_dhcp_server_enabled()
 
 	$dhcpdenable = false;
 	
-	if ((!is_array($config['dhcpd'])) && (!is_array($config['dhcpdv6'])))
+	if (!is_array($config['dhcpd']))
 		return false;
 
 	$Iflist = get_configured_interface_list();
@@ -1036,6 +1036,28 @@ function is_dhcp_server_enabled()
 			}
 		}
 	}
+
+	return $dhcpdenable;
+}
+
+/* DHCP enabled on any interfaces? */
+function is_dhcpv6_server_enabled() 
+{
+	global $config;
+
+	$dhcpdenable = false;
+	
+	$Iflist = get_configured_interface_list();
+
+	foreach($Iflist as $ifname) {
+		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
+			return true;
+		}
+	}
+
+	if (!is_array($config['dhcpdv6']))
+		return false;
+
 
 	if(is_array($config['dhcpdv6'])) {
 		foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {

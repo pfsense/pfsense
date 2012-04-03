@@ -717,9 +717,6 @@ function services_dhcpdv6_configure() {
 		}
 	}
 
-	print_r($dhcpdv6cfg);
-
-
 	/* write dhcpdv6.conf */
 	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
 	if (! $fdv6) {

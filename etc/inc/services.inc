@@ -699,16 +699,16 @@ function services_dhcpdv6_configure() {
 			$dhcpdv6cfg[$ifname]['range']['to'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));;
 			/* prefix length > 0? We can add dhcp6 prefix delegation server */
 			if($pdlen > 2) {
-				$pdlenmax = 64 - $pdlen;
-				$pdlenhalf = 64 - round($pdlen / 2);
-				$range = Net_IPv6::parseAddress($ifcfgipv6, $pdlenmax);
+				$pdlenmax = $pdlen;
+				$pdlenhalf = round($pdlen / 2);
+				$range = Net_IPv6::parseAddress($ifcfgipv6, (64 - $pdlenmax));
 				/* use a fraction of the possible prefix for delegation */
-				$range = Net_IPv6::parseAddress($range['end'], $pdlenhalf);
+				$range = Net_IPv6::parseAddress($range['end'], (64 - $pdlenhalf));
 				$dhcpdv6cfg[$ifname]['prefixrange']['from'] = Net_IPv6::compress($range['start']);
 				$range['end'] = Net_IPv6::getNetmask($range['end'], 64);
 				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
-				if($pdlen > 4)
-					$pdlenmin = (64 - (pow(2, round($pdlen / 4))));
+				if($pdlenhalf > 2)
+					$pdlenmin = (64 - floor($pdlenhalf / 2));
 				else
 					$pdlenmin = 64;
 				$dhcpdv6cfg[$ifname]['prefixrange']['prefixlength'] = $pdlenmin;

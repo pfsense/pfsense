@@ -5,6 +5,7 @@
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
 	Copyright (C) 2008-2010 Ermal Luçi
+	Copyright (C) 2012 Ben Phillips <audiossis@gmail.com>.
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)

@@ -111,32 +111,34 @@ function updateType(t){
 	show_advanced('0');
 	switch(t) {
 		case "select": {
-			$('ppp','pppoe','ppp_provider','phone_num','apn_','pptp','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('hide');
+			$('username_pptp','ppp','pppoe','ppp_provider','phone_num','apn_','pptp','pptp-special','l2tp-specific','l2tp-special','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('hide');
 			select_list.length = 0;
 			select_list[0] = new Option("Select Link Type First","");
 			break;
 		}
 		case "ppp": {
 			update_select_list(serialports, select_list);
-			$('select','pppoe').invoke('hide');
-			$('ppp_provider','phone_num','apn_').invoke('show');
+			$('username_pptp','select','pppoe','pptp-special','l2tp-specific','l2tp-special').invoke('hide');
+			$('username_ppp','ppp_provider','phone_num','apn_').invoke('show');
 			country_list();
 			break;
 		}
 		case "pppoe": {
 			update_select_list(ports, select_list);
-			$('select','ppp','ppp_provider','phone_num','apn_').invoke('hide');
+			$('username_pptp','select','pptp-special','l2tp-specific','l2tp-special','ppp','ppp_provider','phone_num','apn_').invoke('hide');
+			$('username_ppp').invoke('show');
 			break;
 		}
 		case "l2tp": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pppoe','ppp_provider','phone_num','apn_','pptp','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('hide');
+			$('username_pptp','ppp','pptp-special','pppoe','ppp_provider','phone_num','apn_').invoke('hide');
+			$('username_ppp','l2tp-specific','pptp','l2tp-special','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('show');
 			break;
 		}
 		case "pptp": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pppoe','ppp_provider','phone_num','apn_').invoke('hide');
-			$('pptp','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('show');
+			$('username_ppp','select','l2tp-specific','l2tp-special','ppp','pppoe','ppp_provider','phone_num','apn_').invoke('hide');
+			$('username_pptp','pptp','pptp-special','route','proxyarp','ip-ranges','require-dns','enable-comp','enable-crypt','mppc-enable','pred1','deflate','mppe-enable','mppe-40','mppe-56','mppe-128','mppec-stateless','mppec-policy','dese-bis','ese-old','keep-alive','max-redial','chap','pap','eap').invoke('show');
 			break;
 		}
 		default:

@@ -4,6 +4,7 @@
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2008-2009 Ermal Luçi
+	Copyright (C) 2012 Ben Phillips <audiossis@gmail.com>.
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -1417,7 +1418,7 @@ function interface_ppps_configure($interface) {
 	###############################################################################################################################################
 	###############################################################################################################################################
 
-	if ($ppp['type'] == 'pptp') {	
+	if ($ppp['type'] == 'pptp' || $ppp['type'] == 'l2tp') {	
 
 		foreach($ports as $pid => $port){
 			$port = get_real_interface($port);
@@ -1795,23 +1796,107 @@ EOD;
 		
 EOD;
 			$mpdconf .= <<<EOD
-			
+
 	# Authentication credentials
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}
-			
+	
 EOD;
-			
-			$mpdconf .= <<<EOD
-		
-	# Clients external WAN IP
-	set pptp self {$localips[$pid]}
+				$mpdconf .= <<<EOD
 
+	# Clients external WAN IP
+	set {$type} self {$localips[$pid]}
+	
 	# Servers external WAN IP
-	set pptp peer {$gateways[$pid]}
+	set {$type} peer {$gateways[$pid]}
+	
+EOD;
+
+			if (!empty($ppp['calling_num'])) {
+						$mpdconf .= <<<EOD
+						
+	set {$type} callingnum ${ppp['']}
+
+EOD;
+			}
+				
+			if (!empty($ppp['called_num'])) {
+					$mpdconf .= <<<EOD
+						
+	set {$type} callednum ${ppp['']}
 		
 EOD;
+			}
+
+			if ($ppp['type'] == 'pptp') {
+				if (isset($ppp['delayed-ack'])) {
+						$mpdconf .= <<<EOD
+						
+	set pptp delayed-ack ${ppp['delayed-ack']}
 		
+EOD;
+				}
+				
+				if (isset($ppp['inc-ack'])) {
+						$mpdconf .= <<<EOD
+						
+	set pptp always-ack ${ppp['inc-ack']}
+		
+EOD;
+				}
+				
+				if (isset($ppp['enable-windowing'])) {
+						$mpdconf .= <<<EOD
+						
+	set pptp windowing ${ppp['enable-windowing']}
+		
+EOD;
+				}
+			}
+			
+			if ($ppp['type'] == 'l2tp') {
+
+				if (!empty($ppp['l2tp_hostname'])) {
+						$mpdconf .= <<<EOD
+						
+	set l2tp hostname ${ppp['l2tp_hostname']}
+
+EOD;
+				}
+				
+				if (!empty($ppp['l2tp_secret'])) {
+						$mpdconf .= <<<EOD
+						
+	set l2tp secret ${ppp['l2tp_secret']}
+		
+EOD;
+				}
+				
+				if (isset($ppp['hidden-mode'])) {
+						$mpdconf .= <<<EOD
+						
+	set l2tp hidden ${ppp['hidden-mode']}
+		
+EOD;
+				}
+				
+				if (isset($ppp['data-length'])) {
+						$mpdconf .= <<<EOD
+						
+	set l2tp length ${ppp['data-length']}
+		
+EOD;
+				}
+				
+				if (isset($ppp['enable-dataseq'])) {
+						$mpdconf .= <<<EOD
+						
+	set l2tp dataseq ${ppp['enable-dataseq']}
+		
+EOD;
+				}
+			}
+			
 			$mpdconf .= <<<EOD
 		
 	# Enable Logging	
@@ -2023,14 +2108,6 @@ EOD;
 	set pppoe iface {$port}
 
 EOD;
-
-		if ($type == "l2tp") {
-			$mpdconf .= <<<EOD
-	set {$type} self {$localips[$pid]}
-	set {$type} peer {$gateways[$pid]}
-
-EOD;
-			}
 			
 			$mpdconf .= "\topen\r\n";
 		} //end foreach($port)

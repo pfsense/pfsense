@@ -1,12 +1,13 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs_wireless.php
-	part of pfSense
+	diag_logs_gateways.php
+	Copyright (C) 2004-2009 Scott Ullrich
+	Copyright (C) 2012 Seth Mos
+	All rights reserved.
 
-	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
-	Copyright (C) 2008 Seth Mos <seth.mos@dds.nl>.
-	Copyright (C) 2011 Jim Pingle <jimp@pfsense.org>.
+	originally part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -31,29 +32,38 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
-	pfSense_MODULE:	routing
+/*		
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-wireless
-##|*NAME=Status: System logs: Wireless page
-##|*DESCR=Allow access to the 'Status: System logs: System: Wireless' page.
-##|*MATCH=diag_logs_wireless.php*
+##|*IDENT=page-diagnostics-logs-gateways
+##|*NAME=Diagnostics: Logs: System: Gateways page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: System: Gateways' page.
+##|*MATCH=diag_logs_gateways.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$wireless_logfile = "{$g['varlog_path']}/wireless.log";
+$system_logfile = "{$g['varlog_path']}/gateways.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) 
-	clear_log_file($wireless_logfile);
+	clear_log_file($system_logfile);
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Wireless"));
+if ($_GET['filtertext'])
+	$filtertext = htmlspecialchars($_GET['filtertext']);
+
+if ($_POST['filtertext'])
+	$filtertext = htmlspecialchars($_POST['filtertext']);
+
+if ($filtertext)
+	$filtertextmeta="?filtertext=$filtertext";
+
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Gateways"));
 include("head.inc");
 
 ?>
@@ -61,7 +71,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), true, "diag_logs.php");
@@ -77,34 +88,49 @@ include("head.inc");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
+		</td>
+	</tr>
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("General"), false, "/diag_logs.php");
-	$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
+	$tab_array[] = array(gettext("Gateways"), true, "/diag_logs_gateways.php");
 	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
-	$tab_array[] = array(gettext("Wireless"), true, "/diag_logs_wireless.php");
-        display_top_tabs($tab_array);
+	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
+	display_top_tabs($tab_array);
 ?>
-                </td>
-        </tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Wireless (hostapd) log entries"),$nentries);?></td>
-		  </tr>
-		  <?php dump_clog($wireless_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_wireless.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
-		</table>
-	</div>
-</form>
-	</td>
-  </tr>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s system log entries"),$nentries); ?></td>
+				</tr>
+				<?php
+					if($filtertext)
+						dump_clog($system_logfile, $nentries, true, array("$filtertext"));
+					else
+						dump_clog($system_logfile, $nentries, true, array());
+				?>
+				<tr>
+					<td align="left" valign="top">
+						<form id="filterform" name="filterform" action="diag_logs.php" method="post" style="margin-top: 14px;">
+              				<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
+						</form>
+					</td>
+					<td align="right" valign="top" >
+						<form id="clearform" name="clearform" action="diag_logs_gateways.php" method="post" style="margin-top: 14px;">
+              				<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
+              				<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
+						</form>
+					</td>
+				</tr>
+			</table>
+	    	</div>
+		</td>
+	</tr>
 </table>
 <?php include("fend.inc"); ?>
 </body>

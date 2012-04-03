@@ -594,8 +594,10 @@ include("head.inc");
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
 				&nbsp;<?=gettext("prefix length"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
 					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
+					<option value="52" <?php if($pconfig['prefixrange_length'] == 52) echo "selected"; ?>>52</option>
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
 					<option value="60" <?php if($pconfig['prefixrange_length'] == 60) echo "selected"; ?>>60</option>
+					<option value="62" <?php if($pconfig['prefixrange_length'] == 62) echo "selected"; ?>>62</option>
 				</select> <br/>
 				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
 					assigning networks to subrouters"); ?>

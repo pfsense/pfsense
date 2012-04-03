@@ -1023,7 +1023,7 @@ function is_dhcp_server_enabled()
 
 	$dhcpdenable = false;
 	
-	if ((!is_array($config['dhcpd'])) && (!is_array($config['dhcpdv6'])))
+	if (!is_array($config['dhcpd']))
 		return false;
 
 	$Iflist = get_configured_interface_list();
@@ -1036,6 +1036,28 @@ function is_dhcp_server_enabled()
 			}
 		}
 	}
+
+	return $dhcpdenable;
+}
+
+/* DHCP enabled on any interfaces? */
+function is_dhcpv6_server_enabled() 
+{
+	global $config;
+
+	$dhcpdenable = false;
+	
+	$Iflist = get_configured_interface_list();
+
+	foreach($Iflist as $ifname) {
+		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
+			return true;
+		}
+	}
+
+	if (!is_array($config['dhcpdv6']))
+		return false;
+
 
 	if(is_array($config['dhcpdv6'])) {
 		foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
@@ -2310,4 +2332,47 @@ function get_locale_list() {
 	asort($locales);
 	return $locales;
 }
+
+function return_hex_ipv4($ipv4) {
+	if(!is_ipaddrv4($ipv4))
+		return(false);
+	
+	/* we need the hex form of the interface IPv4 address */
+	$ip4arr = explode(".", $ipv4);
+	$hexwanv4 = "";
+	foreach($ip4arr as $octet)
+		$hexwanv4 .= sprintf("%02x", $octet);
+
+	return($hexwanv4);
+}
+
+function convert_ipv6_to_128bit($ipv6) {
+	if(!is_ipaddrv6($ipv6))
+		return(false);
+
+	$ip6arr = array();
+	$ip6prefix = Net_IPv6::uncompress($ipv6);
+	$ip6arr = explode(":", $ip6prefix);
+	/* binary presentation of the prefix for all 128 bits. */
+	$ip6prefixbin = "";
+	foreach($ip6arr as $element) {
+		$ip6prefixbin .= sprintf("%016b", hexdec($element));
+	}
+	return($ip6prefixbin);
+}
+
+function convert_128bit_to_ipv6($ip6bin) {
+	if(strlen($ip6bin) <> 128)
+		return(false);
+
+	$ip6arr = array();
+	$ip6binarr = array();
+	$ip6binarr = str_split($ip6bin, 16);
+	foreach($ip6binarr as $binpart)
+		$ip6arr[] = dechex(bindec($binpart));
+	$ip6addr = Net_IPv6::compress(implode(":", $ip6arr));
+
+	return($ip6addr);
+}
+
 ?>

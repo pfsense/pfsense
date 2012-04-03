@@ -1065,6 +1065,50 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	switch ($ifcfg['ipaddrv6']) {
+	case "dhcp6":
+		$pidv6 = find_dhcp6c_process($realif);
+		if($pidv6)
+			mwexec("/bin/kill {$pidv6}");
+		sleep(3);
+		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
+		}
+		break;
+	case "6rd":
+		$realif = "srd0";
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+		}		
+		break;
+	case "6to4":
+		$realif = "stf0";
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+		}		
+		break;
+	default:
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			if ($destroy == true)
+				pfSense_interface_flags($realif, -IFF_UP);
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
+		}
+		break;
+	}
+
+
+>>>>>>> upstream/master
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
@@ -1080,7 +1124,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
+		if (preg_match("/^vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|^stf|^srd/i", $realif))
 			pfSense_interface_destroy($realif);
 	}	
 
@@ -1819,7 +1863,6 @@ EOD;
 
 EOD;
 			}
-				
 			if (!empty($ppp['called_num'])) {
 					$mpdconf .= <<<EOD
 						
@@ -1827,7 +1870,6 @@ EOD;
 		
 EOD;
 			}
-
 			if ($ppp['type'] == 'pptp') {
 				if (isset($ppp['delayed-ack'])) {
 						$mpdconf .= <<<EOD
@@ -1836,7 +1878,6 @@ EOD;
 		
 EOD;
 				}
-				
 				if (isset($ppp['inc-ack'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1844,7 +1885,6 @@ EOD;
 		
 EOD;
 				}
-				
 				if (isset($ppp['enable-windowing'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1853,9 +1893,7 @@ EOD;
 EOD;
 				}
 			}
-			
 			if ($ppp['type'] == 'l2tp') {
-
 				if (!empty($ppp['l2tp_hostname'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1863,7 +1901,6 @@ EOD;
 
 EOD;
 				}
-				
 				if (!empty($ppp['l2tp_secret'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1871,7 +1908,6 @@ EOD;
 		
 EOD;
 				}
-				
 				if (isset($ppp['hidden-mode'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1879,7 +1915,6 @@ EOD;
 		
 EOD;
 				}
-				
 				if (isset($ppp['data-length'])) {
 						$mpdconf .= <<<EOD
 						
@@ -1887,7 +1922,6 @@ EOD;
 		
 EOD;
 				}
-				
 				if (isset($ppp['enable-dataseq'])) {
 						$mpdconf .= <<<EOD
 						
@@ -3098,6 +3132,18 @@ function find_dhclient_process($interface) {
 	return intval($pid);
 }
 
+<<<<<<< HEAD
+=======
+function find_dhcp6c_process($interface) {
+	if ($interface)
+		$pid = `/bin/ps auxw|grep "[d]hcp6c" |grep "{$interface}"|awk '{print $2}'`;
+	else
+		return(false);
+
+	return intval($pid);
+}
+
+>>>>>>> upstream/master
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
@@ -3267,6 +3313,31 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 	}
 
+<<<<<<< HEAD
+=======
+	switch ($wancfg['ipaddrv6']) {
+		case 'dhcp6':
+			interface_dhcpv6_configure($interface);
+			break;
+		case '6rd':
+			interface_6rd_configure($interface);
+			break;
+		case '6to4':
+			interface_6to4_configure($interface);
+			break;
+		case 'track6':
+			interface_track6_configure($interface);
+			break;
+		default:
+			if (is_ipaddr($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
+				pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
+				// FIXME: Add IPv6 Support to the pfSense module
+				mwexec("/sbin/ifconfig {$realif} inet6 {$wancfg['ipaddrv6']} prefixlen {$wancfg['subnetv6']} ");
+			}
+			break;
+	}
+
+>>>>>>> upstream/master
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
 
@@ -3333,6 +3404,469 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	else 
 		log_error("Could not bring wanif up in terface_carpdev_dhcp_configure()");
 
+<<<<<<< HEAD
+=======
+function interface_track6_configure($interface = "lan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	/* If the interface is not configured via another, exit */
+	if(!$wancfg['track6-interface'] <> "") {
+		return(false);
+	}
+
+	$type = $config['interfaces'][$wancfg['track6-interface']]['ipaddrv6'];
+	switch($type) {
+		case "6to4":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+			interface_track6_6to4_configure($interface);
+			break;
+		case "6rd":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+			interface_track6_6rd_configure($interface);
+			break;
+		case "dhcp6":
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+			interface_track6_dhcp6_configure($interface);
+			break;
+		default:
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']} but unknown type {$type}");
+			break;
+	}
+	return 0;
+}
+
+function interface_track6_6rd_configure($interface = "lan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$lancfg = $config['interfaces'][$interface];
+	$lanif = $lancfg['if'];
+	if (empty($lancfg))
+		$lancfg = array();
+
+	$lanif = get_real_interface($interface);
+	
+	/* If the interface is not configured via another, exit */
+	if(!$lancfg['track6-interface'] <> "") {
+		return(false);
+	}
+	if(!is_numeric($lancfg['track6-prefix-id']))
+		$lancfg['track6-prefix-id'] = 0;
+	
+	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	$hexwanv4 = return_hex_ipv4($ip4address);
+	
+	/* create the long prefix notation for math, save the prefix length */
+	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
+	$rd6prefixlen = $rd6prefix[1];
+	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
+
+	/* binary presentation of the prefix for all 128 bits. */
+	$rd6lanbin = convert_ipv6_to_128bit($rd6prefix);
+	
+	/* just save the left prefix length bits */
+	$rd6lanbin = substr($rd6lanbin, 0, $rd6prefixlen);
+	/* add the v4 address, offset n bits from the left */
+	$rd6lanbin .= substr(sprintf("%032b", hexdec($hexwanv4)), (0 + $wancfg['prefix-6rd-v4plen']), 32);
+
+	/* add the custom prefix id, max 32bits long? (64 bits - (prefixlen + (32 - v4plen)) */
+	/* 64 - (37 + (32 - 17)) = 8 == /52 */
+	$restbits = 64 - ($rd6prefixlen + (32 - $wancfg['prefix-6rd-v4plen']));
+	// echo "64 - (prefixlen {$rd6prefixlen} + v4len (32 - {$wancfg['prefix-6rd-v4plen']})) = {$restbits} \n";
+	$rd6lanbin .= substr(sprintf("%032b", str_pad($lancfg['track6-prefix-id'], 32, "0", STR_PAD_LEFT)), (32 - $restbits), 32);
+	/* fill the rest out with zeros */
+	$rd6lanbin = str_pad($rd6lanbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the lan address back into a valid IPv6 address */ 
+	$rd6lan = convert_128bit_to_ipv6($rd6lanbin) ."1";
+	
+	log_error("rd6 {$interface} with ipv6 address {$rd6lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
+	mwexec("/sbin/ifconfig {$lanif} inet6 {$rd6lan} prefixlen 64");
+	return 0;
+}
+
+function interface_track6_6to4_configure($interface = "lan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$lancfg = $config['interfaces'][$interface];
+	$lanif = $lancfg['if'];
+	if (empty($lancfg))
+		$lancfg = array();
+
+	$lanif = get_real_interface($interface);
+	
+	/* If the interface is not configured via another, exit */
+	if(!$lancfg['track6-interface'] <> "") {
+		return(false);
+	}
+	if(!is_numeric($lancfg['track6-prefix-id']))
+		$lancfg['track6-prefix-id'] = 0;
+	
+	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	$hexwanv4 = return_hex_ipv4($ip4address);
+	
+	/* create the long prefix notation for math, save the prefix length */
+	$sixto4prefix = "2002::";
+	$sixto4prefixlen = 16;
+	$sixto4prefix = Net_IPv6::uncompress($sixto4prefix);
+
+	/* binary presentation of the prefix for all 128 bits. */
+	$sixto4lanbin = convert_ipv6_to_128bit($sixto4prefix);
+	
+	/* just save the left prefix length bits */
+	$sixto4lanbin = substr($sixto4lanbin, 0, $sixto4prefixlen);
+	/* add the v4 address */
+	$sixto4lanbin .= sprintf("%032b", hexdec($hexwanv4));
+	/* add the custom prefix id */
+	$sixto4lanbin .= sprintf("%016b", $lancfg['track6-prefix-id']);
+	/* fill the rest out with zeros */
+	$sixto4lanbin = str_pad($sixto4lanbin, 128, "0", STR_PAD_RIGHT);;
+	
+	/* convert the 128 bits for the lan address back into a valid IPv6 address */ 
+	$sixto4lan = convert_128bit_to_ipv6($sixto4lanbin) ."1";
+	
+	log_error("sixto4 {$interface} with ipv6 address {$sixto4lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
+	mwexec("/sbin/ifconfig {$lanif} inet6 {$sixto4lan} prefixlen 64");
+	return 0;
+}
+
+function interface_track6_dhcp6_configure($interface = "lan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$lancfg = $config['interfaces'][$interface];
+	$lanif = $lancfg['if'];
+	if (empty($lancfg))
+		$lancfg = array();
+
+	$lanif = get_real_interface($interface);
+	
+	/* If the interface is not configured via another, exit */
+	if(!$lancfg['track6-interface'] <> "") {
+		return(false);
+	}
+	if(!is_numeric($lancfg['track6-prefix-id']))
+		$lancfg['track6-prefix-id'] = 0;
+	
+	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+	
+	
+	$ifcfgipv6 = find_interface_ipv6($lanif);
+	if(is_ipaddrv6($ifcfgipv6)) {
+		$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
+		$dhcp6lanarr[4] = 0;
+		$dhcp6lanarr[5] = 0;
+		$dhcp6lanarr[6] = 0;
+		$dhcp6lanarr[7] = 1;
+		$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
+		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
+	}
+	return 0;
+}
+
+function interface_6rd_configure($interface = "wan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	/* because this is a tunnel interface we can only function 
+	 *	with a public IPv4 address on the interface */
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	$hexwanv4 = return_hex_ipv4($ip4address);
+	
+	if(!is_numeric($wancfg['prefix-6rd-v4plen']))
+		$wancfg['prefix-6rd-v4plen'] = 0;
+
+	/* create the long prefix notation for math, save the prefix length */
+	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
+	$rd6prefixlen = $rd6prefix[1];
+	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
+
+	/* we need the hex form of the broker IPv4 address */
+	$hexbrv4 = return_hex_ipv4($wancfg['gateway-6rd']);
+	
+	/* binary presentation of the prefix for all 128 bits. */
+	$rd6prefixbin = convert_ipv6_to_128bit($rd6prefix);
+		
+	/* just save the left prefix length bits */
+	$rd6brprefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$rd6brprefixbin .= substr(sprintf("%032b", hexdec($hexbrv4)), $wancfg['prefix-6rd-v4plen'], 32);
+	/* fill out the rest with 0's */
+	$rd6brprefixbin = str_pad($rd6brprefixbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6brgw = convert_128bit_to_ipv6($rd6brprefixbin);
+
+	/* just save the left prefix length bits */
+	$rd6prefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$rd6prefixbin .= substr(sprintf("%032b", hexdec($hexwanv4)), $wancfg['prefix-6rd-v4plen'], 32);
+	/* fill out the rest with 0's */
+	$rd6prefixbin = str_pad($rd6prefixbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
+
+	/* setup the stf interface */
+	/* use the srd device
+	mwexec("/sbin/ifconfig srd0 destroy");
+	mwexec("/sbin/ifconfig srd0 create");
+	mwexec("/sbin/ifconfig srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
+	log_error("Created 6rd interface srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
+	*/
+	/* stf approach only works when embedding the entire 32 bits of the v4 */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$rd6prefix}/{$rd6prefixlen}");
+	log_error("Created 6rd interface stf0 {$rd6prefix}/{$rd6prefixlen}");
+
+	/* write out a default router file */
+	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
+	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$rd6brgw}\n");
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
+	
+	return 0;
+}
+
+function interface_6to4_configure($interface = "wan"){
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	/* because this is a tunnel interface we can only function 
+	 *	with a public IPv4 address on the interface */
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+	
+	$ip4address = find_interface_ip($wanif);
+	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		return false;
+	}
+	
+	/* create the long prefix notation for math, save the prefix length */
+	$stfprefixlen = 16;
+	$stfprefix = Net_IPv6::uncompress("2002::");
+	$stfarr = explode(":", $stfprefix);
+	$v4prefixlen = "0";
+	
+	/* we need the hex form of the interface IPv4 address */
+	$ip4arr = explode(".", $ip4address);
+	$hexwanv4 = "";
+	foreach($ip4arr as $octet)
+		$hexwanv4 .= sprintf("%02x", $octet);
+
+	/* we need the hex form of the broker IPv4 address */
+	$ip4arr = explode(".", "192.88.99.1");
+	$hexbrv4 = "";
+	foreach($ip4arr as $octet)
+		$hexbrv4 .= sprintf("%02x", $octet);
+	
+	/* binary presentation of the prefix for all 128 bits. */
+	$stfprefixbin = "";
+	foreach($stfarr as $element) {
+		$stfprefixbin .= sprintf("%016b", hexdec($element));
+	}
+	/* just save the left prefix length bits */
+	$stfprefixstartbin = substr($stfprefixbin, 0, $stfprefixlen);
+
+	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
+	$stfbrokerbin = substr(sprintf("%032b", hexdec($hexbrv4)), $v4prefixlen, 32);
+	$stfbrokerbin = str_pad($stfprefixstartbin . $stfbrokerbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* for the local subnet too. */
+	$stflanbin = substr(sprintf("%032b", hexdec($hexwanv4)), $v4prefixlen, 32);
+	$stflanbin = str_pad($stfprefixstartbin . $stflanbin, 128, "0", STR_PAD_RIGHT);;
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$stfbrarr = array();
+	$stfbrbinarr = array();
+	$stfbrbinarr = str_split($stfbrokerbin, 16);
+	foreach($stfbrbinarr as $bin)
+		$stfbrarr[] = dechex(bindec($bin));
+	$stfbrarr[7] = 1;
+	$stfbrgw = Net_IPv6::compress(implode(":", $stfbrarr));
+
+	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
+	$stflanarr = array();
+	$stflanbinarr = array();
+	$stflanbinarr = str_split($stflanbin, 16);
+	foreach($stflanbinarr as $bin)
+		$stflanarr[] = dechex(bindec($bin));
+	$stflanpr = Net_IPv6::compress(implode(":", $stflanarr));
+	$stflanarr[7] = 1;
+	$stflan = Net_IPv6::compress(implode(":", $stflanarr));
+
+	/* setup the stf interface */
+	mwexec("/sbin/ifconfig stf0 destroy");
+	mwexec("/sbin/ifconfig stf0 create");
+	mwexec("/sbin/ifconfig stf0 inet6 {$stflanpr} prefixlen 16");
+
+	log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for stf0, route {$stfbrgw}");
+	
+	/* write out a default router file */
+	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
+	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$stfbrgw}");
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
+	
+	return 0;
+}
+
+function interface_dhcpv6_configure($interface = "wan") {
+	global $config, $g;
+	$iflist = get_configured_interface_with_descr(false, true);
+
+	$wancfg = $config['interfaces'][$interface];
+	$wanif = $wancfg['if'];
+	if (empty($wancfg))
+		$wancfg = array();
+
+	$wanif = get_real_interface($interface);
+
+	/* Add ISC IPv6 dhclient here, only wide-dhcp6c works for now. */
+	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcpv6_configure() for writing.\n");
+		return 1;
+	}
+
+	$dhcp6cconf = "";
+ 	$dhcp6cconf .= "interface {$wanif} {\n";
+	$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
+	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+		$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
+	}
+	$dhcp6cconf .= "request domain-name-servers;\n";
+	$dhcp6cconf .= "request domain-name;\n";
+	$dhcp6cconf .= "script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
+
+	$dhcp6cconf .= "};\n";
+	$dhcp6cconf .= "id-assoc na 0 { };\n";
+	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+		/* Setup the prefix delegation */
+		$dhcp6cconf .= "id-assoc pd 0 {\n";
+		foreach($iflist as $friendly => $ifdescr) {
+			if($config['interfaces'][$friendly]['track6-interface'] != $interface)
+				continue;
+			if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
+				log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");
+				$realif = get_real_interface($friendly);
+				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
+				$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['track6-prefix-id']};\n";
+				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
+				$dhcp6cconf .= "	};\n";
+			}
+		}
+		$dhcp6cconf .= "};\n";
+	}
+
+	fwrite($fd, $dhcp6cconf);
+	fclose($fd);
+
+	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
+	$fds = fopen("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", "w");
+	if (!$fds) {
+		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interfaces_wan_dhcpv6_configure() for writing.\n");
+		return 1;
+	}
+	$dhcp6cscript = "#!/bin/sh\n";
+	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
+	$dhcp6cscript .= "/etc/rc.newwanipv6 $interface \n";
+
+	fwrite($fds, $dhcp6cscript);
+	fclose($fds);
+	chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
+
+
+	/* accept router advertisements for this interface */
+	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
+	log_error("Accept router advertisements on interface {$wanif} ");
+	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
+	mwexec("/sbin/ifconfig {$wanif} inet6 defroute_rtadv");
+
+	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
+	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
+	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
+	if(!empty($out)) {
+		foreach($out as $line) {
+			if(stristr($line, "received")) {
+				$parts = explode(" ", $line);
+				if(is_ipaddrv6($parts[3])) {
+					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
+					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
+					file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$parts[3]}\n");
+				}
+			}
+		}
+	}
+	/* sleep a few seconds before returning to give the client some time
+	 * to configure a lan interface with a prefix */
+	sleep(5);
+
+	/* configure dependent interfaces */
+	foreach($iflist as $if => $ifname) {
+		if($config['interfaces'][$if]['track6-interface'] == $interface)
+			interface_track6_configure($if);
+	}
+
+>>>>>>> upstream/master
 	return 0;
 }
 
@@ -4098,6 +4632,37 @@ function interface_has_gateway($friendly) {
 	return false;
 }
 
+<<<<<<< HEAD
+=======
+/* return true if interface has a gateway */
+function interface_has_gatewayv6($friendly) {
+	global $config;
+
+	if (!empty($config['interfaces'][$friendly])) {
+		$ifname = &$config['interfaces'][$friendly];
+		switch ($ifname['ipaddrv6']) {
+			case "dhcp6":
+				return true;
+				break;
+			case "6to4":
+				return true;
+				break;
+			case "6rd":
+				return true;
+				break;
+			default:
+				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
+					return true;
+				if (!empty($ifname['gatewayv6']))
+					return true;
+				break;
+		}
+	}
+
+	return false;
+}
+
+>>>>>>> upstream/master
 /****f* interfaces/is_altq_capable
  * NAME
  *   is_altq_capable - Test if interface is capable of using ALTQ

@@ -217,11 +217,12 @@
 			<if>vr0</if>
 			<ipaddr>192.168.1.1</ipaddr>
 			<subnet>24</subnet>
-			<ipaddrv6>fe80::192:168:1:1</ipaddrv6>
+			<ipaddrv6>track6</ipaddrv6>
 			<subnetv6>64</subnetv6>
 			<media></media>
 			<mediaopt></mediaopt>
-			<dhcp6-pd-sla-id>0</dhcp6-pd-sla-id>
+			<track6-interface>wan</track6-interface>
+			<track6-prefix-id>0</track6-prefix-id>
 			<!--
 			<wireless>
 				*see below (opt[n])*

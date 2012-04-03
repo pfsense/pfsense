@@ -548,7 +548,9 @@ function filter_generate_aliases() {
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			/* XXX possibly add 6to4 in the future as well, stf0 */
 			if ($ifcfg['type6'] == '6rd')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} srd0 ";
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} srd0 stf0 ";
+			else if ($ifcfg['type6'] == '6to4')
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
 			else 
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 			$aliases .= " }\"\n";
@@ -2287,11 +2289,11 @@ block out $log inet6 all label "Default deny rule IPv6"
 pass quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} keep state
 
 # Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state
+pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} keep state
+pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state
 
 # We use the mighty pf, we cannot be fooled.
 block quick inet proto { tcp, udp } from any port = 0 to any
@@ -2489,13 +2491,13 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow our DHCPv6 client out to the {$oc['descr']}
-pass in on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client out {$oc['descr']}"
-pass out on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
+pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "allow dhcpv6 client in {$oc['descr']}"
+pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client in {$oc['descr']}"
+pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
 
 EOD;
 			break;
 		case "6rd":
-			print_r($oc);
 			$ipfrules .= <<<EOD
 
 # allow our proto 41 traffic from the 6RD border relay in
@@ -2504,17 +2506,29 @@ pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to {$config['interfaces']
 
 EOD;
 			break;
+		case "6to4":
+			$ipfrules .= <<<EOD
+
+# allow our proto 41 traffic from the 6to4 border relay in
+pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+
+EOD;
+			break;
 		default:
-			if(isset($config['dhcpdv6'][$on]['enable'])) {
+			if((isset($config['dhcpdv6'][$on]['enable'])) ||
+					(isset($config['interfaces'][$on]['track6-interface']))) {
 				$ipfrules .= <<<EOD
 
 # allow access to DHCPv6 server on {$oc['descr']}
 anchor "dhcpv6server{$oc['descr']}"
 # We need inet6 icmp for stateless autoconfig and dhcpv6
-pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
-pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
-pass in on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
-pass out on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
+pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 label "allow access to DHCPv6 server"
+pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
+pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
+pass quick on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 label "allow access to DHCPv6 server"
+pass in quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
+pass out quick on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
 
 EOD;
 			}
@@ -2661,6 +2675,36 @@ EOD;
 			if(!$rule['rule'])
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+	}
+
+	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";
+	/* add automatic LAN rules to allow IPv6 traffic out for dynamic IPv6 networks */
+	foreach ($FilterIflist as $ifdescr => $ifcfg) {
+		$oc = $FilterIflist[$ifdescr];
+		if($config['interfaces'][$ifdescr]['track6-interface'] <> "") {
+			$realif = get_real_interface($ifdescr);
+			$ifcfgipv6 = find_interface_ipv6($realif);
+			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
+			$trackcfg = $config['interfaces'][$trackifname];
+			/* determine possible prefix length */
+			switch($trackcfg['ipaddrv6']) {
+				case "6to4":
+					$pdlen = 16;
+					break;
+				case "6rd":
+					$rd6plen = explode("/", $trackcfg['prefix-6rd']);
+					$pdlen =(64 - ($rd6plen[1] + (32 - $trackcfg['prefix-6rd-v4plen'])));
+					break;
+				 case "dhcp6":
+					$pdlen = $trackcfg['dhcp6-ia-pd-len'];
+					break;
+			}
+			$pdlen = (64 - $pdlen);
+			if(is_ipaddrv6($ifcfgipv6)) {
+				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
+				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";
+			}
 		}
 	}
 

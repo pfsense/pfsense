@@ -69,6 +69,8 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
+	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
+	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
@@ -103,6 +105,8 @@ if ($_POST) {
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['enable'] = $_POST['enable'] ? false : true;
 		$dyndns['interface'] = $_POST['interface'];
+		$dyndns['zoneid'] = $_POST['zoneid'];
+		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 		
@@ -152,8 +156,8 @@ include("head.inc");
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type">
                       <?php
-						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost");
+						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53");
+						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53");
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>
@@ -207,6 +211,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                     <br/><?= gettext("Username is required for all types except Namecheap and FreeDNS.");?>
+		    <br/><?= gettext("Route 53: Enter your Access Key ID.");?>
                   </td>
                 </tr>
                 <tr>
@@ -215,8 +220,29 @@ include("head.inc");
                     <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                     <br/>
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
+		    <br/><?= gettext("Route 53: Enter your Secret Access Key.");?>
                   </td>
                 </tr>
+
+                <tr id="r53_zoneid" style="display:none">
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>">
+                    <br/><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
+                  </td>
+                </tr>
+                <tr>
+
+                <tr id="r53_ttl" style="display:none">
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("TTL");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=htmlspecialchars($pconfig['ttl']);?>">
+                    <br/><?= gettext("Choose TTL for your dns record.");?>
+                  </td>
+                </tr>
+                <tr>
+
+
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
@@ -244,5 +270,20 @@ include("head.inc");
               </table>
 </form>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+var selectmenu=document.getElementById("type")
+selectmenu.onchange=function(){ 
+       var chosenoption=this.options[this.selectedIndex] 
+       if (chosenoption.value=="route53"){
+               document.getElementById("r53_zoneid").style.display="";
+               document.getElementById("r53_ttl").style.display="";
+       } else if (chosenoption.value !="route53"){
+               document.getElementById("r53_zoneid").style.display="none";
+               document.getElementById("r53_ttl").style.display="none";
+       }
+}
+</script>
+
 </body>
 </html>

@@ -18,6 +18,7 @@ var temp_streaming_text = "";
 
 var addRowTo = (function() {
     return (function (tableId) {
+	var $ = jQuery;
 	var d, tbody, tr, td, bgc, i, ii, j;
 	d = document;
 	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
@@ -28,6 +29,8 @@ var addRowTo = (function() {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], rowsize[i], totalrows) + " ";
 		} else if(rowtype[i] == 'textbox') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' class='formfld unknown' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+		} else if(rowtype[i] == 'textbox,ipv4v6') {
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' class='formfld unknown ipv4v6' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' size='" + rowsize[i] + "' class='formfld pwd' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
@@ -37,6 +40,13 @@ var addRowTo = (function() {
 				str=str + "<option value=\"" + cidr + "\" >" + cidr + "</option>";
 			}
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select size='1' name='" + rowname[i] + totalrows + "'>" + str + "</select> ";
+		} else if(rowtype[i] == 'select,ipv4v6') {
+                        var cidr;
+			var str;
+			for (cidr = 128; cidr>= 1; cidr--) {
+				str=str + "<option value=\"" + cidr + "\" >" + cidr + "</option>";
+			}
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select class='ipv4v6' size='1' name='" + rowname[i] + totalrows + "'>" + str + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
                         var cidr;
 			var str;
@@ -56,6 +66,7 @@ var addRowTo = (function() {
 	tr.appendChild(td);
 	tbody.appendChild(tr);
 	totalrows++;
+	$(tr).ipv4v6ify();
     });
 })();
 

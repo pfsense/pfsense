@@ -344,8 +344,14 @@ function return_gateways_array($disabled = false) {
 			 * Some interface like wan might be default but have no info recorded 
 			 * the config.
 			if ($gateway['friendlyiface'] == "wan" && !isset($gateway['defaultgw'])) {
-				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw"))
+				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
 					$gateway['defaultgw'] = true;
+					$gateway['ipprotocol'] = "inet";
+				}
+				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6"))
+					$gateway['defaultgwv6'] = true;
+					$gateway['ipprotocol'] = "inet6";
+				}
 			}
 			 */
 			/* include the gateway index as the attribute */
@@ -423,10 +429,13 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
 		/* XXX Add stf and friends in the future ? */
 		switch($ifcfg['ipaddrv6']) {
+			case "6to4":
+				$gateway['interface'] = "stf0";
+				$gateway['dynamic'] = "default";
+				break;
 			case "6rd":
 				$gateway['interface'] = "srd0";
 				$gateway['dynamic'] = "default";
-				$gateway['gateway'] = "::1";
 				break;
 			default:
 				$gateway['interface'] = get_real_interface($ifname);

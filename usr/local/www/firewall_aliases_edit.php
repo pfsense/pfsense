@@ -539,6 +539,8 @@ EOD;
 	echo $jscriptstr;
 ?>
 
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
+</script>
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 <script type="text/javascript" src="/javascript/autosuggest.js">
@@ -551,11 +553,11 @@ EOD;
 
 <script type="text/javascript">
 	rowname[0] = "address";
-	rowtype[0] = "textbox";
+	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
 
 	rowname[1] = "address_subnet";
-	rowtype[1] = "select";
+	rowtype[1] = "select,ipv4v6";
 	rowsize[1] = "1";
 
 	rowname[2] = "detail";
@@ -648,10 +650,10 @@ EOD;
 	?>
           <tr>
             <td>
-              <input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+              <input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
             </td>
             <td>
-			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
+			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $tracker; ?>">
 				<option></option>
 			          <?php for ($i = 128; $i >= 1; $i--): ?>
 			          <option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected"; ?>><?=$i;?></option>

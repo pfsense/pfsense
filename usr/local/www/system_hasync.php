@@ -184,7 +184,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizeusers' type='checkbox' name='synchronizeusers' value='on' <?php if ($pconfig['synchronizeusers'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the users and groups over to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the users and groups over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -192,7 +192,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizecerts' type='checkbox' name='synchronizecerts' value='on' <?php if ($pconfig['synchronizecerts'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the Certificate Authorities, Certificates, and Certificate Revocation Lists over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -200,7 +200,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizerules' type='checkbox' name='synchronizerules' value='on' <?php if ($pconfig['synchronizerules'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the firewall rules to the other CARP host when changes are made..
+			When this option is enabled, this system will automatically sync the firewall rules to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -208,7 +208,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizeschedules' type='checkbox' name='synchronizeschedules' value='on' <?php if ($pconfig['synchronizeschedules'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the firewall schedules to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the firewall schedules to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -216,7 +216,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizealiases' type='checkbox' name='synchronizealiases' value='on' <?php if ($pconfig['synchronizealiases'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the aliases over to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the aliases over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -224,7 +224,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizenat' type='checkbox' name='synchronizenat' value='on' <?php if ($pconfig['synchronizenat'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the NAT rules over to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the NAT rules over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -232,7 +232,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizeipsec' type='checkbox' name='synchronizeipsec' value='on' <?php if ($pconfig['synchronizeipsec'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the IPsec configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the IPsec configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -240,7 +240,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizeopenvpn' type='checkbox' name='synchronizeopenvpn' value='on' <?php if ($pconfig['synchronizeopenvpn'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the OpenVPN configuration to the other CARP host when changes are made. Using this option implies "Synchronize Certificates" as they are required for OpenVPN.
+			When this option is enabled, this system will automatically sync the OpenVPN configuration to the other HA host when changes are made. Using this option implies "Synchronize Certificates" as they are required for OpenVPN.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -248,7 +248,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizedhcpd' type='checkbox' name='synchronizedhcpd' value='on' <?php if ($pconfig['synchronizedhcpd'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other carp host when changes are made.
+			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -256,7 +256,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizewol' type='checkbox' name='synchronizewol' value='on' <?php if ($pconfig['synchronizewol'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the WoL configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the WoL configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -264,7 +264,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizestaticroutes' type='checkbox' name='synchronizestaticroutes' value='on' <?php if ($pconfig['synchronizestaticroutes'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the Static Route configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the Static Route configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -272,7 +272,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizelb' type='checkbox' name='synchronizelb' value='on' <?php if ($pconfig['synchronizelb'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the Load Balancer configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the Load Balancer configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -280,7 +280,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizevirtualip' type='checkbox' name='synchronizevirtualip' value='on' <?php if ($pconfig['synchronizevirtualip'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the CARP Virtual IPs to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the CARP Virtual IPs to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -288,7 +288,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizetrafficshaper' type='checkbox' name='synchronizetrafficshaper' value='on' <?php if ($pconfig['synchronizetrafficshaper'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the traffic shaper configuration for queues to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the traffic shaper configuration for queues to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -296,7 +296,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizetrafficshaperlimiter' type='checkbox' name='synchronizetrafficshaperlimiter' value='on' <?php if ($pconfig['synchronizetrafficshaperlimiter'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the traffic shaper configuration for limiters to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the traffic shaper configuration for limiters to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -304,7 +304,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizetrafficshaperlayer7' type='checkbox' name='synchronizetrafficshaperlayer7' value='on' <?php if ($pconfig['synchronizetrafficshaperlayer7'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the traffic shaper configuration for layer7 to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the traffic shaper configuration for layer7 to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -312,7 +312,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizednsforwarder' type='checkbox' name='synchronizednsforwarder' value='on' <?php if ($pconfig['synchronizednsforwarder'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DNS Forwarder configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the DNS Forwarder configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">
@@ -320,7 +320,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizecaptiveportal' type='checkbox' name='synchronizecaptiveportal' value='on' <?php if ($pconfig['synchronizecaptiveportal'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the Captive Portal configuration to the other CARP host when changes are made.
+			When this option is enabled, this system will automatically sync the Captive Portal configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr>

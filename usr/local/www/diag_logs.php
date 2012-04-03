@@ -62,7 +62,7 @@ if ($_POST['filtertext'])
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("System"));
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("General"));
 include("head.inc");
 
 ?>
@@ -84,8 +84,18 @@ include("head.inc");
 	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
 	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
 	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Wireless"), false, "diag_logs_wireless.php");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+	display_top_tabs($tab_array);
+?>
+		</td>
+	</tr>
+  <tr><td class="tabnavtbl">
+<?php
+	$tab_array = array();
+	$tab_array[] = array(gettext("General"), true, "/diag_logs.php");
+	$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
+	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
+	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>

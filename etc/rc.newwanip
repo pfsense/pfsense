@@ -136,6 +136,19 @@ if(is_array($config['gifs']['gif'])){
 	}
 }
 
+/* check tunneled IPv6 interface tracking */
+switch($config['interfaces'][$interface]['type6']) {
+	case "6to4":
+	case "6rd":	
+		foreach($config['interfaces'] as $iftrackname => $iftrack) {
+			if($iftrack['track6-interface'] == $interface) {
+				log_error("interface {%iftrackname} depends on {$interface}, configuring");
+				interface_track6_configure($iftrackname);
+			}
+		}
+		break;
+}
+
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 

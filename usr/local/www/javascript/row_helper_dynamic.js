@@ -24,7 +24,8 @@ var temp_streaming_text = "";
 
 var addRowTo = (function() {
     return (function (tableId, objectSize) {
-	var d, tbody, tr, td, bgc, i, ii, j;
+	var $ = jQuery;
+	var d, tbody, tr, td, bgc, i, ii, j, className;
 	d = document;
 	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
 	tr = d.createElement("tr");
@@ -37,8 +38,12 @@ var addRowTo = (function() {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], objectSize, totalrows) + " ";
 		} else if(rowtype[i] == 'textbox') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+		} else if(rowtype[i] == 'textbox,ipv4v6') {
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+		} else if(rowtype[i] == 'select,ipv4v6') {
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
@@ -57,6 +62,7 @@ var addRowTo = (function() {
 	tbody.appendChild(tr);
 	if(rowhelper_onAdd != '') 
 		eval(rowhelper_onAdd);
+	$(tr).ipv4v6ify();
     });
 })();
 

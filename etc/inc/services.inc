@@ -679,7 +679,7 @@ function services_dhcpdv6_configure() {
 			/* determine possible prefix length */
 			switch($trackcfg['ipaddrv6']) {
 				case "6to4":
-					$pdlen = 48;
+					$pdlen = 16;
 					break;
 				case "6rd":
 					$rd6plen = explode("/", $rd6cfg['prefix-6rd']);

@@ -2678,6 +2678,36 @@ EOD;
 		}
 	}
 
+	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";
+	/* add automatic LAN rules to allow IPv6 traffic out for dynamic IPv6 networks */
+	foreach ($FilterIflist as $ifdescr => $ifcfg) {
+		$oc = $FilterIflist[$ifdescr];
+		if($config['interfaces'][$ifdescr]['track6-interface'] <> "") {
+			$realif = get_real_interface($ifdescr);
+			$ifcfgipv6 = find_interface_ipv6($realif);
+			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
+			$trackcfg = $config['interfaces'][$trackifname];
+			/* determine possible prefix length */
+			switch($trackcfg['ipaddrv6']) {
+				case "6to4":
+					$pdlen = 16;
+					break;
+				case "6rd":
+					$rd6plen = explode("/", $trackcfg['prefix-6rd']);
+					$pdlen =(64 - ($rd6plen[1] + (32 - $trackcfg['prefix-6rd-v4plen'])));
+					break;
+				 case "dhcp6":
+					$pdlen = $trackcfg['dhcp6-ia-pd-len'];
+					break;
+			}
+			$pdlen = (64 - $pdlen);
+			if(is_ipaddrv6($ifcfgipv6)) {
+				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
+				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";
+			}
+		}
+	}
+
 	/*  pass traffic between statically routed subnets and the subnet on the
 	 *  interface in question to avoid problems with complicated routing
 	 *  topologies

@@ -1694,7 +1694,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is used as a fixed alias IPv4 address by the " .
 											"DHCP client."); ?>
 										</td>
-									</tr>									
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1716,8 +1716,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													// $current_duid = file_get_contents("/var/db/dhcp6c_duid");
 												}
 												printf(gettext("The current DUID is: '%s'"),$current_duid);
+												// hexdump -e '"%07.7_ax " 1/2 "%04x" " " 14/1 "%02x:" "\n"'
 											?>
-											
 										</td>
 									</tr>
 									-->
@@ -1738,7 +1738,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
-									
 								</table>
 							</td>
 						</tr>
@@ -1780,7 +1779,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
 										</td>
 									</tr>
-									
 								</table>
 							</td>
 						</tr>
@@ -1828,7 +1826,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												/* DHCP-PD is variable, calculate from the prefix-len on the WAN interface */
 												/* 6rd is variable, calculate from 64 - (v6 prefixlen - (32 - v4 prefixlen)) */
 												/* 6to4 is 16 bits, e.g. 65535 */
-												
 												switch($config['interfaces'][$pconfig['track6-interface']]['ipaddrv6']) {
 													case "6to4":
 														$pdlen = 16;
@@ -1865,7 +1862,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 										</td>
 									</tr>
-									
 								</table>
 							</td>
 						</tr>

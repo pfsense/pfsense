@@ -2509,14 +2509,15 @@ EOD;
 		case "6to4":
 			$ipfrules .= <<<EOD
 
-# allow our proto 41 traffic from the 6RD border relay in
-pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to {$oc['ip']} label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to 192.88.99.1 label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
+# allow our proto 41 traffic from the 6to4 border relay in
+pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
 
 EOD;
 			break;
 		default:
-			if(isset($config['dhcpdv6'][$on]['enable'])) {
+			if((isset($config['dhcpdv6'][$on]['enable'])) ||
+					(isset($config['interfaces'][$on]['track6-interface']))) {
 				$ipfrules .= <<<EOD
 
 # allow access to DHCPv6 server on {$oc['descr']}

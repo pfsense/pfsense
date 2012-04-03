@@ -1065,8 +1065,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
-<<<<<<< HEAD
-=======
+/*<<<<<<< HEAD
+=======*/
 	switch ($ifcfg['ipaddrv6']) {
 	case "dhcp6":
 		$pidv6 = find_dhcp6c_process($realif);
@@ -1108,7 +1108,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 
->>>>>>> upstream/master
+/*>>>>>>> upstream/master*/
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
@@ -3132,8 +3132,8 @@ function find_dhclient_process($interface) {
 	return intval($pid);
 }
 
-<<<<<<< HEAD
-=======
+/*<<<<<<< HEAD
+=======*/
 function find_dhcp6c_process($interface) {
 	if ($interface)
 		$pid = `/bin/ps auxw|grep "[d]hcp6c" |grep "{$interface}"|awk '{print $2}'`;
@@ -3143,7 +3143,7 @@ function find_dhcp6c_process($interface) {
 	return intval($pid);
 }
 
->>>>>>> upstream/master
+/*>>>>>>> upstream/master*/
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
@@ -3313,8 +3313,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 	}
 
-<<<<<<< HEAD
-=======
+/*<<<<<<< HEAD
+=======*/
 	switch ($wancfg['ipaddrv6']) {
 		case 'dhcp6':
 			interface_dhcpv6_configure($interface);
@@ -3337,7 +3337,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 	}
 
->>>>>>> upstream/master
+/*>>>>>>> upstream/master*/
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
 
@@ -3404,8 +3404,8 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	else 
 		log_error("Could not bring wanif up in terface_carpdev_dhcp_configure()");
 
-<<<<<<< HEAD
-=======
+/*<<<<<<< HEAD
+=======*/
 function interface_track6_configure($interface = "lan") {
 	global $config, $g;
 	$iflist = get_configured_interface_with_descr(false, true);
@@ -3866,7 +3866,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 			interface_track6_configure($if);
 	}
 
->>>>>>> upstream/master
+/*>>>>>>> upstream/master*/
 	return 0;
 }
 
@@ -4632,8 +4632,8 @@ function interface_has_gateway($friendly) {
 	return false;
 }
 
-<<<<<<< HEAD
-=======
+/*<<<<<<< HEAD
+=======*/
 /* return true if interface has a gateway */
 function interface_has_gatewayv6($friendly) {
 	global $config;
@@ -4662,7 +4662,7 @@ function interface_has_gatewayv6($friendly) {
 	return false;
 }
 
->>>>>>> upstream/master
+/*>>>>>>> upstream/master*/
 /****f* interfaces/is_altq_capable
  * NAME
  *   is_altq_capable - Test if interface is capable of using ALTQ
@@ -4919,5 +4919,5 @@ function interfaces_staticarp_configure($if) {
 
 	return 0;
 }
-
+}
 ?>

@@ -21,6 +21,7 @@
 	 *    - HE.net (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 *    - SelfHost (selfhost.de)
+         *    - Amazon Route 53 (aws.amazon.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -55,6 +56,7 @@
 	 *  HE.net         - Last Tested: NEVER
 	 *  HE.net Tunnel  - Last Tested: 28 June 2011
 	 *  SelfHost       - Last Tested: 26 December 2011
++        *  Amazon Route 53 - Last tested: 01 April 2012
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -84,6 +86,8 @@
 		var $_dnsServer;
 		var $_dnsPort;
 		var $_dnsUpdateURL;
+		var $_dnsZoneID;
+		var $_dnsTTL;
 		var $status;
 		var $_debugID;
 		var $_if;
@@ -94,7 +98,8 @@
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
-				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false) {
+				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
+				    $dnsZoneID ='', $dnsTTL='') {
 			
 			global $config, $g;
 			
@@ -114,6 +119,11 @@
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				break;
+                       case 'route53':
+                                if (!$dnsZoneID) $this->_error(8);
+                                if (!$dnsTTL) $this->_error(9);
+                                break;
+
 			default:
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
@@ -128,6 +138,8 @@
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
+                        $this->_dnsZoneID = $dnsZoneID;
+                        $this->_dnsTTL = $dnsTTL;
 			$this->_if = get_real_interface($dnsIf);
 			$this->_ifIP = get_interface_ip($dnsIf);
 
@@ -163,6 +175,7 @@
 				case 'namecheap':
 				case 'he-net':
 				case 'selfhost':
+				case 'route53':
 					$this->_update();	
 					break;
 				case 'he-net-tunnelbroker':
@@ -185,7 +198,7 @@
 		
 			log_error("DynDns: DynDns _update() starting.");
 		
-			if ($this->_dnsService != 'ods') {
+			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_HEADER, 0);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
@@ -428,10 +441,65 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
+                               case 'route53':
+                                        log_error("Route53: DNS update() starting.");
+                                       
+                                        /* Setting Variables */
+                                        $hostname = "{$this->_dnsHost}.";
+                                        $ZoneID = $this->_dnsZoneID;
+                                        $AccessKeyId=$this->_dnsUser;
+                                        $SecretAccessKey=$this->_dnsPass;
+                                        $NewIP=$this->_dnsIP;
+                                        $NewTTL=$this->_dnsTTL;
+
+                                        /* Include Route 53 Library Class */
+                                        require_once('/etc/inc/r53.class');
+
+                                        /* Set Amazon AWS Credentials for this record */
+                                        $r53 = new Route53($AccessKeyId, $SecretAccessKey);
+
+                                        /* Function to find old values of records in Route 53 */
+                                        if(!function_exists('Searchrecords')) {
+                                        function SearchRecords($records, $name) {
+                                                $result = array();
+                                                foreach($records as $record) {
+                                                        if(strtolower($record['Name']) == strtolower($name)) {
+                                                                $result [] = $record;
+                                                        }
+                                                }
+                                                return ($result) ? $result : false;
+                                        }}
+
+                                        $records = $r53->listResourceRecordSets("/hostedzone/$ZoneID");
+
+                                        /* Get IP for your hostname in Route 53 */
+                                        if(false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
+                                                $OldTTL=$a_result[0][TTL];
+                                                $OldIP=$a_result[0][ResourceRecords][0];
+                                        } else {
+                                                $OldIP="";
+                                        }
+
+                                        /* Check if we need update DNS Record */
+                                        if ($OldIP !== $NewIP) {
+                                                if(!empty($OldIP)) {
+                                                        /* Your Hostname already exist, deleting and creating it again */
+                                                        $changes = array();
+                                                        $changes[] = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
+                                                        $changes[] = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
+                                                        $result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
+                                                        } else {
+                                                        /* Your Hostname dosent exist yet, creating it */
+                                                        $changes = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
+                                                        $result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
+                                                        }
+                                                }
+                                        $this->_checkStatus(0, $result);
+                                                break;
 				default:
 					break;
 			}
-			if ($this->_dnsService != 'ods') {
+			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53') {
 				$data = curl_exec($ch);
 				$this->_checkStatus($ch, $data);
 				@curl_close($ch);
@@ -446,7 +514,7 @@
 			log_error("DynDns: DynDns _checkStatus() starting.");
 			log_error("DynDns: Current Service: {$this->_dnsService}");
 			$successful_update = false;
-			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
+			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53' && @curl_error($ch)) {
 				$status = "Curl error occurred: " . curl_error($ch);
 				log_error($status);
 				$this->status = $status;
@@ -823,6 +891,9 @@
 						$this->_debug($data);
 					}
 					break;
+                                case 'route53':
+                                        $successful_update = true;
+                                        break;
 			}
 			
 			if($successful_update == true) {
@@ -867,6 +938,12 @@
 				case 7:
 					$error = 'phpDynDNS: (ERROR!) No Update URL Provided.';
 					break;
+                                case 8:
+                                        $status = "Route 53: (Error) Invalid ZoneID";
+					break;
+                                case 9:
+                                        $status = "Route 53: (Error) Invalid TTL";
+                                        break;  
 				case 10:
 					$error = 'phpDynDNS: No change in my IP address and/or 25 days has not passed. Not updating dynamic DNS entry.';
 					break;

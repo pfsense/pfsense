@@ -4255,7 +4255,14 @@ function get_interface_ip($interface = "wan")
 
 function get_interface_ipv6($interface = "wan")
 {
+	global $config;
 	$realif = get_real_interface($interface);
+	switch($config['interfaces'][$interface]['ipaddrv6']) {
+		case "6rd":
+		case "6to4":
+			$realif = "stf0";
+			break;
+	}
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;

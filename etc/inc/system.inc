@@ -353,7 +353,7 @@ function system_routing_configure($interface = "") {
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']))) {
+			if (isset($gateway['defaultgw']) && ((is_ipaddrv4($gateway['gateway'])) || ($gateway['gateway'] == "dynamic"))) {
 				if(strstr($gateway['gateway'], ":"))
 					break;
 				if ($gateway['gateway'] == "dynamic")
@@ -370,7 +370,7 @@ function system_routing_configure($interface = "") {
 			}
 		}
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && (is_ipaddrv6($gateway['gateway']))) {
+			if (isset($gateway['defaultgw']) && ((is_ipaddrv6($gateway['gateway'])) || ($gateway['gateway'] == "dynamic6"))) {
 				if ($gateway['gateway'] == "dynamic6")
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 				$gatewayipv6 = $gateway['gateway'];

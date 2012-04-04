@@ -2501,8 +2501,8 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow our proto 41 traffic from the 6RD border relay in
-pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to {$oc['ip']} label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
+pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
 
 EOD;
 			break;
@@ -2510,8 +2510,8 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow our proto 41 traffic from the 6to4 border relay in
-pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to any label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from any to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
 
 EOD;
 			break;

@@ -21,21 +21,21 @@ echo "rc.update_bogons.sh is beginning the update cycle." | logger
 /etc/rc.conf_mount_rw
 
 /usr/bin/fetch -q -o /tmp/bogons "http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt"
-if [ ! -f /tmp/bogons ]; then
-	echo "Could not download http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt" | logger
-	# Relaunch and sleep
-	sh /etc/rc.update_bogons.sh & 
-	exit
-fi
-
 /usr/bin/fetch -q -o /tmp/bogonsv6 "http://files.pfsense.org/mirrors/fullbogons-ipv6.txt"
+if [ ! -f /tmp/bogons ];
+	echo "Could not download http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt" | logger
+	dl_error="true"
+fi
 if [ ! -f /tmp/bogonsv6 ]; then
 	echo "Could not download http://files.pfsense.org/mirrors/fullbogons-ipv6.txt" | logger
+	dl_error="true"
+fi
+
+if [ "$dl_error" != "" ];then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh & 
 	exit
 fi
-
 
 BOGON_MD5=`/usr/bin/fetch -q -o - "http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt.md5" | awk '{ print $4 }'`
 ON_DISK_MD5=`md5 /tmp/bogons | awk '{ print $4 }'`

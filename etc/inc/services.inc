@@ -670,9 +670,10 @@ function services_dhcpdv6_configure() {
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
 	foreach($Iflist as $ifname) {
 		$realif = get_real_interface($ifname);
-		$ifcfgipv6 = Net_IPv6::getNetmask(find_interface_ipv6($realif), 64);
+		$ifcfgipv6 = find_interface_ipv6($realif);
 		if(!is_ipaddrv6($ifcfgipv6))
 			continue;
+		$ifcfgipv6 = Net_IPv6::getNetmask($ifcfgipv6, 64);
 		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
 			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
 			$trackcfg = $config['interfaces'][$trackifname];

@@ -2565,8 +2565,20 @@ EOD;
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
+		switch($ifcfg['type6']) {
+			case "6rd":
+			case "6to4":
+				$stf = stf0;
+				$pdlen = 48;
+				break;
+			default:
+				$stf = $ifcfg['if'];
+				$pdlen = 64;
+				break;
+		}
+		/* FIXME: get the right delegated prefix length, cheating here with /48 */
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['sav6']}/{$ifcfg['snv6']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+                	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']}/$pdlen to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}
 	
 

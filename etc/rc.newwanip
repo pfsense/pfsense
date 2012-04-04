@@ -139,13 +139,10 @@ if(is_array($config['gifs']['gif'])){
 /* check tunneled IPv6 interface tracking */
 switch($config['interfaces'][$interface]['type6']) {
 	case "6to4":
-	case "6rd":	
-		foreach($config['interfaces'] as $iftrackname => $iftrack) {
-			if($iftrack['track6-interface'] == $interface) {
-				log_error("interface {%iftrackname} depends on {$interface}, configuring");
-				interface_track6_configure($iftrackname);
-			}
-		}
+		interface_6to4_configure($interface);
+		break;
+	case "6rd":
+		interface_6rd_configure($interface);
 		break;
 }
 

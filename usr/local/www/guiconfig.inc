@@ -5,6 +5,7 @@
 	originally based on of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2012 Ben Phillips <audiossis@gmail.com>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -77,15 +78,6 @@ $apple_ua = array("iPhone","iPod", "iPad");
 foreach($apple_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = "pfsense";
-
-/* Set the default interface language */
-if($config['system']['language'] <> "") {
-	$g['language'] = $config['system']['language'];
-} elseif ($g['language'] == "") {
-	$g['language'] = 'en_US';
-}
-
-set_language($g['language']);
 
 /* used by progress bar */
 $lastseen = "-1";
@@ -294,18 +286,14 @@ function verify_gzip_file($fname) {
 		return 1;
 }
 
-function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
+function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g, $nifty_redbox, $nifty_blackbox, $nifty_background;
-
-	if(empty($value)) {
-		$value = gettext("Apply changes");
-	}
 
 	// Set the Nifty background color if one is not set already (defaults to white)
 	if($nifty_background == "")
 		$nifty_background = "#FFF";
 
-	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
+	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		if($_POST['if']) 
@@ -328,7 +316,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}	
 		
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
 	}
 
 	echo <<<EOFnp
@@ -391,7 +379,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 	
 		
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
 	}
 
 	echo <<<EOFnp
@@ -927,7 +915,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		}
 
 		if ($tab_array_char_limit == '') {
-			$tab_array_char_limit = 92;
+			$tab_array_char_limit = 82;
 		}
 
         $tab_temp = array ();
@@ -1104,11 +1092,5 @@ function rule_popup($src,$srcport,$dst,$dstport){
         	return $descriptions;
   	}
 }
-
-$timezone = $syscfg['timezone'];
-if (!$timezone)
-	$timezone = "Etc/UTC";
-
-date_default_timezone_set($timezone);
 
 ?>

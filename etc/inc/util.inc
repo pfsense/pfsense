@@ -96,7 +96,7 @@ function mark_subsystem_dirty($subsystem = "") {
 	global $g;
 
 	if (!file_put_contents("{$g['varrun_path']}/{$subsystem}.dirty", "DIRTY"))
-		log_error(sprintf(gettext("WARNING: Could not mark subsystem: %s dirty"), $subsystem));
+		log_error("WARNING: Could not mark subsystem: {$subsytem} dirty");
 }
 
 function clear_subsystem_dirty($subsystem = "") {
@@ -116,7 +116,7 @@ function config_unlock() {
 function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
-		die(gettext("WARNING: You must give a name as parameter to lock() function."));
+		die("WARNING: You must give a name as parameter to lock() function.");
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
@@ -166,9 +166,16 @@ function send_multiple_events($cmds) {
 			
 	if (!is_array($cmds))
 		return;
-
-	foreach ($cmds as $cmd)
-		send_event($cmd);
+	$fd = fsockopen($g['event_address']);
+	if ($fd) {
+		foreach ($cmds as $cmd) {
+			fwrite($fd, $cmd);
+			$resp = fread($fd, 4096);
+			if ($resp != "OK\n")
+				log_error("send_event: sent {$cmd} got {$resp}");
+		}
+		fclose($fd);
+	}
 }
 
 function refcount_init($reference) {
@@ -179,19 +186,21 @@ function refcount_init($reference) {
 
 function refcount_reference($reference) {
 	try {
-		$shmid = @shmop_open($reference, "w", 0644, 10);
+		$shmid = @shmop_open($reference, "w", 0, 0);
 		if (!$shmid) {
 			refcount_init($reference);
 			$shmid = @shmop_open($reference, "w", 0, 0);
 		}
 		$shm_data = @shmop_read($shmid, 0, 10);
+		if (intval($shm_data) < 0)
+			$shm_data = 0;
 		$shm_data = intval($shm_data) + 1;
 		@shmop_write($shmid, $shm_data, 0);
 		@shmop_close($shmid);
 	} catch (Exception $e) {
 		log_error($e->getMessage());
 	}
-
+		
 	return $shm_data;
 }
 
@@ -202,15 +211,15 @@ function refcount_unreference($reference) {
 		$shm_data = @shmop_read($shmid, 0, 10);
 		$shm_data = intval($shm_data) - 1;
 		if ($shm_data < 0) {
-			//debug_backtrace();
-			log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
+			//log_error("MISUAGE OF REFCOUNT_API: trace " . print_r(debug_backtrace(), true));
+			log_error("Reference {$reference} is going negative, not doing unreference.");
 		} else
 			@shmop_write($shmid, $shm_data, 0);
 		@shmop_close($shmid);
 	} catch (Exception $e) {
 		log_error($e->getMessage());
 	}
-
+	
 	return $shm_data;
 }
 
@@ -226,16 +235,8 @@ function is_module_loaded($module_name) {
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
 		return "";
+
 	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
-}
-
-/* return the subnet address given a host address and a subnet bit count */
-function gen_subnetv6($ipaddr, $bits) {
-	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
-		return "";
-
-	$address = Net_IPv6::getNetmask($ipaddr, $bits);
-	return $address;
 }
 
 /* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */
@@ -244,21 +245,6 @@ function gen_subnet_max($ipaddr, $bits) {
 		return "";
 
 	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
-}
-
-/* Generate end number for a given ipv6 subnet mask */
-function gen_subnetv6_max($ipaddr, $bits) {
-	if(!is_ipaddrv6($ipaddr))
-		return false;
-	
-	$mask = Net_IPv6::getNetmask('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF',$bits);
-	
-	$inet_ip = (binary)inet_pton($ipaddr);
-	$inet_mask = (binary)inet_pton($mask);
-
-	$inet_end = $inet_ip | ~$inet_mask;
-
-	return(Net_IPv6::uncompress(inet_ntop($inet_end)));
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -411,26 +397,8 @@ function is_numericint($arg) {
 	return (preg_match("/[^0-9]/", $arg) ? false : true);
 }
 
-
-/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
-function is_ipaddr($ipaddr) {
-	if(is_ipaddrv4($ipaddr)) {
-		return true;
-	}
-	if(is_ipaddrv6($ipaddr)) {
-		return true;
-	}
-	return false;
-}
-
-/* returns true if $ipaddr is a valid IPv6 address */
-function is_ipaddrv6($ipaddr) {
-	$result = Net_IPv6::checkIPv6($ipaddr);
-	return $result;
-}
-
 /* returns true if $ipaddr is a valid dotted IPv4 address */
-function is_ipaddrv4($ipaddr) {
+function is_ipaddr($ipaddr) {
 	if (!is_string($ipaddr))
 		return false;
 
@@ -441,28 +409,6 @@ function is_ipaddrv4($ipaddr) {
 		return true;
 	else
 		return false;
-}
-
-function is_ipaddrwithport($ipport) {
-	$parts = explode(":", $ipport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_ipaddrv4($parts[0]) && is_port($port);
-	} elseif (count($parts) > 1) {
-		return is_ipaddrv6(implode(":", $parts)) && is_port($port);
-	} else {
-		return false;
-	}
-}
-
-function is_hostnamewithport($hostport) {
-	$parts = explode(":", $hostport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_hostname($parts[0]) && is_port($port);
-	} else {
-		return false;
-	}
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
@@ -482,25 +428,14 @@ function is_ipaddroralias($ipaddr) {
 
 }
 
-/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format */
+/* returns true if $subnet is a valid subnet in CIDR format */
 function is_subnet($subnet) {
-	if(is_subnetv4($subnet)) {
-		return true;
-	}
-	if(is_subnetv6($subnet)) {
-		return true;
-	}
-	return false;
-}
-
-/* returns true if $subnet is a valid IPv4 subnet in CIDR format */
-function is_subnetv4($subnet) {
 	if (!is_string($subnet))
 		return false;
 
 	list($hp,$np) = explode('/', $subnet);
 
-	if (!is_ipaddrv4($hp))
+	if (!is_ipaddr($hp))
 		return false;
 
 	if (!is_numeric($np) || ($np < 1) || ($np > 32))
@@ -508,23 +443,6 @@ function is_subnetv4($subnet) {
 
 	return true;
 }
-
-/* returns true if $subnet is a valid IPv6 subnet in CIDR format */
-function is_subnetv6($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv6($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 128))
-		return false;
-
-	return true;
-}
-
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
@@ -684,6 +602,9 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 
 	$iflist = array();
 
+	if(!is_array($config['interfaces']))
+		$config = parse_config(true);
+
 	/* if list */
 	foreach($config['interfaces'] as $if => $ifdetail) {
 		if ($only_opt && ($if == "wan" || $if == "lan"))
@@ -759,28 +680,6 @@ function get_configured_ip_addresses() {
 }
 
 /*
- *   get_configured_ipv6_addresses() - Return a list of all configured
- *   interfaces IPv6 Addresses
- *
- */
-function get_configured_ipv6_addresses() {
-	require_once("interfaces.inc");
-	$ipv6_array = array();
-	$interfaces = get_configured_interface_list();
-	if(is_array($interfaces)) {
-		foreach($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int);
-			$ipv6_array[$int] = $ipaddrv6;
-		}
-	}
-	$interfaces = get_configured_carp_interface_list();
-	if(is_array($interfaces)) 
-		foreach($interfaces as $int => $ipaddrv6) 
-			$ipv6_array[$int] = $ipaddrv6;
-	return $ipv6_array;
-}
-
-/*
  *   get_interface_list() - Return a list of all physical interfaces
  *   along with MAC and status.
  *
@@ -798,6 +697,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'ppp',
 				'pppoe',
 				'pptp',
+				'pptp-client',
 				'l2tp',
 				'sl',
 				'gif',
@@ -820,10 +720,10 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	}
 	switch($mode) {
 	case "active":
-                $upints = pfSense_interface_listget(IFF_UP);
+                $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
         	break;
 	case "media":
-		$intlist = pfSense_interface_listget();
+                $intlist = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
                 $ifconfig = "";
                 exec("/sbin/ifconfig -a", $ifconfig);
                 $regexp = '/(' . implode('|', $intlist) . '):\s/';
@@ -834,7 +734,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		}
 		break;
 	default:
-		$upints = pfSense_interface_listget();
+		$upints = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
 		break;
 	}
         /* build interface list with netstat */
@@ -957,7 +857,7 @@ function mwexec($command, $mute = false) {
 		$mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
-		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
+		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
 	}
 	return $retval;
 }
@@ -997,25 +897,11 @@ function alias_make_table($config) {
 		}
 	}
 }
-
 /* check if an alias exists */
 function is_alias($name) {
 	global $aliastable;
 
 	return isset($aliastable[$name]);
-}
-
-function alias_get_type($name) {
-        global $config;
-        
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($name == $alias['name'])
-				return $alias['type'];
-		}
-	}
-
-        return "";
 }
 
 /* expand a host or network alias, if necessary */
@@ -1035,14 +921,12 @@ function alias_expand_urltable($name) {
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
-				if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
-					return $urltable_filename;
-				else if (process_alias_urltable($name, $alias["url"], 0, true))
-					return $urltable_filename;
-			}
+	foreach ($config['aliases']['alias'] as $alias) {
+		if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
+			if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
+				return $urltable_filename;
+			else if (process_alias_urltable($name, $alias["url"], 0, true))
+				return $urltable_filename;
 		}
 	}
 	return null;
@@ -1082,13 +966,6 @@ function ipcmp($a, $b) {
 
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
-	if(is_ipaddrv6($addr)) {
-		$result = Net_IPv6::IsInNetmask($addr, $subnet);
-		if($result)
-			return true;
-		else
-			return false;
-	}
 	list($ip, $mask) = explode('/', $subnet);
 	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
 	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
@@ -1132,26 +1009,28 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
+    $mac =explode(":", $clientmac);
+
     global $config;
 
-    $mac = explode(":", $clientmac);
     $mac_format = $config['captiveportal']['radmac_format'] ? $config['captiveportal']['radmac_format'] : false;
 
     switch($mac_format) {
+
         case 'singledash':
-		return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
+        return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
 
         case 'ietf':
-		return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
+        return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
 
         case 'cisco':
-		return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
+        return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
 
         case 'unformatted':
-		return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
+        return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
 
         default:
-		return $clientmac;
+        return $clientmac;
     }
 }
 
@@ -1160,9 +1039,8 @@ function resolve_retry($hostname, $retries = 5) {
 	if (is_ipaddr($hostname))
 		return $hostname;
 
-       for ($i = 0; $i < $retries; $i++) {
-		// FIXME: gethostbyname does not work for AAAA hostnames, boo, hiss
-               $ip = gethostbyname($hostname);
+	for ($i = 0; $i < $retries; $i++) {
+		$ip = gethostbyname($hostname);
 
 		if ($ip && $ip != $hostname) {
 			/* success */
@@ -1350,11 +1228,8 @@ function mute_kernel_msgs() {
 	global $config;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
-	}
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
 	if($config['system']['enableserial']) 
 		return;			
 	exec("/sbin/conscontrol mute on");
@@ -1364,19 +1239,14 @@ function unmute_kernel_msgs() {
 	global $config;
 	// Do not mute serial console.  The kernel gets very very cranky
 	// and will start dishing you cannot control tty errors.
-	switch (trim(file_get_contents("/etc/platform"))) {
-		case "nanobsd":
-		case "jail":
-			return;
-	}
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+		return;
 	exec("/sbin/conscontrol mute off");
 }
 
 function start_devd() {
 	global $g;
 
-	if ($g['platform'] == 'jail')
-		return;
 	exec("/sbin/devd");
 	sleep(1);
 }
@@ -1401,7 +1271,7 @@ function is_interface_mismatch() {
 	$i = 0;
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^pptp-client|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -1639,20 +1509,6 @@ function array_merge_recursive_unique($array0, $array1) {
 				}
 			}
 		}
-	}
-	return $result;
-}
-
-/*
- * converts a string like "a,b,c,d"
- * into an array like array("a" => "b", "c" => "d")
- */
-function explode_assoc($delimiter, $string) {
-	$array = explode($delimiter, $string);
-	$result = array();
-	$numkeys = floor(count($array) / 2);
-	for ($i = 0; $i < $numkeys; $i += 1) {
-		$result[$array[$i * 2]] = $array[$i * 2 + 1];
 	}
 	return $result;
 }

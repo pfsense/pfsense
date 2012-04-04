@@ -4,7 +4,8 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008-2010 Ermal Lu?i
+	Copyright (C) 2008-2010 Ermal Luçi
+	Copyright (C) 2012 Ben Phillips <audiossis@gmail.com>.
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -85,7 +86,6 @@ if (!is_array($config['gateways']['gateway_item']))
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
-$old_wancfg = $wancfg;
 // Populate page descr if it does not exist.
 if ($if == "wan" && !$wancfg['descr'])
 	$wancfg['descr'] = "WAN";
@@ -132,7 +132,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 			}
 			log_error("ResetTime:".$resetTime);
 			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
-				$resetTime_a = explode(" ", $resetTime);
+				$resetTime_a = split(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
 				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
 				$pconfig['pppoe_resethour'] = $resetTime_a[1];
@@ -167,7 +167,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 		$pconfig['pptp_subnet'] = explode(",",$a_ppps[$pppid]['subnet']);
 		$pconfig['pptp_remote'] = explode(",",$a_ppps[$pppid]['gateway']);
 		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
-		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['timeout'];
+		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 	}
 } else {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
@@ -193,6 +193,7 @@ switch($wancfg['ipaddr']) {
 		$pconfig['type'] = "dhcp";
 		break;
 	case "carpdev-dhcp":
+		$pconfig['type'] = "carpdev-dhcp";
 		$pconfig['ipaddr'] = "";
 		break;
 	case "pppoe":
@@ -203,7 +204,7 @@ switch($wancfg['ipaddr']) {
 		break;
 	default:
 		if(is_ipaddr($wancfg['ipaddr'])) {
-			$pconfig['type'] = "staticv4";
+			$pconfig['type'] = "static";
 			$pconfig['ipaddr'] = $wancfg['ipaddr'];
 			$pconfig['subnet'] = $wancfg['subnet'];
 			$pconfig['gateway'] = $wancfg['gateway'];
@@ -212,6 +213,8 @@ switch($wancfg['ipaddr']) {
 		break;
 }
 
+<<<<<<< HEAD
+=======
 switch($wancfg['ipaddrv6']) {
 	case "dhcp6":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
@@ -249,6 +252,7 @@ switch($wancfg['ipaddrv6']) {
 
 // print_r($pconfig);
 
+>>>>>>> upstream/master
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
@@ -303,9 +307,6 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['auth_server_addr'] = $wancfg['wireless']['auth_server_addr'];
 	$pconfig['auth_server_port'] = $wancfg['wireless']['auth_server_port'];
 	$pconfig['auth_server_shared_secret'] = $wancfg['wireless']['auth_server_shared_secret'];
-	$pconfig['auth_server_addr2'] = $wancfg['wireless']['auth_server_addr2'];
-	$pconfig['auth_server_port2'] = $wancfg['wireless']['auth_server_port2'];
-	$pconfig['auth_server_shared_secret2'] = $wancfg['wireless']['auth_server_shared_secret2'];
 	if (is_array($wancfg['wireless']['wpa'])) {
 		$pconfig['debug_mode'] = $wancfg['wireless']['wpa']['debug_mode'];
 		$pconfig['macaddr_acl'] = $wancfg['wireless']['wpa']['macaddr_acl'];
@@ -348,19 +349,11 @@ if ($_POST['apply']) {
 
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-			foreach ($toapplylist as $ifapply => $values) {
-				if (isset($config['interfaces'][$ifapply]['enable'])) {
-					/* check if any old addresses need purging */
-					if(is_ipaddrv6($values['ipaddrv6'])) {
-						$realif = get_real_interface("$ifapply");
-						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
-						mwexec("/sbin/ifconfig {$realif} inet6 {$values['ipaddrv6']} -alias");
-					}
+			foreach ($toapplylist as $ifapply) {
+				if (isset($config['interfaces'][$ifapply]['enable']))
 					interface_reconfigure($ifapply, true);
-				} else {
-
+				else
 					interface_bring_down($ifapply);
-				}
 			}
 		}
 		/* restart snmp so that it binds to correct address */
@@ -384,16 +377,11 @@ if ($_POST['apply']) {
 		interface_sync_wireless_clones($wancfg, false);
 	write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
 	mark_subsystem_dirty('interfaces');
-	if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
+	if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
 		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-	} else {
+	else
 		$toapplylist = array();
-	}
-	$toapplylist[$if] = array();
-	/* we need to be able remove IP aliases for IPv6 */
-	if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
-		$toapplylist[$if]['ipaddrv6'] = "{$old_wancfg['ipaddrv6']}";
-	}
+	$toapplylist[$if] = $if; 
 	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 	header("Location: interfaces.php?if={$if}");
 	exit;
@@ -427,27 +415,23 @@ if ($_POST['apply']) {
 		}
 	}
 	/* input validation */
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (! preg_match("/^staticv4/", $_POST['type'])))
+	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
 		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
-	if (isset($config['dhcpd6']) && isset($config['dhcpd6'][$if]['enable']) && (! preg_match("/^staticv6/", $_POST['type6'])))
-		$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only with a static IPv6 configuration. Please disable the DHCPv6 Server service on this interface first, then change the interface configuration.");
 
 	switch(strtolower($_POST['type'])) {
-		case "staticv4":
+		case "static":
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
-			$reqdfieldsn = array(gettext("IPv4 address"),gettext("Subnet bit count"),gettext("Gateway"));
+			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vip) {
-					if (is_ipaddrv4($vip['subnet']) && $vip['interface'] == $if)
-						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
+					if ($vip['interface'] == $if)
+						$input_errors[] = gettext("This interface is referenced by VIPs please delete those before setting the interface to 'none' configuration.");
 				}
 			}
 		case "dhcp":
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
@@ -485,6 +469,8 @@ if ($_POST['apply']) {
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 	}
+<<<<<<< HEAD
+=======
 	switch(strtolower($_POST['type6'])) {
 		case "staticv6":
 			$reqdfields = explode(" ", "ipaddrv6 subnetv6 gatewayv6");
@@ -516,31 +502,22 @@ if ($_POST['apply']) {
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 	}
+>>>>>>> upstream/master
 
-	
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr'])))
-		$input_errors[] = gettext("A valid IPv4 address must be specified.");
-	if (($_POST['ipaddrv6'] && !is_ipaddr($_POST['ipaddrv6'])))
-		$input_errors[] = gettext("A valid IPv6 address must be specified.");
+		$input_errors[] = gettext("A valid IP address must be specified.");
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet'])))
-		$input_errors[] = gettext("A valid subnet bit count must be specified.");
-	if (($_POST['subnetv6'] && !is_numeric($_POST['subnetv6'])))
 		$input_errors[] = gettext("A valid subnet bit count must be specified.");
 	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address'])))
 		$input_errors[] = gettext("A valid alias IP address must be specified.");
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet'])))
 		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
-	if (($_POST['gateway'] != "none") || ($_POST['gatewayv6'] != "none")) {
+	if ($_POST['gateway'] != "none") {
 		$match = false;
 		foreach($a_gateways as $gateway) {
 			if(in_array($_POST['gateway'], $gateway)) {
-				$match = true;
-			}
-		}
-		foreach($a_gateways as $gateway) {
-			if(in_array($_POST['gatewayv6'], $gateway)) {
 				$match = true;
 			}
 		}
@@ -576,12 +553,8 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$reqdfields = array("mode");
-		$reqdfieldsn = array(gettext("Mode"));
-		if ($_POST['mode'] == 'hostap') {
-			$reqdfields[] = "ssid";
-			$reqdfieldsn[] = gettext("SSID");
-		}
+		$reqdfields = explode(" ", "mode ssid");
+		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
 		/* loop through keys and enforce size */
@@ -631,10 +604,6 @@ if ($_POST['apply']) {
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
 				unset($a_ppps[$pppid]);
-			} else if ($wancfg['ipaddrv6'] == "dhcp6") {
-				$pid = find_dhcp6c_process($realif);
-				if($pid)
-					posix_kill($pid, SIGTERM);
 			} else if ($wancfg['ipaddr'] == "dhcp") {
 				$pid = find_dhclient_process($realif);
 				if($pid)
@@ -645,13 +614,12 @@ if ($_POST['apply']) {
 		$ppp = array();
 		if ($wancfg['ipaddr'] != "ppp")
 			unset($wancfg['ipaddr']);
-		if ($wancfg['ipaddrv6'] != "ppp")
-			unset($wancfg['ipaddrv6']);
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);
-		unset($wancfg['subnetv6']);
-		unset($wancfg['gatewayv6']);
 		unset($wancfg['dhcphostname']);
+<<<<<<< HEAD
+		unset($wancfg['pppoe_username']);
+=======
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['track6-interface']);
@@ -659,6 +627,7 @@ if ($_POST['apply']) {
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
+>>>>>>> upstream/master
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -668,7 +637,7 @@ if ($_POST['apply']) {
 		if (isset($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
-		
+		unset($wancfg['subnet']);
 		unset($wancfg['remote']);
 		unset($a_ppps[$pppid]['apn']);
 		unset($a_ppps[$pppid]['phone']);
@@ -690,6 +659,15 @@ if ($_POST['apply']) {
 			/* check for duplicates */
 			$skip = false;
 			foreach($a_gateways as $item) {
+<<<<<<< HEAD
+				if(($item['interface'] == "$if") && ($item['gateway'] == "dynamic")) {
+					$skip = true;
+				}
+			}
+			if($skip == false) {
+				$gateway_item['gateway'] = gettext("dynamic");
+				$gateway_item['descr'] = gettext("Interface") . $if . gettext("dynamic gateway");
+=======
 				if(($item['interface'] == "$if") && (trim($item['gateway']) == "dynamic")) {
 					$skip4 = true;
 				}
@@ -700,6 +678,7 @@ if ($_POST['apply']) {
 			if($skip4 == false) {
 				$gateway_item['gateway'] = "dynamic";
 				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic IPv4 gateway"),$if);
+>>>>>>> upstream/master
 				$gateway_item['name'] = "GW_" . strtoupper($if);
 				$gateway_item['interface'] = "{$if}";
 				$gateway_item['family'] = "inet";
@@ -715,7 +694,7 @@ if ($_POST['apply']) {
 		}
 
 		switch($_POST['type']) {
-			case "staticv4":
+			case "static":
 				$wancfg['ipaddr'] = $_POST['ipaddr'];
 				$wancfg['subnet'] = $_POST['subnet'];
 				if ($_POST['gateway'] != "none") {
@@ -769,7 +748,7 @@ if ($_POST['apply']) {
 				if (!empty($_POST['provider']))
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				else
-					$a_ppps[$pppid]['provider'] = true;
+					unset($a_ppps[$pppid]['provider']);
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
@@ -802,7 +781,7 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
 				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
 				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-				if (!empty($_POST['idletimeout']))
+				if (!empty($_POST['pptp_idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
 				else
 					unset($a_ppps[$pppid]['idletimeout']);
@@ -815,6 +794,8 @@ if ($_POST['apply']) {
 			case "none":
 				break;
 		}
+<<<<<<< HEAD
+=======
 		switch($_POST['type6']) {
 			case "staticv6":
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
@@ -851,6 +832,7 @@ if ($_POST['apply']) {
 			case "none":
 				break;
 		}
+>>>>>>> upstream/master
 		handle_pppoe_reset($_POST);
 
 		if($_POST['blockpriv'] == "yes") {
@@ -890,17 +872,11 @@ if ($_POST['apply']) {
 		conf_mount_ro();
 		write_config();
 
-		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
+		if (file_exists("{$g['tmp_path']}/.interfaces.apply"))
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-		} else {
+		else
 			$toapplylist = array();
-		}
-		$toapplylist[$if] = array();
-		/* we need to be able remove IP aliases for IPv6 */
-		if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
-			$toapplylist[$if]['ipaddrv6'] = $old_wancfg['ipaddrv6'];
-		}
-		
+		$toapplylist[$if] = $if; 
 		file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 
 		mark_subsystem_dirty('interfaces');
@@ -951,10 +927,6 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_addr'] = $_POST['auth_server_addr'];
 	$wancfg['wireless']['auth_server_port'] = $_POST['auth_server_port'];
 	$wancfg['wireless']['auth_server_shared_secret'] = $_POST['auth_server_shared_secret'];
-	$wancfg['wireless']['auth_server_addr2'] = $_POST['auth_server_addr2'];
-	$wancfg['wireless']['auth_server_port2'] = $_POST['auth_server_port2'];
-	$wancfg['wireless']['auth_server_shared_secret2'] = $_POST['auth_server_shared_secret2'];
-	
 	if ($_POST['persistcommonwireless'] == "yes") {
 		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
@@ -1099,8 +1071,12 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
+<<<<<<< HEAD
+$types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
+=======
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6rd"), "6to4" => gettext("6to4"), "track6" => gettext("Track Interface"));
+>>>>>>> upstream/master
 
 ?>
 
@@ -1114,34 +1090,37 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateType(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv4, #dhcp, #pppoe, #pptp, #ppp').hide();
+				$('static','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
-			case "staticv4": {
-				jQuery('#none, #dhcp, #pppoe, #pptp, #ppp').hide();
+			case "static": {
+				$('none','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "dhcp": {
-				jQuery('#none, #staticv4, #pppoe, #pptp, #ppp').hide();
+				$('none','static','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "ppp": {
-				jQuery('#none, #staticv4, #dhcp, #pptp, #pppoe').hide();
+				$('none','static','dhcp','pptp', 'pppoe').invoke('hide');
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				jQuery('#none, #staticv4, #dhcp, #pptp, #ppp').hide();
+				$('none','static','dhcp','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "l2tp":
 			case "pptp": {
-				jQuery('#none, #staticv4, #dhcp, #pppoe, #ppp').hide();
-				jQuery('#pptp').show();
+				$('none','static','dhcp','pppoe', 'ppp').invoke('hide');
+				$('pptp').show();
 				break;
 			}
 		}
 		if (t != "l2tp" && t != "pptp")
+<<<<<<< HEAD
+			$(t).show();
+=======
 			jQuery('#'+t).show();
 	}
 	function updateTypeSix(t) {
@@ -1173,31 +1152,33 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		if (t != "l2tp" && t != "pptp")
 			jQuery('#'+t).show();
+>>>>>>> upstream/master
 	}
 
 	function show_allcfg(obj) {
 		if (obj.checked)
-			jQuery('#allcfg').show();
+			$('allcfg').show();
 		else
-			jQuery('#allcfg').hide();
+			$('allcfg').hide();
 	}
 
 	function show_reset_settings(reset_type) {
 		if (reset_type == 'preset') {
-			jQuery('#pppoepresetwrap').show();
-			jQuery('#pppoecustomwrap').hide();
+			Effect.Appear('pppoepresetwrap', { duration: 0.0 });
+			Effect.Fade('pppoecustomwrap', { duration: 0.0 });
 		}
 		else if (reset_type == 'custom') {
-			jQuery('#pppoecustomwrap').show();
-			jQuery('#pppoepresetwrap').hide();
+			Effect.Appear('pppoecustomwrap', { duration: 0.0 });
+			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
 		} else {
-			jQuery('#pppoecustomwrap').hide();
-			jQuery('#pppoepresetwrap').hide();
+			Effect.Fade('pppoecustomwrap', { duration: 0.0 });
+			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
 		}
 	}
 	function show_mon_config() {
-		jQuery("#showmonbox").html('');
-		jQuery('#showmon').css('display','block');
+		document.getElementById("showmonbox").innerHTML='';
+		aodiv = document.getElementById('showmon');
+		aodiv.style.display = "block";
 	}
 
 	function openwindow(url) {
@@ -1208,54 +1189,52 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			return true;
 	}
 	function country_list() {
-		jQuery('#country').children().remove();
-		jQuery('#provider').children().remove();
-		jQuery('#providerplan').children().remove();
-		jQuery.ajax("getserviceproviders.php",{
-			success: function(response) {
-				var responseTextArr = response.split("\n");
+		$('country').childElements().each(function(node) { node.remove(); });
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					var option = new Element('option');
 					country = value.split(":");
 					option.text = country[0];
 					option.value = country[1];
-					jQuery('#country').append(option);
+					$('country').insert({ bottom : option });
 				});
 			}
 		});
-		jQuery('#trcountry').css('display',"table-row");
+		$('trcountry').setStyle({display : "table-row"});
 	}
 
 	function providers_list() {
-		jQuery('#provider').children().remove();
-		jQuery('#providerplan').children().remove();
-		jQuery.ajax("getserviceproviders.php",{
-			type: 'post',
-			data: {country : jQuery('#country').val()},
-			success: function(response) {
-				var responseTextArr = response.split("\n");
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					var option = new Element('option');
 					option.text = value;
 					option.value = value;
-					jQuery('#provider').append(option);
+					$('provider').insert({ bottom : option });
 				});
 			}
 		});
-		jQuery('#trprovider').css("display","table-row");
-		jQuery('#trproviderplan').css("display","none");
+		$('trprovider').setStyle({display : "table-row"});
+		$('trproviderplan').setStyle({display : "none"});
 	}
 
 	function providerplan_list() {
-		jQuery('#providerplan').children().remove();
-		jQuery('#providerplan').append( new Element('option') );
-		jQuery.ajax("getserviceproviders.php",{
-			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val()},
-			success: function(response) {
-				var responseTextArr = response.split("\n");
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		$('providerplan').insert( new Element('option') );
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
 				responseTextArr.sort();
 				responseTextArr.each( function(value) {
 					if(value != "") {
@@ -1264,34 +1243,31 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						var option = new Element('option');
 						option.text = providerplan[0] + " - " + providerplan[1];
 						option.value = providerplan[1];
-						jQuery('#providerplan').append(option);
+						$('providerplan').insert({ bottom : option });
 					}
 				});
 			}
 		});
-		jQuery('#trproviderplan').css("display","table-row");
+		$('trproviderplan').setStyle({display : "table-row"});
 	}
 
 	function prefill_provider() {
-		jQuery.ajax("getserviceproviders.php",{
-			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val(), plan : jQuery('#providerplan').val()},
-			success: function(data,textStatus,response) {
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider'), plan : $F('providerplan')},
+			onSuccess: function(response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
-				jQuery('#username').val('');
-				jQuery('#password').val('');
+				$('username').setValue('');
+				$('password').setValue('');
 				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
-					jQuery('#phone').val('#777');
-					jQuery('#apn').val('');
+					$('phone').setValue('#777');
+					$('apn').setValue('');
 				} else {
-					jQuery('#phone').val('*99#');
-					jQuery('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
+					$('phone').setValue('*99#');
+					$('apn').setValue(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
-				username = provider.getElementsByTagName('username')[0].firstChild.data;
-				password = provider.getElementsByTagName('password')[0].firstChild.data;
-				jQuery('#username').val(username);
-				jQuery('#password').val(password);
+				$('username').setValue(provider.getElementsByTagName('username')[0].firstChild.data);
+				$('password').setValue(provider.getElementsByTagName('password')[0].firstChild.data);
 			}
 		});
 	}
@@ -1332,29 +1308,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 						</tr>
 						<tr>
-							<td valign="middle" class="vncell"><strong><?=gettext("IPv4 Configuration Type"); ?></strong></td>
+							<td valign="middle" class="vncell"><strong><?=gettext("Type"); ?></strong></td>
 							<td class="vtable">
 								<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
 								<?php
-									foreach ($types4 as $key => $opt) {
+									foreach ($types as $key => $opt) {
 										echo "<option onClick=\"updateType('{$key}');\"";
 										if ($key == $pconfig['type'])
-											echo " selected";
-										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
-										echo "</option>";
-									}
-								?>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="middle" class="vncell"><strong><?=gettext("IPv6 Configuration Type"); ?></strong></td>
-							<td class="vtable">
-								<select name="type6" onChange="updateTypeSix(this.value);" class="formselect" id="type6">
-								<?php
-									foreach ($types6 as $key => $opt) {
-										echo "<option onClick=\"updateTypeSix('{$key}');\"";
-										if ($key == $pconfig['type6'])
 											echo " selected";
 										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
 										echo "</option>";
@@ -1389,7 +1349,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
 								<?=gettext("If you leave this field blank, the adapter's default MTU will " .
-								"be used. This is typically 1500 bytes but can vary in some circumstances."); ?>
+								"be used. This is typically 1500 bytes but can vary on some hardware."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -1417,8 +1377,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
 							else echo '>';
 								echo '<select name="mediaopt" class="formselect" id="mediaopt">';
-								print "<option value=\"\">Default (no preference, typically autoselect)</option>";
-								print "<option value=\"\">------- Media Supported by this interface -------</option>";
+								print "<option value=\"\">Default</option>";
 								foreach($mediaopts_list as $mediaopt){
 									if ($mediaopt != rtrim($mediaopt_from_config)){
 										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";
@@ -1427,7 +1386,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									}
 								}
 								echo '</select><br>';
-								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.");
+								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autonegotiate unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
 						echo '</tr>';
@@ -1438,14 +1397,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						</tr>
 						<tr style="display:none;" name="none" id="none">
 						</tr>
-						<tr style="display:none;" name="staticv4" id="staticv4">
+						<tr style="display:none;" name="static" id="static">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IPv4 configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IP configuration"); ?></td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv4 address"); ?></td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
 											/
@@ -1463,14 +1422,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway"); ?></td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gateway" class="formselect" id="gateway">
 												<option value="none" selected><?=gettext("None"); ?></option>
 													<?php
 													if(count($a_gateways) > 0) {
 														foreach ($a_gateways as $gateway) {
-															if(($gateway['interface'] == $if)  && (is_ipaddrv4($gateway['gateway']))) {
+															if($gateway['interface'] == $if) {
 													?>
 															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
 																<?=htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']);?>
@@ -1480,8 +1439,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														}
 													}
 													?>
-											</select>
-											- or  <strong><a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a></strong>
+											</select> -or- <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a>
 											<br/>
 											<div id='addgwbox'>
 												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
@@ -1512,7 +1470,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway IPv4:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IP:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
 																</tr>
 																<tr>
 																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
@@ -1523,8 +1481,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td>
 																		<center>
 																			<div id='savebuttondiv'>
-
-
+																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
@@ -1543,6 +1500,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
+<<<<<<< HEAD
+=======
 						<tr style="display:none;" name="staticv6" id="staticv6">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1649,6 +1608,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
+>>>>>>> upstream/master
 						<tr style="display:none;" name="dhcp" id="dhcp">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1677,7 +1637,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IPv4 address"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IP address"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
@@ -1691,9 +1651,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												}
 												?>
 											</select>
-											<?=gettext("The value in this field is used as a fixed alias IPv4 address by the " .
+											<?=gettext("The value in this field is used as a fixed alias IP address by the " .
 											"DHCP client."); ?>
 										</td>
+<<<<<<< HEAD
+=======
 									</tr>
 								</table>
 							</td>
@@ -1778,6 +1740,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<br>
 											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
 										</td>
+>>>>>>> upstream/master
 									</tr>
 								</table>
 							</td>
@@ -2357,8 +2320,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
 							<td class="vtable">
 								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
-								<br/>
-								<?=gettext("Note: Only required in Access Point mode. If left blank in Ad-hoc or Infrastructure mode, this interface will connect to any available SSID"); ?>
 							</td>
 						</tr>
 						<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
@@ -2578,27 +2539,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 						</tr>
 						<tr>
-					<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server IP Address"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_addr2" id="auth_server_addr2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr2']);?>">
-								<br/><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>">
-								<br/><?=gettext("Leave blank for the default 1812 port."); ?>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Shared Secret"); ?></td>
-							<td class="vtable">
-								<input name="auth_server_shared_secret2" id="auth_server_shared_secret2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret2']);?>">
-								<br/>
-							</td>
-						</tr>
-						<tr>
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
 							<td class="vtable">
 								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <? if ($pconfig['rsn_preauth']) echo "checked"; ?>>
@@ -2668,8 +2608,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	<script type="text/javascript">
 		var gatewayip;
 		var name;
-		var gatewayipv6;
-		var namev6;
 		function show_add_gateway() {
 			document.getElementById("addgateway").style.display = '';
 			document.getElementById("addgwbox").style.display = 'none';
@@ -2678,17 +2616,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("cancel").style.display = 'none';
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
-			jQuery('#notebox').html("");
-		}
-		function show_add_gateway_v6() {
-			document.getElementById("addgatewayv6").style.display = '';
-			document.getElementById("addgwboxv6").style.display = 'none';
-			document.getElementById("gatewayv6").style.display = 'none';
-			document.getElementById("save").style.display = 'none';
-			document.getElementById("cancel").style.display = 'none';
-			document.getElementById("gwsave").style.display = '';
-			document.getElementById("gwcancel").style.display = '';
-			jQuery('#noteboxv6').html("");
+			$('notebox').innerHTML="";
 		}
 		function hide_add_gateway() {
 			document.getElementById("addgateway").style.display = 'none';
@@ -2699,52 +2627,24 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
 		}
-		function hide_add_gateway_v6() {
-			document.getElementById("addgatewayv6").style.display = 'none';
-			document.getElementById("addgwboxv6").style.display = '';
-			document.getElementById("gatewayv6").style.display = '';
-			document.getElementById("save").style.display = '';
-			document.getElementById("cancel").style.display = '';
-			document.getElementById("gwsave").style.display = '';
-			document.getElementById("gwcancel").style.display = '';
-		}
 		function hide_add_gatewaysave() {
 			document.getElementById("addgateway").style.display = 'none';
-			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
-			var iface = jQuery('#if').val();
-			name = jQuery('#name').val();
-			var descr = jQuery('#gatewaydescr').val();
-			gatewayip = jQuery('#gatewayip').val();
-
-			var defaultgw = jQuery('#defaultgw').val();
+			$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
+			var iface = $F('if');
+			name = $('name').getValue();
+			var descr = $('gatewaydescr').getValue();
+			gatewayip = $('gatewayip').getValue();
+			addrtype = $('addrtype').getValue();
+			var defaultgw = $('defaultgw').getValue();
 			var url = "system_gateways_edit.php";
-			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-			jQuery.ajax(
+			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
+			var myAjax = new Ajax.Request(
 				url,
 				{
-					type: 'post',
-					data: pars,
-					error: report_failure,
-					complete: save_callback
-				});
-		}
-		function hide_add_gatewaysave_v6() {
-			document.getElementById("addgatewayv6").style.display = 'none';
-			jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
-			var iface = jQuery('#if').val();
-			name = jQuery('#namev6').val();
-			var descr = jQuery('#gatewaydescrv6').val();
-			gatewayip = jQuery('#gatewayipv6').val();
-			var defaultgw = jQuery('#defaultgwv6').val();
-			var url_v6 = "system_gateways_edit.php";
-			var pars_v6 = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-			jQuery.ajax(
-				url_v6,
-				{
-					type: 'post',
-					data: pars_v6,
-					error: report_failure_v6,
-					complete: save_callback_v6
+					method: 'post',
+					parameters: pars,
+					onFailure: report_failure,
+					onComplete: save_callback
 				});
 		}
 		function addOption(selectbox,text,value)
@@ -2752,38 +2652,24 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			var optn = document.createElement("OPTION");
 			optn.text = text;
 			optn.value = value;
-			selectbox.append(optn);
-			selectbox.prop('selectedIndex',selectbox.children().length-1);
-			jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
-		}
-		function addOption_v6(selectbox,text,value)
-		{
-			var optn = document.createElement("OPTION");
-			optn.text = text;
-			optn.value = value;
-			selectbox.append(optn);
-			selectbox.prop('selectedIndex',selectbox.children().length-1);
-			jQuery('#noteboxv6').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
+			selectbox.options.add(optn);
+			selectbox.selectedIndex = (selectbox.options.length-1);
+			$('notebox').innerHTML="<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.";
 		}
 		function report_failure() {
-			alert("Sorry, we could not create your IPv4 gateway at this time.");
+			alert("Sorry, we could not create your gateway at this time.");
 			hide_add_gateway();
-		}
-		function report_failure_v6() {
-			alert("Sorry, we could not create your IPv6 gateway at this time.");
-			hide_add_gateway_v6();
 		}
 		function save_callback(transport) {
 			var response = transport.responseText;
 			if(response) {
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
-				jQuery('#status').html('');
-				var gwtext = escape(name) + " - " + gatewayip;
-				addOption(jQuery('#gateway'), gwtext, name);
+				$('status').innerHTML = '';
+				addOption($('gateway'), name, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif">');
+				//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 			} else {
 				report_failure();
 			}
@@ -2793,25 +2679,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			aodiv = document.getElementById('showmediaadv');
 			aodiv.style.display = "block";
 		}
-		function save_callback_v6(transport) {
-			var response_v6 = transport.responseText;
-			if(response_v6) {
-				document.getElementById("addgatewayv6").style.display = 'none';
-				hide_add_gateway_v6();
-				jQuery('#statusv6').html('');
-				var gwtext_v6 = escape(name) + " - " + gatewayip;
-				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
-				// Auto submit form?
-				//document.iform.submit();
-				//jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif">');
-			} else {
-				report_failure_v6();
-			}
-		}
 		<?php
 		echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
-		echo "updateTypeSix('{$pconfig['type6']}');\n";
 		?>
 	</script>
 	<?php include("fend.inc"); ?>

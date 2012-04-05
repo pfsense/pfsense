@@ -170,7 +170,7 @@ if ($savemsg)
 	print_info_box($savemsg);
 
 if (is_subsystem_dirty("unbound"))
-		print_info_box_np(gettext("The settings for the DNS Resolver has changed. You must apply the configuration to take affect."));
+		print_info_box_np(gettext("The settings for the DNS Resolver have changed. You must apply the configuration to take affect."));
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
@@ -220,10 +220,10 @@ if (is_subsystem_dirty("unbound"))
 							<br/>
 							<span class="vexpl">
 								<?=gettext("Choose what to do with DNS requests that match the criteria specified below.");?> <br/>
-								<?=gettext("<b>Deny:</b> This actions stops queries from hosts within the netblock defined below.");?> <br/>
-								<?=gettext("<b>Refuse:</b> This actions also stops queries from hosts within the netblock defined below, but sends back DNS rcode REFUSED error message back tot eh client.");?> <br/>
-								<?=gettext("<b>Allow:</b> This actions allows queries from hosts within the netblock defined below.");?> <br/>
-								<?=gettext("<b>Allow Snoop:</b> This actions allows recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.");?> <br/>
+								<?=gettext("<b>Deny:</b> This action stops queries from hosts within the netblock defined below.");?> <br/>
+								<?=gettext("<b>Refuse:</b> This action also stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.");?> <br/>
+								<?=gettext("<b>Allow:</b> This action allows queries from hosts within the netblock defined below.");?> <br/>
+								<?=gettext("<b>Allow Snoop:</b> This action allows recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.");?> <br/>
 							</span>
 						</td>
 					</tr>

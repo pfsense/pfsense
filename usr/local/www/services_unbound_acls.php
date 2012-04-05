@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	unbound_acls.php
+	services_unbound_acls.php
 	part of pfSense (http://www.pfsense.com/)
 
 	Copyright (C) 2011 Warren Baker <warren@decoy.co.za>
@@ -158,7 +158,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<form action="unbound_acls.php" method="post" name="iform" id="iform">
+<form action="services_unbound_acls.php" method="post" name="iform" id="iform">
 <?php
 if (!$savemsg)
 	$savemsg = "";
@@ -325,7 +325,7 @@ if (is_subsystem_dirty("unbound"))
 					$i = 0;
 					foreach($a_acls as $acl):
 				?>
-				<tr ondblclick="document.location='unbound_acls.php?act=edit&id=<?=$i;?>'">
+				<tr ondblclick="document.location='services_unbound_acls.php?act=edit&id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$acl['aclname'];?>
 					</td>
@@ -336,11 +336,11 @@ if (is_subsystem_dirty("unbound"))
 						<?=htmlspecialchars($acl['description']);?>
 					</td>
 					<td valign="middle" nowrap class="list">
-						<a href="unbound_acls.php?act=edit&id=<?=$i;?>">
+						<a href="services_unbound_acls.php?act=edit&id=<?=$i;?>">
 							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit client"); ?>" width="17" height="17" border="0">
 						</a>
 						&nbsp;
-						<a href="unbound_acls.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
+						<a href="services_unbound_acls.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
 							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete client"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
@@ -354,7 +354,7 @@ if (is_subsystem_dirty("unbound"))
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
-						<a href="unbound_acls.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new ACL"); ?>" width="17" height="17" border="0">
+						<a href="services_unbound_acls.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new ACL"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>

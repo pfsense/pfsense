@@ -91,8 +91,10 @@ if ($_POST) {
 	if (!is_port($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
 
-	if(!is_ipaddr($_POST['ipaddr']))
-		$input_errors[] = sprintf(gettext("%s is not a valid IP address."), $_POST['ipaddr']);
+	if (!is_ipaddr($_POST['ipaddr']) && !is_subnetv4($_POST['ipaddr']))
+		$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet."), $_POST['ipaddr']);
+	else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64)
+		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
 
 	if (!$input_errors) {
 		$vsent = array();

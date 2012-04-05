@@ -1048,6 +1048,43 @@ function alias_expand_urltable($name) {
 	return null;
 }
 
+function subnet_size ($subnet) {
+	if (is_subnetv4($subnet)) {
+		list ($ip, $bits) = explode("/", $subnet);
+		return round(exp(log(2) * (32 - $bits)));
+	}
+	else if (is_subnetv6($subnet)) {
+		list ($ip, $bits) = explode("/", $subnet);
+		return round(exp(log(2) * (128 - $bits)));
+	}
+	else {
+		return 0;
+	}
+}
+
+function subnet_expand ($subnet) {
+	if (is_subnetv4($subnet)) {
+		return subnetv4_expand($subnet);
+	} else if (is_subnetv6($subnet)) {
+		return subnetv6_expand($subnet);
+	} else {
+		return $subnet;
+	}
+}
+
+function subnetv4_expand ($subnet) {
+	$result = array();
+	list ($ip, $bits) = explode("/", $subnet);
+	$net  = ip2long($ip);
+	$mask = (0xffffffff << (32 - $bits));
+	$net &= $mask;
+	$size = round(exp(log(2) * (32 - $bits)));
+	for ($i = 0; $i < $size; $i += 1) {
+		$result[] = long2ip($net | $i);
+	}
+	return $result;
+}
+
 /* find out whether two subnets overlap */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 

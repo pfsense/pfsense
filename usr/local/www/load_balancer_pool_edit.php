@@ -94,15 +94,21 @@ if ($_POST) {
 
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
-			if (!is_ipaddr($svrent)) {
-				$input_errors[] = sprintf(gettext("%s is not a valid IP address (in \"enabled\" list)."), $svrent);
+			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
+				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"enabled\" list)."), $svrent);
+			}
+			else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
+				$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses (in \"enabled\" list)."), $svrent);
 			}
 		}
 	}
 	if (is_array($_POST['serversdisabled'])) {
 		foreach($pconfig['serversdisabled'] as $svrent) {
-			if (!is_ipaddr($svrent)) {
-				$input_errors[] = sprintf(gettext("%s is not a valid IP address (in \"disabled\" list)."), $svrent);
+			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
+				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"disabled\" list)."), $svrent);
+			}
+			else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
+				$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses (in \"disabled\" list)."), $svrent);
 			}
 		}
 	}

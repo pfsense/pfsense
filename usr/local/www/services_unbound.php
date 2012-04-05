@@ -66,6 +66,9 @@ if ($_POST) {
 	unset($input_errors);
 
 	$config['unbound']['enable'] = ($_POST['enable']) ? true : false;
+	if($config['unbound']['enable'] === true && isset($config['dnsmasq']['enable']))
+		$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+
 	$config['unbound']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 
 	if (!$input_errors) {
@@ -75,8 +78,6 @@ if ($_POST) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
 
-		// Relaod filter (we might need to sync to CARP hosts)
-		filter_configure();
 	}
 }
 

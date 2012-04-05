@@ -131,30 +131,24 @@ function echo_lbaction($action) {
 	$ret = "";
 	$ret .=  "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
 	switch($actions_a[$action]['action']) {
-	case 'append': {
+	case 'append':
 		$ret .= " \"{$actions_a[$action]['options']['value']}\" to \"{$actions_a[$action]['options']['akey']}\"";
 		break;
-	}
-	case 'change': {
+	case 'change':
 		$ret .= " \"{$actions_a[$action]['options']['akey']}\" to \"{$actions_a[$action]['options']['value']}\"";
 		break;
-	}
-	case 'expect': {
+	case 'expect':
 		$ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
 		break;
-	}
-	case 'filter': {
+	case 'filter':
 		$ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
 		break;
-	}
-	case 'hash': {
+	case 'hash':
 		$ret .= " \"{$actions_a[$action]['options']['akey']}\"";
 		break;
-	}
-	case 'log': {
+	case 'log':
 		$ret .= " \"{$actions_a[$action]['options']['akey']}\"";
 		break;
-	}
 	}
 	return $ret;
 }
@@ -171,26 +165,21 @@ function relayd_configure($kill_first=false) {
 
 	foreach ((array)$config['load_balancer']['monitor_type'] as $type) {
 		switch($type['type']) {
-		case 'icmp': {
+		case 'icmp':
 			$mon = new ICMPMonitor($type['options']);
 			break;
-		}
-		case 'tcp': {
+		case 'tcp':
 			$mon = new TCPMonitor($type['options']);
 			break;
-		}
-		case 'http': {
+		case 'http':
 			$mon = new HTTPMonitor($type['options']);
 			break;
-		}
-		case 'https': {
+		case 'https':
 			$mon = new HTTPSMonitor($type['options']);
 			break;
-		}
-		case 'send': {
+		case 'send':
 			$mon = new SendMonitor($type['options']);
 			break;
-		}
 		}
 		if($mon) {
 			$check_a[$type['name']] = $mon->p();
@@ -255,7 +244,7 @@ function relayd_configure($kill_first=false) {
 //  }
 
 	$conf .= "dns protocol \"dnsproto\" {\n";
-	$conf .= "	tcp { nodelay, sack, socket buffer 1024, backlog 1000 }\n";
+	$conf .= "\ttcp { nodelay, sack, socket buffer 1024, backlog 1000 }\n";
 	$conf .= "}\n";
 
 	if(is_array($vs_a)) {
@@ -408,12 +397,12 @@ function get_lb_summary() {
 		switch (trim($t[1])) {
 			case "table":
 				$curpool=trim($t[2]);
-			break;
+				break;
 			case "host":
 				$curhost=trim($t[2]);
 				$relay_hosts[$curpool][$curhost]['avail']=trim($t[3]);
 				$relay_hosts[$curpool][$curhost]['state']=trim($t[4]);
-			break;
+				break;
 		}
 	}
 	return $relay_hosts;

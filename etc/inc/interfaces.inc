@@ -1993,6 +1993,8 @@ function interface_carp_configure(&$vip) {
 			file_notice("CARP", sprintf(gettext("Sorry but we could not find a matching real interface subnet for the virtual IPv6 address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
+	}
+
 	// set the vip interface to the vhid
 	$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 

@@ -296,13 +296,29 @@ function change_mode() {
 }
 
 function typesel_change_local(bits) {
+	var value = document.iform.mode.options[index].value;
+	if (typeof(bits) === "undefined") {
+		if (value === "tunnel") {
+			bits = 24;
+		}
+		else if (value === "tunnel6") {
+			bits = 64;
+		}
+	}
+	var address_is_blank = !/\S/.test(document.iform.localid_address.value);
 	switch (document.iform.localid_type.selectedIndex) {
 		case 0:	/* single */
 			document.iform.localid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.localid_netbits.value = 0;
+			}
 			document.iform.localid_netbits.disabled = 1;
 			break;
 		case 1:	/* network */
 			document.iform.localid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.localid_netbits.value = bits;
+			}
 			document.iform.localid_netbits.disabled = 0;
 			break;
 		case 3:	/* none */
@@ -312,6 +328,9 @@ function typesel_change_local(bits) {
 		default:
 			document.iform.localid_address.value = "";
 			document.iform.localid_address.disabled = 1;
+			if (address_is_blank) {
+				document.iform.localid_netbits.value = 0;
+			}
 			document.iform.localid_netbits.disabled = 1;
 			break;
 	}
@@ -320,18 +339,37 @@ function typesel_change_local(bits) {
 <?php if (!isset($pconfig['mobile'])): ?>
 
 function typesel_change_remote(bits) {
+	var value = document.iform.mode.options[index].value;
+	if (typeof(bits) === "undefined") {
+		if (value === "tunnel") {
+			bits = 24;
+		}
+		else if (value === "tunnel6") {
+			bits = 64;
+		}
+	}
+	var address_is_blank = !/\S/.test(document.iform.remoteid_address.value);
 	switch (document.iform.remoteid_type.selectedIndex) {
 		case 0:	/* single */
 			document.iform.remoteid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.remoteid_netbits.value = 0;
+			}
 			document.iform.remoteid_netbits.disabled = 1;
 			break;
 		case 1:	/* network */
 			document.iform.remoteid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.remoteid_netbits.value = bits;
+			}
 			document.iform.remoteid_netbits.disabled = 0;
 			break;
 		default:
 			document.iform.remoteid_address.value = "";
 			document.iform.remoteid_address.disabled = 1;
+			if (address_is_blank) {
+				document.iform.remoteid_netbits.value = 0;
+			}
 			document.iform.remoteid_netbits.disabled = 1;
 			break;
 	}

@@ -1443,6 +1443,17 @@ function services_unbound_configure() {
 		else
 			sleep(1);
 
+		/* Setup Unbound DHCP Chroot environment */
+		$fd = fopen("{$g['tmp_path']}/unbound.sh","w");
+		$status = `/sbin/mount | /usr/bin/grep "{$g['unbound_chroot_path']}/dev"`;
+		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}\n");
+		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}/dev\n");
+		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}/etc\n");
+		if(!trim($status))
+			fwrite($fd, "mount -t devfs devfs {$g['unbound_chroot_path']}/dev\n");
+		fclose($fd);
+		mwexec("/bin/sh {$g['tmp_path']}/unbound.sh");
+
 		/* generate Unbound config file */
 		if(unbound_generate_config()!=0) {
 			log_error("Problem generating Unbound configuration.");

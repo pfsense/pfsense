@@ -45,8 +45,8 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
-$pconfig['active_interface'] = isset($config['unbound']['active_interface']);
-$pconfig['outgoing_interface'] = isset($config['unbound']['outgoing_interface']);
+$pconfig['active_interface'] = $config['unbound']['active_interface'];
+$pconfig['outgoing_interface'] = $config['unbound']['outgoing_interface'];
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
@@ -74,6 +74,9 @@ if ($_POST) {
 	if($_POST['enable'] == "yes" && isset($config['dnsmasq']['enable']))
 		$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
 
+	if(empty($_POST['active_interface']))
+		$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+
 	if (!$input_errors) {
 		$a_unboundcfg['enable'] = ($_POST['enable']) ? true : false;
 		$a_unboundcfg['dnssec'] = ($_POST['dnssec']) ? true : false;
@@ -82,6 +85,15 @@ if ($_POST) {
 		$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 		$a_unboundcfg['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
 		$a_unboundcfg['custom_options'] =  str_replace("\r\n", "\n", $_POST['custom_options']);
+		if (is_array($_POST['active_interface']))
+			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
+		else
+			$a_unboundcfg['active_interface'] = $_POST['active_interface'];
+		if (is_array($_POST['outgoing_interface']))
+			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
+		else
+			$a_unboundcfg['outgoing_interface'] = $_POST['outgoing_interface'];
+
 		write_config("DNS Resolver configured.");
 		$retval = 0;
 		$retval = services_unbound_configure();
@@ -168,11 +180,11 @@ function enable_change(enable_over) {
 				<td width="78%" class="vtable">
 					<select name="outgoing_interface[]" id="outgoing_interface" multiple="true" size="3">
 					<?php $iflist = get_configured_interface_with_descr();
-						$active_iface = explode(",", $pconfig['outgoing_interface']);
+						$outgoing_iface = explode(",", $pconfig['outgoing_interface']);
 						$iflist['localhost'] = "Localhost";
 						foreach ($iflist as $iface => $ifdescr) {
 							echo "<option value='{$iface}' ";
-							if (in_array($iface, $active_iface))
+							if (in_array($iface, $outgoing_iface))
 								echo "selected";
 							echo ">{$ifdescr}</option>\n";
 						}

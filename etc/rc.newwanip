@@ -137,7 +137,7 @@ if(is_array($config['gifs']['gif'])){
 }
 
 /* check tunneled IPv6 interface tracking */
-switch($config['interfaces'][$interface]['type6']) {
+switch($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6to4":
 		interface_6to4_configure($interface);
 		break;

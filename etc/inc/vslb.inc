@@ -121,123 +121,123 @@ class SendMonitor extends Monitor {
 }
 
 function echo_lbaction($action) {
-  global $config;
+	global $config;
   
-  // Index actions by name
-  $actions_a = array();
-  for ($i=0; isset($config['load_balancer']['lbaction'][$i]); $i++)
+	// Index actions by name
+	$actions_a = array();
+	for ($i=0; isset($config['load_balancer']['lbaction'][$i]); $i++)
 		$actions_a[$config['load_balancer']['lbaction'][$i]['name']] = $config['load_balancer']['lbaction'][$i];
 
-  $ret = "";
-  $ret .=  "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
-  switch($actions_a[$action]['action']) {
-    case 'append': {
-      $ret .= " \"{$actions_a[$action]['options']['value']}\" to \"{$actions_a[$action]['options']['akey']}\"";
-      break;
-    }
-    case 'change': {
-      $ret .= " \"{$actions_a[$action]['options']['akey']}\" to \"{$actions_a[$action]['options']['value']}\"";
-      break;
-    }
-    case 'expect': {
-      $ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
-      break;
-    }
-    case 'filter': {
-      $ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
-      break;
-    }
-    case 'hash': {
-      $ret .= " \"{$actions_a[$action]['options']['akey']}\"";
-      break;
-    }
-    case 'log': {
-      $ret .= " \"{$actions_a[$action]['options']['akey']}\"";
-      break;
-    }
-  }
-  return $ret;
+	$ret = "";
+	$ret .=  "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
+	switch($actions_a[$action]['action']) {
+	case 'append': {
+		$ret .= " \"{$actions_a[$action]['options']['value']}\" to \"{$actions_a[$action]['options']['akey']}\"";
+		break;
+	}
+	case 'change': {
+		$ret .= " \"{$actions_a[$action]['options']['akey']}\" to \"{$actions_a[$action]['options']['value']}\"";
+		break;
+	}
+	case 'expect': {
+		$ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
+		break;
+	}
+	case 'filter': {
+		$ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
+		break;
+	}
+	case 'hash': {
+		$ret .= " \"{$actions_a[$action]['options']['akey']}\"";
+		break;
+	}
+	case 'log': {
+		$ret .= " \"{$actions_a[$action]['options']['akey']}\"";
+		break;
+	}
+	}
+	return $ret;
 }
 
 function relayd_configure($kill_first=false) {
-  global $config, $g;
+	global $config, $g;
 
-  $vs_a = $config['load_balancer']['virtual_server'];
-  $pool_a = $config['load_balancer']['lbpool'];
-  $protocol_a = $config['load_balancer']['lbprotocol'];
-  $setting = $config['load_balancer']['setting'];
+	$vs_a = $config['load_balancer']['virtual_server'];
+	$pool_a = $config['load_balancer']['lbpool'];
+	$protocol_a = $config['load_balancer']['lbprotocol'];
+	$setting = $config['load_balancer']['setting'];
 
-  $check_a = array();
+	$check_a = array();
 
-  foreach ((array)$config['load_balancer']['monitor_type'] as $type) {
-    switch($type['type']) {
-      case 'icmp': {
-        $mon = new ICMPMonitor($type['options']);
-	break;
-      }
-      case 'tcp': {
-        $mon = new TCPMonitor($type['options']);
-	break;
-      }
-      case 'http': {
-        $mon = new HTTPMonitor($type['options']);
-	break;
-      }
-      case 'https': {
-        $mon = new HTTPSMonitor($type['options']);
-	break;
-      }
-      case 'send': {
-        $mon = new SendMonitor($type['options']);
-	break;
-      }
-    }
-    if($mon) {
-      $check_a[$type['name']] = $mon->p();
-    }
-  }
-
-  
-  $fd = fopen("{$g['varetc_path']}/relayd.conf", "w");
-  $conf .= "log updates \n";
-
-  /* Global timeout, interval and prefork settings
-     if not specified by the user:
-     - use a 1000 ms timeout value as in pfsense 2.0.1 and above
-     - leave interval and prefork empty, relayd will use its default values */
-     
-  if (isset($setting['timeout']) && !empty($setting['timeout'])) {
-  	$conf .= "timeout ".$setting['timeout']." \n";
-  } else {
-	$conf .= "timeout 1000 \n";
-  }
-
-  if (isset($setting['interval']) && !empty($setting['interval'])) {
-  	$conf .= "interval ".$setting['interval']." \n";
-  }
-
-  if (isset($setting['prefork']) && !empty($setting['prefork'])) {
-	$conf .= "prefork ".$setting['prefork']." \n";
-  }
-
-  /* reindex pools by name as we loop through the pools array */
-  $pools = array();
-  /* Virtual server pools */
-  if(is_array($pool_a)) {
-    for ($i = 0; isset($pool_a[$i]); $i++) {
-      if(is_array($pool_a[$i]['servers'])) {
-	if (!empty($pool_a[$i]['retry'])) {
-		$retrytext = " retry {$pool_a[$i]['retry']}";
-		$srvtxt = implode("{$retrytext}, ", $pool_a[$i]['servers']) . "{$retrytext}";
-	} else {
-		$srvtxt = implode(", ", $pool_a[$i]['servers']);
+	foreach ((array)$config['load_balancer']['monitor_type'] as $type) {
+		switch($type['type']) {
+		case 'icmp': {
+			$mon = new ICMPMonitor($type['options']);
+			break;
+		}
+		case 'tcp': {
+			$mon = new TCPMonitor($type['options']);
+			break;
+		}
+		case 'http': {
+			$mon = new HTTPMonitor($type['options']);
+			break;
+		}
+		case 'https': {
+			$mon = new HTTPSMonitor($type['options']);
+			break;
+		}
+		case 'send': {
+			$mon = new SendMonitor($type['options']);
+			break;
+		}
+		}
+		if($mon) {
+			$check_a[$type['name']] = $mon->p();
+		}
 	}
-        $conf .= "table <{$pool_a[$i]['name']}> { $srvtxt }\n";
-        /* Index by name for easier fetching when we loop through the virtual servers */
-        $pools[$pool_a[$i]['name']] = $pool_a[$i];
-      }
-    }
-  }
+	
+  
+	$fd = fopen("{$g['varetc_path']}/relayd.conf", "w");
+	$conf .= "log updates \n";
+
+	/* Global timeout, interval and prefork settings
+	   if not specified by the user:
+	   - use a 1000 ms timeout value as in pfsense 2.0.1 and above
+	   - leave interval and prefork empty, relayd will use its default values */
+	
+	if (isset($setting['timeout']) && !empty($setting['timeout'])) {
+		$conf .= "timeout ".$setting['timeout']." \n";
+	} else {
+		$conf .= "timeout 1000 \n";
+	}
+	
+	if (isset($setting['interval']) && !empty($setting['interval'])) {
+		$conf .= "interval ".$setting['interval']." \n";
+	}
+	
+	if (isset($setting['prefork']) && !empty($setting['prefork'])) {
+		$conf .= "prefork ".$setting['prefork']." \n";
+	}
+	
+	/* reindex pools by name as we loop through the pools array */
+	$pools = array();
+	/* Virtual server pools */
+	if(is_array($pool_a)) {
+		for ($i = 0; isset($pool_a[$i]); $i++) {
+			if(is_array($pool_a[$i]['servers'])) {
+				if (!empty($pool_a[$i]['retry'])) {
+					$retrytext = " retry {$pool_a[$i]['retry']}";
+					$srvtxt = implode("{$retrytext}, ", $pool_a[$i]['servers']) . "{$retrytext}";
+				} else {
+					$srvtxt = implode(", ", $pool_a[$i]['servers']);
+				}
+				$conf .= "table <{$pool_a[$i]['name']}> { $srvtxt }\n";
+				/* Index by name for easier fetching when we loop through the virtual servers */
+				$pools[$pool_a[$i]['name']] = $pool_a[$i];
+			}
+		}
+	}
 //  if(is_array($protocol_a)) {
 //    for ($i = 0; isset($protocol_a[$i]); $i++) {
 //      $proto = "{$protocol_a[$i]['type']} protocol \"{$protocol_a[$i]['name']}\" {\n";
@@ -287,7 +287,7 @@ function relayd_configure($kill_first=false) {
 				if (isset($config['system']['lb_use_sticky']))
 					$conf .= "  sticky-address\n";
 
-				# sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
+				/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
 				if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
 					$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 

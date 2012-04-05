@@ -218,7 +218,7 @@ EOF;
 
 /* Generate Unbound configuration */
 function unbound_generate_config() {
-	global $config,$g;
+	global $config, $g;
 
 	$unboundcfg = $config['unbound'];
 
@@ -226,7 +226,7 @@ function unbound_generate_config() {
 	$optimization = unbound_optimization();
 
 	/* Setup DNSSEC support */
-	if($unboundcfg['dnssec_status'] == "on") {
+	if(isset($unboundcfg['dnssec_status'])) {
 		$module_config = "validator iterator";
 		$anchor_file = "auto-trust-anchor-file: /etc/root-trust-anchor";
 	} else

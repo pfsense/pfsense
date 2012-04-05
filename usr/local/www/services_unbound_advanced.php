@@ -166,7 +166,7 @@ function show_advanced_dns() {
 				<td width="22%" valign="top" class="vncell"><?=gettext("Harden DNSSEC data");?></td>
 				<td width="78%" class="vtable">
 					<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
-					<?=gettext("DNSSEC data is required for trust-anchored zones. If usch data is absent, the zone becomes bogus. If this is disabled and no DNSSEC data is received, then the zone is made insecure.");?></p>
+					<?=gettext("DNSSEC data is required for trust-anchored zones. If such data is absent, the zone becomes bogus. If this is disabled and no DNSSEC data is received, then the zone is made insecure.");?></p>
 				</td>
 			</tr>
 			<tr>

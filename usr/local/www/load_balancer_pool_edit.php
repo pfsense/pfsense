@@ -85,8 +85,8 @@ if ($_POST) {
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
 
-	if (!is_port($_POST['port']))
-		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
+	if (!is_portoralias($_POST['port']))
+		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
 
 	// May as well use is_port as we want a positive integer and such.
 	if (!empty($_POST['retry']) && !is_port($_POST['retry']))
@@ -209,7 +209,10 @@ function clearcombo(){
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
-				<div id="monitorport_desc"><?=gettext("This is the port your servers are listening on."); ?></div>
+				<div id="monitorport_desc">
+					<?=gettext("This is the port your servers are listening on."); ?><br />
+					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Interfaces here."); ?>
+				</div>
 			</td>
 		</tr>
 		<tr align="left">

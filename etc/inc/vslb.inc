@@ -259,49 +259,79 @@ function relayd_configure($kill_first=false) {
 
 	if(is_array($vs_a)) {
 		for ($i = 0; isset($vs_a[$i]); $i++) {
+			
+			$append_port_to_name = false;
+			if (is_alias($vs_a[$i]['port'])) {
+				$src_port_array = alias_expand_array($vs_a[$i]['port']);
+				$append_port_to_name = true;
+			}
+			else {
+				$src_port_array = array($vs_a[$i]['port']);
+			}
+			if (is_alias($pools[$vs_a[$i]['pool']]['port'])) {
+				$dest_port_array = alias_expand_array($pools[$vs_a[$i]['pool']]['port']);
+				$append_port_to_name = true;
+			}
+			else {
+				$dest_port_array = array($pools[$vs_a[$i]['pool']]['port']);
+			}
+
+			$append_ip_to_name = false;
 			if (is_subnetv4($vs_a[$i]['ipaddr'])) {
 				$ip_list = subnetv4_expand($vs_a[$i]['ipaddr']);
-				$name_format = "%s_%d";
+				$append_ip_to_name = true;
 			}
 			else {
 				$ip_list = array($vs_a[$i]['ipaddr']);
-				$name_format = "%s"; /* in which case the second arg of the sprintf call below will be silently ignored */
 			}
+
 			for ($j = 0; $j < count($ip_list); $j += 1) {
 				$ip = $ip_list[$j];
-				$name = sprintf($name_format, $vs_a[$i]['name'], $j);
-				if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {
-					$conf .= "relay \"{$name}\" {\n";
-					$conf .= "  listen on {$ip} port {$vs_a[$i]['port']}\n";
+				for ($k = 0; $k < count($src_port_array) && $k < count($dest_port_array); $k += 1) {
+					$src_port  = $src_port_array[$k];
+					$dest_port = $dest_port_array[$k];
 
-					if ($vs_a[$i]['relay_protocol'] == "dns") {
-						$conf .= "  protocol \"dnsproto\"\n";
-					} else {
-						$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+					$name = $vs_a[$i]['name'];
+					if ($append_ip_to_name) {
+						$name .= "_" . $j;
 					}
-					$lbmode = "";
-					if ( $pools[$vs_a[$i]['pool']]['mode'] == "loadbalance" ) {
-						$lbmode = "mode loadbalance";
+					if ($append_port_to_name) {
+						$name .= "_" . $src_port;
 					}
 
-					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$lbmode} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+					if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {
+						$conf .= "relay \"{$name}\" {\n";
+						$conf .= "  listen on {$ip} port {$src_port}\n";
 
-					if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
-						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$lbmode} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
-					$conf .= "}\n";
-				} else  {
-					$conf .= "redirect \"{$name}\" {\n";
-					$conf .= "  listen on {$ip} port {$vs_a[$i]['port']}\n";
-					$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+						if ($vs_a[$i]['relay_protocol'] == "dns") {
+							$conf .= "  protocol \"dnsproto\"\n";
+						} else {
+							$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+						}
+						$lbmode = "";
+						if ( $pools[$vs_a[$i]['pool']]['mode'] == "loadbalance" ) {
+							$lbmode = "mode loadbalance";
+						}
 
-					if (isset($config['system']['lb_use_sticky']))
-						$conf .= "  sticky-address\n";
+						$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 
-					/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
-					if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
-						$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+						if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
+							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+						$conf .= "}\n";
+					} else  {
+						$conf .= "redirect \"{$name}\" {\n";
+						$conf .= "  listen on {$ip} port {$src_port}\n";
+						$conf .= "  forward to <{$vs_a[$i]['pool']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
 
-					$conf .= "}\n";
+						if (isset($config['system']['lb_use_sticky']))
+							$conf .= "  sticky-address\n";
+
+						/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
+						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
+							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} \n";
+
+						$conf .= "}\n";
+					}
 				}
 			}
 		}

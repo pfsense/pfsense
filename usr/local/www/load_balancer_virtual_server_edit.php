@@ -88,8 +88,8 @@ if ($_POST) {
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
 
-	if (!is_port($_POST['port']))
-		$input_errors[] = gettext("The port must be an integer between 1 and 65535.");
+	if (!is_portoralias($_POST['port']))
+		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
 
 	if (!is_ipaddr($_POST['ipaddr']) && !is_subnetv4($_POST['ipaddr']))
 		$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet."), $_POST['ipaddr']);
@@ -205,6 +205,7 @@ jQuery(document).ready( function() {
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
 					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
+					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Interfaces here."); ?>
                   </td>
 			</tr>
                 <tr align="left">

@@ -60,7 +60,7 @@ if (!$clientip) {
 }
 
 if (isset($config['captiveportal'][$cpzone]['httpslogin']))
-    $ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ($cpcfg['zoneid'] + 1);
+    $ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ":" . ($cpcfg['zoneid'] + 1);
 else {
     $ifip = portal_ip_from_client_ip($clientip);
     if (!$ifip)
@@ -140,7 +140,7 @@ EOD;
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 
-} else if ($_POST['accept'] && $_POST['auth_voucher']) {
+} else if ($config['voucher'][$cpzone]['enable'] && $_POST['accept'] && $_POST['auth_voucher']) {
 
     $voucher = trim($_POST['auth_voucher']);
     $timecredit = voucher_auth($voucher);

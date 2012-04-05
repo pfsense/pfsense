@@ -219,6 +219,16 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
         exit;
 }
 
+if ($_GET['act'] == "del") {
+	if ($a_out[$_GET['id']]) {
+		unset($a_out[$_GET['id']]);
+		write_config();
+		mark_subsystem_dirty('natconf');
+		header("Location: firewall_nat_out.php");
+		exit;
+	}
+}
+
 if (isset($_POST['del_x'])) {
         /* delete selected rules */
         if (is_array($_POST['rule']) && count($_POST['rule'])) {
@@ -433,10 +443,11 @@ include("head.inc");
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" height="17" type="image" width="17" border="0"></td>
                         <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit mapping");?>"></a></td>
                       </tr>
                       <tr>
-                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" height="17" type="image" width="17" border="0"></td>
+			<td align="center" valign="middle"><a href="firewall_nat_out.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>"></a></td>
                         <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new nat based on this one");?>" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

@@ -80,7 +80,6 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     global $config, $cpzone;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac(get_real_interface("wan")));
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;

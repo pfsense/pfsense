@@ -40,7 +40,7 @@
 require("guiconfig.inc");
 
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
-if (($_POST['submit'] == gettext("Upload")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	if(fileExtension($_FILES['ulfile']['name'])) {
 		move_uploaded_file($_FILES['ulfile']['tmp_name'], "/usr/local/share/protocols/" . $_FILES['ulfile']['name']);
 		$ulmsg = gettext("Uploaded file to") . " /usr/local/share/protocols/" . htmlentities($_FILES['ulfile']['name']);

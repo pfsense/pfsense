@@ -628,8 +628,11 @@ function enable_change(enable_change) {
                   </tr>
                 </table>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
-        	<tr>
-            	<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Primary Authentication Source</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
@@ -669,7 +672,10 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Tertiary RADIUS server"); ?></td>
+				<td colspan="2" valign="top" class="listtopic">Secondary Authentication Source</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Primary RADIUS server"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
@@ -688,7 +694,7 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Quaternary RADIUS server"); ?></td>
+				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Secondary RADIUS server"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
@@ -705,6 +711,9 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">&nbsp;</td>
 			</tr>
 			<tr>
 				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Accounting"); ?></td>

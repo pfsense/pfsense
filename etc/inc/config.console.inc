@@ -255,19 +255,19 @@ EOD;
 			while (1) {
 				if ($optif[$i])
 					$i++;
-				$i1 = $i + 1;
+				$io = $i + 1;
 		
-				if($config['interfaces']['opt' . $i1]['descr'])
-					printf(gettext("%sOptional interface %s description found: %s"), "\n", $i1, $config['interfaces']['opt' . $i1]['descr']);
+				if($config['interfaces']['opt' . $io]['descr'])
+					printf(gettext("%sOptional interface %s description found: %s"), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
 	
-				printf(gettext("%sEnter the Optional %s{$i1} interface name or 'a' for auto-detection%s" .
-					"(or nothing if finished):%s"), "\n", $i1, "\n", " ");
+				printf(gettext("%sEnter the Optional %s{$i} interface name or 'a' for auto-detection%s" .
+					"(or nothing if finished):%s"), "\n", $io, "\n", " ");
 		
 				$optif[$i] = chop(fgets($fp));
 		
 				if ($optif[$i]) {
 					if ($optif[$i] === "a") {
-						$ad = autodetect_interface(gettext("Optional") . " " . $i1, $fp);
+						$ad = autodetect_interface(gettext("Optional") . " " . $io, $fp);
 						if ($ad)
 							$optif[$i] = $ad;
 						else

@@ -666,7 +666,7 @@ class altq_root_queue {
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
 		$form .= ">Gbit/s</option>";		
-		$form .= "<option value=\"\"";
+		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
 		$form .= ">Bit/s</option>";
@@ -1866,7 +1866,7 @@ class hfsc_queue extends priq_queue {
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"\"";
+		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
@@ -2344,7 +2344,7 @@ class cbq_queue extends priq_queue {
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"\"";
+		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
@@ -2610,7 +2610,7 @@ class fairq_queue extends priq_queue {
 		if ($this->GetBwscale() == "Kb")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
-		$form .= "<option value=\"\"";
+		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
@@ -2990,13 +2990,13 @@ class dnpipe_class extends dummynet_class {
 			default:
 				break;
 			}
-			$pfq_rule .= "\n";
-
-			if (!empty($this->subqueues) && count($this->subqueues) > 0) {
-       			        foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules();
-               		}
     		}            
+		$pfq_rule .= "\n";
+
+		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
+			foreach ($this->subqueues as $q)
+			$pfq_rule .= $q->build_rules();
+		}
 		$pfq_rule .= " \n";
 
 		return $pfq_rule;
@@ -3039,7 +3039,7 @@ class dnpipe_class extends dummynet_class {
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Gbit/s") . "</option>";		
-		$form .= "<option value=\"\"";
+		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"yes\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";

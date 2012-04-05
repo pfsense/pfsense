@@ -193,7 +193,7 @@ include("head.inc");
 <span class="vexpl">
 <span class="red"><strong><?=gettext("Note"); ?>:</strong></span>
 <br />
-<?=gettext("You can configure CARP settings"); ?> <a href="pkg_edit.php?xml=carp_settings.xml&id=0"><?=gettext("here"); ?></a>.
+<?=gettext("You can configure high availability sync settings"); ?> <a href="system_hasync.php"><?=gettext("here"); ?></a>.
 </span>
 
 <p/>

@@ -79,8 +79,8 @@ $iflist = get_configured_interface_with_descr();
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && (!is_ipaddrv6($oc['ipaddrv6']))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && (!is_ipaddrv6($oc['ipaddrv6']))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
 			continue;
 		$if = $ifent;
 		break;
@@ -260,7 +260,7 @@ if ($_POST) {
 					if (empty($map['ipaddrv6']))
 						continue;
 					if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
-						(inet_pton($map['ipaddr']) < $dynsubnet_end)) {
+						(inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}
@@ -409,8 +409,8 @@ include("head.inc");
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
-		//document.iform.ntp1.disabled = endis;
-		//document.iform.ntp2.disabled = endis;
+		document.iform.ntp1.disabled = endis;
+		document.iform.ntp2.disabled = endis;
 		//document.iform.tftp.disabled = endis;
 		document.iform.ldap.disabled = endis;
 		document.iform.netboot.disabled = endis;
@@ -431,13 +431,11 @@ include("head.inc");
 		aodiv = document.getElementById('showddns');
 		aodiv.style.display = "block";
 	}
-	/*
 	function show_ntp_config() {
 		document.getElementById("showntpbox").innerHTML='';
 		aodiv = document.getElementById('showntp');
 		aodiv.style.display = "block";
 	}
-	*/
 	/*
 	function show_tftp_config() {
 		document.getElementById("showtftpbox").innerHTML='';
@@ -484,8 +482,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && (!is_ipaddrv6($oc['ipaddrv6']))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && (!is_ipaddrv6($oc['ipaddrv6']))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
 			continue;
 		if ($ifent == $if)
 			$active = true;
@@ -596,8 +594,10 @@ include("head.inc");
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
 				&nbsp;<?=gettext("prefix length"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
 					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
+					<option value="52" <?php if($pconfig['prefixrange_length'] == 52) echo "selected"; ?>>52</option>
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
 					<option value="60" <?php if($pconfig['prefixrange_length'] == 60) echo "selected"; ?>>60</option>
+					<option value="62" <?php if($pconfig['prefixrange_length'] == 62) echo "selected"; ?>>62</option>
 				</select> <br/>
 				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
 					assigning networks to subrouters"); ?>
@@ -702,7 +702,6 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
-			<!-- ISC dhcpd does not support ntp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 			<td width="78%" class="vtable">
@@ -715,7 +714,6 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
-			-->
 			<!-- ISC dhcpd does not support tftp for ipv6 yet. See redmine #2016
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>

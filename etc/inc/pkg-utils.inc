@@ -8,7 +8,7 @@
  *   $Id$
  ******
  *
- * Copyright (C) 2010 Ermal Luçi
+ * Copyright (C) 2010 Ermal Luï¿½i
  * Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -99,21 +99,36 @@ conf_mount_ro();
  *   
  ******/
 function remove_freebsd_package($packagestring) {
+	// The packagestring passed in must be the full PBI package name, 
+	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
+	// It must NOT have ".pbi" on the end.
 	exec("/usr/local/sbin/pbi_info {$packagestring} | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 	$pbidir = $pbidir[0];
-	$linkdirs = array('bin','sbin');
-	foreach($linkdirs as $dir) {
-		if(is_dir("{$pbidir}/{$dir}")) {
-			$files = scandir("{$pbidir}/{$dir}");
-			foreach($files as $f) {
-				if($f != '.' && $f != '..') {
-					unlink("/usr/local/{$dir}/{$f}");
+	if ($pbidir == "") {
+		log_error("PBI dir for {$packagestring} was not found - cannot cleanup PBI files");
+	}
+	else {
+		$linkdirs = array('bin','sbin');
+		foreach($linkdirs as $dir) {
+			$target_dir = $pbidir . "/" . $dir;
+			if(is_dir($target_dir)) {
+				$files = scandir($target_dir);
+				foreach($files as $f) {
+					if($f != '.' && $f != '..') {
+						// Only try to unlink the file if it is a link to the expected pbi dir.
+						$local_name = "/usr/local/{$dir}/{$f}";
+						if(is_link($local_name)) {
+							if(substr(readlink($local_name),0,strlen($target_dir)) == $target_dir) {
+								unlink($local_name);
+							}
+						}
+					}
 				}
 			}
 		}
-	}
 
-	exec("/usr/local/sbin/pbi_delete {$packagestring} 2>>/tmp/pbi_delete_errors.txt");
+		exec("/usr/local/sbin/pbi_delete {$packagestring} 2>>/tmp/pbi_delete_errors.txt");
+	}
 }
 
 /****f* pkg-utils/is_package_installed
@@ -352,7 +367,17 @@ function uninstall_package($pkg_name) {
 			foreach ($pkg_depends as $pkg_depend)
 				delete_package($pkg_depend);
 		} else {
-			delete_package($pkg_depends);
+			// The packages (1 or more) are all in one long string.
+			// We need to pass them 1 at a time to delete_package.
+			// Compress any multiple whitespace (sp, tab, cr, lf...) into a single space char.
+			$pkg_dep_str = preg_replace("'\s+'", ' ', $pkg_depends);
+			// Get rid of any leading or trailing space.
+			$pkg_dep_str = trim($pkg_dep_str);
+			// Now we have a space-separated string. Make it into an array and process it.
+			$pkg_dep_array = explode(" ", $pkg_dep_str);
+			foreach ($pkg_dep_array as $pkg_depend) {
+				delete_package($pkg_depend);
+			}
 		}
 	}
 	delete_package_xml($pkg_name);
@@ -535,7 +560,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				$files = scandir("{$pbidir}/{$dir}");
 				foreach($files as $f) {
 					if(!file_exists("/usr/local/{$dir}/{$f}")) {
-						symlink("{$pbidir}/{$dir}/${$f}","/usr/local/{$dir}/{$f}");
+						symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
 					}
 				}
 			}
@@ -794,13 +819,23 @@ function install_package_xml($pkg) {
 				 *	change packages to store configs at /usr/pbi/pkg/etc and remove this
 				 */
 				eval_once($pkg_config['custom_php_install_command']);
-				exec("/usr/local/sbin/pbi_info | grep {$pkg} | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidir);
-				$pbidir = $pbidir[0];
+				// Note: pkg may be mixed-case, e.g. "squidGuard" but the PBI names are lowercase.
+				// e.g. "squidguard-1.4_4-i386" so feed lowercase to pbi_info below.
+				// Also add the "-" so that examples like "squid-" do not match "squidguard-".
+				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
+				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
+				$pbidir0 = $pbidirarray[0];
 				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
 				foreach($files as $f) {
-					$pbiconf = str_replace('/usr/local',$pbidir,$f);
-					unlink($pbiconf);
-					symlink($f,$pbiconf);
+					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
+					if(is_file($pbiconf) || is_link($pbiconf)) {
+						unlink($pbiconf);
+					}
+					if(is_dir(dirname($pbiconf))) {
+						symlink($f,$pbiconf);
+					} else {
+						log_error("The dir for {$pbiconf} does not exist. Cannot add symlink to {$f}.");
+					}
 				}
 				eval_once($pkg_config['custom_php_install_command']);
 				$static_output .= gettext("done.") . "\n";
@@ -906,6 +941,7 @@ function delete_package($pkg) {
 	if(!$pkg) 
 		return;
 
+	// Note: $pkg has the full PBI package name followed by ".pbi". Strip off ".pbi".
 	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 
 	if($pkg)

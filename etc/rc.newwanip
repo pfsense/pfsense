@@ -118,20 +118,32 @@ if (!empty($bridgetmp))
 system_routing_configure($interface);
 
 /* Check Gif tunnels */
-foreach($config['gifs']['gif'] as $gif) {
-	if($gif['if'] == $interface) {
-		foreach($config['interfaces'] as $ifname => $ifparent) {
-			// echo "interface $ifparent, ifname $ifname, gif {$gif['gifif']}\n";
-			if(($ifparent['if'] == $gif['gifif']) && (isset($ifparent['enable']))) {
-				// echo "Running routing configure for $ifname\n";
-				$gif['gifif'] = interface_gif_configure($gif);
-				$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
-				if ($confif <> "")
-					interface_configure($confif);
-				system_routing_configure($ifname);
+if(is_array($config['gifs']['gif'])){
+	foreach($config['gifs']['gif'] as $gif) {
+		if($gif['if'] == $interface) {
+			foreach($config['interfaces'] as $ifname => $ifparent) {
+				// echo "interface $ifparent, ifname $ifname, gif {$gif['gifif']}\n";
+				if(($ifparent['if'] == $gif['gifif']) && (isset($ifparent['enable']))) {
+					// echo "Running routing configure for $ifname\n";
+					$gif['gifif'] = interface_gif_configure($gif);
+					$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
+					if ($confif <> "")
+						interface_configure($confif);
+					system_routing_configure($ifname);
+				}
 			}
 		}
 	}
+}
+
+/* check tunneled IPv6 interface tracking */
+switch($config['interfaces'][$interface]['type6']) {
+	case "6to4":
+		interface_6to4_configure($interface);
+		break;
+	case "6rd":
+		interface_6rd_configure($interface);
+		break;
 }
 
 /* reconfigure our gateway monitor */

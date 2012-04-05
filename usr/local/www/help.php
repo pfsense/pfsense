@@ -227,7 +227,7 @@ $helppages = array(
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 
 	'carp_status.php' => 'http://doc.pfsense.org/index.php/Category:CARP',
-	'carp_settings.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
+	'system_hasync.php' => 'http://doc.pfsense.org/index.php/Category:CARP', /* FIXME? */
 
 	'load_balancer_monitor.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
 	'load_balancer_monitor_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',

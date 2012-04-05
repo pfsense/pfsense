@@ -42,6 +42,7 @@ require_once("vpn.inc");
 require_once("openvpn.inc");
 require_once("IPv6.inc");
 require_once("services.inc");
+require_once("rrd.inc");
 
 // Do not process while booting
 if($g['booting']) 
@@ -68,6 +69,8 @@ function restart_packages() {
 
 log_error("rc.newwanipv6: Informational is starting.");
 
+/* FIXME: how can we find out about the correct interface name? */
+/* switch to ISC dhcp6 client? */
 $curwanipv6 = get_interface_ipv6();
 $interface = "wan";
 $interface_real = get_real_interface();
@@ -106,6 +109,18 @@ system_resolvconf_generate(true);
 
 /* write current WAN IPv6 to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+
+/* check native IPv6 interface tracking */
+switch($config['interfaces'][$interface]['type6']) {
+	case "dhcp6":
+		foreach($config['interfaces'] as $iftrackname => $iftrack) {
+			if($iftrack['track6-interface'] == $interface) {
+				log_error("interface {%iftrackname} depends on {$interface}, configuring");
+				interface_track6_configure($iftrackname);
+			}
+		}
+		break;
+}
 
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
@@ -154,6 +169,6 @@ services_igmpproxy_configure();
 
 restart_packages();
 
-services_rtadvd_configure();
+services_radvd_configure();
 
 ?>

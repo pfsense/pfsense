@@ -136,6 +136,7 @@ target default {
 
 EOD;
 
+	$monitor_ips = array();
 	foreach($gateways_arr as $name => $gateway) {
 		/* Do not monitor if such was requested */
 		if (isset($gateway['monitor_disable']))
@@ -147,6 +148,10 @@ EOD;
 				continue;
 		}
 
+		/* if the monitor address is already used before, skip */ 
+		if(in_array($gateway['monitor'], $monitor_ips))
+			continue;
+		
 		/* Interface ip is needed since apinger will bind a socket to it. */
 		if (is_ipaddrv4($gateway['gateway'])) {
 			$gwifip = find_interface_ip($gateway['interface'], true);
@@ -164,6 +169,7 @@ EOD;
 		if (!is_ipaddr($gwifip))
 			continue; //Skip this target
 
+		$monitor_ips[] = monitor_ips;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
@@ -314,17 +320,39 @@ function return_gateways_array($disabled = false) {
 
 	$gateways_arr = array();
 
+	$found_defaultv4 = 0;
+	$found_defaultv6 = 0;
+
 	$i = 0;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if(empty($gateway['gateway']) || preg_match("/dynamic/", $gateway['gateway'])) {
+			/* skip disabled interfaces */
+			if(!isset($config['interfaces'][$gateway['interface']]['enable']))
+				continue;
+			
+			/* if the gateway is dynamic and we can find the IP, Great! */
+			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) {
+				$gateway['ipprotocol'] = "inet";
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
-				if(preg_match("/dynamic/", $gateway['gateway'])) {
+				if($gateway['gateway'] == "dynamic") {
 					$dynstr = $gateway['gateway'];
 				}
 				/* no IP address found, set to dynamic */
-				if(! is_ipaddr($gateway['gateway'])) {
+				if(! is_ipaddrv4($gateway['gateway'])) {
+					$gateway['gateway'] = "{$dynstr}";
+				}
+				$gateway['dynamic'] = true;
+			}
+			/* if the gateway is dynamic6 and we can find the IPv6, Great! */
+			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic6")) {
+				$gateway['ipprotocol'] = "inet6";
+				$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+				if($gateway['gateway'] == "dynamic6") {
+					$dynstr = $gateway['gateway'];
+				}
+				/* no IPv6 address found, set to dynamic6 */
+				if(! is_ipaddrv6($gateway['gateway'])) {
 					$gateway['gateway'] = "{$dynstr}";
 				}
 				$gateway['dynamic'] = true;
@@ -340,18 +368,41 @@ function return_gateways_array($disabled = false) {
 
 			$gateway['friendlyiface'] = $gateway['interface'];
 			$gateway['interface'] = get_real_interface($gateway['interface']);
+
+			/* entry has a default flag, use it */
+			if (isset($gateway['defaultgw'])) {
+				if($gateway['ipprotocol'] == "inet") {
+					$gateway['defaultgw'] = true;
+					$found_defaultv4 = 1;
+				}
+				if($gateway['ipprotocol'] == "inet6") {
+					$gateway['defaultgw'] = true;
+					$found_defaultv6 = 1;
+				}
+			}
 			/* FIXME: Should this be enabled.
 			 * Some interface like wan might be default but have no info recorded 
-			 * the config.
-			if ($gateway['friendlyiface'] == "wan" && !isset($gateway['defaultgw'])) {
-				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw"))
-					$gateway['defaultgw'] = true;
+			 * the config. */
+			/* this is a fallback if all else fails and we want to get packet out @smos */
+			if (!isset($gateway['defaultgw'])) {
+				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0)) {
+					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
+						$gateway['defaultgw'] = true;
+						$found_defaultv4 = 1;
+					}
+				}
+				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0)) {
+					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
+						$gateway['defaultgw'] = true;
+						$found_defaultv6 = 1;
+					}
+				}
 			}
-			 */
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
 			$gateways_arr[$gateway['name']] = $gateway;
+			unset($gateway);
 			$i++;
 		}
 	} 
@@ -374,18 +425,32 @@ function return_gateways_array($disabled = false) {
 		if(!empty($ifcfg['ipaddr']) && is_ipaddrv4($ifcfg['ipaddr']))
 			continue;
 
+		if(!isset($ifcfg['enable']))
+			continue;
+			
+		$ctype = "";
+		switch($ifcfg['ipaddr']) {
+			case "dhcp":
+			case "pppoe":
+			case "pptp":
+				$ctype = strtoupper($ifcfg['ipaddr']);
+				break;
+		}
+		$ctype = "_". strtoupper($ctype);
+
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet";
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = $friendly;
+		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
 	
-		if ($gateway['dynamic'] === "default") {
+		if (($gateway['dynamic'] === "default") && ($found_defaultv4 == 0)) {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
+			$found_defaultv4 = 1;
 		}
 		/* Loopback dummy for dynamic interfaces without a IP */
 		if (!is_ipaddrv4($gateway['gateway']) && $gateway['dynamic'] == true)
@@ -401,8 +466,9 @@ function return_gateways_array($disabled = false) {
 		if (is_ipaddrv4($gateway['gateway']))
 			$gateway['monitor'] = $gateway['gateway'];
 
-		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
+		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;
+		unset($gateway);
 	}
 
 	/* Process/add dynamic v6 gateways. */
@@ -416,29 +482,45 @@ function return_gateways_array($disabled = false) {
 		$ifcfg = &$config['interfaces'][$ifname];
 		if(!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
 			continue;
+			
+		if(!isset($ifcfg['enable']))
+			continue;
+
+		$ctype = "";
+		switch($ifcfg['ipaddrv6']) {
+			case "dhcp6":
+			case "6to4":
+			case "6rd":
+				$ctype = strtoupper($ifcfg['ipaddrv6']);
+				break;
+		}
+		$ctype = "_". strtoupper($ctype);
 
 		$gateway = array();
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet6";
 		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
-		/* XXX Add stf and friends in the future ? */
 		switch($ifcfg['ipaddrv6']) {
+			case "6to4":
+				$gateway['interface'] = "stf0";
+				$gateway['dynamic'] = "default";
+				break;
 			case "6rd":
 				$gateway['interface'] = "srd0";
 				$gateway['dynamic'] = "default";
-				$gateway['gateway'] = "::1";
 				break;
 			default:
 				$gateway['interface'] = get_real_interface($ifname);
 				break;
 		}
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$friendly}_v6";
+		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
 	
-		if ($gateway['dynamic'] === "default") {
+		if (($gateway['dynamic'] === "default")  && ($found_defaultv6 == 0)) {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
+			$found_defaultv6 = 1;
 		}
 
 		/* Loopback dummy for dynamic interfaces without a IP */
@@ -455,8 +537,9 @@ function return_gateways_array($disabled = false) {
 		if (is_ipaddrv6($gateway['gateway']))
 			$gateway['monitor'] = $gateway['gateway'];
 
-		$gateway['descr'] = "Interface {$friendly} Dynamic Gateway";
+		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;
+		unset($gateway);
 	}
 	return($gateways_arr);
 }

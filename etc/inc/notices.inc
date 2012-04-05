@@ -323,7 +323,7 @@ function notify_via_smtp($message) {
 	fwrite($fd, $message);
 	fclose($fd);
 
-	if($smtp->SendMessage($from, array($to), $headers, $message)) {
+	if($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
 		log_error(sprintf(gettext("Message sent to %s OK"), $to));
 		return;
 	} else {

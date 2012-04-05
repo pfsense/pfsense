@@ -36,6 +36,9 @@
 ##|*MATCH=edit.php*
 ##|-PRIV
 
+if($_REQUEST['action'] === "load" || $_REQUEST['action'] === "save")
+	$nocsrf = true;
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 

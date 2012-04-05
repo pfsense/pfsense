@@ -104,6 +104,24 @@ include("head.inc");
 			</a>
 		</td>
 	</tr>
+	<?php endif;
+	if ($ifinfo['dhcp6link']): ?>
+	<tr>
+		<td width="22%" class="vncellt">
+			DHCP6
+		</td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
+			<?php if ($ifinfo['dhcp6link'] == "up"): ?>
+				<a href="status_interfaces.php?action=Release&if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Release");?>" class="formbtns">
+			<?php else: ?>
+				<a href="status_interfaces.php?action=Renew&if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Renew");?>" class="formbtns">
+			<?php endif; ?>
+			</a>
+		</td>
+	</tr>
 	<?php endif; if ($ifinfo['pppoelink']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("PPPoE"); ?></td>

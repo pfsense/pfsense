@@ -84,6 +84,9 @@ fi
 # be done automatically by the script below.
 PHPMODULES="apc"
 PHPMODULES="$PHPMODULES standard"
+# Config read/write
+PHPMODULES="$PHPMODULES xml libxml dom"
+PHPMODULES="$PHPMODULES simplexml xmlreader xmlwriter"
 # Downloading via HTTP/FTP (pkg mgr, etc)
 PHPMODULES="$PHPMODULES curl date"
 # Internationalization 
@@ -100,12 +103,9 @@ PHPMODULES="$PHPMODULES readline"
 # Login sessions
 PHPMODULES="$PHPMODULES session"
 # Extra sanity seatbelts
-#PHPMODULES="$PHPMODULES suhosin"
+PHPMODULES="$PHPMODULES suhosin"
 # Firewall rules edit
 PHPMODULES="$PHPMODULES ctype"
-# Config read/write
-PHPMODULES="$PHPMODULES xml xmlreader xmlwriter libxml"
-PHPMODULES="$PHPMODULES simplexml"
 # firewall_rules_edit.php
 PHPMODULES="$PHPMODULES mbstring"
 # Synchronization primitives
@@ -116,6 +116,8 @@ PHPMODULES="$PHPMODULES zlib"
 PHPMODULES="$PHPMODULES spl"
 PHPMODULES="$PHPMODULES pdo"
 PHPMODULES="$PHPMODULES sqlite"
+# RADIUS
+PHPMODULES="$PHPMODULES radius"
 # ZeroMQ
 PHPMODULES="$PHPMODULES zmq"
 # SSH2

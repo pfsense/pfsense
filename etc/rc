@@ -81,7 +81,9 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
-/etc/rc.disable_hdd_apm
+if [ -f /etc/rc.disable_hdd_apm ]; then
+	/etc/rc.disable_hdd_apm
+fi
 
 if [ ! "$PLATFORM" = "jail" ]; then
 	# Check to see if a compact flash mountpoint exists
@@ -248,68 +250,30 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 # make some directories in /var
 /bin/mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
-/bin/rm /var/log/* 2>/dev/null
 /bin/rm -rf /var/run/*
+if [ "$PLATFORM" != "pfSense" ]; then
+	/bin/rm /var/log/* 2>/dev/null
+fi
 
 echo -n "."
-DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
-if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
-	/usr/bin/touch /var/log/system.log
-	/usr/bin/touch /var/log/filter.log
-	/usr/bin/touch /var/log/dhcpd.log
-	/usr/bin/touch /var/log/vpn.log
-	/usr/bin/touch /var/log/pptps.log
-	/usr/bin/touch /var/log/poes.log
-	/usr/bin/touch /var/log/l2tps.log
-	/usr/bin/touch /var/log/openvpn.log
-	/usr/bin/touch /var/log/portalauth.log
-	/usr/bin/touch /var/log/ipsec.log
-	/usr/bin/touch /var/log/ppp.log
-	/usr/bin/touch /var/log/relayd.log
-	/usr/bin/touch /var/log/wireless.log
-	/usr/bin/touch /var/log/lighttpd.log
-	/usr/bin/touch /var/log/ntpd.log
-	/usr/bin/touch /var/log/apinger.log
-else 
-	ENABLEFIFOLOG=`cat /cf/conf/config.xml | grep usefifolog | wc -l | awk '{ print $1 }'`
-	if [ "$ENABLEFIFOLOG" -gt "0" ]; then
-		# generate fifolog files
-		/usr/sbin/fifolog_create -s 511488 /var/log/system.log
-		/usr/sbin/fifolog_create -s 511488 /var/log/filter.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/dhcpd.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/pptps.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/poes.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/l2tps.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/ppp.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/wireless.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/apinger.log
+DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
+ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
+LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver"
+for logfile in $LOG_FILES; do
+	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
+		/usr/bin/touch /var/log/$logfile.log
 	else 
-		/usr/sbin/clog -i -s 512144 /var/log/system.log
-		/usr/sbin/clog -i -s 512144 /var/log/filter.log
-		/usr/sbin/clog -i -s 65535 /var/log/dhcpd.log
-		/usr/sbin/clog -i -s 65535 /var/log/vpn.log
-		/usr/sbin/clog -i -s 50688 /var/log/pptps.log
-		/usr/sbin/clog -i -s 50688 /var/log/poes.log
-		/usr/sbin/clog -i -s 50688 /var/log/l2tps.log
-		/usr/sbin/clog -i -s 65535 /var/log/openvpn.log
-		/usr/sbin/clog -i -s 65535 /var/log/portalauth.log
-		/usr/sbin/clog -i -s 65535 /var/log/ipsec.log
-		/usr/sbin/clog -i -s 65535 /var/log/ppp.log
-		/usr/sbin/clog -i -s 65535 /var/log/slbd.log
-		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
-		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log
-		/usr/sbin/clog -i -s 65535 /var/log/relayd.log	
-		/usr/sbin/clog -i -s 65535 /var/log/wireless.log
-		/usr/sbin/clog -i -s 65535 /var/log/apinger.log	
-	fi
-fi 
+		if [ ! -f /var/log/$logfile.log ]; then
+			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
+				# generate fifolog files
+				/usr/sbin/fifolog_create -s 511488 /var/log/$logfile.log
+			else 
+				/usr/sbin/clog -i -s 512144 /var/log/$logfile.log
+			fi
+		fi
+	fi 
+done
+
 # change permissions on newly created fifolog files.
 /bin/chmod 0600 /var/log/*.log
 

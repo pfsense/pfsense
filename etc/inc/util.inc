@@ -820,10 +820,10 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	}
 	switch($mode) {
 	case "active":
-                $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
+                $upints = pfSense_interface_listget(IFF_UP);
         	break;
 	case "media":
-                $intlist = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
+		$intlist = pfSense_interface_listget();
                 $ifconfig = "";
                 exec("/sbin/ifconfig -a", $ifconfig);
                 $regexp = '/(' . implode('|', $intlist) . '):\s/';
@@ -834,7 +834,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		}
 		break;
 	default:
-		$upints = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
+		$upints = pfSense_interface_listget();
 		break;
 	}
         /* build interface list with netstat */
@@ -1132,28 +1132,26 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-    $mac =explode(":", $clientmac);
-
     global $config;
 
+    $mac = explode(":", $clientmac);
     $mac_format = $config['captiveportal']['radmac_format'] ? $config['captiveportal']['radmac_format'] : false;
 
     switch($mac_format) {
-
         case 'singledash':
-        return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
+		return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
 
         case 'ietf':
-        return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
+		return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
 
         case 'cisco':
-        return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
+		return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
 
         case 'unformatted':
-        return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
+		return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
 
         default:
-        return $clientmac;
+		return $clientmac;
     }
 }
 
@@ -1641,6 +1639,20 @@ function array_merge_recursive_unique($array0, $array1) {
 				}
 			}
 		}
+	}
+	return $result;
+}
+
+/*
+ * converts a string like "a,b,c,d"
+ * into an array like array("a" => "b", "c" => "d")
+ */
+function explode_assoc($delimiter, $string) {
+	$array = explode($delimiter, $string);
+	$result = array();
+	$numkeys = floor(count($array) / 2);
+	for ($i = 0; $i < $numkeys; $i += 1) {
+		$result[$array[$i * 2]] = $array[$i * 2 + 1];
 	}
 	return $result;
 }

@@ -353,7 +353,7 @@ function system_routing_configure($interface = "") {
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']))) {
+			if (isset($gateway['defaultgw']) && ((is_ipaddrv4($gateway['gateway'])) || ($gateway['gateway'] == "dynamic"))) {
 				if(strstr($gateway['gateway'], ":"))
 					break;
 				if ($gateway['gateway'] == "dynamic")
@@ -370,7 +370,7 @@ function system_routing_configure($interface = "") {
 			}
 		}
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && (is_ipaddrv6($gateway['gateway']))) {
+			if (isset($gateway['defaultgw']) && ((is_ipaddrv6($gateway['gateway'])) || ($gateway['gateway'] == "dynamic6"))) {
 				if ($gateway['gateway'] == "dynamic6")
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 				$gatewayipv6 = $gateway['gateway'];
@@ -530,7 +530,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd');
+		$separatelogfacilities = array('ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -581,7 +581,19 @@ function system_syslogd_start() {
 
 		$syslogconf .= "!apinger\n";
 		if (!isset($syslogcfg['disablelocallogging']))
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/apinger.log\n";
+			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/gateways.log\n";
+		if (isset($syslogcfg['apinger']))
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+
+		$syslogconf .= "!dnsmasq,unbound\n";
+		if (!isset($syslogcfg['disablelocallogging']))
+			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
+		if (isset($syslogcfg['apinger']))
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+
+		$syslogconf .= "!dhcpd,dhcrelay\n";
+		if (!isset($syslogcfg['disablelocallogging']))
+			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/dhcpd.log\n";
 		if (isset($syslogcfg['apinger']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
@@ -856,7 +868,7 @@ function system_generate_lighty_config($filename,
 	if($captive_portal == true)  {	
 		$bin_environment =  <<<EOC
 			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_CHILDREN" => "0",
 				"PHP_FCGI_MAX_REQUESTS" => "500"
 			),
 EOC;
@@ -864,7 +876,7 @@ EOC;
 	} else if ($avail > 0 and $avail < 128) {
 		$bin_environment = <<<EOC
 			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_CHILDREN" => "0",
 				"PHP_FCGI_MAX_REQUESTS" => "2",
 			),
 
@@ -872,7 +884,7 @@ EOC;
 	} else
 		$bin_environment =  <<<EOC
 			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "$max_procs",
+				"PHP_FCGI_CHILDREN" => "0",
 				"PHP_FCGI_MAX_REQUESTS" => "500"
 			),
 EOC;
@@ -1044,9 +1056,9 @@ url.access-deny             = ( "~", ".inc" )
 EOD;
 
 	if($captive_portal == true) {
-		$lighty_config .= "server.bind	= \"127.0.0.1\"\n";
+		$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
 		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"127.0.0.1:{$lighty_port}\" { }\n";
+		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
 		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:{$lighty_port}\" { \n";
 		if($cert <> "" and $key <> "") {
 			$lighty_config .= "\n";

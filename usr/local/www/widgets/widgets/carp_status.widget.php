@@ -55,7 +55,7 @@ $carp_enabled = get_carp_status();
 <tr>
 	<td class="vncellt" width="30%">
 		<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/> &nbsp;
-		<strong><a href="/pkg_edit.php?xml=carp_settings.xml&id=0">
+		<strong><a href="/system_hasync.php">
 		<span style="color:#000000"><?=htmlspecialchars($carp_int);?></span></a></strong>
 	</td>
 	<td width="70%"  class="listr">

@@ -528,6 +528,11 @@ function filter_expand_alias($alias_name)
 	}
 }
 
+function filter_expand_alias_array($alias_name) {
+	$expansion = filter_expand_alias($alias_name);
+	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
+}
+
 function filter_generate_aliases() {
 	global $config, $FilterIflist, $after_filter_configure_run;
 

@@ -1030,17 +1030,6 @@ function alias_expand($name) {
 		return null;
 }
 
-function alias_expand_array($name) {
-	global $aliastable;
-	$result = array();
-	if (isset($aliastable[$name])) {
-		return explode(" ", $aliastable[$name]);
-	}
-	else {
-		return null;
-	}
-}
-
 function alias_expand_urltable($name) {
 	global $config;
 	$urltable_prefix = "/var/db/aliastables/";

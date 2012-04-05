@@ -156,6 +156,8 @@ function echo_lbaction($action) {
 function relayd_configure($kill_first=false) {
 	global $config, $g;
 
+	require_once("filter.inc");
+
 	$vs_a = $config['load_balancer']['virtual_server'];
 	$pool_a = $config['load_balancer']['lbpool'];
 	$protocol_a = $config['load_balancer']['lbprotocol'];
@@ -262,14 +264,14 @@ function relayd_configure($kill_first=false) {
 			
 			$append_port_to_name = false;
 			if (is_alias($vs_a[$i]['port'])) {
-				$src_port_array = alias_expand_array($vs_a[$i]['port']);
+				$src_port_array = filter_expand_alias_array($vs_a[$i]['port']);
 				$append_port_to_name = true;
 			}
 			else {
 				$src_port_array = array($vs_a[$i]['port']);
 			}
 			if (is_alias($pools[$vs_a[$i]['pool']]['port'])) {
-				$dest_port_array = alias_expand_array($pools[$vs_a[$i]['pool']]['port']);
+				$dest_port_array = filter_expand_alias_array($pools[$vs_a[$i]['pool']]['port']);
 				$append_port_to_name = true;
 			}
 			else {

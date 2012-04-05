@@ -45,6 +45,9 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
+$pconfig['active_interface'] = isset($config['unbound']['active_interface']);
+$pconfig['outgoing_interface'] = isset($config['unbound']['outgoing_interface']);
+$pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
 $pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
@@ -52,32 +55,37 @@ $pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
 $pconfig['dhcpfirst'] = isset($config['unbound']['dhcpfirst']);
 $pconfig['custom_options'] = $config['unbound']['custom_options'];
 
+if(!is_array($config['unbound']))
+	$config['unbound'] = array();
+$a_unboundcfg =& $config['unbound'];
+
 if (!is_array($config['unbound']['hosts']))
 	$config['unbound']['hosts'] = array();
+$a_hosts =& $config['unbound']['hosts'];
 
 if (!is_array($config['unbound']['domainoverrides']))
 	$config['unbound']['domainoverrides'] = array();
-
-$a_hosts = &$config['unbound']['hosts'];
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
 if ($_POST) {
 
 	unset($input_errors);
 
-	$config['unbound']['enable'] = ($_POST['enable']) ? true : false;
-	if($config['unbound']['enable'] === true && isset($config['dnsmasq']['enable']))
+	if($_POST['enable'] == "yes" && isset($config['dnsmasq']['enable']))
 		$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
 
-	$config['unbound']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-
 	if (!$input_errors) {
+		$a_unboundcfg['enable'] = ($_POST['enable']) ? true : false;
+		$a_unboundcfg['dnssec'] = ($_POST['dnssec']) ? true : false;
+		$a_unboundcfg['forwarding'] = ($_POST['forwarding']) ? true : false;
+		$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+		$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+		$a_unboundcfg['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+		$a_unboundcfg['custom_options'] =  str_replace("\r\n", "\n", $_POST['custom_options']);
 		write_config("DNS Resolver configured.");
-
 		$retval = 0;
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-
 	}
 }
 
@@ -131,7 +139,7 @@ function enable_change(enable_over) {
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
+					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] === true) echo "checked";?> onClick="enable_change(false)">
 					<strong><?=gettext("Enable DNS Resolver");?><br>
 					</strong></p></td>
 			</tr>
@@ -178,21 +186,21 @@ function enable_change(enable_over) {
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
+					<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] === true) echo "checked";?>/>
 					<strong><?=gettext("Enable DNSSEC Support");?><br>
 					</strong></p></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Forwarding");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] == "yes") echo "checked";?>/>
+					<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] === true) echo "checked";?>/>
 					<strong><?=gettext("Enable Forwarding Mode");?><br>
 					</strong></p></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
+					<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] === true) echo "checked";?>>
 					<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br>
 					</strong><?php printf(gettext("If this option is set, then machines that specify".
 					" their hostname when requesting a DHCP lease will be registered".
@@ -204,7 +212,7 @@ function enable_change(enable_over) {
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
+					<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] === true) echo "checked";?>>
 					<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br>
 					</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
 							"be registered in the DNS Resolver, so that their name can be ".
@@ -215,7 +223,7 @@ function enable_change(enable_over) {
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
 				<td width="78%" class="vtable"><p>
-					<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
+					<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] === true) echo "checked";?>>
 					<strong><?=gettext("Resolve DHCP mappings first");?><br>
 					</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 							"be resolved before the manual list of names below. This only ".

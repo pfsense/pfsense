@@ -453,7 +453,7 @@ function typesel_change() {
                         <td><input name="subnet" type="text" class="formfld unknown ipv4v6" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect ipv4v6" id="select">
                             <?php for ($i = 128; $i >= 1; $i--): ?>
-                            <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['subnet']) && $i == 32)) echo "selected"; ?>>
+                            <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected"; ?>>
                             <?=$i;?>
                       </option>
                             <?php endfor; ?>

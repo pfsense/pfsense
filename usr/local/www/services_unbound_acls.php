@@ -197,14 +197,14 @@ if (is_subsystem_dirty("unbound"))
 
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=sprintf(gettext("%s ACL"),$act);?></td>
+						<td colspan="2" valign="top" class="listtopic"><?=ucwords(sprintf(gettext("%s Access List"),$act));?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("ACL name");?></td>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Access List name");?></td>
 						<td width="78%" class="vtable">
 							<input name="aclname" type="text" class="formfld" id="aclname" size="30" maxlength="30" value="<?=htmlspecialchars($pconfig['aclname']);?>">
 							<br />
-							<span class="vexpl"><?=gettext("Provide an ACL name.");?></span>
+							<span class="vexpl"><?=gettext("Provide an Access List name.");?></span>
 						</td>
 					</tr>
 					<tr>
@@ -337,11 +337,11 @@ if (is_subsystem_dirty("unbound"))
 					</td>
 					<td valign="middle" nowrap class="list">
 						<a href="services_unbound_acls.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit client"); ?>" width="17" height="17" border="0">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0">
 						</a>
 						&nbsp;
-						<a href="services_unbound_acls.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete client"); ?>" width="17" height="17" border="0">
+						<a href="services_unbound_acls.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>
@@ -354,7 +354,7 @@ if (is_subsystem_dirty("unbound"))
 				<tr>
 					<td class="list" colspan="4"></td>
 					<td class="list">
-						<a href="services_unbound_acls.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new ACL"); ?>" width="17" height="17" border="0">
+						<a href="services_unbound_acls.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" width="17" height="17" border="0">
 						</a>
 					</td>
 				</tr>

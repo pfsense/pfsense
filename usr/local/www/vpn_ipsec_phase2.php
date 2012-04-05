@@ -274,6 +274,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
@@ -295,25 +296,13 @@ function change_mode() {
 }
 
 function typesel_change_local(bits) {
-
-	if (typeof(bits)=="undefined") {
-		if (value == 'tunnel') {
-			bits = 24;
-		}
-		if (value == 'tunnel6') {
-			bits = 64;
-		}
-	}
-
 	switch (document.iform.localid_type.selectedIndex) {
 		case 0:	/* single */
 			document.iform.localid_address.disabled = 0;
-			document.iform.localid_netbits.value = 0;
 			document.iform.localid_netbits.disabled = 1;
 			break;
 		case 1:	/* network */
 			document.iform.localid_address.disabled = 0;
-			document.iform.localid_netbits.value = bits;
 			document.iform.localid_netbits.disabled = 0;
 			break;
 		case 3:	/* none */
@@ -323,7 +312,6 @@ function typesel_change_local(bits) {
 		default:
 			document.iform.localid_address.value = "";
 			document.iform.localid_address.disabled = 1;
-			document.iform.localid_netbits.value = 0;
 			document.iform.localid_netbits.disabled = 1;
 			break;
 	}
@@ -332,31 +320,18 @@ function typesel_change_local(bits) {
 <?php if (!isset($pconfig['mobile'])): ?>
 
 function typesel_change_remote(bits) {
-
-	if (typeof(bits)=="undefined") {
-		if (value == 'tunnel') {
-			bits = 24;
-		}
-		if (value == 'tunnel6') {
-			bits = 64;
-		}
-	}
-
 	switch (document.iform.remoteid_type.selectedIndex) {
 		case 0:	/* single */
 			document.iform.remoteid_address.disabled = 0;
-			document.iform.remoteid_netbits.value = 0;
 			document.iform.remoteid_netbits.disabled = 1;
 			break;
 		case 1:	/* network */
 			document.iform.remoteid_address.disabled = 0;
-			document.iform.remoteid_netbits.value = bits;
 			document.iform.remoteid_netbits.disabled = 0;
 			break;
 		default:
 			document.iform.remoteid_address.value = "";
 			document.iform.remoteid_address.disabled = 1;
-			document.iform.remoteid_netbits.value = 0;
 			document.iform.remoteid_netbits.disabled = 1;
 			break;
 	}
@@ -450,11 +425,11 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
+										<input name="localid_address" type="text" class="formfld unknown ipv4v6" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
 										/
-										<select name="localid_netbits" class="formselect" id="localid_netbits">
+										<select name="localid_netbits" class="formselect ipv4v6" id="localid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if ($i == $pconfig['localid_netbits']) echo "selected"; ?>>
+											<option value="<?=$i;?>" <?php if (isset($pconfig['localid_netbits']) && $i == $pconfig['localid_netbits']) echo "selected"; ?>>
 												<?=$i;?>
 											</option>
 										<?php endfor; ?>
@@ -485,13 +460,13 @@ function change_protocol() {
 									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
+										<input name="remoteid_address" type="text" class="formfld unknown ipv4v6" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
 										/
-										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
+										<select name="remoteid_netbits" class="formselect ipv4v6" id="remoteid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--) { 
 											
 											echo "<option value=\"{$i}\"";
-											if ($i == $pconfig['remoteid_netbits']) echo " selected";
+											if (isset($pconfig['remoteid_netbits']) && $i == $pconfig['remoteid_netbits']) echo " selected";
 											echo ">{$i}</option>\n";
 											} ?>
 										</select>

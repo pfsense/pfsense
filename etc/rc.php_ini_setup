@@ -254,7 +254,7 @@ done
 RAM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1000000}' | /usr/bin/awk -F '.' '{print $1}'`
 export RAM
 export LOWMEM
-if [  "$RAM" -gt 96 ]; then
+if [  "$RAM" -gt 135 ]; then
 
 	/bin/cat >>/usr/local/lib/php.ini <<EOF
 

@@ -2651,7 +2651,8 @@ function upgrade_080_to_081() {
 			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$realif}_vip{$vip['vhid']}/g\n");
 		}
 		mwexec("/bin/sh -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
-		@unlink("{$g['tmp_path']}/config.cache");
+		require_once("config.lib.inc");
+		$config = parse_config(true);
 	}
 }
 

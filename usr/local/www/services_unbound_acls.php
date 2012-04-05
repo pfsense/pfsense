@@ -361,7 +361,7 @@ if (is_subsystem_dirty("unbound"))
 				<tr>
 					<td colspan="4">
 						<p>
-							<?=gettext("Access Lists to control access to Unbound can be defined here.");?>
+							<?=gettext("Access Lists to control access to the DNS Resolver can be defined here.");?>
 						</p>
 					</td>
 				</tr>

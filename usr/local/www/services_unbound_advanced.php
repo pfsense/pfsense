@@ -41,42 +41,48 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-if (!is_array($config['unbound']['hosts']))
-	$config['unbound']['hosts'] = array();
+if(!is_array($config['unbound']))
+	$config['unbound'] = array();
+$a_unboundcfg =& $config['unbound'];
 
-if (!is_array($config['unbound']['domainoverrides']))
-	$config['unbound']['domainoverrides'] = array();
+$pconfig['hideidentity'] = isset($config['unbound']['hideidentity']);
+$pconfig['hideversion'] = isset($config['unbound']['hideversion']);
+$pconfig['prefetch'] = isset($config['unbound']['prefetch']);
+$pconfig['prefetchkey'] = isset($config['unbound']['prefetchkey']);
+$pconfig['hardenglue'] = isset($config['unbound']['hardenglue']);
+$pconfig['dnssecstripped'] = isset($config['unbound']['dnssecstripped']);
+$pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
+$pconfig['outgoing_num_tcp'] = $config['unbound']['outgoing_num_tcp'];
+$pconfig['incoming_num_tcp'] = $config['unbound']['incoming_num_tcp'];
+$pconfig['edns_buffer_size'] = $config['unbound']['edns_buffer_size'];
+$pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
+$pconfig['jostle_timeout'] = $config['unbound']['jostle_timeout'];
+$pconfig['cache_max_ttl'] = $config['unbound']['cache_max_ttl'];
+$pconfig['cache_min_ttl'] = $config['unbound']['cache_min_ttl'];
+$pconfig['infra_host_ttl'] = $config['unbound']['infra_host_ttl'];
+$pconfig['infra_lame_ttl'] = $config['unbound']['infra_lame_ttl'];
+$pconfig['infra_cache_numhosts'] = $config['unbound']['infra_cache_numhosts'];
+$pconfig['unwanted_reply_threshold'] = $config['unbound']['unwanted_reply_threshold'];
+$pconfig['log_verbosity'] = $config['unbound']['log_verbosity'];
 
 if ($_POST) {
 
 	unset($input_errors);
 
-	$config['unbound']['enable'] = ($_POST['enable']) ? true : false;
-	$config['unbound']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-
 	if (!$input_errors) {
-		write_config("Unbound DNS configured.");
+		$a_unboundcfg['hideidentity'] = ($_POST['hideidentity']) ? true : false;
+		$a_unboundcfg['hideversion'] = ($_POST['hideversion']) ? true : false;
+		$a_unboundcfg['prefetch'] = ($_POST['prefetch']) ? true : false;
+		$a_unboundcfg['prefetchkey'] = ($_POST['prefetchkey']) ? true : false;
+		$a_unboundcfg['hardenglue'] = ($_POST['hardenglue']) ? true : false;
+		$a_unboundcfg['dnssecstripped'] = ($_POST['dnssecstripped']) ? true : false;
+		$a_unboundcfg['custom_options'] =  str_replace("\r\n", "\n", $_POST['custom_options']);
+		write_config("DNS Resolver configured.");
 
 		$retval = 0;
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-
-		// Relaod filter (we might need to sync to CARP hosts)
-		filter_configure();
 	}
-} else {
-	$pconfig = array();
-	$pconfig['websec'] = $settings['websec'];
-	$pconfig['active_interface'] = $settings['active_interface'];
-	$pconfig['allow_interface'] = $settings['allow_interface'];
-	$pconfig['sslscan'] = $settings['sslscan'];
-	$pconfig['admin_email'] = $settings['admin_email'];
-	$pconfig['caref'] = $settings['caref'];
-	$pconfig['certref'] = $settings['certref'];
-	$pconfig['crlref'] = $settings['crlref'];
-	$pconfig['fwalias'] = $settings['fwalias'];
-	$pconfig['auth_prompt'] = $settings['auth_prompt'];
-	$pconfig['auth_ttl'] = $settings['auth_ttl'];
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
@@ -103,11 +109,11 @@ function show_advanced_dns() {
 	
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="services_dnsmasq.php" method="post" name="iform" id="iform">
+<form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np(gettext("The configuration for Unbound DNS, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
@@ -130,7 +136,7 @@ function show_advanced_dns() {
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Hide Identity");?></td>
 				<td width="78%" class="vtable">
-					<p><input name="enable" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<p><input name="hideidentity" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] === true) echo "checked";?> onClick="enable_change(false)"><br/>
 					<?=gettext("If enabled, id.server and hostname.bind queries are refused.");?></p>
 				</td>
 			</tr>

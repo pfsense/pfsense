@@ -156,7 +156,11 @@ function echo_lbaction($action) {
 function relayd_configure($kill_first=false) {
 	global $config, $g;
 
-	require_once("filter.inc");
+	// have to do this until every call to filter.inc is
+	// require_once() instead of require().
+	if (!is_function('filter_expand_alias_array')) {
+		require_once("filter.inc");
+	}
 
 	$vs_a = $config['load_balancer']['virtual_server'];
 	$pool_a = $config['load_balancer']['lbpool'];

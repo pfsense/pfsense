@@ -33,8 +33,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-unbound
-##|*NAME=Services: Unbound DNS page
-##|*DESCR=Allow access to the 'Services: Unbound DNS' page.
+##|*NAME=Services: DNS Resolver Advanced page
+##|*DESCR=Allow access to the 'Services: DNS Resolver Advanced' page.
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
 
@@ -79,7 +79,7 @@ if ($_POST) {
 	$pconfig['auth_ttl'] = $settings['auth_ttl'];
 }
 
-$pgtitle = array(gettext("Services"),gettext("Unbound DNS"));
+$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
 include_once("head.inc");
 
 ?>
@@ -109,253 +109,238 @@ function show_advanced_dns() {
 <?php if (is_subsystem_dirty('hosts')): ?><p>
 <?php print_info_box_np(gettext("The configuration for Unbound DNS, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
-  <tr><td class="tabnavtbl">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+ 	<tr>
+		<td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
-	$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+	$tab_array[] = array(gettext("General settings"), false, "services_unbound.php");
+	$tab_array[] = array(gettext("Advanced settings"), true, "services_unbound_advanced.php");
+	$tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 	display_top_tabs($tab_array, true);
 ?>
-</td></tr>
-</table>
-<div id="mainarea">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
-	<tr>
-		<td colspan="2" valign="top" class="listtopic"><?=gettext("General Unbound DNS Options");?></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
-			<strong><?=gettext("Enable Unbound DNS");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Network interfaces");?></td>
-		<td width="78%" class="vtable">
-			<select name="active_interface[]" id="active_interface" multiple="true" size="3">
-			<?php $iflist = get_configured_interface_with_descr();
-				$active_iface = explode(",", $pconfig['active_interface']);
-				$iflist['localhost'] = "Localhost";
-				foreach ($iflist as $iface => $ifdescr) {
-					echo "<option value='{$iface}' ";
-					if (in_array($iface, $active_iface))
-						echo "selected";
-					echo ">{$ifdescr}</option>\n";
-				}
-			?>
-			</select>
-			<br/><span class="vexpl">
-					<?=gettext("The Unbound DNS Server will listen on the selected interfaces. To add an interface click inside the interface box and select the interface from the drop down.");?> <br/>
-				</span>
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Query interfaces");?></td>
-		<td width="78%" class="vtable">
-			<select name="query_interface[]" id="query_interface" multiple="true" size="3">
-			<?php $iflist = get_configured_interface_with_descr();
-				$active_iface = explode(",", $pconfig['query_interface']);
-				$iflist['localhost'] = "Localhost";
-				foreach ($iflist as $iface => $ifdescr) {
-					echo "<option value='{$iface}' ";
-					if (in_array($iface, $active_iface))
-						echo "selected";
-					echo ">{$ifdescr}</option>\n";
-				}
-			?>
-			</select>
-			<br/><span class="vexpl">
-					<?=gettext("Utilize different network interface(s) that Unbound DNS server will use to send queries to authoritative servers and receive their replies.");?> <br/>
-				</span>
-		</td>
+		<td class="tabcont">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tr>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Resolver Options");?></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Hide Identity");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=gettext("If enabled, id.server and hostname.bind queries are refused.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Hide Version");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="hideversion" value="yes" <?php if ($pconfig['hideversion'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=gettext("If enabled, version.server and version.bind queries are refused.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch Support");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="prefetch" value="yes" <?php if ($pconfig['prefetch'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=gettext("Message cache elements are prefetched before they expire to help keep the cache up to date. When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch DNS Key Support");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="prefetchkey" value="yes" <?php if ($pconfig['prefetchkey'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=sprintf(gettext("DNSKEY's are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="hardenglue" value="yes" <?php if ($pconfig['hardenglue'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=gettext("Only trust glue if it is within the servers authority.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Harden DNSSEC data");?></td>
+				<td width="78%" class="vtable">
+					<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+					<?=gettext("DNSSEC data is required for trust-anchored zones. If usch data is absent, the zone becomes bogus. If this is disabled and no DNSSEC data is received, then the zone is made insecure.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Message Cache Size");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="msgcachesize" name="msgcachesize">
+						<option value="4">4MB</option>
+						<option value="10">10MB</option>
+						<option value="20">20MB</option>
+						<option value="50">50MB</option>
+						<option value="100">100MB</option>
+						<option value="250">250MB</option>
+						<option value="512">512MB</option>
+					</select><br/>
+					<?=gettext("Size of the message cache. The message cache stores DNS rcodes and validation statuses. The RRSet cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Outgoing TCP Buffers");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="outgoing_num_tcp" name="outgoing_num_tcp">
+						<option value="0">0</option>
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+						<option value="40">40</option>
+						<option value="50">50</option>
+					</select><br/>
+					<?=gettext("The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Incoming TCP Buffers");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="incoming_num_tcp" name="incoming_num_tcp">
+						<option value="0">0</option>
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+						<option value="40">40</option>
+						<option value="50">50</option>
+					</select><br/>
+					<?=gettext("The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, from clients, are accepted.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("EDNS Buffer Size");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="edns_buffer_size" name="edns_buffer_size">
+						<option value="512">512</option>
+						<option value="1480">1480</option>
+						<option value="4096">4096</option>
+					</select><br/>
+					<?=gettext("Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. RFC recommendation is 4096 (which is the default). If you have fragmentation reassemble problems, usually seen as timeouts, then a value of 1480 should help. The 512 value bypasses most MTU path problems, but it can generate an excessive amount of TCP fallback.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Number of queries per thread");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="num_queries_per_thread" name="num_queries_per_thread">
+						<option value="512">512</option>
+						<option value="1024">1024</option>
+						<option value="2048">2048</option>
+					</select><br/>
+					<?=gettext("The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Jostle Timeout");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="jostle_timeout" name="jostle_timeout">
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="500">500</option>
+						<option value="1000">1000</option>
+					</select><br/>
+					<?=gettext("This timeout is used for when the server is very busy. This protects against denial of service by slow queries or high query rates. The default value is 200 milliseconds.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Maximum TTL for RRsets and messages");?></td>
+				<td width="78%" class="vtable"><p>
+					<input type="text" id="cache_max_ttl" name="cache_max_ttl" size=5><br/>
+					<?=gettext("Configure a maximum Time to live for RRsets and messages in the cache. The default is 86400 seconds (1 day). When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Minimum TTL for RRsets and messages");?></td>
+				<td width="78%" class="vtable"><p>
+					<input type="text" id="cache_min_ttl" name="cache_min_ttl" size=5><br/>
+					<?=gettext("Configure a minimum Time to live for RRsets and messages in the cache. The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("TTL for Host cache entries");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="infra_host_ttl" name="infra_host_ttl">
+						<option value="60">1 minute</option>
+						<option value="120">2 minutes</option>
+						<option value="300">5 minutes</option>
+						<option value="600">10 minutes</option>
+						<option value="900">15 minutes</option>						
+					</select><br/>
+					<?=gettext("Time to live for entries in the host cache. The host cache contains roundtrip timing and EDNS support information. The default is 15 minutes.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("TTL for lame delegation");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="infra_lame_ttl" name="infra_lame_ttl">
+						<option value="60">1 minute</option>
+						<option value="120">2 minutes</option>
+						<option value="300">5 minutes</option>
+						<option value="600">10 minutes</option>
+						<option value="900">15 minutes</option>
+					</select><br/>
+					<?=gettext("Time to live for when a delegation is considered to be lame. The default is 15 minutes.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Number of Hosts to cache");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="infra_cache_numhosts" name="infra_cache_numhosts">
+						<option value="1000">1000</option>
+						<option value="5000">5000</option>
+						<option value="10000">10 000</option>
+						<option value="20000">20 000</option>
+						<option value="50000">50 000</option>
+					</select><br/>
+					<?=gettext("Number of hosts for which information is cached. The default is 10,000.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Unwanted Reply Threshold");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="unwanted_reply_threshold" name="unwanted_reply_threshold">
+						<option value="disabled">disabled</option>
+						<option value="5000000">5 million</option>
+						<option value="10000000">10 million</option>
+						<option value="20000000">20 million</option>
+						<option value="40000000">40 million</option>
+						<option value="50000000">50 million</option>
+					</select><br/>
+					<?=gettext("If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. The default is disabled, but if enabled a a value of 10 million is suggested.");?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Log level verbosity");?></td>
+				<td width="78%" class="vtable"><p>
+					<select id="log_verbosity" name="log_verbosity">
+						<option value="0">Level 0</option>
+						<option value="1">Level 1</option>
+						<option value="2">Level 2</option>
+						<option value="3">Level 3</option>
+						<option value="4">Level 4</option>
+						<option value="5">Level 5</option>
+					</select><br/>
+					<?=gettext("Select the log verbosity.");?></p>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="22%"></td>
+				<td width="78%">
+					<input type="submit" name="Save" class="formbtn" id="save" value="Save" />
+				</td>
+			</tr>
+		</table>
+	</div>
+	</td>
 	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dnssec" type="checkbox" id="enable" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable DNSSEC Support");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Forwarding");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dnssec" type="checkbox" id="enable" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable Forwarding Mode");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dnssec" type="checkbox" id="enable" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable Forwarding Mode");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Forwarding");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dnssec" type="checkbox" id="enable" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable Forwarding Mode");?><br>
-			</strong></p></td>
-	</tr>	
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Allow access from selected network interface");?></td>
-	<td width="78%" class="vtable">
-		<input type="checkbox" name="allow_interface" id="allow_interface" class="formfld unknown" value="on" <?php if (isset($pconfig['allow_interface'])) echo "checked"; ?> />
-	<br/><span class="vexpl">
-		<?=gettext("If this field is enabled, the network connected to the interface selected in the 'Network interface' field will be allowed to use the proxy, therefore there will be no need to add the interface's subnet to the list of ");?>  <a href='web_settings_access.php'>Access Control Lists</a>. It will automatically be added. <br/>
-	</span>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Administrator email");?></td>
-	<td width="78%" class="vtable">
-		<input name="admin_email" id="admin_email" class="formfld unknown" size="60" value="<?php if ($pconfig['admin_email']) echo $pconfig['admin_email']; else echo "admin@localhost"; ?>" />
-	<br/><span class="vexpl">
-		<?=gettext("This is the email address displayed in error messages to the users.");?> <br/>
-	</span>
-	</td>
-</tr>
-<tr>
-	<td colspan="2" class="listtopic">HTTPS MITM setttings<br></td>
-</tr>
-<tr class="on_off">
-  <td width="30%" valign="top" class="vncellreq">HTTPS Scanning</td>
-  <td width="70%" class="vtable">
-    <input type="checkbox" id="on_off" name="sslscan"<?php if(isset($pconfig['sslscan'])) echo " CHECKED"; ?>/><br />
-	Enable this to perform content scanning on HTTPS web traffic.
-  </td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Certificate Authority"); ?></td>
-	<td width="78%" class="vtable">
-		<div>
-		<select id="caref" title="Select Certificate Authority" name="caref" size="5" style="width:150px;" class="chzn-select">
-	<?php
-	      if (is_array($config['ca']) && count($config['ca']) > 0):
-			echo "<option value=''>None</option>\n";
-			foreach ($config['ca'] as $ca):
-				$selected = "";
-				if ($pconfig['caref'] == $ca['refid'])
-					$selected = "selected";
-	?>
-		<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
-			<?php endforeach; ?>
-		</select>
-		</div>
-	<?php else: ?>
-		<b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
-	<?php endif; ?>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Certificate Revocation List"); ?></td>
-	<td width="78%" class="vtable">
-	<?php if (is_array($config['crl']) && count($config['crl']) > 0): ?>
-		<select id="crlref" title="Select Certificate Revocation List" name="crlref" size="5" style="width:150px;" class="chzn-select">
-		<option value="">None</option>
-	<?php
-		foreach ($config['crl'] as $crl):
-			$selected = "";
-			$caname = "";
-			$ca = lookup_ca($crl['caref']);
-			if ($ca) {
-				$caname = " (CA: {$ca['descr']})";
-				if ($pconfig['crlref'] == $crl['refid'])
-					$selected = "selected";
-			}
-	?>
-		<option value="<?=$crl['refid'];?>" <?=$selected;?>><?php echo "{$crl['descr']} {$caname}";?></option>
-		<?php endforeach; ?>
-		</select>
-	<?php else: ?>
-		<b>No Certificate Revocation Lists (CRLs) defined.</b> <br/>Create one under <a href="system_crlmanager.php">System &gt; Cert Manager</a>.
-	<?php endif; ?>
-	</td>
-</tr>
-<tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Server Certificate"); ?></td>
-	<td width="78%" class="vtable">
-	<?php if (is_array($config['cert']) && count($config['cert']) > 0): ?>
-		<select id="certref" title="Select Server Certificate" name="certref" size="5" style="width:200px;" class="chzn-select">
-	<?php
-		foreach ($config['cert'] as $cert):
-			$selected = "";
-			$caname = "";
-			$inuse = "";
-			$revoked = "";
-			$ca = lookup_ca($cert['caref']);
-			if ($ca)
-				$caname = " (CA: {$ca['descr']})";
-			if ($pconfig['certref'] == $cert['refid'])
-				$selected = "selected";
-			if (cert_in_use($cert['refid']))
-				$inuse = " *In Use";
-			if (is_cert_revoked($cert))
-				$revoked = " *Revoked";
-	?>
-		<option value="<?=$cert['refid'];?>" <?=$selected;?>><?php echo "{$cert['descr']} {$caname} {$inuse} {$revoked}";?></option>
-		<?php endforeach; ?>
-		</select>
-	<?php else: ?>
-		<b>No Certificates defined.</b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
-	<?php endif; ?>
-	</td>
-</tr>
-<tr>
-	<td colspan="2" class="listtopic">Authentication Settings<br></td>
-</tr>
-<tr>
-        <td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
-        <td width="78%" class="vtable">
-			<div>
-                <select name='auth_method[]' id='auth_method' multiple="true" data-placeholder="Select the Authentication types" size="3" style="width:150px;" class="chzn-select">
-                <?php
-                         $auth_servers = auth_get_authserver_list();
-                         foreach ($auth_servers as $auth_server):
-                                $selected = "";
-                                if ($auth_server['name'] == $pconfig['auth_method'])
-                                        $selected = "selected";
-                                if (!isset($pconfig['auth_method']) && $auth_server['name'] == "none")
-                                        $selected = "selected";
-
-                ?>
-                        <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-                        <?php   endforeach; ?>
-                </select>
-			</div>
-        </td>
-</tr>
-<tr >
-        <td width="22%" class="vncell">Authentication prompt</td>
-        <td class="vtable">
-                <input id="auth_prompt" name="auth_prompt" value="<?=$pconfig['auth_prompt'];?>" size="50" class="formfld unknown">
-                <br/>
-                This string will be displayed at the top of the authentication request window.
-        </td>
-</tr>
-<tr valign="top">
-        <td width="22%" class="vncell">Authentication TTL</td>
-        <td class="vtable">
-                <input id="auth_ttl" name="auth_ttl" value="<?=$pconfig['auth_ttl'];?>" class="formfld unknown">
-                <br/>
-                This specifies for how long (in minutes) the server assumes an externally validated username and password combination is valid (Time To Live). When the TTL expires, the user will be prompted f
-or credentials again.
-        </td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-	<td width="22%"></td>
-	<td width="78%">
-		<input type="submit" name="Save" class="formbtn" id="save" value="Save" />
-	</td>
-</tr>
-</table>
-</div>
-</td></tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

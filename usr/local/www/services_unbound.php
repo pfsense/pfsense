@@ -36,8 +36,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-unbound
-##|*NAME=Services: Unbound DNS page
-##|*DESCR=Allow access to the 'Services: Unbound DNS' page.
+##|*NAME=Services: DNS Resolver page
+##|*DESCR=Allow access to the 'Services: DNS Resolver' page.
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
 
@@ -69,7 +69,7 @@ if ($_POST) {
 	$config['unbound']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 
 	if (!$input_errors) {
-		write_config("Unbound DNS configured.");
+		write_config("DNS Resolver configured.");
 
 		$retval = 0;
 		$retval = services_unbound_configure();
@@ -80,7 +80,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Unbound DNS"));
+$pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
 include_once("head.inc");
 
 ?>
@@ -106,7 +106,7 @@ function enable_change(enable_over) {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np(gettext("The configuration for Unbound DNS, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -115,105 +115,106 @@ function enable_change(enable_over) {
 				$tab_array = array();
 				$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
 				$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+				$tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 				display_top_tabs($tab_array, true);
 			?>
 		</td>
 	</tr>
 	<tr>
-		<td>
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
-	<tr>
-		<td colspan="2" valign="top" class="listtopic"><?=gettext("General Unbound DNS Options");?></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
-			<strong><?=gettext("Enable Unbound DNS");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Network interfaces");?></td>
-		<td width="78%" class="vtable">
-			<select name="active_interface[]" id="active_interface" multiple="true" size="3">
-			<?php $iflist = get_configured_interface_with_descr();
-				$active_iface = explode(",", $pconfig['active_interface']);
-				$iflist['localhost'] = "Localhost";
-				foreach ($iflist as $iface => $ifdescr) {
-					echo "<option value='{$iface}' ";
-					if (in_array($iface, $active_iface))
-						echo "selected";
-					echo ">{$ifdescr}</option>\n";
-				}
-			?>
-			</select>
-			<br/><span class="vexpl">
-					<?=gettext("The Unbound DNS Server will listen on the selected interfaces. To add an interface click inside the interface box and select the interface from the drop down.");?> <br/>
-				</span>
+		<td class="tabcont">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tr>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("General DNS Resolver Options");?></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
+					<strong><?=gettext("Enable DNS Resolver");?><br>
+					</strong></p></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Network interfaces");?></td>
+				<td width="78%" class="vtable">
+					<select name="active_interface[]" id="active_interface" multiple="true" size="3">
+					<?php $iflist = get_configured_interface_with_descr();
+						$active_iface = explode(",", $pconfig['active_interface']);
+						$iflist['localhost'] = "Localhost";
+						foreach ($iflist as $iface => $ifdescr) {
+							echo "<option value='{$iface}' ";
+							if (in_array($iface, $active_iface))
+								echo "selected";
+							echo ">{$ifdescr}</option>\n";
+						}
+					?>
+					</select>
+					<br/><span class="vexpl">
+							<?=gettext("The DNS Resolver Server will listen on the selected interfaces. To add an interface click inside the interface box and select the interface from the drop down.");?> <br/>
+						</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
+					<strong><?=gettext("Enable DNSSEC Support");?><br>
+					</strong></p></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Forwarding");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] == "yes") echo "checked";?>/>
+					<strong><?=gettext("Enable Forwarding Mode");?><br>
+					</strong></p></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
+					<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br>
+					</strong><?php printf(gettext("If this option is set, then machines that specify".
+					" their hostname when requesting a DHCP lease will be registered".
+					" in the DNS Resolver, so that their name can be resolved.".
+					" You should also set the domain in %sSystem:".
+					" General setup%s to the proper value."),'<a href="system.php">','</a>')?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
+					<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br>
+					</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
+							"be registered in the DNS Resolver, so that their name can be ".
+							"resolved. You should also set the domain in %s".
+							"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
+				<td width="78%" class="vtable"><p>
+					<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
+					<strong><?=gettext("Resolve DHCP mappings first");?><br>
+					</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
+							"be resolved before the manual list of names below. This only ".
+							"affects the name given for a reverse lookup (PTR)."));?></p>
+				</td>
+			</tr>	
+			<tr>
+				<td colspan="2">
+					<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)"/>
+				</td>
+			</tr>
+		</table>
 		</td>
 	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable DNSSEC Support");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Forwarding");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] == "yes") echo "checked";?>/>
-			<strong><?=gettext("Enable Forwarding Mode");?><br>
-			</strong></p></td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
-			<strong><?=gettext("Register DHCP leases in Unbound DNS");?><br>
-			</strong><?php printf(gettext("If this option is set, then machines that specify".
-			" their hostname when requesting a DHCP lease will be registered".
-			" in Unbound DNS, so that their name can be resolved.".
-			" You should also set the domain in %sSystem:".
-			" General setup%s to the proper value."),'<a href="system.php">','</a>')?></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
-			<strong><?=gettext("Register DHCP static mappings in Unbound DNS");?><br>
-			</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
-					"be registered in Unbound DNS, so that their name can be ".
-					"resolved. You should also set the domain in %s".
-					"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
-			<strong><?=gettext("Resolve DHCP mappings first");?><br>
-			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
-					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR)."));?></p>
-		</td>
-	</tr>	
-	<tr>
-		<td colspan="2">
-			<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)"/>
-		</td>
-	</tr>
-</table>
-</td>
-</tr>
 </table>
 
 <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
-</strong></span><?php printf(gettext("If Unbound DNS is enabled, the DHCP".
+</strong></span><?php printf(gettext("If the DNS Resolver is enabled, the DHCP".
 " service (if enabled) will automatically serve the LAN IP".
 " address as a DNS server to DHCP clients so they will use".
-" Unbound DNS. If Forwarding, is enabled, Unbound DNS will use the DNS servers".
+" the DNS Resolver. If Forwarding, is enabled, the DNS Resolver will use the DNS servers".
 " entered in %sSystem: General setup%s".
 " or those obtained via DHCP or PPP on WAN if the &quot;Allow".
 " DNS server list to be overridden by DHCP/PPP on WAN&quot;".

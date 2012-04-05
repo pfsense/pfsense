@@ -1450,7 +1450,7 @@ function services_unbound_configure() {
 		}
 
 		/* run Unbound */
-		mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}}/etc/unbound.conf");
+		mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/etc/unbound.conf");
 
 		if ($g['booting'])
 			echo "done.\n";

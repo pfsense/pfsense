@@ -1450,7 +1450,7 @@ function services_unbound_configure() {
 		}
 
 		/* run Unbound */
-		mwexec("/usr/local/sbin/unbound");
+		mwexec("/usr/local/sbin/unbound -c /var/unbound/etc/unbound.conf");
 
 		if ($g['booting'])
 			echo "done.\n";

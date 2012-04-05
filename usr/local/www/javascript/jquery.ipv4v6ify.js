@@ -67,25 +67,30 @@ if (!Array.prototype.some) {
 			var bits = parseInt($(input2).val(), 10);
 			if (was_ipv4 === false && is_ipv4 === true) {
 				restrict_bits_to_ipv4();
-				if (bits >= (96 + min_ipv4) && bits <= max_ipv6) {
-					$(input2).val(bits - 96);
+				/* min_ipv4 -> min_ipv4 */
+				/*   ...    ->   ...    */
+				/* max_ipv4 -> max_ipv4 */
+				/*   ...    ->   ...    */
+				/* max_ipv6 -> max_ipv4 */
+				if (bits < min_ipv4) {
+					$(input2).val(min_ipv4);
 				}
-				else if (bits > max_ipv6) {
-					$(input2).val(max_ipv4);
+				else if (bits < max_ipv4) {
+					$(input2).val(bits);
 				}
 				else {
-					$(input2).val(min_ipv4);
+					$(input2).val(max_ipv4);
 				}
 			}
 			else if (was_ipv4 === true && is_ipv4 === false) {
 				unrestrict_bits();
-				if (bits >= min_ipv4 && bits <= max_ipv4) {
-					$(input2).val(bits + 96);
-				}
-				else if (bits < min_ipv4) {
+				/* min_ipv4 -> min_ipv4 */
+				/*   ...    ->   ...    */
+				/* max_ipv4 -> max_ipv4 */
+				if (bits < min_ipv4) {
 					$(input2).val(min_ipv6);
 				}
-				else if (bits <= max_ipv6) {
+				else if (bits < max_ipv4) {
 					$(input2).val(bits);
 				}
 				else {
@@ -95,11 +100,16 @@ if (!Array.prototype.some) {
 			else if (was_ipv4 === undefined && is_ipv4 === true) {
 				// initial value is an ipv4 address
 				restrict_bits_to_ipv4();
-				if (bits >= min_ipv4 && bits <= max_ipv4) {
-					$(input2).val(bits);
-				}
-				else if (bits < min_ipv4) {
+				/* min_ipv4 -> min_ipv4 */
+				/*   ...    ->   ...    */
+				/* max_ipv4 -> max_ipv4 */
+				/*   ...    ->   ...    */
+				/* max_ipv6 -> max_ipv4 */
+				if (bits < min_ipv4) {
 					$(input2).val(min_ipv4);
+				}
+				else if (bits < max_ipv4) {
+					$(input2).val(bits);
 				}
 				else {
 					$(input2).val(max_ipv4);

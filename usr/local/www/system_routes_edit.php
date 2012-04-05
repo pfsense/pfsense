@@ -173,6 +173,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
@@ -183,16 +184,11 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
+                    <input name="network" type="text" class="formfld unknown ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
-                    <select name="network_subnet" class="formselect" id="network_subnet"
+                    <select name="network_subnet" class="formselect ipv4v6" id="network_subnet"
                       <?php
-			if(is_ipaddrv4($pconfig['network'])) {
-				$size = 32;
-			} else {
-				$size = 128;
-			}
-			for ($i = $size; $i >= 1; $i--): ?>
+			for ($i = 128; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

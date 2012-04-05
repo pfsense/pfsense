@@ -53,7 +53,6 @@ $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
 $pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
 $pconfig['dhcpfirst'] = isset($config['unbound']['dhcpfirst']);
-$pconfig['custom_options'] = $config['unbound']['custom_options'];
 
 if(!is_array($config['unbound']))
 	$config['unbound'] = array();
@@ -84,7 +83,6 @@ if ($_POST) {
 		$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 		$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 		$a_unboundcfg['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-		$a_unboundcfg['custom_options'] =  str_replace("\r\n", "\n", $_POST['custom_options']);
 		if (is_array($_POST['active_interface']))
 			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
 		else

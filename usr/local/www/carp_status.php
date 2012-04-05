@@ -84,7 +84,7 @@ if($_POST['disablecarp'] <> "") {
 						sleep(1);
 					break;
 					case "ipalias":
-						if (substr($vip['interface'], 0, 3) == "vip")
+						if (strstr($vip['interface'], "_vip"))
 							interface_ipalias_configure($vip);
 					break;
                                 }
@@ -159,7 +159,7 @@ include("head.inc");
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
 						$advbase = $carp['advbase'];
-						$carp_int = "vip{$vhid}";
+						$carp_int = "{$carp['interface']}_vip{$vhid}";
 						$status = get_carp_interface_status($carp_int);
 						echo "<tr>";
 						$align = "valign='middle'";

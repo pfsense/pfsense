@@ -2631,7 +2631,6 @@ function upgrade_079_to_080() {
 }
 
 function upgrade_080_to_081() {
-<<<<<<< HEAD
 	global $config;
 	global $g;
 

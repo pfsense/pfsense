@@ -500,4 +500,22 @@ function unbound_setup() {
 	unbound_resync_config();
 }
 
+function unbound_acl_id_used($id) {
+	global $config;
+
+	if (is_array($config['installedpackages']['unboundacls']['config']))
+		foreach ($config['installedpackages']['unboundacls']['config'] as & $acls)
+			if ($id == $acls['aclid'])
+				return true;
+
+	return false;
+}
+
+function unbound_get_next_id() {
+	$aclid = 0;
+	while(unbound_acl_id_used($aclid))
+		$aclid++;
+	return $aclid;
+}
+
 ?>

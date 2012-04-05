@@ -91,6 +91,7 @@ function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
 	document.iform.active_interface.disabled = endis;
+	document.iform.outgoing_interface.disabled = endis;
 	document.iform.dnssec.disabled = endis;
 	document.iform.forwarding.disabled = endis;
 	document.iform.regdhcp.disabled = endis;
@@ -150,6 +151,26 @@ function enable_change(enable_over) {
 					</select>
 					<br/><span class="vexpl">
 							<?=gettext("The DNS Resolver Server will listen on the selected interfaces. To add an interface click inside the interface box and select the interface from the drop down.");?> <br/>
+						</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Outgoing interfaces");?></td>
+				<td width="78%" class="vtable">
+					<select name="outgoing_interface[]" id="outgoing_interface" multiple="true" size="3">
+					<?php $iflist = get_configured_interface_with_descr();
+						$active_iface = explode(",", $pconfig['outgoing_interface']);
+						$iflist['localhost'] = "Localhost";
+						foreach ($iflist as $iface => $ifdescr) {
+							echo "<option value='{$iface}' ";
+							if (in_array($iface, $active_iface))
+								echo "selected";
+							echo ">{$ifdescr}</option>\n";
+						}
+					?>
+					</select>
+					<br/><span class="vexpl">
+							<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?> <br/>
 						</span>
 				</td>
 			</tr>

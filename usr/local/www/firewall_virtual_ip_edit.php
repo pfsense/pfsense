@@ -146,11 +146,11 @@ if ($_POST) {
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
-			if($vip['vhid'] == $_POST['vhid'] and $idtracker <> $id)
-				$input_errors[] = sprintf(gettext("VHID %s is already in use.  Pick a unique number."),$_POST['vhid']);
+			if($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker <> $id)
+				$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."),$_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
 			$idtracker++;
 		}
-		if($_POST['password'] == "")
+		if (empty($_POST['password']))
 			$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
 
 		if(is_ipaddrv4($_POST['subnet'])) {
@@ -170,11 +170,11 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 			}
 		}
-		if (substr($_POST['interface'], 0, 3) == "vip")
+		if (strstr($_POST['interface'], "_vip"))
                         $input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
 		break;
 	case "ipalias":
-		if (substr($_POST['interface'], 0, 3) == "vip") {
+		if (strstr($_POST['interface'], "_vip")) {
 			$parent_ip = get_interface_ip($_POST['interface']);
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
@@ -184,27 +184,11 @@ if ($_POST) {
 		}
 		break;
 	default:
-		if (substr($_POST['interface'], 0, 3) == "vip")
+		if (strstr($_POST['interface'], "_vip"))
 			$input_errors[] = gettext("For this type of VIP, a CARP parent is not allowed.");
 		break;
 	}
 
-
-	/* XXX: Seems this code is to draconian and without a real usefulness. Leaving commented out for now and remove later on */
-	if (0 && isset($id) && ($a_vip[$id])) {
-		if ($a_vip[$id]['mode'] != $_POST['mode']) {
-			$bringdown = false;
-			if ($a_vip[$id]['mode'] == "proxyarp") {
-				$vipiface = $a_vip[$id]['interface'];
-				foreach ($a_vip as $vip) {
-					if ($vip['interface'] == $vipiface && $vip['mode'] == "carp") {
-						if (ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$id]['subnet'], $a_vip[$id]['subnet_bits']) . "/" . $a_vip[$id]['subnet_bits']))
-							$input_errors[] = gettext("This entry cannot be modified because it is still referenced by CARP") . " {$vip['descr']}.";
-					}
-				}
-			}
-		}
-	}
 
 	if (!$input_errors) {
 		$vipent = array();

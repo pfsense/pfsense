@@ -893,10 +893,34 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		foreach($rowhelper['options']['option'] as $rowopt) {
 			$selected = "";
 			if($rowopt['value'] == $value) $selected = " SELECTED";
-			$text .= "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>";
+			$text .= "<option value='" . $rowopt['value'] . ">" . $rowopt['name'] . "</option>";
 			echo "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>\n";
 		}
 		echo "</select>\n";
+	} else if($type == "interfaces_selection") {
+			$size = ($size ? "size=\"{$size}\"" : '');
+			$multiple = '';
+			if (isset($rowhelper['multiple'])) {
+				$fieldname .= '[]';
+				$multiple = 'multiple';
+			}
+			echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' $size $multiple>\n";
+			$ifaces = get_configured_interface_with_descr();
+			$additional_ifaces = $rowhelper['add_to_interfaces_selection'];
+			if (!empty($additional_ifaces))
+				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
+			if(is_array($value))
+				$values = $value;
+			else
+				$values  =  explode(',',  $value);
+			$ifaces["lo0"] = "loopback";
+			echo "<option><name></name><value></value></option>/n";
+			foreach($ifaces as $ifname => $iface) {
+				$selected = (in_array($ifname, $values) ? 'selected' : '');
+				$text .="<option value=\\\"$ifname\\\">$iface</option>";
+				echo "<option value=\"$ifname\" $selected>$iface</option>\n";
+			}
+			echo "</select>\n";
 	} else if($type == "select_source") {
 		echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>\n";
 		$source_url = $rowhelper['source'];
@@ -915,7 +939,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		  	}
 			if($source_value == $value) 
 				$selected = " SELECTED";
-			$text .= "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>";
+			$text .= "<option value='" . $source_value . "'" . ">" . $source_name . "</option>";
 			echo "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>\n";
 		}
 		echo "</select>\n";		

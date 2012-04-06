@@ -264,6 +264,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
 	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
+
 	if(!trim($status))
 		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
@@ -1005,6 +1006,7 @@ EOD;
 	if(count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
 			join(" ", $dhcpdv6ifs));
+		mwexec("/usr/local/sbin/dhcpleases -c "/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh" -p {$g['dhcpd_chroot_path']}/var/run/dhcpd6.pid  -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
 
 	if ($g['booting']) {

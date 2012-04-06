@@ -278,152 +278,150 @@ if (is_array($config['hasync'])) {
 
 	if (empty($hasync['synchronizetoip'])) {
 		log_error("Config sync not being done because of missing sync IP (this is normal on secondary systems).");
-		break;
-	}
-	/*
-	 * XXX: The way we're finding the port right now is really suboptimal -
-	 *     we can't assume that the other machine is setup identically.
-	 */
-	if (!empty($config['system']['webgui']['protocol'])) {
-		$synchronizetoip = $config['system']['webgui']['protocol'];
-		$synchronizetoip .= "://";
-	}
+	} else {
+    /*
+     * XXX: The way we're finding the port right now is really suboptimal -
+     *     we can't assume that the other machine is setup identically.
+     */
+    if (!empty($config['system']['webgui']['protocol'])) {
+      $synchronizetoip = $config['system']['webgui']['protocol'];
+      $synchronizetoip .= "://";
+    }
 
-	/* if port is empty lets rely on the protocol selection */
-	$port = $config['system']['webgui']['port'];
-	if (empty($port)) {
-		if ($config['system']['webgui']['protocol'] == "http")
-			$port = "80";
-		else
-			$port = "443";
-	}
+    /* if port is empty lets rely on the protocol selection */
+    $port = $config['system']['webgui']['port'];
+    if (empty($port)) {
+      if ($config['system']['webgui']['protocol'] == "http")
+        $port = "80";
+      else
+        $port = "443";
+    }
 
-	if(is_ipaddrv6($hasync['synchronizetoip']))
-		$hasync['synchronizetoip'] = "[{$hasync['synchronizetoip']}]";
-	$synchronizetoip .= $hasync['synchronizetoip'];
-	if ($hasync['synchronizerules'] != "") {
-		if (!is_array($config['filter']))
-			$config['filter'] = array();
-		$sections[] = 'filter';
-	}
-	if ($hasync['synchronizenat'] != "") {
-		if (!is_array($config['nat']))
-			$config['nat'] = array();
-		$sections[] = 'nat';
-	}
-	if ($hasync['synchronizealiases'] != "") {
-		if (!is_array($config['aliases']))
-			$config['aliases'] = array();
-		$sections[] = 'aliases';
-	}
-	if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
-		$sections[] = 'dhcpd';
-	if ($hasync['synchronizewol'] != "") {
-		if (!is_array($config['wol']))
-			$config['wol'] = array();
-		$sections[] = 'wol';
-	}
-	if ($hasync['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
-		$sections[] = 'shaper';
-	}
-	if ($hasync['synchronizetrafficshaperlimiter'] != "" and is_array($config['dnshaper'])) {
-		$sections[] = 'dnshaper';
-	}
-	if ($hasync['synchronizetrafficshaperlayer7'] != "" and is_array($config['l7shaper'])) {
-		$sections[] = 'l7shaper';
-	}
-	if ($hasync['synchronizestaticroutes'] != "") {
-		if (!is_array($config['staticroutes']))
-			$config['staticroutes'] = array();
-		if (!is_array($config['staticroutes']['route']))
-			$config['staticroutes']['route'] = array();
-		$sections[] = 'staticroutes';
-		if (!is_array($config['gateways']))
-			$config['gateways'] = array();
-		$sections[] = 'gateways';
-	}
-	if ($hasync['synchronizevirtualip'] != "") {
-		if (!is_array($config['virtualip']))
-			$config['virtualip'] = array();
-		$sections[] = 'virtualip';
-	}
-	if ($hasync['synchronizelb'] != "") {
-		if (!is_array($config['load_balancer']))
-			$config['load_balancer'] = array();
-		$sections[] = 'load_balancer';
-	}
-	if ($hasync['synchronizeipsec'] != "") {
-		if (!is_array($config['ipsec']))
-			$config['ipsec'] = array();
-		$sections[] = 'ipsec';
-	}
-	if ($hasync['synchronizeopenvpn'] != "") {
-		if (!is_array($config['openvpn']))
-			$config['openvpn'] = array();
-		$sections[] = 'openvpn';
-	}
-	if ($hasync['synchronizecerts'] != "" || $hasync['synchronizeopenvpn'] != "") {
-		if (!is_array($config['cert']))
-			$config['cert'] = array();
-		$sections[] = 'cert';
+    if(is_ipaddrv6($hasync['synchronizetoip']))
+      $hasync['synchronizetoip'] = "[{$hasync['synchronizetoip']}]";
+    $synchronizetoip .= $hasync['synchronizetoip'];
+    if ($hasync['synchronizerules'] != "") {
+      if (!is_array($config['filter']))
+        $config['filter'] = array();
+      $sections[] = 'filter';
+    }
+    if ($hasync['synchronizenat'] != "") {
+      if (!is_array($config['nat']))
+        $config['nat'] = array();
+      $sections[] = 'nat';
+    }
+    if ($hasync['synchronizealiases'] != "") {
+      if (!is_array($config['aliases']))
+        $config['aliases'] = array();
+      $sections[] = 'aliases';
+    }
+    if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
+      $sections[] = 'dhcpd';
+    if ($hasync['synchronizewol'] != "") {
+      if (!is_array($config['wol']))
+        $config['wol'] = array();
+      $sections[] = 'wol';
+    }
+    if ($hasync['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
+      $sections[] = 'shaper';
+    }
+    if ($hasync['synchronizetrafficshaperlimiter'] != "" and is_array($config['dnshaper'])) {
+      $sections[] = 'dnshaper';
+    }
+    if ($hasync['synchronizetrafficshaperlayer7'] != "" and is_array($config['l7shaper'])) {
+      $sections[] = 'l7shaper';
+    }
+    if ($hasync['synchronizestaticroutes'] != "") {
+      if (!is_array($config['staticroutes']))
+        $config['staticroutes'] = array();
+      if (!is_array($config['staticroutes']['route']))
+        $config['staticroutes']['route'] = array();
+      $sections[] = 'staticroutes';
+      if (!is_array($config['gateways']))
+        $config['gateways'] = array();
+      $sections[] = 'gateways';
+    }
+    if ($hasync['synchronizevirtualip'] != "") {
+      if (!is_array($config['virtualip']))
+        $config['virtualip'] = array();
+      $sections[] = 'virtualip';
+    }
+    if ($hasync['synchronizelb'] != "") {
+      if (!is_array($config['load_balancer']))
+        $config['load_balancer'] = array();
+      $sections[] = 'load_balancer';
+    }
+    if ($hasync['synchronizeipsec'] != "") {
+      if (!is_array($config['ipsec']))
+        $config['ipsec'] = array();
+      $sections[] = 'ipsec';
+    }
+    if ($hasync['synchronizeopenvpn'] != "") {
+      if (!is_array($config['openvpn']))
+        $config['openvpn'] = array();
+      $sections[] = 'openvpn';
+    }
+    if ($hasync['synchronizecerts'] != "" || $hasync['synchronizeopenvpn'] != "") {
+      if (!is_array($config['cert']))
+        $config['cert'] = array();
+      $sections[] = 'cert';
 
-		if (!is_array($config['ca']))
-			$config['ca'] = array();
-		$sections[] = 'ca';
+      if (!is_array($config['ca']))
+        $config['ca'] = array();
+      $sections[] = 'ca';
 
-		if (!is_array($config['crl']))
-			$config['crl'] = array();
-		$sections[] = 'crl';
-	}
-	if ($hasync['synchronizeusers'] != "") {
-		$sections[] = 'user';
-		$sections[] = 'group';
-	} 
-	if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
-		$sections[] = 'dnsmasq';
-	if ($hasync['synchronizeschedules'] != "") {
-		if (!is_array($config['schedules']))
-			$config['schedules'] = array();
-		$sections[] = 'schedules';
-	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal']))
-		$sections[] = 'captiveportal';
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['vouchers']))
-		$sections[] = 'vouchers';
-	if (count($sections) > 0) {
-		if (empty($hasync['username']))
-			$username = "admin";
-		else
-			$username = $hasync['username'];
-		if (!carp_check_version($synchronizetoip, $username, $hasync['password'], $port))
-			break;
+      if (!is_array($config['crl']))
+        $config['crl'] = array();
+      $sections[] = 'crl';
+    }
+    if ($hasync['synchronizeusers'] != "") {
+      $sections[] = 'user';
+      $sections[] = 'group';
+    } 
+    if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
+      $sections[] = 'dnsmasq';
+    if ($hasync['synchronizeschedules'] != "") {
+      if (!is_array($config['schedules']))
+        $config['schedules'] = array();
+      $sections[] = 'schedules';
+    }
+    if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal']))
+      $sections[] = 'captiveportal';
+    if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['vouchers']))
+      $sections[] = 'vouchers';
+    if (count($sections) > 0) {
+      if (empty($hasync['username']))
+        $username = "admin";
+      else
+        $username = $hasync['username'];
+        
+      if (carp_check_version($synchronizetoip, $username, $hasync['password'], $port)) {
+        update_filter_reload_status("Signaling CARP reload signal...");
+        carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port);
+        $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
+        $params = array(
+          XML_RPC_encode($hasync['password'])
+        );
 
-		update_filter_reload_status("Signaling CARP reload signal...");
-		carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port);
-		$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
-		$params = array(
-			XML_RPC_encode($hasync['password'])
-		);
+        $msg = new XML_RPC_Message('pfsense.filter_configure', $params);
+        $cli->setCredentials($username, $hasync['password']);
+        $resp = $cli->send($msg, "900");
 
-		$msg = new XML_RPC_Message('pfsense.filter_configure', $params);
-		$cli->setCredentials($username, $hasync['password']);
-		$resp = $cli->send($msg, "900");
-
-		if(!is_object($resp)) {
-			$error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
-			log_error($error);
-			file_notice("sync_settings", $error, "Settings Sync", "");
-		} elseif($resp->faultCode()) {
-			$error = "An error code was received while attempting Filter sync with username {$username} {$synchronizetoip}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-			log_error($error);
-			file_notice("sync_settings", $error, "Settings Sync", "");
-		} else {
-			log_error("Filter sync successfully completed with {$synchronizetoip}:{$port}.");
-			$numberofruns = 3;
-		}
-	}
-	break;
-
+        if(!is_object($resp)) {
+          $error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
+          log_error($error);
+          file_notice("sync_settings", $error, "Settings Sync", "");
+        } elseif($resp->faultCode()) {
+          $error = "An error code was received while attempting Filter sync with username {$username} {$synchronizetoip}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+          log_error($error);
+          file_notice("sync_settings", $error, "Settings Sync", "");
+        } else {
+          log_error("Filter sync successfully completed with {$synchronizetoip}:{$port}.");
+          $numberofruns = 3;
+        }
+      }
+    }
+  }
 }
 
 ?>

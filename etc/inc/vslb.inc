@@ -158,7 +158,7 @@ function relayd_configure($kill_first=false) {
 
 	// have to do this until every call to filter.inc is
 	// require_once() instead of require().
-	if (!is_function('filter_expand_alias_array')) {
+	if (!function_exists('filter_expand_alias_array')) {
 		require_once("filter.inc");
 	}
 

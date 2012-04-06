@@ -1,19 +1,19 @@
 function trafficshowDiv(incDiv,swapButtons){
 		//appear element
 	selectedDiv = incDiv + "graphdiv";
-    jQuery('#' + selectedDiv).effect('blind',{mode:'show'},1000);      
-    showSave();    
+	jQuery('#' + selectedDiv).effect('blind',{mode:'show'},1000);      
+	showSave();    
 	d = document;	
-    if (swapButtons){
-	    selectIntLink = selectedDiv + "-min";
+	if (swapButtons){
+		selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "inline";	    
-	    
-	    selectIntLink = selectedDiv + "-open";
+		
+		selectIntLink = selectedDiv + "-open";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
-    }
-    selectIntLink = incDiv + "_graph-config";
+	}
+	selectIntLink = incDiv + "_graph-config";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "show";	
 	updateGraphDisplays(); 
@@ -22,19 +22,19 @@ function trafficshowDiv(incDiv,swapButtons){
 function  trafficminimizeDiv(incDiv,swapButtons){
 	//fade element
 	selectedDiv = incDiv + "graphdiv";
-    jQuery('#' + selectedDiv).effect('blind',{mode:'hide'},1000);
-    showSave();
+	jQuery('#' + selectedDiv).effect('blind',{mode:'hide'},1000);
+	showSave();
 	d = document;	
-    if (swapButtons){
-	    selectIntLink = selectedDiv + "-open";
+	if (swapButtons){
+		selectIntLink = selectedDiv + "-open";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "inline";	    
-	    
-	    selectIntLink = selectedDiv + "-min";
+		
+		selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
-    } 
-    selectIntLink = incDiv + "_graph-config";
+	} 
+	selectIntLink = incDiv + "_graph-config";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "hide";	
 	updateGraphDisplays();    
@@ -58,7 +58,7 @@ function updateGraphDisplays(){
 	graphsdisplayed += ",refreshInterval=";
 	graphsdisplayed += d.getElementById(selectIntLink).value;
 	
-    selectIntLink = "traffic_graphs-config";
+	selectIntLink = "traffic_graphs-config";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = graphsdisplayed;
 }

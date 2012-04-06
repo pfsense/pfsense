@@ -173,21 +173,21 @@ function enable_change(enable_over) {
 function check_everything() {
 	if (document.iform.logall.checked) {
 		document.iform.filter.disabled = 1;
-		document.iform.filter.checked = false
+		document.iform.filter.checked = false;
 		document.iform.dhcp.disabled = 1;
-		document.iform.dhcp.checked = false
+		document.iform.dhcp.checked = false;
 		document.iform.portalauth.disabled = 1;
-		document.iform.portalauth.checked = false
+		document.iform.portalauth.checked = false;
 		document.iform.vpn.disabled = 1;
-		document.iform.vpn.checked = false
+		document.iform.vpn.checked = false;
 		document.iform.apinger.disabled = 1;
-		document.iform.apinger.checked = false
+		document.iform.apinger.checked = false;
 		document.iform.relayd.disabled = 1;
-		document.iform.relayd.checked = false
+		document.iform.relayd.checked = false;
 		document.iform.hostapd.disabled = 1;
-		document.iform.hostapd.checked = false
+		document.iform.hostapd.checked = false;
 		document.iform.system.disabled = 1;
-		document.iform.system.checked = false
+		document.iform.system.checked = false;
 	} else {
 		document.iform.filter.disabled = 0;
 		document.iform.dhcp.disabled = 0;

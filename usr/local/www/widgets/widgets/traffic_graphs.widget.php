@@ -37,41 +37,75 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+$first_time = false;
+if (!is_array($config["widgets"]["trafficgraphs"])) {
+	$first_time = true;
+	$config["widgets"]["trafficgraphs"] = array();
+}
+$a_config = &$config["widgets"]["trafficgraphs"];
+
+if (!is_array($a_config["shown"])) {
+	$a_config["shown"] = array();
+}
+if (!is_array($a_config["shown"]["item"])) {
+	$a_config["shown"]["item"] = array();
+}
+
 $ifdescrs = get_configured_interface_with_descr();
+
+if ($_POST) {
+	if (isset($_POST["refreshinterval"])) {
+		$a_config["refreshinterval"] = $_POST["refreshinterval"];
+	}
+	$a_config["shown"]["item"] = array();
+	foreach ($ifdescrs as $ifname => $ifdescr) {
+		$state = $_POST["shown"][$ifname];
+		if ($state === "show") {
+			$a_config["shown"]["item"][] = $ifname;
+		}
+	}
+	write_config("Updated traffic graph settings via dashboard.");
+	header("Location: /");
+	exit(0);
+}
+
+$shown = array();
+foreach ($a_config["shown"]["item"] as $if) {
+	$shown[$if] = true;
+}
+if ($first_time) {
+	$keys = array_keys($ifdescrs);
+	$shown[$keys[0]] = true;
+}
+
+if (isset($a_config["refreshinterval"])) {
+	$refreshinterval = $a_config["refreshinterval"];
+} else {
+	$refreshinterval = 10;
+}
 
 ?>
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="">
+
 <?php
 	//set variables for traffic graph
 	$width = "100%";
 	$height = "150";
-	$showngraphlist = explode(",", $config['widgets']['traffic_graphs-config']);
-	$graphcounter = 0;
-	if($config['widgets']['traffic_graphs-config']) {
-		$graphlistcount = count($showngraphlist);
-		$refreshintervalstring = $showngraphlist[$graphlistcount-1];
-		$eqposition = strpos($refreshintervalstring,"=");
-		$refreshInterval = substr($refreshintervalstring, $eqposition +1 );
-	} else {
-		$refreshInterval = "10";
-	}
 ?>
 
 <div id="traffic_graphs-settings" name="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
-Refresh Interval:
-	<select name="refreshInterval" class="formfld" id="refreshInterval" onchange="updateGraphDisplays();">
-		<option value="1" <?php if ($refreshInterval == "1") echo "SELECTED";?>>1</option>
-		<option value="2" <?php if ($refreshInterval == "2") echo "SELECTED";?>>2</option>
-		<option value="3" <?php if ($refreshInterval == "3") echo "SELECTED";?>>3</option>
-		<option value="4" <?php if ($refreshInterval == "4") echo "SELECTED";?>>4</option>
-		<option value="5" <?php if ($refreshInterval == "5") echo "SELECTED";?>>5</option>
-		<option value="6" <?php if ($refreshInterval == "6") echo "SELECTED";?>>6</option>
-		<option value="7" <?php if ($refreshInterval == "7") echo "SELECTED";?>>7</option>
-		<option value="8" <?php if ($refreshInterval == "8") echo "SELECTED";?>>8</option>
-		<option value="9" <?php if ($refreshInterval == "9") echo "SELECTED";?>>9</option>
-		<option value="10" <?php if ($refreshInterval == "10") echo "SELECTED";?>>10</option>
+<form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="iform" id="iform">
+	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
+		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
+	<?php } ?>
+	Refresh Interval:
+	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
+		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
+			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected='selected'";?>><?= $i ?></option>
+		<?php } ?>
 	</select>&nbsp; Seconds<br>&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br><br>
 	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+</form>
 </div>
 
 <script language="javascript" type="text/javascript">
@@ -82,56 +116,37 @@ Refresh Interval:
 </script>
 
 <?php
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$ifinfo = get_interface_info($ifdescr);
-		$currentgraph = $showngraphlist[$graphcounter];
-		$colposition = strpos($currentgraph,":");
-		$currentgraph = substr($currentgraph, $colposition+1);
-		if($config['widgets']['traffic_graphs-config']) {
-			if ($currentgraph =="show") {
-				$mingraphbutton = "inline";
-				$showgraphbutton = "none";
-				$graphdisplay = "inline";
-				$interfacevalue = "show";
-			} else {
-				$mingraphbutton = "none";
-				$showgraphbutton = "inline";
-				$graphdisplay = "none";
-				$interfacevalue = "hide";
-			}
-		} else {
-			if(!$firstgraphshown) {
-				$mingraphbutton = "inline";
-				$showgraphbutton = "none";
-				$graphdisplay = "inline";
-				$interfacevalue = "show";
-			} else {
-				$mingraphbutton = "none";
-				$showgraphbutton = "inline";
-				$graphdisplay = "none";
-				$interfacevalue = "hide";
-			}
-		}
-
-	 if ($ifinfo['status'] != "down") {
-	?>
-	<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
-	<input type="hidden" id="<?php echo $ifname;?>_graph-config" name="<?php echo $ifname;?>_graph-config" class="graphsettings" value="<?=$interfacevalue;?>">
-		<div id="<?=$ifname;?>topic" class="widgetsubheader">
-			<div style="float:left;width:49%">
-				<span onClick="location.href='/status_graph.php?if=<?=$ifdescr;?>'" style="cursor:pointer">Current <?=$ifname;?> Traffic</span>
-			</div>
-			<div align="right" style="float:right;width:49%">
-				<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?php echo $ifname;?>",true)' style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>
-				<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?php echo $ifname;?>",true)' style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>
-			</div>
-			<div style="clear:both;"></div>
-		</div>
-		<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-			<embed id="graph" src="graph.php?ifnum=<?=$ifdescr;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-		</div>
-<? $firstgraphshown = true; $graphcounter++; ?>
-	</div>
-	 <? }
+foreach ($ifdescrs as $ifname => $ifdescr) {
+	$ifinfo = get_interface_info($ifname);
+	if ($shown[$ifname]) {
+		$mingraphbutton = "inline";
+		$showgraphbutton = "none";
+		$graphdisplay = "inline";
+		$interfacevalue = "show";
+	} else {
+		$mingraphbutton = "none";
+		$showgraphbutton = "inline";
+		$graphdisplay = "none";
+		$interfacevalue = "hide";
 	}
+	if ($ifinfo['status'] != "down") { ?>
+		<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
+			<div id="<?=$ifname;?>topic" class="widgetsubheader">
+				<div style="float:left;width:49%">
+					<span onClick="location.href='/status_graph.php?if=<?=$ifname;?>'" style="cursor:pointer">Current <?=$ifdescr;?> Traffic</span>
+				</div>
+				<div align="right" style="float:right;width:49%">
+					<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?= $ifname ?>", true);'
+						style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>
+					<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?= $ifname ?>", true);'
+						style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
+				<embed id="graph" src="graph.php?ifnum=<?=$ifname;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshinterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+			</div>
+		</div>
+	<? }
+}
 ?>

@@ -1,5 +1,5 @@
 function trafficshowDiv(incDiv,swapButtons){
-		//appear element
+	//appear element
 	selectedDiv = incDiv + "graphdiv";
 	jQuery('#' + selectedDiv).effect('blind',{mode:'show'},1000);      
 	showSave();    
@@ -13,10 +13,7 @@ function trafficshowDiv(incDiv,swapButtons){
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
 	}
-	selectIntLink = incDiv + "_graph-config";
-	textlink = d.getElementById(selectIntLink);
-	textlink.value = "show";	
-	updateGraphDisplays(); 
+	document.iform["shown[" + incDiv + "]"].value = "show";
 }
 	
 function  trafficminimizeDiv(incDiv,swapButtons){
@@ -34,31 +31,6 @@ function  trafficminimizeDiv(incDiv,swapButtons){
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
 	} 
-	selectIntLink = incDiv + "_graph-config";
-	textlink = d.getElementById(selectIntLink);
-	textlink.value = "hide";	
-	updateGraphDisplays();    
+	document.iform["shown[" + incDiv + "]"].value = "hide";
 }
 
-function updateGraphDisplays(){
-	var graphs = document.getElementsByClassName('graphsettings');
-	var graphsdisplayed = "";
-	var firstprint = false;	
-	d = document;
-	for (i=0; i<graphs.length; i++){
-		if (firstprint)
-			graphsdisplayed += ",";
-		var graph = graphs[i].id;
-		graphsdisplayed += graph + ":";
-		textlink = d.getElementById(graph).value;
-		graphsdisplayed += textlink;
-		firstprint = true;
-	}
-	selectIntLink = "refreshInterval";
-	graphsdisplayed += ",refreshInterval=";
-	graphsdisplayed += d.getElementById(selectIntLink).value;
-	
-	selectIntLink = "traffic_graphs-config";
-	textlink = d.getElementById(selectIntLink);
-	textlink.value = graphsdisplayed;
-}

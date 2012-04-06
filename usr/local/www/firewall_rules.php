@@ -182,8 +182,12 @@ pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/interfaces_override");
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)
                 $if = "FloatingRules";
-        else if ("FloatingRules" != $if)
-                $if = "wan";
+        else if ("FloatingRules" != $if) {
+		if (isset($iflist['wan']))
+			$if = "wan";
+		else
+			$if = "FloatingRules";
+	}
 }
 
 if ($_POST) {

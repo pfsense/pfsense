@@ -506,7 +506,7 @@ function return_gateways_array($disabled = false) {
 				$gateway['dynamic'] = "default";
 				break;
 			case "6rd":
-				$gateway['interface'] = "srd0";
+				$gateway['interface'] = "stf0";
 				$gateway['dynamic'] = "default";
 				break;
 			default:

@@ -99,6 +99,9 @@ if ($_GET['act'] == "del") {
 		find_alias_reference(array('nat', 'advancedoutbound', 'rule'), array('target'), $alias_name, $is_alias_referenced, $referenced_by);
 		// Alias in an alias
 		find_alias_reference(array('aliases', 'alias'), array('address'), $alias_name, $is_alias_referenced, $referenced_by);
+		// Load Balancer
+		find_alias_reference(array('load_balancer', 'lbpool'),         array('port'), $alias_name, $is_alias_referenced, $referenced_by);
+		find_alias_reference(array('load_balancer', 'virtual_server'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		if($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {

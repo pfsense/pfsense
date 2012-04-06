@@ -220,7 +220,10 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$newvoucher = array();
+		if (empty($config['voucher'][$cpzone]))
+                        $newvoucher = array();
+                else
+                        $newvoucher = $config['voucher'][$cpzone];
 		if ($_POST['enable'] == "yes")
 			$newvoucher['enable'] = true;
 		else

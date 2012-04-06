@@ -680,6 +680,7 @@ if ($pkg['tabs'] <> "") {
 				foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 					echo "rowname[" . $fieldcounter . "] = \"" . $rowhelper['fieldname'] . "\";\n";
 					echo "rowtype[" . $fieldcounter . "] = \"" . $rowhelper['type'] . "\";\n";
+					echo "rowsize[" . $fieldcounter . "] = \"" . $rowhelper['size'] . "\";\n";
 					$fieldcounter++;
 				}
 			?>
@@ -746,9 +747,9 @@ if ($pkg['tabs'] <> "") {
 				if($trc == 0) {
 					/*
 					 *  no records loaded.
-                                         *  just show a generic line non-populated with saved data
-                                         */
-                                        foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+					 *  just show a generic line non-populated with saved data
+					 */
+					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						if($rowhelper['value'] <> "") $value = $rowhelper['value'];
 						$fieldname = $rowhelper['fieldname'];
 						$options = "";

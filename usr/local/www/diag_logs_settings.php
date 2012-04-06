@@ -155,6 +155,7 @@ function enable_change(enable_over) {
 		document.iform.hostapd.disabled = 0;
 		document.iform.system.disabled = 0;
 		document.iform.logall.disabled = 0;
+		check_everything();
 	} else {
 		document.iform.remoteserver.disabled = 1;
 		document.iform.remoteserver2.disabled = 1;
@@ -343,7 +344,6 @@ function check_everything() {
 <script language="JavaScript">
 <!--
 enable_change(false);
-check_everything();
 //-->
 </script>
 <?php include("fend.inc"); ?>

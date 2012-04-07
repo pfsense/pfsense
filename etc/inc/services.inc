@@ -36,6 +36,7 @@
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/radvd		/usr/local/sbin/unbound
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcleases6
 	pfSense_MODULE:	utils
 */
 
@@ -1006,7 +1007,7 @@ EOD;
 	if(count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
 			join(" ", $dhcpdv6ifs));
-		mwexec("/usr/local/sbin/dhcpleases -c \"/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh\" -p {$g['dhcpd_chroot_path']}/var/run/dhcpd6.pid  -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases -h {$g['varetc_path']}/hosts");
+		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
 
 	if ($g['booting']) {

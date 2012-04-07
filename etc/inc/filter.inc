@@ -2721,6 +2721,12 @@ EOD;
 			if(is_ipaddrv6($ifcfgipv6)) {
 				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
 				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";
+				/* add rules on the WAN for traffic back in, let the downstream router
+				 * figure out what to do with the traffic */
+				$trackcfgipv6 = find_interface_ipv6(get_real_interface($trackifname));
+				if(is_ipaddrv6($trackcfgipv6)) {
+					$ipfrules .= "pass in quick on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen to any keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
+				}
 			}
 		}
 	}

@@ -65,7 +65,8 @@ var addRowTo = (function() {
 	tbody.appendChild(tr);
 	if(rowhelper_onAdd != '') 
 		eval(rowhelper_onAdd);
-	$(tr).ipv4v6ify();
+	if($(tr).ipv4v6ify)
+		$(tr).ipv4v6ify();
     });
 })();
 

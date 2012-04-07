@@ -2725,7 +2725,7 @@ EOD;
 				 * figure out what to do with the traffic */
 				$trackcfgipv6 = find_interface_ipv6(get_real_interface($trackifname));
 				if(is_ipaddrv6($trackcfgipv6)) {
-					$ipfrules .= "pass in quick on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen to any keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
+					$ipfrules .= "pass in quick on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
 				}
 			}
 		}

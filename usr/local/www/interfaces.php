@@ -504,7 +504,7 @@ if ($_POST['apply']) {
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && (($_POST['ipaddrv6'] == $_POST['type6']) || ($_POST['ipaddrv6'] == "6to4")) ) {
+				if ($if != $ifent && (($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6']) || ($config[interfaces][$ifent]['ipaddrv6'] == "6to4")) ) {
 					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6to4."),$_POST['type6']);
 					break;
 				}
@@ -514,7 +514,7 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && (($_POST['ipaddrv6'] == $_POST['type6']) || ($_POST['ipaddrv6'] == "6rd")) ) {
+				if ($if != $ifent && (($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6']) || ($config[interfaces][$ifent]['ipaddrv6'] == "6rd")) ) {
 					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6rd."),$_POST['type6']);
 					break;
 				}

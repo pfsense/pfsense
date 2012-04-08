@@ -1835,13 +1835,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="78%" class="vtable">
 											<select name="track6-prefix-id" class="formselect" id="track6-prefix-id">
 												<?php
-												if((count($dynv6ifs) == 1) && (!isset($pconfig['track6-interface']))) {
-													foreach($dynv6ifs as $trackif => $trackdescr)
-														break;
-													$pdlen = calculate_ipv6_delegation_length($trackif);
-												} else {
-													$pdlen = calculate_ipv6_delegation_length($pconfig['track6-interface']);
-												}
+												$pdlen = calculate_ipv6_delegation_length($pconfig['track6-interface']);
 
 												$numbers = pow(2, $pdlen);
 												if($pconfig['track6-prefix-id'] == "none")

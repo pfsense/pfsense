@@ -679,19 +679,7 @@ function services_dhcpdv6_configure() {
 		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
 			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
 			$trackcfg = $config['interfaces'][$trackifname];
-			/* determine possible prefix length */
-			switch($trackcfg['ipaddrv6']) {
-				case "6to4":
-					$pdlen = 16;
-					break;
-				case "6rd":
-					$rd6plen = explode("/", $rd6cfg['prefix-6rd']);
-					$pdlen =(64 - ($rd6plen[1] + (32 - $trackcfg['prefix-6rd-v4plen'])));
-					break;
-				case "dhcp6":
-					$pdlen = $trackcfg['dhcp6-ia-pd-len'];
-					break;
-			}
+			$pdlen = calculate_ipv6_delegation_length($trackifname);
 			$ifcfgipv6arr =explode(":", $ifcfgipv6);
 			$dhcpdv6cfg[$ifname] = array();
 			$dhcpdv6cfg[$ifname]['enable'] = true;

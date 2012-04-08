@@ -500,20 +500,32 @@ if ($_POST['apply']) {
 			}
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
 			break;
 		case "6rd":
+			foreach ($ifdescrs as $ifent => $ifdescr) {
+				if ($if != $ifent && (($_POST['ipaddrv6'] == $_POST['type6']) || ($_POST['ipaddrv6'] == "6to4")) ) {
+					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6to4."),$_POST['type6']);
+					break;
+				}
+			}
 			if (in_array($wancfg['ipaddrv6'], array()))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
 			break;
 		case "6to4":
+			foreach ($ifdescrs as $ifent => $ifdescr) {
+				if ($if != $ifent && (($_POST['ipaddrv6'] == $_POST['type6']) || ($_POST['ipaddrv6'] == "6rd")) ) {
+					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6rd."),$_POST['type6']);
+					break;
+				}
+			}
 			if (in_array($wancfg['ipaddrv6'], array()))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
 			break;
 		case "track6":
 			/* needs to check if $track6-prefix-id is used on another interface */
 			if (in_array($wancfg['ipaddrv6'], array()))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
+				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
 			break;
 	}
 
@@ -1823,38 +1835,28 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="78%" class="vtable">
 											<select name="track6-prefix-id" class="formselect" id="track6-prefix-id">
 												<?php
-												/* DHCP-PD is variable, calculate from the prefix-len on the WAN interface */
-												/* 6rd is variable, calculate from 64 - (v6 prefixlen - (32 - v4 prefixlen)) */
-												/* 6to4 is 16 bits, e.g. 65535 */
-												switch($config['interfaces'][$pconfig['track6-interface']]['ipaddrv6']) {
-													case "6to4":
-														$pdlen = 16;
+												if((count($dynv6ifs) == 1) && (!isset($pconfig['track6-interface']))) {
+													foreach($dynv6ifs as $trackif => $trackdescr)
 														break;
-													case "6rd":
-														$rd6cfg = $config['interfaces'][$pconfig['track6-interface']];
-														$rd6plen = explode("/", $rd6cfg['prefix-6rd']);
-														$pdlen = (64 - ($rd6plen[1] + (32 - $rd6cfg['prefix-6rd-v4plen'])));
-														break;
-													case "dhcp6":
-														$dhcp6cfg = $config['interfaces'][$pconfig['track6-interface']];
-														$pdlen = $dhcp6cfg['dhcp6-ia-pd-len'];
-														break;
-													default:
-														$pdlen = 0;
-														break;
+													$pdlen = calculate_ipv6_delegation_length($trackif);
+												} else {
+													$pdlen = calculate_ipv6_delegation_length($pconfig['track6-interface']);
 												}
-												print_r($pconfig['track6-interface']);
+
+												$numbers = pow(2, $pdlen);
 												if($pconfig['track6-prefix-id'] == "none")
 													$selected = "selected";
 												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
-												$numbers = pow(2, $pdlen);
+												$choices = array();
 												for($i = 0;$i < $numbers; $i++) {
-													echo "<option value=\"{$i}\" ";
-													if ("$i" == $pconfig['track6-prefix-id']) {
-														echo "selected";
-													}
-													echo ">" . dechex($i) . "</option>\n";
+													if ("$i" == $pconfig['track6-prefix-id'])
+														$selected = "selected";
+													else
+														$selected = "";
+
+													$choices[] = sprintf("<option value=\"%d\" $selected>%0x</option>", $i, $i);
 												}
+												echo implode("\n", $choices);
 												?> 
 											</select>
 											<?=gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>

@@ -553,7 +553,7 @@ function filter_generate_aliases() {
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			/* XXX possibly add 6to4 in the future as well, stf0 */
 			if ($ifcfg['type6'] == '6rd')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} srd0 stf0 ";
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
 			else if ($ifcfg['type6'] == '6to4')
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
 			else 
@@ -2515,8 +2515,8 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow our proto 41 traffic from the 6to4 border relay in
-pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to any label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from any to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to (self) label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from (self) to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
 
 EOD;
 			break;
@@ -2570,18 +2570,7 @@ EOD;
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
-		switch($ifcfg['type6']) {
-			case "6rd":
-			case "6to4":
-				$stf = stf0;
-				$pdlen = 48;
-				break;
-			default:
-				$stf = $ifcfg['if'];
-				$pdlen = 64;
-				break;
-		}
-		/* FIXME: get the right delegated prefix length, cheating here with /48 */
+		$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
                 	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']}/$pdlen to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}
@@ -2704,20 +2693,8 @@ EOD;
 			$ifcfgipv6 = find_interface_ipv6($realif);
 			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
 			$trackcfg = $config['interfaces'][$trackifname];
-			/* determine possible prefix length */
-			switch($trackcfg['ipaddrv6']) {
-				case "6to4":
-					$pdlen = 16;
-					break;
-				case "6rd":
-					$rd6plen = explode("/", $trackcfg['prefix-6rd']);
-					$pdlen =(64 - ($rd6plen[1] + (32 - $trackcfg['prefix-6rd-v4plen'])));
-					break;
-				 case "dhcp6":
-					$pdlen = $trackcfg['dhcp6-ia-pd-len'];
-					break;
-			}
-			$pdlen = (64 - $pdlen);
+
+			$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
 			if(is_ipaddrv6($ifcfgipv6)) {
 				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
 				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";

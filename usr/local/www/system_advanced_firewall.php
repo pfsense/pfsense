@@ -72,7 +72,7 @@ $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
+	$pconfig = array_merge($pconfig, $_POST);
 
 	/* input validation */
 	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {

@@ -693,39 +693,7 @@ if ($_POST['apply']) {
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
 
-		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
-		 * log messages from appearing. They can also manually add these items */
-		/* 1st added gateway gets a default bit */
-		/* FIXME: Add address family check here! IPv6 needs a gateway bit too */
-		if(!empty($a_gateways)) {
-			$gateway_item = array();
-			/* check for duplicates */
-			$skip = false;
-			foreach($a_gateways as $item) {
-				if(($item['interface'] == "$if") && (trim($item['gateway']) == "dynamic")) {
-					$skip4 = true;
-				}
-				if(($item['interface'] == "$if") && (trim($item['gateway']) == "dynamic6")) {
-					$skip6 = true;
-				}
-			}
-			if($skip4 == false) {
-				$gateway_item['gateway'] = "dynamic";
-				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic IPv4 gateway"),$if);
-				$gateway_item['name'] = "GW_" . strtoupper($if);
-				$gateway_item['interface'] = "{$if}";
-				$gateway_item['family'] = "inet";
-			} elseif($skip6 == false) {
-				$gateway_item['gateway'] = "dynamic6";
-				$gateway_item['descr'] = sprintf(gettext("Interface %s dynamic IPv6 gateway"),$if);
-				$gateway_item['name'] = "GW_" . strtoupper($if) ."_v6";
-				$gateway_item['interface'] = "{$if}";
-				$gateway_item['family'] = "inet6";
-			} else {
-				unset($gateway_item);
-			}
-		}
-
+		/* let return_gateways_array() do the magic on dynamic interfaces for us */
 		switch($_POST['type']) {
 			case "staticv4":
 				$wancfg['ipaddr'] = $_POST['ipaddr'];

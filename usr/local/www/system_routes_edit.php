@@ -92,7 +92,7 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['network'] && !is_ipaddr($_POST['network']))) {
+	if (($_POST['network'] && !is_ipaddr($_POST['network']) && !is_alias($_POST['network']))) {
 		$input_errors[] = gettext("A valid destination network must be specified.");
 	}
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
@@ -104,15 +104,44 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
-	$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
-	foreach ($a_routes as $route) {
-		if (isset($id) && ($a_routes[$id]) && ($a_routes[$id] === $route))
-			continue;
-
-		if ($route['network'] == $osn) {
-			$input_errors[] = gettext("A route to this destination network already exists.");
-			break;
+	$current_targets = get_staticroutes(true);
+	$new_targets = array();
+	if (is_ipaddr($_POST['network'])) {
+		$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
+		$new_targets[] = $osn;
+	} elseif (is_alias($_POST['network'])) {
+		$osn = $_POST['network'];
+		foreach (filter_expand_alias_array($_POST['network']) as $tgt) {
+			if (is_ipaddr($tgt))
+				$tgt .= "/32";
+			if (!is_subnet($tgt))
+				continue;
+			$new_targets[] = $tgt;
 		}
+	}
+
+	if (!isset($id))
+		$id = count($a_routes);
+	$oroute = $a_routes[$id];
+	if (!empty($oroute)) {
+		$old_targets = array();
+		if (is_alias($oroute['network'])) {
+			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
+				if (is_ipaddr($tgt))
+					$tgt .= "/32";
+				if (!is_subnet($tgt))
+					continue;
+				$old_targets[] = $tgt;
+			}
+		} else {
+			$old_targets[] = $oroute['network'];
+		}
+	}
+
+	$overlaps = array_intersect($current_targets, $new_targets);
+	$overlaps = array_diff($overlaps, $old_targets);
+	if (count($overlaps)) {
+		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
 	if (!$input_errors) {
@@ -121,21 +150,17 @@ if ($_POST) {
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
 
-		if (!isset($id))
-                        $id = count($a_routes);
-                if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
-                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
-                else
-                        $toapplylist = array();
-                $oroute = $a_routes[$id];
-
+		if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+		else
+			$toapplylist = array();
 		$a_routes[$id] = $route;
 
 		if (!empty($oroute)) {
-			$osn = explode('/', $oroute['network']);
-			$sn = explode('/', $route['network']);
-			if ($oroute['network'] <> $route['network'])
-				$toapplylist[] = "/sbin/route delete {$oroute['network']}"; 
+			$delete_targets = array_diff($old_targets, $new_targets);
+			if (count($delete_targets))
+				foreach ($delete_targets as $dts)
+					$toapplylist[] = "/sbin/route delete {$dts}"; 
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 		staticroutes_sort();
@@ -151,11 +176,14 @@ if ($_POST) {
 
 $pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
 include("head.inc");
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<script type="text/javascript" src="/javascript/autosuggest.js">
+</script>
+<script type="text/javascript" src="/javascript/suggestions.js">
+</script>
+<?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -165,7 +193,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
+                    <input name="network" type="text" class="formfldalias" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
                     <select name="network_subnet" class="formselect" id="network_subnet">
                       <?php for ($i = 32; $i >= 1; $i--): ?>
@@ -329,6 +357,28 @@ include("head.inc");
 							report_failure();
 						}
 					}
+					<?php
+					$isfirst = 0;
+					$aliases = "";
+					$addrisfirst = 0;
+					$aliasesaddr = "";
+					if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+						foreach($config['aliases']['alias'] as $alias_name) {
+							switch ($alias_name['type']) {
+							case "host":
+							case "network":
+								if($addrisfirst == 1) $aliasesaddr .= ",";
+								$aliasesaddr .= "'" . $alias_name['name'] . "'";
+								$addrisfirst = 1;
+								break;
+							default:
+								break;
+							}
+						}
+					?>
+					var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+					var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
+
 				</script>
 <?php include("fend.inc"); ?>
 </body>

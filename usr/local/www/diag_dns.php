@@ -93,14 +93,13 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "Host");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	$host = trim($_POST['host']);
-	$host_esc = escapeshellarg(trim($_POST['host']));
+	$host = trim($_POST['host'], " \t\n\r\0\x0B[]");
+	$host_esc = escapeshellarg($host);
 	
-	if (!is_hostname($host) && !is_ipaddr($host)) 
+	if (!is_hostname($host) && !is_ipaddr($host)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
-
-	// Test resolution speed of each DNS server.
-	if ((is_hostname($host) || is_ipaddr($host))) {
+	} else {
+		// Test resolution speed of each DNS server.
 		$dns_speeds = array();
 		$resolvconf_servers = `grep nameserver /etc/resolv.conf | cut -f2 -d' '`;
 		$dns_servers = explode("\n", trim($resolvconf_servers));

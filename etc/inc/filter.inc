@@ -1753,11 +1753,6 @@ function filter_generate_user_rule_arr($rule) {
 	return $ret;
 }
 
-function filter_expand_alias_array($alias_name) {
-	$expansion = filter_expand_alias($alias_name);
-	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
-}
-
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist, $config;
 	$src = "";

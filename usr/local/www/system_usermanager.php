@@ -268,8 +268,10 @@ if ($_POST) {
 		isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
 		/* the user name was modified */
-		if ($_POST['usernamefld'] <> $_POST['oldusername'])
+		if ($_POST['usernamefld'] <> $_POST['oldusername']) {
 			$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
+			local_user_del($userent);
+		}
 
 		/* the user password was mofified */
 		if ($_POST['passwordfld1'])

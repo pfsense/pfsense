@@ -775,11 +775,9 @@ function filter_get_direct_networks_list() {
 			$networks_arr[] = $subnet;
 		}
 	}
-	if(is_array($config['staticroutes']['route'])) {
-		foreach($config['staticroutes']['route'] as $netent) {
-			if(is_ipaddr($netent['network'])) {
-				$networks_arr[] = $netent['network'];
-			}
+	foreach(get_staticroutes(true) as $netent) {
+		if(is_subnet($netent)) {
+			$networks_arr[] = $netent;
 		}
 	}
 	if(!empty($networks_arr)) {
@@ -1443,17 +1441,15 @@ function filter_nat_rules_generate() {
 		$tonathosts = "";
 		$numberofnathosts = 0;
 
-		if(is_array($config['staticroutes']['route'])) {
-			foreach ($config['staticroutes']['route'] as $route) {
-				$netip = explode("/", $route['network']);
-				if (isset($GatewaysList[$route['gateway']])) {
-					$gateway =& $GatewaysList[$route['gateway']];
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
-					if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
-						$numberofnathosts++;
-						$tonathosts .= "{$route['network']} ";
-					}
+		foreach (get_staticroutes() as $route) {
+			$netip = explode("/", $route['network']);
+			if (isset($GatewaysList[$route['gateway']])) {
+				$gateway =& $GatewaysList[$route['gateway']];
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+				if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
+					$numberofnathosts++;
+					$tonathosts .= "{$route['network']} ";
 				}
 			}
 		}
@@ -1755,6 +1751,11 @@ function filter_generate_user_rule_arr($rule) {
 		$ret['descr'] = "label \"USER_RULE\"";
 
 	return $ret;
+}
+
+function filter_expand_alias_array($alias_name) {
+	$expansion = filter_expand_alias($alias_name);
+	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
 }
 
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
@@ -2724,7 +2725,7 @@ EOD;
 	 */
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n";
-		foreach ($config['staticroutes']['route'] as $route) {
+		foreach (get_staticroutes() as $route) {
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];

@@ -93,7 +93,7 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['network'] && !is_ipaddr($_POST['network']))) {
+	if (($_POST['network'] && !is_ipaddr($_POST['network']) && !is_alias($_POST['network']))) {
 		$input_errors[] = gettext("A valid IPv4 or IPv6 destination network must be specified.");
 	}
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
@@ -107,23 +107,51 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
+	$current_targets = get_staticroutes(true);
+	$new_targets = array();
 	if(is_ipaddrv6($_POST['network'])) {
 		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
+		$new_targets[] = $osn;
 	}
-	if(is_ipaddrv4($_POST['network'])) {
+	if (is_ipaddr($_POST['network'])) {
 		if($_POST['network_subnet'] > 32)
 			$input_errors[] = gettext("A IPv4 subnet can not be over 32 bits.");
-		else
+		else {
 			$osn = gen_subnet($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
-	}
-	foreach ($a_routes as $route) {
-		if (isset($id) && ($a_routes[$id]) && ($a_routes[$id] === $route))
-			continue;
-
-		if ($route['network'] == $osn) {
-			$input_errors[] = gettext("A route to this destination network already exists.");
-			break;
+			$new_targets[] = $osn;
 		}
+	} elseif (is_alias($_POST['network'])) {
+		$osn = $_POST['network'];
+		foreach (filter_expand_alias_array($_POST['network']) as $tgt) {
+			if (is_ipaddr($tgt))
+				$tgt .= "/32";
+			if (!is_subnet($tgt))
+				continue;
+			$new_targets[] = $tgt;
+		}
+	}
+	if (!isset($id))
+		$id = count($a_routes);
+	$oroute = $a_routes[$id];
+	if (!empty($oroute)) {
+		$old_targets = array();
+		if (is_alias($oroute['network'])) {
+			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
+				if (is_ipaddr($tgt))
+					$tgt .= "/32";
+				if (!is_subnet($tgt))
+					continue;
+				$old_targets[] = $tgt;
+			}
+		} else {
+			$old_targets[] = $oroute['network'];
+		}
+	}
+
+	$overlaps = array_intersect($current_targets, $new_targets);
+	$overlaps = array_diff($overlaps, $old_targets);
+	if (count($overlaps)) {
+		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
 	if (!$input_errors) {
@@ -136,24 +164,20 @@ if ($_POST) {
 		else
 			unset($route['disabled']);
 
-		if (!isset($id))
-                        $id = count($a_routes);
-                if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
-                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
-                else
-                        $toapplylist = array();
-                $oroute = $a_routes[$id];
-
+		if (file_exists("{$g['tmp_path']}/.system_routes.apply"))
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.system_routes.apply"));
+		else
+			$toapplylist = array();
 		$a_routes[$id] = $route;
 
 		if (!empty($oroute)) {
-			$osn = explode('/', $oroute['network']);
-			$sn = explode('/', $route['network']);
-			if ($oroute['network'] <> $route['network']) {
-				if(is_ipaddrv6($oroute['network']))
-					$family = "-inet6";
-				$toapplylist[] = "/sbin/route delete {$family} {$oroute['network']}";
-			}
+			$delete_targets = array_diff($old_targets, $new_targets);
+			if (count($delete_targets))
+				foreach ($delete_targets as $dts) {
+					if(is_ipaddrv6($dts))
+						$family = "-inet6";
+					$toapplylist[] = "/sbin/route delete {$family} {$dts}"; 
+				}
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
 		staticroutes_sort();
@@ -169,12 +193,15 @@ if ($_POST) {
 
 $pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
 include("head.inc");
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<?php include("fbegin.inc"); ?>
+<script type="text/javascript" src="/javascript/autosuggest.js">
+</script>
+<script type="text/javascript" src="/javascript/suggestions.js">
+</script>
+<?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -184,7 +211,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="network" type="text" class="formfld unknown ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
+                    <input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
                     <select name="network_subnet" class="formselect ipv4v6" id="network_subnet"
                       <?php
@@ -357,6 +384,28 @@ include("head.inc");
 							report_failure();
 						}
 					}
+					<?php
+					$isfirst = 0;
+					$aliases = "";
+					$addrisfirst = 0;
+					$aliasesaddr = "";
+					if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+						foreach($config['aliases']['alias'] as $alias_name) {
+							switch ($alias_name['type']) {
+							case "host":
+							case "network":
+								if($addrisfirst == 1) $aliasesaddr .= ",";
+								$aliasesaddr .= "'" . $alias_name['name'] . "'";
+								$addrisfirst = 1;
+								break;
+							default:
+								break;
+							}
+						}
+					?>
+					var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+					var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
+
 				</script>
 <?php include("fend.inc"); ?>
 </body>

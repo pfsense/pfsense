@@ -1114,13 +1114,11 @@ function services_dhcrelay_configure() {
 			}
 		}
 		if (!isset($destif)) {
-			if (is_array($config['staticroutes']['route'])) {
-				foreach ($config['staticroutes']['route'] as $rtent) {
-					if (ip_in_subnet($srvip, $rtent['network'])) {
-						$a_gateways = return_gateways_array(true);
-						$destif = $a_gateways[$rtent['gateway']]['interface'];
-						break;
-					}
+			foreach (get_staticroutes() as $rtent) {
+				if (ip_in_subnet($srvip, $rtent['network'])) {
+					$a_gateways = return_gateways_array(true);
+					$destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
 				}
 			}
 		}

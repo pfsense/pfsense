@@ -1680,6 +1680,7 @@ function array_merge_recursive_unique($array0, $array1) {
 	return $result;
 }
 
+
 /*
  * converts a string like "a,b,c,d"
  * into an array like array("a" => "b", "c" => "d")
@@ -1694,4 +1695,40 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
+function get_staticroutes($returnsubnetsonly = false) {
+	global $config;
+	require_once('filter.inc');
+	$allstaticroutes = array();
+	$allsubnets = array();
+
+	/* Bail if there are no routes, but return an array always so callers don't have to check. */
+	if (!is_array($config['staticroutes']['route']))
+		return array();
+
+	/* Loop through routes and expand aliases as we find them. */
+	foreach ($config['staticroutes']['route'] as $route) {
+		if (is_alias($route['network'])) {
+			$subnets = filter_expand_alias_array($route['network']);
+			foreach ($subnets as $net) {
+				if (is_ipaddr($net))
+					$net .= "/32";
+				/* This must be a hostname, we can't use it. */
+				if (!is_subnet($net))
+					continue;
+				$temproute = $route;
+				$temproute['network'] = $net;
+				$allstaticroutes[] = $temproute;
+				$allsubnets[] = $net;
+			}
+		} elseif (is_subnet($route['network'])) {
+			$allstaticroutes[] = $route;
+			$allsubnets[] = $route['network'];
+		}
+	}
+	if ($returnsubnetsonly) {
+		return $allsubnets;
+	} else {
+		return $allstaticroutes;
+	}
+}
 ?>

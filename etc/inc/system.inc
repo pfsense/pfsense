@@ -427,10 +427,11 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
-	if (is_array($config['staticroutes']['route'])) {
+	$static_routes = get_staticroutes();
+	if (count($static_routes)) {
 		$gateways_arr = return_gateways_array();
 
-		foreach ($config['staticroutes']['route'] as $rtent) {
+		foreach ($static_routes as $rtent) {
 			$gatewayip = "";
 			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));

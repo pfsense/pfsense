@@ -68,6 +68,11 @@ $pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 
+if (!empty($config['system']['powerd_mode']))
+	$pconfig['powerd_mode'] = $config['system']['powerd_mode'];
+else
+	$pconfig['powerd_mode'] = "hadp";
+
 if ($_POST) {
 
     unset($input_errors);
@@ -154,6 +159,8 @@ if ($_POST) {
                 else
                         unset($config['system']['powerd_enable']);
 
+		$config['system']['powerd_mode'] = $_POST['powerd_mode'];
+						
 		if($_POST['glxsb_enable'] == "yes")
                         $config['system']['glxsb_enable'] = true;
                 else
@@ -323,17 +330,28 @@ function maxmss_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Use PowerD"); ?></strong><br/>
-									<br />
+									<br/>
+									<?=gettext("Mode"); ?>&nbsp;:&nbsp;
+									<select name="powerd_mode" id="powerd_mode">
+										<option value="hadp"<?php if($pconfig['powerd_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
+									</select>
+									<br/><br/>
 								     <?=gettext("The powerd utility monitors the system state and sets various power control " .
-								     "options accordingly. It offers three modes (maximum, minimum, and " .
-								     "adaptive) that can be individually selected while on AC power or batteries. " . 
-								     "The modes maximum, minimum, and adaptive may be abbreviated max, " .
-								     "min, adp.   Maximum mode chooses the highest performance values.  Minimum " .
+								     "options accordingly.  It offers four modes (maximum, minimum, adaptive " .
+								     "and hiadaptive) that can be individually selected while on AC power or batteries. " . 
+								     "The modes maximum, minimum, adaptive and hiadaptive may be abbreviated max, " .
+								     "min, adp, hadp.  Maximum mode chooses the highest performance values.  Minimum " .
 								     "mode selects the lowest performance values to get the most power savings. " .
 								     "Adaptive mode attempts to strike a balance by degrading performance when " .
 								     "the system appears idle and increasing it when the system is busy.  It " .
 								     "offers a good balance between a small performance loss for greatly " .
-								     "increased power savings.  The default mode for {$g['product_name']} is adaptive."); ?>
+								     "increased power savings.  Hiadaptive mode is alike adaptive mode, but " .
+									 "tuned for systems where performance and interactivity are more important" .
+									 "than power consumption.  It rises frequency faster, drops slower and" .
+									 "keeps twice lower CPU load."); ?>
 								</td>
 							</tr>
 							<tr>

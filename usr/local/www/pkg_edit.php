@@ -648,10 +648,6 @@ if ($pkg['tabs'] <> "") {
 			else
 				$values  =  explode(',',  $value);
 			$ifaces["lo0"] = "loopback";
-			if(isset($pkga['advancedfield']) && $adv_enabled)
-				$advanced .="<option><name></name><value></value></option>/n";
-			else
-				echo "<option><name></name><value></value></option>/n";
 			foreach($ifaces as $ifname => $iface) {
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
 				if(isset($pkga['advancedfield']) && $adv_enabled)

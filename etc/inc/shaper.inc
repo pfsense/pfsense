@@ -3242,7 +3242,7 @@ class dnqueue_class extends dummynet_class {
 		$parent =& $this->GetParent();
             	$pfq_rule = "queue ". $this->GetNumber() . " config pipe " . $parent->GetNumber();
 		if ($this->GetQlimit())
-                    	$pfq_rule .= " queue " . $this->GetQimit();
+                    	$pfq_rule .= " queue " . $this->GetQlimit();
 		if ($this->GetWeight())
 			$pfq_rule .= " weight " . $this->GetWeight();
 		if ($this->GetBuckets())

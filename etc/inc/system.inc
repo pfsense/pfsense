@@ -479,6 +479,14 @@ function system_routing_enable() {
 	return;
 }
 
+function system_syslogd_fixup_server($server) {
+	/* If it's an IPv6 IP alone, encase it in brackets */
+	if (is_ipaddrv6($server))
+		return "[$server]";
+	else
+		return $server;
+}
+
 function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	// Rather than repeatedly use the same code, use this function to build a list of remote servers.
 	$facility .= " ".
@@ -486,11 +494,11 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	$pad_to  = 56;
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
 	if($syslogcfg['remoteserver'])
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@{$syslogcfg['remoteserver']}\n";
+		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
 	if($syslogcfg['remoteserver2'])
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@{$syslogcfg['remoteserver2']}\n";
+		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver2']) . "\n";
 	if($syslogcfg['remoteserver3'])
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@{$syslogcfg['remoteserver3']}\n";
+		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver3']) . "\n";
 	return $remote_servers;
 }
 

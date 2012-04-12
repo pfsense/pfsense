@@ -605,10 +605,7 @@ function is_port($port) {
 function is_portrange($portrange) {
 	$ports = explode(":", $portrange);
 
-	if(count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]))
-		return true;
-	else
-		return false;
+	return (count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]));
 }
 
 /* returns true if $port is a valid port number or an alias thereof */
@@ -916,7 +913,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 function log_error($error) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
-	syslog(LOG_WARNING, "$page: $error");
+	syslog(LOG_ERROR, "$page: $error");
 	if ($g['debug'])
 		syslog(LOG_WARNING, var_dump(debug_backtrace()));
 	return;
@@ -1115,10 +1112,7 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
 	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
 
-	if ($sn1 == $sn2)
-		return true;
-	else
-		return false;
+	return ($sn1 == $sn2);
 }
 
 /* compare two IP addresses */
@@ -1543,7 +1537,7 @@ function msort($array, $id="id", $sort_ascending=true) {
 	if ($sort_ascending) {
 		return $temp_array;
 	} else {
-    	return array_reverse($temp_array);
+    		return array_reverse($temp_array);
 	}
 }
 

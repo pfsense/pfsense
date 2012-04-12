@@ -1399,7 +1399,6 @@ EOD;
 				if (isset ($pppoecfg['radius']['accounting'])) {
 					$mpdconf .=<<<EOD
 	set auth enable radius-acct
-	set radius acct-update 300
 
 EOD;
 				}
@@ -1591,7 +1590,6 @@ EOD;
 				if (isset ($l2tpcfg['radius']['accounting'])) {
 					$mpdconf .=<<<EOD
 	set auth enable radius-acct
-	set radius acct-update 300
 
 EOD;
 				}

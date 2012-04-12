@@ -55,6 +55,33 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+$rrddbpath = "/var/db/rrd";
+$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+function rrd_data_xml() {
+	global $rrddbpath;
+	global $rrdtool;
+	
+	$result = "\t<rrddata>\n";
+	$rrd_files = glob("{$rrddbpath}/*.rrd");
+	$xml_files = array();
+	foreach ($rrd_files as $rrd_file) {
+		$basename = basename($rrd_file);
+		$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
+		exec("$rrdtool dump '{$rrd_file}' '{$xml_file}'");
+		$xml_data = file_get_contents($xml_file);
+		unlink($xml_file);
+		if ($xml_data !== false) {
+			$result .= "\t\t<rrddatafile>\n";
+			$result .= "\t\t\t<filename>{$basename}</filename>\n";
+			$result .= "\t\t\t<xmldata>" . base64_encode(gzdeflate($xml_data)) . "</xmldata>\n";
+			$result .= "\t\t</rrddatafile>\n";
+		}
+	}
+	$result .= "\t</rrddata>\n";
+	return $result;
+}
+
 function add_base_packages_menu_items() {
 	global $g, $config;
 	$base_packages = explode($g['base_packages'], ",");
@@ -225,21 +252,9 @@ if ($_POST) {
 				 *  Backup RRD Data
 				 */
 				if(!$_POST['donotbackuprrd']) {
-					$data = str_replace("</" . $g['xml_rootobj'] . ">", "\t<rrddata>", $data);
-					$rrd_files_var_db_rrd = explode("\n",`cd /var/db/rrd && ls *.rrd`);
-					foreach($rrd_files_var_db_rrd as $rrd) {
-						if($rrd) {
-							$rrd_data = file_get_contents("{$g['vardb_path']}/rrd/{$rrd}");
-							if($rrd_data) {
-								$data .= "\t\t<rrddatafile>\n";
-								$data .= "\t\t\t<filename>{$rrd}</filename>\n";
-								$data .= "\t\t\t<data>" . base64_encode(gzdeflate($rrd_data)) . "</data>\n";
-								$data .= "\t\t</rrddatafile>\n";
-							}
-						}
-					}
-					$data .= "\t</rrddata>\n";
-					$data .= "</" . $g['xml_rootobj'] . ">\n";
+					$rrd_data_xml = rrd_data_xml();
+					$closing_tag = "</" . $g['xml_rootobj'] . ">";
+					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
 
 				$size = strlen($data);
@@ -320,18 +335,27 @@ if ($_POST) {
 								/* extract out rrd items, unset from $config when done */
 								if($config['rrddata']) {
 									foreach($config['rrddata']['rrddatafile'] as $rrd) {
-										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
-										$data = base64_decode($rrd['data']);
-										/* Try to decompress the data. */
-										$dcomp = @gzinflate($data);
-										if ($dcomp) {
-											/* If the decompression worked, write the decompressed data */
-											fwrite($rrd_fd, $dcomp);
-										} else {
-											/* If the decompression failed, it wasn't compressed, so write raw data */
-											fwrite($rrd_fd, $data);
+										if ($rrd['xmldata']) {
+											$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+											$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
+											file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata'])));
+											exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
+											unlink($xml_file);
 										}
-										fclose($rrd_fd);
+										else if ($rrd['data']) {
+											$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
+											$data = base64_decode($rrd['data']);
+											/* Try to decompress the data. */
+											$dcomp = @gzinflate($data);
+											if ($dcomp) {
+												/* If the decompression worked, write the decompressed data */
+												fwrite($rrd_fd, $dcomp);
+											} else {
+												/* If the decompression failed, it wasn't compressed, so write raw data */
+												fwrite($rrd_fd, $data);
+											}
+											fclose($rrd_fd);
+										}
 									}
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");

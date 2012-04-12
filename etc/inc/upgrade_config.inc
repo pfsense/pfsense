@@ -1986,11 +1986,7 @@ function upgrade_054_to_055() {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	if ($g['platform'] != "pfSense") {
 		/* restore the databases, if we have one */
-		if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-			exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);                        $rrdrestore = implode(" ", $rrdrestore);
-			if($rrdreturn <> 0) {
-				log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
-			}
+		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
 			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
 		}
@@ -2111,7 +2107,7 @@ function upgrade_054_to_055() {
 	enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
-	exec("cd /;LANG=C /usr/bin/tar -czf {$g['cf_conf_path']}/rrd.tgz -C / var/db/rrd/*.rrd");
+	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	if ($g['booting'])
 		echo "Updating configuration...";
 }

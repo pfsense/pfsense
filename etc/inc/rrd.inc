@@ -47,6 +47,33 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	return($dumpret);
 }
 
+function restore_rrd() {
+	global $g;
+
+	$rrddbpath = "/var/db/rrd/";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	$rrdrestore = "";
+	$rrdreturn = "";
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
+			unlink($xml_file);
+		}
+		exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
+		$rrdrestore = implode(" ", $rrdrestore);
+		if($rrdreturn != 0) {
+			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+		}
+		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
+			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
+			exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
+			unlink($xml_file);
+		}
+		return true;
+	}
+	return false;
+}
+
 function create_new_rrd($rrdcreatecmd) {
 	$rrdcreateoutput = array();
 	$rrdcreatereturn = 0;
@@ -226,9 +253,6 @@ function enable_rrd_graphing() {
 	/* read the shaper config */
 	read_altq_config();
 
-	$rrdrestore = "";
-	$rrdreturn = "";
-
 	if (isset ($config['rrd']['enable'])) {
 
 		/* create directory if needed */
@@ -239,14 +263,7 @@ function enable_rrd_graphing() {
 
 		if ($g['booting']) {
 			if ($g['platform'] != "pfSense") {
-				/* restore the databases, if we have one */
-				if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
-					$rrdrestore = implode(" ", $rrdrestore);
-					if($rrdreturn <> 0) {
-						log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s%3$s'), $rrdreturn, $rrdrestore, "\n"));
-					}
-				}
+				restore_rrd();
 			}
 		}
 

@@ -841,7 +841,7 @@ if($pkg['note'] != "")
 		}
 ?>
 </table>
-</div></tr></td>
+</div></td></tr>
 </table>
 </form>
 

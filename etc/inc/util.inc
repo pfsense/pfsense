@@ -425,9 +425,6 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid IPv6 address */
 function is_ipaddrv6($ipaddr) {
-	if(preg_match("/\[([0-9a-f:]+)\]/i", $ipaddr, $match))
-		$ipaddr = $match[1];
-
 	$result = Net_IPv6::checkIPv6($ipaddr);
 	return $result;
 }

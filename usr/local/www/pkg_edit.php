@@ -653,10 +653,10 @@ if ($pkg['tabs'] <> "") {
 			else
 				$values  =  explode(',',  $value);
 			$ifaces["lo0"] = "loopback";
-			if(isset($pkga['advancedfield']) && $adv_enabled)
-				$advanced .="<option><name></name><value></value></option>/n";
-			else
-				echo "<option><name></name><value></value></option>/n";
+			if(isset($pkga['advancedfield']) && $adv_enabled && ($pkga['size'] == "1") && !isset($pkga['multiple']))
+				$advanced .="<OPTION SELECTED VALUE=\"\">Select...</OPTION>\n";
+			else if($pkga['size'] == "1" && !isset($pkga['multiple']))
+				echo "<OPTION SELECTED VALUE=\"\">Select...</OPTION>\n";
 			foreach($ifaces as $ifname => $iface) {
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
 				if(isset($pkga['advancedfield']) && $adv_enabled)
@@ -918,7 +918,8 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			else
 				$values  =  explode(',',  $value);
 			$ifaces["lo0"] = "loopback";
-			echo "<option><name></name><value></value></option>/n";
+			if($rowhelper['size'] == "1" && !isset($row['multiple']))
+				echo "<OPTION SELECTED VALUE=\"\">Select...</OPTION>\n";
 			foreach($ifaces as $ifname => $iface) {
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
 				$text .="<option value=\\\"$ifname\\\">$iface</option>";

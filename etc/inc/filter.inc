@@ -775,6 +775,12 @@ function filter_get_direct_networks_list() {
 			$networks_arr[] = $subnet;
 		}
 	}
+	foreach(get_configured_ip_aliases_list() as $vip => $vipif) {
+		$vip_split = explode('/', $vip);
+		if(!empty($vip_split[1]) && is_subnet($vip) && !(is_subnetv4($vip) && $vip_split[1] == 32) && !(is_subnetv6($vip) && $vip_split[1] == 128)) {
+			$networks_arr[] = $vip;
+		}
+	}
 	foreach(get_staticroutes(true) as $netent) {
 		if(is_subnet($netent)) {
 			$networks_arr[] = $netent;

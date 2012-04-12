@@ -647,7 +647,7 @@ function get_configured_carp_interface_list() {
 }
 
 /* return the configured IP aliases list */
-function get_configured_ip_aliases_list() {
+function get_configured_ip_aliases_list($returnfullentry = false) {
 	global $config;
 
 	$alias_list=array();
@@ -656,7 +656,10 @@ function get_configured_ip_aliases_list() {
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
 			if ($vip['mode']=="ipalias") {
-				$alias_list[$vip['subnet']] = $vip['interface'];
+				if ($returnfullentry)
+					$alias_list[$vip['subnet']] = $vip;
+				else
+					$alias_list[$vip['subnet']] = $vip['interface'];
 			}
 		}
 	}

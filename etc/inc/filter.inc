@@ -775,13 +775,13 @@ function filter_get_direct_networks_list() {
 			$networks_arr[] = $subnet;
 		}
 	}
-	foreach(get_configured_ip_aliases_list() as $vip => $vipif) {
-		$vip_split = explode('/', $vip);
-		if(!empty($vip_split[1]) && is_subnet($vip) && !(is_subnetv4($vip) && $vip_split[1] == 32) && !(is_subnetv6($vip) && $vip_split[1] == 128)) {
-			if(is_subnetv4($vip))
-				$networks_arr[] = gen_subnet($vip_split[0], $vip_split[1]) . "/{$vip_split[1]}";
-			else if(is_subnetv6($vip))
-				$networks_arr[] = gen_subnetv6($vip_split[0], $vip_split[1]) . "/{$vip_split[1]}";
+	foreach(get_configured_ip_aliases_list(true) as $vip) {
+		$subnet = "{$vip['subnet']}/{$vip['subnet_bits']}";
+		if(is_subnet($subnet) && !(is_subnetv4($subnet) && $vip['subnet_bits'] == 32) && !(is_subnetv6($subnet) && $vip['subnet_bits'] == 128)) {
+			if(is_subnetv4($subnet))
+				$networks_arr[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
+			else if(is_subnetv6($subnet))
+				$networks_arr[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
 		}
 	}
 	foreach(get_staticroutes(true) as $netent) {

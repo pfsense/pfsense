@@ -42,13 +42,15 @@ function activate_powerd() {
 	global $config, $g;
 	if ($g['platform'] == 'jail')
 		return;
+	if(is_process_running("powerd"))
+		exec("/usr/bin/killall powerd");
 	if(isset($config['system']['powerd_enable'])) {
 		if ($g["platform"] == "nanobsd")
 			exec("/sbin/kldload cpufreq");
-		exec("/usr/sbin/powerd -b adp -a adp");
-	} else {
-		if(is_process_running("powerd"))
-			exec("/usr/bin/killall powerd");
+		$mode = "hadp";
+		if (!empty($config['system']['powerd_mode']))
+			$mode = $config['system']['powerd_mode'];
+		mwexec("/usr/sbin/powerd -b $mode -a $mode");
 	}
 }
 

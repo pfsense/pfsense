@@ -128,12 +128,26 @@ $sad = ipsec_dump_sad();
 						<td class="list">
 							<?php
 							$source = "";
+							$ip_interface = null;
+							$ip_alias = null;
 							if ($ph2ent['localid']['type'] == 'lan') {
 								$source = get_interface_ip('lan');
+							} else if ($ph2ent['localid']['type'] == 'network') {
+								$ip_interface = find_ip_interface($ph2ent['localid']['address'], $ph2ent['localid']['netbits']);
+								if (!$ip_interface) {
+									$ip_alias = find_virtual_ip_alias($ph2ent['localid']['address'], $ph2ent['localid']['netbits']);
+								}
 							} else {
-								$source = get_interface_ip(find_ip_interface($ph2ent['localid']['address']));
+								$ip_interface = find_ip_interface($ph2ent['localid']['address']);
+								if (!$ip_interface) {
+									$ip_alias = find_virtual_ip_alias($ph2ent['localid']['address']);
+								}
 							}
-
+							if ($ip_interface) {
+								$source = get_interface_ip($ip_interface);
+							} else if ($ip_alias) {
+								$source = $ip_alias['subnet'];
+							}
 							?>
 							<?php if (($ph2ent['remoteid']['type'] != "mobile") && ($icon != "pass") && ($source != "")): ?>
 							<center>

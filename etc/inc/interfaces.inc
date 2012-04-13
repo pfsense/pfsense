@@ -3846,19 +3846,54 @@ function guess_interface_from_ip($ipaddress) {
 
 /*
  * find_ip_interface($ip): return the interface where an ip is defined
+ *   (or if $bits is specified, where an IP within the subnet is defined)
  */
-function find_ip_interface($ip)
+function find_ip_interface($ip, $bits = null)
 {
-        /* if list */
-        $ifdescrs = get_configured_interface_list();
-
-        foreach ($ifdescrs as $ifdescr => $ifname) {
-		if ($ip == get_interface_ip($ifname)) {
-                	$int = get_real_interface($ifname);
-			return $int;
+	/* if list */
+	$ifdescrs = get_configured_interface_list();
+		
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		if ($bits === null) {
+			if ($ip == get_interface_ip($ifname)) {
+				$int = get_real_interface($ifname);
+				return $int;
+			}
 		}
-        }
-        return false;
+		else {
+			if (ip_in_subnet(get_interface_ip($ifname), $ip . "/" . $bits)) {
+				$int = get_real_interface($ifname);
+				return $int;
+			}
+		}
+	}
+	return false;
+}
+
+/*
+ * find_virtual_ip_alias($ip): return the virtual IP alias where an IP is found
+ *   (or if $bits is specified, where an IP within the subnet is found)
+ */
+function find_virtual_ip_alias($ip, $bits = null) {
+	global $config;
+	if (!is_array($config['virtualip']['vip'])) {
+		return false;
+	}
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if ($vip['mode'] === "ipalias") {
+			if ($bits === null) {
+				if (ip_in_subnet($ip, $vip['subnet'] . "/" . $vip['subnet_bits'])) {
+					return $vip;
+				}
+			}
+			else {
+				if (check_subnets_overlap($ip, $bits, $vip['subnet'], $vip['subnet_bits'])) {
+					return $vip;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 /*

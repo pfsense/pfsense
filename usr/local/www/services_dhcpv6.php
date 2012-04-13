@@ -592,7 +592,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="prefixrange_from" type="text" class="formfld unknown" id="prefixrange_from" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
-				&nbsp;<?=gettext("prefix length"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
+				&nbsp;<?=gettext("prefix delegation size"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
 					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
 					<option value="52" <?php if($pconfig['prefixrange_length'] == 52) echo "selected"; ?>>52</option>
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
@@ -600,7 +600,7 @@ include("head.inc");
 					<option value="62" <?php if($pconfig['prefixrange_length'] == 62) echo "selected"; ?>>62</option>
 				</select> <br/>
 				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
-					assigning networks to subrouters"); ?>
+					assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size."); ?>
 			</td>
 			</tr>
 			<tr>

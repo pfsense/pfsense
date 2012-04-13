@@ -598,6 +598,8 @@ include("head.inc");
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
 					<option value="60" <?php if($pconfig['prefixrange_length'] == 60) echo "selected"; ?>>60</option>
 					<option value="62" <?php if($pconfig['prefixrange_length'] == 62) echo "selected"; ?>>62</option>
+					<option value="63" <?php if($pconfig['prefixrange_length'] == 63) echo "selected"; ?>>63</option>
+					<option value="64" <?php if($pconfig['prefixrange_length'] == 64) echo "selected"; ?>>64</option>
 				</select> <br/>
 				<?php echo gettext("You can define a Prefix range here for DHCP Prefix Delegation. This allows for 
 					assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size."); ?>

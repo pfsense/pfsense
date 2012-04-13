@@ -1288,7 +1288,7 @@ function system_ntp_configure() {
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
+	exec("/usr/local/sbin/ntpd -v -s -f {$g['varetc_path']}/ntpd.conf");
 	
 	// Note that we are starting up
 	log_error("OpenNTPD is starting up.");

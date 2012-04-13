@@ -188,6 +188,7 @@
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
+		<powerd_mode>hadp</powerd_mode>
 	</system>
 	<interfaces>
 		<wan>

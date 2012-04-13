@@ -376,10 +376,10 @@ if (count($services) > 0) {
 		else
 			$running = is_service_running($service['name']);
 		if($running) {
-			echo '<td class="listr"><center>' . "\n";
+			echo "<td class=\"listr\" align=\"center\">\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>\n";
 		} else {
-			echo '<td class="listbg"><center>' . "\n";
+			echo "<td class=\"listbg\" align=\"center\">\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Stopped") . "</td>\n";
 		}
 		echo '<td valign="middle" class="list" nowrap>';
@@ -409,7 +409,7 @@ if (count($services) > 0) {
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\"><center>" . gettext("No services found") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . ".</td></tr>\n";
 }
 
 ?>

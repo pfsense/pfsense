@@ -234,7 +234,12 @@ EOD;
 		 */
 		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-			mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+			if(is_ipaddrv6($gateway['gateway'])) {
+				$inetfamily = "-inet6";
+			} else {
+				$inetfamily = "-inet";
+			}
+			mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
 				" " . escapeshellarg($gateway['gateway']), true);
 		}
 
@@ -588,12 +593,22 @@ function return_gateway_groups_array() {
 				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 				log_error("Default gateway down setting {$upgw} as default!");
-				mwexec("/sbin/route change -inet default {$gateways_arr[$upgw]['gateway']}");
+				if(is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
+					$inetfamily = "-inet6";
+				} else {
+					$inetfamily = "-inet";
+				}
+				mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 			}
 		} else {
 			$defaultgw = trim(`/sbin/route -n get -inet default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
+			if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
+				$inetfamily = "-inet6";
+			} else {
+				$inetfamily = "-inet";
+			}
 			if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
-				mwexec("/sbin/route change -inet default {$gateways_arr[$dfltgwname]['gateway']}");
+				mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$dfltgwname]['gateway']}");
 		}
 				
 		unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);

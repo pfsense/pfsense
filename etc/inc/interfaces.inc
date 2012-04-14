@@ -834,8 +834,15 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		return -1;
 
 	$realif = get_real_interface($gif['if']);
-	$realifip = get_interface_ip($gif['if']);
 
+	if(is_ipaddrv4($gif['remote-addr'])) {
+		$realifip = get_interface_ip($gif['if']);
+		$realifgw = get_interface_gateway($gif['if']);
+	}
+	if(is_ipaddrv6($gif['remote-addr'])) {
+		$realifip = get_interface_ipv6($gif['if']);
+		$realifgw = get_interface_gatewayv6($gif['if']);
+	}
 	/* make sure the parent interface is up */
 	if($realif)
 		interfaces_bring_up($realif);
@@ -884,6 +891,13 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
 	if(is_ipaddrv6($gif['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6", $gif['tunnel-remote-addr']);
+
+        if (is_ipaddrv4($realifgw)) {
+                mwexec("route change -host {$gif['remote-addr']} {$realifgw}");
+        }
+        if (is_ipaddrv6($realifgw)) {
+                mwexec("route change -host -inet6 {$gif['remote-addr']} {$realifgw}");
+        }
 
 	return $gifif;
 }

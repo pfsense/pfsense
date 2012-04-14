@@ -118,7 +118,7 @@ if ($authenticated == false) {
 	exit(-1);
 }
 
-syslog(LOG_WARNING, "user {$username} authenticated\n");
+syslog(LOG_NOTICE, "user {$username} authenticated\n");
 
 exit(0);
 

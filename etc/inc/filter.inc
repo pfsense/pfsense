@@ -760,9 +760,11 @@ function filter_get_vpns_list() {
 	return $vpns;
 }
 
-/* returns space separated list of directly connected networks */
-function filter_get_direct_networks_list() {
-	global $config, $FilterIflist;
+/* returns space separated list of directly connected networks
+ * optionally returns an array instead, including friendly interface and gateway (if applicable)
+ */
+function filter_get_direct_networks_list($returnsubnetsonly = true) {
+	global $config, $FilterIflist, $GatewaysList;
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
 	$networks_arr = array();
@@ -772,27 +774,47 @@ function filter_get_direct_networks_list() {
 	foreach ($FilterIflist as $ifent => $ifcfg) {
 		$subnet = "{$ifcfg['sa']}/{$ifcfg['sn']}";
 		if(is_subnet($subnet)) {
-			$networks_arr[] = $subnet;
+			if($returnsubnetsonly) {
+				$networks_arr[] = $subnet;
+			} else {
+				$networks_arr[] = array('subnet' => $subnet, 'if' => $ifent);
+			}
 		}
 	}
 	foreach(get_configured_ip_aliases_list(true) as $vip) {
 		$subnet = "{$vip['subnet']}/{$vip['subnet_bits']}";
 		if(is_subnet($subnet) && !(is_subnetv4($subnet) && $vip['subnet_bits'] == 32) && !(is_subnetv6($subnet) && $vip['subnet_bits'] == 128)) {
 			if(is_subnetv4($subnet))
-				$networks_arr[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
+				$subnet = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
 			else if(is_subnetv6($subnet))
-				$networks_arr[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
+				$subnet = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/{$vip['subnet_bits']}";
+			if($returnsubnetsonly) {
+				$networks_arr[] = $subnet;
+			} else {
+				$networks_arr[] = array('subnet' => $subnet, 'if' => $vip['interface']);
+			}
 		}
 	}
-	foreach(get_staticroutes(true) as $netent) {
-		if(is_subnet($netent)) {
-			$networks_arr[] = $netent;
+	foreach(get_staticroutes() as $netent) {
+		if(is_subnet($netent['network'])) {
+			if($returnsubnetsonly) {
+				$networks_arr[] = $netent['network'];
+			} else if(isset($GatewaysList[$netent['gateway']])) {
+				$networks_arr[] = array(
+					'subnet' => $netent['network'],
+					'if' => $GatewaysList[$netent['gateway']]['friendlyiface'],
+					'gateway' => $GatewaysList[$netent['gateway']]['gateway']);
+			}
 		}
 	}
-	if(!empty($networks_arr)) {
-		$networks = implode(" ", $networks_arr);
+	if($returnsubnetsonly) {
+		if(!empty($networks_arr)) {
+			$networks = implode(" ", $networks_arr);
+		}
+		return $networks;
+	} else {
+		return $networks_arr;
 	}
-	return $networks;
 }
 
 function filter_generate_optcfg_array() {

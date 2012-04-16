@@ -114,8 +114,15 @@ $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp))
 	interface_bridge_add_member($bridgetmp, $interface_real);
 
-/* reconfigure static routes (kernel may have deleted them) */
-system_routing_configure($interface);
+/* check tunneled IPv6 interface tracking */
+switch($config['interfaces'][$interface]['ipaddrv6']) {
+	case "6to4":
+		interface_6to4_configure($interface);
+		break;
+	case "6rd":
+		interface_6rd_configure($interface);
+		break;
+}
 
 /* Check Gif tunnels */
 if(is_array($config['gifs']['gif'])){
@@ -136,15 +143,8 @@ if(is_array($config['gifs']['gif'])){
 	}
 }
 
-/* check tunneled IPv6 interface tracking */
-switch($config['interfaces'][$interface]['ipaddrv6']) {
-	case "6to4":
-		interface_6to4_configure($interface);
-		break;
-	case "6rd":
-		interface_6rd_configure($interface);
-		break;
-}
+/* reconfigure static routes (kernel may have deleted them) */
+system_routing_configure($interface);
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();

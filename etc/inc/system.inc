@@ -265,6 +265,8 @@ function system_hosts_generate() {
 					foreach ($dhcpifconf['staticmap'] as $host)
 						if ($host['ipaddr'] && $host['hostname'])
 							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+	}
+	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf)
 			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
 					foreach ($dhcpifconf['staticmap'] as $host)

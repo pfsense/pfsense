@@ -3313,7 +3313,6 @@ function interface_6to4_configure($interface = "wan"){
 	$stfbrbinarr = str_split($stfbrokerbin, 16);
 	foreach($stfbrbinarr as $bin)
 		$stfbrarr[] = dechex(bindec($bin));
-	$stfbrarr[7] = 1;
 	$stfbrgw = Net_IPv6::compress(implode(":", $stfbrarr));
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 

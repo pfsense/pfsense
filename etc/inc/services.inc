@@ -372,6 +372,16 @@ EOD;
 		$dhcpdconf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
+	$add_routers = false;
+	$gateways_arr = return_gateways_array();
+	/* only add a routers line if the system has any IPv4 gateway at all */
+	/* a static route has a gateway, manually overriding this field always works */
+	foreach($gateways_arr as $gwitem) {
+		if($gwitem['ipprotocol'] == "inet") {
+			$add_routers = true;
+			break;
+		}
+	}
 
 	/*    loop through and determine if we need to setup
 	 *    failover peer "bleh" entries
@@ -499,10 +509,12 @@ EOPP;
 		if (isset($dhcpifconf['denyunknown']))
 		   $dhcpdconf .= "		deny unknown-clients;\n";
 
-		if ($dhcpifconf['gateway'])
+		if ($dhcpifconf['gateway']) {
 			$routers = $dhcpifconf['gateway'];
-		else
+			$add_routers = true;
+		} else {
 			$routers = $ifcfgip;
+		}
 
 		if($dhcpifconf['failover_peerip'] <> "") {
 			$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
@@ -512,7 +524,12 @@ EOPP;
 		$dhcpdconf .= <<<EOD
 		range {$dhcpifconf['range']['from']} {$dhcpifconf['range']['to']};
 	}
-	option routers {$routers};
+
+EOD;
+
+		if($add_routers)
+			$dhcpdconf .= "	option routers {$routers};\n";
+		$dhcpdconf .= <<<EOD
 $dnscfg
 
 EOD;

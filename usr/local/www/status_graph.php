@@ -143,7 +143,7 @@ function updateBandwidthHosts(data){
 
                 //make the row appear if hidden
                 var rowid = "#host" + y;
-                if (jQuery(rowid).css('dislay') == "none"){
+                if (jQuery(rowid).css('display') == "none"){
                      //hide rows that contain no data
                      jQuery(rowid).show(1000);
                 }
@@ -152,7 +152,7 @@ function updateBandwidthHosts(data){
         else
         {
             var rowid = "#host" + y;
-            if (jQuery(rowid).css('dislay') != "none"){
+            if (jQuery(rowid).css('display') != "none"){
                 //hide rows that contain no data
                 jQuery(rowid).fadeOut(2000);
             }

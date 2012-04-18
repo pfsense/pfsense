@@ -419,6 +419,13 @@ if(file_exists('/conf/needs_package_sync')) {
 	@unlink('/conf/needs_package_sync');
 }
 
+/* If syslogd is forwarding to an IPv6 server, give it a kick since otherwise syslogd 
+	won't forward to a v6 server. See #2370 (https://redmine.pfsense.org/issues/2370). */
+
+if (is_ipaddrv6($config['syslog']['remoteserver']) || is_ipaddrv6($config['syslog']['remoteserver2']) || is_ipaddrv6($config['syslog']['remoteserver3'])) {
+	system_syslogd_start();
+}
+
 /* done */
 unset($g['booting']);
 

@@ -4463,6 +4463,7 @@ function interface_has_gatewayv6($friendly) {
 	if (!empty($config['interfaces'][$friendly])) {
 		$ifname = &$config['interfaces'][$friendly];
 		switch ($ifname['ipaddrv6']) {
+			case "slaac":
 			case "dhcp6":
 				return true;
 				break;

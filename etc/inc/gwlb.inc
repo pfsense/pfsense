@@ -478,7 +478,7 @@ function return_gateways_array($disabled = false) {
 
 	/* Process/add dynamic v6 gateways. */
 	foreach($iflist as $ifname => $friendly ) {
-		if(! interface_has_gateway($ifname))
+		if(! interface_has_gatewayv6($ifname))
 			continue;
 
 		if (empty($config['interfaces'][$ifname]))

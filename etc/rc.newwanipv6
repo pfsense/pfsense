@@ -75,9 +75,15 @@ $curwanipv6 = get_interface_ipv6();
 $interface = "wan";
 $interface_real = get_real_interface();
 
-if(is_ipaddrv6(trim($_ENV['new_domain_name_servers']))) {
-	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", trim($_ENV['new_domain_name_servers']));
+$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
+$valid_ns = array();
+foreach($name_servers as $ns) {
+	if(is_ipaddrv6(trim($ns)))
+		$valid_ns[] = trim($ns);
 }
+if(count($valid_ns > 0))
+	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
+
 if(!empty($_ENV['new_domain_name'])) {
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 }

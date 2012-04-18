@@ -654,6 +654,7 @@ function services_dhcpdv6_configure() {
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */
@@ -876,14 +877,6 @@ EOPP;
 
 		$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));
 		$dhcpdv6conf .= "subnet6 {$subnet6}/{$ifcfgsnv6} {\n";
-
-		/* is failover dns setup? */
-		if (is_array($dhcpv6ifconf['dnsserver']) && $dhcpv6ifconf['dnsserver'][0] <> "") {
-			$dhcpdv6conf .= "		option dhcp6.name-servers {$dhcpv6ifconf['dnsserver'][0]}";
-			if($dhcpv6ifconf['dnsserver'][1] <> "")
-				$dhcpdv6conf .= ",{$dhcpv6ifconf['dnsserver'][1]}";
-			$dhcpdv6conf .= ";\n";
-		}
 
 		if($dhcpv6ifconf['failover_peerip'] <> "")
 			$dhcpdv6conf .= "		deny dynamic bootp clients;\n";

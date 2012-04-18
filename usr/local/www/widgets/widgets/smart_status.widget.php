@@ -1,47 +1,61 @@
 <?php
+/*
+	Copyright 2012 mkirbst @ pfSense Forum
+	Part of pfSense widgets (www.pfsense.com)
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-$devs = array();
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<?
-		echo '<td class="widgetsubheader"><b><center>' . gettext("Drive") . '</center></b></td>';
-		echo '<td class="widgetsubheader"><b><center>' . gettext("Ident") . '</center></b></td>';
-		echo '<td class="widgetsubheader"><b><center>' . gettext("SMART Status") . '</center></b></td>';
-		?>
+		<td class="widgetsubheader"><b><center><?php echo gettext("Drive") ?></center></b></td>
+		<td class="widgetsubheader"><b><center><?php echo gettext("Ident") ?></center></b></td>
+		<td class="widgetsubheader"><b><center><?php echo gettext("SMART Status") ?></center></b></td>
 	</tr>
 
 <?php
-
-// Get all AD* and DA* (IDE and SCSI) devices currently installed and st$
-exec("ls /dev | grep '^[ad][da][0-9]\{1,2\}$'", $devs);
+$devs = array();
+## Get all AD* and DA* (IDE and SCSI) devices currently installed and st$
+exec("ls /dev | grep '^[ad][da][0-9]\{1,2\}$'", $devs); ## leant from orginal SMART status screen
 
 if(count($devs) > 0)  {
-	foreach($devs as $dev)  {
-		$dev_state =  exec("smartctl -a /dev/$dev | grep result: | awk '{print $6}'");
-		$dev_ident =  exec("diskinfo -v /dev/$dev | grep ident | awk '{print $1}'");
-		##erste Spalte: Drives ausgeben
-		echo '<tr><td class="listlr">';
-		echo '/dev/'. $dev ;
-		echo '</td>' . "\n";
-
-		##zweite Spalte
-		echo '<td class="listr"><center>' . "\n";
-		echo $dev_ident ;
-		echo '</td>' . "\n";
-
-		##dritte Spalte: smartstatus ausgeben
-		echo '<td class="listr">'; #tabellenspalte
-
-		if($dev_state == "PASSED")
-			echo "<span style=\"background-color:#00FF00\">$dev_state</span><br>"; ##gruener Hintergrund bei PASSED
-		else
-			echo "<span style=\"background-color:#FF0000\">$dev_state</span><br>"; ##roter Hintergrund sonst
-		echo '</td></tr>' . "\n"; #tabellenspalte
-	}
+	foreach($devs as $dev)  {	## for each found drive do
+		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
+		$dev_state = exec("smartctl -H /dev/$dev | grep result: | awk '{print $6}'"); ## get SMART state from drive
+		# Use light green color for passed, light coral otherwise.
+		$color = ($dev_state == "PASSED") ? "#90EE90" : "#F08080";
+?>
+		<tr>
+			<td class="listlr"><?php echo $dev; ?></td>
+			<td class="listr" align="center"><?php echo $dev_ident; ?></td>
+			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>"><?php echo $dev_state; ?></span></td>
+		</tr>
+<?php	}
 }
 ?>
 </table>

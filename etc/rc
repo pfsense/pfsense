@@ -126,10 +126,14 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
 elif [ "$PLATFORM" = "nanobsd" ] ; then
-	# Ensure that packages can be persistent across reboots
+	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
 	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
+	# Ensure that PBI packages can be persistent across reboots
+	/bin/mkdir -p /root/var/db/pbi
+	/bin/rm -rf /var/db/pbi
+	/bin/ln -s /root/var/db/pbi/ /var/db/pbi
 elif [ "$PLATFORM" = "jail" ]; then
 	# do nothing for jail platform
 else

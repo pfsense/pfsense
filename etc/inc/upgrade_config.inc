@@ -2793,6 +2793,8 @@ function upgrade_084_to_085() {
 					$elements = explode("|", $entry);
 					if($oldnames[$elements[0]] <> "") {
 						$newlist[] = "{$oldnames[$elements[0]]}|{$elements[1]}";
+					} else {
+						$newlist[] = "{$elements[0]}|{$elements[1]}";
 					}
 				}
 				$group['item'] = $newlist;

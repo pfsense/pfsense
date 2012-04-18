@@ -440,6 +440,10 @@ function return_gateways_array($disabled = false) {
 			case "pptp":
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
+			default:
+				if (substr($ifcfg['if'], 0, 5) ==  "ovpnc")
+					$ctype = "VPNv4";
+				break;
 		}
 		$ctype = "_". strtoupper($ctype);
 
@@ -498,6 +502,10 @@ function return_gateways_array($disabled = false) {
 			case "6to4":
 			case "6rd":
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
+				break;
+			default:
+				if (substr($ifcfg['if'], 0, 5) ==  "ovpnc")
+					$ctype = "VPNv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);

@@ -2767,4 +2767,40 @@ function upgrade_083_to_084() {
 	}
 }
 
+function upgrade_084_to_085() {
+	global $config;
+
+	$gateway_group_arr = array();
+	$gateways = return_gateways_array();
+	$oldnames = array();
+	/* setup translation array */
+	foreach($gateways as $name => $gw) {
+		if(isset($gw['dynamic'])){
+			$oldname = strtoupper($config['interfaces'][$gw['friendlyiface']]['descr']);
+			$oldnames[$oldname] = $name; 
+		} else {
+			$oldnames[$name] = $name;
+		}
+	}
+
+	/* process the old array */
+	if(is_array($config['gateways']['gateway_group'])) {
+		$group_array_new = array();
+		foreach($config['gateways']['gateway_group'] as $name => $group) {
+			if(is_array($group['item'])) {
+				$newlist = array();
+				foreach($group['item'] as $entry) {
+					$elements = explode("|", $entry);
+					if($oldnames[$elements[0]] <> "") {
+						$newlist[] = "{$oldnames[$elements[0]]}|{$elements[1]}";
+					}
+				}
+				$group['item'] = $newlist;
+				$group_array_new[$name] = $group;
+			}
+		}
+		$config['gateways']['gateway_group'] = $group_array_new;
+	}
+}
+
 ?>

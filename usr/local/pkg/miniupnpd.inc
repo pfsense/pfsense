@@ -139,7 +139,7 @@
 					$bits = find_interface_subnet($if);
 					/* check that the interface has an ip address before adding parameters */
 					if (is_ipaddr($addr)) {
-						$config_text .= "listening_ip={$addr}/$bits\n";
+						$config_text .= "listening_ip={$addr}/{$bits}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;

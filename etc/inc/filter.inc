@@ -2497,6 +2497,7 @@ EOD;
 			break;
 		}
 		switch($oc['type6']) {
+		case "slaac":
 		case "dhcp6":
 			$ipfrules .= <<<EOD
 

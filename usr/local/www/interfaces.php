@@ -213,6 +213,9 @@ switch($wancfg['ipaddr']) {
 }
 
 switch($wancfg['ipaddrv6']) {
+	case "slaac":
+		$pconfig['type6'] = "slaac";
+		break;
 	case "dhcp6":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
 		if($wancfg['dhcp6-ia-pd-len'] == "")
@@ -803,6 +806,9 @@ if ($_POST['apply']) {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
 				break;
+			case "slaac":
+				$wancfg['ipaddrv6'] = "slaac";
+				break;
 			case "dhcp6":
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
@@ -1080,7 +1086,7 @@ $statusurl = "status_interfaces.php";
 $closehead = false;
 include("head.inc");
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
-$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "6rd" => gettext("6rd"), "6to4" => gettext("6to4"), "track6" => gettext("Track Interface"));
+$types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
 
 ?>
 
@@ -1127,27 +1133,31 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function updateTypeSix(t) {
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #6rd, #6to4, #track6').hide();
+				jQuery('#staticv6, #dhcp6, #6rd, #6to4, #track6, #slaac').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #6rd, #6to4, #track6').hide();
+				jQuery('#none, #dhcp6, #6rd, #6to4, #track6, #slaac').hide();
+				break;
+			}
+			case "slaac": {
+				jQuery('#none, #staticv6, #6rd, #6to4, #track6, #dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #6rd, #6to4, #track6').hide();
+				jQuery('#none, #staticv6, #6rd, #6to4, #track6, #slaac').hide();
 				break;
 			}
 			case "6rd": {
-				jQuery('#none, #dhcp6, #staticv6, #6to4, #track6').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6to4, #track6, #slaac').hide();
 				break;
 			}
 			case "6to4": {
-				jQuery('#none, #dhcp6, #staticv6, #6rd, #track6').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6rd, #track6, #slaac').hide();
 				break;
 			}
 			case "track6": {
-				jQuery('#none, #dhcp6, #staticv6, #6rd, #6to4').hide();
+				jQuery('#none, #dhcp6, #staticv6, #6rd, #6to4, #slaac').hide();
 				break;
 			}
 		}

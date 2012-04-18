@@ -1119,6 +1119,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	switch ($ifcfg['ipaddrv6']) {
+	case "slaac":
 	case "dhcp6":
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
@@ -2886,6 +2887,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	switch ($wancfg['ipaddrv6']) {
+		case 'slaac':
 		case 'dhcp6':
 			interface_dhcpv6_configure($interface);
 			break;
@@ -3368,35 +3370,45 @@ function interface_dhcpv6_configure($interface = "wan") {
 	}
 
 	$dhcp6cconf = "";
- 	$dhcp6cconf .= "interface {$wanif} {\n";
-	$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
-	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
-		$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
-	}
-	$dhcp6cconf .= "request domain-name-servers;\n";
-	$dhcp6cconf .= "request domain-name;\n";
-	$dhcp6cconf .= "script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
+	$dhcp6cconf .= "interface {$wanif} {\n";
 
-	$dhcp6cconf .= "};\n";
-	$dhcp6cconf .= "id-assoc na 0 { };\n";
-	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
-		/* Setup the prefix delegation */
-		$dhcp6cconf .= "id-assoc pd 0 {\n";
-		foreach($iflist as $friendly => $ifdescr) {
-			if($config['interfaces'][$friendly]['track6-interface'] != $interface)
-				continue;
-			if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
-				log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");
-				$realif = get_real_interface($friendly);
-				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-				$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['track6-prefix-id']};\n";
-				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
-				$dhcp6cconf .= "	};\n";
-			}
-		}
+	/* for SLAAC interfaces we do fire off a dhcp6 client for just our name servers */
+	if($wancfg['ipaddrv6'] == "slaac") {
+		$dhcp6cconf .= "	information-only;\n";
+		$dhcp6cconf .= "	request domain-name-servers;\n";
+		$dhcp6cconf .= "	request domain-name;\n";
+		$dhcp6cconf .= "	script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
 		$dhcp6cconf .= "};\n";
-	}
+	} else {
+	
+		$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
+		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+			$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
+		}
+		$dhcp6cconf .= "request domain-name-servers;\n";
+		$dhcp6cconf .= "request domain-name;\n";
+		$dhcp6cconf .= "script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
 
+		$dhcp6cconf .= "};\n";
+		$dhcp6cconf .= "id-assoc na 0 { };\n";
+		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+			/* Setup the prefix delegation */
+			$dhcp6cconf .= "id-assoc pd 0 {\n";
+			foreach($iflist as $friendly => $ifdescr) {
+				if($config['interfaces'][$friendly]['track6-interface'] != $interface)
+					continue;
+				if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
+					log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");
+					$realif = get_real_interface($friendly);
+					$dhcp6cconf .= "	prefix-interface {$realif} {\n";
+					$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['track6-prefix-id']};\n";
+					$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
+					$dhcp6cconf .= "	};\n";
+				}
+			}
+			$dhcp6cconf .= "};\n";
+		}
+	}
 	fwrite($fd, $dhcp6cconf);
 	fclose($fd);
 
@@ -3432,6 +3444,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
 					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
 					file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$parts[3]}\n");
+					break;
 				}
 			}
 		}
@@ -3440,12 +3453,13 @@ function interface_dhcpv6_configure($interface = "wan") {
 	 * to configure a lan interface with a prefix */
 	sleep(5);
 
-	/* configure dependent interfaces */
-	foreach($iflist as $if => $ifname) {
-		if($config['interfaces'][$if]['track6-interface'] == $interface)
-			interface_track6_configure($if);
+	if($wancfg['ippaddrv6'] != "slaac") {
+		/* configure dependent interfaces */
+		foreach($iflist as $if => $ifname) {
+			if($config['interfaces'][$if]['track6-interface'] == $interface)
+				interface_track6_configure($if);
+		}
 	}
-
 	return 0;
 }
 

@@ -212,6 +212,7 @@ $wkports = array(
 	162 => "SNMP-Trap",
 	22 => "SSH",
 	3478 => "STUN",
+	587 => "SUBMISSION",
 	3544 => "Teredo",
 	23 => "Telnet",
 	69 => "TFTP",

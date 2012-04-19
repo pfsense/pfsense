@@ -519,9 +519,12 @@ function get_dates($curperiod, $graph) {
 						$curdatabase = $curoption;
 						$graph = "custom-$curdatabase";
 						if(in_array($curdatabase, $custom_databases)) {
+							$id = "{$graph}-{$curoption}-{$curdatabase}";
+							$id = preg_replace('/\./', '_', $id);
+
 							echo "<tr><td colspan=2 class=\"list\">\n";
-							echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
-							echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
+							echo "<IMG BORDER='0' name='{$id}' ";
+							echo "id='{$id}' ALT=\"$prettydb Graph\" ";
 							echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
 							echo "<br /><hr><br />\n";								
 							echo "</td></tr>\n";
@@ -579,12 +582,15 @@ function get_dates($curperiod, $graph) {
 										}
 								}
 								if(in_array($curdatabase, $ui_databases)) {
+									$id = "{$graph}-{$curoption}-{$curdatabase}";
+									$id = preg_replace('/\./', '_', $id);
+
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
 									$end = $dates['end'];
 									echo "<tr><td colspan=2 class=\"list\">\n";
-									echo "<IMG BORDER='0' name='{$graph}-{$curoption}-{$curdatabase}' ";
-									echo "id='{$graph}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
+									echo "<IMG BORDER='0' name='{$id}' ";
+									echo "id='{$id}' ALT=\"$prettydb Graph\" ";
 									echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
 									echo "<br /><hr><br />\n";								
 									echo "</td></tr>\n";
@@ -658,8 +664,11 @@ function get_dates($curperiod, $graph) {
 										$end = $dates['end'];
 									}
 									/* generate update events utilizing jQuery('') feature */
+									$id = "{$graph}-{$curoption}-{$curdatabase}";
+									$id = preg_replace('/\./', '_', $id);
+
 									echo "\n";
-									echo "\t\tjQuery('#{$graph}-{$curoption}-{$curdatabase}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 									}
 								}
 							?>

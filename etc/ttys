@@ -34,7 +34,7 @@ console	none				unknown	off secure
 #
 ttyv0	"/usr/libexec/getty Pc"		cons25	on  secure
 # Virtual terminals
-ttyv1	"/usr/libexec/getty Pc"		cons25	off  secure
+ttyv1	"/usr/libexec/getty Pc"		cons25	on   secure
 ttyv2	"/usr/libexec/getty Pc"		cons25	off  secure
 ttyv3	"/usr/libexec/getty Pc"		cons25	off  secure
 ttyv4	"/usr/libexec/getty Pc"		cons25	off  secure

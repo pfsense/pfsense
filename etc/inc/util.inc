@@ -1455,6 +1455,7 @@ function is_interface_mismatch() {
 				continue;
 			}
 			else if (does_interface_exist($ifcfg['if']) == false) {
+				echo "Warning: Interface '{$ifcfg['if']}' does not exist.\n";
 				$do_assign = true;
 			} else
 				$i++;

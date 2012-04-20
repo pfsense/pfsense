@@ -330,7 +330,7 @@ if ($_POST) {
 		else
 			unset($natent['nosync']);
 
-		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "purenat" || $_POST['natreflection'] == "disable")
 			$natent['natreflection'] = $_POST['natreflection'];
 		else
 			unset($natent['natreflection']);
@@ -783,9 +783,10 @@ include("fbegin.inc"); ?>
 					<td width="22%" valign="top" class="vncell"><?=gettext("NAT reflection"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="natreflection" class="formselect">
-						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>><?=gettext("use system default"); ?></option>
-						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>><?=gettext("enable"); ?></option>
-						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>><?=gettext("disable"); ?></option>
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "purenat" && $pconfig['natreflection'] != "disable") echo "selected"; ?>><?=gettext("Use system default"); ?></option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
+						<option value="purenat" <?php if ($pconfig['natreflection'] == "purenat") echo "selected"; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>><?=gettext("Disable"); ?></option>
 						</select>
 					</td>
 				</tr>

@@ -59,10 +59,7 @@ $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
-if (!isset($config['system']['enablebinatreflection']))
-	$pconfig['disablebinatreflection'] = "yes";
-else
-	$pconfig['disablebinatreflection'] = "";
+$pconfig['enablebinatreflection'] = $config['system']['enablebinatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
@@ -121,15 +118,21 @@ if ($_POST) {
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
 
-		if($_POST['disablenatreflection'] == "yes")
-			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
-		else
+		if($_POST['natreflection'] == "proxy") {
 			unset($config['system']['disablenatreflection']);
+			unset($config['system']['enablenatreflectionpurenat']);
+		} else if($_POST['natreflection'] == "purenat") {
+			unset($config['system']['disablenatreflection']);
+			$config['system']['enablenatreflectionpurenat'] = "yes";
+		} else {
+			$config['system']['disablenatreflection'] = "yes";
+			unset($config['system']['enablenatreflectionpurenat']);
+		}
 
-		if($_POST['disablebinatreflection'] == "yes")
-			unset($config['system']['enablebinatreflection']);
-		else
+		if($_POST['enablebinatreflection'] == "yes")
 			$config['system']['enablebinatreflection'] = "yes";
+		else
+			unset($config['system']['enablebinatreflection']);
 
 		if($_POST['disablereplyto'] == "yes")
                         $config['system']['disablereplyto'] = $_POST['disablereplyto'];
@@ -380,33 +383,50 @@ function update_description(itemnum) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Network Address Translation");?></td>
 							</tr>		
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Disable NAT Reflection for port forwards");?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("NAT Reflection mode for port forwards");?></td>
 								<td width="78%" class="vtable">
-									<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
-									<strong><?=gettext("Disables the automatic creation of additional NAT redirect rules for access to port forwards on your external IP addresses from within your internal networks.  Note: Reflection for port forward entries is skipped for ranges larger than 500 ports.");?></strong>
+									<select name="natreflection" class="formselect">
+									<option value="disable" <?php if (isset($config['system']['disablenatreflection'])) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+									<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected"; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
+									<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected"; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
+									</select>
+									<br/>
+									<strong><?=gettext("When enabled, this automatically creates additional NAT redirect rules for access to port forwards on your external IP addresses from within your internal networks.");?></strong>
+									<br/><br/>
+									<?=gettext("The NAT + proxy mode uses a helper program to send packets to the target of the port forward.  It is useful in setups where the interface and/or gateway IP used for communication with the target cannot be accurately determined at the time the rules are loaded.  Reflection rules are not created for ranges larger than 500 ports and will not be used for more than 1000 ports total between all port forwards.  Only TCP and UDP protocols are supported.");?>
+									<br/><br/>
+									<?=gettext("The pure NAT mode uses a set of NAT rules to direct packets to the target of the port forward.  It has better scalability, but it must be possible to accurately determine the interface and gateway IP used for communication with the target at the time the rules are loaded.  There are no inherent limits to the number of ports other than the limits of the protocols.  All protocols available for port forwards are supported.");?>
+									<br/><br/>
+									<?=gettext("Individual rules may be configured to override this system setting on a per-rule basis.");?>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Reflection Timeout");?></td>
 								<td width="78%" class="vtable">
 									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
-									<strong><?=gettext("Enter value for Reflection timeout in seconds.  Note: Only applies to Reflection on port forwards.");?></strong>
+									<strong><?=gettext("Enter value for Reflection timeout in seconds.");?></strong>
+									<br/<br/>
+									<?=gettext("Note: Only applies to Reflection on port forwards in NAT + proxy mode.");?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Disable NAT Reflection for 1:1 NAT");?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Enable NAT Reflection for 1:1 NAT");?></td>
 								<td width="78%" class="vtable">
-									<input name="disablebinatreflection" type="checkbox" id="disablebinatreflection" value="yes" <?php if (!isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
-									<strong><?=gettext("Disables the automatic creation of additional NAT 1:1 mappings for access to 1:1 mappings of your external IP addresses from within your internal networks.  Note: Reflection for 1:1 NAT might not fully work in certain complex routing scenarios.");?></strong>
+									<input name="enablebinatreflection" type="checkbox" id="enablebinatreflection" value="yes" <?php if (isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
+									<strong><?=gettext("Enables the automatic creation of additional NAT 1:1 mappings for access to 1:1 mappings of your external IP addresses from within your internal networks.");?></strong>
+									<br/><br/>
+									<?=gettext("Note: Reflection on 1:1 mappings is only for the inbound component of the 1:1 mappings.  This functions the same as the pure NAT mode for port forwards.  For more details, refer to the pure NAT mode description above.");?>
+									<br/><br/>
+									<?=gettext("Individual rules may be configured to override this system setting on a per-rule basis.");?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">&nbsp;</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Enable automatic outbound NAT for Reflection");?></td>
 								<td width="78%" class="vtable">
 									<input name="enablenatreflectionhelper" type="checkbox" id="enablenatreflectionhelper" value="yes" <?php if (isset($config['system']['enablenatreflectionhelper'])) echo "checked"; ?> />
 									<strong><?=gettext("Automatically create outbound NAT rules which assist inbound NAT rules that direct traffic back out to the same subnet it originated from.");?></strong>
 									<br/>
-									<?=gettext("Currently only applies to 1:1 NAT rules.  Required for full functionality of NAT Reflection for 1:1 NAT.");?>
+									<?=gettext("Required for full functionality of the pure NAT mode of NAT Reflection for port forwards or NAT Reflection for 1:1 NAT.");?>
 								</td>
 							</tr>
 							<tr>

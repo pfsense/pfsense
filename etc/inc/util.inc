@@ -823,6 +823,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pfsync',
 				'enc',
 				'tun',
+				'tap',
+				'ovpns',
+				'ovpnc',
 				'carp',
 				'lagg',
 				'vip',
@@ -1446,7 +1449,7 @@ function is_interface_mismatch() {
 	$i = 0;
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

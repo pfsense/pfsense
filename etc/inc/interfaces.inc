@@ -2043,7 +2043,8 @@ function interface_carp_configure(&$vip) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 		/* make sure to add a link local address too */
-		mwexec("/sbin/ifconfig {$vipif} inet6 fe80::5:{$vip['vhid']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		$linklocal = generate_ipv6_from_mac(get_interface_mac($vipif));
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$linklocal} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 
 	interfaces_bring_up($vipif);

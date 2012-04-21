@@ -99,12 +99,16 @@ $sad = ipsec_dump_sad();
 						foreach ($a_phase2 as $ph2ent) {
 							ipsec_lookup_phase1($ph2ent,$ph1ent);
 							if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
-								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent))
+								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
 									$icon = "pass";
-								elseif(!isset($config['ipsec']['enable']))
+									$status = "Active";
+								} elseif(!isset($config['ipsec']['enable'])) {
 									$icon = "block";
-								else
+									$status = "Disabled";
+								} else {
 									$icon = "reject";
+									$status = "Error";
+								}
 					?>
 					<tr>
 						<td class="listlr">
@@ -122,7 +126,7 @@ $sad = ipsec_dump_sad();
 						<td class="listr"><?=htmlspecialchars($ph2ent['descr']);?></td>
 						<td class="listr">
 							<center>
-								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif">
+								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif"> <?=$status?>
 							</center>
 						</td>
 						<td class="list">

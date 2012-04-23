@@ -427,7 +427,7 @@ function filter_generate_scrubing() {
 		if (!empty($config['system']['maxmss']))
 			$maxmss = $config['system']['maxmss'];
 
-		$scrubrules .= "scrub in from any to <vpn_networks> max-mss {$maxmss}\n";
+		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
@@ -449,9 +449,9 @@ function filter_generate_scrubing() {
 		else
 			$scrubrnid = "";
 		if(!isset($config['system']['disablescrub']))
-			$scrubrules .= "scrub in on \${$scrubcfg['descr']} all {$scrubnodf} {$scrubrnid} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+			$scrubrules .= "scrub on \${$scrubcfg['descr']} all {$scrubnodf} {$scrubrnid} {$mssclamp} fragment reassemble\n"; // reassemble all directions
 		else if(!empty($mssclamp))
-			$scrubrules .= "scrub in on \${$scrubcfg['descr']} {$mssclamp}\n";
+			$scrubrules .= "scrub on \${$scrubcfg['descr']} {$mssclamp}\n";
 	}
 	return $scrubrules;
 }

@@ -66,6 +66,9 @@ function restore_rrd() {
 		}
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
+			if (file_exists("{$rrd_file}")) {
+				unlink($rrd_file);
+			}
 			exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
 			unlink($xml_file);
 		}

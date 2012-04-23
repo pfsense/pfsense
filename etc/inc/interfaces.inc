@@ -247,7 +247,7 @@ function interface_vlan_configure(&$vlan) {
 	$tag = $vlan['tag'];
 
 	if (empty($if)) {
-		log_error(gettext("interface_vlan_confgure called with if undefined."));
+		log_error(gettext("interface_vlan_configure called with if undefined."));
 		return;
 	}
 
@@ -288,7 +288,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
         $qinqif = $vlan['if'];
         $tag = $vlan['tag'];
         if(empty($qinqif)) {
-                log_error(sprintf(gettext("interface_qinq_confgure called with if undefined.%s"), "\n"));
+                log_error(sprintf(gettext("interface_qinq_configure called with if undefined.%s"), "\n"));
                 return;
         }
 	$vlanif = interface_vlan_configure($vlan);
@@ -373,7 +373,7 @@ function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
         $tag = $qinq['tag'];
         $vlanif = "{$if}_{$tag}";
         if(empty($if)) {
-                log_error(sprintf(gettext("interface_qinq_confgure called with if undefined.%s"), "\n"));
+                log_error(sprintf(gettext("interface_qinq2_configure called with if undefined.%s"), "\n"));
                 return;
         }
 
@@ -1790,8 +1790,8 @@ function interfaces_carp_setup() {
 
 	sleep(1);
 
-	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issuese
-	 * for exiting sessions.
+	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issues
+	 * for existing sessions.
 	 */
 	$i = 0;
 	while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
@@ -2122,7 +2122,7 @@ EOD;
 		/* fire up dhclient */
 		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >{$g['tmp_path']}/{$vipif}_output 2>{$g['tmp_path']}/{$vipif}_error_output", false);
 	} else {
-		log_error(sprintf(gettext("Error: cannot open dhclient_%s.conf in interfaces_carpdev_configure() for writing.%s"), $vipif, "\n"));
+		log_error(sprintf(gettext("Error: cannot open dhclient_%s.conf in interface_carpdev_configure() for writing.%s"), $vipif, "\n"));
 		mwexec("/sbin/dhclient -b {$vipif}");
 	}
 
@@ -2267,9 +2267,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	/*    open up a shell script that will be used to output the commands.
 	 *    since wireless is changing a lot, these series of commands are fragile
-     *    and will sometimes need to be verified by a operator by executing the command
-     *    and returning the output of the command to the developers for inspection.  please
-     *    do not change this routine from a shell script to individul exec commands.  -sullrich
+	 *    and will sometimes need to be verified by a operator by executing the command
+	 *    and returning the output of the command to the developers for inspection.  please
+	 *    do not change this routine from a shell script to individual exec commands.  -sullrich
 	 */
 
 	// Remove script file
@@ -2292,7 +2292,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	$sysctl = "/sbin/sysctl";
 	$killall = "/usr/bin/killall";
 
-	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
+	/* Set all wireless ifconfig variables (split up to get rid of needed checking) */
 
 	$wlcmd = array();
 	$wl_sysctl = array();
@@ -2726,16 +2726,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
-
-
-
-
-
-
-
-
 			interface_bring_down($interface);
-
 		}
 	}
 
@@ -2974,7 +2965,7 @@ function interface_carpdev_dhcp_configure($interface = "wan") {
 	if($wanif)
 		interfaces_bring_up($wanif);
 	else 
-		log_error(gettext("Could not bring wanif up in terface_carpdev_dhcp_configure()"));
+		log_error(gettext("Could not bring wanif up in interface_carpdev_dhcp_configure()"));
 
 	return 0;
 }
@@ -3366,7 +3357,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* Add ISC IPv6 dhclient here, only wide-dhcp6c works for now. */
 	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open dhcp6c_{$interface}.conf in interfaces_wan_dhcpv6_configure() for writing.\n");
+		printf("Error: cannot open dhcp6c_{$interface}.conf in interface_dhcpv6_configure() for writing.\n");
 		return 1;
 	}
 
@@ -3416,7 +3407,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	$fds = fopen("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", "w");
 	if (!$fds) {
-		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interfaces_wan_dhcpv6_configure() for writing.\n");
+		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
 		return 1;
 	}
 	$dhcp6cscript = "#!/bin/sh\n";
@@ -3475,7 +3466,7 @@ function interface_dhcp_configure($interface = "wan") {
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
 	if (!$fd) {
-		printf(printf(gettext("Error: cannot open dhclient_%s.conf in interfaces_wan_dhcp_configure() for writing.%s"), $interface, "\n"));
+		printf(printf(gettext("Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for writing.%s"), $interface, "\n"));
 		return 1;
 	}
 

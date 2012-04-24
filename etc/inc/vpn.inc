@@ -911,7 +911,7 @@ EOD;
 				else
 					$parentinterface = $ph1ent['interface'];
 
-				if (($parentinterface <> "wan") && (is_ipaddr($rgip))) {
+				if (is_ipaddr($rgip)) {
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
@@ -928,8 +928,7 @@ EOD;
 							}
 						}
 					}
-				} else if(is_ipaddr($rgip))
-					mwexec("/sbin/route delete -host {$rgip}", true);
+				} 
 			}
 
 		}

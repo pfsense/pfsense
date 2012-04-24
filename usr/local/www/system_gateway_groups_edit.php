@@ -47,10 +47,12 @@ if (!is_array($config['gateways']['gateway_group']))
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
-$categories = array('down' => gettext("Member Down"),
-                'downloss' => gettext("Packet Loss"),
-                'downlatency' => gettext("High Latency"),
-                'downlosslatency' => gettext("Packet Loss or High Latency"));
+$categories = array(
+				'downlosslatency' => gettext("Packet Loss or High Latency").
+				'downloss' => gettext("Packet Loss"),
+				'downlatency' => gettext("High Latency"),
+				'down' => gettext("Member Down")
+				);
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

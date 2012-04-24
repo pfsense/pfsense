@@ -654,6 +654,7 @@ function services_dhcpdv6_configure() {
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd")) {
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
 	}
 
 	/* DHCP enabled on any interfaces? */

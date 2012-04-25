@@ -78,6 +78,14 @@ function setup_etc_gateways($iface="", $mode="") {
 			if ($passwd != "") {
 				$ret .= "passwd={$passwd} ";
 			}
+                        $add_no_ag = $config['installedpackages']['routed']['config'][0]['enable_no_ag'];
+                        $add_no_super_ag = $config['installedpackages']['routed']['config'][0]['enable_no_super_ag'];
+                        if($add_no_ag == "on") {
+                                $ret .= "no_ag ";
+                        }
+                        if($add_no_super_ag == "on") {
+                                $ret .= "no_super_ag ";
+                        }
 		}
 		break;
 	case "disable":

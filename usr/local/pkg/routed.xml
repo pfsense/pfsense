@@ -64,7 +64,7 @@
 			<fieldname>enable</fieldname>
 			<description>Enables the Routing Information Protocol daemon</description>
 			<type>checkbox</type>
-      <enablefields>iface_array[],ripversion,passwd</enablefields>
+      <enablefields>iface_array[],ripversion,passwd,enable_no_ag,enable_no_super_ag</enablefields>
 		</field>
 		<field>
 			<fielddescr>Interfaces</fielddescr>
@@ -96,6 +96,18 @@
 			</description>
 			<type>input</type>
 		</field>
+                <field>
+                        <fielddescr>no_ag</fielddescr>
+                        <fieldname>enable_no_ag</fieldname>
+                        <description>turns off aggregation of subnets in RIPv1 and RIPv2 responses.</description>
+                        <type>checkbox</type>
+                </field>
+                <field>
+                        <fielddescr>no_super_ag</fielddescr>
+                        <fieldname>enable_no_super_ag</fieldname>
+                        <description>turns off aggregation of networks into supernets in RIPv2 responses.</description>
+                        <type>checkbox</type>
+                </field>
 	</fields>
 	<aftersaveredirect>pkg_edit.php?xml=routed.xml&amp;id=0</aftersaveredirect>
         <custom_php_command_before_form>

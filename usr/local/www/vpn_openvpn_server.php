@@ -1143,7 +1143,7 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="serverbridge_dhcp_end">
-						<td width="22%" valign="top" class="vncell"><?=gettext("Server Bridge DHCP Start"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Server Bridge DHCP End"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="serverbridge_dhcp_end" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['serverbridge_dhcp_end']);?>">
 							<br>

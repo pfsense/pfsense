@@ -48,7 +48,7 @@ $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
 $categories = array(
-				'downlosslatency' => gettext("Packet Loss or High Latency"),
+				'downlosslatency' => gettext("Packet Loss or High Latency").
 				'downloss' => gettext("Packet Loss"),
 				'downlatency' => gettext("High Latency"),
 				'down' => gettext("Member Down")

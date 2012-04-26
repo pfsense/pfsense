@@ -447,7 +447,7 @@ EOD;
         fclose($igmpfl);
 
         mwexec("/usr/local/sbin/igmpproxy -c " . $g['tmp_path'] . "/igmpproxy.conf");
-        log_error("Started Igmpproxy service sucsesfully.");
+        log_error("Started IGMP proxy service.");
 
         return 0;
 }

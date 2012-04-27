@@ -69,7 +69,7 @@ include('head.inc');
 <input type="submit" class="formbtn" name="submit" value="<?=gettext("Show"); ?>" />
 <br />
 <br />
-<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span><?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser");?>.</span>
+<span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
 </td>
 </tr>
 

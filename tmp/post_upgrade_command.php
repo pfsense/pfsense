@@ -7,9 +7,9 @@
 	require_once("functions.inc");
 
 	if(file_exists("/usr/local/bin/git") && isset($config['system']['gitsync']['synconupgrade'])) {
-		if(isset($config['system']['gitsync']['repositoryurl']))
+		if(!empty($config['system']['gitsync']['repositoryurl']))
 			exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url " . escapeshellarg($config['system']['gitsync']['repositoryurl']));
-		if(isset($config['system']['gitsync']['branch']))
+		if(!empty($config['system']['gitsync']['branch']))
 			system("pfSsh.php playback gitsync " . escapeshellarg($config['system']['gitsync']['branch']) . " --upgrading");
 	}
 

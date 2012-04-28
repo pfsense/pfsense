@@ -1752,20 +1752,15 @@ function filter_nat_rules_generate() {
 			else
 				$nat_if_list = array();
 
+			if(empty($nat_if_list))
+				$reflection_type = "none";
+
 			$localport_nat = $localport;
 			if(empty($localport_nat) && $dstaddr_port[2])
 				$localport_nat = " port " . $dstaddr_port[2];
 
 			if($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$rdr_if_list = $natif;
-				if($reflection_type == "purenat" || isset($rule['nordr'])) {
-					$nat_if_list = array_merge(array($natif), $nat_if_list);
-					$rdr_if_list = implode(" ", $nat_if_list);
-					if(count($nat_if_list) > 1)
-						$rdr_if_list = "{ {$rdr_if_list} }";
-				}
-
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if(isset($rule['destination']['any']) && !isset($rule['nordr']) && !isset($config['system']['enablenatreflectionhelper']) && !interface_has_gateway($rule['interface'])) {
@@ -1785,7 +1780,17 @@ function filter_nat_rules_generate() {
 
 					foreach ($reflection_rules as $txtline)
 						fwrite($inetd_fd, $txtline);
+				} else if($reflection_type == "purenat" || isset($rule['nordr'])) {
+					$rdr_if_list = implode(" ", $nat_if_list);
+					if(count($nat_if_list) > 1)
+						$rdr_if_list = "{ {$rdr_if_list} }";
+					$natrules .= "\n# Reflection redirect\n";
+					$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+					$nat_if_list = array_merge(array($natif), $nat_if_list);
 				}
+
+				if(empty($nat_if_list))
+					$nat_if_list = array($natif);
 
 				$natrules .= "\n";
 				if(!isset($rule['nordr']))

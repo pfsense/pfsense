@@ -413,7 +413,7 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Enable NAT Reflection for 1:1 NAT");?></td>
 								<td width="78%" class="vtable">
 									<input name="enablebinatreflection" type="checkbox" id="enablebinatreflection" value="yes" <?php if (isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
-									<strong><?=gettext("Enables the automatic creation of additional NAT 1:1 mappings for access to 1:1 mappings of your external IP addresses from within your internal networks.");?></strong>
+									<strong><?=gettext("Enables the automatic creation of additional NAT redirect rules for access to 1:1 mappings of your external IP addresses from within your internal networks.");?></strong>
 									<br/><br/>
 									<?=gettext("Note: Reflection on 1:1 mappings is only for the inbound component of the 1:1 mappings.  This functions the same as the pure NAT mode for port forwards.  For more details, refer to the pure NAT mode description above.");?>
 									<br/><br/>

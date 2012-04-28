@@ -720,6 +720,8 @@ include("head.inc");
 					/* add openvpn/tun interfaces */
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
 						$interfaces["openvpn"] = "OpenVPN";
+					if (is_array($pconfig['interface']))
+						$pconfig['interface'] = implode(",", $pconfig['interface']);
 					$selected_interfaces = explode(",", $pconfig['interface']);
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && ( strcasecmp($pconfig['interface'], $iface) == 0 || in_array($iface, $selected_interfaces) )) echo "selected"; ?>><?=$ifacename?></option>

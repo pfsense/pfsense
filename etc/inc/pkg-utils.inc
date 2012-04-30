@@ -1247,4 +1247,48 @@ function pkg_reinstall_all() {
 	}
 }
 
+function stop_packages() {
+	require_once("config.inc");
+	require_once("functions.inc");
+	require_once("filter.inc");
+	require_once("shaper.inc");
+	require_once("captiveportal.inc");
+	require_once("pkg-utils.inc");
+	require_once("pfsense-utils.inc");
+	require_once("service-utils.inc");
+
+	global $config, $g, $rcfileprefix;
+
+	log_error("Stopping all packages.");
+
+	$rcfiles = glob("{$rcfileprefix}*.sh");
+	if (!$rcfiles)
+		$rcfiles = array();
+	else {
+		$rcfiles = array_flip($rcfiles);
+		if (!$rcfiles)
+			$rcfiles = array();
+	}
+
+	if (is_array($config['installedpackages']['package'])) {
+		foreach($config['installedpackages']['package'] as $package) {
+			echo " Stopping package {$package['name']}...";
+			stop_service($package['name']);
+			unset($rcfiles["{$rcfileprefix}{$package['name']}.sh"]);
+			echo "done.\n";
+		}
+	}
+
+	$shell = @popen("/bin/sh", "w");
+	if ($shell) {
+		foreach ($rcfiles as $rcfile => $number) {
+			echo " Stopping {$rcfile}...";
+			fwrite($shell, "{$rcfile} stop >>/tmp/bootup_messages 2>&1");
+			echo "done.\n";
+		}
+
+		pclose($shell);
+	}
+}
+
 ?>

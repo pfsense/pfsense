@@ -1345,7 +1345,8 @@ function system_reboot_cleanup() {
 	captiveportal_radius_stop_all();
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
-	mwexec("/etc/rc.stop_packages");
+	require_once("pkg-utils.inc");
+	stop_packages();
 }
 
 function system_do_shell_commands($early = 0) {

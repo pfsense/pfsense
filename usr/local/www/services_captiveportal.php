@@ -306,7 +306,6 @@ if ($_POST) {
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		if (!is_array($newcp['page']))
 			$newcp['page'] = array();
-		$newcp['timeout'] = 60;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))

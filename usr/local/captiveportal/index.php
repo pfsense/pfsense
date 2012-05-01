@@ -64,7 +64,7 @@ if (isset($config['captiveportal'][$cpzone]['httpslogin']))
 else {
     $ifip = portal_ip_from_client_ip($clientip);
     if (!$ifip)
-    	$ourhostname = $config['system'][$cpzone]['hostname'] . ":{$cpcfg['zoneid']}";
+    	$ourhostname = $config['system']['hostname'] . $config['system']['domain'] . ":{$cpcfg['zoneid']}";
     else
     	$ourhostname = "{$ifip}:{$cpcfg['zoneid']}";
 }

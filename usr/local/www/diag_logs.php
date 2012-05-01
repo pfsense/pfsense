@@ -94,6 +94,7 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[] = array(gettext("General"), true, "/diag_logs.php");
 	$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
+	$tab_array[] = array(gettext("Routing"), false, "/diag_logs_routing.php");
 	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
 	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
 	display_top_tabs($tab_array);

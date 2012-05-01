@@ -543,7 +543,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger');
+		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -560,7 +560,11 @@ function system_syslogd_start() {
 			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
 			return 1;
 		}
-		$syslogconf .= "!ntpdate,ntp,ntpd\n";
+		$syslogconf .= "!radvd,routed,olsrd,zebra,ospfd,bgpd\n";
+		if (!isset($syslogcfg['disablelocallogging']))
+			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
+
+		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
 

@@ -49,23 +49,26 @@ header("Pragma: no-cache"); // HTTP/1.0
 
 require("guiconfig.inc");
 
-if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid"))
-	mwexec("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
+if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid")) {
+	/* Start in the background so we don't hang up the GUI */
+	mwexec_bg("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
+	/* Give it a moment to start up */
+	sleep(1);
+}
 
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	log_error("Something wrong happened during comunication with stat gathering");
-	header("Location: /status_queues.php");
-	exit;
+	$error = "Something wrong happened during comunication with stat gathering";
+} else {
+	$stats = "";
+	while(!feof($fd))
+		$stats .= fread($fd, 4096);
+	fclose($fd);
+	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
+	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
+	if ($altqstats == -1)
+		$error = "No queue statistics could be read.";
 }
-$stats = "";
-while(!feof($fd))
-	$stats .= fread($fd, 4096);
-fclose($fd);
-
-@file_put_contents("{$g['tmp_path']}/qstats", $stats);
-$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
-
 if ($_REQUEST['getactivity']) {
         /* calculate total packets being moved through all queues. */
         $total_packets_s = 0;
@@ -103,13 +106,13 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php
-if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 1) {
+if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	echo gettext("Traffic shaping is not configured.");
 	include("fend.inc");
 	exit;	
 }
 ?>
-
+<?php if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
         function getqueueactivity() {
@@ -130,7 +133,11 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
           setTimeout('getqueueactivity()', 150);
         });
 </script>
+<?php endif; ?>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
+<?php if ($error): ?>
+		<tr><td><?php echo $error; ?></td></tr>
+<?php else: ?>
                       <tr>
                         <td class="listhdr" colspan="1"><?=gettext("Queue"); ?></td>
 			<td class="listhdr" colspan="6"><?=gettext("Statistics"); ?></td>
@@ -167,6 +174,7 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
                       </tr>
 		      <tr><td class="vncell" bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <?php $i++; endforeach; $total_queues = $i; ?>
+<?php endif; ?>
                     </table>
 		    <p>
                     <strong><span class="red"><?=gettext("Note"); ?>:</span></strong><strong><br></strong>

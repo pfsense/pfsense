@@ -408,7 +408,7 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
-		case 3:	/* OpenVPN Users */
+/*		case 3:	 // OpenVPN Users
 			var cmd;
 
 			newrows = totalrows;
@@ -419,8 +419,8 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
-
-		case 4:	/* url */
+*/
+		case 3:	/* url */
 			var cmd;
 			newrows = totalrows;
 			for(i=0; i<newrows; i++) {
@@ -429,7 +429,7 @@ function typesel_change() {
 			}
 			break;
 
-		case 5:	/* urltable */
+		case 4:	/* urltable */
 			var cmd;
 			newrows = totalrows;
 			for(i=0; i<newrows; i++) {

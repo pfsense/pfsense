@@ -1888,7 +1888,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	if(isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !$passthrumac) {
 
 		if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
-			$httpsport = $config['captiveportal'][$cpzone]['zoneid'] + 1;
+			$httpsport =
+				$config['captiveportal'][$cpzone]['listenporthttps'] ?
+				$config['captiveportal'][$cpzone]['listenporthttps'] :
+				($config['captiveportal'][$cpzone]['zoneid'] + 1);
 			$logouturl = "https://{$config['captiveportal']['httpsname']}:{$httpsport}/";
 		} else {
 			$ifip = portal_ip_from_client_ip($clientip);

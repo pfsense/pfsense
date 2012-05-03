@@ -230,6 +230,11 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "track6";
 		$pconfig['track6-interface'] = $wancfg['track6-interface'];
 		$pconfig['track6-prefix-id'] = $wancfg['track6-prefix-id'];
+		if ($wancfg['track6-prefix-id'] == "" || $wancfg['track6-prefix-id'] == "none") {
+			$pconfig['track6-prefix-id--hex'] = "";
+		} else {
+			$pconfig['track6-prefix-id--hex'] = sprintf("%x", $wancfg['track6-prefix-id']);
+		}
 		break;
 	case "6rd":
 		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
@@ -341,6 +346,9 @@ if (isset($wancfg['wireless'])) {
 	}
 }
 
+$ipv6_delegation_length = calculate_ipv6_delegation_length($pconfig['track6-interface']);
+$ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
+
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces'))
@@ -404,6 +412,13 @@ if ($_POST['apply']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+	if ($pconfig['track6-prefix-id--hex'] === "") {
+		$pconfig['track6-prefix-id'] = "none";
+	} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
+	} else {
+		$pconfig['track6-prefix-id'] = "none";
+	}
 	conf_mount_rw();
 
 	/* filter out spaces from descriptions  */
@@ -529,6 +544,15 @@ if ($_POST['apply']) {
 			/* needs to check if $track6-prefix-id is used on another interface */
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
+
+			if ($_POST['track6-prefix-id--hex'] != "" && !is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+				$input_errors[] = gettext("You must enter a valid hexadecimal number for the IPv6 prefix ID.");
+			} else {
+				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
+				if ($track6_prefix_id < 0 || $track6_prefix_id >= $ipv6_num_prefix_ids) {
+					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range.");
+				}
+			}
 			break;
 	}
 
@@ -832,7 +856,13 @@ if ($_POST['apply']) {
 			case "track6":
 				$wancfg['ipaddrv6'] = "track6";
 				$wancfg['track6-interface'] = $_POST['track6-interface'];
-				$wancfg['track6-prefix-id'] = $_POST['track6-prefix-id'];
+				if ($_POST['track6-prefix-id--hex'] === "") {
+					$wancfg['track6-prefix-id'] = "none";
+				} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+					$wancfg['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
+				} else {
+					$wancfg['track6-prefix-id'] = "none";
+				}
 				break;
 			case "none":
 				break;
@@ -1811,27 +1841,18 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Prefix ID"); ?></td>
 										<td width="78%" class="vtable">
-											<select name="track6-prefix-id" class="formselect" id="track6-prefix-id">
-												<?php
-												$pdlen = calculate_ipv6_delegation_length($pconfig['track6-interface']);
-
-												$numbers = pow(2, $pdlen);
-												if($pconfig['track6-prefix-id'] == "none")
-													$selected = "selected";
-												echo "<option value=\"none\" {$selected}>". gettext("None") ."</option>\n";
-												$choices = array();
-												for($i = 0;$i < $numbers; $i++) {
-													if ("$i" == $pconfig['track6-prefix-id'])
-														$selected = "selected";
-													else
-														$selected = "";
-
-													$choices[] = sprintf("<option value=\"%d\" $selected>%0x</option>", $i, $i);
+											<?php
+												if ($pconfig['track6-prefix-id'] == "none" || $pconfig['track6-prefix-id'] == "") {
+													$track6_prefix_id_hex = "";
+												} else {
+													$track6_prefix_id_hex = sprintf("%x", $pconfig['track6-prefix-id']);
 												}
-												echo implode("\n", $choices);
-												?> 
-											</select>
-											<?=gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+											?>
+											<input name="track6-prefix-id--hex" type="text" class="formfld unknown" id="track6-prefix-id--hex" size="8" value="<?= $track6_prefix_id_hex ?>" />
+											<br />
+											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+											<br />
+											<?= sprintf(gettext("Enter a <b>hexadecimal</b> value between %x and %x here, or leave blank."), 0, $ipv6_num_prefix_ids - 1); ?>
 										</td>
 									</tr>
 										</td>

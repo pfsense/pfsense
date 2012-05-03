@@ -22,7 +22,7 @@ echo "rc.update_bogons.sh is beginning the update cycle." | logger
 
 /usr/bin/fetch -q -o /tmp/bogons "http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt"
 /usr/bin/fetch -q -o /tmp/bogonsv6 "http://files.pfsense.org/mirrors/fullbogons-ipv6.txt"
-if [ ! -f /tmp/bogons ];
+if [ ! -f /tmp/bogons ]; then
 	echo "Could not download http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt" | logger
 	dl_error="true"
 fi

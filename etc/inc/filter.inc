@@ -2478,8 +2478,10 @@ EOD;
                         if (count($cpiplist) > 0 && count($cpiflist) > 0) {
                                 $cpinterface = implode(" ", $cpiflist);
                                 $cpaddresses = implode(" ", $cpiplist);
-                                $portalias = $cpcfg['zoneid'] + 1;
-                                $portalias .= " {$cpcfg['zoneid']}";
+				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+                                $portalias = $listenporthttps;
+                                $portalias .= " {$listenporthttp}";
                                 $ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
                                 $ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
                         }

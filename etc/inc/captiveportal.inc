@@ -457,14 +457,16 @@ function captiveportal_init_webguis($cpcfg) {
 			$cacert = "";
 		$key = base64_decode($cpcfg['private-key']);
 		/* generate lighttpd configuration */
+		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
-			$cert, $key, $cacert, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $cpcfg['zoneid'] + 1, "/usr/local/captiveportal",
+			$cert, $key, $cacert, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, $cpzone);
 	}
 
 	/* generate lighttpd configuration */
+	$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf",
-		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $cpcfg['zoneid'], "/usr/local/captiveportal",
+		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
 		"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, $cpzone);
 
 	/* attempt to start lighttpd */
@@ -604,11 +606,17 @@ EOD;
 		$cprules .= "add {$rulenum} set 1 allow ip from any to table(2) out\n";
 		$rulenum++;
 	}
+
+	
+	$listenporthttp =
+		$config['captiveportal'][$cpzone]['listenporthttp'] ?
+		$config['captiveportal'][$cpzone]['listenporthttp'] :
+		$config['captiveportal'][$cpzone]['zoneid'];
 	
 	$cprules .= <<<EOD
 
 # redirect non-authenticated clients to captive portal
-add 65531 set 1 fwd 127.0.0.1,{$config['captiveportal'][$cpzone]['zoneid']} tcp from any to any in
+add 65531 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any in
 # let the responses from the captive portal web server back out
 add 65532 set 1 pass tcp from any to any out
 # block everything else
@@ -1613,15 +1621,16 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 
 	/* substitute other variables */
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
-		$httpsport  = $cpcfg['zoneid'] + 1;
+		$httpsport = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/", $htmltext);
 		$htmltext = str_replace("#PORTAL_ACTION#", "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/", $htmltext);
 	} else {
+		$httpport = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 		$ifip = portal_ip_from_client_ip($clientip);
 		if (!$ifip)
-			$ourhostname = $config['system']['hostname'] . ":{$cpcfg['zoneid']}";
+			$ourhostname = $config['system']['hostname'] . ":{$httpport}";
 		else
-			$ourhostname = "{$ifip}:{$cpcfg['zoneid']}";
+			$ourhostname = "{$ifip}:{$httpport}";
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
 		$htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
 	}
@@ -1883,7 +1892,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$logouturl = "https://{$config['captiveportal']['httpsname']}:{$httpsport}/";
 		} else {
 			$ifip = portal_ip_from_client_ip($clientip);
-			$httpport = $config['captiveportal'][$cpzone]['zoneid'];
+			$httpport =
+				$config['captiveportal'][$cpzone]['listenporthttp'] ?
+				$config['captiveportal'][$cpzone]['listenporthttp'] :
+				$config['captiveportal'][$cpzone]['zoneid'];
 			if (!$ifip)
 				$ourhostname = $config['system']['hostname'] . ":{$httpport}";
 			else

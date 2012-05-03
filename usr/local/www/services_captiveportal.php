@@ -896,10 +896,13 @@ function enable_change(enable_change) {
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld file" id="htmlfile"><br>
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
-			if($pconfig['zoneid']) {
-				$href = "https://{$host}:{$pconfig['zoneid']}";
+			$zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
+			if (isset($pconfig['httpslogin'])) {
+				$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 1);
+				$href = "https://{$host}:{$port}";
 			} else {
-				$href = "http://{$host}:8000";
+				$port = $pconfig['listenporthttp']  ? $pconfig['listenporthttp']  : $zoneid;
+				$href = "http://{$host}:{$port}";
 			}
 		?>
 		<?php if ($pconfig['page']['htmltext']): ?>

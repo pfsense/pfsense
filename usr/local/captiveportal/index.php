@@ -59,14 +59,17 @@ if (!$clientip) {
 	exit;
 }
 
+$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+
 if (isset($config['captiveportal'][$cpzone]['httpslogin']))
-    $ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ":" . ($cpcfg['zoneid'] + 1);
+    $ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ":" . $listenporthttps;
 else {
     $ifip = portal_ip_from_client_ip($clientip);
     if (!$ifip)
-    	$ourhostname = $config['system']['hostname'] . $config['system']['domain'] . ":{$cpcfg['zoneid']}";
+    	$ourhostname = $config['system']['hostname'] . $config['system']['domain'] . ":{$listenporthttp}";
     else
-    	$ourhostname = "{$ifip}:{$cpcfg['zoneid']}";
+    	$ourhostname = "{$ifip}:{$listenporthttp}";
 }
 
 if ($orig_host != $ourhostname) {

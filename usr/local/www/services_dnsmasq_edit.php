@@ -68,6 +68,7 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['domain'] = $a_hosts[$id]['domain'];
 	$pconfig['ip'] = $a_hosts[$id]['ip'];
 	$pconfig['descr'] = $a_hosts[$id]['descr'];
+	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
 }
 
 if ($_POST) {
@@ -90,6 +91,43 @@ if ($_POST) {
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
 		$input_errors[] = gettext("A valid IP address must be specified.");
 
+	/* collect aliases */
+	$aliases = array();
+	foreach ($_POST as $key => $value) {
+		$entry = '';
+		if (!substr_compare('aliashost', $key, 0, 9)) {
+			$entry = substr($key, 9);
+			$field = 'host';
+		}
+		elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
+			$entry = substr($key, 11);
+			$field = 'domain';
+		}
+		elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
+			$entry = substr($key, 16);
+			$field = 'description';
+		}
+		if (ctype_digit($entry)) {
+			$aliases[$entry][$field] = $value;
+		}
+	}
+	$pconfig['aliases']['item'] = $aliases;
+
+	/* validate aliases */
+	foreach ($aliases as $idx => $alias) {
+		$aliasreqdfields = array('aliasdomain' . $idx);
+		$aliasreqdfieldsn = array(gettext("Alias Domain"));
+
+		var_dump(array('fields' => $aliasreqdfields, 'names' => $aliasreqdfieldsn, 'alias' => $alias));
+		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, &$input_errors);
+		if (($alias['host'] && !is_hostname($alias['host']))) {
+			$input_errors[] = gettext("Hostnames in alias list can only contain the characters A-Z, 0-9 and '-'.");
+		}
+		if (($alias['domain'] && !is_domain($alias['domain']))) {
+			$input_errors[] = gettext("A valid domain must be specified in alias list.");
+		}
+	}
+
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
 		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent))
@@ -108,6 +146,7 @@ if ($_POST) {
 		$hostent['domain'] = $_POST['domain'];
 		$hostent['ip'] = $_POST['ip'];
 		$hostent['descr'] = $_POST['descr'];
+		$hostent['aliases']['item'] = $aliases;
 
 		if (isset($id) && $a_hosts[$id])
 			$a_hosts[$id] = $hostent;
@@ -129,8 +168,24 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
+
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
+
+<script type="text/javascript">
+	rowname[0] = "aliashost";
+	rowtype[0] = "textbox";
+	rowsize[0] = "20";
+	rowname[1] = "aliasdomain";
+	rowtype[1] = "textbox";
+	rowsize[1] = "20";
+	rowname[2] = "aliasdescription";
+	rowtype[2] = "textbox";
+	rowsize[2] = "20";
+</script>
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
         <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
         <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -166,6 +221,63 @@ include("head.inc");
                     <br> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
+				<tr>
+		  <td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
+		  <td width="78%" class="vtable">
+		    <table id="maintable">
+		      <tbody>
+			<tr>
+			  <td colspan="4">
+			    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">
+			      <?=gettext("Enter additional names for this host."); ?>
+			    </div>
+			  </td>
+			</tr>
+			<tr>
+			  <td><div id="onecolumn"><?=gettext("Host");?></div></td>
+			  <td><div id="twocolumn"><?=gettext("Domain");?></div></td>
+			  <td><div id="threecolumn"><?=gettext("Description");?></div></td>
+			</tr>
+			<?php
+			  $counter = 0;
+			  if($pconfig['aliases']['item']):
+			    foreach($pconfig['aliases']['item'] as $item):
+			      $host = $item['host'];
+			      $domain = $item['domain'];
+			      $description = $item['description'];
+			?>
+			<tr>
+			  <td>
+			    <input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($host);?>" />
+			  </td>
+			  <td>
+			    <input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($domain);?>" />
+			  </td>
+			  <td>
+			    <input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($description);?>" />
+			  </td>
+			  <td>
+			    <a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+			  </td>
+			</tr>
+			<?php
+			      $counter++;
+			    endforeach;
+			  endif;
+			?>
+		      </tbody>
+		    </table>
+		    <a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
+		      <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+		    </a>
+		    <script type="text/javascript">
+		      field_counter_js = 3;
+		      rows = 1;
+		      totalrows = <?php echo $counter; ?>;
+		      loaded = <?php echo $counter; ?>;
+		    </script>
+		  </td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

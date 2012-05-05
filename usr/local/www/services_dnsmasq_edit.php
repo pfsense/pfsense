@@ -222,62 +222,62 @@ include("head.inc");
                    " for your reference (not parsed).");?></span></td>
                 </tr>
 				<tr>
-		  <td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
-		  <td width="78%" class="vtable">
-		    <table id="maintable">
-		      <tbody>
-			<tr>
-			  <td colspan="4">
-			    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">
-			      <?=gettext("Enter additional names for this host."); ?>
-			    </div>
-			  </td>
-			</tr>
-			<tr>
-			  <td><div id="onecolumn"><?=gettext("Host");?></div></td>
-			  <td><div id="twocolumn"><?=gettext("Domain");?></div></td>
-			  <td><div id="threecolumn"><?=gettext("Description");?></div></td>
-			</tr>
-			<?php
-			  $counter = 0;
-			  if($pconfig['aliases']['item']):
-			    foreach($pconfig['aliases']['item'] as $item):
-			      $host = $item['host'];
-			      $domain = $item['domain'];
-			      $description = $item['description'];
-			?>
-			<tr>
-			  <td>
-			    <input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($host);?>" />
-			  </td>
-			  <td>
-			    <input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($domain);?>" />
-			  </td>
-			  <td>
-			    <input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($description);?>" />
-			  </td>
-			  <td>
-			    <a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-			  </td>
-			</tr>
-			<?php
-			      $counter++;
-			    endforeach;
-			  endif;
-			?>
-		      </tbody>
-		    </table>
-		    <a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
-		      <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
-		    </a>
-		    <script type="text/javascript">
-		      field_counter_js = 3;
-		      rows = 1;
-		      totalrows = <?php echo $counter; ?>;
-		      loaded = <?php echo $counter; ?>;
-		    </script>
-		  </td>
-		</tr>
+                  <td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
+                  <td width="78%" class="vtable">
+                    <table id="maintable">
+                      <tbody>
+                        <tr>
+                          <td colspan="4">
+                            <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">
+                              <?=gettext("Enter additional names for this host."); ?>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><div id="onecolumn"><?=gettext("Host");?></div></td>
+                          <td><div id="twocolumn"><?=gettext("Domain");?></div></td>
+                          <td><div id="threecolumn"><?=gettext("Description");?></div></td>
+                        </tr>
+                        <?php
+                          $counter = 0;
+                          if($pconfig['aliases']['item']):
+                            foreach($pconfig['aliases']['item'] as $item):
+                              $host = $item['host'];
+                              $domain = $item['domain'];
+                              $description = $item['description'];
+                        ?>
+                        <tr>
+                          <td>
+                            <input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($host);?>" />
+                          </td>
+                          <td>
+                            <input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($domain);?>" />
+                          </td>
+                          <td>
+                            <input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($description);?>" />
+                          </td>
+                          <td>
+                            <a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+                          </td>
+                        </tr>
+                        <?php
+                              $counter++;
+                            endforeach;
+                          endif;
+                        ?>
+                      </tbody>
+                    </table>
+                    <a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
+                      <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+                    </a>
+                    <script type="text/javascript">
+                      field_counter_js = 3;
+                      rows = 1;
+                      totalrows = <?php echo $counter; ?>;
+                      loaded = <?php echo $counter; ?>;
+                    </script>
+                  </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

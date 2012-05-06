@@ -258,6 +258,8 @@ function system_hosts_generate() {
 			$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 		else
 			$lhosts .= "{$host['ip']}	{$host['domain']}\n";
+		if (!is_array($host['aliases']) || !is_array($host['aliases']['item']))
+			continue;
 		foreach ($host['aliases']['item'] as $alias) {
 			if ($alias['host'])
 				$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";

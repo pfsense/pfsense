@@ -143,7 +143,7 @@ EOD;
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 
-} else if ($config['voucher'][$cpzone]['enable'] && $_POST['accept'] && $_POST['auth_voucher']) {
+} else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 
     $voucher = trim($_POST['auth_voucher']);
     $timecredit = voucher_auth($voucher);

@@ -258,6 +258,12 @@ function system_hosts_generate() {
 			$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
 		else
 			$lhosts .= "{$host['ip']}	{$host['domain']}\n";
+		foreach ($host['aliases']['item'] as $alias) {
+			if ($alias['host'])
+				$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
+			else
+				$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
+		}
 	}
 	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)

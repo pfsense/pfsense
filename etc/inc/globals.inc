@@ -102,14 +102,15 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");
+	$arch = ($arch == "i386") ? "" : '/' . $arch;
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
-		$g['update_url']="http://updates.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_RELENG_2_0/.updaters/";
+		$g['update_url']="http://updates.pfsense.org/_updaters{$arch}/";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 		$g['firmware_update_text']="pfSense-*.img.gz";
 
 	} else {
-		$g['update_url']="http://updates.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_RELENG_2_0/.updaters/";
+		$g['update_url']="http://updates.pfsense.org/_updaters{$arch}/";
 		$g['update_manifest']="http://updates.pfSense.com/manifest";
 		$g['firmware_update_text']="pfSense-*.tgz";
 	}

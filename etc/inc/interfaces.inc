@@ -515,7 +515,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		pfSense_interface_mtu($realif1, $smallermtu);
 		pfSense_interface_capabilities($realif1, -$flags);
 		interfaces_bring_up($realif1);
-		pfSense_bridge_add_member($bridgeif, $realif);
+		pfSense_bridge_add_member($bridgeif, $realifl);
 	}
 
 	if (isset($bridge['enablestp'])) {

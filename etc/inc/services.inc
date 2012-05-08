@@ -241,9 +241,9 @@ EOPP;
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
 		
-    		if($dhcpifconf['domainsearchlist'] <> "") {
-			$dnscfg .= "	option domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
-    		}
+		if($dhcpifconf['domainsearchlist'] <> "") {
+			$dnscfg .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpifconf['domainsearchlist'])) . "\";\n";
+		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
 			if($dhcpifconf['ddnsdomain'] <> "") {

@@ -300,10 +300,17 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
 			$rrdupdatesh .= "TMPFILE=`mktemp -q /tmp/STATS_{$realif}.XXXXXX` \n";
-			$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
 			$rrdupdatesh .= "unset BYTES \n";
-			$rrdupdatesh .= "BYTES=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
-			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			/* check disablefilters */
+			if(is_set($config['system']['disablefilter'])) {
+				$rrdupdatesh .= "$netstat -nbf link -I {$realif} > \$TMPFILE \n";
+				$rrdupdatesh .= "BYTES=`cat \$TMPFILE | awk '{getline 2;print \$8 \":\" \$11 \":0:0\"}'`\n";
+				
+			} else {
+				$rrdupdatesh .= "$pfctl -vvsI -i {$realif} > \$TMPFILE \n";
+				$rrdupdatesh .= "BYTES=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$6 \":\"}'`\\\n";
+				$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
+			}
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\$BYTES\n";
 
 			/* PACKETS, set up the rrd file */
@@ -329,8 +336,12 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "unset PACKETS \n";
-			$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
-			$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			if(is_set($config['system']['disablefilter'])) {
+				$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '{getline 2;print \$5 \":\" \$9 \":\" \$6 \":\" \$10}'`\n";
+			} else {			
+				$rrdupdatesh .= "PACKETS=`cat \$TMPFILE | awk '/In4\/Pass|Out4\/Pass/ {printf \$4 \":\"}'`\\\n";
+				$rrdupdatesh .= "`cat \$TMPFILE | awk '/In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
+			}
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\$PACKETS\n";
 			$rrdupdatesh .= "rm \$TMPFILE \n";
 

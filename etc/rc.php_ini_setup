@@ -75,7 +75,7 @@ fi
 
 # Set upload directory
 if [ "$PLATFORM" = "embedded" -o "$PLATFORM" = "nanobsd" ]; then
-	UPLOADTMPDIR="/root"
+	UPLOADTMPDIR=`/usr/bin/grep upload_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 else 
 	UPLOADTMPDIR="/tmp"
 fi

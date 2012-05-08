@@ -530,7 +530,7 @@ if ($_POST['apply']) {
 				$wancfg['if'] = $a_ppps[$pppid]['ports'];
 				unset($a_ppps[$pppid]);
 			} else if ($wancfg['ipaddr'] == "dhcp") {
-				$pid = find_dhclient_process($realif);
+				$pid = find_dhclient_process($wancfg['if']);
 				if($pid)
 					posix_kill($pid, SIGTERM);
 			}

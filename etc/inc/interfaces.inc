@@ -98,7 +98,7 @@ function does_vip_exist($vip) {
 	switch ($vip['mode']) {
 	case "carp":
 	case "carpdev":
-		$realif = "{$vip['interface']}_vip{$vip['vhid']}";
+		$realif = "vip{$vip['vhid']}";
 		if (!does_interface_exist($realif)) {
 			return false;
 		}
@@ -743,9 +743,9 @@ function interfaces_gre_configure($checkparent = 0) {
                 foreach ($config['gres']['gre'] as $i => $gre) {
                         if(empty($gre['greif']))
                                 $gre['greif'] = "gre{$i}";
-			if ($checkparent == 1 && strstr($gre['if'], "_vip"))
+			if ($checkparent == 1 && strstr($gre['if'], "vip"))
 				continue;
-			if ($checkparent == 2 && !strstr($gre['if'], "_vip"))
+			if ($checkparent == 2 && !strstr($gre['if'], "vip"))
 				continue;
                         /* XXX: Maybe we should report any errors?! */
                         interface_gre_configure($gre);
@@ -802,9 +802,9 @@ function interfaces_gif_configure($checkparent = 0) {
 		foreach ($config['gifs']['gif'] as $i => $gif) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
-			if ($checkparent == 1 && strstr($gif['if'], "_vip"))
+			if ($checkparent == 1 && strstr($gif['if'], "vip"))
 				continue;
-			if ($checkparent == 2 && !strstr($gif['if'], "_vip"))
+			if ($checkparent == 2 && !strstr($gif['if'], "vip"))
 				continue;
 			/* XXX: Maybe we should report any errors?! */
 			interface_gif_configure($gif);
@@ -996,9 +996,13 @@ function interface_vip_bring_down($vip) {
 			pfSense_interface_deladdress($vipif, $vip['subnet']);
 		break;
 	case "carp":
+		$vipif = "vip" . $vip['vhid'];
+		if(does_interface_exist($vipif)) 
+			pfSense_interface_destroy($vipif);
+		break;
 	case "carpdev-dhcp":
-		$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
-		if (does_interface_exist($vipif)) 
+		$vipif = "vip" . $vip['vhid'];
+		if(does_interface_exist($vipif)) 
 			pfSense_interface_destroy($vipif);
 		break;
 	}
@@ -1877,6 +1881,14 @@ function interface_carp_configure(&$vip) {
 	if ($vip['mode'] != "carp")
 		return;
 
+	$vip_password = $vip['password'];
+	$vip_password = escapeshellarg(addslashes(str_replace(" ", "", $vip_password)));
+	if ($vip['password'] != "")
+		$password = " pass {$vip_password}";
+
+	// set the vip interface to the vhid
+	$vipif = "vip{$vip['vhid']}";
+
 	/*
 	 * ensure the interface containing the VIP really exists
  	 * prevents a panic if the interface is missing or invalid
@@ -1886,9 +1898,6 @@ function interface_carp_configure(&$vip) {
 		file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
 		return;
 	}
-
-	// set the vip interface to the vhid
-	$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 
 	/* Ensure CARP IP really exists prior to loading up. */
 	$ww_subnet_ip = find_interface_ip($realif);
@@ -1910,20 +1919,14 @@ function interface_carp_configure(&$vip) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	$vip_password = $vip['password'];
-	$vip_password = escapeshellarg(addslashes(str_replace(" ", "", $vip_password)));
-	if ($vip['password'] != "")
-		$password = " pass {$vip_password}";
-
 	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 	$advbase = "";
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
-
 	mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 
 	interfaces_bring_up($vipif);
-
+	
 	return $vipif;
 }
 
@@ -1933,12 +1936,17 @@ function interface_carpdev_configure(&$vip) {
 	if ($vip['mode'] != "carpdev-dhcp")
 		return;
 
+	$vip_password = $vip['password'];
+	$vip_password = str_replace(" ", "", $vip_password);
+	if($vip['password'] != "")
+		$password = " pass \"" . $vip_password . "\"";
+
 	if (empty($vip['interface']))
 		return;
 
+	$vipif = "vip" . $vip['vhid'];
 	$realif = get_real_interface($vip['interface']);
 	interfaces_bring_up($realif);
-
 	/*
 	 * ensure the interface containing the VIP really exists
 	 * prevents a panic if the interface is missing or invalid
@@ -1948,7 +1956,6 @@ function interface_carpdev_configure(&$vip) {
 		return;
 	}
 
-	$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 	if (does_interface_exist($vipif)) {
 		interface_bring_down($vipif);
 	} else {
@@ -1956,12 +1963,6 @@ function interface_carpdev_configure(&$vip) {
 		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
 		pfSense_ngctl_name("{$carpdevif}:", $vipif);
 	}
-
-	$vip_password = $vip['password'];
-	$vip_password = str_replace(" ", "", $vip_password);
-	if ($vip['password'] != "")
-		$password = " pass \"" . $vip_password . "\"";
-
 
 	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
 	interfaces_bring_up($vipif);
@@ -2924,10 +2925,11 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
         global $config;
 
-	if (stristr($interface, "_vip")) {
+	if (stristr($interface, "vip")) {
+                $index = intval(substr($interface, 3));
                 foreach ($config['virtualip']['vip'] as $counter => $vip) {
                         if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-                                if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
+                                if ($index == $vip['vhid'])
                                         return $vip['interface'];
                         }
                 }
@@ -2983,11 +2985,11 @@ function convert_friendly_interface_to_friendly_descr($interface) {
                         else
                                 $ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
-		} else if (stristr($interface, "_vip")) {
+		} else if (substr($interface, 0, 3) == "vip") {
 			if (is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $counter => $vip) {
 					if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-						if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
+						if ($interface == "vip{$vip['vhid']}")
 							return "{$vip['subnet']} - {$vip['descr']}";
 					}
 				}
@@ -2996,8 +2998,8 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			/* if list */
 			$ifdescrs = get_configured_interface_with_descr(false, true);
 			foreach ($ifdescrs as $if => $ifname) {
-				if ($if == $interface || $ifname == $interface)
-					return $ifname;
+					if ($if == $interface || $ifname == $interface)
+						return $ifname;
 			}
 		}
                 break;
@@ -3300,9 +3302,8 @@ function link_ip_to_carp_interface($ip) {
                                 $carp_ip = $vip['subnet'];
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
-                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
-					$carp_int[] = "{$vip['interface']}_vip{$vip['vhid']}";
-				}
+                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}"))
+					$carp_int[] = "vip{$vip['vhid']}";
                         }
                 }
 		if (!empty($carp_int))
@@ -3336,9 +3337,14 @@ function link_interface_to_vips($int, $action = "") {
         if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($int == $vip['interface']) {
-				if ($action == "update")
-					interfaces_vips_configure($int);
-				else
+				if ($action == "update") {
+					if ($vip['mode'] == "carp" && !does_interface_exist("vip{$vip['vhid']}"))
+						interfaces_vips_configure($int);
+					else {
+						interface_vip_bring_down($vip);
+						interfaces_vips_configure($int);
+					}
+				} else
 					return $vip;
 			}
 		}

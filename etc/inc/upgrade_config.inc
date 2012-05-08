@@ -2638,22 +2638,4 @@ function upgrade_079_to_080() {
 		unset($config['system']['username']);
 	}
 }
-
-function upgrade_080_to_081() {
-	global $config, $g;
-
-	/* XXX: Gross hacks in sight */
-	write_config();
-	if (is_array($config['virtualips']['vip'])) {
-		$vipchg = array();
-		foreach ($config['virtualips']['vip'] as $vip) {
-			$realif = get_real_interface($vip['interface']);
-			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$realif}_vip{$vip['vhid']}/g\n");
-		}
-		mwexec("/bin/sh -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
-		require_once("config.lib.inc");
-		$config = parse_config(true);
-	}
-}
-
 ?>

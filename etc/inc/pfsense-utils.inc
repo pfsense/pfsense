@@ -1656,10 +1656,10 @@ function update_alias_url_data() {
 			$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 			unlink($temp_filename);
 			$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-			fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
+			fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
 			fclose($fda);
 			mwexec("/bin/mkdir -p {$temp_filename}");
-			mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
+			mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
 			/* if the item is tar gzipped then extract */
 			if(stristr($alias['aliasurl'], ".tgz"))
 				process_alias_tgz($temp_filename);
@@ -1836,7 +1836,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		conf_mount_rw();
 		unlink_if_exists($urltable_filename . ".tmp");
 		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
-		mwexec("/usr/bin/fetch -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
+		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
 		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
 		if (file_exists($urltable_filename . ".tmp")) {
 			mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));

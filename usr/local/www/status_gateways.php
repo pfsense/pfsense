@@ -72,10 +72,10 @@ include("head.inc");
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Gateway"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Monitor"); ?></td>
-                  <td width="10%" class="listhdrr"><?=gettext("RTT"); ?></td>
-                  <td width="10%" class="listhdrr"><?=gettext("Loss"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Status"); ?></td>
-                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
+                  <td width="8%" class="listhdrr"><?=gettext("RTT"); ?></td>
+                  <td width="7%" class="listhdrr"><?=gettext("Loss"); ?></td>
+                  <td width="35%" class="listhdrr"><?=gettext("Status"); ?></td>
+                  <td width="20%" class="listhdr"><?=gettext("Description"); ?></td>
 		</tr>
 		  <?php foreach ($a_gateways as $gname => $gateway) {
 			?>
@@ -118,10 +118,10 @@ include("head.inc");
 						$online = gettext("Offline");
 						$bgcolor = "lightcoral";
 					} elseif (stristr($status['status'], "loss")) {
-						$online = gettext("Warning, Packetloss");
+						$online = gettext("Warning, Packetloss").': '.$status['loss'];
 						$bgcolor = "khaki";
 					} elseif (stristr($status['status'], "delay")) {
-						$online = gettext("Warning, Latency");
+						$online = gettext("Warning, Latency").': '.$status['delay'];
 						$bgcolor = "khaki";
 					} elseif ($status['status'] == "none") {
 						$online = gettext("Online");
@@ -134,16 +134,12 @@ include("head.inc");
 					$online = gettext("Gathering data");
 					$bgcolor = "lightgray";
 				}
-				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-				$lastchange = $gateway['lastcheck'];
+				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\" > $online </td></tr><tr><td>";
+				$lastchange = $gateways_status[$gname]['lastcheck'];
 				if(!empty($lastchange)) {
-					$lastchange = explode(" ", $lastchange);
-					array_shift($lastchange);
-					array_shift($lastchange);
-					$lastchange = implode(" ", $lastchange);
-					printf(gettext("Last check %s"), $lastchange);
+					echo gettext("Last check:") . '<br/>' . $lastchange;
 				}
-				echo "</td></tr>";
+				echo "</td></tr></table></td></tr>";
                         ?>
 			</table>
                   </td>

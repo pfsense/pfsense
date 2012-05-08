@@ -40,11 +40,6 @@
 	pfSense_MODULE:	utils
 */
 
-function strify($str) {
-	return '"' . $str . '"';
-};
-
-
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure() {
 	global $config, $g;
@@ -471,11 +466,9 @@ EOPP;
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
 
-    		if($dhcpifconf['domainsearchlist'] <> "") {
+		if($dhcpifconf['domainsearchlist'] <> "") {
 			$dnscfg .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpifconf['domainsearchlist'])) . "\";\n";
-                        $domains = implode(',', array_map(strify, explode(' ', $dhcpifconf['domainsearchlist'])));
-                        $dnscfg .= "   option domain-search {$domains};\n";
-    		}
+		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
 			if($dhcpifconf['ddnsdomain'] <> "") {

@@ -1288,6 +1288,18 @@ function authenticate_user($username, $password, $authcfg = NULL) {
 function session_auth() {
 	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
 
+	// Handle HTTPS httponly and secure flags
+	if($config['system']['webgui']['protocol'] == "https") {
+		$currentCookieParams = session_get_cookie_params();
+		session_set_cookie_params(
+			$currentCookieParams["lifetime"],
+			$currentCookieParams["path"],
+			NULL,
+			true,
+			true
+		);
+	}
+
 	if (!session_id())
 		session_start();
 

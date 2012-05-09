@@ -73,8 +73,9 @@ while(!feof($log)) {
 	 dstip      - Destination IP
 	 dstport    - Destination Port
 	*/
+	$flags = (($flent['proto'] == "TCP") && !empty($flent['tcpflags'])) ? ":" . $flent['tcpflags'] : "";
 	if ($flent != "") {
-		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']} {$flent['src']} {$flent['dst']}\n";
+		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']}{$flags} {$flent['src']} {$flent['dst']}\n";
 		$flent = "";
 	}
 }

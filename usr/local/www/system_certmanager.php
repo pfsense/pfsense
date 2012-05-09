@@ -51,6 +51,8 @@ $cert_types = array(	"ca" => "Certificate Authority",
 			"server" => "Server Certificate",
 			"user" => "User Certificate");
 
+$altname_types = array("DNS", "IP", "email", "URI");
+
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
 $userid = $_GET['userid'];
@@ -234,6 +236,51 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		if ($pconfig['method'] != "import")
+			/* subjectAltNames */
+			$altnames = array();
+			foreach ($_POST as $key => $value) {
+				$entry = '';
+				if (!substr_compare('altname_type', $key, 0, 12)) {
+					$entry = substr($key, 12);
+					$field = 'type';
+				}
+				elseif (!substr_compare('altname_value', $key, 0, 13)) {
+					$entry = substr($key, 13);
+					$field = 'value';
+				}
+				if (ctype_digit($entry)) {
+					$altnames[$entry][$field] = $value;
+				}
+			}
+			$pconfig['aliases']['item'] = $aliases;
+
+			/* Input validation for subjectAltNames */
+			foreach ($altnames as $idx => $altname) {
+				switch ($altname['type']) {
+					case "DNS":
+						if (!is_hostname($altname['value']))
+							array_push($input_errors, "DNS subjectAltName values must be valid hostnames or FQDNs");
+						break;
+					case "IP":
+						if (!is_ipaddr($altname['value']))
+							array_push($input_errors, "IP subjectAltName values must be valid IP Addresses");
+						break;
+					case "email":
+						if (empty($altname['value']))
+							array_push($input_errors, "You must provide an e-mail address for this type of subjectAltName");
+						if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value']))
+							array_push($input_errors, "The e-mail provided in a subjectAltName contains invalid characters.");
+						break;
+					case "URI":
+						/* Close enough? */
+						if (!is_URL($altname['value']))
+							$input_errors[] = "URI subjectAltName types must be a valid URI";
+						break;
+					default:
+						$input_errors[] = "Unrecognized subjectAltName type.";
+				}
+			}
+
 			/* Make sure we do not have invalid characters in the fields for the certificate */
 			for ($i = 0; $i < count($reqdfields); $i++) {
 				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
@@ -280,7 +327,13 @@ if ($_POST) {
 						'organizationName' => $pconfig['dn_organization'],
 						'emailAddress' => $pconfig['dn_email'],
 						'commonName' => $pconfig['dn_commonname']);
-	
+					if (count($altnames)) {
+						$altnames_tmp = "";
+						foreach ($altnames as $altname) {
+							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+						}
+						$dn['subjectAltName'] = implode(",", $altnames_tmp);
+					}
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
 						$pconfig['lifetime'], $dn, $pconfig['type'])){
 						while($ssl_err = openssl_error_string()){
@@ -298,7 +351,13 @@ if ($_POST) {
 						'organizationName' => $pconfig['csr_dn_organization'],
 						'emailAddress' => $pconfig['csr_dn_email'],
 						'commonName' => $pconfig['csr_dn_commonname']);
-
+					if (count($altnames)) {
+						$altnames_tmp = "";
+						foreach ($altnames as $altname) {
+							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+						}
+						$dn['subjectAltName'] = implode(",", $altnames_tmp);
+					}
 					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn)){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
@@ -461,6 +520,18 @@ function internalca_change() {
 <?php endif; ?>
 
 //-->
+</script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js">
+</script>
+<input type='hidden' name='altname_value_type' value='select' />
+<input type='hidden' name='altname_type_type' value='textbox' />
+<script type="text/javascript">
+	rowname[0] = "altname_type";
+	rowtype[0] = "textbox";
+	rowsize[0] = "10";
+	rowname[1] = "altname_value";
+	rowtype[1] = "textbox";
+	rowsize[1] = "30";
 </script>
 <?php
 	if ($input_errors)
@@ -679,6 +750,54 @@ function internalca_change() {
 											<em>ex:</em>
 											&nbsp;
 											<?=gettext("www.example.com");?>
+										</td>
+									</tr>
+									<tr>
+										<td align="right"><?=gettext("Alternative Names");?> : &nbsp;</td>
+										<td align="left">
+											<table id="altNametable">
+											<thead>
+											<tr>
+												<th><div id="onecolumn"><?=gettext("Type");?></div></th>
+												<th><div id="twocolumn"><?=gettext("Value");?></div></th>
+											</tr>
+											</thead>
+											<tbody>
+											<?php
+												$counter = 0;
+												if($pconfig['altnames']['item']):
+												foreach($pconfig['altnames']['item'] as $item):
+													$type = $item['type'];
+													$value = $item['value'];
+											?>
+											<tr>
+												<td>
+												<input autocomplete="off" name="altname_type<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_type<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($value);?>" />
+												</td>
+												<td>
+												<input autocomplete="off" name="altname_value<?php echo $counter; ?>" type="text" class="formfld unknown" id="altname_value<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($value);?>" />
+												</td>
+												<td>
+												<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+												</td>
+											</tr>
+											<?php
+													$counter++;
+												endforeach;
+												endif;
+											?>
+											</tbody>
+											</table>
+											<a onclick="javascript:addRowTo('altNametable', 'formfldalias'); return false;" href="#">
+												<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+											</a>
+											<script type="text/javascript">
+												field_counter_js = 3;
+												rows = 1;
+												totalrows = <?php echo $counter; ?>;
+												loaded = <?php echo $counter; ?>;
+											</script>
+											<br/>NOTE: Type must be one of DNS (FQDN or Hostname), IP (IP address), URI, or email.
 										</td>
 									</tr>
 								</table>

@@ -1,7 +1,7 @@
 
 <script src="/javascript/sorttable.js"></script>
 <style id="antiClickjack">body{display:none}</style> <script type="text/JavaScript">
-if (self === top) { var antiClickjack = document.getElementByID("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
+if (self === top) { var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
 } else { top.location = self.location;
 }</script>
 

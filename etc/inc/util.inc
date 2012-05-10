@@ -1740,4 +1740,37 @@ function get_staticroutes($returnsubnetsonly = false) {
 		return $allstaticroutes;
 	}
 }
+
+/****f* util/get_alias_list
+ * NAME
+ *   get_alias_list - Provide a list of aliases.
+ * INPUTS
+ *   $type          - Optional, can be a string or array specifying what type(s) of aliases you need.
+ * RESULT
+ *   Array containing list of aliases.
+ *   If $type is unspecified, all aliases are returned.
+ *   If $type is a string, all aliases of the type specified in $type are returned.
+ *   If $type is an array, all aliases of any type specified in any element of $type are returned.
+ */
+function get_alias_list($type = null) {
+	global $config;
+	$result = array();
+	if ($config['aliases']['alias'] <> "" && is_array($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($type === null) {
+				$result[] = $alias['name'];
+			}
+			else if (is_array($type)) {
+				if (in_array($alias['type'], $type)) {
+					$result[] = $alias['name'];
+				}
+			}
+			else if ($type === $alias['type']) {
+				$result[] = $alias['name'];
+			}
+		}
+	}		
+	return $result;
+}
+
 ?>

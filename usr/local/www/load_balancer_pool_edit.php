@@ -175,6 +175,8 @@ function clearcombo(){
 }
 </script>
 
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
@@ -208,11 +210,27 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
+				<input class="formfldalias" id="port" name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
 				<div id="monitorport_desc">
 					<?=gettext("This is the port your servers are listening on."); ?><br />
 					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 				</div>
+				<?php
+				$aliases = array();
+				if (is_array($config['aliases']['alias'])) {
+					foreach ($config['aliases']['alias'] as $alias) {
+						if ($alias['type'] === "port") {
+							$aliases[] = $alias['name'];
+						}
+					}
+				}
+				?>
+				<script type="text/javascript">
+				//<![CDATA[
+					var addressarray = <?= json_encode($aliases) ?>;
+					var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
+				//]]>
+				</script>
 			</td>
 		</tr>
 		<tr align="left">

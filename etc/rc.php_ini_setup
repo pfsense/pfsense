@@ -124,6 +124,8 @@ PHPMODULES="$PHPMODULES zmq"
 PHPMODULES="$PHPMODULES ssh2"
 # pfSense extensions
 PHPMODULES="$PHPMODULES pfSense"
+# json
+PHPMODULES="$PHPMODULES json"
 
 PHP_ZEND_MODULES="ioncube_loader"
 PHP_ZEND_MODULES_TS="ioncube_loader_ts"
@@ -141,7 +143,6 @@ PHP_ZEND_MODULES_TS="ioncube_loader_ts"
 #	Reflection \
 #	mysql \
 #	bz2	\
-#	json \
 
 # Clear the .ini file to make sure we are clean
 if [ -f /usr/local/etc/php.ini ]; then

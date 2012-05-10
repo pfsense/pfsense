@@ -693,6 +693,7 @@ EOD;
 </form>
 
 <script type="text/javascript">
+//<![CDATA[
 	field_counter_js = 3;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
@@ -700,32 +701,17 @@ EOD;
 	typesel_change();
 	update_box_type();
 
-<?php
-        $isfirst = 0;
-        $aliases = "";
-        $addrisfirst = 0;
-        $aliasesaddr = "";
-        if(isset($config['aliases']['alias']) && is_array($config['aliases']['alias']))
-                foreach($config['aliases']['alias'] as $alias_name) {
-			if ($pconfig['name'] <> "" && $pconfig['name'] == $alias_name['name'])
-				continue;
-			if($addrisfirst == 1) $aliasesaddr .= ",";
-			$aliasesaddr .= "'" . $alias_name['name'] . "'";
-			$addrisfirst = 1;
-                }
-?>
+	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list("port"))) ?>;
 
-        var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	function createAutoSuggest() {
+		<?php  
+		for ($jv = 0; $jv < $counter; $jv++)
+			echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
+		?>
+	}
 
-function createAutoSuggest() {
-<?php  
-	for ($jv = 0; $jv < $counter; $jv++)
-		echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
-?>
-}
-
-setTimeout("createAutoSuggest();", 500);
-
+	setTimeout("createAutoSuggest();", 500);
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

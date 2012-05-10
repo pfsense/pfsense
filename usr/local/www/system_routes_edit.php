@@ -384,26 +384,7 @@ include("head.inc");
 							report_failure();
 						}
 					}
-					<?php
-					$isfirst = 0;
-					$aliases = "";
-					$addrisfirst = 0;
-					$aliasesaddr = "";
-					if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
-						foreach($config['aliases']['alias'] as $alias_name) {
-							switch ($alias_name['type']) {
-							case "host":
-							case "network":
-								if($addrisfirst == 1) $aliasesaddr .= ",";
-								$aliasesaddr .= "'" . $alias_name['name'] . "'";
-								$addrisfirst = 1;
-								break;
-							default:
-								break;
-							}
-						}
-					?>
-					var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+					var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
 					var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
 
 				</script>

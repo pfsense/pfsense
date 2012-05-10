@@ -655,49 +655,22 @@ any)");?></td>
               </table>
 </form>
 <script language="JavaScript">
-<!--
-sourcesel_change();
-typesel_change();
-staticportchange();
-nonat_change();
-proto_change();
-poolopts_change();
+//<![CDATA[
+	sourcesel_change();
+	typesel_change();
+	staticportchange();
+	nonat_change();
+	proto_change();
+	poolopts_change();
 
-<?php
-	$isfirst = 0;
-	$aliases = "";
-	$addrisfirst = 0;
-	$aliasesaddr = "";
-	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
-		foreach($config['aliases']['alias'] as $alias_name) {
-			switch ($alias_name['type']) {
-			case "port":
-				if($isfirst == 1) $portaliases .= ",";
-				$portaliases .= "'" . $alias_name['name'] . "'";
-				$isfirst = 1;
-				break;
-			case "host":
-			case "network":
-			case "openvpn":
-			case "urltable":
-				if($addrisfirst == 1) $aliasesaddr .= ",";
-				$aliasesaddr .= "'" . $alias_name['name'] . "'";
-				$addrisfirst = 1;
-				break;
-			default:
-				break;
-			}
-		}
-?>
-
-	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
-	var customarray=new Array(<?php echo $portaliases; ?>);
+	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
+	var customarray  = <?= json_encode(get_alias_list("port")) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("sourceport"), new StateSuggestions(customarray));
 	var oTextbox3 = new AutoSuggestControl(document.getElementById("destination"), new StateSuggestions(addressarray));
 	var oTextbox4 = new AutoSuggestControl(document.getElementById("dstport"), new StateSuggestions(customarray));
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

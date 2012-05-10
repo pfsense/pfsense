@@ -1773,4 +1773,17 @@ function get_alias_list($type = null) {
 	return $result;
 }
 
+/* returns an array consisting of every element of $haystack that is not equal to $needle. */
+function array_exclude($needle, $haystack) {
+	$result = array();
+	if (is_array($haystack)) {
+		foreach ($haystack as $thing) {
+			if ($needle !== $thing) {
+				$result[] = $thing;
+			}
+		}
+	}
+	return $result;
+}
+
 ?>

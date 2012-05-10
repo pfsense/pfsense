@@ -211,7 +211,7 @@ function clearcombo(){
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
 				<div id="monitorport_desc">
 					<?=gettext("This is the port your servers are listening on."); ?><br />
-					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Interfaces here."); ?>
+					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 				</div>
 			</td>
 		</tr>

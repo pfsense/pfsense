@@ -205,7 +205,7 @@ jQuery(document).ready( function() {
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
 					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
-					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Interfaces here."); ?>
+					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
                   </td>
 			</tr>
                 <tr align="left">

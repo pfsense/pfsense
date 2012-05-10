@@ -584,7 +584,7 @@ EOD;
       <?php endif; ?>
       <br />
       <span class="vexpl">
-        <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?>
+        <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and _\"."); ?>
       </span>
     </td>
   </tr>

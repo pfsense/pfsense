@@ -174,6 +174,10 @@ jQuery(document).ready( function() {
 });
 
 </script>
+
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
@@ -203,9 +207,15 @@ jQuery(document).ready( function() {
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
+                    <input class="formfldalias" name="port" id="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
 					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
+					<script type="text/javascript">
+					//<![CDATA[
+						var addressarray = <?= json_encode(get_alias_list("port")) ?>;
+						var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
+					//]]>
+					</script>
                   </td>
 			</tr>
                 <tr align="left">

@@ -215,19 +215,9 @@ function clearcombo(){
 					<?=gettext("This is the port your servers are listening on."); ?><br />
 					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 				</div>
-				<?php
-				$aliases = array();
-				if (is_array($config['aliases']['alias'])) {
-					foreach ($config['aliases']['alias'] as $alias) {
-						if ($alias['type'] === "port") {
-							$aliases[] = $alias['name'];
-						}
-					}
-				}
-				?>
 				<script type="text/javascript">
 				//<![CDATA[
-					var addressarray = <?= json_encode($aliases) ?>;
+					var addressarray = <?= json_encode(get_alias_list("port")) ?>;
 					var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
 				//]]>
 				</script>

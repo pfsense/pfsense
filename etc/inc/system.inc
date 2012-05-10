@@ -763,7 +763,16 @@ function system_webgui_start() {
 	}
 
 	/* generate lighttpd configuration */
-	$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
+	/* max_procs for system GUI is default 1 on small memory systems,  default 2 on large memory systems */
+	$memory = get_memory();
+	$avail = $memory[0];
+
+        if($avail < 256) {
+		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 1;
+        } else {
+		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
+	}
+
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
 		"cert.pem", "ca.pem", $max_procs);

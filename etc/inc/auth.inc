@@ -1410,4 +1410,6 @@ function session_auth() {
 	return true;
 }
 
+Header("X-Frame-Options: DENY"); 
+
 ?>

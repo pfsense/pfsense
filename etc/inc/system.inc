@@ -788,10 +788,9 @@ function system_webgui_start() {
 	}
 
 	/* generate lighttpd configuration */
-	$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
-		"cert.pem", "ca.pem", $max_procs);
+		"cert.pem", "ca.pem");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -821,7 +820,6 @@ function system_generate_lighty_config($filename,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
 	$ca_location = "ca.pem",
-	$max_procs = 1,
 	$max_requests = "2",
 	$fast_cgi_enable = true,
 	$captive_portal = false) {
@@ -866,27 +864,33 @@ function system_generate_lighty_config($filename,
 	$memory = get_memory();
 	$avail = $memory[0];
 
+	// Determine web GUI process settings and take into account low memory systems
 	if($avail > 0 and $avail < 65) {
 		$fast_cgi_enable = false;
 	}
+	if($avail > 64 and $avail < 256) {
+		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 1;
+	}
+	if($avail > 255 ) {
+		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
+	}
 
-	// Ramp up captive portal max procs
-	//  Work relative to the default of 2, for values that would be >2.
+	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM 
 	if($captive_portal == true)  {
-		if($avail > 65 and $avail < 98) {
-			$max_procs = 1;
+		if($avail > 107 and $avail < 256) {
+			$max_procs += 1; // 2 worker processes
 		}
-		if($avail > 97 and $avail < 128) {
-			$max_procs = 2;
+		if($avail > 255 and $avail < 320) {
+			$max_procs += 1; // 3 worker processes
 		}
-		if($avail > 127 and $avail < 256) {
-			$max_procs += 1;
+		if($avail > 319 and $avail < 384) {
+			$max_procs += 2; // 4 worker processes
 		}
-		if($avail > 255 and $avail < 384) {
-			$max_procs += 2;
+		if($avail > 383 and $avail < 448) {
+			$max_procs += 3; // 5 worker processes
 		}
-		if($avail > 383) {
-			$max_procs += 3;
+		if($avail > 447) {
+			$max_procs += 4; // 6 worker processes
 		}
 	}
 

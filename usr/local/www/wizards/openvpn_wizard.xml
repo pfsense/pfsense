@@ -906,7 +906,7 @@
 		</field>
 		<field>
 			<type>text</type>
-			<description>Firewall Rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automtically added here, or configured manually after completing the wizard.</description>
+			<description>Firewall Rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
 		</field>
 		<field>
 			<type>listtopic</type>

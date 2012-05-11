@@ -126,7 +126,7 @@ $sad = ipsec_dump_sad();
 						<td class="listr"><?=htmlspecialchars($ph2ent['descr']);?></td>
 						<td class="listr">
 							<center>
-								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif"> <?=$status?>
+								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif" title="<?=$status?>">
 							</center>
 						</td>
 						<td class="list">

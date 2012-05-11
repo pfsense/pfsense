@@ -143,38 +143,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript" type="text/javascript">
-function updateRelay(m) {
-  switch (m) {
-    case "relay": {
-      jQuery('#relay_protocol').removeProp('disabled');
-      jQuery('#relay').show();
-      break;
-    }
-    case "redirect": {
-      jQuery('#relay_protocol').prop('disabled','');
-      jQuery('#relay').hide();
-      break;
-    }
-  }
-}
-
-jQuery(document).ready( function() {
-  // Setup some observers
-  jQuery('#redirect_mode').bind('click', function(){
-      updateRelay('redirect');
-  });
-  jQuery('#relay_mode').bind('click', function(){
-      updateRelay('relay');
-  });
-
-  // Go ahead and disable the relay stuff, we'll trigger
-  updateRelay("<?=htmlspecialchars($pconfig['mode']);?>");
-
-});
-
-</script>
-
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 

@@ -68,13 +68,13 @@ if ($_POST) {
 	/* input validation */
   switch($pconfig['mode']) {
     case "redirect": {
-    	$reqdfields = explode(" ", "ipaddr name port mode");
-    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Port"),gettext("Mode"));
+    	$reqdfields = explode(" ", "ipaddr name mode");
+    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Mode"));
     	break;
     }
     case "relay": {
-    	$reqdfields = explode(" ", "ipaddr name port mode relay_protocol");
-    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Port"),gettext("Relay Protocol"));
+    	$reqdfields = explode(" ", "ipaddr name mode relay_protocol");
+    	$reqdfieldsn = array(gettext("IP Address"),gettext("Name"),gettext("Relay Protocol"));
       break;
     }
   }
@@ -88,8 +88,8 @@ if ($_POST) {
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
 
-	if (!is_portoralias($_POST['port']))
-		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
+	if ($_POST['port'] != "" && !is_portoralias($_POST['port']))
+		$input_errors[] = gettext("The port must be an integer between 1 and 65535, a port alias, or left blank.");
 
 	if (!is_ipaddroralias($_POST['ipaddr']) && !is_subnetv4($_POST['ipaddr']))
 		$input_errors[] = sprintf(gettext("%s is not a valid IP address, IPv4 subnet, or alias."), $_POST['ipaddr']);
@@ -212,10 +212,11 @@ jQuery(document).ready( function() {
                   </td>
 			</tr>
                 <tr align="left">
-		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Port"); ?></td>
+		  			<td width="22%" valign="top" class="vncell"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input class="formfldalias" name="port" id="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
 					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
+					<br><?=gettext("If left blank, listening ports from the pool will be used."); ?>
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[

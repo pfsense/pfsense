@@ -267,13 +267,6 @@ function relayd_configure($kill_first=false) {
 		for ($i = 0; isset($vs_a[$i]); $i++) {
 			
 			$append_port_to_name = false;
-			if (is_alias($vs_a[$i]['port'])) {
-				$src_port_array = filter_expand_alias_array($vs_a[$i]['port']);
-				$append_port_to_name = true;
-			}
-			else {
-				$src_port_array = array($vs_a[$i]['port']);
-			}
 			if (is_alias($pools[$vs_a[$i]['pool']]['port'])) {
 				$dest_port_array = filter_expand_alias_array($pools[$vs_a[$i]['pool']]['port']);
 				$append_port_to_name = true;
@@ -281,11 +274,22 @@ function relayd_configure($kill_first=false) {
 			else {
 				$dest_port_array = array($pools[$vs_a[$i]['pool']]['port']);
 			}
+			if (is_alias($vs_a[$i]['port'])) {
+				$src_port_array = filter_expand_alias_array($vs_a[$i]['port']);
+				$append_port_to_name = true;
+			}
+			else if ($vs_a[$i]['port']) {
+				$src_port_array = array($vs_a[$i]['port']);
+			}
+			else {
+				$src_port_array = $dest_port_array;
+			}
 
 			$append_ip_to_name = false;
 			if (is_alias($vs_a[$i]['ipaddr'])) {
-				$ip_list = [];
+				$ip_list = array();
 				foreach (filter_expand_alias_array($vs_a[$i]['ipaddr']) as $item) {
+					log_error("item is $item");
 					if (is_subnetv4($item)) {
 						$ip_list = array_merge($ip_list, subnetv4_expand($item));
 					}

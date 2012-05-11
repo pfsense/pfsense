@@ -283,7 +283,19 @@ function relayd_configure($kill_first=false) {
 			}
 
 			$append_ip_to_name = false;
-			if (is_subnetv4($vs_a[$i]['ipaddr'])) {
+			if (is_alias($vs_a[$i]['ipaddr'])) {
+				$ip_list = [];
+				foreach (filter_expand_alias_array($vs_a[$i]['ipaddr']) as $item) {
+					if (is_subnetv4($item)) {
+						$ip_list = array_merge($ip_list, subnetv4_expand($item));
+					}
+					else {
+						$ip_list[] = $item;
+					}
+				}
+				$append_ip_to_name = true;
+			}
+			else if (is_subnetv4($vs_a[$i]['ipaddr'])) {
 				$ip_list = subnetv4_expand($vs_a[$i]['ipaddr']);
 				$append_ip_to_name = true;
 			}

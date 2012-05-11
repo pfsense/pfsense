@@ -91,8 +91,8 @@ if ($_POST) {
 	if (!is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
 
-	if (!is_ipaddr($_POST['ipaddr']) && !is_subnetv4($_POST['ipaddr']))
-		$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet."), $_POST['ipaddr']);
+	if (!is_ipaddroralias($_POST['ipaddr']) && !is_subnetv4($_POST['ipaddr']))
+		$input_errors[] = sprintf(gettext("%s is not a valid IP address, IPv4 subnet, or alias."), $_POST['ipaddr']);
 	else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64)
 		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
 
@@ -200,8 +200,15 @@ jQuery(document).ready( function() {
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="39" maxlength="39">
+                    <input class="formfldalias" id="ipaddr" name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="39" maxlength="39">
 					<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
+					<br><?=gettext("You may also specify a host alias listed in Firewall -&gt; Aliases here."); ?>
+					<script type="text/javascript">
+					//<![CDATA[
+						var host_aliases = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
+						var oTextbox1 = new AutoSuggestControl(document.getElementById("ipaddr"), new StateSuggestions(host_aliases));
+					//]]>
+					</script>
                   </td>
 			</tr>
                 <tr align="left">
@@ -212,8 +219,8 @@ jQuery(document).ready( function() {
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[
-						var addressarray = <?= json_encode(get_alias_list("port")) ?>;
-						var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
+						var port_aliases = <?= json_encode(get_alias_list("port")) ?>;
+						var oTextbox2 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(port_aliases));
 					//]]>
 					</script>
                   </td>

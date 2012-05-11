@@ -67,7 +67,7 @@ $pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['
 
 if ($_GET['act'] == "del" && !empty($cpzone)) {
 	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
-	if ($allowedhostnames[$_GET['id']]) {
+	if ($a_allowedhostnames[$_GET['id']]) {
 		$ipent = $a_allowedhostnames[$_GET['id']];
 		
 		if (isset($a_cp[$cpzone]['enable'])) {

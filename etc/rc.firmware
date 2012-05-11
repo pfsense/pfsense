@@ -156,7 +156,7 @@ pfSenseNanoBSDupgrade)
 
 	echo "NanoBSD Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade in progress..." | wall
-	/etc/rc.firmware_notify -e -g -m "NanoBSD Firmware upgrade in progress..."
+	/etc/rc.notify_message -e -g -m "NanoBSD Firmware upgrade in progress..."
 	
 	# backup config
 	/bin/mkdir -p /tmp/configbak
@@ -370,7 +370,7 @@ pfSenseNanoBSDupgrade)
 
 	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds." | wall
-	/etc/rc.firmware_notify -e -g -m "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."
+	/etc/rc.notify_message -e -g -m "NanoBSD Firmware upgrade is complete.  Rebooting in 10 seconds."
 
 	sleep 10
 
@@ -422,7 +422,7 @@ pfSenseupgrade)
 
 	echo "Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
 	echo "Firmware upgrade in progress..."  | wall
-	/etc/rc.firmware_notify -e -g -m "Firmware upgrade in progress..."
+	/etc/rc.notify_message -e -g -m "Firmware upgrade in progress..."
 	
 	# backup config
 	/bin/mkdir -p /tmp/configbak
@@ -489,7 +489,7 @@ pfSenseupgrade)
 
 	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  >> /conf/upgrade_log.txt 2>&1
 	echo "Firmware upgrade is complete. Rebooting in 10 seconds."  | wall
-	/etc/rc.firmware_notify -e -g -m "Firmware upgrade is complete. Rebooting in 10 seconds."
+	/etc/rc.notify_message -e -g -m "Firmware upgrade is complete. Rebooting in 10 seconds."
 
 	# Sleep and allow disks to catch up
 	sleep 10

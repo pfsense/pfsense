@@ -144,11 +144,11 @@ $priv_list['page-status-systemlogs-ipsecvpn']['descr'] = gettext("Allow access t
 $priv_list['page-status-systemlogs-ipsecvpn']['match'] = array();
 $priv_list['page-status-systemlogs-ipsecvpn']['match'][] = "diag_logs_ipsec.php*";
 
-$priv_list['page-status-systemlogs-openntpd'] = array();
-$priv_list['page-status-systemlogs-openntpd']['name'] = gettext("WebCfg - Status: System logs: OpenNTPD page");
-$priv_list['page-status-systemlogs-openntpd']['descr'] = gettext("Allow access to the 'Status: System logs: OpenNTPD' page.");
-$priv_list['page-status-systemlogs-openntpd']['match'] = array();
-$priv_list['page-status-systemlogs-openntpd']['match'][] = "diag_logs_ntpd.php*";
+$priv_list['page-status-systemlogs-ntpd'] = array();
+$priv_list['page-status-systemlogs-ntpd']['name'] = gettext("WebCfg - Status: System logs: NTP page");
+$priv_list['page-status-systemlogs-ntpd']['descr'] = gettext("Allow access to the 'Status: System logs: NTP' page.");
+$priv_list['page-status-systemlogs-ntpd']['match'] = array();
+$priv_list['page-status-systemlogs-ntpd']['match'][] = "diag_logs_ntpd.php*";
 
 $priv_list['page-status-systemlogs-openvpn'] = array();
 $priv_list['page-status-systemlogs-openvpn']['name'] = gettext("WebCfg - Status: System logs: OpenVPN page");

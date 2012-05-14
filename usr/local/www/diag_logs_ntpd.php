@@ -34,7 +34,7 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-openntpd
+##|*IDENT=page-status-systemlogs-ntpd
 ##|*NAME=Status: System logs: NTP page
 ##|*DESCR=Allow access to the 'Status: System logs: NTP' page.
 ##|*MATCH=diag_logs_ntpd.php*

@@ -35,8 +35,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-openntpd
-##|*NAME=Status: System logs: OpenNTPD page
-##|*DESCR=Allow access to the 'Status: System logs: OpenNTPD' page.
+##|*NAME=Status: System logs: NTP page
+##|*DESCR=Allow access to the 'Status: System logs: NTP' page.
 ##|*MATCH=diag_logs_ntpd.php*
 ##|-PRIV
 
@@ -51,7 +51,7 @@ if (!$nentries)
 if ($_POST['clear']) 
 	clear_log_file($ntpd_logfile);
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("OpenNTPD"));
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("NTP"));
 include("head.inc");
 
 ?>
@@ -71,7 +71,7 @@ include("head.inc");
 	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
 	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
 	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("OpenNTPD"), true, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("NTP"), true, "diag_logs_ntpd.php");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
@@ -82,7 +82,7 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Last %s OpenNTPD log entries"), $nentries);?></td>
+			  <?php printf(gettext("Last %s NTP log entries"), $nentries);?></td>
 		  </tr>
 		  <?php dump_clog($ntpd_logfile, $nentries); ?>
 		<tr><td><br>

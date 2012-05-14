@@ -135,8 +135,6 @@ if(count($config['interfaces']) > 1) {
 	*/
 	$services_menu[] = array("UPnP &amp; NAT-PMP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
 }
-$services_menu[] = array(gettext("NTP"), "/pkg_edit.php?xml=openntpd.xml&id=0");
-$services_menu[] = array("Wake on LAN", "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
 
 // VPN
@@ -159,6 +157,7 @@ $status_menu[] = array("Filter Reload", "/status_filter_reload.php");
 $status_menu[] = array("Interfaces", "/status_interfaces.php");
 $status_menu[] = array("IPsec", "/diag_ipsec.php");
 $status_menu[] = array("Load Balancer", "/status_lb_pool.php");
+$status_menu[] = array("NTP", "/status_ntpd.php");
 $status_menu[] = array("OpenVPN", "/status_openvpn.php");
 if ($g['platform'] == "pfSense")
 	$status_menu[] = array("Package Logs", "/diag_pkglogs.php");

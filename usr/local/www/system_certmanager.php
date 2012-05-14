@@ -234,10 +234,10 @@ if ($_POST) {
 			$reqdfieldsn = array(gettext("Existing Certificate Choice"));
 		}
 
+		$altnames = array();
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		if ($pconfig['method'] != "import")
+		if ($pconfig['method'] != "import") {
 			/* subjectAltNames */
-			$altnames = array();
 			foreach ($_POST as $key => $value) {
 				$entry = '';
 				if (!substr_compare('altname_type', $key, 0, 12)) {
@@ -292,6 +292,7 @@ if ($_POST) {
 				}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
+		}
 
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {

@@ -1,9 +1,18 @@
 #!/bin/sh
 
-# let the configuration system know that the ip has changed.
-/bin/echo $4 > /tmp/$1_router
-/bin/echo $3 > /tmp/$1_ip
-/usr/bin/touch /tmp/$1up
+if [ "$2" == "inet" ]; then
+	# let the configuration system know that the ipv4 has changed.
+	/bin/echo $4 > /tmp/$1_router
+	/bin/echo $3 > /tmp/$1_ip
+	/usr/bin/touch /tmp/$1up
+fi
+
+if [ "$2" == "inet6" ]; then
+	# let the configuration system know that the ipv6 has changed.
+	/bin/echo $4 |cut -d% -f1 > /tmp/$1_routerv6
+	/bin/echo $3 |cut -d% -f1 > /tmp/$1_ipv6
+	/usr/bin/touch /tmp/$1upv6
+fi
 
 ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
 if [ $ALLOWOVERRIDE -gt 0 ]; then

@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/sbin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
@@ -1251,41 +1251,20 @@ function system_timezone_configure() {
 
 function system_ntp_configure() {
 	global $config, $g;
+	$driftfile = "/var/db/ntpd.drift";
 
 	if ($g['platform'] == 'jail')
 		return;
 
 	$ntpcfg = "# \n";
-	$ntpcfg .= "# pfSense OpenNTPD configuration file \n";
+	$ntpcfg .= "# pfSense ntp configuration file \n";
 	$ntpcfg .= "# \n\n";
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts)
-		$ntpcfg .= "servers {$ts}\n";
+		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
 
-	/* Setup listener(s) if the user has configured one */
-        if ($config['installedpackages']['openntpd']) {
-    		/* server config is in coregui1 */
-		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
-		if ($xmlsettings['enable'] == 'on') {
-			$ifaces = explode(',', $xmlsettings['interface']);
-			$ips = array();
-			foreach ($ifaces as $if) {
-				if (is_ipaddr($if)) {
-					$ips[] = $if;
-				} else {
-					$if = get_real_interface($if);
-					if (does_interface_exist($if))
-						$ips[] = find_interface_ip($if);
-				}
-			}
-			foreach ($ips as $ip) {
-				if (is_ipaddr($ip))
-					$ntpcfg .= "listen on $ip\n";
-			}
-		}
-	}
-	$ntpcfg .= "\n";
+	$ntpcfg .= "driftfile {$driftfile}\n";
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
@@ -1298,7 +1277,7 @@ function system_ntp_configure() {
 	/* slurp! */
 	fclose($fd);
 
-	/* if openntpd is running, kill it */
+	/* if ntpd is running, kill it */
 	while(is_process_running("ntpd")) {
 		killbyname("ntpd");
 	}
@@ -1308,10 +1287,10 @@ function system_ntp_configure() {
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	exec("/usr/local/sbin/ntpd -v -s -f {$g['varetc_path']}/ntpd.conf");
+	exec("/usr/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
 	
 	// Note that we are starting up
-	log_error("OpenNTPD is starting up.");
+	log_error("NTPD is starting up.");
 
 }
 

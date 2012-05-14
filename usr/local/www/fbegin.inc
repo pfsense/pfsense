@@ -135,7 +135,7 @@ if(count($config['interfaces']) > 1) {
 	*/
 	$services_menu[] = array("UPnP &amp; NAT-PMP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
 }
-$services_menu[] = array("OpenNTPD", "/pkg_edit.php?xml=openntpd.xml&id=0");
+$services_menu[] = array(gettext("NTP"), "/pkg_edit.php?xml=openntpd.xml&id=0");
 $services_menu[] = array("Wake on LAN", "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
 

@@ -46,7 +46,34 @@ exec("/usr/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
 $ntpq_servers = array();
 foreach ($ntpq_output as $line) {
 	$server = array();
-	$server['tallycode'] = substr($line, 0, 1);
+
+	switch (substr($line, 0, 1)) {
+		case " ":
+			$server['status'] = "Unreach/Pending";
+			break;
+		case "*":
+			$server['status'] = "Active Peer";
+			break;
+		case "+":
+			$server['status'] = "Candidate";
+			break;
+		case "o":
+			$server['status'] = "PPS Peer";
+			break;
+		case "#":
+			$server['status'] = "Selected";
+			break;
+		case ".":
+			$server['status'] = "Excess Peer";
+			break;
+		case "x":
+			$server['status'] = "False Ticker";
+			break;
+		case "-":
+			$server['status'] = "Outlier";
+			break;
+	}
+
 	$line = substr($line, 1);
 	$peerinfo = preg_split("/[\s\t]+/", $line);
 
@@ -77,7 +104,7 @@ include("head.inc");
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
-		<th class="listhdrr"><?=gettext("Tally code"); ?></td>
+		<th class="listhdrr"><?=gettext("Status"); ?></td>
 		<th class="listhdrr"><?=gettext("Server"); ?></td>
 		<th class="listhdrr"><?=gettext("Ref ID"); ?></td>
 		<th class="listhdrr"><?=gettext("Stratum"); ?></td>
@@ -98,8 +125,8 @@ include("head.inc");
 	<?php else: ?>
 	<?php $i = 0; foreach ($ntpq_servers as $server): ?>
 	<tr>
-	<td class="listlr">
-		<?=$server['tallycode'];?>
+	<td class="listlr" nowrap>
+		<?=$server['status'];?>
 	</td>
 	<td class="listlr">
 		<?=$server['server'];?>
@@ -133,19 +160,6 @@ include("head.inc");
 	</td>
 	</tr>
 <?php $i++; endforeach; endif; ?>
-	<tr><td colspan="11">
-	<br/>Tally code meanings:<br/>
-	<ul>
-		<li>(blank) = Peer in unreachable/unusable, or undetermined</li>
-		<li>* = System Peer (active)</li>
-		<li>+ = Candidate</li>
-		<li>o = Peer with PPS</li>
-		<li># = Survivor, but not among first six</li>
-		<li>. = Excess peer not needed as there are too many</li>
-		<li>x = Discarded as false ticker</li>
-		<li>- = Discarded as an Outlier</li>
-	</ul>
-	</td></tr>
 	</tbody>
 	</table>
 </div></td></tr>

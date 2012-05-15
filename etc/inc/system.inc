@@ -1140,8 +1140,8 @@ function system_ntp_configure() {
 	if(!is_dir("/var/empty"))
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
-	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	exec("/usr/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
+	/* start ntpd, allow a large initial skew, and use /var/etc/ntpd.conf - run through tcsh to work around a PHP shell exec bug. */
+	exec("echo /usr/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf | tcsh");
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");

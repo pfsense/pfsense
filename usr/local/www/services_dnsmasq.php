@@ -277,6 +277,7 @@ function show_advanced_dns() {
 				</tr>
 			</table>
 	</tr>
+	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
 	<?php foreach ($hostent['aliases']['item'] as $alias): ?>
 	<tr>
 		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
@@ -296,6 +297,7 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<?php endforeach; ?>
+	<?php endif; ?>
 	<?php $i++; endforeach; ?>
 	</tbody>
 	<tfoot>

@@ -1141,7 +1141,10 @@ function system_ntp_configure() {
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
+	$oldset = array();
+	pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	exec("/usr/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
+	pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");

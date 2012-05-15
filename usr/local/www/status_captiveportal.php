@@ -80,7 +80,7 @@ function clientcmp($a, $b) {
 if (!empty($cpzone)) {
 	$cpdb = array();
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db")) {
-		$captiveportallck = lock('captiveportaldb{$cpzone}');
+		$captiveportallck = lock("captiveportaldb{$cpzone}");
 		$cpcontents = file("/var/db/captiveportal_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		unlock($captiveportallck);	
 	} else

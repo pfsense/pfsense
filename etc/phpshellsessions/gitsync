@@ -13,7 +13,8 @@ require_once("pfsense-utils.inc");
 	
 conf_mount_rw();
 
-$GIT_REPO="git://github.com/bsdperimeter/pfsense.git";
+$GIT_PKG = "git"; // Either "git" or the full package URL
+$GIT_REPO = "git://github.com/bsdperimeter/pfsense.git";
 $DEFAULT_BRANCH = "master";
 $CODIR =  "/root/pfsense/";
 $GITSYNC_MERGE = "/root/.gitsync_merge";
@@ -45,7 +46,7 @@ if(!file_exists("/usr/local/bin/git")) {
 			mkdir($pkgstagingdir);
 		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
 	}
-	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r git");
+	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r {$GIT_PKG}");
 }
 
 # Remove mainline if exists (older)

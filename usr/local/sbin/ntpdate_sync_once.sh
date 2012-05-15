@@ -16,4 +16,4 @@ while [ "$NOTSYNCED" = "true" ]; do
 	sleep 5
 done
 
-/usr/local/sbin/ntpd -s -f /var/etc/ntpd.conf
+/usr/local/sbin/ntpd -g -c /var/etc/ntpd.conf

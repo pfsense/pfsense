@@ -104,17 +104,17 @@ include("head.inc");
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
-		<th class="listhdrr"><?=gettext("Status"); ?></td>
-		<th class="listhdrr"><?=gettext("Server"); ?></td>
-		<th class="listhdrr"><?=gettext("Ref ID"); ?></td>
-		<th class="listhdrr"><?=gettext("Stratum"); ?></td>
-		<th class="listhdrr"><?=gettext("Type"); ?></td>
-		<th class="listhdrr"><?=gettext("When"); ?></td>
-		<th class="listhdrr"><?=gettext("Poll"); ?></td>
-		<th class="listhdrr"><?=gettext("Reach"); ?></td>
-		<th class="listhdrr"><?=gettext("Delay"); ?></td>
-		<th class="listhdrr"><?=gettext("Offset"); ?></td>
-		<th class="listhdr"><?=gettext("Jitter"); ?></td>
+		<th class="listhdrr"><?=gettext("Status"); ?></th>
+		<th class="listhdrr"><?=gettext("Server"); ?></th>
+		<th class="listhdrr"><?=gettext("Ref ID"); ?></th>
+		<th class="listhdrr"><?=gettext("Stratum"); ?></th>
+		<th class="listhdrr"><?=gettext("Type"); ?></th>
+		<th class="listhdrr"><?=gettext("When"); ?></th>
+		<th class="listhdrr"><?=gettext("Poll"); ?></th>
+		<th class="listhdrr"><?=gettext("Reach"); ?></th>
+		<th class="listhdrr"><?=gettext("Delay"); ?></th>
+		<th class="listhdrr"><?=gettext("Offset"); ?></th>
+		<th class="listhdr"><?=gettext("Jitter"); ?></th>
 	</tr>
 	</thead>
 	<tbody>

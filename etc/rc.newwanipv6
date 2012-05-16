@@ -62,7 +62,8 @@ function restart_packages() {
 	global $oldip, $curwanipv6, $g;
 
 	/* restart packages */
-	system_ntp_configure();
+	system_ntp_configure(false);
+	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
 	mwexec_bg("/etc/rc.start_packages");
 }

@@ -1249,7 +1249,7 @@ function system_timezone_configure() {
 		echo gettext("done.") . "\n";
 }
 
-function system_ntp_configure() {
+function system_ntp_configure($start_ntpd=true) {
 	global $config, $g;
 	$driftfile = "/var/db/ntpd.drift";
 
@@ -1277,6 +1277,10 @@ function system_ntp_configure() {
 	/* slurp! */
 	fclose($fd);
 
+	/* At bootup we just want to write out the config. */
+	if (!$start_ntpd)
+		return;
+
 	/* if ntpd is running, kill it */
 	while(is_process_running("ntpd")) {
 		killbyname("ntpd");
@@ -1294,7 +1298,7 @@ function system_ntp_configure() {
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
-
+	return;
 }
 
 function sync_system_time() {

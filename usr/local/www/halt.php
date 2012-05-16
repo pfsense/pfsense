@@ -46,14 +46,9 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if ($_POST) {
-	if ($_POST['Submit'] != " No ") {
-		system_halt();
-		$rebootmsg = gettext("The system is halting now. This may take one minute.");
-	} else {
-		header("Location: index.php");
-		exit;
-	}
+if ($_POST['Submit'] == " " . gettext("No") . " ") {
+	header("Location: index.php");
+	exit;
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
@@ -62,14 +57,19 @@ include('head.inc');
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
-      <form action="halt.php" method="post">
-        <p><strong><?=gettext("Are you sure you want to halt the system?");?></strong></p>
-        <p>
-          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes"); ?> ">
-          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No"); ?> ">
-        </p>
-      </form>
+<?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
+	print_info_box(gettext("The system is halting now. This may take one minute.")); ?>
+<pre>
+<?php 	system_halt(); ?>
+</pre>
+<?php else: ?>
+<form action="halt.php" method="post">
+	<p><strong><?=gettext("Are you sure you want to halt the system?");?></strong></p>
+	<p>
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes"); ?> ">
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No"); ?> ">
+	</p>
+</form>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>

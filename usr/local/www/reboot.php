@@ -40,43 +40,32 @@ require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
 
-if ($_POST) {
-	if ($_POST['Submit'] == gettext(" Yes ")) {
-		$rebootmsg = gettext("The system is rebooting now. This may take a few minutes, depending on your hardware.");
-	} else {
-		Header("Location: /");
-	}
+if ($_POST['Submit'] == " " . gettext("No") . " ") {
+	header("Location: index.php");
+	exit;
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
-      <form action="reboot.php" method="post">
-        <p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
-        <p> 
-	  <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
-	  <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
-        </p>
-      </form>
+<?php if ($_POST['Submit'] == " " . gettext("Yes") . " "): ?>
+<meta http-equiv=\"refresh\" content=\"70;url=/\">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php	print_info_box(gettext("The system is rebooting now. This may take one minute.")); ?>
+<pre>
+<?php 	system_reboot(); ?>
+</pre>
+<?php else: ?>
+<form action="reboot.php" method="post">
+	<p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
+	<p>
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
+	</p>
+</form>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-if ($_POST) {
-	$reply = " " . gettext("Yes") . " ";
-	if ($_POST['Submit'] == $reply) {
-		echo "<meta http-equiv=\"refresh\" content=\"70;url=/\">";
-		system_reboot();
-		$rebootmsg = gettext("The system is rebooting now. This may take a few minutes, depending on your hardware.");
-	} else {
-		exit;
-	}
-}
-
-?>

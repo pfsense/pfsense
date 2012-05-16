@@ -1,19 +1,30 @@
 #!/bin/sh
 
 NOTSYNCED="true"
-SERVER=`cat /cf/conf/config.xml | grep timeservers | cut -d">" -f2 | cut -d"<" -f1`
-pkill -f ntpdate_sync_once.sh
+MAX_ATTEMPTS=3
+SERVER=`/bin/cat /cf/conf/config.xml | /usr/bin/grep timeservers | /usr/bin/cut -d">" -f2 | /usr/bin/cut -d"<" -f1`
+/bin/pkill -f ntpdate_sync_once.sh
 
-while [ "$NOTSYNCED" = "true" ]; do
+ATTEMPT=1
+# Loop until we're synchronized, but for a set number of attempts so we don't get stuck here forever.
+while [ "$NOTSYNCED" = "true" ] && [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
 	# Ensure that ntpd and ntpdate are not running so that the socket we want will be free.
-	killall ntpd 2>/dev/null
-	killall ntpdate
+	/usr/bin/killall ntpd 2>/dev/null
+	/usr/bin/killall ntpdate 2>/dev/null
 	sleep 1
-	ntpdate -s -t 5 $SERVER
+	/usr/sbin/ntpdate -s -t 5 ${SERVER}
 	if [ "$?" = "0" ]; then
 		NOTSYNCED="false"
+	else
+		sleep 5
+		ATTEMPT=`expr ${ATTEMPT} + 1`
 	fi
-	sleep 5
 done
 
-/usr/local/sbin/ntpd -g -c /var/etc/ntpd.conf
+if [ "$NOTSYNCED" = "true" ]; then
+	echo "Giving up on time sync after ${MAX_ATTEMPTS} attempts." | /usr/bin/logger -t ntp;
+fi
+
+if [ -f /var/etc/ntpd.conf ]; then
+	/usr/sbin/ntpd -g -c /var/etc/ntpd.conf
+fi

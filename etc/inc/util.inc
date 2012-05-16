@@ -953,7 +953,7 @@ function exec_command($command) {
 }
 
 /* wrapper for exec() */
-function mwexec($command, $mute = false) {
+function mwexec($command, $mute = false, $clearsigmask = false) {
 	global $g;
 
 	if ($g['debug']) {
@@ -962,7 +962,15 @@ function mwexec($command, $mute = false) {
 	}
 	$oarr = array();
 	$retval = 0;
+
+	if ($clearsigmask) {
+		$oldset = array();
+		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
+	}
 	$garbage = exec("$command 2>&1", $oarr, $retval);
+	if ($clearsigmask) {
+		pcntl_sigprocmask(SIG_SETMASK, $oldset);
+	}
 
 	if(isset($config['system']['developerspew']))
 		$mute = false;
@@ -974,7 +982,7 @@ function mwexec($command, $mute = false) {
 }
 
 /* wrapper for exec() in background */
-function mwexec_bg($command) {
+function mwexec_bg($command, $clearsigmask = false) {
 	global $g;
 
 	if ($g['debug']) {
@@ -982,7 +990,14 @@ function mwexec_bg($command) {
 			echo "mwexec(): $command\n";
 	}
 
+	if ($clearsigmask) {
+		$oldset = array();
+		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
+	}
 	exec("nohup $command > /dev/null 2>&1 &");
+	if ($clearsigmask) {
+		pcntl_sigprocmask(SIG_SETMASK, $oldset);
+	}
 }
 
 /* unlink a file, if it exists */

@@ -106,7 +106,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
 	}
 	/* skip system gateways which have been automatically added */
-	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && ($_POST['gateway'] != "dynamic")) {
+	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] !== "system")) && ($_POST['gateway'] != "dynamic")) {
 		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
@@ -157,26 +157,33 @@ if ($_POST) {
 
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
+		log_error(print_r($a_gateways, true));
 		foreach ($a_gateways as $gateway) {
+			log_error(print_r($gateway, true));
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
 				if ($gateway['name'] != $_POST['name'])
 					$input_errors[] = gettext("Changing name on a gateway is not allowed.");
 				continue;
 			}
 			if($_POST['name'] <> "") {
-				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] != "system")) {
+				log_error("\$_POST['name'] = [{$_POST['name']}]");
+				log_error("name = [{$gateway['name']}]");
+				log_error("attribute = [{$gateway['attribute']}]");
+				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] !== "system")) {
+					log_error("-> is a dup");
 					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $_POST['name']);
 					break;
 				}
+				log_error("-> is not a dup");
 			}
 			if(is_ipaddr($_POST['gateway'])) {
-				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] != "system")) {
+				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] !== "system")) {
 					$input_errors[] = sprintf(gettext('The gateway IP address "%s" already exists.'), $_POST['gateway']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['monitor'])) {
-				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] != "system")) {
+				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] !== "system")) {
 					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. You must choose a different monitor IP.'), $_POST['monitor']);
 					break;
 				}

@@ -83,17 +83,25 @@ function rrd_data_xml() {
 }
 
 function restore_rrddata() {
-	global $config, $g, $rrdtool;
+	global $config, $g, $rrdtool, $input_errors;
+
+	log_error("restore_rrddata has been called.");
 	foreach($config['rrddata']['rrddatafile'] as $rrd) {
 		if ($rrd['xmldata']) {
+			log_error("rrd contains xmldata.");
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
+			log_error("\$xml_file = \"$xml_file\"");
+			log_error("\$rrd_file = \"$rrd_file\"");
 			file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata'])));
 			exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
 			unlink($xml_file);
 		}
 		else if ($rrd['data']) {
-			$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
+			log_error("rrd contains (non-xml) data.");
+			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			log_error("\$rrd_file = \"$rrd_file\"");
+			$rrd_fd = fopen($rrd_file, "w");
 			$data = base64_decode($rrd['data']);
 			/* Try to decompress the data. */
 			$dcomp = @gzinflate($data);
@@ -151,7 +159,7 @@ function check_and_returnif_section_exists($section) {
 	return false;
 }
 
-function spit_out_select_items($area, $showall) {
+function spit_out_select_items($name, $showall) {
 	global $config;
 	
 	$areas = array("aliases" => gettext("Aliases"),
@@ -166,6 +174,7 @@ function spit_out_select_items($area, $showall) {
 		       "ovpn" => gettext("OpenVPN"),
 		       "installedpackages" => gettext("Package Manager"),
 		       "pptpd" => gettext("PPTP Server"),
+		       "rrddata" => gettext("RRD Data"),
 		       "cron" => gettext("Scheduled Tasks"),
 		       "syslog" => gettext("Syslog"),
 		       "system" => gettext("System"),
@@ -176,11 +185,8 @@ function spit_out_select_items($area, $showall) {
 		       "vlans" => gettext("VLANS"),
 		       "wol" => gettext("Wake on LAN")
 		);
-	
-	$select  = "<select name=\"{$area}\" id=\"{$aread}\" ";
-	if ($area == "backuparea")
-		$select .= " onChange=backuparea_change(this)";
-	$select .= " >\n";
+
+	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
 	
 	if($showall == true)
@@ -188,10 +194,22 @@ function spit_out_select_items($area, $showall) {
 			$select .= "<option value='{$area}'>{$areaname}</option>\n";
 	else
 		foreach($areas as $area => $areaname)
-			if(check_and_returnif_section_exists($area) == true)
+			if($area === "rrddata" || check_and_returnif_section_exists($area) == true)
 				$select .= "<option value='{$area}'>{$areaname}</option>\n";
-	
+
 	$select .= "</select>\n";
+
+	if ($name === "backuparea") {
+		$select .= <<<END_SCRIPT_BLOCK
+			<script type='text/javascript'>
+				jQuery(function (\$) {
+					$("#{$name}").change(function () {
+						backuparea_change(this);
+					}).trigger("change");
+				});
+			</script>
+END_SCRIPT_BLOCK;
+	}
 	
 	echo $select;
 	
@@ -261,6 +279,9 @@ if ($_POST) {
 					if(!$_POST['backuparea']) {
 						/* backup entire configuration */
 						$data = file_get_contents("{$g['conf_path']}/config.xml");
+					} else if ($_POST['backuparea'] === "rrddata") {
+						$data = rrd_data_xml();
+						$name = "{$_POST['backuparea']}-{$name}";
 					} else {
 						/* backup specific area of configuration */
 						$data = backup_config_section($_POST['backuparea']);
@@ -278,7 +299,7 @@ if ($_POST) {
 				/*
 				 *  Backup RRD Data
 				 */
-				if(!$_POST['donotbackuprrd']) {
+				if ($_POST['backuparea'] !== "rrddata" && !$_POST['donotbackuprrd']) {
 					$rrd_data_xml = rrd_data_xml();
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
@@ -341,6 +362,15 @@ if ($_POST) {
 							$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
 						} else {
 							restore_config_section($_POST['restorearea'], $data);
+							if ($config['rrddata']) {
+								restore_rrddata();
+								unset($config['rrddata']);
+								unlink_if_exists("{$g['tmp_path']}/config.cache");
+								write_config();
+								add_base_packages_menu_items();
+								convert_config();
+								conf_mount_ro();
+							}
 							filter_configure();
 							$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
 						}
@@ -552,11 +582,17 @@ function decrypt_change() {
 }
 
 function backuparea_change(obj) {
-
         if (obj.value == "")
                 document.getElementById("dotnotbackuprrd").checked = false;
         else
                 document.getElementById("dotnotbackuprrd").checked = true;
+	if (obj.value == "rrddata") {
+                document.getElementById("nopackages").disabled      = true;
+                document.getElementById("dotnotbackuprrd").disabled = true;
+	} else {
+                document.getElementById("nopackages").disabled      = false;
+                document.getElementById("dotnotbackuprrd").disabled = false;
+	}
 }
 //-->
 </script>

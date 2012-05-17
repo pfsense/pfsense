@@ -195,7 +195,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 			break;
 
 	if (!$parsedcfg[$rootobj_name]) {
-		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", $rootobj));
+		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", implode(" or ", $rootobj)));
 		return -1;
 	}
 

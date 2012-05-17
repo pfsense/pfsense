@@ -188,18 +188,21 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	}
 	xml_parser_free($xml_parser);
 
-	if (!is_array($rootobj))
-		$rootobj = array($rootobj);
-	foreach ($rootobj as $rootobj_name)
-		if ($parsedcfg[$rootobj_name])
-			break;
-
-	if (!$parsedcfg[$rootobj_name]) {
-		log_error(sprintf(gettext("XML error: no %s object found!") . "\n", implode(" or ", $rootobj)));
-		return -1;
+	if ($rootobj) {
+		if (!is_array($rootobj))
+			$rootobj = array($rootobj);
+		foreach ($rootobj as $rootobj_name)
+			if ($parsedcfg[$rootobj_name])
+				break;
+		
+		if (!$parsedcfg[$rootobj_name]) {
+			log_error(sprintf(gettext("XML error: no %s object found!") . "\n", implode(" or ", $rootobj)));
+			return -1;
+		}
+		return $parsedcfg[$rootobj_name];
+	} else {
+		return $parsedcfg;
 	}
-
-	return $parsedcfg[$rootobj_name];
 }
 
 function dump_xml_config_sub($arr, $indent) {

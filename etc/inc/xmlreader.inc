@@ -128,13 +128,17 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	} else
 		log_error(sprintf(gettext("Error returned while trying to parse %s"), $cffile));
 
-	if (!is_array($rootobj))
-		$rootobj = array($rootobj);
-	foreach ($rootobj as $rootobj_name)
-		if ($parsedcfg[$rootobj_name])
-			break;
-
-	return $parsedcfg[$rootobj_name];
+	if ($rootobj) {
+		if (!is_array($rootobj))
+			$rootobj = array($rootobj);
+		foreach ($rootobj as $rootobj_name)
+			if ($parsedcfg[$rootobj_name])
+				break;
+		
+		return $parsedcfg[$rootobj_name];
+	} else {
+		return $parsedcfg;
+	}
 }
 
 function dump_xml_config_sub(& $writer, $arr) {

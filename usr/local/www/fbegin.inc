@@ -74,11 +74,23 @@ function return_ext_menu($section) {
 	return $extarray;
 }
 
-function output_menu($arrayitem, $target="") {
-	foreach($arrayitem as $item) {
-		if($target)
-			$targetinfo = "target='{$target}'";
-		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . '" class="navlnk">' . $item[0] . '</a></li>' . "\n";
+function output_menu($arrayitem, $target = null) {
+	foreach ($arrayitem as $item) {
+		$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+		if ($target) {
+			$attr .= sprintf(" target=\"%s\"", htmlentities($target));
+		}
+		$class = "navlnk";
+		if ($item['class']) {
+			$class .= " {$item['class']}";
+		}
+		$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+		if ($item['style']) {
+			$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
+		}
+		echo "<li>\n";
+		printf("<a %s>%s</a>\n", $attr, $item[0]);
+		echo "</li>\n";
 	}
 }
 
@@ -217,8 +229,8 @@ if($g['platform'] == "nanobsd")
 	$diagnostics_menu[] = array(gettext("NanoBSD"), "/diag_nanobsd.php");
 
 if (isset($config['system']['developer'])) {
-	echo "<li><hr width=\"80%\"/></li>";
-	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php");
+	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
+	
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 

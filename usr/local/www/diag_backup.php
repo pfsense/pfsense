@@ -153,36 +153,36 @@ function check_and_returnif_section_exists($section) {
 
 function spit_out_select_items($area, $showall) {
 	global $config;
-
+	
 	$areas = array("aliases" => gettext("Aliases"),
-				   "captiveportal" => gettext("Captive Portal"),
-				   "voucher" => gettext("Captive Portal Vouchers"),
-				   "dnsmasq" => gettext("DNS Forwarder"),
-				   "dhcpd" => gettext("DHCP Server"),
-				   "filter" => gettext("Firewall Rules"),
-				   "interfaces" => gettext("Interfaces"),
-				   "ipsec" => gettext("IPSEC"),
-				   "nat" => gettext("NAT"),
-				   "ovpn" => gettext("OpenVPN"),
-				   "installedpackages" => gettext("Package Manager"),
-				   "pptpd" => gettext("PPTP Server"),
-				   "cron" => gettext("Scheduled Tasks"),
-				   "syslog" => gettext("Syslog"),
-				   "system" => gettext("System"),
-				   "staticroutes" => gettext("Static routes"),
-				   "sysctl" => gettext("System tunables"),
-				   "snmpd" => gettext("SNMP Server"),
-				   "shaper" => gettext("Traffic Shaper"),
-				   "vlans" => gettext("VLANS"),
-				   "wol" => gettext("Wake on LAN")
-	);
-
+		       "captiveportal" => gettext("Captive Portal"),
+		       "voucher" => gettext("Captive Portal Vouchers"),
+		       "dnsmasq" => gettext("DNS Forwarder"),
+		       "dhcpd" => gettext("DHCP Server"),
+		       "filter" => gettext("Firewall Rules"),
+		       "interfaces" => gettext("Interfaces"),
+		       "ipsec" => gettext("IPSEC"),
+		       "nat" => gettext("NAT"),
+		       "ovpn" => gettext("OpenVPN"),
+		       "installedpackages" => gettext("Package Manager"),
+		       "pptpd" => gettext("PPTP Server"),
+		       "cron" => gettext("Scheduled Tasks"),
+		       "syslog" => gettext("Syslog"),
+		       "system" => gettext("System"),
+		       "staticroutes" => gettext("Static routes"),
+		       "sysctl" => gettext("System tunables"),
+		       "snmpd" => gettext("SNMP Server"),
+		       "shaper" => gettext("Traffic Shaper"),
+		       "vlans" => gettext("VLANS"),
+		       "wol" => gettext("Wake on LAN")
+		);
+	
 	$select  = "<select name=\"{$area}\" id=\"{$aread}\" ";
 	if ($area == "backuparea")
 		$select .= " onChange=backuparea_change(this)";
 	$select .= " >\n";
 	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
-
+	
 	if($showall == true)
 		foreach($areas as $area => $areaname)
 			$select .= "<option value='{$area}'>{$areaname}</option>\n";
@@ -190,19 +190,19 @@ function spit_out_select_items($area, $showall) {
 		foreach($areas as $area => $areaname)
 			if(check_and_returnif_section_exists($area) == true)
 				$select .= "<option value='{$area}'>{$areaname}</option>\n";
-
+	
 	$select .= "</select>\n";
-
+	
 	echo $select;
-
+	
 }
 
 if ($_POST['apply']) {
         ob_flush();
         flush();
-		conf_mount_rw();
-		clear_subsystem_dirty("restore");
-		conf_mount_ro();
+	conf_mount_rw();
+	clear_subsystem_dirty("restore");
+	conf_mount_ro();
         exit;
 }
 
@@ -218,32 +218,32 @@ if ($_POST) {
 		$mode = "download";
 	else if (stristr($_POST['Submit'], gettext("Restore version")))
 		$mode = "restore_ver";
-
+	
 	if ($_POST["nopackages"] <> "")
 		$options = "nopackages";
-
+	
 	if ($_POST["ver"] <> "")
 		$ver2restore = $_POST["ver"];
-
+	
 	if ($mode) {
-
+		
 		if ($mode == "download") {
-
+			
 			if ($_POST['encrypt']) {
 				if(!$_POST['encrypt_password'] || !$_POST['encrypt_passconf'])
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
 				if($_POST['encrypt_password'] != $_POST['encrypt_passconf'])
 					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
-
+			
 			if (!$input_errors) {
-
+				
 				//$lockbckp = lock('config');
-
+				
 				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
 				$name = "config-{$host}-".date("YmdHis").".xml";
 				$data = "";
-
+				
 				if($options == "nopackages") {
 					if(!$_POST['backuparea']) {
 						/* backup entire configuration */
@@ -267,14 +267,14 @@ if ($_POST) {
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
 				}
-
+				
 				//unlock($lockbckp);
-
+				
 				if ($_POST['encrypt']) {
 					$data = encrypt_data($data, $_POST['encrypt_password']);
 					tagfile_reformat($data, $data, "config.xml");
 				}
-
+				
 				/*
 				 *  Backup RRD Data
 				 */
@@ -283,7 +283,7 @@ if ($_POST) {
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
-
+				
 				$size = strlen($data);
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
@@ -296,31 +296,31 @@ if ($_POST) {
 					header("Cache-Control: private, must-revalidate");
 				}
 				echo $data;
-
+				
 				exit;
 			}
 		}
-
+		
 		if ($mode == "restore") {
-
+			
 			if ($_POST['decrypt']) {
 				if(!$_POST['decrypt_password'] || !$_POST['decrypt_passconf'])
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
 				if($_POST['decrypt_password'] != $_POST['decrypt_passconf'])
 					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
-
+			
 			if (!$input_errors) {
-
+				
 				if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
-
+					
 					/* read the file contents */
 					$data = file_get_contents($_FILES['conffile']['tmp_name']);
 					if(!$data) {
 						log_error(sprintf(gettext("Warning, could not read file %s"), $_FILES['conffile']['tmp_name']));
 						return 1;
 					}
-
+					
 					if ($_POST['decrypt']) {
 						if (!tagfile_deformat($data, $data, "config.xml")) {
 							$input_errors[] = gettext("The uploaded file does not appear to contain an encrypted pfsense configuration.");
@@ -328,7 +328,7 @@ if ($_POST) {
 						}
 						$data = decrypt_data($data, $_POST['decrypt_password']);
 					}
-
+					
 					if(stristr($data, "<m0n0wall>")) {
 						log_error(gettext("Upgrading m0n0wall configuration to pfsense."));
 						/* m0n0wall was found in config.  convert it. */
@@ -417,45 +417,45 @@ if ($_POST) {
 									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
 										if($config["filter"]["rule"][$i]['icmptype']) {
 											switch($config["filter"]["rule"][$i]['icmptype']) {
-												case "echo":
-													$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
-													break;
-					                            case "unreach":
-													$config["filter"]["rule"][$i]['icmptype'] = "unreach";
-													break;
-					                            case "echorep":
-													$config["filter"]["rule"][$i]['icmptype'] = "echorep";
-													break;
-					                            case "squench":
-													$config["filter"]["rule"][$i]['icmptype'] = "squench";
-													break;
-					                            case "redir":
-													$config["filter"]["rule"][$i]['icmptype'] = "redir";
-													break;
-					                            case "timex":
-													$config["filter"]["rule"][$i]['icmptype'] = "timex";
-													break;
-					                            case "paramprob":
-													$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
-													break;
-					                            case "timest":
-													$config["filter"]["rule"][$i]['icmptype'] = "timereq";
-													break;
-					                            case "timestrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "timerep";
-													break;
-					                            case "inforeq":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
-													break;
-					                            case "inforep":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforep";
-													break;
-					                            case "maskreq":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
-													break;
-					                            case "maskrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
-													break;
+											case "echo":
+												$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
+												break;
+											case "unreach":
+												$config["filter"]["rule"][$i]['icmptype'] = "unreach";
+												break;
+											case "echorep":
+												$config["filter"]["rule"][$i]['icmptype'] = "echorep";
+												break;
+											case "squench":
+												$config["filter"]["rule"][$i]['icmptype'] = "squench";
+												break;
+											case "redir":
+												$config["filter"]["rule"][$i]['icmptype'] = "redir";
+												break;
+											case "timex":
+												$config["filter"]["rule"][$i]['icmptype'] = "timex";
+												break;
+											case "paramprob":
+												$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
+												break;
+											case "timest":
+												$config["filter"]["rule"][$i]['icmptype'] = "timereq";
+												break;
+											case "timestrep":
+												$config["filter"]["rule"][$i]['icmptype'] = "timerep";
+												break;
+											case "inforeq":
+												$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
+												break;
+											case "inforep":
+												$config["filter"]["rule"][$i]['icmptype'] = "inforep";
+												break;
+											case "maskreq":
+												$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
+												break;
+											case "maskrep":
+												$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
+												break;
 											}
 										}
 									}
@@ -496,9 +496,9 @@ if ($_POST) {
 				}
 			}
 		}
-
+		
 		if ($mode == "reinstallpackages") {
-
+			
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
 		} else if ($mode == "clearpackagelock") {
@@ -509,13 +509,13 @@ if ($_POST) {
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
 				if (config_install($conf_file) == 0) {
-						mark_subsystem_dirty("restore");
-                        } else {
-                        	$input_errors[] = gettext("The configuration could not be restored.");
-                        }
-                } else {
-                        $input_errors[] = gettext("No version selected.");
-                }
+					mark_subsystem_dirty("restore");
+				} else {
+					$input_errors[] = gettext("The configuration could not be restored.");
+				}
+			} else {
+				$input_errors[] = gettext("No version selected.");
+			}
 		}
 	}
 }
@@ -650,7 +650,9 @@ function backuparea_change(obj) {
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?> <br /><br /> <?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
+						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?>
+						<br /><br />
+						<?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<table>
 							<tr>

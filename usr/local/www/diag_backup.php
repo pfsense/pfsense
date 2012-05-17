@@ -84,35 +84,50 @@ function rrd_data_xml() {
 
 function restore_rrddata() {
 	global $config, $g, $rrdtool, $input_errors;
-
-	log_error("restore_rrddata has been called.");
 	foreach($config['rrddata']['rrddatafile'] as $rrd) {
 		if ($rrd['xmldata']) {
-			log_error("rrd contains xmldata.");
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
-			log_error("\$xml_file = \"$xml_file\"");
-			log_error("\$rrd_file = \"$rrd_file\"");
-			file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata'])));
-			exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
+			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
+				log_error("Cannot write $xml_file");
+				continue;
+			}
+			$output = array();
+			$status = null;
+			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			if ($status) {
+				log_error("rrdtool restore -f failed returning $status");
+				continue;
+			}
 			unlink($xml_file);
 		}
 		else if ($rrd['data']) {
-			log_error("rrd contains (non-xml) data.");
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
-			log_error("\$rrd_file = \"$rrd_file\"");
 			$rrd_fd = fopen($rrd_file, "w");
+			if (!$rrd_fd) {
+				log_error("Cannot write $rrd_file");
+				continue;
+			}
 			$data = base64_decode($rrd['data']);
 			/* Try to decompress the data. */
 			$dcomp = @gzinflate($data);
 			if ($dcomp) {
 				/* If the decompression worked, write the decompressed data */
-				fwrite($rrd_fd, $dcomp);
+				if (fwrite($rrd_fd, $dcomp) === false) {
+					log_error("fwrite $rrd_file failed");
+					continue;
+				}
 			} else {
 				/* If the decompression failed, it wasn't compressed, so write raw data */
-				fwrite($rrd_fd, $data);
+				if (fwrite($rrd_fd, $data) === false) {
+					log_error("fwrite $rrd_file failed");
+					continue;
+				}
 			}
-			fclose($rrd_fd);
+			if (fclose($rrd_fd) === false) {
+				log_error("fclose $rrd_file failed");
+				continue;
+			}
 		}
 	}
 }

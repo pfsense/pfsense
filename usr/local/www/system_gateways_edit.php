@@ -269,7 +269,7 @@ if ($_POST) {
 		if ($_POST['latencyhigh'])
                		$gateway['latencyhigh'] = $_POST['latencyhigh'];
 		if ($_POST['losslow'])
-              			$gateway['losslow'] = $_POST['losslow'];
+			$gateway['losslow'] = $_POST['losslow'];
 		if ($_POST['losshigh'])
                		$gateway['losshigh'] = $_POST['losshigh'];
 		if ($_POST['down'])
@@ -294,6 +294,15 @@ if ($_POST) {
 		header("Location: system_gateways.php");
 		exit;
 	} else {
+		if ($_REQUEST['isAjax']) {
+			header("HTTP/1.0 500 Internal Server Error");
+			header("Content-type: text/plain");
+			foreach ($input_errors as $error) {
+				echo("$error\n");
+			}
+			exit;
+		}
+		
 		$pconfig = $_POST;
 		if (empty($_POST['friendlyiface']))
 			$pconfig['friendlyiface'] = $_POST['interface'];

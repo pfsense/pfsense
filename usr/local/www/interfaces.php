@@ -2760,12 +2760,20 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			selectbox.prop('selectedIndex',selectbox.children().length-1);
 			jQuery('#noteboxv6').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
 		}
-		function report_failure() {
-			alert("Sorry, we could not create your IPv4 gateway at this time.");
+		function report_failure(request, textStatus, errorThrown) {
+			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
+				alert(request.responseText);
+			} else {
+				alert("Sorry, we could not create your IPv4 gateway at this time.");
+			}
 			hide_add_gateway();
 		}
-		function report_failure_v6() {
-			alert("Sorry, we could not create your IPv6 gateway at this time.");
+		function report_failure_v6(request, textStatus, errorThrown) {
+			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
+				alert(request.responseText);
+			} else {
+				alert("Sorry, we could not create your IPv6 gateway at this time.");
+			}
 			hide_add_gateway_v6();
 		}
 		function save_callback(transport) {

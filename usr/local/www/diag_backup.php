@@ -373,21 +373,24 @@ if ($_POST) {
 					}
 					if($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
-						if(!stristr($data, $_POST['restorearea'])) {
+						if(!stristr($data, "<" . $_POST['restorearea'] . ">")) {
 							$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
 						} else {
-							restore_config_section($_POST['restorearea'], $data);
-							if ($config['rrddata']) {
-								restore_rrddata();
-								unset($config['rrddata']);
-								unlink_if_exists("{$g['tmp_path']}/config.cache");
-								write_config();
-								add_base_packages_menu_items();
-								convert_config();
-								conf_mount_ro();
+							if (!restore_config_section($_POST['restorearea'], $data)) {
+								$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
+							} else {
+								if ($config['rrddata']) {
+									restore_rrddata();
+									unset($config['rrddata']);
+									unlink_if_exists("{$g['tmp_path']}/config.cache");
+									write_config();
+									add_base_packages_menu_items();
+									convert_config();
+									conf_mount_ro();
+								}
+								filter_configure();
+								$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
 							}
-							filter_configure();
-							$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
 						}
 					} else {
 						if(!stristr($data, "<" . $g['xml_rootobj'] . ">")) {

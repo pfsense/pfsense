@@ -489,55 +489,70 @@ function reverse_strrchr($haystack, $needle) {
  *  backup_config_section($section): returns as an xml file string of
  *                                   the configuration section
  */
-function backup_config_section($section) {
+function backup_config_section($section_name) {
 	global $config;
-	$new_section = &$config[$section];
+	$new_section = &$config[$section_name];
 	/* generate configuration XML */
-	$xmlconfig = dump_xml_config($new_section, $section);
+	$xmlconfig = dump_xml_config($new_section, $section_name);
 	$xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
 	return $xmlconfig;
 }
 
 /*
- *  restore_config_section($section, new_contents): restore a configuration section,
+ *  restore_config_section($section_name, new_contents): restore a configuration section,
  *                                                  and write the configuration out
  *                                                  to disk/cf.
  */
-function restore_config_section($section, $new_contents) {
+function restore_config_section($section_name, $new_contents) {
 	global $config, $g;
 	conf_mount_rw();
 	$fout = fopen("{$g['tmp_path']}/tmpxml","w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
-	$section_xml = parse_xml_config($g['tmp_path'] . "/tmpxml", $section);
-	if ($section_xml != -1)
-		$config[$section] = &$section_xml;
+
+	$xml = parse_xml_config($g['tmp_path'] . "/tmpxml", null);
+	if ($xml['pfsense']) {
+		$xml = $xml['pfsense'];
+	}
+	else if ($xml['m0n0wall']) {
+		$xml = $xml['m0n0wall'];
+	}
+	if ($xml[$section_name]) {
+		$section_xml = $xml[$section_name];
+	} else {
+		$section_xml = -1;
+	}
+
 	@unlink($g['tmp_path'] . "/tmpxml");
+	if ($section_xml === -1) {
+		return false;
+	}
+	$config[$section_name] = &$section_xml;
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
-	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section));
+	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
 	conf_mount_ro();
-	return;
+	return true;
 }
 
 /*
- *  merge_config_section($section, new_contents):   restore a configuration section,
+ *  merge_config_section($section_name, new_contents):   restore a configuration section,
  *                                                  and write the configuration out
  *                                                  to disk/cf.  But preserve the prior
  * 													structure if needed
  */
-function merge_config_section($section, $new_contents) {
+function merge_config_section($section_name, $new_contents) {
 	global $config;
 	conf_mount_rw();
 	$fname = get_tmp_filename();
 	$fout = fopen($fname, "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
-	$section_xml = parse_xml_config($fname, $section);
-	$config[$section] = $section_xml;
+	$section_xml = parse_xml_config($fname, $section_name);
+	$config[$section_name] = $section_xml;
 	unlink($fname);
-	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section));
+	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
 	conf_mount_ro();
 	return;

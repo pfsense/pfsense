@@ -2,7 +2,6 @@ function trafficshowDiv(incDiv,swapButtons){
 	//appear element
 	selectedDiv = incDiv + "graphdiv";
 	jQuery('#' + selectedDiv).effect('blind',{mode:'show'},1000);      
-	showSave();    
 	d = document;	
 	if (swapButtons){
 		selectIntLink = selectedDiv + "-min";
@@ -20,7 +19,6 @@ function  trafficminimizeDiv(incDiv,swapButtons){
 	//fade element
 	selectedDiv = incDiv + "graphdiv";
 	jQuery('#' + selectedDiv).effect('blind',{mode:'hide'},1000);
-	showSave();
 	d = document;	
 	if (swapButtons){
 		selectIntLink = selectedDiv + "-open";

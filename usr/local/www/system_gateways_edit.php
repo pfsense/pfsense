@@ -157,24 +157,17 @@ if ($_POST) {
 
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
-		log_error(print_r($a_gateways, true));
 		foreach ($a_gateways as $gateway) {
-			log_error(print_r($gateway, true));
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
 				if ($gateway['name'] != $_POST['name'])
 					$input_errors[] = gettext("Changing name on a gateway is not allowed.");
 				continue;
 			}
 			if($_POST['name'] <> "") {
-				log_error("\$_POST['name'] = [{$_POST['name']}]");
-				log_error("name = [{$gateway['name']}]");
-				log_error("attribute = [{$gateway['attribute']}]");
 				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] !== "system")) {
-					log_error("-> is a dup");
 					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $_POST['name']);
 					break;
 				}
-				log_error("-> is not a dup");
 			}
 			if(is_ipaddr($_POST['gateway'])) {
 				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] !== "system")) {

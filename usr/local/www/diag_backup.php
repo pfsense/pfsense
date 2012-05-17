@@ -96,7 +96,7 @@ function restore_rrddata() {
 			$status = null;
 			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
-				log_error("rrdtool restore -f failed returning $status");
+				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unlink($xml_file);

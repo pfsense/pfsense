@@ -69,7 +69,13 @@ function restore_rrd() {
 			if (file_exists("{$rrd_file}")) {
 				unlink($rrd_file);
 			}
-			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'");
+			$output = array();
+			$status = null;
+			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			if ($status) {
+				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
+				continue;
+			}
 			unlink($xml_file);
 		}
 		return true;

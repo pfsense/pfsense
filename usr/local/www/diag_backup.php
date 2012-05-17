@@ -82,6 +82,33 @@ function rrd_data_xml() {
 	return $result;
 }
 
+function restore_rrddata() {
+	global $config, $g, $rrdtool;
+	foreach($config['rrddata']['rrddatafile'] as $rrd) {
+		if ($rrd['xmldata']) {
+			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
+			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
+			file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata'])));
+			exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
+			unlink($xml_file);
+		}
+		else if ($rrd['data']) {
+			$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
+			$data = base64_decode($rrd['data']);
+			/* Try to decompress the data. */
+			$dcomp = @gzinflate($data);
+			if ($dcomp) {
+				/* If the decompression worked, write the decompressed data */
+				fwrite($rrd_fd, $dcomp);
+			} else {
+				/* If the decompression failed, it wasn't compressed, so write raw data */
+				fwrite($rrd_fd, $data);
+			}
+			fclose($rrd_fd);
+		}
+	}
+}
+
 function add_base_packages_menu_items() {
 	global $g, $config;
 	$base_packages = explode($g['base_packages'], ",");
@@ -334,29 +361,7 @@ if ($_POST) {
 								$config = parse_config(true);
 								/* extract out rrd items, unset from $config when done */
 								if($config['rrddata']) {
-									foreach($config['rrddata']['rrddatafile'] as $rrd) {
-										if ($rrd['xmldata']) {
-											$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
-											$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
-											file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata'])));
-											exec("$rrdtool restore '{$xml_file}' '{$rrd_file}'");
-											unlink($xml_file);
-										}
-										else if ($rrd['data']) {
-											$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
-											$data = base64_decode($rrd['data']);
-											/* Try to decompress the data. */
-											$dcomp = @gzinflate($data);
-											if ($dcomp) {
-												/* If the decompression worked, write the decompressed data */
-												fwrite($rrd_fd, $dcomp);
-											} else {
-												/* If the decompression failed, it wasn't compressed, so write raw data */
-												fwrite($rrd_fd, $data);
-											}
-											fclose($rrd_fd);
-										}
-									}
+									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									write_config();

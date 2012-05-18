@@ -19,6 +19,7 @@ function get_stats() {
 	$stats['interfacestatistics'] = get_interfacestats();
 	$stats['interfacestatus'] = get_interfacestatus();
 	$stats['gateways'] = get_gatewaystats();
+	$stats['cpufreq'] = get_cpufreq();
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -213,6 +214,21 @@ function update_date_time() {
 	
 	$datetime = date("D M j G:i:s T Y");
 	return $datetime;
+}
+
+function get_cpufreq() {
+	$cpufreqs = "";
+	$out = "";
+	exec("/sbin/sysctl -n dev.cpu.0.freq_levels", $cpufreqs);
+	$cpufreqs = explode(" ", trim($cpufreqs[0]));
+	$maxfreq = explode("/", $cpufreqs[0]);
+	$maxfreq = $maxfreq[0];
+	$curfreq = "";
+	exec("/sbin/sysctl -n dev.cpu.0.freq", $curfreq);
+	$curfreq = trim($curfreq[0]);
+	if ($curfreq != $maxfreq)
+		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
+	return $out;
 }
 
 function get_interfacestats() {

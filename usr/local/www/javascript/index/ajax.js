@@ -41,6 +41,7 @@ function stats(x) {
         updateInterfaceStats(values[6]);
         updateInterfaces(values[7]);
         updateGatewayStats(values[8]);
+        updateCpuFreq(values[9]);
 }
 
 function updateMemory(x) {
@@ -98,6 +99,11 @@ function updateGatewayStats(x){
 			}
 		}
 	}
+}
+
+function updateCpuFreq(x) {
+	if(jQuery('#cpufreq'))
+		jQuery("#cpufreq").html(x);
 }
 
 function updateInterfaceStats(x){

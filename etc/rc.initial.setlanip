@@ -52,7 +52,7 @@ function console_get_interface_from_ppp($realif) {
 	return "";
 }
 
-function prompt_for_enable_dhcp_server() {
+function prompt_for_enable_dhcp_server($version = 4) {
 	global $config, $fp, $interface;
 	if($interface == "wan") {
 		if($config['interfaces']['lan']) 
@@ -60,11 +60,17 @@ function prompt_for_enable_dhcp_server() {
 	}
 	/* only allow DHCP server to be enabled when static IP is
 	   configured on this interface */
-	if (is_ipaddr($config['interfaces'][$interface]['ipaddr'])) {
+	if ($version === 6) {
+		$is_ipaddr = is_ipaddrv6($config['interfaces'][$interface]['ipaddrv6']);
+	} else {
+		$is_ipaddr = is_ipaddrv4($config['interfaces'][$interface]['ipaddr']);
+	}
+	if ($is_ipaddr) {
+		$label_DHCP = ($version === 6) ? "DHCP6" : "DHCP";
 		do {
 			$good = false;
 			$upperifname = strtoupper($interface);
-			echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
+			echo "\n" . gettext("Do you want to enable the {$label_DHCP} server on {$upperifname}? [y|n]") . "  ";
 			$yn = strtolower(chop(fgets($fp)));
 			if ($yn[0] == "y" or $yn[0] == "n")
 				$good = true;
@@ -74,7 +80,6 @@ function prompt_for_enable_dhcp_server() {
 }
 
 $fp = fopen('php://stdin', 'r');
-$addr_blank = false;
 
 /* build an interface collection */
 $ifdescrs = get_configured_interface_with_descr(false, true);
@@ -115,16 +120,24 @@ if(!$interface) {
 }
 
 $ifaceassigned = "";
-do {
+
+function console_configure_ip_address($version) {
+	global $g, $config, $interface, $restart_dhcpd, $ifaceassigned, $fp;
+
+	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
+	$maxbits    = ($version === 6) ? 127      : 31;
+	$label_DHCP = ($version === 6) ? "DHCP6"  : "DHCP";
+
+	$upperifname = strtoupper($interface);
+
 	if($interface == "wan") {
-		$upperifname = strtoupper($interface);
-		echo gettext("Configure {$upperifname} interface via DHCP?  [y|n]") . "\n> ";
+		echo gettext("Configure {$label_IPvX} address {$upperifname} interface via {$label_DHCP}?  [y|n]") . "\n> ";
 		$intdhcp = chop(fgets($fp));
 		if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 			if (!empty($ifppp))
 				$ifaceassigned = $ifppp;
-			$intip = "dhcp";
+			$intip = ($version === 6) ? "dhcp6" : "dhcp";
 			$intbits = "";
 			$isintdhcp = true;
 			$restart_dhcpd = true;
@@ -133,73 +146,99 @@ do {
 		
 	if($isintdhcp == false or $interface <> "wan") {
 		do {
-			$upperifname = strtoupper($interface);
-			echo "\n" . gettext("Enter the new {$upperifname} IPv4 address.  Press <ENTER> for none:") . "\n> ";
+			echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} address.  Press <ENTER> for none:") . "\n> ";
 			$intip = chop(fgets($fp));
-			$addr_blank = false;
-		} while (!(is_ipaddr($intip) || $intip == ''));
+			$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
+		} while (!($is_ipaddr || $intip == ''));
 		if ($intip != '') {
 			echo "\n" . gettext("Subnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.") . "\n";
-			echo "e.g. 255.255.255.0 = 24\n";
-			echo "     255.255.0.0   = 16\n";
-			echo "     255.0.0.0     = 8\n";
+			if ($version === 6) {
+				echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
+				echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
+				echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
+				echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
+				echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
+			} else {
+				echo "e.g. 255.255.255.0 = 24\n";
+				echo "     255.255.0.0   = 16\n";
+				echo "     255.0.0.0     = 8\n";
+			}
 			do {
 				$upperifname = strtoupper($interface);
-				echo "\n" . gettext("Enter the new {$upperifname} IPv4 subnet bit count:") . "\n> ";
+				echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} subnet bit count:") . "\n> ";
 				$intbits = chop(fgets($fp));
 				$restart_dhcpd = true;
-			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
+			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > $maxbits));
 		}
 		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 		if (!empty($ifppp))
 			$ifaceassigned = $ifppp;
 	}
 
+	return array($intip, $intbits);
+}
 
-} while ($addr_blank);
+list($intip,  $intbits)  = console_configure_ip_address(4);
+list($intip6, $intbits6) = console_configure_ip_address(6);
 
 if (!empty($ifaceassigned))
 	$config['interfaces'][$interface]['if'] = $ifaceassigned;
 $config['interfaces'][$interface]['ipaddr'] = $intip;
 $config['interfaces'][$interface]['subnet'] = $intbits;
-$config['interfaces'][$interface]['enable'] = true;
-	
-if($g['services_dhcp_server_enable'])
-	$yn = prompt_for_enable_dhcp_server();
-	
-// TODO: Add DHCP IPv6 support
-if ($yn == "y") {
-	do {
-		echo gettext("Enter the start address of the client address range:") . " ";
-		$dhcpstartip = chop(fgets($fp));
-		if ($dhcpstartip === "") {
-			fclose($fp);
-			exit(0);
-		}
-	} while (!(is_ipaddr($dhcpstartip)));
-
-	do {
-		echo gettext("Enter the end address of the client address range:") . " ";
-		$dhcpendip = chop(fgets($fp));
-		if ($dhcpendip === "") {
-			fclose($fp);
-			exit(0);
-		}
-	} while (!(is_ipaddr($dhcpendip)));
-	$restart_dhcpd = true;
-	$config['dhcpd'][$interface]['enable'] = true;
-	$config['dhcpd'][$interface]['range']['from'] = $dhcpstartip;
-	$config['dhcpd'][$interface]['range']['to'] = $dhcpendip;
-} else {
-	/* TODO - this line is causing a "Fatal error: Cannot unset
-	   string offsets in /etc/rc.initial.setlanip" on below line
-	   number */
-	if($config['dhcpd'][$interface]) 
-		unset($config['dhcpd'][$interface]['enable']);
-	echo "Disabling DHCPD...";
-	services_dhcpd_configure();
-	echo "Done!\n";
+if ($intip6 && $intbits6) {
+	$config['interfaces'][$interface]['ipaddrv6'] = $intip6;
+	$config['interfaces'][$interface]['subnetv6'] = $intbits6;
 }
+$config['interfaces'][$interface]['enable'] = true;
+
+function console_configure_dhcpd($version = 4) {
+	global $g, $config, $restart_dhcpd, $fp, $interface;
+
+	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
+	$dhcpd      = ($version === 6) ? "dhcpd6" : "dhcpd";
+
+	if($g['services_dhcp_server_enable'])
+		$yn = prompt_for_enable_dhcp_server($version);
+	if ($yn == "y") {
+		do {
+			echo gettext("Enter the start address of the {$label_IPvX} client address range:") . " ";
+			$dhcpstartip = chop(fgets($fp));
+			if ($dhcpstartip === "") {
+				fclose($fp);
+				exit(0);
+			}
+			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
+		} while (!$is_ipaddr);
+
+		do {
+			echo gettext("Enter the end address of the {$label_IPvX} client address range:") . " ";
+			$dhcpendip = chop(fgets($fp));
+			if ($dhcpendip === "") {
+				fclose($fp);
+				exit(0);
+			}
+			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
+		} while (!$is_ipaddr);
+		$restart_dhcpd = true;
+		$config[$dhcpd][$interface]['enable'] = true;
+		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
+		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;
+	} else {
+		/* TODO - this line is causing a "Fatal error: Cannot unset
+		   string offsets in /etc/rc.initial.setlanip" on below line
+		   number */
+		if($config[$dhcpd][$interface]) 
+			unset($config[$dhcpd][$interface]['enable']);
+		echo "Disabling DHCPD...";
+		services_dhcpd_configure();
+		echo "Done!\n";
+	}
+}
+
+console_configure_dhcpd(4);
+console_configure_dhcpd(6);
+	
+//*****************************************************************************
 
 if ($config['system']['webgui']['protocol'] == "https") {
 
@@ -226,12 +265,17 @@ if($config['interfaces']['lan']) {
 	if($config['dhcpd'])
 		if($config['dhcpd']['wan'])
 			unset($config['dhcpd']['wan']);		
+	if($config['dhcpd6'])
+		if($config['dhcpd6']['wan'])
+			unset($config['dhcpd6']['wan']);		
 }
 
 if(!$config['interfaces']['lan']) {
 	unset($config['interfaces']['lan']);
 	if($config['dhcpd']['lan'])
 		unset($config['dhcpd']['lan']);
+	if($config['dhcpd6']['lan'])
+		unset($config['dhcpd6']['lan']);
 	unset($config['shaper']);
 	unset($config['ezshaper']);
 	unset($config['nat']);
@@ -261,6 +305,16 @@ if ($intip != '') {
 	} else {
 		echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}\n";
 	}
+}
+if ($intip6 != '') {
+	if (is_ipaddr($intip6)) {
+		echo "\n\n" . gettext("The IPv6 {$upperifname} address has been set to ") . "{$intip6}/{$intbits6}\n";
+	} else {
+		echo "\n\n" . gettext("The IPv6 {$upperifname} address has been set to ") . "{$intip6}\n";
+	}
+}
+
+if ($intip != '' || $intip6 != '') {
 	if (count($ifdescrs) == "1" or $interface = "lan") {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";

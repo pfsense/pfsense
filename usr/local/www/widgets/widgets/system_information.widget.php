@@ -135,18 +135,8 @@ $curcfg = $config['system']['firmware'];
 				exec("/sbin/sysctl -n hw.model", $cpumodel);
 				$cpumodel = implode(" ", $cpumodel);
 				echo (htmlspecialchars($cpumodel));
-
-				$cpufreqs = "";
-				exec("/sbin/sysctl -n dev.cpu.0.freq_levels", $cpufreqs);
-				$cpufreqs = explode(" ", trim($cpufreqs[0]));
-				$maxfreq = explode("/", $cpufreqs[0]);
-				$maxfreq = $maxfreq[0];
-				$curfreq = "";
-				exec("/sbin/sysctl -n dev.cpu.0.freq", $curfreq);
-				$curfreq = trim($curfreq[0]);
-				if ($curfreq != $maxfreq)
-					echo "<br/>Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 			?>
+			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 			</td>
 		</tr>
 		<?php if ($hwcrypto): ?>

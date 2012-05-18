@@ -149,6 +149,12 @@ function show_advanced_noxmlrpc() {
 	aodiv.style.display = "block";	
 }
 
+function show_advanced_vlanprio() {
+	document.getElementById("showadvvlanpriobox").innerHTML='';
+	aodiv = document.getElementById('showvlanprioadv');
+	aodiv.style.display = "block";
+}
+
 function show_advanced_schedule() {
 	document.getElementById("showadvschedulebox").innerHTML='';
 	aodiv = document.getElementById('showscheduleadv');

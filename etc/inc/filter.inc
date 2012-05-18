@@ -2171,6 +2171,10 @@ function filter_generate_user_rule($rule) {
 		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
 	if(!empty($rule['dscp']))
 		$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
+	if(!empty($rule['vlanprio']))
+		$aline['vlanprio'] = " ieee8021q-pcp " . $rule['vlanprio'] . " ";
+	if(!empty($rule['vlanprioset']))
+		$aline['vlanprioset'] = " ieee8021q-setpcp " . $rule['vlanprioset'] . " ";
 	if($type == "pass") {
 		if(isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
@@ -2323,7 +2327,7 @@ function filter_generate_user_rule($rule) {
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .
-			$aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
+			$aline['vlanprio'] . $aline['vlanprioset'] . $aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy routing for destination\"\n";
 
@@ -2332,7 +2336,7 @@ function filter_generate_user_rule($rule) {
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
 		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
-		$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 
 	return $line;

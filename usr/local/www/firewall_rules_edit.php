@@ -171,6 +171,8 @@ if (isset($id) && $a_filter[$id]) {
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
+	$pconfig['vlanprio'] = $a_filter[$id]['vlanprio'];
+	$pconfig['vlanprioset'] = $a_filter[$id]['vlanprioset'];
 	if (!isset($_GET['dup']))
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 
@@ -574,6 +576,13 @@ if ($_POST) {
 		
 		if ($_POST['sched'] != "") {
 			$filterent['sched'] = $_POST['sched'];
+		}
+
+		if ($_POST['vlanprio'] != "") {
+			$filterent['vlanprio'] = $_POST['vlanprio'];
+		}
+		if ($_POST['vlanprioset'] != "") {
+			$filterent['vlanprioset'] = $_POST['vlanprioset'];
 		}
 
 		// If we have an associated nat rule, make sure the source and destination doesn't change
@@ -1246,6 +1255,38 @@ $i--): ?>
 				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 					<?=gettext("Hint: This prevents the rule from automatically syncing to other CARP members.");?>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("802.1p");?></td>
+			<td width="78%" class="vtable">
+				<div id="showadvvlanpriobox" <?php if (!empty($pconfig['vlanprio'])) echo "style='display:none'"; ?>>
+					<input type="button" onClick="show_advanced_vlanprio()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
+				</div>
+				<div id="showvlanprioadv" <?php if (empty($pconfig['vlanprio'])) echo "style='display:none'"; ?>>
+					<?php $vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc"); ?>
+<?php
+					$opts = "";
+					foreach($vlanprio as $vprio) {
+						if ($vprio == $pconfig['vlanprio'])
+							$selected = " SELECTED";
+						else
+							$selected = "";
+						if ($vprio == "none")
+							$opts .= "<option value=\"\" {$vprio}>{$vprio}</option>\n";
+						else
+							$opts .= "<option value=\"{$vprio}\" {$selected}>" . strtoupper($vprio) . "</option>\n";
+					}
+?>
+					<select name='vlanprio'>
+					<?php echo $opts; ?>
+					</select>
+					<p><?=gettext("Choose 802.1p priority to match on");?></p>
+					<select name='vlanprioset'>
+					<?php echo $opts; ?>
+					</select>
+					<p><?=gettext("Choose 802.1p priority to apply");?></p>
 				</div>
 			</td>
 		</tr>

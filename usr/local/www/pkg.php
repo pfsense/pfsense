@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg.php
-    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,10 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+function domTT_title($title_msg){
+	print "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
+}
+
 $xml = $_REQUEST['xml'];
 
 if($xml == "") {
@@ -81,6 +85,26 @@ if($_REQUEST['display_maximum_rows'])
 		$display_maximum_rows = $_REQUEST['display_maximum_rows'];
 
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
+
+if ($_GET['act'] == "update") {
+		if(is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != ""){
+			#get current values
+			$current_values=$config['installedpackages'][$pkg['name']]['config'];
+			#get updated ids
+			$update_list=explode(",",$_GET['ids']);
+			#sort ids to know what to change
+			$sort_list=$update_list;
+			sort($sort_list);
+			#apply updates
+			foreach(explode(",",$_GET['ids']) as $key=> $value){
+				$config['installedpackages'][$pkg['name']]['config'][$sort_list[$key]]=$current_values[$update_list[$key]];
+				}
+			#save current config
+			write_config();
+			#sync package
+			eval ("{$pkg['custom_php_resync_config_command']}");
+			}
+}
 
 if ($_GET['act'] == "del") {
 		// loop through our fieldnames and automatically setup the fieldnames
@@ -184,10 +208,83 @@ if ($pkg['tabs'] <> "") {
 		document.pkgform.submit();
 	}
 </script>
+
+<?
+if($pkg['adddeleteeditpagefields']['movable']){
+?>
+        <style type="text/css">
+            td {
+                border:0px solid black;
+            }
+            
+            td.up {
+                cursor:pointer;
+            }
+
+            td.down {
+                cursor:pointer;
+            }
+            
+        </style>
+
+
+ <script type="text/javascript">
+                Event.observe(window, "load", function() {
+                    $$(".up").each(function(element) {
+                        element.observe("click", up);
+                    });
+
+                    $$(".down").each(function(element) {
+                        element.observe("click", down);
+                    });
+                });
+
+                
+                function up(event) {
+                    var element = event.element().ancestors()[1];
+                    var previous = element.previous('.movable');
+                    if (previous) {
+                        previous.remove();
+                        element.insert({after:previous});
+                    }
+                }
+
+                function down(event) {
+                    var element = event.element().ancestors()[1];
+                    var next = element.next('.movable');
+                    if (next) {
+                        next.remove();
+                        element.insert({before:next});
+                    }
+                }
+
+                function alertItems() {
+                         ids = $$('tr[class="movable"]').collect(function(el) { return el.id; });
+                         return(ids.join(','));
+                }
+
+                function save_changes_to_xml(xml) {
+                	if(confirm("<?=gettext("Do you really want to save changes?");?>")){
+                		var axel = Math.random() + "";
+    					var num = axel * 1000000000000000000;
+                		location.href="/pkg.php?xml=" + xml + "&act=update&ids=" + alertItems() + "&nocache=" + num;
+                		}
+                    
+                }
+                
+        </script>
+
+<?php }
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
+?>
 <tr><td><div id="mainarea"><table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td class="tabcont">
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
 <?php
 				/* Handle filtering bar A-Z */				
 				$include_filtering_inputbox = false;
@@ -199,6 +296,7 @@ if ($pkg['tabs'] <> "") {
 					// First find the sorting type field if it exists
 					foreach($pkg['fields']['field'] as $field) {
 						if($field['type'] == "sorting") {
+							$sortable="on";
 							if(isset($field['include_filtering_inputbox'])) 
 								$include_filtering_inputbox = true;
 							if($display_maximum_rows < 1) 
@@ -257,7 +355,7 @@ if ($pkg['tabs'] <> "") {
 					echo "<tr>";
 					echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
 					echo "<td align='right'>Rows per page: <select onChange='document.pkgform.submit();' name='display_maximum_rows'>";
-					for($x=0; $x<250; $x++) {
+					for($x=5; $x<250; $x++) {
 						if($x == $display_maximum_rows)
 							$SELECTED = "SELECTED";
 						else 
@@ -298,7 +396,10 @@ if ($pkg['tabs'] <> "") {
 									foreach($field['sortablefields']['item'] as $sf) {
 										if($sf['name'] == $_REQUEST['pkg_filter_type']) {
 											$filter_fieldname = $sf['fieldname'];
-											$filter_regex = str_replace("%FILTERTEXT%", $_REQUEST['pkg_filter'], trim($sf['regex']));
+											if($sf['regex'])
+												$filter_regex = str_replace("%FILTERTEXT%", $_REQUEST['pkg_filter'], trim($sf['regex']));
+											else
+												$filter_regex = "/{$_REQUEST['pkg_filter']}/i";
 										}
 									}
 								}
@@ -324,7 +425,10 @@ if ($pkg['tabs'] <> "") {
 						continue;
 					}
 				}
-				echo "<tr valign=\"top\">\n";
+				if($pkg['adddeleteeditpagefields']['movable'])
+					echo "<tr valign=\"top\" class=\"movable\" id=\"$i\">\n";
+				else
+					echo "<tr valign=\"top\" >\n";
 				if($pkg['adddeleteeditpagefields']['columnitem'] <> "")
 					foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 						if ($column['fieldname'] == "description")
@@ -335,32 +439,37 @@ if ($pkg['tabs'] <> "") {
 						<td class="<?=$class;?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
 							<?php
 								$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
-							    if($column['type'] == "checkbox") {
-									if($fieldname == "") {
-								    	echo gettext("No");
-									} else {
-								    	echo gettext("Yes");
-									}
-							    } else if ($column['type'] == "interface") {
+								if ($column['type'] == "interface") {
 									echo  $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
 							    } else {
-									echo $column['prefix'] . $fieldname . $column['suffix'];
+							    	if ($column['encoding'] == "base64")
+										echo  $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
+									else if($column['listmodeon'] && $fieldname == "on")
+								   		echo $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
+								   	else if($column['listmodeoff'] && $fieldname == "")
+								    	echo $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
+									else
+										echo $column['prefix'] . $fieldname ." ". $column['suffix'];
 							    }
 							?>
 						</td>
-<?php
+
+							<?php
 					}
 ?>
-				<td valign="middle" class="list" nowrap>
-				<table border="0" cellspacing="0" cellpadding="1">
-				<tr>
-				<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-				<td valign="middle"><a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-				</table>
+
+				<td valign="left" width="80" >
+					<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" <?=domTT_title("Edit this item")?>></a>
+					<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" <?=domTT_title("Remove this item")?>></a>
+					<?php if($pkg['adddeleteeditpagefields']['movable']){?>
+						<!--http://prototypejs.org/api/element/previous-->
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_up.gif" class="up" width="17" height="17" border="0" <?=domTT_title("Move this item up")?>>
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" class="down" width="17" height="17" border="0" <?=domTT_title("Move this item down")?>>
+					<?php }?>
 				</td>
+</tr>
 <?php
-				echo "</tr>\n";
+
 				// Handle pagination and display_maximum_rows
 				if($display_maximum_rows) {
 					if($pagination_counter == ($display_maximum_rows-1) or 
@@ -403,12 +512,20 @@ if ($pkg['tabs'] <> "") {
 					<td>
 						<table border="0" cellspacing="0" cellpadding="1">
 							<tr>
-								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+								<td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" <?=domTT_title("Add a new item")?>></a></td>
+								<?php if($pkg['adddeleteeditpagefields']['description']){?>
+								<td valign="middle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" width="17" height="17" border="0" <?=domTT_title($pkg['adddeleteeditpagefields']['description'])?>></td>
+								<?php }?>								
 							</tr>
 						</table>
 					</td>
 				</tr>
 				<?=$final_footer?>
+				<?php if($pkg['adddeleteeditpagefields']['movable']){?>
+				<td><input class="formbtn" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"></td>
+				<?php }?>
+				
+				</tbody>
 		</table>
 	</td>
 </tr>

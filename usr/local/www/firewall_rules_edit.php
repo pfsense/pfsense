@@ -228,19 +228,16 @@ if ($_POST) {
 		}
 	}
 
-
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;
 		$_POST['dstbeginport'] = 0;
 		$_POST['dstendport'] = 0;
 	} else {
-
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
-			$_POST['srcbeginport'] = $_POST['srcbeginport_cust'];
+			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
 		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
-			$_POST['srcendport'] = $_POST['srcendport_cust'];
-
+			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
 		if ($_POST['srcbeginport'] == "any") {
 			$_POST['srcbeginport'] = 0;
 			$_POST['srcendport'] = 0;
@@ -252,9 +249,9 @@ if ($_POST) {
 			$_POST['srcendport'] = $_POST['srcbeginport'];
 
 		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
-			$_POST['dstbeginport'] = $_POST['dstbeginport_cust'];
+			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
 		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
-			$_POST['dstendport'] = $_POST['dstendport_cust'];
+			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
 
 		if ($_POST['dstbeginport'] == "any") {
 			$_POST['dstbeginport'] = 0;
@@ -325,12 +322,12 @@ if ($_POST) {
 
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport']))
                 $input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcbeginposrt']);
-        if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport']))
-                $input_errors[] = sprintf(gettext("%s  is not a valid end source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcendport']);
-        if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport']))
-                $input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
-        if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
-                $input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
+	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport']))
+			$input_errors[] = sprintf(gettext("%s  is not a valid end source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcendport']);
+	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport']))
+			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
+	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
+			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
 	if ( !$_POST['srcbeginport_cust'] && $_POST['srcendport_cust'])
 		if (is_alias($_POST['srcendport_cust']))
 			$input_errors[] = 'If you put port alias in Source port range to: field you must put the same port alias in from: field';
@@ -351,6 +348,11 @@ if ($_POST) {
 		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust']))) 
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 	}
+
+	if ($_POST['src'])
+		$_POST['src'] = trim($_POST['src']);
+	if ($_POST['dst'])
+		$_POST['dst'] = trim($_POST['dst']);
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if($_POST['srctype'] == "network") {

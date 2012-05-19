@@ -172,6 +172,10 @@ if ($_POST) {
 	$final_address_details = array();
 	$alias['name'] = $_POST['name'];
 
+	for($x=0; isset($_POST['address'.$x]); $x++) {
+		$_POST['address'.$x] = trim($_POST['address'.$x]);
+	}
+
 	if ($_POST['type'] == "urltable") {
 		$address = "";
 		$isfirst = 0;

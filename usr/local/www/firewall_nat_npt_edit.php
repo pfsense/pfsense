@@ -116,6 +116,11 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
 
+	if ($_POST['src'])
+		$_POST['src'] = trim($_POST['src']);
+	if ($_POST['dst'])
+		$_POST['dst'] = trim($_POST['dst']);
+
 		pconfig_to_address($natent['source'], $_POST['src'],
                         $_POST['srcmask'], $_POST['srcnot']);
 

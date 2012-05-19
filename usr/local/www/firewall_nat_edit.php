@@ -113,9 +113,9 @@ if ($_POST) {
 
 	if(strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
-			$_POST['srcbeginport'] = $_POST['srcbeginport_cust'];
+			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
 		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
-			$_POST['srcendport'] = $_POST['srcendport_cust'];
+			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
 
 		if ($_POST['srcbeginport'] == "any") {
 			$_POST['srcbeginport'] = 0;
@@ -128,9 +128,9 @@ if ($_POST) {
 			$_POST['srcendport'] = $_POST['srcbeginport'];
 
 		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
-			$_POST['dstbeginport'] = $_POST['dstbeginport_cust'];
+			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
 		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
-			$_POST['dstendport'] = $_POST['dstendport_cust'];
+			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
 
 		if ($_POST['dstbeginport'] == "any") {
 			$_POST['dstbeginport'] = 0;
@@ -143,7 +143,7 @@ if ($_POST) {
 			$_POST['dstendport'] = $_POST['dstbeginport'];
 
 		if ($_POST['localbeginport_cust'] && !$_POST['localbeginport'])
-			$_POST['localbeginport'] = $_POST['localbeginport_cust'];
+			$_POST['localbeginport'] = trim($_POST['localbeginport_cust']);
 
 		/* Make beginning port end port if not defined and endport is */
 		if (!$_POST['srcbeginport'] && $_POST['srcendport'])
@@ -208,6 +208,13 @@ if ($_POST) {
 		$_POST['dstbeginport'] = 0;
 		$_POST['dstendport'] = 0;
 	}
+
+	if ($_POST['src'])
+		$_POST['src'] = trim($_POST['src']);
+	if ($_POST['dst'])
+		$_POST['dst'] = trim($_POST['dst']);
+	if ($_POST['localip'])
+		$_POST['localip'] = trim($_POST['localip']);
 
 	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);

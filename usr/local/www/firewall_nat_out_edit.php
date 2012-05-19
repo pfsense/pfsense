@@ -133,13 +133,26 @@ if ($_POST) {
 
 	$protocol_uses_ports = in_array($_POST['protocol'], explode(" ", "any tcp udp tcp/udp"));
 
+	if ($_POST['source'])
+		$_POST['source'] = trim($_POST['source']);
+	if ($_POST['destination'])
+		$_POST['destination'] = trim($_POST['destination']);
+	if ($_POST['targetip'])
+		$_POST['targetip'] = trim($_POST['targetip']);
+	if ($_POST['sourceport'])
+		$_POST['sourceport'] = trim($_POST['sourceport']);
+	if ($_POST['dstport'])
+		$_POST['dstport'] = trim($_POST['dstport']);
+	if ($_POST['natport'])
+		$_POST['natport'] = trim($_POST['natport']);
+
 	if($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_portoralias($_POST['sourceport']))
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
 
-	if($protocol_uses_ports and $_POST['dstport'] <> "" and !is_portoralias($_POST['dstport']))
+	if($protocol_uses_ports && $_POST['dstport'] <> "" && !is_portoralias($_POST['dstport']))
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 
-	if($protocol_uses_ports and $_POST['natport'] <> "" and !is_port($_POST['natport']) and !isset($_POST['nonat']))
+	if($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
 		$input_errors[] = gettext("You must supply a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {

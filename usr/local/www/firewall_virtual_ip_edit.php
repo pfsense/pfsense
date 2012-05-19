@@ -107,6 +107,9 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+	if ($_POST['subnet'])
+		$_POST['subnet'] = trim($_POST['subnet']);
+
 	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet'])))
 		$input_errors[] = gettext("A valid IP address must be specified.");
 

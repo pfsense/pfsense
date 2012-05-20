@@ -282,16 +282,11 @@ exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null")
 
 echo "===> Installing new files...\n";
 
-// Don't include the .git directory in the copy
-exec("mv $CODIR/pfSenseGITREPO/pfSenseGITREPO/.git $CODIR/pfSenseGITREPO/gitsync_temp.git");
-
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - --exclude .git . | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - --exclude .git . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
-
-exec("mv $CODIR/pfSenseGITREPO/gitsync_temp.git $CODIR/pfSenseGITREPO/pfSenseGITREPO/.git");
 
 // Reset the repository to restore the deleted files
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");

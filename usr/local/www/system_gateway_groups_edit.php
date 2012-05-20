@@ -167,7 +167,8 @@ include("head.inc");
 			foreach($a_gateways as $gwname => $gateway) {
 				if(!empty($pconfig['item'])) {
 					$af = explode("|", $pconfig['item'][0]);
-					if(!validate_address_family(lookup_gateway_ip_by_name($af[0]), $gateway['gateway']))
+					$family = $a_gateways[$af[0]]['ipprotocol'];
+					if($gateway['ipprotocol'] != $family)
 						continue;
 				}
 				$selected = array();

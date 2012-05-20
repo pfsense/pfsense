@@ -1632,7 +1632,7 @@ EOD;
 EOD;
 		}
 		if (isset($ppp['simpin']) && $type == "modem") {
-			if($ppp['pin-wait'] = "")
+			if($ppp['pin-wait'] == "")
 				$ppp['pin-wait'] = 0;
 			$mpdconf .= <<<EOD
 	set modem var \$SimPin "{$ppp['simpin']}"

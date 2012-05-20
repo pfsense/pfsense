@@ -85,6 +85,11 @@ if [ -f /etc/rc.disable_hdd_apm ]; then
 	/etc/rc.disable_hdd_apm
 fi
 
+#Eject CD devices on 3G modems
+MANUFATURER="huawei|zte"
+CDDEVICE=`dmesg |egrep -ei "($MANUFACTURER)" | awk '/cd/ {print $1}'`
+cdcontrol -f /dev/"$CDDEVICE" eject
+
 if [ ! "$PLATFORM" = "jail" ]; then
 	# Check to see if a compact flash mountpoint exists
 	# If it fails to mount then run a fsck -fy

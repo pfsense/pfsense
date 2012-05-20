@@ -179,6 +179,7 @@ if ($_POST) {
 		/* item is a url type */
 		if ($_POST['address0']) {
 			/* fetch down and add in */
+			$_POST['address0'] = trim($_POST['address0']);
 			$isfirst = 0;
 			$address = "";
 			$alias['url'] = $_POST['address0'];
@@ -196,7 +197,8 @@ if ($_POST) {
 		$address_count = 2;
 
 		/* item is a url type */
-		for($x=0; isset($_POST['address'. $x]); $x++) {
+		for($x=0; isset($_POST['address' . $x]); $x++) {
+			$_POST['address' . $x] = trim($_POST['address' . $x]);
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$isfirst = 0;
@@ -250,6 +252,7 @@ if ($_POST) {
 		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
+				$_POST["address{$x}"] = trim($_POST["address{$x}"]);
 				if (is_alias($_POST["address{$x}"])) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						// But alias type network can include alias type urltable. Feature#1603.

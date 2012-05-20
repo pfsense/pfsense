@@ -438,6 +438,7 @@ function return_gateways_array($disabled = false) {
 			case "dhcp":
 			case "pppoe":
 			case "pptp":
+			case "ppp":
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:

@@ -123,6 +123,13 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+	if ($_POST['external'])
+		$_POST['external'] = trim($_POST['external']);
+	if ($_POST['src'])
+		$_POST['src'] = trim($_POST['src']);
+	if ($_POST['dst'])
+		$_POST['dst'] = trim($_POST['dst']);
+
 	if (is_specialnet($_POST['srctype'])) {
                 $_POST['src'] = $_POST['srctype'];
                 $_POST['srcmask'] = 0;

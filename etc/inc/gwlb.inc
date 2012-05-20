@@ -877,14 +877,17 @@ function validate_address_family($ipaddr, $gwname) {
 		$v4gw = true;
 	if(is_ipaddrv6(lookup_gateway_ip_by_name($gwname)))
 		$v6gw = true;
-	/* are they dynamic */
-	switch($gwname) {
-		case "dynamic":
-			$v4gw = true;
-			break;
-		case "dynamic6":
-			$v6gw = true;
-			break;
+
+	$gw_array = return_gateways_array();
+	if(is_array($gw_array[$gwname])) {
+		switch($gw_array[$gwname]['ipprotocol']) {
+			case "inet":
+				$v4gw = true;
+				break;
+			case "inet6":
+				$v6gw = true;
+				break;
+		}
 	}
 
 	if($v4ip && $v4gw)

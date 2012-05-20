@@ -328,6 +328,9 @@ function return_gateways_array($disabled = false) {
 	$found_defaultv4 = 0;
 	$found_defaultv6 = 0;
 
+	$interfaces_v4 = array();
+	$interfaces_v6 = array();
+
 	$i = 0;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
@@ -336,31 +339,45 @@ function return_gateways_array($disabled = false) {
 			if(!isset($config['interfaces'][$gateway['interface']]['enable']))
 				continue;
 			
-			/* if the gateway is dynamic and we can find the IP, Great! */
+			$wancfg = $config['interfaces'][$gateway['interface']];
+			/* if the gateway is dynamic and we can find the IPv4, Great! */
 			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) {
-				$gateway['ipprotocol'] = "inet";
-				$gateway['gateway'] = get_interface_gateway($gateway['interface']);
-				if($gateway['gateway'] == "dynamic") {
-					$dynstr = $gateway['gateway'];
+				/* we know which interfaces is dynamic, this should be made a function */
+				switch($wancfg['ipaddr']) {
+					case "dhcp":
+					case "pppoe":
+					case "pptp":
+					case "ppp":
+						$gateway['ipprotocol'] = "inet";
+						$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+						if($gateway['gateway'] == "dynamic") {
+							$dynstr = $gateway['gateway'];
+						}
+						/* no IP address found, set to dynamic */
+						if(! is_ipaddrv4($gateway['gateway'])) {
+							$gateway['gateway'] = "{$dynstr}";
+						}
+						$gateway['dynamic'] = true;
+						break;
 				}
-				/* no IP address found, set to dynamic */
-				if(! is_ipaddrv4($gateway['gateway'])) {
-					$gateway['gateway'] = "{$dynstr}";
-				}
-				$gateway['dynamic'] = true;
 			}
 			/* if the gateway is dynamic6 and we can find the IPv6, Great! */
 			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic6")) {
-				$gateway['ipprotocol'] = "inet6";
-				$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-				if($gateway['gateway'] == "dynamic6") {
-					$dynstr = $gateway['gateway'];
+				/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
+				switch($wancfg['ipaddrv6']) {
+					case "dhcp6":
+						$gateway['ipprotocol'] = "inet6";
+						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+						if($gateway['gateway'] == "dynamic6") {
+							$dynstr = $gateway['gateway'];
+						}
+						/* no IPv6 address found, set to dynamic6 */
+						if(! is_ipaddrv6($gateway['gateway'])) {
+							$gateway['gateway'] = "{$dynstr}";
+						}
+						$gateway['dynamic'] = true;
+						break;
 				}
-				/* no IPv6 address found, set to dynamic6 */
-				if(! is_ipaddrv6($gateway['gateway'])) {
-					$gateway['gateway'] = "{$dynstr}";
-				}
-				$gateway['dynamic'] = true;
 			}
 			if(is_ipaddrv4($gateway['gateway']))
 				$gateway['ipprotocol'] = "inet";
@@ -388,7 +405,7 @@ function return_gateways_array($disabled = false) {
 			/* FIXME: Should this be enabled.
 			 * Some interface like wan might be default but have no info recorded 
 			 * the config. */
-			/* this is a fallback if all else fails and we want to get packet out @smos */
+			/* this is a fallback if all else fails and we want to get packets out @smos */
 			if (!isset($gateway['defaultgw'])) {
 				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0)) {
 					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
@@ -405,6 +422,13 @@ function return_gateways_array($disabled = false) {
 			}
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
+
+			/* tack a item on the array to keep track of dynamic interfaces */
+			if($gateway['ipprotocol'] == "inet")
+				$interfaces_v4[] = $gateway['friendlyiface'];
+
+			if($gateway['ipprotocol'] == "inet6")
+				$interfaces_v6[] = $gateway['friendlyiface'];
 
 			$gateways_arr[$gateway['name']] = $gateway;
 			unset($gateway);
@@ -431,6 +455,9 @@ function return_gateways_array($disabled = false) {
 			continue;
 
 		if(!isset($ifcfg['enable']))
+			continue;
+
+		if(in_array($ifname, $interfaces_v4))
 			continue;
 			
 		$ctype = "";
@@ -494,6 +521,9 @@ function return_gateways_array($disabled = false) {
 			continue;
 			
 		if(!isset($ifcfg['enable']))
+			continue;
+
+		if(in_array($ifname, $interfaces_v6))
 			continue;
 
 		$ctype = "";

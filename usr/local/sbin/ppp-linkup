@@ -5,6 +5,22 @@ if [ "$2" == "inet" ]; then
 	/bin/echo $4 > /tmp/$1_router
 	/bin/echo $3 > /tmp/$1_ip
 	/usr/bin/touch /tmp/$1up
+
+	ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
+	if [ $ALLOWOVERRIDE -gt 0 ]; then
+		# write nameservers to file
+		if [ $6 = "dns1" ]; then
+			echo $7 > /var/etc/nameserver_$1
+			/sbin/route change $7 $4
+		fi
+
+		if [ $8 = "dns2" ]; then
+			echo $9 >> /var/etc/nameserver_$1
+			/sbin/route change $9 $4
+		fi
+		/usr/local/sbin/pfSctl -c 'service reload dns'
+		/bin/sleep 1
+	fi
 fi
 
 if [ "$2" == "inet6" ]; then
@@ -12,22 +28,22 @@ if [ "$2" == "inet6" ]; then
 	/bin/echo $4 |cut -d% -f1 > /tmp/$1_routerv6
 	/bin/echo $3 |cut -d% -f1 > /tmp/$1_ipv6
 	/usr/bin/touch /tmp/$1upv6
-fi
 
-ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
-if [ $ALLOWOVERRIDE -gt 0 ]; then
-	# write nameservers to file
-	if [ $6 = "dns1" ]; then
-		echo $7 > /var/etc/nameserver_$1
-		/sbin/route change $7 $4
-	fi
+	ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
+	if [ $ALLOWOVERRIDE -gt 0 ]; then
+		# write nameservers to file
+		if [ $6 = "dns1" ]; then
+			echo $7 > /var/etc/nameserver_v6$1
+			/sbin/route change -inet6 $7 $4
+		fi
 
-	if [ $8 = "dns2" ]; then
-		echo $9 >> /var/etc/nameserver_$1
-		/sbin/route change $9 $4
+		if [ $8 = "dns2" ]; then
+			echo $9 >> /var/etc/nameserver_v6$1
+			/sbin/route change -inet6 $9 $4
+		fi
+		/usr/local/sbin/pfSctl -c 'service reload dns'
+		/bin/sleep 1
 	fi
-	/usr/local/sbin/pfSctl -c 'service reload dns'
-	/bin/sleep 1
 fi
 
 /usr/local/sbin/pfSctl -c "interface newip $1"

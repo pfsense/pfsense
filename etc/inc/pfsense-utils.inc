@@ -1262,7 +1262,7 @@ function get_interface_info($ifdescr) {
 
 		$mondev = $dev;
 		/* FIXME: needs a gui part really, some devices only have port 2. */
-		$mondev = "{$g['tmp_path']}/3gstats.". substr(basename($mondev), 0, -1) ."3";
+		$mondev = "{$g['tmp_path']}/3gstats.{$ifdescr}";
 		if(file_exists($mondev)) {
 			$cellstats = file($mondev);
 			$a_cellstats = explode(",", $cellstats[1]);

@@ -1722,6 +1722,12 @@ EOD;
 		$i++;
 	}
 
+	foreach($ports as $port) {
+		$mondev  = substr(basename($port), 0, -1). "3";
+		log_error("/usr/local/bin/3gstats.php $mondev $interface");
+		mwexec_bg("/usr/local/bin/3gstats.php $mondev {$interface}");
+	}
+
 	return 1;
 }
 

@@ -539,6 +539,32 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= " printf \"-t \" dsname \" N:\" dsdata }' ";
 				$rrdupdatesh .= " dsname=\"\" dsdata=\"\"`\n\n";
 			}
+
+			/* 3G interfaces */
+			if(preg_match("/ppp[0-9]+/i", $realif))	{
+				if (!file_exists("$rrddbpath$ifname$cellular")) {
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$cellular --step $rrdcellularinterval ";
+					$rrdcreate .= "DS:rssi:GAUGE:$cellularvalid:0:100 ";
+					$rrdcreate .= "DS:upstream:GAUGE:$cellularvalid:0:100000000 ";
+					$rrdcreate .= "DS:downstream:GAUGE:$cellularvalid:0:100000000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+					create_new_rrd($rrdcreate);
+				}
+
+				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+				if($g['booting']) {
+					mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U:U");
+				}
+
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# polling 3G\n";
+				$rrdupdatesh .= "3GSTATS=`awk -F, 'getline 2 {print \$2 \":\" \$8 \":\" \$9}' < /tmp/3gstats.$ifname\`\n";
+				$rrdupdatesh .= "$rrdtool update N:\"\$3GSTATS\"";
+			}
+
 		}
 		$i++;
 
@@ -676,34 +702,6 @@ function enable_rrd_graphing() {
 
 		}
 		/* End System statistics */
-
-		/* 3G WIRELESS, set up the rrd file */
-		/* XXX: Are multiple 3G interfaces not possible? smos@ */
-		if(isset($config['ppps']['ppp'])) {
-			$ifname = "ppp";
-			if (!file_exists("$rrddbpath$ifname$cellular")) {
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$cellular --step $rrdcellularinterval ";
-				$rrdcreate .= "DS:signal1:GAUGE:$cellularvalid:-200:200 ";
-				$rrdcreate .= "DS:signal2:GAUGE:$cellularvalid:-200:200 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-
-				create_new_rrd($rrdcreate);
-			}
-
-			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U");
-			}
-
-			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling 3G\n";
-			$rrdupdatesh .= "dev=`usbconfig show_ifdrv | awk -F. '/ u3g|umodem/ {print \"/dev/\" $1 \".\" $2}'`\n";
-			$rrdupdatesh .= "if [ -n \"\$dev\" ]; then $rrdtool update $rrddbpath$ifname$cellular N:`3gstat -s -d \$dev`\n";
-			$rrdupdatesh .= "else $rrdtool update $rrddbpath$ifname$cellular N:U:U; fi\n";
-		}
 
 		/* Captive Portal statistics, set up the rrd file */
 		if(isset($config['captiveportal']['enable'])) {

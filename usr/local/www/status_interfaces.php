@@ -191,6 +191,27 @@ include("head.inc");
 			<?=htmlspecialchars($ifinfo['ppp_uptime']);?> <?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>
 		</td>
         </tr>
+	<?php  endif; if ($ifinfo['cell_rssi']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Signal (RSSI)");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_rssi']);?> (0-31)
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_upstream']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Upstream");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_upstream']);?> kbit/s
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_downstream']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Downstream");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_downstream']);?> kbit/s
+		</td>
+        </tr>
 	<?php  endif; if ($ifinfo['macaddr']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("MAC address");?></td>

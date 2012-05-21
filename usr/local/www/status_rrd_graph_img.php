@@ -1031,21 +1031,14 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
-	$graphcmd .= "DEF:\"$curif-signal1=$rrddbpath$curdatabase:signal1:AVERAGE\" ";
-	$graphcmd .= "DEF:\"$curif-signal2=$rrddbpath$curdatabase:signal2:AVERAGE\" ";
-	$graphcmd .= "LINE2:\"$curif-signal1#{$colorwireless[0]}:$curif-signal1\" ";
-	$graphcmd .= "LINE2:\"$curif-signal2#{$colorwireless[1]}:$curif-signal2\" ";
+	$graphcmd .= "DEF:\"$curif-rssi=$rrddbpath$curdatabase:rssi:AVERAGE\" ";
+	$graphcmd .= "LINE2:\"$curif-rssi#{$colorwireless[0]}:$curif-rssi\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t     current\\n\" ";
-	$graphcmd .= "COMMENT:\"Signal1\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-signal1:MAX:%7.2lf dBm  \" ";
-	$graphcmd .= "GPRINT:\"$curif-signal1:AVERAGE:%7.2lf dBm  \" ";
-	$graphcmd .= "GPRINT:\"$curif-signal1:LAST:%7.2lf dBm\" ";
-	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Signal2\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-signal2:MAX:%7.2lf dBm  \" ";
-	$graphcmd .= "GPRINT:\"$curif-signal2:AVERAGE:%7.2lf dBm  \" ";
-	$graphcmd .= "GPRINT:\"$curif-signal2:LAST:%7.2lf dBm\" ";
+	$graphcmd .= "COMMENT:\"RSSI\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-rssi:MAX:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-rssi:AVERAGE:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-rssi:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }

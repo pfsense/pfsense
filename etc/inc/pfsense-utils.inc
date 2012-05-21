@@ -1259,6 +1259,17 @@ function get_interface_info($ifdescr) {
 			$ifinfo['nodevice'] = 1;
 			$ifinfo['pppinfo'] = $dev . " " . gettext("device not present! Is the modem attached to the system?");	
 		}
+
+		$mondev = $dev;
+		/* FIXME: needs a gui part really, some devices only have port 2. */
+		$mondev = "{$g['tmp_path']}/3gstats.". substr(basename($mondev), 0, -1) ."3";
+		if(file_exists($mondev)) {
+			$cellstats = file($mondev);
+			$a_cellstats = explode(",", $cellstats[1]);
+			$ifinfo['cell_rssi'] = $a_cellstats[1];
+			$ifinfo['cell_upstream'] = $a_cellstats[7];
+			$ifinfo['cell_downstream'] = trim($a_cellstats[8]);
+		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
 		if (isset($ppp['uptime']))
 			$ifinfo['ppp_uptime_accumulated'] = "(".get_ppp_uptime($ifinfo['if']).")";

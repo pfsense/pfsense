@@ -206,14 +206,17 @@ if ($_POST) {
 		$input_errors[] = gettext("Queue type rules only work with queues.");
 
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+		$a_gatewaygroups = return_gateway_groups_array();
 		foreach($config['gateways']['gateway_group'] as $gw_group) {
 			if($gw_group['name'] == $_POST['gateway']) {
-				$af = explode("|", $gw_group['item'][0]);
-				$ip = lookup_gateway_ip_by_name($af[0]);
-				if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6($ip))) {
+				$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
+				if($_POST['ipprotocol'] == $family) {
+					continue;
+				}
+				if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
 					$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
 				}
-				if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4($ip))) {
+				if(($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
 					$input_errors[] = gettext("You can not assign a IPv6 gateway group on IPv4 Address Family rule");
 				}
 			}

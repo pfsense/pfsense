@@ -600,10 +600,6 @@ function decrypt_change() {
 }
 
 function backuparea_change(obj) {
-        if (obj.value == "")
-                document.getElementById("dotnotbackuprrd").checked = false;
-        else
-                document.getElementById("dotnotbackuprrd").checked = true;
 	if (obj.value == "rrddata") {
                 document.getElementById("nopackages").disabled      = true;
                 document.getElementById("dotnotbackuprrd").disabled = true;

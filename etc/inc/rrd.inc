@@ -561,8 +561,8 @@ function enable_rrd_graphing() {
 
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling 3G\n";
-				$rrdupdatesh .= "3GSTATS=`awk -F, 'getline 2 {print \$2 \":\" \$8 \":\" \$9}' < /tmp/3gstats.$ifname\`\n";
-				$rrdupdatesh .= "$rrdtool update N:\"\$3GSTATS\"";
+				$rrdupdatesh .= "GSTATS=`awk -F, 'getline 2 {print \$2 \":\" \$8 \":\" \$9}' < /tmp/3gstats.$ifname`\n";
+				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$cellular N:\"\$GSTATS\"";
 			}
 
 		}

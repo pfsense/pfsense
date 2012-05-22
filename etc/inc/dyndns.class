@@ -156,7 +156,7 @@
                         $this->_dnsZoneID = $dnsZoneID;
                         $this->_dnsTTL = $dnsTTL;
 			$this->_if = get_real_interface($dnsIf);
-			$this->_ifIP = get_interface_ip($dnsIf);
+			$this->_checkIP();
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
 			$this->_dnsRequestIf = get_real_interface($dnsRequestIf);
@@ -165,6 +165,11 @@
 			// Ensure that we where able to lookup the IP
 			if(!is_ipaddr($this->_ifIP)) {
 				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
+				unlock($dyndnslck);
+				return;
+			}
+			if(!is_ipaddr($this->_dnsIP)) {
+				log_error("There was an error trying to determine the public IP for interface - {$dnsIf}({$this->_if}). Probably interface is not a WAN interface.");
 				unlock($dyndnslck);
 				return;
 			}
@@ -1024,7 +1029,6 @@
 				log_error("DynDns: Current WAN IP could not be determined, skipping update process.");
 				return false;
 			}
-			$this->_dnsIP = $wan_ip;
 			$log_error = "DynDns: Current WAN IP: {$wan_ip} ";
 
 			if (file_exists($this->_cacheFile)) {
@@ -1133,6 +1137,8 @@
 				}
 			} else
 				log_error("DynDns debug information: {$ip_address} extracted from local system.");
+
+			$this->_dnsIP = $ip_address;
 
 			return $ip_address;
 		}

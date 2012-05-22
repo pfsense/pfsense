@@ -1340,8 +1340,11 @@ function captiveportal_write_db($cpdb, $locked = false, $remove = false) {
 				else
 					unset($cpdb[$key]);
 			}
-		} else
+		} else {
+			if ($locked == false)
+				unlock($cpdblck);
 			return; //This makes sure no record removal calls
+		}
 	}
 	$fd = @fopen("{$g['vardb_path']}/captiveportal_{$cpzone}.db", "w");
 	if ($fd) {

@@ -3243,7 +3243,7 @@ function filter_generate_ipsec_rules() {
 				}
 			}
 
-			if(preg_match("/^[a-z0-9]_vip/i", $ph1ent['interface'])) {
+			if(preg_match("/^[a-z0-9]+_vip/i", $ph1ent['interface'])) {
 				$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
 			} else {
 				$parentinterface = $ph1ent['interface'];

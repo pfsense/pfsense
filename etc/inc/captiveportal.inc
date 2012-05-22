@@ -763,7 +763,8 @@ function captiveportal_prune_old() {
 					captiveportal_disconnect($cpentry, $radiusservers, 17);
 					captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
 					$unsetindexes[] = $cpentry[5];
-				}
+				} else if ($auth_list['auth_val'] == 2) // SUCCESS, check if any optional attributes are returned
+					captiveportal_reapply_attributes($cpentry, $auth_list);
 			}
 		}
 	}
@@ -1562,6 +1563,52 @@ function portal_mac_radius($clientmac,$clientip) {
     return FALSE;
 }
 
+function captiveportal_reapply_attributes($cpentry, $attributes) {
+
+	/* Add rules for traffic shaping
+	 * We don't need to add extra rules since traffic will pass due to the following kernel option
+	 * net.inet.ip.fw.one_pass: 1
+	 */
+	$peruserbw = isset($config['captiveportal']['peruserbw']);
+
+	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : 0;
+	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : 0;
+	$bw_up_pipeno = $cpentry[1]+20000;
+	$bw_down_pipeno = $cpentry[1]+20001;
+	$commands = "";
+
+	if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
+		$commands .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
+
+		if (!isset($config['captiveportal']['nomacfilter'])) {
+			$commands .= "table 1 del {$cpentry[2]} mac {$cpentry[3]}\n";
+			$commands .= "table 1 add {$cpentry[2]} mac {$cpentry[3]} {$bw_up_pipeno}\n";
+		} else {
+			$commands .= "table 1 del {$cpentry[2]}\n";
+			$commands .= "table 1 add {$cpentry[2]} {$bw_up_pipeno}\n";
+		}
+	}
+	if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
+		$commands .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
+
+		if (!isset($config['captiveportal']['nomacfilter'])) {
+			$commands .= "table 2 del {$cpentry[2]} mac {$cpentry[3]}\n";
+			$commands .= "table 2 add {$cpentry[2]} mac {$cpentry[3]} {$bw_down_pipeno}\n";
+		} else {
+			$commands .= "table 2 del {$cpentry[2]}\n";
+			$commands .= "table 2 add {$cpentry[2]} {$bw_down_pipeno}\n";
+		}
+	}
+
+	if (!empty($commands)) {
+		@file_put_contents("{$g['tmp_path']}/reattribute.rule.tmp", $commands);
+		mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmprules.rules");
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
+	}
+
+	unset($bw_up_pipeno, $bw_Down_pipeno, $bw_up, $bw_down);
+}
+
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
 	global $redirurl, $g, $config, $type, $passthrumac, $_POST;
@@ -1701,7 +1748,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$config['captiveportal']['passthrumac'][] = $mac;
 			unlock($cpdblck);
 			$macrules = captiveportal_passthrumac_configure_entry($mac);
-			file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
+			@file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
 			$writecfg = true;
 		} else {
@@ -1795,7 +1842,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 	return $sessionid;
 }
-
 
 /*
  * Used for when pass-through credits are enabled.

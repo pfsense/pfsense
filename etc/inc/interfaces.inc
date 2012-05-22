@@ -1177,7 +1177,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|^stf|^srd/i", $realif))
+		if (preg_match("/^[a-z0-9]_vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|^stf|^srd/i", $realif))
 			pfSense_interface_destroy($realif);
 	}	
 
@@ -4305,7 +4305,7 @@ function get_interface_ip($interface = "wan")
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^vip/i", $interface))
+		else if (preg_match("/^[a-z0-9]_vip/i", $interface))
 			$realif = $interface;
 		else
 			return null;
@@ -4331,7 +4331,7 @@ function get_interface_ipv6($interface = "wan")
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^vip/i", $interface))
+		else if (preg_match("/^[a-z0-9]_vip/i", $interface))
 			$realif = $interface;
 		else
 			return null;
@@ -4350,7 +4350,7 @@ function get_interface_linklocal($interface = "wan")
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^vip/i", $interface))
+		else if (preg_match("/^[a-z0-9]_vip/i", $interface))
 			$realif = $interface;
 		else
 			return null;
@@ -4369,7 +4369,7 @@ function get_interface_subnet($interface = "wan")
 	if (!$realif) {
                 if (preg_match("/^carp/i", $interface))
                         $realif = $interface;
-                else if (preg_match("/^vip/i", $interface))
+                else if (preg_match("/^[a-z0-9]_vip/i", $interface))
                         $realif = $interface;
                 else
                         return null;
@@ -4388,7 +4388,7 @@ function get_interface_subnetv6($interface = "wan")
 	if (!$realif) {
                 if (preg_match("/^carp/i", $interface))
                         $realif = $interface;
-                else if (preg_match("/^vip/i", $interface))
+                else if (preg_match("/^[a-z0-9]_vip/i", $interface))
                         $realif = $interface;
                 else
                         return null;

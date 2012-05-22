@@ -82,8 +82,6 @@
 		var $_dnsPass;
 		var $_dnsHost;
 		var $_dnsIP;
-		/* This is needed for support on addresses behind NAT. */
-		var $_ifIP;
 		var $_dnsWildcard;
 		var $_dnsMX;
 		var $_dnsBackMX;
@@ -163,11 +161,6 @@
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 
 			// Ensure that we where able to lookup the IP
-			if(!is_ipaddr($this->_ifIP)) {
-				log_error("There was an error trying to determine the IP for interface - {$dnsIf}({$this->_if}). Probably interface has no ip or is down. Dyndns update not possible for {$dnsService}.");
-				unlock($dyndnslck);
-				return;
-			}
 			if(!is_ipaddr($this->_dnsIP)) {
 				log_error("There was an error trying to determine the public IP for interface - {$dnsIf}({$this->_if}). Probably interface is not a WAN interface.");
 				unlock($dyndnslck);
@@ -1104,7 +1097,6 @@
 			$ip_address = find_interface_ip($this->_if);
 			if (!is_ipaddr($ip_address))
 				return 0;
-			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
 				$try = 0;

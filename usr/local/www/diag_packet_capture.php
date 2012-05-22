@@ -48,7 +48,7 @@ $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'vrrp', 'esp');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp');
 
 if ($_POST) {
 	$do_tcpdump = true;
@@ -166,7 +166,7 @@ include("fbegin.inc");
 				<option value="tcp" <?php if ($proto == "tcp") echo "selected"; ?>>TCP</option>
 				<option value="udp" <?php if ($proto == "udp") echo "selected"; ?>>UDP</option>
 				<option value="arp" <?php if ($proto == "arp") echo "selected"; ?>>ARP</option>
-				<option value="vrrp" <?php if ($proto == "vrrp") echo "selected"; ?>>VRRP (CARP)</option>
+				<option value="carp" <?php if ($proto == "carp") echo "selected"; ?>>CARP (VRRP)</option>
 				<option value="esp" <?php if ($proto == "esp") echo "selected"; ?>>ESP</option>
 			</select>
 			<br/><?=gettext("Select the protocol to capture, or Any.");?>
@@ -265,8 +265,13 @@ include("fbegin.inc");
 			if (in_array($fam, $fams))
 				$matches[] = $fam;
 
-			if (in_array($proto, $protos))
-				$matches[] = $proto;
+			if (in_array($proto, $protos)) {
+				if ($proto == "carp") {
+					$matches[] = 'proto 112';
+				} else {
+					$matches[] = $proto;
+				}
+			}
 
 			if ($port != "")
 				$matches[] = "port ".$port;

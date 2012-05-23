@@ -575,7 +575,7 @@ function upgrade_038_to_039() {
 
 
 function upgrade_039_to_040() {
-	global $config;
+	global $config, $g;
 	$config['system']['webgui']['auth_method'] = "session";
 	$config['system']['webgui']['backing_method'] = "htpasswd";
 
@@ -2790,7 +2790,7 @@ function upgrade_084_to_085() {
 }
 
 function upgrade_085_to_086() {
-	global $config;
+	global $config, $g;
 
 	/* XXX: Gross hacks in sight */
 	write_config();

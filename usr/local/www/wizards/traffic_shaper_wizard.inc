@@ -55,8 +55,6 @@ function step2_stepbeforeformdisplay() {
 	foreach ($iflisttmp as $if => $ifdesc) {
 		if (!is_altq_capable(get_real_interface($if)))
 			continue;
-		if ($if == "lan")
-			continue;
 		$numberofinterfaces++;
 		$iflist[$if] = $ifdesc;
 	}

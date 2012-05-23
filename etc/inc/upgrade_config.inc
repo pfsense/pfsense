@@ -2718,8 +2718,7 @@ function upgrade_081_to_082() {
 	if (is_array($config['virtualips']['vip'])) {
 		$vipchg = array();
 		foreach ($config['virtualips']['vip'] as $vip) {
-			$realif = get_real_interface($vip['interface']);
-			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$realif}_vip{$vip['vhid']}/g\n");
+			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$vip['interface']}_vip{$vip['vhid']}/g\n");
 		}
 		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
 		require_once("config.lib.inc");

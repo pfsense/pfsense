@@ -195,7 +195,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Signal (RSSI)");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_rssi']);?> (0-31)
+			<?=htmlspecialchars($ifinfo['cell_rssi']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_mode']): ?>
@@ -205,16 +205,44 @@ include("head.inc");
 			<?=htmlspecialchars($ifinfo['cell_mode']);?>
 		</td>
         </tr>
-	<?php  endif; if ($ifinfo['cell_upstream']): ?>
+	<?php  endif; if ($ifinfo['cell_simstate']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell SIM State");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_simstate']);?>
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_service']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Service");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_service']);?>
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_bwupstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Upstream");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_bwupstream']);?> kbit/s
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_bwdownstream']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Downstream");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_bwdownstream']);?> kbit/s
+		</td>
+        </tr>
+	<?php  endif; if ($ifinfo['cell_upstream']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Current Up");?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['cell_upstream']);?> kbit/s
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_downstream']): ?>
 	<tr>
-		<td width="22%" class="vncellt"><?=gettext("Cell Downstream");?></td>
+		<td width="22%" class="vncellt"><?=gettext("Cell Current Down");?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['cell_downstream']);?> kbit/s
 		</td>

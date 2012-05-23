@@ -2799,7 +2799,7 @@ function upgrade_085_to_086() {
 		foreach ($config['virtualips']['vip'] as $vip) {
 			if ($vip['mode'] != "carp")
 				continue;
-			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$vip['interface']}_vip{$vip['vhid']}/g\n");
+			file_put_contents("{$g['tmp_path']}/vipreplace", "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n");
 		}
 		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
 		require_once("config.lib.inc");

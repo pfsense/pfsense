@@ -59,12 +59,12 @@ while(true) {
 			$items = array();
 			$items = split(",", $elements[1]);
 			$record['time'] = hexdec($items[0]);
-			$record['upstream'] = hexdec($items[1]);
-			$record['downstream'] = hexdec($items[2]);
+			$record['upstream'] = ((hexdec($items[1])) * 8) / 1024;
+			$record['downstream'] = ((hexdec($items[2])) * 8) / 1024;
 			$record['sent'] = hexdec($items[3]);
 			$record['received'] = hexdec($items[4]);
-			$record['bwupstream'] = hexdec($items[5]);
-			$record['bwdownstream'] = hexdec($items[6]);
+			$record['bwupstream'] = ((hexdec($items[5])) * 8) / 1024;
+			$record['bwdownstream'] = ((hexdec($items[6])) * 8) / 1024;
 			break;
 	}
 

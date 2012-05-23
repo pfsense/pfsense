@@ -1604,7 +1604,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	if (!empty($commands)) {
 		@file_put_contents("{$g['tmp_path']}/reattribute.rule.tmp", $commands);
 		mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute.rule.tmp");
-		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
+		//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 	}
 
 	unset($bw_up_pipeno, $bw_Down_pipeno, $bw_up, $bw_down);

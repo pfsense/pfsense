@@ -38,7 +38,17 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
+global $g;
+
 $cpzone = str_replace("\n", "", $argv[1]);
+
+if (file_exists("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running")) {
+        log_error("Skipping CP prunning process because previous/another instance is already running");
+        return;
+}
+
+@file_put_contents("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running", "");
 captiveportal_prune_old();
+@unlink("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
 
 ?>

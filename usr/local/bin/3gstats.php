@@ -15,6 +15,10 @@ $i = 0;
 
 $record = array();
 $handle = fopen($device, "r");
+if(! $handle) {
+	echo "Can not open modem stats device\n";
+	exit(1);
+}
 while(true) {
 	$string = "";
 	$string = fgets($handle, 256);

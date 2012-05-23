@@ -10,7 +10,7 @@ if(empty($argv[1])) {
 $device = "/dev/{$argv[1]}";
 $statfile = "/tmp/3gstats.{$argv[2]}";
 /* mode is a comma seperated value, thus submode is born */
-$header = "#seconds,rssi,mode,submode,upstream,downstream,sentbytes,receivedbyts,bwupstream,bwdownstream\n";
+$header = "#seconds,rssi,mode,submode,upstream,downstream,sentbytes,receivedbyts,bwupstream,bwdownstream,simstate,service\n";
 
 $i = 0;
 
@@ -30,6 +30,8 @@ $record['sent'] = 0;
 $record['received'] = 0;
 $record['bwupstream'] = 0;
 $record['bwdownstream'] = 0;
+$record['simstate'] = 0;
+$record['service'] = 0;
 
 while(true) {
 	$string = "";
@@ -43,6 +45,12 @@ while(true) {
 	switch($elements[0]) {
 		case "^MODE":
 			$record['mode'] = $elements[1];
+			break;
+		case "^SRVST":
+			$record['service'] = $elements[1];
+			break;
+		case "^SIMST":
+			$record['simstate'] = $elements[1];
 			break;
 		case "^RSSI":
 			$record['rssi'] = $elements[1];
@@ -61,7 +69,9 @@ while(true) {
 	}
 
 	if($i > 10) {
-		$csv = $header . "{$record['time']},{$record['rssi']},{$record['mode']},{$record['upstream']},{$record['downstream']},{$record['sent']},{$record['received']},{$record['bwupstream']},{$record['bwdownstream']}\n";
+		$csv = $header;
+		$csv .= implode(",", $record);
+		$csv .= "\n";
 		file_put_contents($statfile, $csv);
 		$i = 0;
 	}

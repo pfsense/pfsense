@@ -2469,7 +2469,7 @@ function huawei_mode_to_string($mode, $submode) {
 	$submodes[4] = "WCDMA";
 	$submodes[5] = "HSDPA";
 	$submodes[6] = "HSUPA";
-	$submodes[7] = "HDSPA+HSUPA";
+	$submodes[7] = "HSDPA+HSUPA";
 	$submodes[8] = "TD-SCDMA";
 	$submodes[9] = "HSPA+";
 	$string = "{$modes[$mode]}, {$submodes[$submode]} Mode";

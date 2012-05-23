@@ -1682,7 +1682,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
          * We don't need to add extra rules since traffic will pass due to the following kernel option
          * net.inet.ip.fw.one_pass: 1
          */
-        $peruserbw = isset($config['captiveportal']['peruserbw']);
+        $peruserbw = isset($config['captiveportal'][$cpzone]['peruserbw']);
                 
         $bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultup'];
         $bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultdn'];

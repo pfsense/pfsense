@@ -19,6 +19,15 @@ if(! $handle) {
 	echo "Can not open modem stats device\n";
 	exit(1);
 }
+$record['mode'] = 0;
+$record['rssi'] = 0;
+$record['time'] = 0;
+$record['upstream'] = 0;
+$record['downstream'] = 0;
+$record['sent'] = 0;
+$record['received'] = 0;
+$record['bwupstream'] = 0;
+$record['bwdownstream'] = 0;
 while(true) {
 	$string = "";
 	$string = fgets($handle, 256);
@@ -29,14 +38,15 @@ while(true) {
 	$elements[1] = trim($elements[1]);
 
 	switch($elements[0]) {
+		case "^MODE":
+			$record['mode'] = $elements[1];
+			break;
 		case "^RSSI":
 			$record['rssi'] = $elements[1];
 			break;
 		case "^DSFLOWRPT":
 			$items = array();
 			$items = split(",", $elements[1]);
-			$record['bwdownstream'] = 0;
-			$record['bwdownstream'] = 0;
 			$record['time'] = hexdec($items[0]);
 			$record['upstream'] = hexdec($items[1]);
 			$record['downstream'] = hexdec($items[2]);

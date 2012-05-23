@@ -1324,7 +1324,7 @@ function interface_ppps_configure($interface) {
 		exec("/bin/mkdir -p /var/spool/lock");
 		exec("/bin/chmod a+rw /var/spool/lock/.");
 	}
-	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files	
+	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
 		mwexec("/bin/ln -s /usr/local/sbin/mpd.script {$g['varetc_path']}/.");
 
@@ -1700,6 +1700,11 @@ EOD;
 			mwexec("rm -f /conf/{$pppif}.log");
 			conf_mount_ro();
 		}
+	}
+
+	/* clean up old lock files */
+	foreach($ports as $port) {
+		unlink("{$g['var_path']}/spool/lock/LCK..{$port}");
 	}
 
 	/* fire up mpd */

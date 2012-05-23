@@ -1267,8 +1267,9 @@ function get_interface_info($ifdescr) {
 			$cellstats = file($mondev);
 			$a_cellstats = explode(",", $cellstats[1]);
 			$ifinfo['cell_rssi'] = $a_cellstats[1];
-			$ifinfo['cell_upstream'] = $a_cellstats[7];
-			$ifinfo['cell_downstream'] = trim($a_cellstats[8]);
+			$ifinfo['cell_mode'] = $a_cellstats[2] .",". $a_cellstats[3];
+			$ifinfo['cell_upstream'] = $a_cellstats[8];
+			$ifinfo['cell_downstream'] = trim($a_cellstats[9]);
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
 		if (isset($ppp['uptime']))

@@ -9,7 +9,8 @@ if(empty($argv[1])) {
 /* Huawei example */
 $device = "/dev/{$argv[1]}";
 $statfile = "/tmp/3gstats.{$argv[2]}";
-$header = "#seconds,rssi,mode,upstream,downstream,sentbytes,receivedbyts,bwupstream,bwdownstream\n";
+/* mode is a comma seperated value, thus submode is born */
+$header = "#seconds,rssi,mode,submode,upstream,downstream,sentbytes,receivedbyts,bwupstream,bwdownstream\n";
 
 $i = 0;
 
@@ -19,15 +20,17 @@ if(! $handle) {
 	echo "Can not open modem stats device\n";
 	exit(1);
 }
-$record['mode'] = 0;
-$record['rssi'] = 0;
+
 $record['time'] = 0;
+$record['rssi'] = 0;
+$record['mode'] = "0,0";
 $record['upstream'] = 0;
 $record['downstream'] = 0;
 $record['sent'] = 0;
 $record['received'] = 0;
 $record['bwupstream'] = 0;
 $record['bwdownstream'] = 0;
+
 while(true) {
 	$string = "";
 	$string = fgets($handle, 256);

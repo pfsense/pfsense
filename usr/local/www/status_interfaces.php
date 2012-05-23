@@ -198,6 +198,13 @@ include("head.inc");
 			<?=htmlspecialchars($ifinfo['cell_rssi']);?> (0-31)
 		</td>
         </tr>
+	<?php  endif; if ($ifinfo['cell_mode']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("Cell Mode");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['cell_mode']);?>
+		</td>
+        </tr>
 	<?php  endif; if ($ifinfo['cell_upstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Upstream");?></td>

@@ -1723,7 +1723,7 @@ EOD;
 	}
 
 	foreach($ports as $port) {
-		mwexec("ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill'");
+		mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
 		$mondev  = substr(basename($port), 0, -1). "3";
 		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
 		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");

@@ -2793,17 +2793,21 @@ function upgrade_085_to_086() {
 	global $config, $g;
 
 	/* XXX: Gross hacks in sight */
-	write_config();
 	if (is_array($config['virtualip']['vip'])) {
 		$vipchg = array();
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] != "carp")
 				continue;
-			file_put_contents("{$g['tmp_path']}/vipreplace", "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n");
+			$vipchg[] = "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n";
 		}
-		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
-		require_once("config.lib.inc");
-		$config = parse_config(true);
+		if (!empty($vipchg)) {
+			file_put_contents("{$g['tmp_path']}/vipreplace", $vipchg);
+			write_config();
+			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
+			require_once("config.lib.inc");
+			$config = parse_config(true);
+			@unlink("{$g['tmp_path']}/vipreplace");
+		}
 	}
 }
 

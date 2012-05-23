@@ -2794,9 +2794,9 @@ function upgrade_085_to_086() {
 
 	/* XXX: Gross hacks in sight */
 	write_config();
-	if (is_array($config['virtualips']['vip'])) {
+	if (is_array($config['virtualip']['vip'])) {
 		$vipchg = array();
-		foreach ($config['virtualips']['vip'] as $vip) {
+		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] != "carp")
 				continue;
 			file_put_contents("{$g['tmp_path']}/vipreplace", "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n");

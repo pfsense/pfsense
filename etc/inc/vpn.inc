@@ -1454,6 +1454,10 @@ EOD;
 				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
 
+			/* Check if previous instance is still up */
+			while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid"))
+				killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
+
 			/* Get support for netgraph(4) from the nic */
 			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */

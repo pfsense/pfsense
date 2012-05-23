@@ -1572,8 +1572,8 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	 */
 	$peruserbw = isset($config['captiveportal']['peruserbw']);
 
-	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : 0;
-	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : 0;
+	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $config['captiveportal']['bwdefaultup'];
+	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $config['captiveportal']['bwdefaultdn'];
 	$bw_up_pipeno = $cpentry[1]+20000;
 	$bw_down_pipeno = $cpentry[1]+20001;
 	$commands = "";

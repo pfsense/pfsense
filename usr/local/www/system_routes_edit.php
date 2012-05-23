@@ -113,7 +113,7 @@ if ($_POST) {
 		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
 		$new_targets[] = $osn;
 	}
-	if (is_ipaddr($_POST['network'])) {
+	if (is_ipaddrv4($_POST['network'])) {
 		if($_POST['network_subnet'] > 32)
 			$input_errors[] = gettext("A IPv4 subnet can not be over 32 bits.");
 		else {
@@ -125,7 +125,11 @@ if ($_POST) {
 		foreach (filter_expand_alias_array($_POST['network']) as $tgt) {
 			if (is_ipaddr($tgt))
 				$tgt .= "/32";
+			if (is_ipaddr($tgt))
+				$tgt .= "/128";
 			if (!is_subnet($tgt))
+				continue;
+			if (!is_subnet_v6($tgt))
 				continue;
 			$new_targets[] = $tgt;
 		}
@@ -133,8 +137,8 @@ if ($_POST) {
 	if (!isset($id))
 		$id = count($a_routes);
 	$oroute = $a_routes[$id];
+	$old_targets = array();
 	if (!empty($oroute)) {
-		$old_targets = array();
 		if (is_alias($oroute['network'])) {
 			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
 				if (is_ipaddr($tgt))

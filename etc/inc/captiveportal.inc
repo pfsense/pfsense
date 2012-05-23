@@ -1714,9 +1714,9 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
         }
 
         if (!empty($commands)) {
-                @file_put_contents("{$g['tmp_path']}/reattribute.rule.tmp", $commands);
+                @file_put_contents("{$g['tmp_path']}/reattribute{$cpzone}.rule.tmp", $commands);
 		captiveportal_ipfw_set_context($cpzone);
-                mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmprules.rules");
+                mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute{$cpzone}.rule.tmp");
                 captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
         }
 

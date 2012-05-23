@@ -2796,8 +2796,11 @@ function upgrade_085_to_086() {
 	write_config();
 	if (is_array($config['virtualips']['vip'])) {
 		$vipchg = array();
-		foreach ($config['virtualips']['vip'] as $vip)
+		foreach ($config['virtualips']['vip'] as $vip) {
+			if ($vip['mode'] != "carp")
+				continue;
 			$vipchg[$vip['vhid']] = $vip;
+		}
 		ksort($vipchg);
 		foreach (array_reverse($vipchg) as $vip)
 			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$vip['interface']}_vip{$vip['vhid']}/g\n");

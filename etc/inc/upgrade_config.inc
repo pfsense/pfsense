@@ -2712,25 +2712,10 @@ function upgrade_081_to_082() {
 	global $config, $g;
 	/* enable the allow IPv6 toggle */
 	$config['system']['ipv6allow'] = true;
-
-	/* XXX: Gross hacks in sight */
-	write_config();
-	if (is_array($config['virtualips']['vip'])) {
-		$vipchg = array();
-		foreach ($config['virtualips']['vip'] as $vip) {
-			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$vip['interface']}_vip{$vip['vhid']}/g\n");
-		}
-		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
-		require_once("config.lib.inc");
-		$config = parse_config(true);
-	}
 }
 
 function upgrade_082_to_083() {
 	global $config;
-
-	/* enable the allow IPv6 toggle if coming from 2.0.x where x > 1 */
-	$config['system']['ipv6allow'] = true;
 
 	/* Upgrade captiveportal config */
 	if (!empty($config['captiveportal'])) {
@@ -2801,6 +2786,22 @@ function upgrade_084_to_085() {
 			}
 		}
 		$config['gateways']['gateway_group'] = $group_array_new;
+	}
+}
+
+function upgrade_085_to_086() {
+	global $config;
+
+	/* XXX: Gross hacks in sight */
+	write_config();
+	if (is_array($config['virtualips']['vip'])) {
+		$vipchg = array();
+		foreach ($config['virtualips']['vip'] as $vip) {
+			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$vip['interface']}_vip{$vip['vhid']}/g\n");
+		}
+		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
+		require_once("config.lib.inc");
+		$config = parse_config(true);
 	}
 }
 

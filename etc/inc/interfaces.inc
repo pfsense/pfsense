@@ -1360,6 +1360,9 @@ function interface_ppps_configure($interface) {
 		$passwd = base64_decode($ppp['password']);
 
 	$bandwidths = explode(',',$ppp['bandwidth']);
+	$defaultmtu = "1492";
+	if (!empty($ifcfg['mtu']))
+		$defaultmtu = intval($ifcfg['mtu']);
 	$mtus = explode(',',$ppp['mtu']);
 	$mrus = explode(',',$ppp['mru']);
 
@@ -1489,7 +1492,7 @@ EOD;
 EOD;
 
 		if (empty($mtus[$pid]))
-			$mtus[$pid] = "1492";
+			$mtus[$pid] = $defaultmtu;
 			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
 

@@ -2721,7 +2721,7 @@ function upgrade_081_to_082() {
 			$realif = get_real_interface($vip['interface']);
 			file_put_contents("{$g['tmp_path']}/vipreplace", "s/vip{$vip['vhid']}/{$realif}_vip{$vip['vhid']}/g\n");
 		}
-		mwexec("/bin/sh -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
+		mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
 		require_once("config.lib.inc");
 		$config = parse_config(true);
 	}

@@ -178,7 +178,7 @@ include("head.inc");
 			  </td>
 			  <td class="listr" nowrap>
 				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif"></a>
-				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['dstip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}&ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif"></a>
+				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['srcip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}&ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif"></a>
 				<?php echo $dststr;?>
 			  </td>
 			  <?php

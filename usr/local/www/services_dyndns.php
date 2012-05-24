@@ -47,7 +47,16 @@ $a_dyndns = &$config['dyndnses']['dyndns'];
 if ($_GET['act'] == "del") {
 		unset($a_dyndns[$_GET['id']]);
 
+		for($i = 0; $i < count($a_dyndns); $i++) {
+			$a_dyndns[$i]['id'] = $i;
+		}
+
+		//FIXME: Instead of rechecking all interfaces and removing the cache files, gracefully move all cache files to the appropriate ID number.
+		mwexec("/bin/rm {$g['conf_path']}/dyndns_*.cache");
+
 		write_config();
+
+		services_dyndns_configure();
 
 		header("Location: services_dyndns.php");
 		exit;
@@ -114,8 +123,8 @@ include("head.inc");
 		  </td>
                   <td class="listlr">
 				  <?php
-					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53");
-					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53");
+					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53, Custom");
+					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom");
 					$j = 0; for ($j = 0; $j < count($vals); $j++) 
                       			if ($vals[$j] == $dyndns['type']) { 
                       				echo htmlspecialchars($types[$j]);
@@ -128,7 +137,7 @@ include("head.inc");
                   </td>
                   <td class="listlr">
 			<?php
-				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . ".cache";
+				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 				$ipaddr = dyndnsCheckIP($if);
 				if(file_exists($filename)) {
 					$cached_ip_s = explode(":", file_get_contents($filename));

@@ -202,6 +202,12 @@ $curcfg = $config['system']['firmware'];
                 </tr>
                 <?php endif; ?>
 		<tr>
+			<td width="25%" class="vncellt">Load average</td>
+			<td width="75%" class="listr">
+			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
+			</td>
+		</tr>
+		<tr>
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">
 				<?php $cpuUsage = "0"; ?>

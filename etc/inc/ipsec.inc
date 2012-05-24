@@ -152,7 +152,7 @@ function ipsec_get_phase1_src(& $ph1ent) {
  */
 function ipsec_get_phase1_dst(& $ph1ent) {
 	global $g;
-	if (!$ph1ent['remote-gateway'])
+	if (empty($ph1ent['remote-gateway']))
 		return false;
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {

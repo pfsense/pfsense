@@ -42,6 +42,7 @@ function stats(x) {
         updateInterfaces(values[7]);
         updateGatewayStats(values[8]);
         updateCpuFreq(values[9]);
+        updateLoadAverage(values[10]);
 }
 
 function updateMemory(x) {
@@ -104,6 +105,11 @@ function updateGatewayStats(x){
 function updateCpuFreq(x) {
 	if(jQuery('#cpufreq'))
 		jQuery("#cpufreq").html(x);
+}
+
+function updateLoadAverage(x) {
+	if(jQuery('#load_average'))
+		jQuery("#load_average").html(x);
 }
 
 function updateInterfaceStats(x){

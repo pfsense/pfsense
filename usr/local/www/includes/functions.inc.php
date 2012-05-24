@@ -20,6 +20,7 @@ function get_stats() {
 	$stats['interfacestatus'] = get_interfacestatus();
 	$stats['gateways'] = get_gatewaystats();
 	$stats['cpufreq'] = get_cpufreq();
+	$stats['load_average'] = get_load_average();
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -229,6 +230,12 @@ function get_cpufreq() {
 	if ($curfreq != $maxfreq)
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	return $out;
+}
+
+function get_load_average() {
+	$load_average = "";
+	exec("/usr/bin/uptime | /usr/bin/sed 's/^.*: //'", $load_average);
+	return $load_average[0];
 }
 
 function get_interfacestats() {

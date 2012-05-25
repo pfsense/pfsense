@@ -497,6 +497,37 @@ function ipsec_dump_sad()
 	return $sad;
 }
 
+/*
+ * Return dump of mobile user list
+ */
+function ipsec_dump_mobile() {
+	$command = "/usr/local/sbin/racoonctl show-users";
+	$fd = @popen($command, "r");
+	$mobile = array();
+	if ($fd) {
+		while (!feof($fd)) {
+			$user = array();
+			$line = chop(fgets($fd));
+			if (!$line)
+				continue;
+			if ($line == "User|Source|Destination|CreatedOn|SPI")
+				continue;
+
+			// jim|192.168.20.243:4500|192.168.20.5:24146|2012-05-25 09:54:39|989d10e1e2d4eca4:7243830d5fd2afe7
+			$linea = explode("|", trim($line));
+			$user['username'] = $linea[0];
+			$user['local'] = $linea[1];
+			$user['remote'] = $linea[2];
+			$user['logintime'] = $linea[3];
+			$user['spi'] = $linea[4];
+			$mobile[] = $user;
+		}
+		pclose($fd);
+	}
+
+	return $mobile;
+}
+
 function ipsec_mobilekey_sort() {
 	global $config;
 
@@ -522,6 +553,12 @@ function ipsec_get_number_of_phase2($ikeid) {
 	}
 
 	return $nbph2;
+}
+
+function ipsec_disconnect_mobile($username) {
+	if (empty($username))
+		return false;
+	exec("/usr/local/sbin/racoonctl logout-user " . escapeshellarg($username));
 }
 
 ?>

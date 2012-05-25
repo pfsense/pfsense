@@ -37,123 +37,155 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
-	if (isset($config['ipsec']['phase1'])){?>
+if (isset($config['ipsec']['phase1'])){?>
 	<div>&nbsp;</div>
-	<?php	
+	<?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
-	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
+	$tab_array[1] = array("Tunnels", false, "ipsec-tunnel");
+	$tab_array[2] = array("Mobile", false, "ipsec-mobile");
 	display_widget_tabs($tab_array);
 
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
+	$mobile = ipsec_dump_mobile();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
-	
+
 	$ipsec_detail_array = array();
-		foreach ($config['ipsec']['phase2'] as $ph2ent){ 
-			ipsec_lookup_phase1($ph2ent,$ph1ent);
-			$ipsecstatus = false;
-			
-			$tun_disabled = "false";
-			$foundsrc = false;
-			$founddst = false; 
-	
-			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-				$tun_disabled = "true";
-				continue;
-			}
-			
-			if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
-				/* tunnel is up */
-				$iconfn = "true";
-				$activecounter++;
-			} else {
-				/* tunnel is down */
-				$iconfn = "false";
-				$inactivecounter++;
-			}
-			
-			$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
-						'dest' => $ph1ent['remote-gateway'],
-						'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
-						'descr' => $ph2ent['descr'],
-						'status' => $iconfn,
-						'disabled' => $tun_disabled);
+	foreach ($config['ipsec']['phase2'] as $ph2ent){
+		if ($ph2ent['remoteid']['type'] == "mobile")
+			continue;
+		ipsec_lookup_phase1($ph2ent,$ph1ent);
+		$ipsecstatus = false;
+
+		$tun_disabled = "false";
+		$foundsrc = false;
+		$founddst = false;
+
+		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
+			$tun_disabled = "true";
+			continue;
 		}
+
+		if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
+			/* tunnel is up */
+			$iconfn = "true";
+			$activecounter++;
+		} else {
+			/* tunnel is down */
+			$iconfn = "false";
+			$inactivecounter++;
+		}
+
+		$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+					'dest' => $ph1ent['remote-gateway'],
+					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
+					'descr' => $ph2ent['descr'],
+					'status' => $iconfn,
+					'disabled' => $tun_disabled);
 	}
-	
+}
+
 	if (isset($config['ipsec']['phase2'])){ ?>
 
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
-	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
-		  <tr>
-		        <td nowrap class="listhdrr">Active Tunnels</td>
-		        <td nowrap class="listhdrr">Inactive Tunnels</td>
-			</tr>
-			<tr>
-				<td class="listlr"><?=$activecounter;?></td>
-				<td class="listr"><?=$inactivecounter;?></td>
-			</tr>
-		</table>
+	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr>
+		<td nowrap class="listhdrr">Active Tunnels</td>
+		<td nowrap class="listhdrr">Inactive Tunnels</td>
+		<td nowrap class="listhdrr">Mobile Users</td>
+	</tr>
+	<tr>
+		<td class="listlr"><?php echo $activecounter; ?></td>
+		<td class="listr"><?php echo $inactivecounter; ?></td>
+		<td class="listr"><?php echo count($mobile); ?></td>
+	</tr>
+	</table>
 	</div>
 </div>
 
 <div id="ipsec-tunnel" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
-	                <div class="widgetsubheader" style="display:table-cell;width:40px">Source</div>
-	                <div class="widgetsubheader" style="display:table-cell;width:100px">Destination</div>
-	                <div class="widgetsubheader" style="display:table-cell;width:90px">Description</div>
-	                <div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>				
+			<div class="widgetsubheader" style="display:table-cell;width:40px">Source</div>
+			<div class="widgetsubheader" style="display:table-cell;width:100px">Destination</div>
+			<div class="widgetsubheader" style="display:table-cell;width:90px">Description</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
 	<?php
 	foreach ($ipsec_detail_array as $ipsec) :
-		
+
 		if ($ipsec['disabled'] == "true"){
 			$spans = "<span class=\"gray\">";
 			$spane = "</span>";
-		} 
+		}
 		else {
 			$spans = $spane = "";
-		}		
+		}
 
 		?>
-	
+
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:39px">
-				<?=$spans;?>
-					<?=htmlspecialchars($ipsec['src']);?>						
-				<?=$spane;?>
+				<?php echo $spans;?>
+					<?php echo htmlspecialchars($ipsec['src']);?>
+				<?php echo $spane;?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:100px"><?=$spans;?>			
-				<?=$ipsec['remote-subnet'];?>
+			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
+				<?php echo $ipsec['remote-subnet'];?>
 				<br/>
-				(<?=htmlspecialchars($ipsec['dest']);?>)<?=$spane;?>
+				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?=$spans;?><?=htmlspecialchars($ipsec['descr']);?><?=$spane;?></div>
-			<div class="listr"  style="display:table-cell;width:37px"><?=$spans;?><center>
-			<?php 
-			
-			if($ipsec['status'] == "true") { 
+			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
+			<div class="listr"  style="display:table-cell;width:37px"><?php echo $spans;?><center>
+			<?php
+
+			if($ipsec['status'] == "true") {
 				/* tunnel is up */
 				$iconfn = "interface_up";
 			} else {
 				/* tunnel is down */
 				$iconfn = "interface_down";
 			}
-			
+
 			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
-						
-			?></center><?=$spane;?></div>
+
+			?></center><?php echo $spane;?></div>
 		</div>
 	<?php endforeach; ?>
 	</div>
  </div>
-</div><?php //end ipsec tunnel
+</div>
+<div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;">
+	<div style="padding: 10px">
+		<div style="display:table-row;">
+			<div class="widgetsubheader" style="display:table-cell;width:140px">User/Time</div>
+			<div class="widgetsubheader" style="display:table-cell;width:130px">Local/Remote</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">&nbsp;</div>
+		</div>
+		<div style="max-height:105px;overflow:auto;">
+<?php	foreach ($mobile as $muser) : ?>
+		<div style="display:table-row;">
+			<div class="listlr" style="display:table-cell;width:139px">
+				<?php echo htmlspecialchars($muser['username']);?><br/>
+				<?php echo htmlspecialchars($muser['logintime']);?>
+			</div>
+			<div class="listr"  style="display:table-cell;width:130px">
+				<?php echo htmlspecialchars($muser['local']);?><br/>
+				<?php echo htmlspecialchars($muser['remote']);?>
+			</div>
+			<div class="listr"  style="display:table-cell;width:30px">
+				<center><a href="diag_ipsec.php?act=disconnect&user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'/></a></center>
+			</div>
+		</div>
+<?php	endforeach; ?>
+	</div>
+</div>
+<?php //end ipsec tunnel
 }//end if tunnels are configured, else show code below
 else { ?>
 <div style="display:block">
@@ -167,7 +199,7 @@ else { ?>
 	              Note: There are no configured IPsec Tunnels<br />
 	            </strong>
 	          </span>
-	          You can configure your IPsec 
+	          You can configure your IPsec
 	          <a href="vpn_ipsec.php">here</a>.
 	        </span>
 	      </p>
@@ -176,5 +208,3 @@ else { ?>
 	</table>
 </div>
 <? } ?>
-
-

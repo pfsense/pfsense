@@ -401,17 +401,7 @@ if($_REQUEST['undodrag']) {
 		(((count($config['interfaces']) > 1) && ($if == 'lan'))
 		|| ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 
-		$guiport = "80";
-		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
-			$guiport = "{$config['system']['webgui']['port']}";
-		if ($config['system']['webgui']['protocol'] == "https")
-			$guiport .= "<br/>443";
-
-		$sshport = "";
-		if (isset($config['system']['enablesshd'])) {
-			$sshport = ($config['system']['ssh']['port']) ? $config['system']['ssh']['port'] : 22;
-		}
-		$sshport = "{$sshport}<br/>";
+		$alports = implode('<br/>', filter_get_antilockout_ports(true));
 ?>
 		<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
@@ -424,7 +414,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"><?=$iflist[$if];?> Address</td>
-			<td class="listr" style="background-color: #E0E0E0"><?= $sshport . $guiport ?></td>
+			<td class="listr" style="background-color: #E0E0E0"><?= $alports ?></td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"></td>

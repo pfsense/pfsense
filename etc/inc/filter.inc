@@ -2356,17 +2356,8 @@ pass out on \$IPsec all keep state label "IPsec internal host to host"
 EOD;
 
 	if(!isset($config['system']['webgui']['noantilockout'])) {
-		$portarg = 80;
-		if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
-			$portarg = "{$config['system']['webgui']['port']}";
-		if ($config['system']['webgui']['protocol'] == "https")
-			$portarg .= " 443 ";
-		$sshport = "";
-		if (isset($config['system']['enablesshd'])) {
-			$sshport = 22;
-			if($config['system']['ssh']['port'] <> "")
-				$sshport = $config['system']['ssh']['port'];
-		}
+		$alports = filter_get_antilockout_ports();
+
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned
@@ -2374,7 +2365,7 @@ EOD;
 				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
+pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -2382,7 +2373,7 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { $portarg $sshport } keep state label "anti-lockout rule"
+pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } keep state label "anti-lockout rule"
 
 EOD;
 		}
@@ -2955,6 +2946,26 @@ function discover_pkg_rules($ruletype) {
 		}
 	}
 	return $rules;
+}
+
+function filter_get_antilockout_ports($wantarray = false) {
+	global $config;
+	$lockoutports = array();
+	$guiport = ($config['system']['webgui']['protocol'] == "https") ? "443" : "80";
+	$guiport = empty($config['system']['webgui']['port']) ? $guiport : $config['system']['webgui']['port'];
+	$lockoutports[] = $guiport;
+
+	if (($config['system']['webgui']['protocol'] == "https") && !isset($config['system']['webgui']['disablehttpredirect']) && ($guiport != "80"))
+		$lockoutports[] = "80";
+
+	if (isset($config['system']['enablesshd']))
+		$lockoutports[] = empty($config['system']['ssh']['port']) ? "22" : $config['system']['ssh']['port'];
+
+	if ($wantarray)
+		return $lockoutports;
+	else
+		return implode(" ", $lockoutports);
+
 }
 
 ?>

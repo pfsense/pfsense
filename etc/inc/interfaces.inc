@@ -2127,7 +2127,7 @@ function interface_carpdev_configure(&$vip) {
 		$dhclientconf .= <<<EOD
 interface "{$vipif}" {
 timeout 60;
-retry 60;
+retry 15;
 select-timeout 0;
 initial-interval 1;
 script "/sbin/dhclient-script";
@@ -3506,7 +3506,7 @@ function interface_dhcp_configure($interface = "wan") {
 	$dhclientconf .= <<<EOD
 interface "{$wanif}" {
 timeout 60;
-retry 60;
+retry 15;
 select-timeout 0;
 initial-interval 1;
 	{$dhclientconf_hostname}

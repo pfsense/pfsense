@@ -128,11 +128,13 @@ if ($_POST) {
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = gettext("A valid IP address must be specified for the DNS server $dnscounter.");
 		}
-		if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-			$input_errors[] = gettext("You can not specify a IPv6 gateway '{$_POST[$dnsgwname]}'for a IPv4 DNS server '{$_POST[$dnsname]}'");
-		}
-		if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-			$input_errors[] = gettext("You can not specify a IPv4 gateway '{$_POST[$dnsgwname]}'for a IPv6 DNS server '{$_POST[$dnsname]}'");
+		if(($_POST[$dnsgwname] <> "") && (is_ipaddr($_POST[$dnsname]))) {
+			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+				$input_errors[] = gettext("You can not specify a IPv6 gateway '{$_POST[$dnsgwname]}'for a IPv4 DNS server '{$_POST[$dnsname]}'");
+			}
+			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+				$input_errors[] = gettext("You can not specify a IPv4 gateway '{$_POST[$dnsgwname]}'for a IPv6 DNS server '{$_POST[$dnsname]}'");
+			}
 		}
 	}
 

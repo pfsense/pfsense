@@ -105,7 +105,7 @@ DialPeerSetPin:
 	log $modemCmd
 	call ModemQuery
 	log $modemQuery
-	if $modemQuery match ".*READY.*" PinReady
+	if $modemQuery match ".*READY.*" return
 	set $modemCmd "+CPIN=\"$SimPin\""
 	call ModemCmd2
 	wait $PinWait

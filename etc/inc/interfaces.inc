@@ -1707,7 +1707,8 @@ EOD;
 
 	/* clean up old lock files */
 	foreach($ports as $port) {
-		unlink("{$g['var_path']}/spool/lock/LCK..{$port}");
+		if(file_exists("{$g['var_path']}/spool/lock/LCK..{$port}"))
+			unlink("{$g['var_path']}/spool/lock/LCK..{$port}");
 	}
 
 	/* fire up mpd */

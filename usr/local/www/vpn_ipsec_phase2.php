@@ -207,11 +207,14 @@ if ($_POST) {
 			}
 		}
         }
-	
-	$ealgos = pconfig_to_ealgos($pconfig);
 
-	if (!count($ealgos)) {
-		$input_errors[] = gettext("At least one encryption algorithm must be selected.");
+	/* For ESP protocol, handle encryption algorithms */
+	if ( $pconfig['proto'] == "esp") {
+		$ealgos = pconfig_to_ealgos($pconfig);
+
+		if (!count($ealgos)) {
+			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
+		}
 	}
 	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
@@ -558,7 +561,7 @@ function change_protocol() {
 							<?php
 								foreach ($p2_ealgos as $algo => $algodata):
 									$checked = '';
-									if (in_array($algo,$pconfig['ealgos']))
+									if (is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos']))
 										$checked = " checked";
 								?>
 								<tr>
@@ -701,13 +704,15 @@ function pconfig_to_ealgos(& $pconfig) {
 	global $p2_ealgos;
 
 	$ealgos = array();
-	foreach ($p2_ealgos as $algo_name => $algo_data) {
-		if (in_array($algo_name,$pconfig['ealgos'])) {
-			$ealg = array();
-			$ealg['name'] = $algo_name;
-			if (is_array($algo_data['keysel']))
-				$ealg['keylen'] = $_POST["keylen_".$algo_name];
-			$ealgos[] = $ealg;
+	if (is_array($pconfig['ealgos'])) {
+		foreach ($p2_ealgos as $algo_name => $algo_data) {
+			if (in_array($algo_name,$pconfig['ealgos'])) {
+				$ealg = array();
+				$ealg['name'] = $algo_name;
+				if (is_array($algo_data['keysel']))
+					$ealg['keylen'] = $_POST["keylen_".$algo_name];
+				$ealgos[] = $ealg;
+			}
 		}
 	}
 

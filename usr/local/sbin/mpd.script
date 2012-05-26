@@ -101,7 +101,7 @@ DialPeer3:
 	success
 
 DialPeerSetPin:
-	set $modemCmd "+CPIN=?"
+	set $modemCmd "+CPIN?"
 	log $modemCmd
 	call ModemQuery
 	log $modemQuery

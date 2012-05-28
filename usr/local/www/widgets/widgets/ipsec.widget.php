@@ -183,6 +183,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			</div>
 		</div>
 <?php	endforeach; ?>
+		</div>
 	</div>
 </div>
 <?php //end ipsec tunnel

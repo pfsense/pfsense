@@ -254,10 +254,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	$rules = "";
-	if($config['system']['maximumtables'] <> "" && is_numeric($config['system']['maximumtables'])) {
-		/* User defined maximum table entries in Advanced menu. */
-		$rules .= "set limit tables {$config['system']['maximumtables']}\n";
-	}
+	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
+	$maxtables = is_numeric($config['system']['maximumtables']) ? $config['system']['maximumtables'] : "3000";
+	$rules .= "set limit tables {$maxtables}\n";
 	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
 		/* User defined maximum table entries in Advanced menu. */
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";

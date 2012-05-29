@@ -117,12 +117,12 @@ include("head.inc");
 				?>
 				<tr>
 					<td align="left" valign="top">
-						<form id="filterform" name="filterform" action="diag_logs.php" method="post" style="margin-top: 14px;">
+						<form id="filterform" name="filterform" action="diag_logs_resolver.php" method="post" style="margin-top: 14px;">
               				<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
 						</form>
 					</td>
 					<td align="right" valign="top" >
-						<form id="clearform" name="clearform" action="diag_logs.php" method="post" style="margin-top: 14px;">
+						<form id="clearform" name="clearform" action="diag_logs_resolver.php" method="post" style="margin-top: 14px;">
               				<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
               				<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 						</form>

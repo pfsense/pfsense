@@ -252,6 +252,15 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	$rules = "";
+	if($config['system']['maximumtables'] <> "" && is_numeric($config['system']['maximumtables'])) {
+		/* User defined maximum table entries in Advanced menu. */
+		$rules .= "set limit tables {$config['system']['maximumtables']}\n";
+	}
+	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
+		/* User defined maximum table entries in Advanced menu. */
+		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
+	}
+
 	$rules .= "{$aliases} \n";
 	$rules .= "{$gateways} \n";
 	update_filter_reload_status("Setting up logging information");
@@ -272,11 +281,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$max_states = pfsense_default_state_size();
 		$rules .= "set limit states {$max_states}\n";
 		$rules .= "set limit src-nodes {$max_states}\n";
-	}
-
-	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
-		/* User defined maximum table entries in Advanced menu. */
-		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
 
 	// Configure flowtable support if enabled.

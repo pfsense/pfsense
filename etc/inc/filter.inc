@@ -254,10 +254,15 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	$rules = "";
+	if($config['system']['maximumtables'] <> "" && is_numeric($config['system']['maximumtables'])) {
+		/* User defined maximum table entries in Advanced menu. */
+		$rules .= "set limit tables {$config['system']['maximumtables']}\n";
+	}
 	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
 		/* User defined maximum table entries in Advanced menu. */
 		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 	}
+
 	$rules .= "{$aliases} \n";
 	$rules .= "{$gateways} \n";
 	update_filter_reload_status(gettext("Setting up logging information"));

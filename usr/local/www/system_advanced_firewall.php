@@ -55,6 +55,7 @@ $pconfig['scrubrnid'] = $config['system']['scrubrnid'];
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
+$pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -74,6 +75,9 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {
 		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
+	}
+	if ($_POST['maximumtables'] && !is_numericint($_POST['maximumtables'])) {
+		$input_errors[] = gettext("The Firewall Maximum Tables value must be an integer.");
 	}
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
@@ -116,6 +120,7 @@ if ($_POST) {
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
+		$config['system']['maximumtables'] = $_POST['maximumtables'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
 
 		if($_POST['natreflection'] == "proxy") {
@@ -315,6 +320,22 @@ function update_description(itemnum) {
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br/>
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default.  On your system the default size is:");?> <?= pfsense_default_state_size() ?></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Tables");?></td>
+								<td width="78%" class="vtable">
+									<input name="maximumtables" type="text" id="maximumtables" value="<?php echo $pconfig['maximumtables']; ?>" />
+									<br/>
+									<strong><?=gettext("Maximum number of tables for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
+									<br/><?php echo gettext("This is the actual number of tables, not the number of entries inside the tables (see below)");?>
+									<br/>
+									<span class="vexpl">
+										<?=gettext("Note:  Leave this blank for the default.");?>
+										<?php if (empty($pconfig['maximumtables'])): ?>
+											<?= gettext("On your system the default size is:");?> <?= pfsense_default_tables_size(); ?>
+										<?php endif; ?>
+									</span>
 								</td>
 							</tr>
 							<tr>

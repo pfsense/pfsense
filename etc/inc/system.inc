@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/bin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
@@ -1266,6 +1266,24 @@ function system_ntp_configure($start_ntpd=true) {
 
 	$ntpcfg .= "driftfile {$driftfile}\n";
 
+	if (empty($config['ntpd']['interface']))
+		if (empty($config['openntpd']['config']['interface']))
+			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
+		else
+			$interfaces = array();
+	else
+		$interfaces = explode(",", $config['ntpd']['interface']);
+
+	if (is_array($interfaces) && count($interfaces)) {
+		$ntpcfg .= "interface ignore all\n";
+		foreach ($interfaces as $interface) {
+			if (!is_ipaddr($interface)) {
+				$interface = get_real_interface($interface);
+			}
+			$ntpcfg .= "interface listen {$interface}\n";
+		}
+	}
+
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
 	if(!$fd) {
@@ -1293,7 +1311,7 @@ function system_ntp_configure($start_ntpd=true) {
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	$oldset = array();
 	pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
-	exec("/usr/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
+	exec("/usr/local/bin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
 	pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	
 	// Note that we are starting up

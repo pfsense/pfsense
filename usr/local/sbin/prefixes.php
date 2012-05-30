@@ -57,14 +57,17 @@ foreach ($duid_arr as $entry) {
 }
 
 // echo "add routes\n";
-foreach ($routes as $address => $prefix) {
-	echo "/sbin/route change -inet6 {$prefix} {$address}\n";
+if(count($routes) > 0) {
+	foreach ($routes as $address => $prefix) {
+		echo "/sbin/route change -inet6 {$prefix} {$address}\n";
+	}
 }
 
 /* get clog from dhcpd */
 $dhcpdlogfile = "/var/log/dhcpd.log";
 $clog = array();
-exec("clog $dhcpdlogfile", $clog, $ret);
+if(file_exists(dhcpdlogfile))
+	exec("clog $dhcpdlogfile", $clog, $ret);
 
 if($ret > 0)
 	$clog = array();
@@ -80,9 +83,11 @@ foreach($clog as $line) {
 }
 
 // echo "remove routes\n";
-foreach ($expires as $prefix) {
-	echo "/sbin/route delete -inet6 {$prefix['prefix']}\n";
-	array_shift($expires);
+if(count($expires) > 0) {
+	foreach ($expires as $prefix) {
+		echo "/sbin/route delete -inet6 {$prefix['prefix']}\n";
+		array_shift($expires);
+	}
 }
 
 ?>

@@ -350,7 +350,7 @@ value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> <?=gettext("per client
                </table>
 <?=gettext("This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in " .
 "to the captive portal, but rather how many users can load the portal page or authenticate at the same time! " .
-"Default is 4 connections per client IP address, with a total maximum of 16 connections."); ?></td>
+"Possible setting allowed is: minimum 4 connections per client IP address, with a total maximum of 100 connections."); ?></td>
 	</tr>
 	<tr>
 	  <td valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>

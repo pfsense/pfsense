@@ -1267,7 +1267,7 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg .= "driftfile {$driftfile}\n";
 
 	if (empty($config['ntpd']['interface']))
-		if (empty($config['openntpd']['config']['interface']))
+		if (!empty($config['installedpackages']['openntpd']['config'][0]['interface']))
 			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		else
 			$interfaces = array();

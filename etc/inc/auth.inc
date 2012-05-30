@@ -1276,7 +1276,7 @@ function session_auth() {
 		session_start();
 
 	/* Validate incoming login request */
-	if (isset($_POST['login'])) {
+	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {

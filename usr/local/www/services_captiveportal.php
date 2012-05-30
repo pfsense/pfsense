@@ -331,10 +331,11 @@ function enable_change(enable_change) {
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
 		  <?php 
 		  $interfaces = get_configured_interface_with_descr();
+		  $cselected = explode(",", $pconfig['cinterface']);
 		  foreach ($interfaces as $iface => $ifacename): ?>
-		  <option value="<?=$iface;?>" <?php if (stristr($pconfig['cinterface'], $iface)) echo "selected"; ?>>
-		  <?=htmlspecialchars($ifacename);?>
-		  </option>
+			  <option value="<?=$iface;?>" <?php if (in_array($iface, $cselected)) echo "selected"; ?>>
+			  <?=htmlspecialchars($ifacename);?>
+			  </option>
 		  <?php endforeach; ?>
 		</select> <br>
 		<span class="vexpl"><?=gettext("Select the interface(s) to enable for captive portal."); ?></span></td>

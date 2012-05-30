@@ -1,9 +1,11 @@
 <?php
 
 $leases_file = "/var/dhcpd/var/db/dhcpd6.leases";
-$leasefile = file($leases_file);
+if(!file_exists($leases_file)) {
+	exit(1);
+}
 
-foreach($leasefile as $line) {
+foreach(file($leases_file) as $line) {
 	// echo "$line";
 	if(preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i ", $line, $duidmatch)) {
 		$type = $duidmatch[1];
@@ -44,7 +46,6 @@ foreach($leasefile as $line) {
 		unset($ia_pd);
 		continue;
 	}
-	array_shift($leasefile);
 }
 
 $routes = array();
@@ -52,6 +53,7 @@ foreach ($duid_arr as $entry) {
 	if($entry['ia-pd'] <> "") {
 		$routes[$entry['ia-na']] = $entry['ia-pd'];
 	}
+	array_shift($duid_arr);
 }
 
 // echo "add routes\n";
@@ -80,6 +82,7 @@ foreach($clog as $line) {
 // echo "remove routes\n";
 foreach ($expires as $prefix) {
 	echo "/sbin/route delete -inet6 {$prefix['prefix']}\n";
+	array_shift($expires);
 }
 
 ?>

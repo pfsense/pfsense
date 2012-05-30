@@ -14,5 +14,12 @@
 
 </div> <!-- Wrapper Div -->
 
-<?php outputJavaScriptFileInline("/usr/local/www/themes/{$g['theme']}/bottom-loader.js"); ?>
-
+<?php outputJavaScriptFileInline("/usr/local/www/themes/{$g['theme']}/bottom-loader.js");
+/* Disable form autocomplete on all but the login screen. */
+if (basename($_SERVER["SCRIPT_FILENAME"] != "login.php")): ?>
+<script type="text/javascript">
+(function ($) {
+	$("input").attr("autocomplete","off");
+})(jQuery);
+</script>
+<?php endif; ?>

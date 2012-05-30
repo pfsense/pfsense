@@ -26,5 +26,5 @@ if [ "$NOTSYNCED" = "true" ]; then
 fi
 
 if [ -f /var/etc/ntpd.conf ]; then
-	/usr/sbin/ntpd -g -c /var/etc/ntpd.conf
+	/usr/local/bin/ntpd -g -c /var/etc/ntpd.conf
 fi

@@ -29,8 +29,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/ntpd	/usr/bin/ntpq
-	pfSense_MODULE:	routing
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/ntpd	/usr/local/bin/ntpq
+	pfSense_MODULE:	ntpd
 */
 
 ##|+PRIV
@@ -42,7 +42,7 @@
 
 require_once("guiconfig.inc");
 
-exec("/usr/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+exec("/usr/local/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
 $ntpq_servers = array();
 foreach ($ntpq_output as $line) {
 	$server = array();
@@ -99,7 +99,7 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td><div id="mainarea">
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr><td>Status of the system's Network Time Protocol servers and clock.</td></tr>
+		<tr><td class="listtopic">Network Time Protocol Status</td></tr>
 	</table>
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<thead>

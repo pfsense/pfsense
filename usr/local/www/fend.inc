@@ -16,7 +16,7 @@
 
 <?php outputJavaScriptFileInline("/usr/local/www/themes/{$g['theme']}/bottom-loader.js");
 /* Disable form autocomplete on all but the login screen. */
-if (basename($_SERVER["SCRIPT_FILENAME"] != "login.php")): ?>
+if (basename($_SERVER["SCRIPT_FILENAME"] != "index.php")): ?>
 <script type="text/javascript">
 (function ($) {
 	$("input").attr("autocomplete","off");

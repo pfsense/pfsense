@@ -40,8 +40,8 @@
 require("guiconfig.inc");
 
 if (empty($config['ntpd']['interface']))
-		if (!empty($config['installedpackages']['openntpd']['config'][0]['interface']))
-			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
+	if (empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
+		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 	} else
 		$pconfig['interface'] = array();

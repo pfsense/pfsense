@@ -40,8 +40,8 @@
 require("guiconfig.inc");
 
 if (empty($config['ntpd']['interface']))
-	if (empty($config['openntpd']['config']['interface'])) {
-		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
+		if (!empty($config['installedpackages']['openntpd']['config'][0]['interface']))
+			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 	} else
 		$pconfig['interface'] = array();
@@ -53,14 +53,11 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	/* input validation */
-	$reqdfields = explode(" ", "interface");
-	$reqdfieldsn = array(gettext("Interface"));
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
 	if (!$input_errors) {
-		$config['ntpd']['interface'] = implode(",", $_POST['interface']);
+		if (is_array($_POST['interface']))
+			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
+		elseif (isset($config['ntpd']['interface']))
+			unset($config['ntpd']['interface']);
 
 		write_config("Updated NTP Server Settings");
 

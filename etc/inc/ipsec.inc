@@ -489,7 +489,8 @@ function ipsec_dump_mobile() {
 			$user['remote'] = $linea[2];
 			$user['logintime'] = $linea[3];
 			$user['spi'] = $linea[4];
-			$mobile[] = $user;
+			if (!empty($user['username']))
+				$mobile[] = $user;
 		}
 		pclose($fd);
 	}

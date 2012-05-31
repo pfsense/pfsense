@@ -2787,6 +2787,13 @@ function upgrade_084_to_085() {
 		}
 		$config['gateways']['gateway_group'] = $group_array_new;
 	}
+	/* rename old Quality RRD files in the process */
+	$rrddbpath = "/var/db/rrd";
+	foreach($oldnames as $old => $new) {
+		if(is_readable("{$rrddbpath}/{$old}-quality.rrd")) {
+			rename("{$rrddbpath}/{$old}-quality.rrd", "{$rrddbpath}/{$new}-quality.rrd");
+		}
+	}
 }
 
 function upgrade_085_to_086() {

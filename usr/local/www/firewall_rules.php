@@ -712,6 +712,9 @@ if($_REQUEST['undodrag']) {
 					case "inet6":
 						echo "IPv6 ";
 						break;
+					case "inet46":
+						echo "IPv4+6 ";
+						break;
 				}
 			} else {
 				echo "IPv4 ";

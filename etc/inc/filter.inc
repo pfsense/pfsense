@@ -2057,6 +2057,9 @@ function filter_generate_user_rule($rule) {
 			case "inet6":
 				$aline['ipprotocol'] = "inet6";
 				break;
+			case "inet46":
+				$aline['ipprotocol'] = "";
+				break;
 		}
 	}
 

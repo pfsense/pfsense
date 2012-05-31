@@ -213,6 +213,9 @@ if ($_POST) {
 				if($_POST['ipprotocol'] == $family) {
 					continue;
 				}
+				if(($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
+					$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
+				}
 				if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
 					$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
 				}
@@ -223,12 +226,24 @@ if ($_POST) {
 		}
 	}
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+		if(($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
+			$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
+		}
 		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 			$input_errors[] = gettext("You can not assign the IPv4 Gateway to a IPv6 Filter rule");
 		}
 		if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 			$input_errors[] = gettext("You can not assign the IPv6 Gateway to a IPv4 Filter rule");
 		}
+	}
+
+	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp") && ($_POST['proto'] != "icmp")) {
+		if($_POST['ipprotocol'] == "inet46")
+			$input_errors[] =  gettext("You can not assign a protocol other then ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
+	}
+	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")){
+		if($_POST['ipprotocol'] == "inet46")
+			$input_errors[] =  gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
 	}
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
@@ -390,6 +405,9 @@ if ($_POST) {
 			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
 		if((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6"))
 			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
+		if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
+			$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
+
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -809,7 +827,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
 			<td width="78%" class="vtable">
 				<select name="ipprotocol" class="formselect">
-					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6');
+					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6', 'inet46' => 'IPv4+IPv6' );
 				foreach ($ipproto as $proto => $name): ?>
 				<option value="<?=$proto;?>"
 					<?php if ($proto == $pconfig['ipprotocol']): ?>
@@ -1347,6 +1365,8 @@ $i--): ?>
 					$gateways = return_gateways_array();
 					// add statically configured gateways to list
 					foreach($gateways as $gwname => $gw) {
+						if(($pconfig['ipprotocol'] == "inet46"))
+							continue;
 						if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6($gw['gateway']))
 							continue;
 						if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4($gw['gateway']))
@@ -1364,6 +1384,8 @@ $i--): ?>
 					if (is_array($config['gateways']['gateway_group'])) {
 						foreach($config['gateways']['gateway_group'] as $gw_group) {
 							$af = explode("|", $gw_group['item'][0]);
+							if(($pconfig['ipprotocol'] == "inet46"))
+								continue;
 							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6(lookup_gateway_ip_by_name($af[0])))
 								continue;
 							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4(lookup_gateway_ip_by_name($af[0])))

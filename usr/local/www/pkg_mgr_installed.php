@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg_mgr.php
-    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink'));
+	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink','descr'));
 }
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
@@ -163,7 +163,7 @@ include("head.inc");
 									<?=$pkgver;?>
 							</td>
 							<td class="listbg">
-									<?=$pkg['descr'];?>
+									<?=$currentvers[$pkg['name']]['descr'];?>
 							</td>
 							<td valign="middle" class="list" nowrap>
 								<a onclick="return confirm('<?=gettext("Do you really want to remove this package?"); ?>')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">

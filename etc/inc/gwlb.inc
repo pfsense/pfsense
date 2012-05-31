@@ -338,10 +338,25 @@ function return_gateways_array($disabled = false) {
 			/* skip disabled interfaces */
 			if(!isset($config['interfaces'][$gateway['interface']]['enable']))
 				continue;
-			
+
 			$wancfg = $config['interfaces'][$gateway['interface']];
+
+			/* getting this detection right is hard at this point because we still don't
+			 * store the address family in the gateway item */
+			if(is_ipaddrv4($gateway['gateway']))
+				$gateway['ipprotocol'] = "inet";
+			if(is_ipaddrv6($gateway['gateway']))
+				$gateway['ipprotocol'] = "inet6";
+			if((preg_match("/dynamic/i", $gateway['gateway'])) && (!isset($gateway['ipprotocol']))) {
+				if(is_ipaddrv4($gateway['monitor']))
+					$gateway['ipprotocol'] = "inet";
+				if(is_ipaddrv6($gateway['monitor']))
+					$gateway['ipprotocol'] = "inet6";
+			}
+
+
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) {
+			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic") && ($gateway['ipprotocol'] == "inet")) {
 				/* we know which interfaces is dynamic, this should be made a function */
 				switch($wancfg['ipaddr']) {
 					case "dhcp":
@@ -361,10 +376,13 @@ function return_gateways_array($disabled = false) {
 						break;
 				}
 			}
+
 			/* if the gateway is dynamic6 and we can find the IPv6, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic6")) {
+			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")  && ($gateway['ipprotocol'] == "inet6")) {
 				/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 				switch($wancfg['ipaddrv6']) {
+					case "6rd":
+					case "6to4":
 					case "dhcp6":
 						$gateway['ipprotocol'] = "inet6";
 						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
@@ -379,17 +397,26 @@ function return_gateways_array($disabled = false) {
 						break;
 				}
 			}
-			if(is_ipaddrv4($gateway['gateway']))
-				$gateway['ipprotocol'] = "inet";
-			if(is_ipaddrv6($gateway['gateway']))
-				$gateway['ipprotocol'] = "inet6";
+
 			if (isset($gateway['monitor_disable']))
 				$gateway['monitor_disable'] = true;
 			else if (empty($gateway['monitor']))
 				$gateway['monitor'] = $gateway['gateway'];
 
 			$gateway['friendlyiface'] = $gateway['interface'];
-			$gateway['interface'] = get_real_interface($gateway['interface']);
+
+			/* special treatment for tunnel interfaces */
+			if($gateway['ipprotocol'] == "inet6") {
+				switch($wancfg['ipaddrv6']) {
+					case "6rd":
+					case "6to4":
+						$gateway['interface'] = "stf0";
+						break;
+				}
+			}
+			if($gateway['ipprotocol'] == "inet") {
+				$gateway['interface'] = get_real_interface($gateway['interface']);
+			}
 
 			/* entry has a default flag, use it */
 			if (isset($gateway['defaultgw'])) {
@@ -434,7 +461,7 @@ function return_gateways_array($disabled = false) {
 			unset($gateway);
 			$i++;
 		}
-	} 
+	}
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false)

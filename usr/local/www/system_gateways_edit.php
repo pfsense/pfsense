@@ -69,6 +69,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['interval'] = $a_gateways[$id]['interval'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
+	$pconfig['ipprotocol'] = $a_gateways[$id]['ipprotocol'];
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
@@ -150,8 +151,12 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
 	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		if(!validate_address_family($_POST['monitor'], $_POST['gateway'])) {
-			$input_errors[] = gettext("The monitor address '{$_POST['monitor']}' is a different Address Family then gateway '{$_POST['gateway']}'.");
+		/* check if we can figure out the address family */
+		if(is_ipaddrv6($_POST['monitor']) && (interface_has_gatewayv6($_POST['interface'])) && $_POST['gateway'] != "dynamic") {
+			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used with a IPv4 gateway'.");
+		}
+		if(is_ipaddrv4($_POST['monitor']) && (interface_has_gateway($_POST['interface'])) && $_POST['gateway'] != "dynamic") {
+			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used with a IPv4 gateway'.");
 		}
 	}
 
@@ -366,6 +371,21 @@ function monitor_change() {
                     </select> <br>
                     <span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span></td>
                 </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Address Family"); ?></td>
+                  <td width="78%" class="vtable">
+		 	<select name='ipprotocol' class='formselect' >
+		<?php
+			$options = array("inet" => "IPv4", "inet6" => "IPv6");
+			foreach ($options as $name => $string) {
+				echo "<option value=\"{$name}\"";
+				if ($name == $pconfig['ipprotocol'])
+					echo " selected";
+				echo ">" . htmlspecialchars($string) . "</option>\n";
+			}
+		?>
+                    </select> <br>
+                    <span class="vexpl"><?=gettext("Choose the Internet Protocol this gateway uses."); ?></span></td>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
                   <td width="78%" class="vtable"> 

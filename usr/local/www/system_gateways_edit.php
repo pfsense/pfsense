@@ -243,6 +243,7 @@ if ($_POST) {
 			$gateway['gateway'] = "dynamic";
 		$gateway['name'] = $_POST['name'];
 		$gateway['weight'] = $_POST['weight'];
+		$gateway['ipprotocol'] = $_POST['ipprotocol'];
 		$gateway['interval'] = $_POST['interval'];
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")

@@ -340,7 +340,6 @@ function return_gateways_array($disabled = false) {
 				continue;
 
 			$wancfg = $config['interfaces'][$gateway['interface']];
-
 			/* getting this detection right is hard at this point because we still don't
 			 * store the address family in the gateway item */
 			if(is_ipaddrv4($gateway['gateway']))
@@ -348,12 +347,17 @@ function return_gateways_array($disabled = false) {
 			if(is_ipaddrv6($gateway['gateway']))
 				$gateway['ipprotocol'] = "inet6";
 			if((preg_match("/dynamic/i", $gateway['gateway'])) && (!isset($gateway['ipprotocol']))) {
+				if(is_ipaddrv4($gateway['gateway']))
+					$gateway['ipprotocol'] = "inet";
+				if(is_ipaddrv6($gateway['gateway']))
+					$gateway['ipprotocol'] = "inet6";
+			}
+			if((preg_match("/dynamic/i", $gateway['monitor'])) && (!isset($gateway['ipprotocol']))) {
 				if(is_ipaddrv4($gateway['monitor']))
 					$gateway['ipprotocol'] = "inet";
 				if(is_ipaddrv6($gateway['monitor']))
 					$gateway['ipprotocol'] = "inet6";
 			}
-
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
 			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic") && ($gateway['ipprotocol'] == "inet")) {

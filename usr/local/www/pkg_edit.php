@@ -179,10 +179,6 @@ if ($_POST) {
 		$pkgarr = array();
 		foreach ($pkg['fields']['field'] as $fields) {
 			switch($fields['type']){
-				case "sorting":
-				case "listtopic":
-					continue;
-					break;
 				case "rowhelper":
 					// save rowhelper items.
 					#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
@@ -403,9 +399,9 @@ if ($pkg['tabs'] <> "") {
     	}
 
 	ksort($tab_array);
-	foreach($tab_array as $tab) {
+	foreach($tab_array as $tabid => $tab) {
 		echo '<tr><td>';
-		display_top_tabs($tab, $no_drop_down);
+		display_top_tabs($tab, $no_drop_down, $tabid);
 		echo '</td></tr>';
 	}
 }
@@ -660,42 +656,67 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-
 			case "interfaces_selection":
+				$ips=array();
+				$interface_regex=(isset($pkga['hideinterfaceregex']) ? $pkga['hideinterfaceregex'] : "nointerfacestohide");
+				if (is_array($config['interfaces']))
+					foreach ($config['interfaces'] as $iface_key=>$iface_value){
+						if (isset($iface_value['enable']) && ! preg_match("/$interface_regex/",$iface_key)){
+							$iface_description=(isset($pkga['showips']) ? strtoupper($iface_key)." address" : strtoupper($iface_key));
+							$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
+							}
+					}
+				if (is_array($config['virtualip']) && isset($pkga['showvirtualips']))
+					foreach ($config['virtualip']['vip'] as $vip){
+						if (! preg_match("/$interface_regex/",$vip['interface']))
+						$vip_description=($vip['descr'] !="" ? " ({$vip['descr']}) " : " ");
+						  switch ($vip['mode']){
+							case "ipalias":
+							case "carp":
+									$ips[]=array(   'ip'=> $vip['subnet'],'description' => "{$vip['subnet']} $vip_description");
+								break;
+							case "proxyarp":
+								if ($vip['type']=="network"){
+									$start = ip2long32(gen_subnet($vip['subnet'], $vip['subnet_bits']));
+									$end = ip2long32(gen_subnet_max($vip['subnet'], $vip['subnet_bits']));
+									$len = $end - $start;
+									for ($i = 0; $i <= $len; $i++)
+										$ips[]= array('ip'=>long2ip32($start+$i),'description'=> long2ip32($start+$i)." from {$vip['subnet']}/{$vip['subnet_bits']} {$vip_description}");
+									}
+								else{
+									$ips[]= array('ip'=>$vip['subnet'],'description'=> "{$vip['subnet']} $vip_description");
+									}
+								break;
+							}
+					}
+				sort($ips);
+				if (isset($pkga['showlistenall']))
+					array_unshift($ips,array('ip'=> 'All', 'description'=> 'Listen on All interfaces/ip addresses '));
+				if (! preg_match("/$interface_regex/","loopback")){
+					$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (loopback)" : "loopback");
+					array_push($ips,array('ip'=> 'lo0', 'description'=> $iface_description));
+					}
+
+				#show interfaces array on gui
 				$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
 				$multiple = '';
 				$fieldname = $pkga['fieldname'];
 				if (isset($pkga['multiple'])) {
 					$fieldname .= '[]';
 					$multiple = 'multiple';
-				}
+					}
 				$input = "<select id='{$pkga['fieldname']}' name=\"{$fieldname}\" {$size} {$multiple}>\n";
-				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
-					$js_array[] = $pkga['fieldname'];
-					$advanced .= display_advanced_field($pkga['fieldname']).$input;
-				} else {
-					echo $input;
-				}
-				$ifaces = get_configured_interface_with_descr();
-				$additional_ifaces = $pkga['add_to_interfaces_selection'];
-				if (!empty($additional_ifaces))
-					$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
 				if(is_array($value))
 					$values = $value;
 				else
 					$values  =  explode(',',  $value);
-				$ifaces["lo0"] = "loopback";
-				foreach($ifaces as $ifname => $iface) {
-					$selected = (in_array($ifname, $values) ? 'selected' : '');
-					$input = "<option value=\"{$ifname}\" {$selected}>{$iface}</option>\n";
-					if(isset($pkga['advancedfield']) && isset($adv_filed_count))
-						$advanced .= $input;
-					else
-						echo $input;
-				}
-				$input = "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
+				foreach($ips as $iface){
+					$selected = (in_array($iface['ip'], $values) ? 'selected' : '');
+					$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
+					}
+				$input .= "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
-					$advanced .= $input."</div>\n";
+					$advanced .= $input;
 				else
 					echo $input;
 				break;

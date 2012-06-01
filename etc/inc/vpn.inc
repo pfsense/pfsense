@@ -719,12 +719,12 @@ EOD;
 							$localid_spec = " ";
 						else {
 							$localid_data = ipsec_get_phase1_src($ph1ent);
-							if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
+							if($ph2ent['mode'] == 'transport') { $localid_data=$localid_data." ".$ph2ent['protocal']; }
 							$localid_spec = "address {$localid_data}";
 						}
 						if (!isset($ph2ent['mobile'])) {
 							$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
-							if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
+							if($ph2ent['mode'] == 'transport') { $remoteid_data=$remoteid_data." ".$ph2ent['protocal']; }
 							$remoteid_spec = "address {$remoteid_data}";
 						} else
 							$remoteid_spec = "anonymous";
@@ -897,11 +897,12 @@ EOD;
 					$localid_data = ipsec_get_phase1_src($ph1ent);
 					$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
 
-					$spdconf .= "spdadd {$localid_data} {$remoteid_data} any -P out ipsec " .
+					$spdconf .= "spdadd {$localid_data} {$remoteid_data} {$ph2ent['protocal']} -P out ipsec " .
 						"{$ph2ent['protocol']}/transport//require;\n";
-
-					$spdconf .= "spdadd {$remoteid_data} {$localid_data} any -P in ipsec " .
+					if (!isset($ph2ent['cisco'])) {
+					$spdconf .= "spdadd {$remoteid_data} {$localid_data} {$ph2ent['protocal']} -P in ipsec " .
 						"{$ph2ent['protocol']}/transport//require;\n";
+					}
 
 				}
 

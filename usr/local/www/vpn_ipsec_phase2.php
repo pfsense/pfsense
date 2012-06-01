@@ -63,6 +63,9 @@ if (isset($p2index) && $a_phase2[$p2index])
 	$pconfig['ikeid'] = $a_phase2[$p2index]['ikeid'];
 	$pconfig['disabled'] = isset($a_phase2[$p2index]['disabled']);
 	$pconfig['mode'] = $a_phase2[$p2index]['mode'];
+	$pconfig['cisco'] = isset($a_phase2[$p2index]['cisco']);
+	$pconfig['protocal'] = $a_phase2[$p2index]['protocal'];
+	
 	$pconfig['descr'] = $a_phase2[$p2index]['descr'];
 	$old_ph2ent = $a_phase2[$p2index];
 
@@ -230,7 +233,10 @@ if ($_POST) {
 			$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
 			$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
 		}
-
+		else {
+			$ph2ent['protocal'] = $pconfig['protocal'];
+		}
+		$ph2ent['cisco'] = $pconfig['cisco'] ? true : false;
 		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
 		$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
@@ -290,12 +296,18 @@ function change_mode() {
 <?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = '';
 <?php endif; ?>
+		document.getElementById('opt_protocal').style.display = 'none';
 	} else {
 		document.getElementById('opt_localid').style.display = 'none';
+		document.getElementById('opt_protocal').style.display = '';
 <?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = 'none';
 <?php endif; ?>
 	}
+}
+
+function change_protocal() {
+	
 }
 
 function typesel_change_local(bits) {
@@ -427,6 +439,16 @@ function change_protocol() {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Cisco Mode"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="cisco" type="checkbox" id="cisco" value="yes" <?php if ($pconfig['cisco']) echo "checked"; ?>>
+							<strong><?=gettext("Enable Cisco Compatibility Mode"); ?></strong>
+							<br>
+							<span class="vexpl"><?=gettext("Set this option to enable cisco " . "compatible IPSEC configuration (ADVANCED)"); ?>.
+							</span>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect" onChange="change_mode()">
@@ -441,6 +463,22 @@ function change_protocol() {
 							</select>
 						</td>
 					</tr>
+					<tr id="opt_protocal">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocal"); ?></td>
+						<td width ="78%" class="vtable">
+								<select name="protocal" class="formselect" onChange="change_protocal()">
+									<?php
+										foreach($p2_protocal as $name => $value):
+											$selected = "";
+											if ($name == $pconfig['protocal'])
+												$selected = "selected";
+									?>
+									<option value="<?=$name;?>" <?=$selected;?>><?=$value;?></option>
+									<?php endforeach; ?>
+								</select>
+						</td>
+					</tr>			
+
 					<tr id="opt_localid">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Local Network"); ?></td>
 						<td width="78%" class="vtable">

@@ -4172,7 +4172,8 @@ function find_interface_ipv6($interface, $flush = false)
 	global $interface_snv6_arr_cache;
 	global $config;
 	
-	$interface = str_replace("\n", "", $interface);
+	$interface = trim($interface);
+	$interface = get_real_interface($interface);
 	
 	if (!does_interface_exist($interface))
 		return;

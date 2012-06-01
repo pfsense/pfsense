@@ -39,9 +39,6 @@
 */
 
 /* DISABLE_PHP_LINT_CHECKING */
-// vim: ts=4 sw=4 noexpandtab
-
-/* include all configuration functions */
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -187,7 +184,7 @@ function filter_delete_states_for_down_gateways() {
 /* reload filter sync */
 function filter_configure_sync($delete_states_if_needed = true) {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
-	global $time_based_rules, $filterdns, $aliases;
+	global $time_based_rules, $filterdns, $aliases, $dummynet_name_list;
 
 	/* Use filter lock to not allow concurrent filter reloads during this run. */
 	$filterlck = lock('filter', LOCK_EX);
@@ -216,6 +213,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$gateways = filter_generate_gateways();
 	if($g['booting'] == true)
 		echo ".";
+	update_filter_reload_status(gettext("Generating Limiter rules"));
+	$dummynet_rules = filter_generate_dummynet_rules();
+	$dummynet_name_list = get_unique_dnqueue_list();
 	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
@@ -229,8 +229,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo ".";
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status(gettext("Generating Limiter rules"));
-	$dummynet_rules = filter_generate_dummynet_rules();
 	update_filter_reload_status(gettext("Generating Layer7 rules"));
 	generate_layer7_files();
 	if($g['booting'] == true)
@@ -296,8 +294,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Setting up SCRUB information"));
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
-	/* NOTE: Disabled until we catch up with dummynet changes. */
-	//$rules .= "{$dummynet_rules}\n";
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
@@ -2002,7 +1998,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $layer7_rules_list;
+	global $layer7_rules_list, $dummynet_name_list;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2296,17 +2292,19 @@ function filter_generate_user_rule($rule) {
 		$aline['queue'] .= ") ";
 	}
 	if($rule['dnpipe'] <> "") {
-		if($rule['dnpipe'][0] == "?") {
-			$aline['dnpipe'] = " dnqueue( ";
-			$aline['dnpipe'] .= substr($rule['dnpipe'],1);
-			if($rule['pdnpipe'] <> "")
-				$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
-		} else {
-			$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
-			if($rule['pdnpipe'] <> "")
-				$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
+		if (!empty($dummynet_name_list[$rule['dnpipe']])) {
+			if($dummynet_name_list[$rule['dnpipe']][0] == "?") {
+				$aline['dnpipe'] = " dnqueue( ";
+				$aline['dnpipe'] .= substr($dummynet_name_list[$rule['dnpipe']],1);
+				if($rule['pdnpipe'] <> "")
+					$aline['dnpipe'] .= ",".substr($dummynet_name_list[$rule['pdnpipe']], 1);
+			} else {
+				$aline['dnpipe'] = " dnpipe ( " . $dummynet_name_list[$rule['dnpipe']];
+				if($rule['pdnpipe'] <> "")
+					$aline['dnpipe'] .= "," . $dummynet_name_list[$rule['pdnpipe']];
+			}
+			$aline['dnpipe'] .= ") ";
 		}
-		$aline['dnpipe'] .= ") ";
 	}
 
 	/* is a time based rule schedule attached? */

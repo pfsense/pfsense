@@ -2862,6 +2862,8 @@ class dnpipe_class extends dummynet_class {
 			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
 			return $q;
 		}
+		$number = dnqueue_find_nextnumber();
+		$q->SetNumber($number);
 		$this->subqueues[$q->GetQname()] = &$q;
             
 		return $q;
@@ -3021,6 +3023,10 @@ class dnpipe_class extends dummynet_class {
 		$form .= $this->GetQname()."\">";
 		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
+		if ($this->GetNumber() > 0) {
+			$form .= "<input type=\"hidden\" id=\"number\" name=\"number\" value=\"";
+			$form .= $this->GetNumber()."\">";
+		}
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">" . gettext("Bandwidth");
 		$form .= "</td><td class=\"vncellreq\">";
@@ -3281,6 +3287,10 @@ class dnqueue_class extends dummynet_class {
 		$form .= $this->GetQname()."\">";
 		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
+		if ($this->GetNumber() > 0) {
+			$form .= "<input type=\"hidden\" id=\"number\" name=\"number\" value=\"";
+			$form .= $this->GetNumber()."\">";
+		}
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3938,8 +3948,6 @@ function read_altq_config() {
 function read_dummynet_config() {
 	global $dummynet_pipe_list, $config;
 	$path = array();
-	$dnqueuenumber = 1;
-	$dnpipenumber = 1;
 
 	if (!is_array($config['dnshaper']))
 		$config['dnshaper'] = array();
@@ -3958,28 +3966,21 @@ function read_dummynet_config() {
 			continue; /* XXX: grrrrrr at php */ 
 		$root =& new dnpipe_class();
 		$root->ReadConfig($conf);
-		$root->SetNumber($dnpipenumber);	
 		$dummynet_pipe_list[$root->GetQname()] = &$root;
 		array_push($path, $key);
 		$root->SetLink($path);
 		if (is_array($conf['queue'])) {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
-				/* XXX: We cheat a little here till a better way is found. */
-				$q['number'] = $dnqueuenumber;
 				/* 
 				 * XXX: we compeletely ignore errors here but anyway we must have 
 				 *	checked them before so no harm should be come from this.
 				 */	
 				$root->add_queue($root->GetQname(), $q, &$path, $input_errors);
 				array_pop($path);
-
-				$dnqueuenumber++;
 			} 	
 		}
 		array_pop($path);
-			
-		$dnpipenumber++;
 	}
 }
 
@@ -4013,6 +4014,65 @@ function filter_generate_altq_queues() {
 	return $altq_rules;
 }
 
+function dnqueue_find_nextnumber() {
+	global $dummynet_pipe_list;
+
+	$dnused = array();
+	if (is_array($dummynet_pipe_list)) {
+		foreach ($dummynet_pipe_list as $dn) {
+			$tmplist =& $dn->get_queue_list();
+			foreach ($tmplist as $qname => $link) {
+				if ($link[0] == "?")
+					$dnused[$qname] = substr($link, 1);
+			}
+		}
+	}
+
+	sort($dnused, SORT_NUMERIC);
+	$dnnumber = 0;
+	$found = false;
+	foreach ($dnused as $dnnum) {
+		if (($dnnum - $dnnumber) > 1) {
+			$dnnumber = $dnnum + 1;
+			$found = true;
+			break;
+		} else
+			$dnnumber = $dnnum;
+	}
+
+	if ($found == false)
+		$dnnumber++;
+
+	unset($dnused, $dnnum, $found);
+	return $dnnumber;
+}
+
+function dnpipe_find_nextnumber() {
+	global $dummynet_pipe_list;
+
+	$dnused = array();
+	foreach ($dummynet_pipe_list as $dn)
+		$dnused[] = $dn->GetNumber();
+
+	sort($dnused, SORT_NUMERIC);
+	$dnnumber = 0;
+	$found = false;
+	foreach ($dnused as $dnnum) {
+		if (($dnnum - $dnnumber) > 1) {
+			$dnnumber = $dnnum + 1;
+			$found = true;
+			break;
+		} else
+			$dnnumber = $dnnum;
+	}
+
+	if ($found == false)
+		$dnnumber++;
+
+	unset($dnused, $dnnum, $found);
+	return $dnnumber;
+}
+
 function filter_generate_dummynet_rules() {
 	global $g, $dummynet_pipe_list;
 	
@@ -4021,8 +4081,6 @@ function filter_generate_dummynet_rules() {
 	if (!empty($dummynet_pipe_list)) {
 		if (!is_module_loaded("dummynet.ko"))
 			mwexec("/sbin/kldload dummynet");
-		/* XXX: Needs to be added code elsewhere to clear pipes/queues from kernel when not needed! */
-		//mwexec("pfctl -F dummynet");
 	}
 
 	$dn_rules = "";
@@ -4033,7 +4091,6 @@ function filter_generate_dummynet_rules() {
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}
-	//return $dn_rules;
 }
 
 function build_iface_without_this_queue($iface, $qname) {

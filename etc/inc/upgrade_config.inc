@@ -2818,4 +2818,44 @@ function upgrade_085_to_086() {
 	}
 }
 
+function upgrade_086_to_087() {
+	global $config, $dummynet_pipe_list;
+
+	if (!is_array($config['filter']) || !is_array($config['filter']['rule']))
+		return;
+	if (!is_array($config['dnshaper']) || !is_array($config['dnshaper']['queue']))
+		return;
+
+	$dnqueue_number = 1;
+	$dnpipe_number = 1;
+
+	foreach ($config['dnshaper']['queue'] as $idx => $dnpipe) {
+		$config['dnshaper']['queue'][$idx]['number'] = $dnpipe_number;
+		$dnpipe_number++;
+		if (is_array($dnpipe['queue'])) {
+			foreach ($dnpipe['queue'] as $qidx => $dnqueue) {
+				$config['dnshaper']['queue'][$idx]['queue'][$qidx]['number'] = $dnqueue_number;
+				$dnqueue_number++;
+			}
+		}
+	}
+
+	unset($dnqueue_number, $dnpipe_number, $qidx, $idx, $dnpipe, $dnqueue);
+
+	require_once("shaper.inc");
+	read_dummynet_config();
+
+	$dummynet_pipe_list = array_flip($dummynet_pipe_list);
+	foreach ($config['filter']['rule'] as $idx => $rule) {
+		if (!empty($rule['dnpipe'])) {
+			if (!empty($dummynet_pipe_list[$rule['dnpipe']]))
+				$config['filter']['rule'][$idx]['dnpipe'] = $dummynet_pipe_list[$rule['dnpipe']];
+		}
+		if (!empty($rule['pdnpipe'])) {
+			if (!empty($dummynet_pipe_list[$rule['pdnpipe']]))
+				$config['filter']['rule'][$idx]['pdnpipe'] = $dummynet_pipe_list[$rule['pdnpipe']];
+		}
+	}
+}
+
 ?>

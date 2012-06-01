@@ -190,6 +190,13 @@ $if = $pconfig['interface'];
 if (isset($_GET['dup']))
 	unset($id);
 
+read_altq_config(); /* XXX: */
+$qlist =& get_unique_queue_list();
+read_dummynet_config(); /* XXX: */
+$dnqlist =& get_unique_dnqueue_list();
+read_layer7_config();
+$l7clist =& get_l7_unique_list();
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -441,9 +448,9 @@ if ($_POST) {
 			$input_errors[] = gettext("You must select a queue for the In direction before selecting one for Out too.");
 		else if ($_POST['pdnpipe'] == $_POST['dnpipe'])
 			$input_errors[] = gettext("In and Out Queue cannot be the same.");
-		else if ($pdnpipe[0] == "?" && $dnpipe[0] <> "?")
+		else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] <> "?")
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
-		else if ($dnpipe[0] == "?" && $pdnpipe[0] <> "?")			
+		else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?")                       
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
 	}
 	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
@@ -649,13 +656,6 @@ if ($_POST) {
 		exit;
 	}
 }
-
-read_altq_config(); /* XXX: */
-$qlist =& get_unique_queue_list();
-read_dummynet_config(); /* XXX: */
-$dnqlist =& get_unique_dnqueue_list();
-read_layer7_config();
-$l7clist =& get_l7_unique_list();
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"),gettext("Edit"));
 $statusurl = "status_filter_reload.php";
@@ -1423,8 +1423,8 @@ $i--): ?>
 		foreach ($dnqlist as $dnq => $dnqkey) {
 			if($dnq == "")
 				continue;
-			echo "<option value=\"$dnqkey\"";
-			if ($dnqkey == $pconfig['dnpipe']) {
+			echo "<option value=\"$dnq\"";
+			if ($dnq == $pconfig['dnpipe']) {
 				$dnqselected = 1;
 				echo " SELECTED";
 			}
@@ -1441,8 +1441,8 @@ $i--): ?>
 		foreach ($dnqlist as $dnq => $dnqkey) {
 			if($dnq == "")
 				continue;
-			echo "<option value=\"$dnqkey\"";
-			if ($dnqkey == $pconfig['pdnpipe']) {
+			echo "<option value=\"$dnq\"";
+			if ($dnq == $pconfig['pdnpipe']) {
 				$dnqselected = 1;
 				echo " SELECTED";
 			}

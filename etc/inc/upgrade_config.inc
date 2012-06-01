@@ -36,7 +36,6 @@ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 
 if(!function_exists("dump_rrd_to_xml")) 
 	require("rrd.inc");
-require_once("util.inc");
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY

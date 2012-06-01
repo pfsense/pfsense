@@ -129,7 +129,7 @@ if ($_POST) {
 				$tgt .= "/128";
 			if (!is_subnet($tgt))
 				continue;
-			if (!is_subnet_v6($tgt))
+			if (!is_subnetv6($tgt))
 				continue;
 			$new_targets[] = $tgt;
 		}

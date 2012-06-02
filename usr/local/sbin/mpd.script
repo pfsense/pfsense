@@ -83,8 +83,6 @@ DialPeer1:
 DialPeer2:
 	log "Detected $ModemDescription."
 	call $ModemSetupFunc
-	if $SimPin != "" call DialPeerSetPin
-	if $APN != "" call DialPeerSetAPN
 	log "Dialing server at $Telephone..."
 	call ModemDial
 	if $dialResult == "OK" goto DialPeerOK
@@ -398,6 +396,8 @@ ModemIdent:
 
 ModemIdentGeneric:
 	set $ModemDescription "Hayes compatible modem"
+	if $SimPin != "" call DialPeerSetPin
+	if $APN != "" call DialPeerSetAPN
 	set $ModemSetupFunc GenericSetup
 	return
 

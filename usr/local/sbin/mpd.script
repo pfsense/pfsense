@@ -105,15 +105,17 @@ DialPeerSetPin:
 	log $modemCmd
 	call ModemQuery
 	log $modemQuery
-	if $modemQuery match ".*READY.*" return
+	if $modemQuery match ".*READY.*" goto DialPinReady
 	set $modemCmd "+CPIN=\"$SimPin\""
 	call ModemCmd2
 	wait $PinWait
-PinReady:
+
+DialPinReady:
 	return
 
 DialPeerSetAPN:
 	set $modemCmd "+CGDCONT=$APNum,\"IP\",\"$APN\""
+	log $modemCmd
 	call ModemCmd2
 	return
 	
@@ -144,6 +146,7 @@ ModemDial:
 	set $ConnectionSpeed ""
 	if $ConnectTimeout == "" set $ConnectTimeout 45
 	print "AT${DialPrefix}${ModTelephone}\r\n"
+	log "AT${DialPrefix}${ModTelephone}"
 	match "NO CARRIER" DialAbortNoCar
 	match "NO DIAL" DialAbortNoDial
 	match "BUSY" DialAbortBusy

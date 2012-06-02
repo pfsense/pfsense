@@ -1736,13 +1736,17 @@ EOD;
 	/* We can also guess the mondev from the manufacturer */
 	exec("usbconfig | egrep -ie '(huawei)'", $usbmodemoutput);
 	mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
-	if(stristr("huawei", implode("\n", $ouput))) {
-		foreach($ports as $port) {
+	foreach($ports as $port) {
+		if(stristr("huawei", implode("\n", $ouput))) {
 			$mondev  = substr(basename($port), 0, -1);
 			$devlist = glob("/dev/{$mondev}?");
 			$mondev = basename(end($devlist));
-			log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
-			mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+		}
+		if(stristr("zte", implode("\n", $ouput))) {
+			$mondev  = substr(basename($port), 0, -1) . "1";
+		}
+		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
+		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
 		}
 	}
 

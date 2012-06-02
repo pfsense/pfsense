@@ -46,6 +46,7 @@ if (!is_array($config['gateways']['gateway_group']))
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
+$carplist = get_configured_carp_interface_list();
 
 $categories = array('down' => gettext("Member Down"),
                 'downloss' => gettext("Packet Loss"),
@@ -179,6 +180,7 @@ include("head.inc");
 					if($gateway['ipprotocol'] != $family)
 						continue;
 				}
+				$interface = $gateway['friendlyiface'];
 				$selected = array();
 				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
@@ -189,18 +191,18 @@ include("head.inc");
 						$selected[0] = "selected";
 					}
 				}
-				echo "<tr>";
+				echo "<tr>\n";
 				echo "<td class='listlr'>";
 				echo "<strong>{$gateway['name']} </strong>";
 				echo "</td><td class='listr'>";
-				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>";
-				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>";
-				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>";
-				echo "<option value='2' $selected[2] >" . gettext("Tier 2") . "</option>";
-				echo "<option value='3' $selected[3] >" . gettext("Tier 3") . "</option>";
-				echo "<option value='4' $selected[4] >" . gettext("Tier 4") . "</option>";
-				echo "<option value='5' $selected[5] >" . gettext("Tier 5") . "</option>";
-				echo "</select>";
+				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>\n";
+				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>\n";
+				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>\n";
+				echo "<option value='2' $selected[2] >" . gettext("Tier 2") . "</option>\n";
+				echo "<option value='3' $selected[3] >" . gettext("Tier 3") . "</option>\n";
+				echo "<option value='4' $selected[4] >" . gettext("Tier 4") . "</option>\n";
+				echo "<option value='5' $selected[5] >" . gettext("Tier 5") . "</option>\n";
+				echo "</select>\n";
 				echo "</td>";
 
 				$selected = array();
@@ -210,15 +212,24 @@ include("head.inc");
 						$selected[$itemsplit[2]] = "selected";
 						break;
 					} else {
-						$selected[0] = "selected";
+						$selected['address'] = "selected";
 					}
 				}
 				echo "<td class='listr'>";
-				echo "<select name='{$gwname}_vip' class='formfldselect' id='{$gwname}_vip'>";
-				echo "<option value='address' $selected[0] >" . gettext("Interface Address") . "</option>";
-				// foreach($vips)
-				echo "</td><td class='listr'>";
-				echo "</select><strong>{$gateway['descr']}</strong>";
+				echo "<select name='{$gwname}_vip' class='formfldselect' id='{$gwname}_vip'>\n";
+				echo "<option value='address' {$selected['address']} >" . gettext("Interface Address") . "</option>\n";
+				foreach($carplist as $vip => $address) {
+					echo "<!-- $vip - $address - $interface -->\n";
+					if(!preg_match("/^{$interface}_/i", $vip))
+						continue;
+					if(($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address)))
+						continue;
+					if(($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address)))
+						continue;
+					echo "<option value='{$vip}' $selected[$vip] >$vip - $address</option>\n";
+				}
+				echo "</select>";
+				echo "<td class='listr'><strong>{$gateway['descr']}</strong>";
 				echo "</td></tr>";
 		 	}
 		?>

@@ -631,6 +631,7 @@ function return_gateway_groups_array() {
 	$gateways_status = return_gateways_status(true);
 	$gateways_arr = return_gateways_array();
 	$gateway_groups_array = array();
+	$carplist = get_configured_carp_interface_list();
 
 	if (isset($config['system']['gw_switch_default'])) {
 		/* 
@@ -694,6 +695,9 @@ function return_gateway_groups_array() {
 				$itemsplit = explode("|", $item);
 				$tier = $itemsplit[1];
 				$gwname = $itemsplit[0];
+				$vipname = $itemsplit[2];
+				if(is_ipaddr($carplist[$vipname]))
+					$gwvip_arr[$group['name']][$gwname] = $vipname;
 
 				/* Do it here rather than reiterating again the group in case no member is up. */
 				$backupplan[$tier][] = $gwname;
@@ -757,6 +761,8 @@ function return_gateway_groups_array() {
 							$groupmember['int']  = $int;
 							$groupmember['gwip']  = $gatewayip;
 							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+							if($gwvip_arr[$group['name']][$gwname] <> "")
+								$groupmember['vip'] = $gwvip_arr[$group['name']][$gwname];
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
 							$gateway_groups_array[$group['name']][] = $groupmember;
 						}

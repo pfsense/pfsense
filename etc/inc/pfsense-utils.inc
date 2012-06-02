@@ -1260,23 +1260,31 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pppinfo'] = $dev . " " . gettext("device not present! Is the modem attached to the system?");	
 		}
 
-		$mondev = $dev;
-		/* FIXME: needs a gui part really, some devices only have port 2. */
+		$usbmodemoutput = array();
+		exec("usbconfig", $usbmodemoutput);
 		$mondev = "{$g['tmp_path']}/3gstats.{$ifdescr}";
 		if(file_exists($mondev)) {
 			$cellstats = file($mondev);
 			/* skip header */
 			$a_cellstats = explode(",", $cellstats[1]);
-			$ifinfo['cell_rssi'] = huawei_rssi_to_string($a_cellstats[1]);
-			$ifinfo['cell_mode'] = huawei_mode_to_string($a_cellstats[2], $a_cellstats[3]);
+			if(preg_match("/huawei/i", implode("\n", $usbmodemoutput))) {
+				$ifinfo['cell_rssi'] = huawei_rssi_to_string($a_cellstats[1]);
+				$ifinfo['cell_mode'] = huawei_mode_to_string($a_cellstats[2], $a_cellstats[3]);
+				$ifinfo['cell_simstate'] = huawei_simstate_to_string($a_cellstats[10]);
+				$ifinfo['cell_service'] = huawei_service_to_string(trim($a_cellstats[11]));
+			}
+			if(preg_match("/zte/i", implode("\n", $usbmodemoutput))) {
+				$ifinfo['cell_rssi'] = zte_rssi_to_string($a_cellstats[1]);
+				$ifinfo['cell_mode'] = zte_mode_to_string($a_cellstats[2], $a_cellstats[3]);
+				$ifinfo['cell_simstate'] = zte_simstate_to_string($a_cellstats[10]);
+				$ifinfo['cell_service'] = zte_service_to_string(trim($a_cellstats[11]));
+			}
 			$ifinfo['cell_upstream'] = $a_cellstats[4];
 			$ifinfo['cell_downstream'] = trim($a_cellstats[5]);
 			$ifinfo['cell_sent'] = $a_cellstats[6];
 			$ifinfo['cell_received'] = trim($a_cellstats[7]);
 			$ifinfo['cell_bwupstream'] = $a_cellstats[8];
 			$ifinfo['cell_bwdownstream'] = trim($a_cellstats[9]);
-			$ifinfo['cell_simstate'] = huawei_simstate_to_string($a_cellstats[10]);
-			$ifinfo['cell_service'] = huawei_service_to_string(trim($a_cellstats[11]));
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
 		if (isset($ppp['uptime']))
@@ -2498,6 +2506,45 @@ function huawei_simstate_to_string($state) {
 	$modes[3] = "Invalid SIM PS";
 	$modes[4] = "Invalid SIM CS/PS";
 	$modes[255] = "Missing SIM";
+	$string = "{$modes[$state]} State";
+	return $string;
+}
+
+function zte_rssi_to_string($rssi) {
+	return huawei_rssi_to_string($rssi);
+}
+
+function zte_mode_to_string($mode, $submode) {
+	$modes[0] = "No Service";
+	$modes[1] = "Limited Service"; 
+	$modes[2] = "GPRS";
+	$modes[3] = "GSM";
+	$modes[4] = "UMTS";
+	$modes[5] = "EDGE";
+	$modes[6] = "HSDPA"; 
+
+	$submodes[0] = "CS_ONLY";
+	$submodes[1] = "PS_ONLY";
+	$submodes[2] = "CS_PS";
+	$submodes[3] = "CAMPED";
+	$string = "{$modes[$mode]}, {$submodes[$submode]} Mode";
+	return $string;
+}
+
+function zte_service_to_string($state) {
+	$modes[0] = "Initializing";
+	$modes[1] = "Network Lock error"; 
+	$modes[2] = "Network Locked";
+	$modes[3] = "Unlocked or correct MCC/MNC";
+	$string = "{$modes[$state]} Service";
+	return $string;
+}
+
+function zte_simstate_to_string($state) {
+	$modes[0] = "No action";
+	$modes[1] = "Network lock"; 
+	$modes[2] = "(U)SIM card lock";
+	$modes[3] = "Network Lock and (U)SIM card Lock";
 	$string = "{$modes[$state]} State";
 	return $string;
 }

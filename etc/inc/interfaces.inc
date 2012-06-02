@@ -1747,7 +1747,6 @@ EOD;
 		}
 		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
 		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
-		}
 	}
 
 	return 1;

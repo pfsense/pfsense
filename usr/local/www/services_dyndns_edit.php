@@ -230,10 +230,22 @@ function _onTypeChange(type){
 				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
-				   <?php $iflist = get_configured_interface_with_descr();
-				   		foreach ($iflist as $if => $ifdesc):?>
-							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected";?>><?=$ifdesc;?></option>
-					<?php endforeach; ?>
+				<?php
+					$iflist = get_configured_interface_with_descr();					
+				   	foreach ($iflist as $if => $ifdesc) {
+						echo "<option value=\"{$if}\"";
+						if ($pconfig['interface'] == $if)
+							echo "selected";
+						echo ">{$ifdesc}</option>\n";
+					}
+					$grouplist = return_gateway_groups_array();
+				   	foreach ($grouplist as $name => $group) {
+						echo "<option value=\"{$name}\"";
+						if ($pconfig['interface'] == $name)
+							echo "selected";
+						echo ">GW Group {$name}</option>\n";
+					}
+				?>
 					</select>
 					</td>
 					</td>

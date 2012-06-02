@@ -105,7 +105,7 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-		  <td width="5%"  class="listhdrr"></td>
+		  <td width="5%"  class="listhdrr"><?=gettext("Interface");?></td>
 		  <td width="15%" class="listhdrr"><?=gettext("Service");?></td>
                   <td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
                   <td width="20%" class="listhdrr"><?=gettext("Cached IP");?></td>
@@ -115,13 +115,23 @@ include("head.inc");
 		  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
                 <tr  ondblclick="document.location='services_dyndns_edit.php?id=<?=$i;?>'">
 		  <td class="listlr">
-		  <?php $iflist = get_configured_interface_with_descr();
-	  		foreach ($iflist as $if => $ifdesc):
-				if ($dyndns['interface'] == $if): ?>
-					<?=$ifdesc; break;?>
-		  <?php endif; endforeach; ?>
+		<?php	$iflist = get_configured_interface_with_descr();
+	  		foreach ($iflist as $if => $ifdesc) {
+				if ($dyndns['interface'] == $if) {
+					echo "{$ifdesc}";
+					break;
+				}
+			}
+			$groupslist = return_gateway_groups_array();
+	  		foreach ($groupslist as $name => $group) {
+				if ($dyndns['interface'] == $name) {
+					echo "{$name}";
+					break;
+				}
+			}
+		?>
 		  </td>
-                  <td class="listlr">
+                  <td class="listr">
 				  <?php
 					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53, Custom");
 					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom");
@@ -135,7 +145,7 @@ include("head.inc");
                   <td class="listr">
 					<?=htmlspecialchars($dyndns['host']);?>
                   </td>
-                  <td class="listlr">
+                  <td class="listr">
 			<?php
 				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 				$ipaddr = dyndnsCheckIP($if);

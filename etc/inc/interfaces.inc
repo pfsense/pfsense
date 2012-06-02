@@ -1731,13 +1731,18 @@ EOD;
 		$i++;
 	}
 
-	foreach($ports as $port) {
-		mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
-		$mondev  = substr(basename($port), 0, -1);
-		$devlist = glob("/dev/{$mondev}?");
-		$mondev = basename(end($devlist));
-		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
-		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+	/* we only support the 3gstats.php for huawei modems for now. Will add more later. */
+	/* We should be able to launch the right version for each modem */
+	/* We can also guess the mondev from the manufacturer */
+	exec("usbconfig | egrep -ie '(huawei)'", $usbmodemoutput);
+	mwexec("/bin/ps auxww|grep \"{$interface}\" |grep \"[3]gstats\" | awk '{print $2}' |xargs kill");
+	if(stristr("huawei", implode("\n", $ouput))) {
+		foreach($ports as $port) {
+			$mondev  = substr(basename($port), 0, -1);
+			$devlist = glob("/dev/{$mondev}?");
+			$mondev = basename(end($devlist));
+			log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
+			mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
 	}
 
 	return 1;

@@ -107,8 +107,9 @@ if ($_POST) {
 	$pconfig['item'] = array();
 	foreach($a_gateways as $gwname => $gateway) {
 		if($_POST[$gwname] > 0) {
+			$vipname = "{$gwname}_vip";
 			/* we have a priority above 0 (disabled), add item to list */
-			$pconfig['item'][] = "{$gwname}|{$_POST[$gwname]}";
+			$pconfig['item'][] = "{$gwname}|{$_POST[$gwname]}|{$_POST[$vipname]}";
 		}
 		/* check for overlaps */
 		if ($_POST['name'] == $gwname)
@@ -163,6 +164,13 @@ include("head.inc");
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
                   <td width="78%" class="vtable"> 
+			<table border=0 cellpadding="6" cellspacing="0">
+			<tr>
+				<td class="listhdrr">Gateway</td>
+				<td class="listhdrr">Tier</td>
+				<td class="listhdrr">Virtual IP</td>
+				<td class="listhdrr">Description</td>
+			</tr>
 		<?php
 			foreach($a_gateways as $gwname => $gateway) {
 				if(!empty($pconfig['item'])) {
@@ -172,7 +180,6 @@ include("head.inc");
 						continue;
 				}
 				$selected = array();
-				$interface = $gateway['interface'];
 				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
 					if($itemsplit[0] == $gwname) {
@@ -182,6 +189,10 @@ include("head.inc");
 						$selected[0] = "selected";
 					}
 				}
+				echo "<tr>";
+				echo "<td class='listlr'>";
+				echo "<strong>{$gateway['name']} </strong>";
+				echo "</td><td class='listr'>";
 				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>";
 				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>";
 				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>";
@@ -189,14 +200,37 @@ include("head.inc");
 				echo "<option value='3' $selected[3] >" . gettext("Tier 3") . "</option>";
 				echo "<option value='4' $selected[4] >" . gettext("Tier 4") . "</option>";
 				echo "<option value='5' $selected[5] >" . gettext("Tier 5") . "</option>";
-				echo "</select> <strong>{$gateway['name']} - {$gateway['descr']}</strong><br />";
+				echo "</select>";
+				echo "</td>";
+
+				$selected = array();
+				foreach((array)$pconfig['item'] as $item) {
+					$itemsplit = explode("|", $item);
+					if($itemsplit[0] == $gwname) {
+						$selected[$itemsplit[2]] = "selected";
+						break;
+					} else {
+						$selected[0] = "selected";
+					}
+				}
+				echo "<td class='listr'>";
+				echo "<select name='{$gwname}_vip' class='formfldselect' id='{$gwname}_vip'>";
+				echo "<option value='address' $selected[0] >" . gettext("Interface Address") . "</option>";
+				// foreach($vips)
+				echo "</td><td class='listr'>";
+				echo "</select><strong>{$gateway['descr']}</strong>";
+				echo "</td></tr>";
 		 	}
 		?>
+			</table>
 			<br/><span class="vexpl">
 			<strong><?=gettext("Link Priority"); ?></strong> <br />
 			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done. " .
 			"Multiple links of the same priority will balance connections until all links in the priority will be exhausted. " .
 			"If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
+			<br />
+			<strong><?=gettext("Virtual IP"); ?></strong> <br />
+			<?=gettext("The virtual IP field selects what (virtual) IP should be used when this group applies to a local Dyndns, IPsec or openvpn endpoint") ?>
 			</span><br />
 		   </td>
                 </tr>

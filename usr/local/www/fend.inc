@@ -18,8 +18,8 @@
 /* Disable form autocomplete on all but the login screen. */
 if (basename($_SERVER["SCRIPT_FILENAME"] != "index.php")): ?>
 <script type="text/javascript">
-(function ($) {
-	$("input").attr("autocomplete","off");
-})(jQuery);
+	jQuery(document).ready(function() {
+		jQuery("input").prop("autocomplete","off");
+	});
 </script>
 <?php endif; ?>

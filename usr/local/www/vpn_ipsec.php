@@ -189,12 +189,23 @@ include("head.inc");
 							<?php
 								if ($ph1ent['interface']) {
 									$iflabels = get_configured_interface_with_descr();
+
 									$carplist = get_configured_carp_interface_list();
 									foreach ($carplist as $cif => $carpip)
 										$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
+
 									$aliaslist = get_configured_ip_aliases_list();
 									foreach ($aliaslist as $aliasip => $aliasif)
 										$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+
+									$grouplist = return_gateway_groups_array();
+									foreach ($grouplist as $name => $group) {
+										if($group[0]['vip'] <> "")
+											$vipif = $group[0]['vip'];
+										else
+											$vipif = $group[0]['int'];
+										$iflabels[$name] = "GW Group {$name}";
+									}
 									$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
 								}
 								else

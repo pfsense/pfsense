@@ -40,6 +40,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
@@ -137,6 +139,9 @@ if ($_POST) {
 		services_dnsupdate_process();
 		/* signal dyndns update */
 		services_dyndns_configure();
+		/* update IPsec too */
+		vpn_ipsec_refresh_policies();
+		vpn_ipsec_configure();
 		
 		write_config();
 		

@@ -3814,6 +3814,7 @@ function get_real_interface($interface = "wan") {
 			$wanif = $interface;
 			break;
 		}
+
 		if (empty($config['interfaces'][$interface]))
 			break;
 
@@ -4320,7 +4321,7 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 
 function get_interface_ip($interface = "wan")
 {
-	$realif = get_real_interface($interface);
+	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
@@ -4340,7 +4341,7 @@ function get_interface_ip($interface = "wan")
 function get_interface_ipv6($interface = "wan")
 {
 	global $config;
-	$realif = get_real_interface($interface);
+	$realif = get_failover_interface($interface);
 	switch($config['interfaces'][$interface]['ipaddrv6']) {
 		case "6rd":
 		case "6to4":
@@ -4365,7 +4366,7 @@ function get_interface_ipv6($interface = "wan")
 
 function get_interface_linklocal($interface = "wan")
 {
-	$realif = get_real_interface($interface);
+	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
@@ -4765,6 +4766,24 @@ function interfaces_staticarp_configure($if) {
 	}
 
 	return 0;
+}
+
+function get_failover_interface($interface) {
+	global $config;
+	/* compare against gateway groups */
+	$a_groups = return_gateway_groups_array();
+	if(is_array($a_groups[$interface])) {
+		/* we found a gateway group, fetch the interface or vip */
+		if($a_groups[$interface][0]['vip'] <> "")
+			$wanif = $a_groups[$interface][0]['vip'];
+		else
+			$wanif = $a_groups[$interface][0]['int'];
+		
+		return $wanif;
+	}
+	/* fall through to get_real_interface */
+	$wanif = get_real_interface($interface);
+	return $wanif;
 }
 
 ?>

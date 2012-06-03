@@ -153,11 +153,12 @@
 			$this->_dnsMX = $dnsMX;
                         $this->_dnsZoneID = $dnsZoneID;
                         $this->_dnsTTL = $dnsTTL;
-			$this->_if = get_real_interface($dnsIf);
+			$this->_if = get_failover_interface($dnsIf);
 			$this->_checkIP();
 			$this->_dnsUpdateURL = $dnsUpdateURL;
 			$this->_dnsResultMatch = $dnsResultMatch;
-			$this->_dnsRequestIf = get_real_interface($dnsRequestIf);
+			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
+			log_error("running get_failover_interface for {$dnsRequestIf}. found {$this->_dnsRequestIf}");
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 
 			// Ensure that we where able to lookup the IP

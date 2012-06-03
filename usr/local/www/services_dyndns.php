@@ -119,13 +119,15 @@ include("head.inc");
 	  		foreach ($iflist as $if => $ifdesc) {
 				if ($dyndns['interface'] == $if) {
 					echo "{$ifdesc}";
+					$iface = $if;
 					break;
 				}
 			}
 			$groupslist = return_gateway_groups_array();
-	  		foreach ($groupslist as $name => $group) {
-				if ($dyndns['interface'] == $name) {
-					echo "{$name}";
+	  		foreach ($groupslist as $if => $group) {
+				if ($dyndns['interface'] == $if) {
+					echo "{$if}";
+					$iface = $if;
 					break;
 				}
 			}
@@ -147,8 +149,8 @@ include("head.inc");
                   </td>
                   <td class="listr">
 			<?php
-				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
-				$ipaddr = dyndnsCheckIP($if);
+				$filename = "{$g['conf_path']}/dyndns_{$iface}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+				$ipaddr = dyndnsCheckIP($iface);
 				if(file_exists($filename)) {
 					$cached_ip_s = explode(":", file_get_contents($filename));
 					$cached_ip = $cached_ip_s[0];

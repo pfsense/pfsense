@@ -29,6 +29,7 @@
 	pfSense_MODULE:	routing
 
  */
+require_once("config.inc");
 
 /*
  * Creates monitoring configuration file and

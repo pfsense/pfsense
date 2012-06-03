@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg_mgr.php
-    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -62,8 +62,14 @@ if(is_subsystem_dirty('packagelock')) {
 	echo "</html>";
 	exit;
 }
-
-$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "supportedbybsdperimeter"));
+function domTT_title($title_msg){
+	if (!empty($title_msg)){
+		$title_msg=preg_replace("/\s+/"," ",$title_msg);
+        $title_msg=preg_replace("/'/","\'",$title_msg);
+		echo "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
+	}
+}
+$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "supportedbybsdperimeter","config_file"));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -88,7 +94,11 @@ $pgtitle = array(gettext("System"),gettext("Package Manager"));
 include("head.inc");
 
 ?>
-
+<script type="text/javascript" src="javascript/domTT/domLib.js"></script>
+<script type="text/javascript" src="javascript/domTT/domTT.js"></script>
+<script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
+<script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
+<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");
@@ -116,12 +126,11 @@ include("head.inc");
 			<div id="mainarea">
 				<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Category"); ?></td>
-<!--					<td width="10%" class="listhdrr">Size</td>	-->
-						<td width="5%" class="listhdrr"><?=gettext("Status"); ?></td>
-						<td width="5%" class="listhdrr"><?=gettext("Package Info"); ?></td>
-						<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
+						<td width="12%" class="listhdrr"><?=gettext("Name"); ?></td>
+						<td width="18%" class="listhdrr"><?=gettext("Category"); ?></td>
+						<td width="15%" class="listhdrr"><?=gettext("Status"); ?></td>
+						<td width="53%" class="listhdr"><?=gettext("Description"); ?></td>
+						<td width="17">&nbsp</td>
 					</tr>
 					<?php
 						if(!$pkg_info) {
@@ -167,9 +176,21 @@ include("head.inc");
 									if($index['maximum_version'] &&
 										(pfs_version_compare("", $version, $index['maximum_version']) > 0))
 										continue;
+									/* get history/changelog git dir */
+									$commit_dir=split("/",$index['config_file']);
+									$changeloglink ="https://github.com/bsdperimeter/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+									/* Check package info link */
+									if($index['pkginfolink']){
+										$pkginfolink = $index['pkginfolink'];
+										$pkginfo=gettext("Package info");
+										}
+									else{
+										$pkginfolink = "http://forum.pfsense.org/index.php/board,15.0.html";
+										$pkginfo=gettext("No package info, check the forum");
+										}
 					?>
 					<tr valign="top">
-						<td class="listlr">
+						<td class="listlr" <?=domTT_title(gettext("Click on package name to access it's website."))?>>
 							<A target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
 						</td>
 						<td class="listr">
@@ -190,30 +211,21 @@ include("head.inc");
 							<?= $size ?>
 						</td>
 -->
-						<td class="listr">
+						<td class="listr" <?=domTT_title(gettext("Click ".ucfirst($index['name'])." version to check it's changelog."))?>>
 							<?=$index['status'] ?>
 							<br/>
-							<?=$index['version'] ?>
+							<a target='_new' href='<?=$changeloglink?>'><?=$index['version']?></a>
 							<br/>
 							<?=gettext("platform") .": ". $index['required_version'] ?>
 							<br/>
 							<?=$index['maximum_version'] ?>
 						</td>
-						<td class="listr">
-						<?php
-						if($index['pkginfolink']) {
-							$pkginfolink = $index['pkginfolink'];
-							echo "<a target='_new' href='$pkginfolink'>". gettext("Package Info") ."</a>";
-						} else {
-							echo gettext("No info, check the") . " <a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
-						}
-						?>
+						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
+						<?= $index['descr'] ?><br><br>
+						<a target='_new' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 						</td>
-						<td class="listbg" class="listbg" style="overflow: hidden;">
-							<?= $index['descr'] ?>
-						</td>
-						<td valign="middle" class="list" nowrap>
-							<a onclick="return confirm('<?=gettext("Do you really want to install this package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
+						<td valign="middle" class="list" nowrap width="17">
+							<a onclick="return confirm('<?=gettext("Do you really want to install ".ucfirst($index['name'])." package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
 						</td>
 					</tr>
 					<?php

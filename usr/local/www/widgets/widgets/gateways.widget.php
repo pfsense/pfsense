@@ -66,7 +66,7 @@ $counter = 1;
 		<?php	if ($gateways_status[$gname])
 				echo $gateways_status[$gname]['delay'];
 			else
-				echo gettext("Gathering data");
+				echo gettext("Pending");
 		?>
 				<?php $counter++; ?>
 		  </td>
@@ -74,7 +74,7 @@ $counter = 1;
 		<?php	if ($gateways_status[$gname])
 				echo $gateways_status[$gname]['loss'];
 			else
-				echo gettext("Gathering data");
+				echo gettext("Pending");
 		?>
 				<?php $counter++; ?>
 		  </td>
@@ -95,7 +95,7 @@ $counter = 1;
                                         $bgcolor = "lightgreen";
 				}
 			} else {
-				$online = gettext("Gathering data");
+				$online = gettext("Pending");
                                 $bgcolor = "lightgray";
 			}
 			echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";

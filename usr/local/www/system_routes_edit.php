@@ -58,7 +58,7 @@ if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
 
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = return_gateways_array(true);
+$a_gateways = return_gateways_array(true, true);
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

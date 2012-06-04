@@ -321,7 +321,7 @@ function return_gateways_status($byname = false) {
 }
 
 /* Return all configured gateways on the system */
-function return_gateways_array($disabled = false) {
+function return_gateways_array($disabled = false, $locahost = false) {
 	global $config, $g;
 
 	$gateways_arr = array();
@@ -617,6 +617,22 @@ function return_gateways_array($disabled = false) {
 		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;
 		unset($gateway);
+	}
+
+	if($localhost === true) {
+		/* attach localhost for Null routes */
+		$gwlo4 = array();
+		$gwlo4['name'] = "Null4";
+		$gwlo4['interface'] = "lo0";
+		$gwlo4['ipprotocol'] = "inet";
+		$gwlo4['gateway'] = "127.0.0.1";
+		$gwlo6 = array();
+		$gwlo6['name'] = "Null6";
+		$gwlo6['interface'] = "lo0";
+		$gwlo6['ipprotocol'] = "inet6";
+		$gwlo6['gateway'] = "::1";
+		$gateways_arr['Null4'] = $gwlo4;
+		$gateways_arr['Null6'] = $gwlo6;
 	}
 	return($gateways_arr);
 }

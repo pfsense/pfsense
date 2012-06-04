@@ -441,7 +441,7 @@ function system_routing_configure($interface = "") {
 
 	$static_routes = get_staticroutes();
 	if (count($static_routes)) {
-		$gateways_arr = return_gateways_array();
+		$gateways_arr = return_gateways_array(false, true);
 
 		foreach ($static_routes as $rtent) {
 			$gatewayip = "";

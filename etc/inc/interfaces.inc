@@ -3012,6 +3012,10 @@ function interface_track6_configure($interface = "lan") {
 		return(false);
 	}
 
+	/* always configure a link-local of fe80::1:1 on the track6 interfaces */
+	$realif = get_real_interface($interface);
+	mwexec("/sbin/ifconfig {$realif} inet6 fe80::1:1%{$realif}");
+
 	$type = $config['interfaces'][$wancfg['track6-interface']]['ipaddrv6'];
 	switch($type) {
 		case "6to4":
@@ -4770,6 +4774,12 @@ function interfaces_staticarp_configure($if) {
 
 function get_failover_interface($interface) {
 	global $config;
+	/* shortcut to get_real_interface if we find it in the config */
+	if(is_array($config['interfaces'][$interface])) {
+		$wanif = get_real_interface($interface);
+		return $wanif;
+	}
+
 	/* compare against gateway groups */
 	$a_groups = return_gateway_groups_array();
 	if(is_array($a_groups[$interface])) {

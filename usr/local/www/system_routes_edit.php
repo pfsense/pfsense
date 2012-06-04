@@ -219,7 +219,7 @@ include("head.inc");
 				  / 
                     <select name="network_subnet" class="formselect ipv4v6" id="network_subnet"
                       <?php
-			for ($i = 128; $i >= 1; $i--): ?>
+			for ($i = 129; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

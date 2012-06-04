@@ -286,8 +286,8 @@ function return_gateways_status($byname = false) {
 		$status[$target]['srcip'] = $info[1];
 		$status[$target]['name'] = $info[2];
 		$status[$target]['lastcheck'] = $info[5] ? date('r', $info[5]) : date('r');
-		$status[$target]['delay'] = empty($info[6]) ? 0 : $info[6];
-		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : $info[7] . "";
+		$status[$target]['delay'] = empty($info[6]) ? "0ms" : round($info[6], 1) ."ms" ;
+		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : round($info[7], 1) . "%";
 		$status[$target]['status'] = trim($info[8]);
 	}
 

@@ -97,7 +97,7 @@ include("head.inc");
 		<?php	if ($gateways_status[$gname])
 				echo $gateways_status[$gname]['delay'];
 			else
-				echo gettext("Gathering data");
+				echo gettext("Pending");
 		?>
 				<?php $counter++; ?>
 		</td>
@@ -105,7 +105,7 @@ include("head.inc");
 		<?php	if ($gateways_status[$gname])
 				echo $gateways_status[$gname]['loss'];
 			else
-				echo gettext("Gathering data");
+				echo gettext("Pending");
 		?>
 				<?php $counter++; ?>
 		</td>
@@ -131,7 +131,7 @@ include("head.inc");
 						$online = gettext("Online");
 						$bgcolor = "lightgreen";
 				} else {
-					$online = gettext("Gathering data");
+					$online = gettext("Pending");
 					$bgcolor = "lightgray";
 				}
 				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\" > $online </td></tr><tr><td>";

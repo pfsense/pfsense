@@ -36,8 +36,8 @@ function get_gatewaystats() {
 			$data .= ",";
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
-		$data .= lookup_gateway_ip_by_name($gname) . ",";
 		if ($gateways_status[$gname]) {
+			$data .= lookup_gateway_ip_by_name($gname) . ",";
 			$gws = $gateways_status[$gname];
 			switch(strtolower($gws['status'])) {
 			case "none":
@@ -49,22 +49,25 @@ function get_gatewaystats() {
 				$bgcolor = "lightcoral";
 				break;
 			case "delay":
-				$online = "Warning: Latency";
+				$online = "Latency";
 				$bgcolor = "khaki";
 				break;
 			case "loss":
-				$online = "Warning: Packetloss";
+				$online = "Packetloss";
 				$bgcolor = "khaki";
 				break;
 			default:
-				$online = "Gathering data";
+				$online = "Pending";
 				break;
 			}
 		} else {
-			$online = "Gathering data";
-			$bgcolor = "lightgray";
+			$data .= "~,";
+			$gws['delay'] = "~";
+			$gws['loss'] = "~";
+			$online = "Unknown";
+			$bgcolor = "lightblue";
 		}
-		$data .= ($online == "Gathering data") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
+		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
 		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
 	}
 	return $data;

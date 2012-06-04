@@ -46,6 +46,7 @@
 require_once("globals.inc");
 require_once("cmd_chain.inc");
 require_once("util.inc");
+require_once("gwlb.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {

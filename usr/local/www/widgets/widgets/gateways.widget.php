@@ -57,8 +57,12 @@ $counter = 1;
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
 		<?php 	if (is_ipaddr($gateway['gateway']))
 				echo $gateway['gateway'];
-			else
-				echo get_interface_gateway($gateway['friendlyiface']);
+			else {
+				if($gateway['ipprotocol'] == "inet")
+					echo get_interface_gateway($gateway['friendlyiface']);
+				if($gateway['ipprotocol'] == "inet6")
+					echo get_interface_gateway_v6($gateway['friendlyiface']);
+			}
 		?>
 				<?php $counter++; ?>
                   </td>
@@ -85,18 +89,21 @@ $counter = 1;
                                         $online = "Offline";
                                         $bgcolor = "lightcoral";
                                 } elseif (stristr($gateways_status[$gname]['status'], "loss")) {
-                                        $online = "Warning, Packetloss";
+                                        $online = "Packetloss";
                                         $bgcolor = "khaki";
                                 } elseif (stristr($gateways_status[$gname]['status'], "delay")) {
-                                        $online = "Warning, Latency";
+                                        $online = "Latency";
                                         $bgcolor = "khaki";
                                 } elseif ($gateways_status[$gname]['status'] == "none") {
                                         $online = "Online";
                                         $bgcolor = "lightgreen";
+                                } elseif ($gateways_status[$gname]['status'] == "") {
+                                        $online = "Pending";
+                                        $bgcolor = "lightgray";
 				}
 			} else {
-				$online = gettext("Pending");
-                                $bgcolor = "lightgray";
+				$online = gettext("Unknown");
+                                $bgcolor = "lightblue";
 			}
 			echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
 			$counter++;

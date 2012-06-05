@@ -811,7 +811,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_ip_by_name($name) {
 
-	$gateways_arr = return_gateways_array();
+	$gateways_arr = return_gateways_array(false, true);
         foreach ($gateways_arr as $gname => $gw) {
                 if ($gw['name'] == $name || $gname == $name)
                         return $gw['gateway'];
@@ -822,7 +822,7 @@ function lookup_gateway_ip_by_name($name) {
 
 function lookup_gateway_monitor_ip_by_name($name) {
 
-        $gateways_arr = return_gateways_array();
+        $gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
 		$gateway = $gateways_arr[$name];
 		if(!is_ipaddr($gateway['monitor']))
@@ -836,7 +836,7 @@ function lookup_gateway_monitor_ip_by_name($name) {
 
 function lookup_gateway_interface_by_name($name) {
 
-        $gateways_arr = return_gateways_array();
+        $gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
 		$interfacegw = $gateway['interface'];
 		return ($interfacegw);

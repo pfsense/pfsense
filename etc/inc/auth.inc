@@ -1099,7 +1099,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	return true;
 }
 
-function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
+function radius_backed($username, $passwd, $authcfg){
 	global $debug, $config;
 	$ret = false;
 
@@ -1135,8 +1135,6 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		if ($debug)
 			printf("Radius send failed: %s<br>\n", $retvalue['error']);
 	} else if ($result === true) {
-		if ($rauth->getAttributes())
-			$attributes = $rauth->listAttributes();
 		$retvalue['auth_val'] = 2;
 		if ($debug)
 			printf(gettext("Radius Auth succeeded")."<br>\n");
@@ -1233,7 +1231,7 @@ function getUserGroups($username, $authcfg) {
 	return $member_groups;
 }
 
-function authenticate_user($username, $password, $authcfg = NULL, &$attributes = array()) {
+function authenticate_user($username, $password, $authcfg = NULL) {
 
 	if (!$authcfg) {
 		return local_backed($username, $password);
@@ -1246,7 +1244,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
                         $authenticated = true;
                 break;
         case 'radius':
-                if (radius_backed($username, $password, $authcfg, $attributes))
+                if (radius_backed($username, $password, $authcfg))
                         $authenticated = true;
                 break;
         default:

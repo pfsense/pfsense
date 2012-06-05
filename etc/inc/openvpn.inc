@@ -364,10 +364,6 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "cipher {$cipher}\n";
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
-	if (file_exists("/usr/local/sbin/openvpn.attributes.sh")) {
-		$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
-		$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
-	}
 
 	if (!empty($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	

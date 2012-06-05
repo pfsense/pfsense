@@ -96,6 +96,11 @@ if (!$username || !$password) {
 /* Replaced by a sed with propper variables used below(ldap parameters). */
 //<template>
 
+if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
+	putenv("LDAPTLS_CACERT={$g['varetc_path']}/openvpn/{$modeid}.ca");
+	putenv("LDAPTLS_REQCERT=never");
+}
+
 $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
@@ -103,12 +108,13 @@ if (($strictusercn === true) && ($common_name != $username)) {
 	exit(1);
 }
 
+$attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
 	if (!$authcfg && $authmode != "local")
 		continue;
 
-	$authenticated = authenticate_user($username, $password, $authcfg);
+	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true)
 		break;
 }
@@ -117,6 +123,36 @@ if ($authenticated == false) {
 	syslog(LOG_WARNING, "user {$username} could not authenticate.\n");
 	exit(-1);
 }
+
+if (file_exists("/etc/inc/openvpn.attributes.php"))
+	include_once("/etc/inc/openvpn.attributes.php");
+
+$content = "";
+if (is_array($attributes['dns-servers'])) {
+	foreach ($attributes['dns-servers'] as $dnssrv) {
+		if (is_ipaddr($dnssrv))
+			$content .= "push \"dhcp-option DNS {$dnssrv}\"\n";
+	}
+}
+if (is_array($attributes['routes'])) {
+	foreach ($attributes['routes'] as $route)
+			$content .= "push \"route {$route} vpn_gateway\"\n";
+}
+
+if (isset($attributes['framed_ip'])) {
+/* XXX: only use when TAP windows driver >= 8.2.x */
+/*      if (isset($attributes['framed_mask'])) {
+                $content .= "topology subnet\n";
+                $content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
+        } else {
+*/
+                $content .= "topology net30\n";
+                $content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) + 1));
+//      }
+}
+
+if (!empty($content))
+	@file_put_contents("{$g['tmp_path']}/{$username}", $content);
 
 syslog(LOG_WARNING, "user {$username} authenticated\n");
 

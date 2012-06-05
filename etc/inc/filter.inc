@@ -2131,6 +2131,8 @@ function filter_rules_generate() {
 
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
+	/* OpenVPN user rules from radius */
+	$ipfrules .= "anchor \"openvpn/*\"\n";
 	# BEGIN OF firewall rules
 	/* default block logging? */
 	if(!isset($config['syslog']['nologdefaultblock']))

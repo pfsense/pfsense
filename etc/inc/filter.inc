@@ -2799,7 +2799,8 @@ EOD;
 			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
 			$trackcfg = $config['interfaces'][$trackifname];
 			if($trackcfg['descr'] == "")
-				$trackcfg['descr'] = strtoupper($trackifname);
+				$trackcfg['descr'] = $trackifname;
+			$trackcfg['descr'] = strtoupper($trackcfg['descr']);
 
 			$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
 			if(is_ipaddrv6($ifcfgipv6)) {

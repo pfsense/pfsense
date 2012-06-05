@@ -396,7 +396,7 @@ if (empty($pagename)) {
 	/* If there was no match, there were no parameters, just grab the filename
 		Otherwise, use the matched filename from above. */
 	if (empty($uri_split[0])) {
-		$pagename = ltrim($_SERVER["HTTP_REFERER"], '/');
+		$pagename = ltrim(parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH), '/');
 	} else {
 		$pagename = $uri_split[1];
 	}

@@ -1,6 +1,5 @@
 <?php
 /*
-        filter.inc
         Copyright (C) 2011-2012         Ermal Luçi
         All rights reserved.
 

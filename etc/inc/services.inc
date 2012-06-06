@@ -82,7 +82,7 @@ function services_radvd_configure() {
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
-								
+
 		/* are router advertisements enabled? */
 		if($dhcpv6ifconf['ramode'] == "disabled")
 			continue;
@@ -96,15 +96,19 @@ function services_radvd_configure() {
 				$realif = get_real_interface($dhcpv6if);
 			}
 		}
+
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+
+		if(in_array($realif, $radvdifs))
 			continue;
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
-		$radvdifs[] = $realif;
+		$radvdifs[] = get_real_interface($realif);
 		
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";

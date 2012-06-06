@@ -170,7 +170,7 @@ function services_radvd_configure() {
 					$dnslist[] = $server;
 			}
 		} elseif (isset($config['dnsmasq']['enable'])) {
-			$dnslist[] = get_interface_ipv6($dhcpv6if);
+			$dnslist[] = get_interface_ipv6($realif);
 		} elseif (!empty($config['system']['dnsserver'][0])) {
 			foreach($config['system']['dnsserver'] as $server) {
 				if(is_ipaddrv6($server))

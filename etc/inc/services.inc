@@ -84,11 +84,18 @@ function services_radvd_configure() {
 			continue;
 								
 		/* are router advertisements enabled? */
-		if($dhcpv6ifconf['mode'] == "disabled")
+		if($dhcpv6ifconf['ramode'] == "disabled")
 			continue;
-			
-		$realif = get_real_interface($dhcpv6if);
 
+		/* check if we need to listen on a CARP interface */
+		$carplist = get_configured_carp_interface_list();
+		if($dhcpv6ifconf['rainterface'] <> "") {
+			if($carplist[$dhcpv6ifconf['rainterface']] <> "") {
+				$realif = $dhcpv6ifconf['rainterface'];
+			} else {
+				$realif = get_real_interface($dhcpv6if);
+			}
+		}
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		if(!is_ipaddrv6($ifcfgipv6))
 			continue;
@@ -106,7 +113,18 @@ function services_radvd_configure() {
 		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
 		$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		// $radvdconf .= "\tDeprecatePrefix on;\n";
-		switch($dhcpv6ifconf['mode']) {
+		switch($dhcpv6ifconf['rapriority']) {
+			case "low":
+				$radvdconf .= "\tAdvDefaultPreference low;\n";
+				break;
+			case "medium":
+				$radvdconf .= "\tAdvDefaultPreference medium;\n";
+				break;
+			case "high":
+				$radvdconf .= "\tAdvDefaultPreference high;\n";
+				break;		
+		}
+		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\tAdvManagedFlag on;\n";
 				break;
@@ -115,7 +133,7 @@ function services_radvd_configure() {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		switch($dhcpv6ifconf['mode']) {
+		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous off;\n";
@@ -976,7 +994,7 @@ EOD;
 			}
 		}
 
-		if($config['dhcpdv6'][$dhcpv6if]['mode'] <> "unmanaged") {
+		if($config['dhcpdv6'][$dhcpv6if]['ramode'] <> "unmanaged") {
 			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
 			$dhcpdv6ifs[] = $realif;
 			exec("/sbin/ifconfig {$realif} |awk  '/ether/ {print $2}'", $mac);

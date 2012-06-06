@@ -88,6 +88,13 @@ if (!$if || !isset($iflist[$if])) {
 }
 
 if (is_array($config['dhcpdv6'][$if])){
+	/* RA specific */
+	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
+	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
+	if($pconfig['rapriority'] == "")
+		$pconfig['rapriority'] = "medium";
+	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
+	/* DHCPv6 */
 	if (is_array($config['dhcpdv6'][$if]['range'])) {
 		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
 		$pconfig['range_to'] = $config['dhcpdv6'][$if]['range']['to'];
@@ -97,10 +104,8 @@ if (is_array($config['dhcpdv6'][$if])){
 		$pconfig['prefixrange_to'] = $config['dhcpdv6'][$if]['prefixrange']['to'];
 		$pconfig['prefixrange_length'] = $config['dhcpdv6'][$if]['prefixrange']['prefixlength'];
 	}
-	$pconfig['mode'] = $config['dhcpdv6'][$if]['mode'];
 	$pconfig['deftime'] = $config['dhcpdv6'][$if]['defaultleasetime'];
 	$pconfig['maxtime'] = $config['dhcpdv6'][$if]['maxleasetime'];
-	$pconfig['gateway'] = $config['dhcpdv6'][$if]['gateway'];
 	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
 	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
@@ -116,7 +121,6 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['nextserver'] = $config['dhcpdv6'][$if]['nextserver'];
 	$pconfig['filename'] = $config['dhcpdv6'][$if]['filename'];
 	$pconfig['rootpath'] = $config['dhcpdv6'][$if]['rootpath'];
-	$pconfig['failover_peerip'] = $config['dhcpdv6'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpdv6'][$if]['netmask'];
 	$pconfig['numberoptions'] = $config['dhcpdv6'][$if]['numberoptions'];
 	$pconfig['dhcpv6leaseinlocaltime'] = $config['dhcpdv6'][$if]['dhcpv6leaseinlocaltime'];
@@ -151,7 +155,15 @@ function is_inrange($test, $start, $end) {
 		return false;
 }
 
-$advertise_modes = array("disabled" => "Disabled", "router" => "Router Only", "unmanaged" => "Unmanaged", "managed" => "Managed", "assist" => "Assisted");
+$advertise_modes = array("disabled" => "Disabled",
+					"router" => "Router Only",
+					"unmanaged" => "Unmanaged",
+					"managed" => "Managed",
+					"assist" => "Assisted");
+$priority_modes = array("low" => "Low",
+					"medium" => "Normal",
+					"high" => "High");
+$carplist = get_configured_carp_interface_list();
 
 if ($_POST) {
 
@@ -277,7 +289,10 @@ if ($_POST) {
 		if (!is_array($config['dhcpdv6'][$if]['prefixrange']))
 			$config['dhcpdv6'][$if]['prefixrange'] = array();
 
-		$config['dhcpdv6'][$if]['mode'] = $_POST['mode'];
+		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
+		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
+		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
+		
 		$config['dhcpdv6'][$if]['range']['from'] = $_POST['range_from'];
 		$config['dhcpdv6'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpdv6'][$if]['prefixrange']['from'] = $_POST['prefixrange_from'];
@@ -300,7 +315,6 @@ if ($_POST) {
 		if ($_POST['dns2'])
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns2'];
 
-		$config['dhcpdv6'][$if]['gateway'] = $_POST['gateway'];
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpdv6'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
@@ -509,18 +523,62 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Router Advertisements");?></td>
 			<td width="78%" class="vtable">
-				<select name="mode" id="mode">
+				<select name="ramode" id="ramode">
 					<?php foreach($advertise_modes as $name => $value) { ?>
-					<option value="<?=$name ?>" <?php if ($pconfig['mode'] == $name) echo "selected"; ?> > <?=$value ?></option>
+					<option value="<?=$name ?>" <?php if ($pconfig['ramode'] == $name) echo "selected"; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
-			<strong><?php printf(gettext("Select the Operating Mode for the router advertisement Daemon."))?></strong>
+			<strong><?php printf(gettext("Select the Operating Mode for the Router Advertisement (RA) Daemon."))?></strong>
 			<?php printf(gettext("Use \"Router Only\" to only advertise this router, \"Unmanaged\" for Router Advertising with Stateless Autoconfig, \"Managed\" for assignment through (a) DHCPv6 Server, \"Assisted\" for DHCPv6 Server assignment combined with Stateless Autoconfig"));?>
 			<?php printf(gettext("It is not required to activate this DHCPv6 server when set to \"Managed\", this can be another host on the network")); ?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Router Priority");?></td>
+			<td width="78%" class="vtable">
+				<select name="rapriority" id="rapriority">
+					<?php foreach($priority_modes as $name => $value) { ?>
+					<option value="<?=$name ?>" <?php if ($pconfig['rapriority'] == $name) echo "selected"; ?> > <?=$value ?></option>
+					<?php } ?>
+				</select><br />
+			<strong><?php printf(gettext("Select the Priority for the Router Advertisement (RA) Daemon."))?></strong>
+			</td>
+			</tr>
+			<?php
+				$carplistif = array();
+				if(count($carplist) > 0) {
+					foreach($carplist as $ifname => $vip) {
+						if((preg_match("/^{$if}_/", $ifname)) && (is_ipaddrv6($vip)))
+							$carplistif[$ifname] = $vip;
+					}
+				}
+				if(count($carplistif) > 0) {
+			?>
+			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("RA Interface");?></td>
+			<td width="78%" class="vtable">
+				<select name="rainterface" id="rainterface">
+					<?php foreach($carplistif as $ifname => $vip) { ?>
+					<option value="interface" <?php if ($pconfig['rainterface'] == "interface") echo "selected"; ?> > <?=strtoupper($if); ?></option>
+					<option value="<?=$ifname ?>" <?php if ($pconfig['rainterface'] == $ifname) echo "selected"; ?> > <?="$ifname - $vip"; ?></option>
+					<?php } ?>
+				</select><br />
+			<strong><?php printf(gettext("Select the Interface for the Router Advertisement (RA) Daemon."))?></strong>
+			</td>
+			</tr>
+			<?php } ?>
+			<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input name="if" type="hidden" value="<?=$if;?>">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
+			</td>
+			</tr>
+		</table>
+	<hr>
+		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCPv6 Server");?></td>
 			<td width="78%" class="vtable">
 				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false);">
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
@@ -613,15 +671,6 @@ include("head.inc");
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
-			<!--
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
-			<td width="78%" class="vtable">
-				<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
-			</td>
-			</tr>
-			-->
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">

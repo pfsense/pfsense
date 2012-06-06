@@ -108,6 +108,7 @@ function services_radvd_configure() {
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
+		$radvdifs[] = $realif;
 		$radvdifs[] = get_real_interface($realif);
 		
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";

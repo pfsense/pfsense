@@ -117,8 +117,10 @@ function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
 		die("WARNING: You must give a name as parameter to lock() function.");
-	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
+	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
+		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
+	}
 	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		if (flock($fp, $op))

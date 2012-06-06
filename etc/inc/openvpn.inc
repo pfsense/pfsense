@@ -376,8 +376,13 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 	if (file_exists("/usr/local/sbin/openvpn.attributes.sh")) {
-		$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
-		$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
+		switch($settings['mode']) {
+			case 'server_user':
+			case 'server_tls_user':
+				$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
+				$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
+				break;
+		}
 	}
 
 	if (is_ipaddrv4($iface_ip)) {

@@ -86,8 +86,8 @@ rrd interval 60s;
 
 ## These parameters can be overriden in a specific alarm configuration
 alarm default { 
-	command on "/usr/local/sbin/pfSctl -c 'filter reload'"
-	command off "/usr/local/sbin/pfSctl -c 'filter reload'"
+	command on "/usr/local/sbin/pfSctl -c 'service dyndnsall reload';/usr/local/sbin/pfSctl -c 'service ipsecdns reload'"
+	command off "/usr/local/sbin/pfSctl -c 'service dyndnsall reload';/usr/local/sbin/pfSctl -c 'service ipsecdns reload'"
 	combine 10s
 }
 

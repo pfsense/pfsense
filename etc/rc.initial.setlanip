@@ -323,9 +323,27 @@ if ($intip != '' || $intip6 != '') {
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
 		if(!empty($config['system']['webgui']['port'])) {
 			$webuiport = $config['system']['webgui']['port'];
-			echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+			if ($intip != '') {
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+			}
+			if ($intip6 != '') {
+				if (is_ipaddr($intip6)) {
+					echo "		{$config['system']['webgui']['protocol']}://[{$intip6}]:{$port}/\n";
+				} else {
+					echo "		{$config['system']['webgui']['protocol']}://{$intip6}:{$port}/\n";
+				}
+			}
 		} else {
-			echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";	
+			if ($intip != '') {
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";
+			}
+			if ($intip6 != '') {
+				if (is_ipaddr($intip6)) {
+					echo "		{$config['system']['webgui']['protocol']}://[{$intip6}]/\n";
+				} else {
+					echo "		{$config['system']['webgui']['protocol']}://{$intip6}/\n";
+				}
+			}
 		}
 	}
 }

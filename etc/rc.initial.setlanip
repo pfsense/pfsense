@@ -90,8 +90,9 @@ $count = count($ifdescrs);
 if ($count > 1) {
 	echo "Available interfaces:\n\n";
 	$x=1;
-	foreach($ifdescrs as $iface) {
-		echo "{$x} - {$iface}\n";
+	foreach($ifdescrs as $iface => $ifdescr) {
+		$realif = $config['interfaces'][$iface]['if'];
+		echo "{$x} - {$ifdescr} ({$realif})\n";
 		$x++;
 	}
 	echo "\nEnter the number of the interface you wish to configure: ";

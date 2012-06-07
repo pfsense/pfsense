@@ -89,7 +89,9 @@ include("head.inc");
 						<tr>
 							<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
 							<td width="20%" class="listhdrr"><?=gettext("Category"); ?></td>
+							<?php if (! $g['disablepackageinfo']): ?>
 							<td width="10%" class="listhdrr"><?=gettext("Package Info"); ?></td>
+							<?php endif; ?>
 							<td width="15%" class="listhdrr"><?=gettext("Package Version"); ?></td>
 							<td width="45%" class="listhdr"><?=gettext("Description"); ?></td>
 						</tr>
@@ -143,6 +145,7 @@ include("head.inc");
 							<td class="listr">
 								<?=$pkg['category'];?>
 							</td>
+							<?php if (! $g['disablepackageinfo']): ?>
 							<td class="listr">
 							<?php
 							if($currentvers[$pkg['name']]['pkginfolink']) {
@@ -153,6 +156,7 @@ include("head.inc");
 							}
 							?>
 							</td>
+							<?php endif; ?>
 							<td class="<?=$tdclass;?>">
 									<?=$pkgver;?>
 							</td>

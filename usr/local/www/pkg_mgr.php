@@ -114,7 +114,9 @@ include("head.inc");
 						<td width="25%" class="listhdrr"><?=gettext("Category"); ?></td>
 <!--					<td width="10%" class="listhdrr">Size</td>	-->
 						<td width="5%" class="listhdrr"><?=gettext("Status"); ?></td>
+						<?php if (! $g['disablepackageinfo']): ?>
 						<td width="5%" class="listhdrr"><?=gettext("Package Info"); ?></td>
+						<?php endif; ?>
 						<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 					</tr>
 					<?php
@@ -193,6 +195,7 @@ include("head.inc");
 							<br/>
 							<?=$index['maximum_version'] ?>
 						</td>
+						<?php if (! $g['disablepackageinfo']): ?>
 						<td class="listr">
 						<?php
 						if($index['pkginfolink']) {
@@ -203,6 +206,7 @@ include("head.inc");
 						}
 						?>
 						</td>
+						<?php endif; ?>
 						<td class="listbg" class="listbg" style="overflow: hidden;">
 							<?= $index['descr'] ?>
 						</td>

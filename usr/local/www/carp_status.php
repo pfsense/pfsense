@@ -61,10 +61,6 @@ if($_POST['disablecarp'] <> "") {
                                        		interface_vip_bring_down($vip);
                                        		sleep(1);
                                        	break;
-                                       	case "carpdev-dhcp":
-                                       		interface_vip_bring_down($vip);
-                                       		sleep(1);
-                                       	break;
                                	}
                 	}
         	}
@@ -77,10 +73,6 @@ if($_POST['disablecarp'] <> "") {
 				switch ($vip['mode']) {
 					case "carp":
 						interface_carp_configure($vip);
-						sleep(1);
-					break;
-					case "carpdev-dhcp":
-						interface_carpdev_configure($vip);
 						sleep(1);
 					break;
 					case "ipalias":

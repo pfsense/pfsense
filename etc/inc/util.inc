@@ -655,7 +655,6 @@ function get_configured_carp_interface_list() {
 		foreach ($viparr as $vip) {
 			switch ($vip['mode']) {
 			case "carp":
-			case "carpdev-dhcp":
 				$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 				$iflist[$vipif] = $vip['subnet'];
 				break;

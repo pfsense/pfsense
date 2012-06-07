@@ -192,9 +192,6 @@ switch($wancfg['ipaddr']) {
 	case "dhcp":
 		$pconfig['type'] = "dhcp";
 		break;
-	case "carpdev-dhcp":
-		$pconfig['ipaddr'] = "";
-		break;
 	case "pppoe":
 	case "pptp":
 	case "l2tp":
@@ -739,15 +736,6 @@ if ($_POST['apply']) {
 					$a_gateways[] = $gateway_item;
 				}
 				break;
-			case "carpdev-dhcp":
-				$wancfg['ipaddr'] = "carpdev-dhcp";
-				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
-				$wancfg['alias-address'] = $_POST['alias-address'];
-				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
-				if($gateway_item) {
-					$a_gateways[] = $gateway_item;
-				}
-				break;
 			case "ppp":
 				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
 				$a_ppps[$pppid]['type'] = $_POST['type'];
@@ -1115,7 +1103,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP") /* , "carpdev-dhcp" => "CarpDev"*/);
+$types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
 
 ?>

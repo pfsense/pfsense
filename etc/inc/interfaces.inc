@@ -100,7 +100,6 @@ function does_vip_exist($vip) {
 
 	switch ($vip['mode']) {
 	case "carp":
-	case "carpdev":
 		$realif = "{$vip['interface']}_vip{$vip['vhid']}";
 		if (!does_interface_exist($realif)) {
 			return false;
@@ -1049,7 +1048,6 @@ function interface_vip_bring_down($vip) {
 			pfSense_interface_deladdress($vipif, $vip['subnet']);
 		break;
 	case "carp":
-	case "carpdev-dhcp":
 		$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 		if (does_interface_exist($vipif)) 
 			pfSense_interface_destroy($vipif);
@@ -1091,11 +1089,6 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 			}
 		}
 		break;
-	case "carpdev-dhcp":
-		/* 
-		 * NB: When carpdev gets enabled it would be better to be handled as all
-		 *	   other interfaces! 
-		 */
 	case "dhcp":
 		$pid = find_dhclient_process($realif);
 		if($pid)
@@ -1945,11 +1938,6 @@ function interfaces_vips_configure($interface = "") {
 					$carp_setuped = true;
 				interface_carp_configure($vip);
 				break;
-			case "carpdev-dhcp":
-				if ($interface <> "" && $vip['interface'] <> $interface)
-					continue;
-				interface_carpdev_configure($vip);
-				break;
 			}
 		}
 		if ($carp_setuped == true)
@@ -1984,11 +1972,6 @@ function interface_reload_carps($cif) {
 					interface_vip_bring_down($vip);
 					sleep(1);
 					interface_carp_configure($vip);
-					break;
-				case "carpdev-dhcp":
-					interface_vip_bring_down($vip);
-					sleep(1);
-					interface_carpdev_configure($vip);
 					break;
 				case "ipalias":
 					interface_vip_bring_down($vip);
@@ -2075,83 +2058,6 @@ function interface_carp_configure(&$vip) {
 	}
 
 	interfaces_bring_up($vipif);
-
-	return $vipif;
-}
-
-function interface_carpdev_configure(&$vip) {
-	global $g;
-
-	if ($vip['mode'] != "carpdev-dhcp")
-		return;
-
-	if (empty($vip['interface']))
-		return;
-
-	$realif = get_real_interface($vip['interface']);
-	interfaces_bring_up($realif);
-
-	/*
-	 * ensure the interface containing the VIP really exists
-	 * prevents a panic if the interface is missing or invalid
-	 */
-	if (!does_interface_exist($realif)) {
-		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
-		return;
-	}
-
-	$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
-	if (does_interface_exist($vipif)) {
-		interface_bring_down($vipif);
-	} else {
-		$carpdevif = exec("/sbin/ifconfig carp create");
-		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
-		pfSense_ngctl_name("{$carpdevif}:", $vipif);
-	}
-
-	$vip_password = $vip['password'];
-	$vip_password = str_replace(" ", "", $vip_password);
-	if ($vip['password'] != "")
-		$password = " pass \"" . $vip_password . "\"";
-
-
-	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
-	interfaces_bring_up($vipif);
-
-	/*
-	 * XXX: BIG HACK but carpdev needs ip services active
-	 *      before even starting something as dhclient.
-	 *      I do not know if this is a feature or a bug
-	 *      but better than track it make it work ;) .
-	 */
-	//$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
-	//$cmdchain->add("CarpDEV hack", "/sbin/ifconfig {$carpint} inet {$fakeiptouse}", false);
-
-	/* generate dhclient_wan.conf */
-	$fd = fopen("{$g['varetc_path']}/dhclient_{$vipif}.conf", "w");
-	if ($fd) {
-		$dhclientconf = "";
-
-		$dhclientconf .= <<<EOD
-interface "{$vipif}" {
-timeout 60;
-retry 15;
-select-timeout 0;
-initial-interval 1;
-script "/sbin/dhclient-script";
-}
-
-EOD;
-
-		fwrite($fd, $dhclientconf);
-		fclose($fd);
-
-		/* fire up dhclient */
-		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >{$g['tmp_path']}/{$vipif}_output 2>{$g['tmp_path']}/{$vipif}_error_output", false);
-	} else {
-		log_error(sprintf(gettext("Error: cannot open dhclient_%s.conf in interface_carpdev_configure() for writing.%s"), $vipif, "\n"));
-		mwexec("/sbin/dhclient -b {$vipif}");
-	}
 
 	return $vipif;
 }
@@ -2872,9 +2778,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	unset($interface_snv6_arr_cache[$realif]);
 
 	switch ($wancfg['ipaddr']) {
-		case 'carpdev-dhcp':
-			interface_carpdev_dhcp_configure($interface);
-			break;
 		case 'dhcp':
 			interface_dhcp_configure($interface);
 			break;
@@ -2979,20 +2882,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			captiveportal_init_rules();
 		}
 	}
-
-	return 0;
-}
-
-function interface_carpdev_dhcp_configure($interface = "wan") {
-	global $config, $g;
-
-	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
-	/* bring wan interface up before starting dhclient */
-	if($wanif)
-		interfaces_bring_up($wanif);
-	else 
-		log_error(gettext("Could not bring wanif up in interface_carpdev_dhcp_configure()"));
 
 	return 0;
 }
@@ -3608,7 +3497,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 
 	if (stristr($interface, "_vip")) {
                 foreach ($config['virtualip']['vip'] as $counter => $vip) {
-                        if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+                        if ($vip['mode'] == "carp")  {
                                 if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
                                         return $vip['interface'];
                         }
@@ -3668,7 +3557,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 		} else if (stristr($interface, "_vip")) {
 			if (is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $counter => $vip) {
-					if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+					if ($vip['mode'] == "carp")  {
 						if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
 							return "{$vip['subnet']} - {$vip['descr']}";
 					}
@@ -3840,18 +3729,6 @@ function get_real_interface($interface = "wan") {
 		*/
 
 		switch ($cfg['ipaddr']) {
-			case "carpdev-dhcp":
-				$viparr = &$config['virtualip']['vip'];
-				if(is_array($viparr))
-				foreach ($viparr as $counter => $vip) {
-					if ($vip['mode'] == "carpdev-dhcp") {
-						if($vip['interface'] == $interface) {
-							$wanif = "carp{$counter}";
-							break;
-						}
-					}
-				}
-				break;
 			case "pppoe": 
 			case "pptp": 
 			case "l2tp": 
@@ -3977,7 +3854,7 @@ function find_carp_interface($ip) {
 	global $config;
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
+			if ($vip['mode'] == "carp") {
 				if(is_ipaddrv4($ip)) {
 					$carp_ip = get_interface_ip($vip['interface']);
 				}
@@ -4044,7 +3921,7 @@ function link_ip_to_carp_interface($ip) {
 		$first = 0;
 		$carp_int = array();
                 foreach ($config['virtualip']['vip'] as $vip) {
-                        if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
+                        if ($vip['mode'] == "carp") {
                                 $carp_ip = $vip['subnet'];
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
@@ -4436,7 +4313,6 @@ function get_interfaces_with_gateway() {
 	foreach($config['interfaces'] as $ifdescr => $ifname) {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
-			case "carpdev-dhcp":
 			case "ppp";
 			case "pppoe":
 			case "pptp":
@@ -4462,7 +4338,6 @@ function interface_has_gateway($friendly) {
 		$ifname = &$config['interfaces'][$friendly];
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
-			case "carpdev-dhcp":
 			case "pppoe":
 			case "pptp":
 			case "l2tp":

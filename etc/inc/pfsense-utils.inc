@@ -1217,7 +1217,6 @@ function get_interface_info($ifdescr) {
 	switch ($link_type) {
 	 /* DHCP? -> see if dhclient is up */
 	case "dhcp":
-	case "carpdev-dhcp":
 		/* see if dhclient is up */
 		if (find_dhclient_process($ifinfo['if']) <> "")
 			$ifinfo['dhcplink'] = "up";

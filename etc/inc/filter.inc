@@ -2557,7 +2557,6 @@ pass in on \${$oc['descr']} proto gre from any to any keep state label "allow PP
 EOD;
 			break;
 		case "dhcp":
-		case "carpdev-dhcp":
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
 pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"

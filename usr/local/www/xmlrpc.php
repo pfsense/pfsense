@@ -249,9 +249,6 @@ function restore_config_section_xmlrpc($raw_params) {
                                         $carp_setuped = true;
 				interface_carp_configure($vip);
 				break;
-			case "carpdev-dhcp":
-				interface_carpdev_configure($vip);
-				break;
 			}
 		}
 		/* Cleanup remaining old carps */

@@ -54,9 +54,6 @@
 		$ifconf = $config['interfaces'][$ifname];
 		/* look for 'special cases' */
 		switch($ifconf['ipaddr']) {
-		case "carpdev-dhcp":
-			$class = "(CarpDEV)";
-			break;
 		case "dhcp":
 			$class = "(DHCP)";
 			break;

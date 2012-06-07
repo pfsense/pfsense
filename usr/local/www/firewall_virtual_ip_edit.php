@@ -145,7 +145,6 @@ if ($_POST) {
 	 */
 	switch ($_POST['mode']) {
 	case "carp":
-	case "carpdev-dhcp":
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -210,7 +209,7 @@ if ($_POST) {
 		}
 
 		/* CARP specific fields */
-		if ($_POST['mode'] === "carp" or $_POST['mode'] == "carpdev-dhcp") {
+		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
@@ -231,12 +230,6 @@ if ($_POST) {
 				$vipent['subnet_bits'] = $_POST['subnet_bits'];
 			}
 			$vipent['subnet'] = $_POST['subnet'];
-		}
-
-		if ($_POST['mode'] == "carpdev-dhcp") {
-			unset($vipent['subnet']);
-			unset($vipent['subnet_bits']);
-			unset($vipent['alias-subnet']);		
 		}
 
 		if (!isset($id))
@@ -339,21 +332,6 @@ function enable_change(enable_over) {
 		document.iform.noexpand.disabled = 1;
 		jQuery('#noexpandrow').css('display','none');
 	}
-	if (get_radio_value(document.iform.mode) == "carpdev-dhcp") {
-		document.iform.type.disabled = 1;
-		note.removeChild(note.firstChild);
-		note.appendChild(ipaliasnote);
-		document.iform.subnet_bits.disabled = 1;
-		document.iform.subnet.disabled = 1;
-		document.iform.subnet.value = '';
-		document.iform.subnet_bits.value = '';		
-        	document.iform.vhid.disabled = 0;
-        	document.iform.password.disabled = 0;
-        	document.iform.advskew.disabled = 0;
-        	document.iform.advbase.disabled = 0;
-		document.iform.noexpand.disabled = 1;
-		jQuery('#noexpandrow').css('display','none');
-	}
 	typesel_change();
 }
 function typesel_change() {
@@ -410,13 +388,6 @@ function typesel_change() {
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
 					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> <?=gettext("IP Alias");?>
-<?php
-/*
-					<input name="mode" type="radio" onclick="enable_change(false)" value="carpdev-dhcp"
-					<?php if ($pconfig['mode'] == "carpdev-dhcp") echo "checked";?>> CarpDEV-DHCP
-*/
-?>
-
 				  </td>
 				</tr>
 				<tr>

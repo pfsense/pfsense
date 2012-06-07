@@ -197,8 +197,11 @@ include("head.inc");
 									echo "<td class='{$tdclass}' ".domTT_title(gettext("Click on ".ucfirst($pkg['name'])." version to check it's changelog."),"return").">{$pkgver}</td>";
 							?>
 							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($pkg['name'])." package."))?>>
-									<?=$currentvers[$pkg['name']]['descr'];?><br><br>
+									<?=$currentvers[$pkg['name']]['descr'];?>
+							<?php if (! $g['disablepackageinfo']): ?>
+							<br><br>
 							<a target='_new' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
+							<?php endif; ?>
 							</td>
 							<td valign="middle" class="list" nowrap>
 								<a onclick="return confirm('<?=gettext("Do you really want to remove {$pkg['name']} package?"); ?>')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">

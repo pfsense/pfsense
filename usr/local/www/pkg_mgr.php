@@ -230,8 +230,11 @@ include("head.inc");
 						<?=$index['maximum_version'] ?>
 						</td>
 						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
-						<?= $index['descr'] ?><br><br>
+						<?= $index['descr'] ?>
+						<?php if (! $g['disablepackageinfo']): ?>
+						<br><br>
 						<a target='_new' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
+						<?php endif; ?>
 						</td>
 						<td valign="middle" class="list" nowrap width="17">
 							<a onclick="return confirm('<?=gettext("Do you really want to install ".ucfirst($index['name'])." package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>

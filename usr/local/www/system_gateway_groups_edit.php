@@ -146,11 +146,77 @@ if ($_POST) {
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
 $statusurl = "status_gateway_groups.php";
 
+function build_gateway_protocol_map (&$a_gateways) {
+	$result = array();
+	foreach ($a_gateways as $gwname => $gateway) {
+		$result[$gwname] = $gateway['ipprotocol'];
+	}
+	return $result;
+}
+
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<?php
+$gateway_protocol = build_gateway_protocol_map($a_gateways);
+$gateway_array    = array_keys($a_gateways);
+$protocol_array   = array_values($gateway_protocol);
+$protocol_array   = array_values(array_unique($gateway_protocol));
+?>
+<script type="text/javascript">
+//<![CDATA[
+jQuery(function ($) {
+	var gateway_protocol = <?= json_encode($gateway_protocol) ?>;
+	var gateways         = <?= json_encode($gateway_array) ?>;
+	var protocols        = <?= json_encode($protocol_array) ?>;
+	if (protocols.length <= 1) { return; }
+
+	var update_gateway_visibilities = function () {
+		var which_protocol_to_show = undefined;
+		$.each(gateways, function (i, gateway) {
+			var $select = $("#" + gateway);
+			var value = $select.val();
+			var protocol = gateway_protocol[gateway];
+			if (value !== '0' /* i.e., an option is selected */) {
+				if (which_protocol_to_show === undefined) {
+					which_protocol_to_show = protocol;
+				}
+				else if (which_protocol_to_show !== protocol) {
+					which_protocol_to_show = 'ALL OF THEM'; // this shouldn't happen
+				}
+			}
+		});
+		if (which_protocol_to_show !== undefined && which_protocol_to_show !== 'ALL OF THEM') {
+			$.each(gateways, function (i, gateway) {
+				var protocol = gateway_protocol[gateway];
+				var $row = $("tr.gateway_row#" + gateway + "_row");
+				if (protocol === which_protocol_to_show) {
+					if ($row.is(":hidden")) {
+						$row.fadeIn('slow');
+					}
+				} else {
+					if (!$row.is(":hidden")) {
+						$row.fadeOut('slow');
+					}
+				}
+			});
+		} else {
+			$("tr.gateway_row").each(function () {
+				if ($(this).is(":hidden")) {
+					$(this).fadeIn('slow');
+				}
+			});
+		}
+	};
+	$("select.gateway_tier_selector").change(update_gateway_visibilities);
+	update_gateway_visibilities();
+});
+//]]>
+</script>
+
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
@@ -166,7 +232,7 @@ include("head.inc");
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
 			<table border=0 cellpadding="6" cellspacing="0">
 			<tr>
 				<td class="listhdrr">Gateway</td>
@@ -193,11 +259,12 @@ include("head.inc");
 						$selected[0] = "selected";
 					}
 				}
-				echo "<tr>\n";
+				$tr_id = $gwname . "_row";
+				echo "<tr class='gateway_row' id='{$tr_id}'>\n";
 				echo "<td class='listlr'>";
 				echo "<strong>{$gateway['name']} </strong>";
 				echo "</td><td class='listr'>";
-				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>\n";
+				echo "<select name='{$gwname}' class='gateway_tier_selector formfldselect' id='{$gwname}'>\n";
 				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>\n";
 				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>\n";
 				echo "<option value='2' $selected[2] >" . gettext("Tier 2") . "</option>\n";
@@ -218,7 +285,7 @@ include("head.inc");
 					}
 				}
 				echo "<td class='listr'>";
-				echo "<select name='{$gwname}_vip' class='formfldselect' id='{$gwname}_vip'>\n";
+				echo "<select name='{$gwname}_vip' class='gateway_vip_selector formfldselect' id='{$gwname}_vip'>\n";
 				echo "<option value='address' {$selected['address']} >" . gettext("Interface Address") . "</option>\n";
 				foreach($carplist as $vip => $address) {
 					echo "<!-- $vip - $address - $interface -->\n";
@@ -252,7 +319,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trigger Level"); ?></td>
                   <td width="78%" class="vtable">
-			<select name='trigger' class='formfldselect' id='trigger'>
+			<select name='trigger' class='formfldselect trigger_level_selector' id='trigger'>
 			<?php
 				foreach ($categories as $category => $categoryd) {
 				        echo "<option value=\"$category\"";
@@ -282,8 +349,5 @@ value="<?=htmlspecialchars($pconfig['descr']);?>">
               </table>
 </form>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
-	enable_change();
-</script>
 </body>
 </html>

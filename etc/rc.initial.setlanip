@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -f
+#!/usr/local/bin/php -q
 <?php
 /* $Id$ */
 /*
@@ -29,6 +29,24 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+
+
+
+$options = getopt("hn", array("dry-run", "help"));
+
+if (isset($options["h"]) || isset($options["help"])) {
+	echo "usage: /etc/rc.initial.setlanip [option ...]\n";
+	echo "  -h, --help       show this message\n";
+	echo "  -n, --dry-run    do not make any configuration changes\n";
+	exit(0);
+}
+
+$dry_run = isset($options["n"]) || isset($options["dry-run"]);
+if ($dry_run) {
+	echo "DRY RUN MODE IS ON\n";
+}
+
+
 
 /* parse the configuration and include all functions used below */
 require_once("config.inc");
@@ -195,17 +213,35 @@ function console_configure_ip_address($version) {
 				$intbits = chop(fgets($fp));
 				$restart_dhcpd = true;
 			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > $maxbits));
+
+			if ($version === 6) {
+				$subnet = gen_subnetv6($intip, $intbits);
+			} else {
+				$subnet = gen_subnet($intip, $intbits);
+			}
+			echo "subnet: {$subnet}/{$intbits}\n";
+			do {
+				echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} gateway address:") . "\n> ";
+				$gwip = chop(fgets($fp));
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
+				$is_in_subnet = ip_in_subnet($gwip, $subnet . "/" . $intbits);
+				if (!$is_ipaddr) {
+					echo "not an {$label_IPvX} IP address!\n";
+				} else if (!$is_in_subnet) {
+					echo "not in subnet!\n";
+				}
+			} while (!($is_ipaddr && $is_in_subnet));
 		}
 		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 		if (!empty($ifppp))
 			$ifaceassigned = $ifppp;
 	}
 
-	return array($intip, $intbits);
+	return array($intip, $intbits, $gwip);
 }
 
-list($intip,  $intbits)  = console_configure_ip_address(4);
-list($intip6, $intbits6) = console_configure_ip_address(6);
+list($intip,  $intbits,  $gwip)  = console_configure_ip_address(4);
+list($intip6, $intbits6, $gwip6) = console_configure_ip_address(6);
 
 if (!empty($ifaceassigned))
 	$config['interfaces'][$interface]['if'] = $ifaceassigned;
@@ -218,7 +254,7 @@ if ($intip6) {
 $config['interfaces'][$interface]['enable'] = true;
 
 function console_configure_dhcpd($version = 4) {
-	global $g, $config, $restart_dhcpd, $fp, $interface;
+	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run;
 
 	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
 	$dhcpd      = ($version === 6) ? "dhcpd6" : "dhcpd";
@@ -256,7 +292,9 @@ function console_configure_dhcpd($version = 4) {
 		if($config[$dhcpd][$interface]) 
 			unset($config[$dhcpd][$interface]['enable']);
 		echo "Disabling DHCPD...";
-		services_dhcpd_configure();
+		if (!$dry_run) {
+			services_dhcpd_configure();
+		}
 		echo "Done!\n";
 	}
 }
@@ -305,24 +343,28 @@ if(!$config['interfaces']['lan']) {
 	unset($config['shaper']);
 	unset($config['ezshaper']);
 	unset($config['nat']);
-	system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
-	services_dhcpd_configure();
+	if (!$dry_run) {
+		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
+		services_dhcpd_configure();
+	}
 }
 
 $upperifname = strtoupper($interface);
-echo "\nPlease wait while the changes are saved to {$upperifname}...";
-write_config(gettext("{$interface} IP configuration from console menu"));
-interface_reconfigure(strtolower($upperifname));
-echo " Reloading filter...";
-filter_configure_sync();
-echo "\n";
-if($restart_dhcpd) {
-	echo " DHCPD..."; 
-	services_dhcpd_configure();
-}
-if($restart_webgui) {
-	echo " restarting webConfigurator... ";
-	mwexec("/etc/rc.restart_webgui");
+if (!$dry_run) {
+	echo "\nPlease wait while the changes are saved to {$upperifname}...";
+	write_config(gettext("{$interface} IP configuration from console menu"));
+	interface_reconfigure(strtolower($upperifname));
+	echo " Reloading filter...";
+	filter_configure_sync();
+	echo "\n";
+	if($restart_dhcpd) {
+		echo " DHCPD..."; 
+		services_dhcpd_configure();
+	}
+	if($restart_webgui) {
+		echo " restarting webConfigurator... ";
+		mwexec("/etc/rc.restart_webgui");
+	}
 }
 	
 if ($intip != '') {

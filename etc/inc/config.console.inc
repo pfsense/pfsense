@@ -256,11 +256,11 @@ EOD;
 				if ($optif[$i])
 					$i++;
 				$io = $i + 1;
-		
+
 				if($config['interfaces']['opt' . $io]['descr'])
 					printf(gettext("%sOptional interface %s description found: %s"), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
 	
-				printf(gettext("%sEnter the Optional %s{$i} interface name or 'a' for auto-detection%s" .
+				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
 					"(or nothing if finished):%s"), "\n", $io, "\n", " ");
 		
 				$optif[$i] = chop(fgets($fp));

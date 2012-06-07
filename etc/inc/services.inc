@@ -170,12 +170,12 @@ function services_radvd_configure() {
 		$radvdconf .= "\t};\n";
 
 		if($carpif == true) {
-			$radvdconf .= "\troute {$subnetv6}/{$ifcfgsnv6} {\n";
+			$radvdconf .= "\troute ::/0 {\n";
 			$radvdconf .= "\t\tRemoveRoute off;\n";
 			$radvdconf .= "\t};\n";
 		} else {
-			$radvdconf .= "\troute {$subnetv6}/{$ifcfgsnv6} {\n";
-			$radvdconf .= "\t\tRemoveRoute off;\n";
+			$radvdconf .= "\troute ::/0 {\n";
+			$radvdconf .= "\t\tRemoveRoute on;\n";
 			$radvdconf .= "\t};\n";
 		}
 

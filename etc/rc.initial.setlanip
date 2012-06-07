@@ -88,7 +88,8 @@ function prompt_for_enable_dhcp_server($version = 4) {
 		do {
 			$good = false;
 			$upperifname = strtoupper($interface);
-			echo "\n" . gettext("Do you want to enable the {$label_DHCP} server on {$upperifname}? [y|n]") . "  ";
+			echo "\n" . sprintf(gettext("Do you want to enable the %s server on %s? [y|n]"),
+			                    $label_DHCP, $upperifname) . "  ";
 			$yn = strtolower(chop(fgets($fp)));
 			if ($yn[0] == "y" or $yn[0] == "n")
 				$good = true;
@@ -175,7 +176,8 @@ function console_configure_ip_address($version) {
 	$upperifname = strtoupper($interface);
 
 	if($interface == "wan") {
-		echo gettext("Configure {$label_IPvX} address {$upperifname} interface via {$label_DHCP}?  [y|n]") . "\n> ";
+		echo sprintf(gettext("Configure %s address %s interface via %s?  [y|n]"),
+		             $label_IPvX, $upperifname, $label_DHCP) . "\n> ";
 		$intdhcp = chop(fgets($fp));
 		if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
@@ -190,12 +192,14 @@ function console_configure_ip_address($version) {
 		
 	if($isintdhcp == false or $interface <> "wan") {
 		do {
-			echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} address.  Press <ENTER> for none:") . "\n> ";
+			echo "\n" . sprintf(gettext("Enter the new %s %s address.  Press <ENTER> for none:"),
+			                    $upperifname, $label_IPvX) . "\n> ";
 			$intip = chop(fgets($fp));
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
 		} while (!($is_ipaddr || $intip == ''));
 		if ($intip != '') {
-			echo "\n" . gettext("Subnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.") . "\n";
+			echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
+			                    $g['product_name']) . "\n";
 			if ($version === 6) {
 				echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
 				echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
@@ -209,7 +213,8 @@ function console_configure_ip_address($version) {
 			}
 			do {
 				$upperifname = strtoupper($interface);
-				echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} subnet bit count:") . "\n> ";
+				echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
+				                    $upperifname, $label_IPvX) . "\n> ";
 				$intbits = chop(fgets($fp));
 				$restart_dhcpd = true;
 			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > $maxbits));
@@ -221,16 +226,19 @@ function console_configure_ip_address($version) {
 			}
 			echo "subnet: {$subnet}/{$intbits}\n";
 			do {
-				echo "\n" . gettext("Enter the new {$upperifname} {$label_IPvX} gateway address:") . "\n> ";
+				echo "\n" . sprintf(gettext("Enter the new %s %s gateway address.  Press <ENTER> for none:"),
+				                    $upperifname, $label_IPvX) . "\n> ";
 				$gwip = chop(fgets($fp));
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
-				$is_in_subnet = ip_in_subnet($gwip, $subnet . "/" . $intbits);
-				if (!$is_ipaddr) {
-					echo "not an {$label_IPvX} IP address!\n";
-				} else if (!$is_in_subnet) {
-					echo "not in subnet!\n";
+				$is_in_subnet = $is_ipaddr && ip_in_subnet($gwip, $subnet . "/" . $intbits);
+				if ($gwip != '') {
+					if (!$is_ipaddr) {
+						echo sprintf(gettext("not an %s IP address!"), $label_IPvX) . "\n";
+					} else if (!$is_in_subnet) {
+						echo gettext("not in subnet!") . "\n";
+					}
 				}
-			} while (!($is_ipaddr && $is_in_subnet));
+			} while (!($gwip == '' || ($is_ipaddr && $is_in_subnet)));
 		}
 		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 		if (!empty($ifppp))
@@ -263,7 +271,7 @@ function console_configure_dhcpd($version = 4) {
 		$yn = prompt_for_enable_dhcp_server($version);
 	if ($yn == "y") {
 		do {
-			echo gettext("Enter the start address of the {$label_IPvX} client address range:") . " ";
+			echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
 			$dhcpstartip = chop(fgets($fp));
 			if ($dhcpstartip === "") {
 				fclose($fp);
@@ -273,7 +281,7 @@ function console_configure_dhcpd($version = 4) {
 		} while (!$is_ipaddr);
 
 		do {
-			echo gettext("Enter the end address of the {$label_IPvX} client address range:") . " ";
+			echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
 			$dhcpendip = chop(fgets($fp));
 			if ($dhcpendip === "") {
 				fclose($fp);
@@ -321,7 +329,7 @@ if ($config['system']['webgui']['protocol'] == "https") {
 }
 
 if (isset($config['system']['webgui']['noantilockout'])) {
-	echo "\n" . gettext("Note: the anti-lockout rule on {$interface} has been re-enabled.") . "\n";
+	echo "\n" . sprintf(gettext("Note: the anti-lockout rule on %s has been re-enabled."), $interface) . "\n";
 	unset($config['system']['webgui']['noantilockout']);
 }
 

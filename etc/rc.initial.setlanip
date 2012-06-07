@@ -79,6 +79,31 @@ function prompt_for_enable_dhcp_server($version = 4) {
 	return $yn;
 }
 
+function get_interface_config_description($iface) {
+	global $config;
+	$c = $config['interfaces'][$iface];
+	if (!$c) { return null; }
+	$if = $c['if'];
+	$result = $if;
+	$result2 = array();
+	$ipaddr = $c['ipaddr'];
+	$ipaddrv6 = $c['ipaddrv6'];
+	if (is_ipaddr($ipaddr)) {
+		$result2[] = "static";
+	} else if ($ipaddr == "dhcp") {
+		$result2[] = "dhcp";
+	}
+	if (is_ipaddr($ipaddrv6)) {
+		$result2[] = "staticv6";
+	} else if ($ipaddrv6 == "dhcp6") {
+		$result2[] = "dhcp6";
+	}
+	if (count($result2)) {
+		$result .= " - " . implode(", ", $result2);
+	}
+	return $result;
+}
+
 $fp = fopen('php://stdin', 'r');
 
 /* build an interface collection */
@@ -91,8 +116,8 @@ if ($count > 1) {
 	echo "Available interfaces:\n\n";
 	$x=1;
 	foreach($ifdescrs as $iface => $ifdescr) {
-		$realif = $config['interfaces'][$iface]['if'];
-		echo "{$x} - {$ifdescr} ({$realif})\n";
+		$config_descr = get_interface_config_description($iface);
+		echo "{$x} - {$ifdescr} ({$config_descr})\n";
 		$x++;
 	}
 	echo "\nEnter the number of the interface you wish to configure: ";

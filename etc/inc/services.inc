@@ -130,12 +130,12 @@ function services_radvd_configure() {
 			case "low":
 				$radvdconf .= "\tAdvDefaultPreference low;\n";
 				break;
-			case "medium":
-				$radvdconf .= "\tAdvDefaultPreference medium;\n";
-				break;
 			case "high":
 				$radvdconf .= "\tAdvDefaultPreference high;\n";
-				break;		
+				break;
+			default:
+				$radvdconf .= "\tAdvDefaultPreference medium;\n";
+				break;
 		}
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":

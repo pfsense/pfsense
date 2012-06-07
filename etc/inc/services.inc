@@ -83,9 +83,15 @@ function services_radvd_configure() {
 		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
+		if(isset($dhcpv6ifconf['mode']))
+			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
+
 		/* are router advertisements enabled? */
 		if($dhcpv6ifconf['ramode'] == "disabled")
 			continue;
+
+		if(!isset($dhcpv6ifconf['rapriority']))
+			$dhcpv6ifconf['rapriority'] = "medium";
 
 		$carpif = false;
 		/* check if we need to listen on a CARP interface */

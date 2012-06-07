@@ -360,7 +360,7 @@ if(!$config['interfaces']['lan']) {
 $upperifname = strtoupper($interface);
 if (!$dry_run) {
 	echo "\nPlease wait while the changes are saved to {$upperifname}...";
-	write_config(gettext("{$interface} IP configuration from console menu"));
+	write_config(sprintf(gettext("%s IP configuration from console menu"), $interface));
 	interface_reconfigure(strtolower($upperifname));
 	echo " Reloading filter...";
 	filter_configure_sync();
@@ -377,16 +377,20 @@ if (!$dry_run) {
 	
 if ($intip != '') {
 	if (is_ipaddr($intip)) {
-		echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}/{$intbits}\n";
+		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
+		                      $upperifname, "{$intip}/{$intbits}") . "\n";
 	} else {
-		echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}\n";
+		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
+		                      $upperifname, $intip) . "\n";
 	}
 }
 if ($intip6 != '') {
 	if (is_ipaddr($intip6)) {
-		echo "\n\n" . gettext("The IPv6 {$upperifname} address has been set to ") . "{$intip6}/{$intbits6}\n";
+		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
+		                      $upperifname, "${intip6}/${intbits6}") . "\n";
 	} else {
-		echo "\n\n" . gettext("The IPv6 {$upperifname} address has been set to ") . "{$intip6}\n";
+		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
+		                      $upperifname, $intip6) . "\n";
 	}
 }
 

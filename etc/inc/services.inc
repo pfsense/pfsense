@@ -52,13 +52,6 @@ function services_radvd_configure() {
 		echo "services_radvd_configure() being called $mt\n";
 	}
 
-	/* we need to shut down the radvd cleanly, it will send out the prefix
-	 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
-	if(is_process_running("radvd")) {
-		log_error("Shutting down Router Advertisment daemon cleanly");
-		mwexec("killall radvd");
-	}
-
 	if (!is_array($config['dhcpdv6']))
 		$config['dhcpdv6'] = array();
 
@@ -282,7 +275,18 @@ function services_radvd_configure() {
 	fclose($fd);
 
 	if(count($radvdifs) > 0) {
-		mwexec("/usr/local/sbin/radvd -C {$g['varetc_path']}/radvd.conf -m syslog");
+		if(is_process_running("radvd")) {
+			mwexec("killall -1 radvd");
+		} else {
+			mwexec("/usr/local/sbin/radvd -C {$g['varetc_path']}/radvd.conf -m syslog");
+		}
+	} else {
+		/* we need to shut down the radvd cleanly, it will send out the prefix
+		 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
+		if(is_process_running("radvd")) {
+			log_error("Shutting down Router Advertisment daemon cleanly");
+			mwexec("killall radvd");
+		}
 	}
 	return 0;
 }

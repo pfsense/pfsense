@@ -364,9 +364,6 @@ auto_login();
 /* load graphing functions */
 enable_rrd_graphing();
 
-/* startup OLSR if needed */
-setup_wireless_olsr();
-
 /* startup routed if needed */
 include_once("/usr/local/pkg/routed.inc");
 setup_routed();

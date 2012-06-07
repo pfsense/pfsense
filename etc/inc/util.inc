@@ -154,7 +154,7 @@ function send_event($cmd) {
 				log_error("send_event: sent {$cmd} got {$resp}");
 			fclose($fd);
 			$try = 3;
-		} else
+		} else if (!is_process_running("check_reload_status"))
 			mwexec_bg("/usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
 		$try++;
 	}
@@ -169,8 +169,21 @@ function send_multiple_events($cmds) {
 	if (!is_array($cmds))
 		return;
 
-	foreach ($cmds as $cmd)
-		send_event($cmd);
+	while ($try < 3) {
+		$fd = @fsockopen($g['event_address']);
+		if ($fd) {
+			foreach ($cmds as $cmd) {
+				fwrite($fd, $cmd);
+				$resp = fread($fd, 4096);
+				if ($resp != "OK\n")
+					log_error("send_event: sent {$cmd} got {$resp}");
+			}
+			fclose($fd);
+			$try = 3;
+		} else if (!is_process_running("check_reload_status"))
+			mwexec_bg("/usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+		$try++;
+	}
 }
 
 function refcount_init($reference) {

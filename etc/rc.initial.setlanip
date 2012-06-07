@@ -185,7 +185,7 @@ if (!empty($ifaceassigned))
 	$config['interfaces'][$interface]['if'] = $ifaceassigned;
 $config['interfaces'][$interface]['ipaddr'] = $intip;
 $config['interfaces'][$interface]['subnet'] = $intbits;
-if ($intip6 && $intbits6) {
+if ($intip6) {
 	$config['interfaces'][$interface]['ipaddrv6'] = $intip6;
 	$config['interfaces'][$interface]['subnetv6'] = $intbits6;
 }

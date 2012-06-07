@@ -60,14 +60,14 @@ function backup_vip_config_section() {
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
-			if($section_val > 255)
-				$section_val = 255;
+			if($section_val > 254)
+				$section_val = 254;
 			$section['advskew'] = $section_val;
 		}
 		if($section['advbase'] <> "") {
 			$section_val = intval($section['advbase']);
-			if($section_val > 255)
-				$section_val = 255;
+			if($section_val > 254)
+				$section_val = 254;
 			$section['advbase'] = $section_val;
 		}
 		$temp['vip'][] = $section;

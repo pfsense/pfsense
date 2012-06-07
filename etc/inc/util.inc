@@ -154,7 +154,7 @@ function send_event($cmd) {
 				log_error("send_event: sent {$cmd} got {$resp}");
 			fclose($fd);
 			$try = 3;
-		} else
+		} else if (!is_process_running("check_reload_status"))
 			mwexec_bg("/usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
 		$try++;
 	}

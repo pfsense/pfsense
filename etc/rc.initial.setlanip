@@ -324,13 +324,13 @@ if ($intip != '' || $intip6 != '') {
 		if(!empty($config['system']['webgui']['port'])) {
 			$webuiport = $config['system']['webgui']['port'];
 			if ($intip != '') {
-				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$webuiport}/\n";
 			}
 			if ($intip6 != '') {
 				if (is_ipaddr($intip6)) {
-					echo "		{$config['system']['webgui']['protocol']}://[{$intip6}]:{$port}/\n";
+					echo "		{$config['system']['webgui']['protocol']}://[{$intip6}]:{$webuiport}/\n";
 				} else {
-					echo "		{$config['system']['webgui']['protocol']}://{$intip6}:{$port}/\n";
+					echo "		{$config['system']['webgui']['protocol']}://{$intip6}:{$webuiport}/\n";
 				}
 			}
 		} else {

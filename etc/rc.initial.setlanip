@@ -83,11 +83,11 @@ $fp = fopen('php://stdin', 'r');
 
 /* build an interface collection */
 $ifdescrs = get_configured_interface_with_descr(false, true);
-$j = count($ifdescrs);
+$count = count($ifdescrs);
 	
 /* grab interface that we will operate on, unless there is only one
    interface */
-if ($j > 1) {
+if ($count > 1) {
 	echo "Available interfaces:\n\n";
 	$x=1;
 	foreach($ifdescrs as $iface) {
@@ -97,12 +97,12 @@ if ($j > 1) {
 	echo "\nEnter the number of the interface you wish to configure: ";
 	$intnum = chop(fgets($fp));	
 } else {
-	$intnum = $j;
+	$intnum = $count;
 }
 	
 if($intnum < 1) 
 	exit;
-if($intnum > $j)
+if($intnum > $count)
 	exit;
 		
 $index = 1;

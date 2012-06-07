@@ -141,10 +141,13 @@ function services_radvd_configure() {
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		if($carpif == true)
+		if($carpif == true) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
-		else
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+		} else {
 			$radvdconf .= "\t\tDeprecatePrefix on;\n";
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+		}
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";

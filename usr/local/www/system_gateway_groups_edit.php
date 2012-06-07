@@ -135,13 +135,6 @@ if ($_POST) {
 			$a_gateway_groups[] = $gateway_group;
 		
 		mark_subsystem_dirty('staticroutes');
-		/* perform RFC 2136 DNS update */
-		services_dnsupdate_process();
-		/* signal dyndns update */
-		services_dyndns_configure();
-		/* update IPsec too */
-		vpn_ipsec_refresh_policies();
-		vpn_ipsec_configure();
 		
 		write_config();
 		

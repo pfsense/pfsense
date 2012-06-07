@@ -438,7 +438,7 @@ if ($pkg['tabs'] <> "") {
 				echo $input;
 			continue;
 		}
-		
+
 		if($pkga['combinefields']=="begin"){
 			$input="<tr valign='top' id='tr_{$pkga['fieldname']}'>";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count))
@@ -446,7 +446,7 @@ if ($pkg['tabs'] <> "") {
 			else
 			  	echo $input;
 			}
-		
+
 		$size = "";
 		if (isset($pkga['dontdisplayname'])){
 			$input="";
@@ -484,7 +484,7 @@ if ($pkg['tabs'] <> "") {
 			else
 			  	echo $input;
 			}
-			
+
 		$class=(isset($pkga['combinefields']) ? '' : 'class="vtable"');
 		if (!isset($pkga['placeonbottom'])){
 			$input="<td valign='top' {$colspan} {$class}>";
@@ -495,7 +495,7 @@ if ($pkg['tabs'] <> "") {
 			else
 				echo $input;
 		}
-			
+
 		// if user is editing a record, load in the data.
 		$fieldname = $pkga['fieldname'];
 		if ($get_from_post) {
@@ -519,7 +519,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . $value . "'>\n";
@@ -531,7 +531,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "info":
 				$input = fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -541,7 +541,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "select":
 				$fieldname = $pkga['fieldname'];
 				if (isset($pkga['multiple'])) {
@@ -568,7 +568,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "select_source":
 				$fieldname = $pkga['fieldname'];
 				if (isset($pkga['multiple'])) {
@@ -592,19 +592,20 @@ if ($pkg['tabs'] <> "") {
 				}
 				$source_url = $pkga['source'];
 				eval("\$pkg_source_txt = &$source_url;");
+				$input="";
 				foreach ($pkg_source_txt as $opt) {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 					$selected = (in_array($source_value, $items)? 'selected="selected"' : '' );
-					$input  = "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
-					$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
-					if(isset($pkga['advancedfield']) && isset($adv_filed_count))
-						$advanced .= $input;
-					else
-						echo $input;
+					$input  .= "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
 					}
+				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
+				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
+					$advanced .= $input;
+				else
+					echo $input;
 				break;
-				
+
 			case "vpn_selection" :
 				$input = "<select id='{$pkga['fieldname']}' name='{$vpn['name']}'>\n";
 				foreach ($config['ipsec']['phase1'] as $vpn) {
@@ -621,7 +622,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "checkbox":
 				$checkboxchecked =($value == "on" ? " CHECKED" : "");
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
@@ -637,7 +638,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "textarea":
 				if($pkga['rows'])
 					$rows = " rows='{$pkga['rows']}' ";
@@ -720,7 +721,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
-				
+
 			case "radio":
 				$input = "<input type='radio' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' value='{$value}'>";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
@@ -728,7 +729,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 					break;
-					
+
 			case "button":
 				$input = "<input type='submit' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formbtn' value='{$pkga['fieldname']}'>\n";
 				if(isset($pkga['placeonbottom']))
@@ -736,7 +737,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input ."\n<br>" . fixup_string($pkga['description']) . "\n";;
 				break;
-				
+
 			case "rowhelper":
 				#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
 				$rowhelpername="row";
@@ -761,16 +762,16 @@ if ($pkg['tabs'] <> "") {
 					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 					  echo "<td ".domTT_title($rowhelper['description'])."><b>" . fixup_string($rowhelper['fielddescr']) . "</td>\n";
 					}
-					
+
 					$rowcounter = 0;
 					$trc = 0;
-					
+
 					//Use assigned $a_pkg or create an empty array to enter loop
 					if(isset($a_pkg[$id][$rowhelpername]))
 						$saved_rows=$a_pkg[$id][$rowhelpername];
 					else
 						$saved_rows[]=array();
-	
+
 					foreach($saved_rows as $row) {
 						echo "</tr>\n<tr class=\"sortable\" id=\"id_{$rowcounter}\">\n";
 						foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
@@ -794,7 +795,7 @@ if ($pkg['tabs'] <> "") {
 							else
 								$size = "8";
 							display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
-								
+
 							$text = "";
 							$trc++;
 							}
@@ -1035,7 +1036,7 @@ function parse_package_templates() {
 			}
 		/* replace $domain_total_rows with total rows */
 		$template_text = str_replace("$domain_total_rows", $row_helper_total_rows, $template_text);
-		
+
 		/* replace cr's */
 		$template_text = str_replace("\\n", "\n", $template_text);
 

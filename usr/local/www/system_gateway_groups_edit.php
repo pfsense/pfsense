@@ -51,9 +51,9 @@ $a_gateways = return_gateways_array();
 $carplist = get_configured_carp_interface_list();
 
 $categories = array('down' => gettext("Member Down"),
-                'downloss' => gettext("Packet Loss"),
-                'downlatency' => gettext("High Latency"),
-                'downlosslatency' => gettext("Packet Loss or High Latency"));
+                    'downloss' => gettext("Packet Loss"),
+                    'downlatency' => gettext("High Latency"),
+                    'downlosslatency' => gettext("Packet Loss or High Latency"));
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

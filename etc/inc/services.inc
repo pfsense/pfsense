@@ -116,8 +116,8 @@ function services_radvd_configure() {
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
-		$radvdconf .= "\tMinRtrAdvInterval 3;\n";
-		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+		$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
 		$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch($dhcpv6ifconf['rapriority']) {
@@ -142,10 +142,8 @@ function services_radvd_configure() {
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		if($carpif == true) {
 			$radvdconf .= "\t\tDeprecatePrefix off;\n";
-			$radvdconf .= "\t\tRemoveRoute off;\n";
 		} else {
 			$radvdconf .= "\t\tDeprecatePrefix on;\n";
-			$radvdconf .= "\t\tRemoveRoute off;\n";
 		}
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
@@ -170,6 +168,16 @@ function services_radvd_configure() {
 				break;				
 		}
 		$radvdconf .= "\t};\n";
+
+		if($carpif == true) {
+			$radvdconf .= "\troute {$subnetv6}/{$ifcfgsnv6} {\n";
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+			$radvdconf .= "\t};\n";
+		} else {
+			$radvdconf .= "\troute {$subnetv6}/{$ifcfgsnv6} {\n";
+			$radvdconf .= "\t\tRemoveRoute off;\n";
+			$radvdconf .= "\t};\n";
+		}
 
 		/* add DNS servers */
 		$dnslist = array();

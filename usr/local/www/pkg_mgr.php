@@ -211,7 +211,7 @@ include("head.inc");
 							<?= $size ?>
 						</td>
 -->
-						<?php if (isset($g['disablepackagehistory'])){?>
+						<?php if ($g['disablepackagehistory']){?>
 							<td	class="listr">
 						<?php }else{?>
 							<td class="listr" <?=domTT_title(gettext("Click ".ucfirst($index['name'])." version to check it's changelog."))?>>
@@ -219,7 +219,7 @@ include("head.inc");
 						<?=$index['status'] ?>
 						<br/>
 						<?php
-						if (isset($g['disablepackagehistory']))
+						if ($g['disablepackagehistory'])
 							echo"<a>{$index['version']}</a>";
 						else
 							echo "<a target='_new' href='{$changeloglink}'>{$index['version']}</a>";

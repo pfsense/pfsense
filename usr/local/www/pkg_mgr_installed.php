@@ -138,7 +138,7 @@ include("head.inc");
 										// we're running a newer version of the package
 										if(strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
-											if (isset($g['disablepackagehistory']))
+											if ($g['disablepackagehistory'])
 												$pkgver  = "<a>".gettext("Available") .": ". $latest_package . "<br/>";
 											else
 												$pkgver  = "<a target='_new' href='$changeloglink'>".gettext("Available") .": ". $latest_package . "<br/>";
@@ -147,7 +147,7 @@ include("head.inc");
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
-											if (isset($g['disablepackagehistory']))
+											if ($g['disablepackagehistory'])
 												$pkgver  = "<a><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br/>";
 											else
 												$pkgver  = "<a target='_new' href='$changeloglink'><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br/>";
@@ -156,7 +156,7 @@ include("head.inc");
 										// we're running the current version
 										if(!strcmp($pkg['version'], $latest_package)) {
 											$tdclass = "listr";
-											if (isset($g['disablepackagehistory']))
+											if ($g['disablepackagehistory'])
 												$pkgver = "<a>{$pkg['version']}</a>";
 											else
 												$pkgver = "<a target='_new' href='$changeloglink'>{$pkg['version']}</a>";
@@ -166,7 +166,7 @@ include("head.inc");
 										$pkgver = "";
 										if(!strcmp($pkg['version'], $latest_package)) {
 											$tdclass = "listr";
-											if (isset($g['disablepackagehistory']))
+											if ($g['disablepackagehistory'])
 												$pkgver = "<a>{$pkg['version']}</a>";
 											else
 												$pkgver = "<a target='_new' href='$changeloglink'>{$pkg['version']}</a>";

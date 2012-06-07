@@ -925,7 +925,7 @@ function interfaces_configure() {
 	
 	/* This is needed to speedup interfaces on bootup. */
 	$reload = false;
-	if ($g['booting'])
+	if (!$g['booting'])
 		$reload = true;
 
 	foreach($iflist as $if => $ifname) {

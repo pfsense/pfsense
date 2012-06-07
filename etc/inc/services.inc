@@ -87,11 +87,13 @@ function services_radvd_configure() {
 		if($dhcpv6ifconf['ramode'] == "disabled")
 			continue;
 
+		$carpif = false;
 		/* check if we need to listen on a CARP interface */
 		$carplist = get_configured_carp_interface_list();
 		if($dhcpv6ifconf['rainterface'] <> "") {
 			if($carplist[$dhcpv6ifconf['rainterface']] <> "") {
 				$realif = $dhcpv6ifconf['rainterface'];
+				$carpif = true;
 			} else {
 				$realif = get_real_interface($dhcpv6if);
 			}
@@ -138,6 +140,11 @@ function services_radvd_configure() {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		if($carpif == true)
+			$radvdconf .= "\t\tDeprecatePrefix off;\n";
+		else
+			$radvdconf .= "\t\tDeprecatePrefix on;\n";
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";

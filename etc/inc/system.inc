@@ -466,11 +466,15 @@ function system_routing_configure($interface = "") {
 			} else {
 				$inetfamily = "-inet";
 			}
+			$blackhole = "";
+			if(preg_match("/^Null/i", $rtent['gateway']))
+				$blackhole = "-blackhole";
+
 			if (is_ipaddr($gatewayip)) {
-				mwexec("/sbin/route change {$inetfamily} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
 			} else if (!empty($interfacegw)) {
-				mwexec("/sbin/route change {$inetfamily} " . escapeshellarg($rtent['network']) .
+				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
 		}

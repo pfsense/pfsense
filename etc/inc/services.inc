@@ -96,6 +96,8 @@ function services_radvd_configure() {
 			} else {
 				$realif = get_real_interface($dhcpv6if);
 			}
+		} else {
+			$realif = get_real_interface($dhcpv6if);
 		}
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);

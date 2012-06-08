@@ -71,7 +71,8 @@ if($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if'])
-	$savemsg = "<b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") . ".<p>" . gettext("Only interfaces configured with a static IP will be shown") . ".</p></b>";
+	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") . ".</b></p>" .
+		   "<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 
 $iflist = get_configured_interface_with_descr();
 
@@ -88,12 +89,6 @@ if (!$if || !isset($iflist[$if])) {
 }
 
 if (is_array($config['dhcpdv6'][$if])){
-	/* RA specific */
-	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
-	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
-	if($pconfig['rapriority'] == "")
-		$pconfig['rapriority'] = "medium";
-	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	/* DHCPv6 */
 	if (is_array($config['dhcpdv6'][$if]['range'])) {
 		$pconfig['range_from'] = $config['dhcpdv6'][$if]['range']['from'];
@@ -289,10 +284,6 @@ if ($_POST) {
 		if (!is_array($config['dhcpdv6'][$if]['prefixrange']))
 			$config['dhcpdv6'][$if]['prefixrange'] = array();
 
-		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
-		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
-		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
-		
 		$config['dhcpdv6'][$if]['range']['from'] = $_POST['range_from'];
 		$config['dhcpdv6'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpdv6'][$if]['prefixrange']['from'] = $_POST['prefixrange_from'];
@@ -516,66 +507,17 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>
 </td></tr>
+<tr><td class="tabnavtbl">
+<?php
+$tab_array = array();
+$tab_array[] = array(gettext("DHCPv6 Server"),         true,  "services_dhcpv6.php?if={$if}");
+$tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
+display_top_tabs($tab_array);
+?>
+</td></tr>
 <tr>
 <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-			<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Router Advertisements");?></td>
-			<td width="78%" class="vtable">
-				<select name="ramode" id="ramode">
-					<?php foreach($advertise_modes as $name => $value) { ?>
-					<option value="<?=$name ?>" <?php if ($pconfig['ramode'] == $name) echo "selected"; ?> > <?=$value ?></option>
-					<?php } ?>
-				</select><br />
-			<strong><?php printf(gettext("Select the Operating Mode for the Router Advertisement (RA) Daemon."))?></strong>
-			<?php printf(gettext("Use \"Router Only\" to only advertise this router, \"Unmanaged\" for Router Advertising with Stateless Autoconfig, \"Managed\" for assignment through (a) DHCPv6 Server, \"Assisted\" for DHCPv6 Server assignment combined with Stateless Autoconfig"));?>
-			<?php printf(gettext("It is not required to activate this DHCPv6 server when set to \"Managed\", this can be another host on the network")); ?>
-			</td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Router Priority");?></td>
-			<td width="78%" class="vtable">
-				<select name="rapriority" id="rapriority">
-					<?php foreach($priority_modes as $name => $value) { ?>
-					<option value="<?=$name ?>" <?php if ($pconfig['rapriority'] == $name) echo "selected"; ?> > <?=$value ?></option>
-					<?php } ?>
-				</select><br />
-			<strong><?php printf(gettext("Select the Priority for the Router Advertisement (RA) Daemon."))?></strong>
-			</td>
-			</tr>
-			<?php
-				$carplistif = array();
-				if(count($carplist) > 0) {
-					foreach($carplist as $ifname => $vip) {
-						if((preg_match("/^{$if}_/", $ifname)) && (is_ipaddrv6($vip)))
-							$carplistif[$ifname] = $vip;
-					}
-				}
-				if(count($carplistif) > 0) {
-			?>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("RA Interface");?></td>
-			<td width="78%" class="vtable">
-				<select name="rainterface" id="rainterface">
-					<?php foreach($carplistif as $ifname => $vip) { ?>
-					<option value="interface" <?php if ($pconfig['rainterface'] == "interface") echo "selected"; ?> > <?=strtoupper($if); ?></option>
-					<option value="<?=$ifname ?>" <?php if ($pconfig['rainterface'] == $ifname) echo "selected"; ?> > <?="$ifname - $vip"; ?></option>
-					<?php } ?>
-				</select><br />
-			<strong><?php printf(gettext("Select the Interface for the Router Advertisement (RA) Daemon."))?></strong>
-			</td>
-			</tr>
-			<?php } ?>
-			<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="if" type="hidden" value="<?=$if;?>">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
-			</td>
-			</tr>
-		</table>
-	<hr>
 		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCPv6 Server");?></td>
@@ -924,7 +866,7 @@ include("head.inc");
 		<td class="listbg" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" nowrap class="list">
+		<td valign="middle" nowrap="nowrap" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
 			<td valign="middle"><a href="services_dhcpv6_edit.php?if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>

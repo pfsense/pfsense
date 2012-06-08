@@ -150,16 +150,6 @@ function is_inrange($test, $start, $end) {
 		return false;
 }
 
-$advertise_modes = array("disabled" => "Disabled",
-					"router" => "Router Only",
-					"unmanaged" => "Unmanaged",
-					"managed" => "Managed",
-					"assist" => "Assisted");
-$priority_modes = array("low" => "Low",
-					"medium" => "Normal",
-					"high" => "High");
-$carplist = get_configured_carp_interface_list();
-
 if ($_POST) {
 
 	unset($input_errors);

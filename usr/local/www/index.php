@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     index.php
-    Copyright (C) 2004, 2005 Scott Ullrich
+    Copyright (C) 2004-2012 Scott Ullrich
     All rights reserved.
 
     Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -51,10 +51,18 @@ ini_set('output_buffering','true');
 // Start buffering with a cache size of 100000
 ob_start(null, "1000");
 
+
 ## Load Essential Includes
 require_once('functions.inc');
 require_once('guiconfig.inc');
 require_once('notices.inc');
+
+if(isset($_REQUEST['closenotice'])){
+	include("functions.inc");
+	close_notice($_REQUEST['closenotice']);
+	echo get_menu_messages();
+	exit;
+}
 
 if($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
@@ -445,11 +453,6 @@ $closehead = false;
 ## Set Page Title and Include Header
 $pgtitle = array(gettext("Status: Dashboard"));
 include("head.inc");
-
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
 
 ?>
 

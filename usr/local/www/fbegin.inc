@@ -1,10 +1,11 @@
 
 <script src="/javascript/sorttable.js"></script>
+<script src="/javascript/ticker.js"></script>
 <style id="antiClickjack">body{display:none}</style> <script type="text/JavaScript">
 if (self === top) { var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
 } else { top.location = self.location;
-}</script>
-
+}
+</script>
 <?php
 /*
 	pfSense_MODULE:	header
@@ -249,88 +250,25 @@ if(! $g['disablehelpmenu']) {
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);	
 }
 
-/* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
-if ($_REQUEST['noticeaction'] == 'acknowledge') {
-	$notice_id = htmlspecialchars($_REQUEST['noticeid']);
-	close_notice($notice_id);
-}
-/**********************************************/
-
 ?>
 
 <div id="wrapper">
-	<div id="header">
+	<div id="header" style="height:40px;">
 		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
-		<div id="header-right">
+		<div id="header-right" style="height:30px;" >
 			<div class="container">
 				<div class="left">webConfigurator</div>
-				<div class="right">
+				<div class="right" id="menu_messages">
 <?
-				if (are_notices_pending()) {
-					$notices = get_notices();
-
-					$requests=array();
-
-					## Get Query Arguments from URL ###
-					foreach ($_REQUEST as $key => $value) {
-						if ($key != "PHPSESSID")
-							$requests[] = $key.'='.$value;
-					}
-					if(is_array($requests))
-						$request_string = implode("&", $requests);
-
-					if(is_array($notices)) {
-						foreach ($notices as $key => $value) {
-							$date = date("m-d-y H:i:s", $key);
-							$noticemsg = str_replace("'", "", $value['notice']);
-							$noticemsg = str_replace('"', "", $noticemsg);
-							$noticemsg = str_replace("\n", "", $noticemsg);
-							$noticemsg = str_replace("<p>", "", $noticemsg);
-							$noticemsg = str_replace("<pre>", "", $noticemsg);
-							$noticemsg = str_replace("</pre>", "", $noticemsg);
-							$noticemsg = str_replace("</p>", "", $noticemsg);
-							$noticemsg = str_replace("<br>", "", $noticemsg);
-							$extra_args = "";
-							if($_GET['xml']) 
-								$extraargs="&xml=" .  htmlspecialchars($_GET['xml']);
-							if($_POST['xml']) 
-								$extraargs="&xml=" .  htmlspecialchars($_POST['xml']);
-							if($_GET['id']) 
-								$extraargs="&xml=" .  htmlspecialchars($_GET['id']);
-							if($_POST['id'])
-								$extraargs="&xml=" .  htmlspecialchars($_POST['id']);
-							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all' . $extraargs . '">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
-							if ($value['url']) {
-								$notice_msgs .= $date.' - <a href="'.$url.'?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
-							} else {
-								$notice_msgs .= $date.' - <a href="?' . htmlspecialchars($request_string) . '&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.htmlspecialchars($noticemsg).'</a>';
-							}
-							$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
-						}
-					}
+				echo get_menu_messages();
 ?>
-					<div id="alerts">
-						<script type="text/javascript">
-							var content='<div id="marquee-text"><?= $notice_msgs; ?></div>'
-						</script>
-						<script type="text/javascript" src="/javascript/ticker.js"></script>
-					</div>
-<?
-				} else {
-?>
-					<div id="hostname">
-						<? print $config['system']['hostname'] . "." . $config['system']['domain']; ?>
-					</div>
-<?
-				}
-?>
-				</div>
+	</div>
 			</div>
 		</div>
 	</div> <!-- Header DIV -->
 	<div id="content">
 		<div id="left">
-			<div id="navigation" style="z-index:1000">
+			<div id="navigation" style="z-index:1000;width:750px;" >
 				<ul id="menu">
 					<li class="firstdrop">
 						<div><?php echo gettext("System"); ?></div>
@@ -406,7 +344,10 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		<div id="right">
 
 <?php
-
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
 	/* display a top alert bar if need be */
 	$need_alert_display = false;
 	$found_notices = are_notices_pending();

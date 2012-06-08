@@ -1,58 +1,59 @@
-<!--
+/* $Id$ */
+/*
+    functions.inc
+    Copyright (C) 2012 Marcello Coutinho
+    Copyright (C) 2012 Carlos Cesario - carloscesario@gmail.com
+    All rights reserved.
 
-var width="310px";
+    originally part of m0n0wall (http://m0n0.ch/wall)
+    Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+    All rights reserved.
 
-var speed=2;
-var pauseit=1;
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
 
-var divonclick=speed=(document.all)? speed : Math.max(1, speed-1);
-var copyspeed=speed;
-var pausespeed=(pauseit==0)? copyspeed: 0;
-var iedom=document.all||document.getElementById;
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
 
-if (iedom&&content)
-	document.write('<span id="marquee-container">'+content+'</span>');
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
 
-var actualwidth='';
-var scroller;
+    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
 
-try {
-    if (window.addEventListener)
-	    window.addEventListener("load", populatescroller, false);
-    else if (window.attachEvent)
-	    window.attachEvent("onload", populatescroller);
-    else if (document.all || document.getElementById)
-	    window.onload=populatescroller;
-}catch(e){}
+	pfSense_MODULE:	utils
 
-function populatescroller(){
-    try {
-	    scroller=document.getElementById? document.getElementById("scroller") : document.all.scroller;
-	    scroller.style.left=parseInt(width)+8+"px";
-	    scroller.style.width = parseInt(document.getElementById("marquee-text").offsetWidth) + 40 + "px";
-	    scroller.innerHTML=content;
-	    document.getElementById("marquee-text");	    
-	    actualwidth=document.all? document.getElementById("marquee-text").offsetWidth : document.getElementById("marquee-text").offsetWidth;
-	    lefttime=setInterval("scrollmarquee()",20);
-	}catch(e){}
+*/
+function notice_action(action,msgid) {
+	jQuery.ajax({
+		type: 'post',
+		cache: false,
+		url: 'index.php',
+		data: {closenotice: msgid},
+		success: function(response) {
+			jQuery('#menu_messages').html(response);
+		}
+	});
 }
 
-function scrollmarquee(){
-	 
-   try {
-	    if (parseInt(scroller.style.left)>(actualwidth*(-1)+8))
-		    scroller.style.left=parseInt(scroller.style.left)-copyspeed+"px";
-	    else
-		    scroller.style.left=parseInt(width)+8+"px";
-	}catch(e){}
+function pulsateText(elem) {
+    jQuery(elem).effect("pulsate", { times:12 }, 500);
+    jQuery(elem).effect("pulsate", { times:6 }, 1500);
+    jQuery(elem).effect("pulsate", { times:3 }, 2500);
 }
 
-if (iedom){
-	document.write('<table id="marquee"><tr><td>');
-	document.write('<div id="container" onMouseover="copyspeed=pausespeed" onMouseout="copyspeed=speed">');
-	document.write('<div id="scroller"></div>');
-	document.write('</div>');
-	document.write('</td></tr></table>');
-}
-
-//-->
+jQuery(document).ready(function() {
+    pulsateText('#marquee-text');
+    jQuery('#marquee-text a').hover(function () {
+        jQuery(this).css('cursor','pointer');
+    });
+});

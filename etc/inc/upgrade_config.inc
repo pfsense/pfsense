@@ -2629,6 +2629,16 @@ function upgrade_079_to_080() {
 function upgrade_080_to_081() {
 	global $config;
 	global $g;
+	/* Welcome to the 2.1 migration path */
+
+	/* tag all the existing gateways as being IPv4 */
+	$i = 0;
+	if(is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gw) {
+			$config['gateways']['gateway_item'][$i]['ipprotocol'] = "inet";
+			$i++;
+		}
+	}
 
 	/* RRD files changed for quality, traffic and packets graphs */
 	/* convert traffic RRD file */

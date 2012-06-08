@@ -383,6 +383,9 @@ echo "done."
 # Start packages
 /etc/rc.start_packages
 
+# Reconfigure CARP interfaces
+/etc/rc.interfaces_carp_configure
+
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds

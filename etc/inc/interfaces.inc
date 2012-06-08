@@ -2045,16 +2045,22 @@ function interface_carp_configure(&$vip) {
 
 	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 	$advbase = "";
+	$advskew = "";
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
+	if ($g['booting']) {
+		$advskew = "advskew 254";
+	} else {
+		$advskew = "advskew {$vip['advskew']}";
+	}
 
 	if(is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} {$advskew} {$advbase} {$password}");
 	}
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} {$advskew} {$advbase} {$password}");
 	}
 
 	interfaces_bring_up($vipif);

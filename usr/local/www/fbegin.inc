@@ -140,7 +140,7 @@ $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 if($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
-	$services_menu[] = array(gettext("DHCPv6 Server"), "/services_dhcpv6.php");
+	$services_menu[] = array(gettext("DHCPv6 Server/RA"), "/services_dhcpv6.php");
 }
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
 $services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");

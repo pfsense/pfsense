@@ -226,6 +226,36 @@ display_top_tabs($tab_array);
 			</td>
 			</tr>
 			<?php } ?>
+
+			<tr>
+			<td colspan="2" valign="top" class="listtopic">DNS</td>
+			</tr>
+
+			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
+			<td width="78%" class="vtable">
+				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
+				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
+				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
+			</td>
+			</tr>
+
+			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
+			<td width="78%" class="vtable">
+				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>"><br>
+				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as seperator");?>
+			</td>
+			</tr>
+
+			<tr>
+			<td width="22%" valign="top" class="vncell">&nbsp;</td>
+			<td width="78%" class="vtable">
+				<input id="rasamednsasdhcp6" name="rasamednsasdhcp6" type="checkbox" value="yes" <?php if ($pconfig['rasamednsasdhcp6']) { echo "checked='checked'"; } ?> />
+				<strong><?= gettext("Use same settings as DHCPv6 server"); ?></strong>
+			</td>
+			</tr>
+
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -239,6 +269,23 @@ display_top_tabs($tab_array);
 </tr>
 </table>
 </form>
+<script language="JavaScript">
+	jQuery(function ($) {
+		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");
+		var $triggered_checkboxes = $("#radns1, #radns2, #radomainsearchlist");
+		if ($rasamednsasdhcp6.length !== 1) { return; }
+		var onchange = function () {
+			var checked = $rasamednsasdhcp6.is(":checked");
+			if (checked) {
+				$triggered_checkboxes.each(function () { this.disabled = true; });
+			} else {
+				$triggered_checkboxes.each(function () { this.disabled = false; });
+			}
+		};
+		$rasamednsasdhcp6.bind("change", onchange);
+		onchange();
+	});
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

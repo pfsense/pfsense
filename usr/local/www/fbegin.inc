@@ -253,9 +253,9 @@ if(! $g['disablehelpmenu']) {
 ?>
 
 <div id="wrapper">
-	<div id="header" style="height:40px;">
+	<div id="header">
 		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
-		<div id="header-right" style="height:30px;" >
+		<div id="header-right">
 			<div class="container">
 				<div class="left">webConfigurator</div>
 				<div class="right" id="menu_messages">
@@ -268,7 +268,7 @@ if(! $g['disablehelpmenu']) {
 	</div> <!-- Header DIV -->
 	<div id="content">
 		<div id="left">
-			<div id="navigation" style="z-index:1000;width:750px;" >
+			<div id="navigation" style="z-index:1000;">
 				<ul id="menu">
 					<li class="firstdrop">
 						<div><?php echo gettext("System"); ?></div>

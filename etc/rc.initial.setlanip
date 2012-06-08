@@ -166,6 +166,61 @@ if(!$interface) {
 
 $ifaceassigned = "";
 
+function next_unused_gateway_name($interface) {
+	global $g, $config;
+	$new_name = "GW_" . strtoupper($interface);
+
+	if (!is_array($config['gateways']['gateway_item'])) { return $new_name; }
+	$count = 1;
+	do {
+		$existing = false;
+		foreach ($config['gateways']['gateway_item'] as $item) {
+			if ($item['name'] === $new_name) {
+				$existing = true;
+				break;
+			}
+		}
+		if ($existing) {
+			$count += 1;
+			$new_name = "GW_" . strtoupper($interface) . "_" . $count;
+		}
+	} while ($existing);
+	return $new_name;
+}
+
+function add_gateway_to_config($interface, $gatewayip, $inet_type) {
+	global $g, $config, $dry_run;
+	if (!is_array($config['gateways']['gateway_item'])) {
+		$config['gateways']['gateway_item'] = array();
+	}
+	$a_gateways = &$config['gateways']['gateway_item'];
+	if ($dry_run) {
+		print_r($a_gateways);
+	}
+	$new_name = next_unused_gateway_name($interface);
+	$is_default = true;
+	foreach ($a_gateways as $item) {
+		if ($item['ipprotocol'] === $inet_type) {
+			$is_default = false;
+			break;
+		}
+	}
+	$item = array(
+		"interface" => $interface,
+		"gateway" => $gatewayip,
+		"name" => $new_name,
+		"weight" => 1,
+		"ipprotocol" => $inet_type,
+		"interval" => true,
+		"descr" => "Interface $interface Gateway",
+		"defaultgw" => $is_default
+	);
+	if ($dry_run) {
+		print_r($item);
+	}
+	$a_gateways[] = $item;
+}
+
 function console_configure_ip_address($version) {
 	global $g, $config, $interface, $restart_dhcpd, $ifaceassigned, $fp;
 
@@ -224,7 +279,6 @@ function console_configure_ip_address($version) {
 			} else {
 				$subnet = gen_subnet($intip, $intbits);
 			}
-			echo "subnet: {$subnet}/{$intbits}\n";
 			do {
 				echo "\n" . sprintf(gettext("Enter the new %s %s gateway address.  Press <ENTER> for none:"),
 				                    $upperifname, $label_IPvX) . "\n> ";
@@ -239,6 +293,11 @@ function console_configure_ip_address($version) {
 					}
 				}
 			} while (!($gwip == '' || ($is_ipaddr && $is_in_subnet)));
+
+			if ($gwip != '') {
+				$inet_type = ($version === 6) ? "inet6" : "inet";
+				add_gateway_to_config($interface, $gwip, $inet_type);
+			}
 		}
 		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 		if (!empty($ifppp))

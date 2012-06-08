@@ -3213,6 +3213,7 @@ function filter_generate_ipsec_rules() {
 				continue;
 			/* determine local and remote peer addresses */
 			if(!isset($ph1ent['mobile'])) {
+				require_once("ipsec.inc");
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if(!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";

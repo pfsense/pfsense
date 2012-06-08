@@ -86,6 +86,8 @@ function services_radvd_configure() {
 		if(!isset($dhcpv6ifconf['rapriority']))
 			$dhcpv6ifconf['rapriority'] = "medium";
 
+		/* always start with the real parent, we override with the carp if later */
+		$realif = get_real_interface($dhcpv6if);
 		$carpif = false;
 		/* check if we need to listen on a CARP interface */
 		$carplist = get_configured_carp_interface_list();
@@ -93,11 +95,7 @@ function services_radvd_configure() {
 			if($carplist[$dhcpv6ifconf['rainterface']] <> "") {
 				$realif = $dhcpv6ifconf['rainterface'];
 				$carpif = true;
-			} else {
-				$realif = get_real_interface($dhcpv6if);
 			}
-		} else {
-			$realif = get_real_interface($dhcpv6if);
 		}
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);

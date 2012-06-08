@@ -95,6 +95,9 @@ if (is_array($config['dhcpdv6'][$if])){
 	if($pconfig['rapriority'] == "")
 		$pconfig['rapriority'] = "medium";
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
+	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
+	list($pconfig['radns1'],$pconfig['radns2']) = $config['dhcpdv6'][$if]['radnsserver'];
+	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 }
 
 $advertise_modes = array("disabled" => "Disabled",
@@ -113,6 +116,19 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	/* input validation */
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])))
+		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
+	if ($_POST['radomainsearchlist']) {
+		$domain_array=preg_split("/[ ;]+/",$_POST['radomainsearchlist']);
+		foreach ($domain_array as $curdomain) {
+			if (!is_domain($curdomain)) {
+				$input_errors[] = gettext("A valid domain search list must be specified.");
+				break;
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'][$if]))
 			$config['dhcpdv6'][$if] = array();
@@ -121,6 +137,15 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
 		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
 		
+		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
+		unset($config['dhcpdv6'][$if]['radnsserver']);
+		if ($_POST['radns1'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
+		if ($_POST['radns2'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns2'];
+
+		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
+
 		write_config();
 		$retval = services_radvd_configure();
 		$savemsg = get_std_save_message($retval);

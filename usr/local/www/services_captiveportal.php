@@ -63,20 +63,20 @@ $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 
 if ($_GET['act'] == "viewhtml") {
-	if (isset($cpzone) && $a_cp[$cpzone])
-		echo base64_decode($pconfig['page']['htmltext']);
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext'])
+		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
 	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
-	if (isset($cpzone) && $a_cp[$cpzone])
-		echo base64_decode($pconfig['page']['errtext']);
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext'])
+		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
 	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
-	if (isset($cpzone) && $a_cp[$cpzone])
-		echo base64_decode($pconfig['page']['logouttext']);
+	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext'])
+		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
 	exit;
 }
 
-if (isset($cpzone) && $a_cp[$cpzone]) {
+if ($a_cp[$cpzone]) {
 	$pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
 	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
 	$pconfig['maxproc'] = $a_cp[$cpzone]['maxproc'];
@@ -941,7 +941,7 @@ function enable_change(enable_change) {
 	  <td class="vtable">
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($pconfig['page']['errtext']): ?>
-		<a href="?act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<a href="?zone=<?=$cpzone?>&amp;act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -955,7 +955,7 @@ function enable_change(enable_change) {
 	  <td class="vtable">
 		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
 		<?php if ($pconfig['page']['logouttext']): ?>
-		<a href="?act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<a href="?zone=<?=$cpzone?>&amp;act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>

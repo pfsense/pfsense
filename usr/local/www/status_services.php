@@ -63,9 +63,10 @@ function get_pkg_descr($package_name) {
 if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'captiveportal':
-			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
-			captiveportal_init_webgui();
+			$zone = $_GET['zone'];
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
 		case 'openntpd':
@@ -116,12 +117,13 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'captiveportal':
-			captiveportal_init_webgui();
+			$zone = $_GET['zone'];
+			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
 		case 'openntpd':
 			system_ntp_configure();
-			break;		
+			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
 			break;
@@ -164,8 +166,9 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
 		case 'captiveportal':
-			killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
+			$zone = $_GET['zone'];
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
 			break;
 		case 'ntpd':
 			killbyname("ntpd");
@@ -269,11 +272,16 @@ $pconfig['name'] = "ntpd";
 $pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
 
-if(isset($config['captiveportal']['enable'])) {
-	$pconfig = array();
-	$pconfig['name'] = "captiveportal";
-	$pconfig['description'] = gettext("Captive Portal");
-	$services[] = $pconfig;
+if (is_array($config['captiveportal'])) {
+	foreach ($config['captiveportal'] as $id => $setting) {
+		if (isset($setting['enable'])) {
+			$pconfig = array();
+			$pconfig['name'] = "captiveportal";
+			$pconfig['zone'] = $setting['zone'];
+			$pconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
+			$services[] = $pconfig;
+		}
+	}
 }
 
 $iflist = array();
@@ -369,12 +377,18 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
-		if ($service['name'] == "openvpn")
-			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
-		else if ($service['name'] == "captiveportal")
-			$running = is_pid_running("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-		else
-			$running = is_service_running($service['name']);
+		switch ($service['name']) {
+			case "openvpn":
+				$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
+				if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
+					$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
+				break;
+			case "captiveportal":
+				$running = is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal.pid");
+				break;
+			default:
+				$running = is_service_running($service['name']);
+		}
 		if($running) {
 			echo "<td class=\"listr\" align=\"center\">\n";
 			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>\n";
@@ -384,26 +398,40 @@ if (count($services) > 0) {
 		}
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
-			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-			} else {
-				echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
+			switch ($service['name']) {
+				case "openvpn":
+					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+					break;
+				case "captiveportal":
+					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&zone={$service['zone']}'>";
+					break;
+				default:
+					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			}
 			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
-			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-			} else {
-				echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
+			switch ($service['name']) {
+				case "openvpn":
+					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+					break;
+				case "captiveportal":
+					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&zone={$service['zone']}'>";
+					break;
+				default:
+					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
 			}
 			echo "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
 			echo "</a>";
 		} else {
-			if ($service['name'] == "openvpn") {
-				echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-			} else { 
-				echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
+			switch ($service['name']) {
+				case "openvpn":
+					echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+					break;
+				case "captiveportal":
+					echo "<a href='status_services.php?mode=startservice&service={$service['name']}&zone={$service['zone']}'>";
+					break;
+				default:
+					echo "<a href='status_services.php?mode=startservice&service={$service['name']}'>";
 			}
-			
 			echo "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
 		}
 		echo "</td></tr>\n";

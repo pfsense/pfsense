@@ -274,6 +274,8 @@ div#marquee-text {
 	font-weight: normal;
 	font-family: Verdana;
 	color: #990000;
+    text-align: right;
+    padding-right: 18px;
 }
 table#marquee div#container {
 	position: relative;

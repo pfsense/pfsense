@@ -107,12 +107,12 @@ function get_menu_messages(){
 							$notice_msgs .="</table>";
 							
 					$domtt= "onclick=\"domTT_activate(this, event, 'caption', '{$notice}','content', '<br>{$notice_msgs}', 'trail', false, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','width','{$domtt_width}','y',5,'type', 'sticky');\"";					
-                    $menu_messages="<div id='alerts' style='z-index:500'; >\n";
+                    $menu_messages="<div id='alerts' ; >\n";
                     if(count($notices)==1)
                     	$msg= sprintf("%1$02d",count($notices))." ".gettext("unread notice");
                     else
                     	$msg= sprintf("%1$02d",count($notices))." ".gettext("unread notices");
-                    $menu_messages.="<div id='marquee-text' ><a href=# {$domtt}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> .:. {$msg} .:. </b></a></div>\n";
+                    $menu_messages.="<div id='marquee-text' style='z-index:1001;'><a href=# {$domtt}><b> .:. {$msg} .:. </b></a></div>\n";
                     $menu_messages.="</div>\n";
                     }
 				} else {

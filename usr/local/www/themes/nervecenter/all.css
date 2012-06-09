@@ -281,6 +281,7 @@ div#marquee-text {
 	font-weight: normal;
 	font-family: Verdana;
 	color: #ffffff;
+    text-align: center;
 }
 table#marquee div#container {
 	position: relative;

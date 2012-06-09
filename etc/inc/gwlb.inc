@@ -417,6 +417,9 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					case "6to4":
 						$gateway['interface'] = "stf0";
 						break;
+					default:
+						$gateway['interface'] = get_real_interface($gateway['interface']);
+						break;
 				}
 			}
 			if($gateway['ipprotocol'] == "inet") {

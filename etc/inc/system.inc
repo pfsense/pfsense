@@ -842,7 +842,7 @@ function system_generate_lighty_config($filename,
 		$captiveportal = ",\"mod_rewrite\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 		$captive_portal_module = "";
-		$maxprocperip = $config['captiveportal']['maxprocperip'];
+		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
 		if($maxprocperip and $maxprocperip > 0)
 			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 		else

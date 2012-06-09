@@ -80,7 +80,7 @@ var domLib_styleNoMaxWidth = domLib_isOpera ? '10000px' : 'none';
 var domLib_hidePosition = '-1000px';
 var domLib_scrollbarWidth = 14;
 var domLib_autoId = 1;
-var domLib_zIndex = 100;
+var domLib_zIndex = 1010;
 
 // -- Detection --
 var domLib_collisionElements;

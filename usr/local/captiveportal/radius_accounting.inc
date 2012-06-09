@@ -82,8 +82,8 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
     global $config, $cpzone;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac("wan"));
-    $clientmac = mac_format($clientmac);
+    $nas_mac = mac_format(get_interface_mac("wan"), $cpzone);
+    $clientmac = mac_format($clientmac, $cpzone);
     $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
 
@@ -194,8 +194,8 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     global $config, $cpzone;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac("wan"));
-    $clientmac = mac_format($clientmac);
+    $nas_mac = mac_format(get_interface_mac("wan"), $cpzone);
+    $clientmac = mac_format($clientmac, $cpzone);
     $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;

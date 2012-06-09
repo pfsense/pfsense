@@ -1205,11 +1205,12 @@ function xml_safe_fieldname($fieldname) {
 	return strtolower(str_replace($replace, "", $fieldname));
 }
 
-function mac_format($clientmac) {
+function mac_format($clientmac, $zone = false) {
     global $config;
 
     $mac = explode(":", $clientmac);
-    $mac_format = $config['captiveportal']['radmac_format'] ? $config['captiveportal']['radmac_format'] : false;
+    if ($zone)
+      $mac_format = $zone ? $config['captiveportal'][$zone]['radmac_format'] : false;
 
     switch($mac_format) {
         case 'singledash':

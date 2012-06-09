@@ -1660,7 +1660,7 @@ function portal_mac_radius($clientmac,$clientip) {
     $radmac_secret = $config['captiveportal'][$cpzone]['radmac_secret'];
 
     /* authentication against the radius server */
-    $username = mac_format($clientmac);
+    $username = mac_format($clientmac, $cpzone);
     $auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
     if ($auth_list['auth_val'] == 2)
         return TRUE;

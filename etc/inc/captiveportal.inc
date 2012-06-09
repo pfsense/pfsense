@@ -1688,7 +1688,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
         if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
                 $commands .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
         
-                if (!isset($config['captiveportal']['nomacfilter'])) {
+                if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
                         $commands .= "table 1 del {$cpentry[2]} mac {$cpentry[3]}\n";
                         $commands .= "table 1 add {$cpentry[2]} mac {$cpentry[3]} {$bw_up_pipeno}\n";
                 } else {
@@ -1699,7 +1699,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
         if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
                 $commands .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
                         
-                if (!isset($config['captiveportal']['nomacfilter'])) {
+                if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
                         $commands .= "table 2 del {$cpentry[2]} mac {$cpentry[3]}\n";
                         $commands .= "table 2 add {$cpentry[2]} mac {$cpentry[3]} {$bw_down_pipeno}\n";
                 } else {
@@ -1710,7 +1710,7 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 
         if (!empty($commands)) {
                 @file_put_contents("{$g['tmp_path']}/reattribute{$cpzone}.rule.tmp", $commands);
-		captiveportal_ipfw_set_context($cpzone);
+                captiveportal_ipfw_set_context($cpzone);
                 mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute{$cpzone}.rule.tmp");
                 //captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
         }
@@ -1797,7 +1797,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$cpentry[10] = 'first';
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
-			if (isset($config['captiveportal']['nomacfilter']) || $cpentry[3] == $clientmac)   
+			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)   
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
 			else
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");

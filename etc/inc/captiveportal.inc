@@ -368,7 +368,7 @@ EOD;
 		captiveportal_write_elements();
 
 		/* start up the webserving daemon */
-		captiveportal_init_webguis($cpcfg);
+		captiveportal_init_webgui_zone($cpcfg);
 
 		/* Kill any existing prunecaptiveportal processes */
 		if(file_exists("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid"))
@@ -429,17 +429,26 @@ function captiveportal_init_webgui() {
 	global $config, $cpzone;
 
 	if (is_array($config['captiveportal'])) {
-		foreach ($config['captiveportal'] as $cpkey =>  $cp) {
+		foreach ($config['captiveportal'] as $cpkey => $cp) {
 			$cpzone = $cpkey;
-			captiveportal_init_webguis($cp);
+			captiveportal_init_webgui_zone($cp);
 		}
 	}
 }
 
-function captiveportal_init_webguis($cpcfg) {
+function captiveportal_init_webgui_zonename($zone) {
+	global $config, $cpzone;
+	
+	if (isset($config['captiveportal'][$zone])) {
+		$cpzone = $zone;
+		captiveportal_init_webgui_zone($config['captiveportal'][$zone]);
+	}
+}
+
+function captiveportal_init_webgui_zone($cpcfg) {
 	global $g, $config, $cpzone;
 
-	 if (!isset($cpcfg['enable']))
+	if (!isset($cpcfg['enable']))
 		return;
 
 	$use_fastcgi = true;
@@ -468,7 +477,7 @@ function captiveportal_init_webguis($cpcfg) {
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
-	if (isset($cpcfg['httpslogin']))
+	if (isset($cpcfg['httpslogin']) && $cpcfg['httpslogin'])
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
 }
 

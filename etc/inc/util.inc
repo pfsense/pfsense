@@ -1206,10 +1206,10 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-    global $config;
+    global $config, $cpzone;
 
     $mac = explode(":", $clientmac);
-    $mac_format = $config['captiveportal']['radmac_format'] ? $config['captiveportal']['radmac_format'] : false;
+    $mac_format = $cpzone ? $config['captiveportal'][$cpzone]['radmac_format'] : false;
 
     switch($mac_format) {
         case 'singledash':

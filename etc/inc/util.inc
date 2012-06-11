@@ -1209,7 +1209,8 @@ function mac_format($clientmac, $zone = false) {
     global $config;
 
     $mac = explode(":", $clientmac);
-    $mac_format = $zone ? $config['captiveportal'][$zone]['radmac_format'] : false;
+    if ($zone)
+      $mac_format = $zone ? $config['captiveportal'][$zone]['radmac_format'] : false;
 
     switch($mac_format) {
         case 'singledash':

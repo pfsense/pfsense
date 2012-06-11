@@ -53,12 +53,12 @@ $carp_enabled = get_carp_status();
 			$status = get_carp_interface_status($carp_int);
 ?>
 <tr>
-	<td class="vncellt" width="30%">
+	<td class="vncellt" width="35%">
 		<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/> &nbsp;
 		<strong><a href="/system_hasync.php">
 		<span style="color:#000000"><?=htmlspecialchars($carp_int);?></span></a></strong>
 	</td>
-	<td width="70%"  class="listr">
+	<td width="65%"  class="listr">
 <?php
 			if($carp_enabled == false) {
 				$status = "DISABLED";

@@ -251,43 +251,43 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
-	$rules = "";
+	$limitrules = "";
 	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
 	$maxtables = is_numeric($config['system']['maximumtables']) ? $config['system']['maximumtables'] : "3000";
-	$rules .= "set limit tables {$maxtables}\n";
-	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
-		/* User defined maximum table entries in Advanced menu. */
-		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
-	}
+	$limitrules .= "set limit tables {$maxtables}\n";
+	/* User defined maximum table entries in Advanced menu. */
+	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries']))
+		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 
-	$rules .= "{$aliases} \n";
-	$rules .= "{$gateways} \n";
-	update_filter_reload_status(gettext("Setting up logging information"));
-	$rules .= filter_setup_logging_interfaces();
-	if($config['system']['optimization'] <> "") {
-		$rules .= "set optimization {$config['system']['optimization']}\n";
+	if ($config['system']['optimization'] <> "") {
+		$limitrules .= "set optimization {$config['system']['optimization']}\n";
 		if($config['system']['optimization'] == "conservative") {
-			$rules .= "set timeout { udp.first 300, udp.single 150, udp.multiple 900 }\n";
+			$limitrules .= "set timeout { udp.first 300, udp.single 150, udp.multiple 900 }\n";
 		}
-	} else {
-		$rules .= "set optimization normal\n";
-	}
-	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+	} else
+		$limitrules .= "set optimization normal\n";
+
+	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
-		$rules .= "set limit states {$config['system']['maximumstates']}\n";
-		$rules .= "set limit src-nodes {$config['system']['maximumstates']}\n";
+		$limitrules .= "set limit states {$config['system']['maximumstates']}\n";
+		$limitrules .= "set limit src-nodes {$config['system']['maximumstates']}\n";
 	} else {
 		$max_states = pfsense_default_state_size();
-		$rules .= "set limit states {$max_states}\n";
-		$rules .= "set limit src-nodes {$max_states}\n";
+		$limitrules .= "set limit states {$max_states}\n";
+		$limitrules .= "set limit src-nodes {$max_states}\n";
 	}
 
 	if (isset($config['system']['lb_use_sticky']) && is_numeric($config['system']['srctrack']) && ($config['system']['srctrack'] > 0))
-		$rules .= "set timeout src.track {$config['system']['srctrack']}\n";
+		$limitrules .= "set timeout src.track {$config['system']['srctrack']}\n";
 
 	// Configure flowtable support if enabled.
 	flowtable_configure();
 
+	$rules = "";
+	$rules .= "{$aliases} \n";
+	$rules .= "{$gateways} \n";
+	update_filter_reload_status(gettext("Setting up logging information"));
+	$rules .= filter_setup_logging_interfaces();
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
 	$rules .= "\n";
@@ -300,6 +300,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	$rules .= discover_pkg_rules("filter");
 
+	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
+	mwexec("/sbin/pfctl -O -f {$g['tmp_path']}/rules.limits");
+	
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);

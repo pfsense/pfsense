@@ -19,7 +19,7 @@
 if (basename($_SERVER["SCRIPT_FILENAME"] != "index.php")): ?>
 <script type="text/javascript">
 (function ($) {
-	$("input").prop("autocomplete","off");
+	$("input").attr("autocomplete","off");
 })(jQuery);
 </script>
 <?php endif; ?>

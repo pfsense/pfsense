@@ -405,8 +405,10 @@ EODD;
 				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
 			}
 
-			unset($config['interfaces']['opt' . ($i+1)]['enable']);
-			$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
+			if (empty($config['interfaces']['opt' . ($i+1)]['descr'])) {
+				$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
+				unset($config['interfaces']['opt' . ($i+1)]['enable']);
+			}
 		}
 
 		/* remove all other (old) optional interfaces */
@@ -414,7 +416,7 @@ EODD;
 			unset($config['interfaces']['opt' . ($i+1)]);
 
 		printf(gettext("%sWriting configuration..."), "\n");
-		write_config();
+		write_config("Console assignment of interfaces");
 		printf(gettext("done.%s"), "\n");
 
 		fclose($fp);

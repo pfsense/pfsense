@@ -38,6 +38,8 @@
 ##|*MATCH=exec.php*
 ##|-PRIV
 
+$allowautocomplete = true;
+
 require("guiconfig.inc");
 
 if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {

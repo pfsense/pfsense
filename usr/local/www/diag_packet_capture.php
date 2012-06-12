@@ -35,6 +35,8 @@
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
 
+$allowautocomplete = true;
+
 if ($_POST['downloadbtn'] == gettext("Download Capture"))
 	$nocsrf = true;
 

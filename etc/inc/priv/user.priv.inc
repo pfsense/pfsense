@@ -2,6 +2,10 @@
 
 global $priv_list;
 
+$priv_list['help-all'] = array();
+$priv_list['help-all']['name'] = "Help - All help pages";
+$priv_list['help-all']['descr'] = "Show all items on help menu";
+
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = "WebCfg - Dashboard (all)";
 $priv_list['page-dashboard-all']['descr'] = "Allow access to all pages required for the dashboard.";

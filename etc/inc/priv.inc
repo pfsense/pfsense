@@ -119,15 +119,10 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 			continue;
 
 		/* compare exact or wildcard match */
-		$wcpos = strpos($match, "*");
-		if ($wcpos === false)
-			$result = strcmp($page, $match);
-		else {
-			$match = "/" . str_replace(array(".", "*"), array("\.", ".*"), $match) . "/";
-			$result = !preg_match($match, $page);
-		}
-
-		if (!$result)
+		$match =  str_replace(array(".", "*","?"), array("\.", ".*","\?"), $match);
+		$result = preg_match("@^/{$match}$@", "/{$page}");
+		
+		if ($result)
 			return true;
 	}
 
@@ -222,10 +217,7 @@ function isAllowedPage($page) {
 				return true;
 
 	/* user privelege access check */
-	if (cmp_page_matches($page, $_SESSION['page-match']))
-		return true;
-
-	return false;
+	return cmp_page_matches($page, $_SESSION['page-match']);
 }
 
 function getPrivPages(& $entry, & $allowed_pages) {

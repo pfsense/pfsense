@@ -180,7 +180,7 @@ function update_description() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
 							<td width="78%" class="vtable">
-								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple size="20">
+								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple size="35">
 									<?php
 										foreach($priv_list as $pname => $pdata):
 											if (in_array($pname, $a_user['priv']))

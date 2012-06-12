@@ -105,7 +105,7 @@ $counter = 1;
 				$online = gettext("Unknown");
                                 $bgcolor = "lightblue";
 			}
-			echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+			echo "<tr><td bgcolor=\"$bgcolor\">$online</td></tr>\n";
 			$counter++;
 		?>
                         </table>

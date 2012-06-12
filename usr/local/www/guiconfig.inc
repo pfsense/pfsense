@@ -931,35 +931,10 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 			$tab_array_char_limit = 92;
 		}
 
-        $tab_temp = array ();
-        foreach ($tab_array as $ta)
-                if(isAllowedPage($ta[2]))
-                        $tab_temp[] = $ta;
-        /*
-                // FIXME :      if the checks are not good enough
-                //                      in isAllowedPage, it needs to be
-                //                      fixed instead of kludging here
-
-                // TODO: humm what shall we do with pkg_edit.php and pkg.php?
-                if ((strpos($link, "pkg.php")) !== false || (strpos($link, "pkg_edit.php")) !== false) {
-                        $pos_equal = strpos($link, "=");
-                        $pos_xmlsuffix = strpos($link, ".xml");
-                        // do we match an absolute url including ?xml= foo
-                        if(!isAllowedPage($link, $allowed))
-                                $link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
-                }
-                // next check - what if the basename contains a query string?
-                if ((strpos($link, "?")) !== false) {
-                        $pos_qmark = strpos($link, "?");
-                        $link = substr($link, 0, $pos_qmark);
-                }
-                $authorized_text = print_r($allowed, true);
-                if(is_array($authorized))
-                        if (in_array(basename($link), $authorized))
-        */
-
-        unset ($tab_array);
-        $tab_array = & $tab_temp;
+		foreach ($tab_array as $tab_id => $ta){
+			if(!isAllowedPage($ta[2]))
+				unset ($tab_array[$tab_id]);
+			}
 
         $tab_active_bg   = "#EEEEEE";
         $tab_inactive_bg = "#777777";

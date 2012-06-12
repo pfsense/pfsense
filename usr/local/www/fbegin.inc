@@ -57,6 +57,7 @@ function return_ext_menu($section) {
 		foreach($config['installedpackages']['menu'] as $menuitem) {
 			if($menuitem['section'] != $section) continue;
 			if($menuitem['url'] <> "") {
+				$test_url=$menuitem['url'];
 			 	$addresswithport = getenv("HTTP_HOST");
 				$colonpos = strpos($addresswithport, ":");
 				if ($colonpos !== False){
@@ -68,8 +69,11 @@ function return_ext_menu($section) {
 				$description = str_replace('$myurl', $myurl, $menuitem['url']);
 			} else {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
+				$test_url=$description;
 			}
-			$extarray[] = array($menuitem['name'], $description);
+			 if(isAllowedPage($test_url)){
+				$extarray[] = array($menuitem['name'], $description);
+			 }
 		}
 	}
 	return $extarray;
@@ -77,21 +81,23 @@ function return_ext_menu($section) {
 
 function output_menu($arrayitem, $target = null) {
 	foreach ($arrayitem as $item) {
-		$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
-		if ($target) {
-			$attr .= sprintf(" target=\"%s\"", htmlentities($target));
+		if (isAllowedPage($item[1]) || $item[1]=="/index.php?logout"){
+			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+			if ($target) {
+				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
+			}
+			$class = "navlnk";
+			if ($item['class']) {
+				$class .= " {$item['class']}";
+			}
+			$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+			if ($item['style']) {
+				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
+			}
+			echo "<li>\n";
+			printf("<a %s>%s</a>\n", $attr, $item[0]);
+			echo "</li>\n";
 		}
-		$class = "navlnk";
-		if ($item['class']) {
-			$class .= " {$item['class']}";
-		}
-		$attr .= sprintf(" class=\"%s\"", htmlentities($class));
-		if ($item['style']) {
-			$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
-		}
-		echo "<li>\n";
-		printf("<a %s>%s</a>\n", $attr, $item[0]);
-		echo "</li>\n";
 	}
 }
 

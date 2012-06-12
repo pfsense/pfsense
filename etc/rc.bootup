@@ -215,8 +215,8 @@ echo "Setting up extended sysctls...";
 system_setup_sysctl();
 echo "done.\n";
 
-/* enable glxsb if wanted */
-load_glxsb();
+/* enable optional crypto modules */
+load_crypto();
 
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);

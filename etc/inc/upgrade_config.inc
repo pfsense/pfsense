@@ -2876,5 +2876,11 @@ function upgrade_086_to_087() {
 		}
 	}
 }
-
+function upgrade_087_to_088() {
+	global $config;
+	if (isset($config['system']['glxsb_enable'])) {
+		unset($config['system']['glxsb_enable']);
+		$config['system']['crypto_hardware'] = "glxsb";
+	}
+}
 ?>

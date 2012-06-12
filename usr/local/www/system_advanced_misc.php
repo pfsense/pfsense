@@ -64,7 +64,7 @@ $pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
-$pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
+$pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 
@@ -73,6 +73,9 @@ if (!empty($config['system']['powerd_mode']))
 else
 	$pconfig['powerd_mode'] = "hadp";
 
+$crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
+			'aesni' => gettext("AES-NI CPU-based Acceleratation"));
+
 if ($_POST) {
 
     unset($input_errors);
@@ -80,6 +83,9 @@ if ($_POST) {
 
 	ob_flush();
 	flush();
+
+	if (!empty($_POST['crypto_hardware']) && !array_key_exists($_POST['crypto_hardware'], $crypto_modules))
+		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
 
 	if (!$input_errors) {
 
@@ -160,11 +166,11 @@ if ($_POST) {
                         unset($config['system']['powerd_enable']);
 
 		$config['system']['powerd_mode'] = $_POST['powerd_mode'];
-						
-		if($_POST['glxsb_enable'] == "yes")
-                        $config['system']['glxsb_enable'] = true;
-                else
-                        unset($config['system']['glxsb_enable']);
+
+		if($_POST['crypto_hardware'])
+			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
+		else
+			unset($config['system']['crypto_hardware']);
 
 		if($_POST['schedule_states'] == "yes")
                         $config['system']['schedule_states'] = true;
@@ -187,7 +193,7 @@ if ($_POST) {
 		    $savemsg = gettext($retval);
 		
 		activate_powerd();
-		load_glxsb();
+		load_crypto();
 		vpn_ipsec_configure_preferoldsa();
 		if ($need_racoon_restart)
 			vpn_ipsec_force_reload();
@@ -358,22 +364,28 @@ function maxmss_checked(obj) {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("glxsb Crypto Acceleration"); ?></td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Cryptographic Hardware Acceleration"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("glxsb"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Cryptographic Hardware"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="glxsb_enable" type="checkbox" id="glxsb_enable" value="yes" <?php if ($pconfig['glxsb_enable']) echo "checked"; ?> />
-									<strong><?=gettext("Use glxsb"); ?></strong><br/>
+									<select name="crypto_hardware" id="crypto_hardware">
+										<option value=""><?php echo gettext("None"); ?></option>
+										<?php foreach ($crypto_modules as $cryptomod_name => $cryptomod_descr): ?>
+											<option value="<?php echo $cryptomod_name; ?>" <?php if ($pconfig['crypto_hardware'] == $cryptomod_name) echo " selected"; ?>><?php echo "{$cryptomod_descr} ({$cryptomod_name})"; ?></option>
+										<?php endforeach; ?>
+									</select>
 									<br />
-								     <?=gettext("The AMD Geode LX Security Block will accelerate some cryptographic functions " .
-								     "on systems which have the chip. Do not enable this option if you have a " .
-								     "Hifn cryptographic acceleration card, as this will take precedence and the " .
-								     "Hifn card will not be used. Acceleration should be automatic for IPsec " .
-								     "when using Rijndael (AES). OpenVPN should be set for AES-128-CBC."); ?>
+								     <?=gettext("A cryptographic accelator module will use hardware support to speed up some " .
+										"cryptographic functions on systems which have the chip. Do not enable this " .
+										"option if you have a Hifn cryptographic acceleration card, as this will take " .
+										"precedence and the Hifn card will not be used. Acceleration should be automatic " .
+										"for IPsec when using a cipher supported by your chip, such as AES-128. OpenVPN " .
+										"should be set for AES-128-CBC and have cryptodev enabled for hardware " .
+										"acceleration."); ?>
 								     <br/><br/>
-								     <?=gettext("If you do not have a glxsb chip in your system, this option will have no " .
-								     "effect. To unload the module, uncheck this option and then reboot."); ?>
+								     <?=gettext("If you do not have a crypto chip in your system, this option will have no " .
+								     "effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
 							</tr>
 							<tr>

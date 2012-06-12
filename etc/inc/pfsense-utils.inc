@@ -1498,13 +1498,19 @@ function compare_hostname_to_dnscache($hostname) {
 }
 
 /*
- * load_glxsb() - Load the glxsb crypto module if enabled in config.
+ * load_crypto() - Load crypto modules if enabled in config.
  */
-function load_glxsb() {
+function load_crypto() {
 	global $config, $g;
-	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c glxsb`;
-	if (isset($config['system']['glxsb_enable']) && ($is_loaded == 0)) {
-		mwexec("/sbin/kldload glxsb");
+	$crypto_modules = array('glxsb', 'aesni');
+
+	if (!in_array($config['system']['crypto_hardware'], $crypto_modules))
+		return false;
+
+	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c {$config['system']['crypto_hardware']}`;
+	if (!empty($config['system']['crypto_hardware']) && ($is_loaded == 0)) {
+		log_error("Loading {$config['system']['crypto_hardware']} cryptographic accelerator module.");
+		mwexec("/sbin/kldload {$config['system']['crypto_hardware']}");
 	}
 }
 

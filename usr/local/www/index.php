@@ -197,7 +197,13 @@ EOF;
 	if ($fd) {
 		while (!feof($fd)) {
 			$dmesgl = fgets($fd);
-			if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches) or preg_match("/.*(VIA Padlock)/", $dmesgl, $matches) or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches) or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches) or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches) or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
+			if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)
+				or preg_match("/.*(VIA Padlock)/", $dmesgl, $matches)
+				or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
+				or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
+				or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
+				or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)
+				or preg_match("/^aesni.: (.*?),/", $dmesgl, $matches)) {
 				$hwcrypto = $matches[1];
 				break;
 			}

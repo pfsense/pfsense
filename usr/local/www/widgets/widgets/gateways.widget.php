@@ -98,7 +98,7 @@ $counter = 1;
 				$online = gettext("Gathering data");
                                 $bgcolor = "lightgray";
 			}
-			echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+			echo "<tr><td bgcolor=\"$bgcolor\">$online</td></tr>\n";
 			$counter++;
 		?>
                         </table>

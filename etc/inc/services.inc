@@ -76,7 +76,7 @@ function services_radvd_configure() {
 		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
-		if(isset($dhcpv6ifconf['mode']))
+		if(!isset($dhcpv6ifconf['ramode']))
 			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
 
 		/* are router advertisements enabled? */

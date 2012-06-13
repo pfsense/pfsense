@@ -472,7 +472,7 @@ table#marquee div#container div#scroller {
 	-webkit-box-shadow: 5px 5px 10px #000000;
 	-moz-box-shadow: 5px 5px 10px #000000;
 	/* Vertical menu max size */
-	max-height: 259px;
+	/* max-height: 259px; /
 	/* Horizontal menu max size */
 	max-width: 128px;
 	overflow-x: hidden;

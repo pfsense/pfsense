@@ -319,6 +319,8 @@ div#marquee-text {
 	font-weight: normal;
 	font-style: italic;
 	color: #000000;
+	margin-top: 2px;
+	margin-left: 25px;
 }
 table#marquee div#container {
 	position: relative;

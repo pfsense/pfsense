@@ -55,16 +55,36 @@
 		/* look for 'special cases' */
 		switch($ifconf['ipaddr']) {
 		case "dhcp":
-			$class = "(DHCP)";
+			$class = "/DHCP4";
 			break;
 		case "pppoe":
-			$class = "(PPPoE)";
+			$class = "/PPPoE";
 			break;
 		case "pptp":
-			$class = "(PPTP)";
+			$class = "/PPTP";
+			break;
+		case "l2tp":
+			$class = "/L2TP";
 			break;
 		default:
 			$class = "";
+			break;
+		}
+		switch($ifconf['ipaddrv6']) {
+		case "dhcp6":
+			$class6 = "/DHCP6";
+			break;
+		case "slaac":
+			$class6 = "/SLAAC";
+			break;
+		case "6rd":
+			$class6 = "/6RD";
+			break;
+		case "6to4":
+			$class6 = "/6to4";
+			break;
+		case "track6":
+			$class6 = "/t6";
 			break;
 		}
 		$ipaddr = get_interface_ip($ifname);
@@ -74,15 +94,30 @@
 		$realif = get_real_interface($ifname);
 		$tobanner = "{$friendly} ({$ifname})";
 
-		printf("\n %-15s -> %-10s -> %s/%s\t%s/%s %s",
+		printf("\n %-15s -> %-10s -> ",
 			$tobanner,
-			$realif,
-			$ipaddr ? $ipaddr : "NONE",
-			$subnet ? $subnet : "NONE",
-			$ipaddr6 ? $ipaddr6 : "NONE",
-			$subnet6 ? $subnet6 : "NONE",
-			$class
+			$realif
 		);
+		$v6first = false;
+		if (!empty($ipaddr) && !empty($subnet)) {
+			printf("v4%s: %s/%s",
+				$class,
+				$ipaddr,
+				$subnet
+			);
+		} else {
+			$v6first = true;
+		}
+		if (!empty($ipaddr6) && !empty($subnet6)) {
+			if (!$v6first) {
+				printf("\n%s", str_repeat(" ",34));
+			}
+			printf("v6%s: %s/%s",
+				$class6,
+				$ipaddr6,
+				$subnet6
+			);
+		}
 	}
 
 ?>

@@ -74,7 +74,7 @@ else
 	$pconfig['powerd_mode'] = "hadp";
 
 $crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
-			'aesni' => gettext("AES-NI CPU-based Acceleratation"));
+			'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
 if ($_POST) {
 
@@ -376,7 +376,7 @@ function maxmss_checked(obj) {
 										<?php endforeach; ?>
 									</select>
 									<br />
-								     <?=gettext("A cryptographic accelator module will use hardware support to speed up some " .
+								     <?=gettext("A cryptographic accelerator module will use hardware support to speed up some " .
 										"cryptographic functions on systems which have the chip. Do not enable this " .
 										"option if you have a Hifn cryptographic acceleration card, as this will take " .
 										"precedence and the Hifn card will not be used. Acceleration should be automatic " .

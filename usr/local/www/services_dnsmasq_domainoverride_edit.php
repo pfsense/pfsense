@@ -51,7 +51,14 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_domainOverrides[$id]) {
        $pconfig['domain'] = $a_domainOverrides[$id]['domain'];
-       $pconfig['ip'] = $a_domainOverrides[$id]['ip'];
+       if (is_ipaddr($a_domainOverrides[$id]['ip']) && ($a_domainOverrides[$id]['ip'] != '#')) {
+              $pconfig['ip'] = $a_domainOverrides[$id]['ip'];
+       }
+       else {
+             $dnsmasqpieces = explode('@', $a_domainOverrides[$id]['ip'], 2);
+             $pconfig['ip'] = $dnsmasqpieces[0];
+             $pconfig['dnssrcip'] = $dnsmasqpieces[1];
+       }
        $pconfig['descr'] = $a_domainOverrides[$id]['descr'];
 }
 
@@ -66,17 +73,32 @@ if ($_POST) {
 
        do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-       if (($_POST['domain'] && !is_domain($_POST['domain']))) {
+       function String_Begins_With($needle, $haystack) {
+           return (substr($haystack, 0, strlen($needle))==$needle);
+       }
+
+       if (String_Begins_With(_msdcs, $_POST['domain'])) {
+               $subdomainstr = substr($_POST['domain'], 7);
+               if ($subdomainstr && !is_domain($subdomainstr)) {
+                  $input_errors[] = gettext("A valid domain must be specified after _msdcs.");
+               }
+       }
+       elseif ($_POST['domain'] && !is_domain($_POST['domain'])) {
                $input_errors[] = gettext("A valid domain must be specified.");
        }
        if ($_POST['ip'] && !is_ipaddr($_POST['ip']) && ($_POST['ip'] != '#')) {
-               $input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion.");
+              $input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion.");
        }
-
+       if ($_POST['dnssrcip'] && !in_array($_POST['dnssrcip'], get_configured_ip_addresses())) {
+              $input_errors[] = gettext("An interface IP address must be specified for the DNS query source.");
+       }
        if (!$input_errors) {
 			$doment = array();
 			$doment['domain'] = $_POST['domain'];
-			$doment['ip'] = $_POST['ip'];
+                       if (empty($_POST['dnssrcip']))
+                                $doment['ip'] = $_POST['ip'];
+                       else
+                               $doment['ip'] = $_POST['ip'] . "@" . $_POST['dnssrcip'];
 			$doment['descr'] = $_POST['descr'];
 
 			if (isset($id) && $a_domainOverrides[$id])
@@ -116,6 +138,13 @@ include("head.inc");
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br> <span class="vexpl"><?=gettext("IP address of the authoritative DNS server for this domain"); ?><br>
                     <?=gettext("e.g."); ?> <em>192.168.100.100</em><br/><?=gettext("Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override."); ?></span></td>
+                </tr>
+                               <tr>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Source IP");?></td>
+                  <td width="78%" class="vtable">
+                    <?=$mandfldhtml;?><input name="dnssrcip" type="text" class="formfld unknown" id="dnssrcip" size="40" value="<?=htmlspecialchars($pconfig['dnssrcip']);?>">
+                    <br> <span class="vexpl"><?=gettext("Source IP address for queries to the DNS server for the override domain."); ?><br>
+                    <?=gettext("Leave blank unless your DNS server is accessed through a VPN tunnel."); ?></span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

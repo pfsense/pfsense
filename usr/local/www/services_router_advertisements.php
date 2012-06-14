@@ -98,6 +98,11 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'],$pconfig['radns2']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
+
+	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
+}
+if (!is_array($pconfig['subnets'])) {
+	$pconfig['subnets'] = array();
 }
 
 $advertise_modes = array("disabled" => "Disabled",
@@ -110,6 +115,11 @@ $priority_modes = array("low" => "Low",
 			"high" => "High");
 $carplist = get_configured_carp_interface_list();
 
+$subnets_help = gettext("Subnets are specified in CIDR format.  " .
+                        "Select the CIDR mask that pertains to each entry.  " .
+                        "/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
+                        "If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.");
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -117,6 +127,29 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
+
+	$pconfig['subnets'] = array();
+	for ($x = 0; $x < 5000; $x += 1) {
+		$address = trim($_POST['subnet_address' . $x]);
+		$bits    = trim($_POST['subnet_bits' . $x]);
+		if ($address === "") {
+			continue;
+		}
+		if (is_ipaddrv6($address)) {
+			if ($bits === "") {
+				$pconfig['subnets'][] = $address . "/128";
+			} else {
+				$pconfig['subnets'][] = $address . "/" . $bits;
+			}
+		}
+		else if (is_alias($address)) {
+			$pconfig['subnets'][] = $address;
+		}
+		else {
+			$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
+		}
+	}
+
 	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])))
 		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
 	if ($_POST['radomainsearchlist']) {
@@ -146,6 +179,12 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
+		if (count($pconfig['subnets'])) {
+			$config['dhcpdv6'][$if]['subnets']['item'] = $pconfig['subnets'];
+		} else {
+			unset($config['dhcpdv6'][$if]['subnets']);
+		}
+
 		write_config();
 		$retval = services_radvd_configure();
 		$savemsg = get_std_save_message($retval);
@@ -160,6 +199,29 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
+<script type="text/javascript" src="/javascript/autosuggest.js">
+</script>
+<script type="text/javascript" src="/javascript/suggestions.js">
+</script>
+<script type="text/javascript">
+	rowname[0] = "subnet_address";
+	rowtype[0] = "textbox";
+	rowsize[0] = "30";
+	rowname[1] = "subnet_bits";
+	rowtype[1] = "select";
+	rowsize[1] = "1";
+	function add_alias_control() {
+		var name = "subnet_address" + (totalrows - 1);
+		obj = document.getElementById(name);
+		obj.setAttribute('class', 'formfldalias');
+		obj.setAttribute('autocomplete', 'off');
+		objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
+	}
+</script>
+
 <form action="services_router_advertisements.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -253,14 +315,60 @@ display_top_tabs($tab_array);
 			<?php } ?>
 
 			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("RA Subnet(s)");?></td>
+			<td width="78%" class="vtable">
+				<div><?= htmlentities($subnets_help) ?></div>
+				<table id="maintable">
+				<tbody>
+<?php
+				$counter = 0;
+				foreach ($pconfig['subnets'] as $subnet) {
+					$address_name = "subnet_address" . $counter;
+					$bits_name = "subnet_bits" . $counter;
+					list($address, $subnet) = explode("/", $subnet);
+?>
+					<tr>
+						<td>
+							<input autocomplete="off" name="<?= $address_name ?>" type="text" class="formfldalias" id="<?= $address_name ?>" size="30" value="<?= htmlentities($address) ?>" />
+						</td>
+						<td>
+							<select name="<?= $bits_name ?>" class="formselect" id="<?= $bits_name ?>">
+							<option value="">
+							<?php for ($i = 128; $i >= 0; $i -= 1) { ?>
+								<option value="<?= $i ?>" <?= ("$subnet" === "$i") ? "selected='selected'" : "" ?>><?= $i ?></option>
+							<?php } ?>
+							</select>
+						</td>
+						<td>
+							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+						</td>
+					</tr>
+<?php
+					$counter += 1;
+				}
+?>
+				</tbody>
+				</table>
+				<script type="text/javascript">
+					field_counter_js = 2;
+					totalrows = <?= $counter ?>;
+				</script>
+				<div id="addrowbutton">
+					<a onclick="javascript:addRowTo('maintable'); add_alias_control(); return false;" href="#"><!--
+					--><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></a>
+				</div>
+			</td>
+			</tr>
+
+			<tr>
 			<td colspan="2" valign="top" class="listtopic">DNS</td>
 			</tr>
 
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
-				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
+				<input name="radns1" type="text" class="formfldalias" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
+				<input name="radns2" type="text" class="formfldalias" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
@@ -294,7 +402,9 @@ display_top_tabs($tab_array);
 </tr>
 </table>
 </form>
+
 <script language="JavaScript">
+//<![CDATA[
 	jQuery(function ($) {
 		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");
 		var $triggered_checkboxes = $("#radns1, #radns2, #radomainsearchlist");
@@ -310,7 +420,20 @@ display_top_tabs($tab_array);
 		$rasamednsasdhcp6.bind("change", onchange);
 		onchange();
 	});
+
+	var addressarray = <?= json_encode(get_alias_list("host", "network", "openvpn", "urltable")); ?>;
+	var objAlias = [];
+	function createAutoSuggest () {
+		<?php for ($i = 0; $i < $counter; $i += 1) { ?>
+			objAlias.push(new AutoSuggestControl(document.getElementById('subnet_address<?= $i ?>'), new StateSuggestions(addressarray)));
+		<?php } ?>
+		new AutoSuggestControl(document.getElementById('radns1'), new StateSuggestions(addressarray));
+		new AutoSuggestControl(document.getElementById('radns2'), new StateSuggestions(addressarray));
+	}
+	setTimeout(createAutoSuggest, 500);
+//]]>
 </script>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

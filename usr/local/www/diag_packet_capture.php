@@ -77,6 +77,23 @@ if ($_POST) {
 	$fam = $_POST['fam'];
 	$proto = $_POST['proto'];
 
+	if (!array_key_exists($interface, $interfaces)) {
+		$input_errors[] = gettext("Invalid interface.");
+	}
+	if ($fam !== "" && $fam !== "ip" && $fam !== "ip6") {
+		$input_errors[] = gettext("Invalid address family.");
+	}
+	if ($proto !== ""      &&
+	    $proto !== "icmp"  &&
+	    $proto !== "icmp6" &&
+	    $proto !== "tcp"   &&
+	    $proto !== "udp"   &&
+	    $proto !== "arp"   &&
+	    $proto !== "carp"  &&
+	    $proto !== "esp") {
+		$input_errors[] = gettext("Invalid protocol.");
+	}
+	
 	if ($host != "") {
 		if (!is_subnet($host) && !is_ipaddr($host)) {
 			$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $host);
@@ -178,6 +195,7 @@ include("fbegin.inc");
 				<?php echo $ifacename;?>
 				</option>
 			<?php endforeach; ?>
+				<option value="invalidinterface">invalidinterface</option>
 			</select>
 			<br/><?=gettext("Select the interface on which to capture traffic.");?>
 			</td>
@@ -243,10 +261,10 @@ include("fbegin.inc");
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Level of Detail");?></td>
 			<td width="83%" class="vtable">
 			<select name="detail" type="text" class="formselect" id="detail" size="1">
-				<option value="-q" <?php if ($detail == "-q") echo "selected"; ?>><?=gettext("Normal");?></option>
-				<option value="-v" <?php if ($detail == "-v") echo "selected"; ?>><?=gettext("Medium");?></option>
-				<option value="-vv" <?php if ($detail == "-vv") echo "selected"; ?>><?=gettext("High");?></option>
-				<option value="-vv -e" <?php if ($detail == "-vv -e") echo "selected"; ?>><?=gettext("Full");?></option>
+				<option value="normal" <?php if ($detail == "normal") echo "selected"; ?>><?=gettext("Normal");?></option>
+				<option value="medium" <?php if ($detail == "medium") echo "selected"; ?>><?=gettext("Medium");?></option>
+				<option value="high"   <?php if ($detail == "high")   echo "selected"; ?>><?=gettext("High");?></option>
+				<option value="full"   <?php if ($detail == "full")   echo "selected"; ?>><?=gettext("Full");?></option>
 			</select>
 			<br/><?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br/><b>" .
 					gettext("Note:") . "</b> " .
@@ -294,7 +312,7 @@ include("fbegin.inc");
 <?php
 		echo "<font face='terminal' size='2'>";
 		if ($processisrunning == true)
-				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
+			echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
 
 		if ($do_tcpdump) {
 			$matches = array();
@@ -332,14 +350,29 @@ include("fbegin.inc");
 				$matchstr = implode($matches, " and ");
 				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
 				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $snaplen -w $fp$fn $matchstr");
-				// echo "/usr/sbin/tcpdump -i $selectedif $searchcount -s $snaplen -w $fp$fn $matchstr";
 			} else {
 				//action = stop
 				echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured:") . "</strong><br/>");
 ?>
 				<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 <?php
-				system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");
+				$detail_args = "";
+				switch ($detail) {
+				case "full":
+					$detail_args = "-vv -e";
+					break;
+				case "high":
+					$detail_args = "-vv";
+					break;
+				case "medium":
+					$detail_args = "-v";
+					break;
+				case "normal":
+				default:
+					$detail_args = "-q";
+					break;
+				}
+				system("/usr/sbin/tcpdump $disabledns $detail_args -r $fp$fn");
 
 				conf_mount_ro();
 ?>

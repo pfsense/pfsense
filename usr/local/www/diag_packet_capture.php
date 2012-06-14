@@ -52,56 +52,86 @@ $count = 100;//default number of packets to capture
 $fams = array('ip', 'ip6');
 $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp');
 
+$input_errors = array();
+
 if ($_POST) {
-	$do_tcpdump = true;
 	$host = $_POST['host'];
 	$selectedif = $_POST['interface'];
 	$count = $_POST['count'];
-	$packetlength = $_POST['snaplen'];
+	$snaplen = $_POST['snaplen'];
 	$port = $_POST['port'];
 	$detail = $_POST['detail'];
 	$fam = $_POST['fam'];
 	$proto = $_POST['proto'];
 
-	conf_mount_rw();
-
-	if ($_POST['dnsquery']) {
-		//if dns lookup is checked
-		$disabledns = "";
+	if ($host != "") {
+		if (!is_subnet($host) && !is_ipaddr($host)) {
+			$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $host);
+		}
+	}
+	if ($port != "") {
+		if (!is_port($port)) {
+			$input_errors[] = gettext("Invalid value specified for port.");
+		}
+	}
+	if ($snaplen == "") {
+		$snaplen = 0;
 	} else {
-		//if dns lookup is unchecked
-		$disabledns = "-n";
+		if (!is_numeric($snaplen) || $snaplen < 0) {
+			$input_errors[] = gettext("Invalid value specified for packet length.");
+		}
+	}
+	if ($count == "") {
+		$count = 0;
+	} else {
+		if (!is_numeric($count) || $count < 0) {
+			$input_errors[] = gettext("Invalid value specified for packet count.");
+		}
 	}
 
-	if ($_POST['startbtn'] != "" ) {
-		$action = gettext("Start");
+	if (!count($input_errors)) {
+		$do_tcpdump = true;
 
-		//delete previous packet capture if it exists
-		if (file_exists($fp.$fn))
-			unlink ($fp.$fn);
+		conf_mount_rw();
 
-	} elseif ($_POST['stopbtn']!= "") {
-		$action = gettext("Stop");
-		$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
-
-		//explode processes into an array, (delimiter is new line)
-		$processes_running_array = explode("\n", $processes_running);
-
-		//kill each of the packetcapture processes
-		foreach ($processes_running_array as $process) {
-			$process_id_pos = strpos($process, ' ');
-			$process_id = substr($process, 0, $process_id_pos);
-			exec("kill $process_id");
+		if ($_POST['dnsquery']) {
+			//if dns lookup is checked
+			$disabledns = "";
+		} else {
+			//if dns lookup is unchecked
+			$disabledns = "-n";
 		}
 
-	} elseif ($_POST['downloadbtn']!= "") {
-		//download file
-		$fs = filesize($fp.$fn);
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=$fn");
-		header("Content-Length: $fs");
-		readfile($fp.$fn);
-		exit;
+		if ($_POST['startbtn'] != "" ) {
+			$action = gettext("Start");
+
+			//delete previous packet capture if it exists
+			if (file_exists($fp.$fn))
+				unlink ($fp.$fn);
+
+		} elseif ($_POST['stopbtn']!= "") {
+			$action = gettext("Stop");
+			$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep {$fn} | /usr/bin/egrep -v '(pflog|grep)'"));
+
+			//explode processes into an array, (delimiter is new line)
+			$processes_running_array = explode("\n", $processes_running);
+
+			//kill each of the packetcapture processes
+			foreach ($processes_running_array as $process) {
+				$process_id_pos = strpos($process, ' ');
+				$process_id = substr($process, 0, $process_id_pos);
+				exec("kill $process_id");
+			}
+
+		} elseif ($_POST['downloadbtn']!= "") {
+			//download file
+			$fs = filesize($fp.$fn);
+			header("Content-Type: application/octet-stream");
+			header("Content-Disposition: attachment; filename=$fn");
+			header("Content-Length: $fs");
+			readfile($fp.$fn);
+			exit;
+		}
 	}
 } else {
 	$do_tcpdump = false;
@@ -114,6 +144,8 @@ include("head.inc"); ?>
 include("fbegin.inc");
 ?>
 
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr><td>
 	<form action="diag_packet_capture.php" method="post" name="iform" id="iform">
@@ -125,24 +157,25 @@ include("fbegin.inc");
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 			<td width="83%" class="vtable">
 			<select name="interface">
-<?php
-			$interfaces = get_configured_interface_with_descr();
-			if (isset($config['ipsec']['enable']))
-				$interfaces['ipsec'] = "IPsec";
-			foreach (array('server', 'client') as $mode) {
-				if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-					foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-						if (!isset($setting['disable'])) {
-							$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+			<?php
+				$interfaces = get_configured_interface_with_descr();
+				if (isset($config['ipsec']['enable']))
+					$interfaces['ipsec'] = "IPsec";
+				foreach (array('server', 'client') as $mode) {
+					if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+						foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+							if (!isset($setting['disable'])) {
+								$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+							}
 						}
 					}
 				}
-			}
-			foreach ($interfaces as $iface => $ifacename): ?>
-			<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
-			<?php echo $ifacename;?>
-			</option>
-			<?php endforeach;?>
+			?>
+			<?php foreach ($interfaces as $iface => $ifacename): ?>
+				<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
+				<?php echo $ifacename;?>
+				</option>
+			<?php endforeach; ?>
 			</select>
 			<br/><?=gettext("Select the interface on which to capture traffic.");?>
 			</td>
@@ -296,8 +329,8 @@ include("fbegin.inc");
 			if ($action == gettext("Start")) {
 				$matchstr = implode($matches, " and ");
 				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
-				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $matchstr");
-				// echo "/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $matchstr";
+				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $snaplen -w $fp$fn $matchstr");
+				// echo "/usr/sbin/tcpdump -i $selectedif $searchcount -s $snaplen -w $fp$fn $matchstr";
 			} else {
 				//action = stop
 				echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured:") . "</strong><br/>");

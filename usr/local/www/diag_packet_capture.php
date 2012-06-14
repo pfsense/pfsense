@@ -54,6 +54,19 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp');
 
 $input_errors = array();
 
+$interfaces = get_configured_interface_with_descr();
+if (isset($config['ipsec']['enable']))
+	$interfaces['ipsec'] = "IPsec";
+foreach (array('server', 'client') as $mode) {
+	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+			if (!isset($setting['disable'])) {
+				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+			}
+		}
+	}
+}
+
 if ($_POST) {
 	$host = $_POST['host'];
 	$selectedif = $_POST['interface'];
@@ -136,6 +149,7 @@ if ($_POST) {
 } else {
 	$do_tcpdump = false;
 }
+
 include("head.inc"); ?>
 
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
@@ -158,18 +172,6 @@ include("fbegin.inc");
 			<td width="83%" class="vtable">
 			<select name="interface">
 			<?php
-				$interfaces = get_configured_interface_with_descr();
-				if (isset($config['ipsec']['enable']))
-					$interfaces['ipsec'] = "IPsec";
-				foreach (array('server', 'client') as $mode) {
-					if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-						foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-							if (!isset($setting['disable'])) {
-								$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
-							}
-						}
-					}
-				}
 			?>
 			<?php foreach ($interfaces as $iface => $ifacename): ?>
 				<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>

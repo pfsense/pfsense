@@ -5682,6 +5682,16 @@ conceived.
 			<apn value="internet.t-2.net"/>
 		</gsm>
 	</provider>
+	<provider>
+		<name>Tusmobil Internet</name>
+		<gsm>
+			<network-id mcc="293" mnc="70"/>
+			<apn value="internet.tusmobil.si">
+				<username>tusmobil</username>
+				<password>internet</password>
+			</apn>
+		</gsm>
+	</provider>
 </country>
 
 <!-- Slovakia -->

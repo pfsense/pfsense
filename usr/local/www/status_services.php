@@ -62,6 +62,9 @@ function get_pkg_descr($package_name) {
 
 if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'radvd':
+			services_radvd_configure();
+			break;
 		case 'captiveportal':
 			$zone = $_GET['zone'];
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
@@ -116,6 +119,9 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 
 if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'radvd':
+			services_radvd_configure();
+			break;
 		case 'captiveportal':
 			$zone = $_GET['zone'];
 			captiveportal_init_webgui_zonename($zone);
@@ -165,6 +171,9 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 /* stop service */
 if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
 	switch($_GET['service']) {
+		case 'radvd':
+			killbypid("{$g['varrun_path']}/radvd.pid");
+			break;
 		case 'captiveportal':
 			$zone = $_GET['zone'];
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
@@ -260,6 +269,13 @@ else
 /*    Add services that are in the base.
  *
  */
+if(is_radvd_enabled()) {
+	$pconfig = array();
+	$pconfig['name'] = "radvd";
+	$pconfig['description'] = gettext("Router Advertisement Daemon");
+	$services[] = $pconfig;
+}
+
 if(isset($config['dnsmasq']['enable'])) {
 	$pconfig = array();
 	$pconfig['name'] = "dnsmasq";

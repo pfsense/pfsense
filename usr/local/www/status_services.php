@@ -396,11 +396,11 @@ if (count($services) > 0) {
 		switch ($service['name']) {
 			case "openvpn":
 				$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
-				if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
-					$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
 				break;
 			case "captiveportal":
 				$running = is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal.pid");
+				if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
+					$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
 				break;
 			default:
 				$running = is_service_running($service['name']);

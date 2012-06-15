@@ -83,14 +83,7 @@ if ($_POST) {
 	if ($fam !== "" && $fam !== "ip" && $fam !== "ip6") {
 		$input_errors[] = gettext("Invalid address family.");
 	}
-	if ($proto !== ""      &&
-	    $proto !== "icmp"  &&
-	    $proto !== "icmp6" &&
-	    $proto !== "tcp"   &&
-	    $proto !== "udp"   &&
-	    $proto !== "arp"   &&
-	    $proto !== "carp"  &&
-	    $proto !== "esp") {
+	if ($proto !== "" && !in_array($proto, $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}
 	

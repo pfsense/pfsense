@@ -186,7 +186,6 @@ switch($_GET['mode']) {
 	case "reinstallpkg":
 		update_status(gettext("Reinstalling package {$_GET['pkg']}"));
 		uninstall_package($_GET['pkg']);
-		update_output_window($static_output);
 	default:
 		$status = install_package(htmlspecialchars($_GET['id']));
 		if($status == -1) {

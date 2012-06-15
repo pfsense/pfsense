@@ -1086,6 +1086,57 @@ function is_dhcpv6_server_enabled()
 	return $dhcpdenable;
 }
 
+/* radvd enabled on any interfaces? */
+function is_radvd_enabled() {
+	global $config;
+
+	if (!is_array($config['dhcpdv6']))
+		$config['dhcpdv6'] = array();
+
+	$dhcpdv6cfg = $config['dhcpdv6'];
+	$Iflist = get_configured_interface_list();
+
+	/* handle manually configured DHCP6 server settings first */
+	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
+			continue;
+
+		if(!isset($dhcpv6ifconf['ramode']))
+			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
+
+		if($dhcpv6ifconf['ramode'] == "disabled")
+			continue;
+
+		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+
+		return true;
+	}
+
+	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
+	foreach ($Iflist as $if => $ifdescr) {
+		if(!isset($config['interfaces'][$if]['track6-interface']))
+			continue;
+		if(!isset($config['interfaces'][$if]['enable']))
+			continue;
+
+		$ifcfgipv6 = get_interface_ipv6($if);
+		if(!is_ipaddrv6($ifcfgipv6))
+			continue;
+
+		$ifcfgsnv6 = get_interface_subnetv6($if);
+		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+
+		if(!is_ipaddrv6($subnetv6))
+			continue;
+
+		return true;
+	}
+
+	return false;
+}
+
 /* Any PPPoE servers enabled? */
 function is_pppoe_server_enabled() {
 	global $config;

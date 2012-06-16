@@ -1,6 +1,6 @@
 /* $Id$ */
 /*
-    functions.inc
+    ticker.js
     Copyright (C) 2012 Marcello Coutinho
     Copyright (C) 2012 Carlos Cesario - carloscesario@gmail.com
     All rights reserved.
@@ -57,3 +57,17 @@ jQuery(document).ready(function() {
         jQuery(this).css('cursor','pointer');
     });
 });
+
+function alias_popup(alias_id,theme,loading) {
+	domTT_update('ttalias_'+alias_id,"<a><img src='/themes/"+theme+"/images/misc/loader.gif'>"+loading+"</a>");
+	jQuery.ajax({
+		type: 'post',
+		cache: false,
+		url: "/index.php",
+		data: {aliasid:alias_id, act:'alias_info_popup'},
+		success: function(response) {
+			//alert('<div>'+response.match(/<h1>.*<\/table>/i)+'<div>');
+			domTT_update('ttalias_'+alias_id,'<div>'+response.match(/<h1>.*<\/table>/i)+'<div>');
+			}
+		});
+}

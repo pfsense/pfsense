@@ -141,6 +141,7 @@ switch($_GET['mode']) {
 		update_output_window(file_get_contents("/tmp/pkg_mgr_{$id}.log"));
 		break;
 	case "reinstallxml":
+	case "reinstallpkg":
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		if (install_package(htmlspecialchars($_GET['pkg'])) < 0) {
 			update_status(gettext("Package reinstallation failed."));
@@ -183,10 +184,6 @@ switch($_GET['mode']) {
 		update_output_window($static_output);
 		filter_configure();
 		break;
-	case "reinstallpkg":
-		update_status(gettext("Reinstalling package {$_GET['pkg']}"));
-		uninstall_package($_GET['pkg']);
-		update_output_window($static_output);
 	default:
 		$status = install_package(htmlspecialchars($_GET['id']));
 		if($status == -1) {

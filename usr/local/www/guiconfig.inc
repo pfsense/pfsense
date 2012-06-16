@@ -1014,70 +1014,102 @@ function add_package_tabs($tabgroup, & $tab_array) {
         }
 }
 
-function rule_popup($src,$srcport,$dst,$dstport){
+function alias_info_popup($alias_id){
 	global $config;
+	$maxlength = 60;
+	$close_title="title='".gettext('move mouse out this alias to hide')."'";
+	if (is_array($config['aliases']['alias'][$alias_id])){
+		$alias_name=$config['aliases']['alias'][$alias_id];
+		$alias_objects_with_details = "<table width='100%' border='0' cellpadding='2' cellspacing='0'>";
+		if ($alias_name['url']) {
+			exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
+			$counter=preg_replace("/\D/","",$total_entries[0]);
+			exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+			$alias_objects_with_details .= "<tr><td colspan='3' $close_title class='vncell'>{$alias_name['url']}</td></tr>";
+			$x=0;
+			foreach ($alias_addresses as $alias_ports_address ){
+				switch ($x){
+					case 0:
+						$x++;
+						$alias_objects_with_details .= "<tr><td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+						break;
+					case 1:
+						$x++;
+						$alias_objects_with_details .= "<td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+						break;
+					default:
+						$x=0;
+						$alias_objects_with_details .= "<td  $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td><tr>";
+						break;
+					}
+				}
+				for ($y=$x;$y<=$x;$y++){
+					$alias_objects_with_details .= "<td $close_title class='vncell' width='33%'>&nbsp;</td>";
+					}
+				if ($x > 0)
+					$alias_objects_with_details .= "</tr>";
+				if ($counter > 10002){
+					$alias_objects_with_details .= "<tr><td colspan='3'> listing only first 10k items</td><tr>";
+				}
+			}
+		else{
+			$alias_addresses = explode (" ", $alias_name['address']);
+			$alias_details = explode ("||", $alias_name['detail']);
+			$counter=0;
+			foreach($alias_addresses as $alias_ports_address)
+				{
+				$alias_objects_with_details .= "<tr><td $close_title width='5%' class='vncell' style='background: #FFFFFF;color: #000000;'>{$alias_addresses[$counter]}</td>";
+				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
+				if ($alias_details[$counter] != "" && $alias_detail_default === False)
+					$alias_objects_with_details .="<td $close_title width='95%' class='vncell' style='background: #FFFFFF;color: #000000;'>{$alias_details[$counter]}</td>";
+				else
+					$alias_objects_with_details .="<td $close_title width='95%' class='vncell' style='background: #FFFFFF;color: #000000;'>&nbsp;</td>";
+				$alias_objects_with_details .= "</tr>";
+				$counter++;
+				}
+				
+				}
+		$alias_objects_with_details .="</table>";
+		}
+		$alias_descr_substr = $alias_name['descr'];
+		if ($strlength >= $maxlength)
+			$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
+		$item_text=($counter > 1 ? "items" : "item");
+		$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href='/firewall_aliases_edit.php?id={$alias_id}' title='".gettext('edit this alias')."'>&nbsp;&nbsp;edit </a>";
+		$strlength = strlen ($alias_caption);
+	print "<h1>{$alias_caption}</h1>".$alias_objects_with_details;
+}
+
+function rule_popup($src,$srcport,$dst,$dstport){
+	global $config,$g;
 	$aliases_array = array();
 	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
-	{
-		$span_begin = "";
-                $alias_src_span_begin = "";
-                $alias_src_span_end = "";
-                $alias_src_port_span_begin = "";
-                $alias_src_port_span_end = "";
-                $alias_dst_span_begin = "";
-                $alias_dst_span_end = "";
-                $alias_dst_port_span_begin = "";
-                $alias_dst_port_span_end = "";
-                $alias_content_text = "";
-        	foreach($config['aliases']['alias'] as $alias_name)
-        	{
-                	$alias_addresses = explode (" ", $alias_name['address']);
-                	$alias_details = explode ("||", $alias_name['detail']);
-                	$alias_objects_with_details = "";
-                	$counter = 0;
-			if ($alias_name['url']) {
-				$alias_objects_with_details .= $alias_name['url'] . "<br/>";
-			}
-                	foreach($alias_addresses as $alias_ports_address)
-                	{
-                        	$alias_objects_with_details .= $alias_addresses[$counter];
-                        	$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
-                        	if ($alias_details[$counter] != "" && $alias_detail_default === False){
-                                	$alias_objects_with_details .=" - " . $alias_details[$counter];
-                        	}
-                        	$alias_objects_with_details .= "<br>";
-                        	$counter++;
-                	}
-                	//max character length for caption field
-                	$maxlength = 60;
-
-                	$alias_descr_substr = $alias_name['descr'];
-                	$alias_content_text = htmlspecialchars($alias_objects_with_details);
-                	$alias_caption = htmlspecialchars($alias_descr_substr . ":");
-                	$strlength = strlen ($alias_caption);
-                	if ($strlength >= $maxlength)
-                        	$alias_caption = substr($alias_caption, 0, $maxlength) . "...";
-
-			$alias_caption_escaped = str_replace("'", "\'", $alias_caption);
-			$alias_content_escaped = str_replace("'", "\'", $alias_content_text);
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$alias_caption_escaped</h1><p>$alias_content_escaped</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
-
-                	if ($alias_name['name'] == $src)
-                        	$alias_src_span_begin = $span_begin;
-                	if ($alias_name['name'] == $srcport)
-                        	$alias_src_port_span_begin = $span_begin;
-                	if ($alias_name['name'] == $dst)
-                        	$alias_dst_span_begin = $span_begin;
-                	if ($alias_name['name'] == $dstport)
-                        	$alias_dst_port_span_begin = $span_begin;
-        	}
-        	$descriptions = array ();
-        	$descriptions['src'] = $alias_src_span_begin;
-        	$descriptions['srcport'] = $alias_src_port_span_begin;
-        	$descriptions['dst'] = $alias_dst_span_begin;
-        	$descriptions['dstport'] = $alias_dst_port_span_begin;
-
-        	return $descriptions;
+		{
+		$descriptions = array ();
+        foreach($config['aliases']['alias'] as $alias_id=>$alias_name){
+				$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\'> " .gettext("loading...")."</a>";
+				switch ($alias_name['type']){
+					case "port":
+						$width="250";
+						break;
+					case "urltable":
+						$width="500";
+						break;
+					default:
+						$width="350";
+						break;
+					}
+				$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g["theme"]}','".gettext('loading...')."');\"  domTT_mouseout(this, close);\"><U>";
+				if ($alias_name['name'] == $src)
+	        		$descriptions['src']= $span_begin;
+	        	if ($alias_name['name'] == $srcport)
+	        		$descriptions['srcport'] = $span_begin;
+	        	if ($alias_name['name'] == $dst )
+	        		$descriptions['dst'] = $span_begin;
+	        	if ($alias_name['name'] == $dstport)
+	        		$descriptions['dstport'] =  $span_begin;
+	       		}
+        return $descriptions;
   	}
 }
 

@@ -294,11 +294,6 @@ if (isset($_POST['del_x'])) {
 $closehead = false;
 
 include("head.inc");
-
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
 <link rel="stylesheet" href="/javascript/chosen/chosen.css" />
 </head>
@@ -410,7 +405,7 @@ if($_REQUEST['undodrag']) {
 		<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0"></td>
-			<td class="listlr" style="background-color: #E0E0E0"></td>
+			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
 <?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_antilockout");
 ?>
@@ -421,7 +416,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0"><?= $alports ?></td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
-			<td class="listr" style="background-color: #E0E0E0"></td>
+			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Anti-Lockout Rule");?></td>
 			<td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
@@ -442,7 +437,7 @@ if($_REQUEST['undodrag']) {
                 <tr valign="top" id="frrfc1918">
                   <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
-                  <td class="listlr" style="background-color: #E0E0E0"></td>
+                  <td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
                   <td class="listr" style="background-color: #E0E0E0">*</td>
                   <td class="listr" style="background-color: #E0E0E0"><?=gettext("RFC 1918 networks");?></td>
                   <td class="listr" style="background-color: #E0E0E0">*</td>
@@ -450,7 +445,7 @@ if($_REQUEST['undodrag']) {
                   <td class="listr" style="background-color: #E0E0E0">*</td>
                   <td class="listr" style="background-color: #E0E0E0">*</td>
 		<td class="listr" style="background-color: #E0E0E0">*</td>
-	 		 <td class="listr" style="background-color: #E0E0E0"></td>
+	 		 <td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
                   <td class="listbg"><?=gettext("Block private networks");?></td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
@@ -470,7 +465,7 @@ if($_REQUEST['undodrag']) {
                 <tr valign="top" id="frrfc1918">
                   <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
-                  <td class="listlr" style="background-color: #E0E0E0"></td>
+                  <td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
                   <td class="listr" style="background-color: #E0E0E0">*</td>
                   <td class="listr" style="background-color: #E0E0E0"><?=gettext("Reserved/not assigned by IANA");?></td>
                   <td class="listr" style="background-color: #E0E0E0">*</td>
@@ -697,7 +692,7 @@ if($_REQUEST['undodrag']) {
 				}
 				?>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-                    <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']; else echo ""; ?><?=$textse;?>
+                    <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']."&nbsp;"; else echo "&nbsp;"; ?><?=$textse;?>
                   </td>
 <?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");

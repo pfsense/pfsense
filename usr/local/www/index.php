@@ -58,9 +58,12 @@ require_once('guiconfig.inc');
 require_once('notices.inc');
 
 if(isset($_REQUEST['closenotice'])){
-	include("functions.inc");
 	close_notice($_REQUEST['closenotice']);
 	echo get_menu_messages();
+	exit;
+}
+if ($_REQUEST['act'] == 'alias_info_popup' && !preg_match("/\D/",$_REQUEST['aliasid'])){
+	alias_info_popup($_REQUEST['aliasid']);
 	exit;
 }
 

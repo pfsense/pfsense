@@ -29,10 +29,10 @@
 
 */
 
-require("globals.inc");
-require("functions.inc");
-require("config.lib.inc");
-require("config.inc");
+require_once("globals.inc");
+require_once("functions.inc");
+require_once("config.lib.inc");
+require_once("config.inc");
 
 $debug = false;
 

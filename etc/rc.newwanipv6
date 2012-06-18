@@ -118,7 +118,7 @@ system_resolvconf_generate(true);
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
 
 /* check native IPv6 interface tracking */
-switch($config['interfaces'][$interface]['type6']) {
+switch($config['interfaces'][$interface]['ipaddrv6']) {
 	case "dhcp6":
 		foreach($config['interfaces'] as $iftrackname => $iftrack) {
 			if($iftrack['track6-interface'] == $interface) {

@@ -1948,10 +1948,12 @@ function interfaces_vips_configure($interface = "") {
 }
 
 function interface_ipalias_configure(&$vip) {
-
 	if ($vip['mode'] == "ipalias") {
 		$if = get_real_interface($vip['interface']);
-		mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias");
+		$af = "inet";
+		if(is_ipaddrv6($vip['subnet']))
+			$af = "inet6";
+		mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias");
 	}
 }
 

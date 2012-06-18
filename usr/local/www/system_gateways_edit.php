@@ -150,13 +150,22 @@ if ($_POST) {
 	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
-	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		/* check if we can figure out the address family */
-		if(is_ipaddrv6($_POST['monitor']) && (interface_has_gatewayv6($_POST['interface'])) && $_POST['gateway'] != "dynamic") {
-			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used with a IPv4 gateway'.");
+	/* only allow correct IPv4 and IPv6 gateway addresses */
+	if (($_POST['gateway'] <> "") && is_ipaddr($_POST['gateway']) && $_POST['gateway'] != "dynamic") {
+		if(is_ipaddrv6($_POST['gateway']) && ($_POST['ipprotocol'] == "inet")) {
+			$input_errors[] = gettext("The IPv6 gateway address '{$_POST['gateway']}' can not be used as a IPv4 gateway'.");
 		}
-		if(is_ipaddrv4($_POST['monitor']) && (interface_has_gateway($_POST['interface'])) && $_POST['gateway'] != "dynamic") {
-			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used with a IPv4 gateway'.");
+		if(is_ipaddrv4($_POST['gateway']) && ($_POST['ipprotocol'] == "inet6")) {
+			$input_errors[] = gettext("The IPv4 gateway address '{$_POST['gateway']}' can not be used as a IPv6 gateway'.");
+		}
+	}
+	/* only allow correct IPv4 and IPv6 monitor addresses */
+	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
+		if(is_ipaddrv6($_POST['monitor']) && ($_POST['ipprotocol'] == "inet")) {
+			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used on a IPv4 gateway'.");
+		}
+		if(is_ipaddrv4($_POST['monitor']) && ($_POST['ipprotocol'] == "inet6")) {
+			$input_errors[] = gettext("The IPv4 monitor address '{$_POST['monitor']}' can not be used on a IPv6 gateway'.");
 		}
 	}
 

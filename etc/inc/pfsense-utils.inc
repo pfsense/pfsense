@@ -2431,6 +2431,7 @@ function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
 function get_locale_list() {
 	$locales = array(
 		"en_US" => gettext("English"),
+		"pt_BR" => gettext("Portuguese (Brazil)"),
 	);
 	asort($locales);
 	return $locales;

@@ -77,7 +77,7 @@ if ($_POST) {
 	$fam = $_POST['fam'];
 	$proto = $_POST['proto'];
 
-	if (!array_key_exists($interface, $interfaces)) {
+	if (!array_key_exists($selectedif, $interfaces)) {
 		$input_errors[] = gettext("Invalid interface.");
 	}
 	if ($fam !== "" && $fam !== "ip" && $fam !== "ip6") {

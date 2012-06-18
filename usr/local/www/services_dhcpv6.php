@@ -819,8 +819,8 @@ display_top_tabs($tab_array);
 				"forwarder"); ?></a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
 				"be assigned to clients by the DHCP server."); ?><br>
 				<br>
-				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcp_leases.php"><?=gettext("Status: " .
-				"DHCP leases"); ?></a> <?=gettext("page."); ?><br>
+				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcpv6_leases.php"><?=gettext("Status: " .
+				"DHCPv6 leases"); ?></a> <?=gettext("page."); ?><br>
 				</span></p>
 			</td>
 			</tr>

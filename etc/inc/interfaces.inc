@@ -3345,10 +3345,14 @@ function interface_dhcpv6_configure($interface = "wan") {
 	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
-	mwexec("/sbin/ifconfig {$wanif} inet6 defroute_rtadv");
+
+	/* run a filter configure so that the filter rules allow traffic before we launch the client */
+	filter_configure();
+	sleep(3);
 
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
+	sleep(1);
 	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
 	if(!empty($out)) {
 		foreach($out as $line) {
@@ -3363,10 +3367,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 			}
 		}
 	}
-	/* sleep a few seconds before returning to give the client some time
-	 * to configure a lan interface with a prefix */
-	sleep(5);
-
+	/* worst case is that the rc.newwanipv6 handles setting up the track6 interface */
 	if($wancfg['ippaddrv6'] != "slaac") {
 		/* configure dependent interfaces */
 		foreach($iflist as $if => $ifname) {

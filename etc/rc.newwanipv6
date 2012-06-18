@@ -122,7 +122,7 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 	case "dhcp6":
 		foreach($config['interfaces'] as $iftrackname => $iftrack) {
 			if($iftrack['track6-interface'] == $interface) {
-				log_error("interface {%iftrackname} depends on {$interface}, configuring");
+				log_error("interface {$iftrackname} depends on {$interface}, configuring");
 				interface_track6_configure($iftrackname);
 			}
 		}

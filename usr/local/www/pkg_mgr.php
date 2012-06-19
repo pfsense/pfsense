@@ -190,7 +190,7 @@ include("head.inc");
 										}
 					?>
 					<tr valign="top">
-						<td class="listlr" <?=domTT_title(gettext("Click on package name to access it's website."))?>>
+						<td class="listlr" <?=domTT_title(gettext("Click on package name to access its website."))?>>
 							<A target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
 						</td>
 						<td class="listr">
@@ -214,7 +214,7 @@ include("head.inc");
 						<?php if ($g['disablepackagehistory']){?>
 							<td	class="listr">
 						<?php }else{?>
-							<td class="listr" <?=domTT_title(gettext("Click ".ucfirst($index['name'])." version to check it's changelog."))?>>
+							<td class="listr" <?=domTT_title(gettext("Click ".ucfirst($index['name'])." version to check its change log."))?>>
 						<?php }?>
 						<?=$index['status'] ?>
 						<br/>

@@ -188,7 +188,6 @@ include("fbegin.inc");
 				<?php echo $ifacename;?>
 				</option>
 			<?php endforeach; ?>
-				<option value="invalidinterface">invalidinterface</option>
 			</select>
 			<br/><?=gettext("Select the interface on which to capture traffic.");?>
 			</td>

@@ -518,11 +518,12 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			$fetchdir = $g['tmp_path'];
 		}
 
-		/* FreeBSD has no PBI's hosted, so fall back to our own URL for now. (Maybe fail to PC-BSD?) */
-		$arch = php_uname("m");
-		$arch = ($arch == "i386") ? "" : $arch . '/';
-		$rel = get_freebsd_version();
-		$priv_url = "http://files.pfsense.org/packages/{$arch}{$rel}/All/";
+		$osname = php_uname("s");
+		$arch =  php_uname("m");
+		$rel = strtolower(php_uname("r"));
+		if (substr_count($rel, '-') > 1)
+			$rel = substr($rel, 0, strrpos($rel, "-"));
+		$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/All";
 		if (empty($base_url))
 			$base_url = $priv_url;
 		if (substr($base_url, -1) == "/")
@@ -1297,5 +1298,4 @@ function stop_packages() {
 	}
 }
 
-?>
-
+?> 

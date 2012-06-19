@@ -194,7 +194,7 @@ include("head.inc");
 							if (isset($g['disablepackagehistory']))
 									echo "<td class='{$tdclass}'>{$pkgver}</td>";
 							else
-									echo "<td class='{$tdclass}' ".domTT_title(gettext("Click on ".ucfirst($pkg['name'])." version to check it's changelog."),"return").">{$pkgver}</td>";
+									echo "<td class='{$tdclass}' ".domTT_title(gettext("Click on ".ucfirst($pkg['name'])." version to check its change log."),"return").">{$pkgver}</td>";
 							?>
 							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($pkg['name'])." package."))?>>
 									<?=$currentvers[$pkg['name']]['descr'];?>

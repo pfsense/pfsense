@@ -3356,7 +3356,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
 	if(!empty($out)) {
 		foreach($out as $line) {
-			if(stristr($line, "received")) {
+			if((stristr($line, "received")) && (!stristr($line, "unexpected"))) {
 				$parts = explode(" ", $line);
 				if(is_ipaddrv6($parts[3])) {
 					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");

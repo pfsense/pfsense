@@ -284,6 +284,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	flowtable_configure();
 
 	$rules = "";
+	$rules = "{$limitrules}\n";
 	$rules .= "{$aliases} \n";
 	$rules .= "{$gateways} \n";
 	update_filter_reload_status(gettext("Setting up logging information"));

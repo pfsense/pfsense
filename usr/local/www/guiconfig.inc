@@ -1113,7 +1113,7 @@ function rule_popup($src,$srcport,$dst,$dstport){
   	}
 }
 
-$timezone = $syscfg['timezone'];
+$timezone = $config['system']['timezone'];
 if (!$timezone)
 	$timezone = "Etc/UTC";
 

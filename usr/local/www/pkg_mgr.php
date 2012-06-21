@@ -44,7 +44,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$timezone = $syscfg['timezone'];
+$timezone = $config['system']['timezone'];
 if (!$timezone)
 	$timezone = "Etc/UTC";
 

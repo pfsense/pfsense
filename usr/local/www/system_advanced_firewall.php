@@ -203,8 +203,8 @@ include("head.inc");
 var descs=new Array(5);
 descs[0]="<?=gettext("as the name says, it's the normal optimization algorithm");?>";
 descs[1]="<?=gettext("used for high latency links, such as satellite links.  Expires idle connections later than default");?>";
-descs[2]="<?=gettext("expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate connections");?>";
-descs[3]="<?=gettext("tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.");?>";
+descs[2]="<?=gettext("expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections");?>";
+descs[3]="<?=gettext("tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization.");?>";
 
 function update_description(itemnum) {
         document.forms[0].info.value=descs[itemnum];

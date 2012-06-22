@@ -1064,7 +1064,7 @@ function services_igmpproxy_configure() {
         /* kill any running igmpproxy */
         killbyname("igmpproxy");
 
-	if (!is_array($config['igmpproxy']['igmpentry']))
+	if (!is_array($config['igmpproxy']['igmpentry']) || (count($config['igmpproxy']['igmpentry']) == 0))
 		return 1;
 
         $iflist = get_configured_interface_list();

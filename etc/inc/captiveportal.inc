@@ -1564,7 +1564,7 @@ function portal_mac_radius($clientmac,$clientip) {
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {
-	global $config;
+	global $config, $g;
 
 	/* Add rules for traffic shaping
 	 * We don't need to add extra rules since traffic will pass due to the following kernel option

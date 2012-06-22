@@ -127,7 +127,7 @@ if(isset($config['snmpd']['enable'])) {
 	$services[] = $svcconfig;
 }
 
-if (count($config['igmpproxy']['igmpentry']) > 0) {
+if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
 	$svcconfig = array();
 	$svcconfig['name'] = "igmpproxy";
 	$svcconfig['descritption'] = gettext("IGMP proxy");

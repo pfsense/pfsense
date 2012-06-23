@@ -824,7 +824,7 @@ function install_package_xml($pkg) {
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
 				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
-				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
+				exec("find /usr/local/etc/ -name *.conf | grep \"{$pkg}\"",$files);
 				foreach($files as $f) {
 					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
 					if(is_file($pbiconf) || is_link($pbiconf)) {

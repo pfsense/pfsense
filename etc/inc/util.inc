@@ -1815,4 +1815,13 @@ function array_exclude($needle, $haystack) {
 	return $result;
 }
 
+function setup_library_paths() {
+	$current_library_paths = explode(":", exec("/sbin/ldconfig -r | /usr/bin/grep 'search directories' | /usr/bin/awk '{print $3;}'"));
+	$pbi_library_paths = glob("/usr/pbi/*/lib");
+	foreach ($pbi_library_paths as $pbilib) {
+		if (!in_array($pbilib, $current_library_paths))
+			exec("/sbin/ldconfig -m {$pbilib}");
+	}
+}
+
 ?>

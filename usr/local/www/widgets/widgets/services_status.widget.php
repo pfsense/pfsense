@@ -194,7 +194,7 @@ if(isset($_POST['servicestatusfilter'])) {
 		<td class="widgetsubheader">&nbsp;</td>
 	</tr>
 <?php
-$skipservices = explode(",", str_replace(" ", "", $config['widgets']['servicestatusfilter']));
+$skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
 function service_name_compare($a, $b) {
 	if (strtolower($a['name']) == strtolower($b['name']))

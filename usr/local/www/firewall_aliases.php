@@ -171,6 +171,7 @@ include("head.inc");
 	$tab_array[] = array(gettext("IP"),($tab=="ip"? true : false), "/firewall_aliases.php?tab=ip");
 	$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
 	$tab_array[] = array(gettext("Urls"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
+	$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
 	display_top_tabs($tab_array);
 
 	?>
@@ -196,6 +197,9 @@ include("head.inc");
 	  foreach ($a_aliases as $i=> $alias){
 		  unset ($show_alias);
 		  switch ($tab){
+		  	case "all":
+		  	$show_alias= true;
+		  	break;
 			case "ip":
 				if (preg_match("/(host|network)/",$alias["type"]))
 					$show_alias= true;

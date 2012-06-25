@@ -334,7 +334,7 @@ function openvpn_reconfigure($mode, $settings) {
 	$dev_mode = $settings['dev_mode'];
 	$cipher = $settings['crypto'];
 
-	$interface = $settings['interface'];
+	$interface = get_failover_interface($settings['interface']);
 	$ipaddr = $settings['ipaddr'];
 	$ipaddrv6 = $settings['ipaddrv6'];
 
@@ -343,12 +343,14 @@ function openvpn_reconfigure($mode, $settings) {
 	// If "any" interface was selected, local directive will be ommited.
 	if (is_ipaddrv4($ipaddr)) {
 		$iface_ip=$ipaddr;
-	} elseif (is_ipaddrv6($ipaddrv6)) {
-		$iface_ipv6=$ipaddrv6;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
 		}
+	}
+	if (is_ipaddrv6($ipaddrv6)) {
+		$iface_ipv6=$ipaddrv6;
+	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ipv6=get_interface_ipv6($interface);
 		}

@@ -282,6 +282,7 @@ function return_gateways_status($byname = false) {
 			$target = $info[0];
 		else
 			$target = $info[2];
+
 		$status[$target]['monitorip'] = $info[0];
 		$status[$target]['srcip'] = $info[1];
 		$status[$target]['name'] = $info[2];
@@ -291,7 +292,8 @@ function return_gateways_status($byname = false) {
 		$status[$target]['status'] = trim($info[8]);
 	}
 
-	/* tack on any gateways that have monitoring disabled */
+	/* tack on any gateways that have monitoring disabled
+	 * or are down, which could cause gateway groups to fail */
 	$gateways_arr = return_gateways_array();
 	foreach($gateways_arr as $gwitem) {
 		if(isset($gwitem['monitor_disable'])) {
@@ -308,13 +310,23 @@ function return_gateways_status($byname = false) {
 			else
 				$target = $tgtip;
 
-			$status[$target]['monitorip'] = $tgtip;
-			$status[$target]['srcip'] = $srcip;
-			$status[$target]['name'] = $gwitem['name'];
-			$status[$target]['lastcheck'] = date('r');
-			$status[$target]['delay'] = "0.0ms";
-			$status[$target]['loss'] = "0.0%";
-			$status[$target]['status'] = "none";
+			/* failsafe for down interfaces */
+			if($target == "") {
+				$target = $gwitem['name'];
+				$status[$target]['name'] = $gwitem['name'];
+				$status[$target]['lastcheck'] = date('r');
+				$status[$target]['delay'] = "0.0ms";
+				$status[$target]['loss'] = "100.0%";
+				$status[$target]['status'] = "down";
+			} else {
+				$status[$target]['monitorip'] = $tgtip;
+				$status[$target]['srcip'] = $srcip;
+				$status[$target]['name'] = $gwitem['name'];
+				$status[$target]['lastcheck'] = date('r');
+				$status[$target]['delay'] = "0.0ms";
+				$status[$target]['loss'] = "0.0%";
+				$status[$target]['status'] = "none";
+			}
 		}
 	}
 	return($status);
@@ -705,7 +717,6 @@ function return_gateway_groups_array() {
 				
 		unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
 	}
-
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members seperated by tier */
@@ -789,7 +800,10 @@ function return_gateway_groups_array() {
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */
-				break;
+				if(is_array($gateway_groups_array[$group['name']]))
+					break;
+				else
+					log_error("GATEWAYS: We did not find the first tier of the gateway group {$group['name']}! That's odd.");
 			}
 		}
 	}

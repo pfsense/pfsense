@@ -123,6 +123,17 @@ function get_menu_messages(){
 				return ($menu_messages);
 				}
 				
+function dom_title($title_msg,$width){
+	$width=preg_replace("/\D+/","",$width);
+	if (!empty($width)){
+		$width=",'width',$width";
+	}
+	if (!empty($title_msg)){
+		$title_msg=preg_replace("/\s+/"," ",$title_msg);
+        $title_msg=preg_replace("/'/","\'",$title_msg);
+		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 250, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle' $width);\"";
+	}
+}
 /* include all configuration functions */
 require_once("interfaces.inc");
 require_once("gwlb.inc");

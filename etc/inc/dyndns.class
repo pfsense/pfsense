@@ -948,7 +948,8 @@
 				$wan_ip = $this->_checkIP();
 				conf_mount_rw();
 				if ($wan_ip > 0) {
-					$currentTime = time();				  
+					$currentTime = time();
+					notify_all_remote(sprintf(gettext("DynDNS updated IP Address on %s (%s) to %s"), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
 				} else

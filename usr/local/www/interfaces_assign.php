@@ -273,15 +273,9 @@ if ($_GET['act'] == "del") {
 		
 		unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
-		if($id == "lan") {
-			unset($config['interfaces']['lan']);
-			if (is_array($config['dhcpd']))
-				unset($config['dhcpd']['lan']);
-				unset($config['shaper']);
-				unset($config['ezshaper']);
-				unset($config['nat']);
-				system("rm /var/dhcpd/var/db/*");
-        			services_dhcpd_configure();
+		if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
+			unset($config['dhcpd'][$id]);
+			services_dhcpd_configure();
 		}
 
 		if (count($config['filter']['rule']) > 0) {

@@ -247,7 +247,7 @@ if ($DisplayNote) {
 	echo "<br/><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
 }
 
-if ((empty($clients)) && (empty($servers))) {
+if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	echo "No OpenVPN instance defined";
 }
 ?>

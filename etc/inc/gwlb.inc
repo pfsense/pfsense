@@ -240,8 +240,8 @@ EOD;
 			} else {
 				$inetfamily = "-inet";
 			}
-			mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
-				" " . escapeshellarg($gateway['gateway']), true);
+			// mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
+			//	" " . escapeshellarg($gateway['gateway']), true);
 		}
 
 		$apingerconfig .= $alarmscfg;

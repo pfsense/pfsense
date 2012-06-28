@@ -123,6 +123,25 @@ if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
 if ($_POST) {
+	$firstfield = "";
+	$rows = 0;
+
+	$input_errors = array();
+	$reqfields = array();
+	$reqfieldsn = array();
+	foreach ($pkg['fields']['field'] as $field) {
+		if (($field['type'] == 'input') && isset($field['required'])) {
+			if($field['fieldname'])
+				$reqfields[] = $field['fieldname'];
+			if($field['fielddescr'])
+				$reqfieldsn[] = $field['fielddescr'];
+		}
+	}
+	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
+
+	if ($pkg['custom_php_validation_command'])
+		eval($pkg['custom_php_validation_command']);
+
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {
 		    if($pkg['custom_php_command_before_form'] <> "")
@@ -137,7 +156,7 @@ if ($_POST) {
 			eval($pkg['custom_php_resync_config_command']);
 		}
 	} else {
-		if($pkg['custom_add_php_command']) {
+		if(!$input_errors && $pkg['custom_add_php_command']) {
 			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
 			?>
 
@@ -153,97 +172,81 @@ if ($_POST) {
 	}
 
 	// donotsave is enabled.  lets simply exit.
-	if($pkg['donotsave'] <> "") exit;
+	if(empty($pkg['donotsave'])) {
 
-	$firstfield = "";
-	$rows = 0;
-
-	$input_errors = array();
-	$reqfields = array();
-	$reqfieldsn = array();
-	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && isset($field['required'])) {
-			if($field['fieldname'])
-				$reqfields[] = $field['fieldname'];
-			if($field['fielddescr'])	
-				$reqfieldsn[] = $field['fielddescr'];
-		}
-	}
-	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
-
-	if ($pkg['custom_php_validation_command'])
-		eval($pkg['custom_php_validation_command']);
-
-	// store values in xml configration file.
-	if (!$input_errors) {
-		$pkgarr = array();
-		foreach ($pkg['fields']['field'] as $fields) {
-			switch($fields['type']){
-				case "rowhelper":
-					// save rowhelper items.
-					#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
-					$rowhelpername="row";
-					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield)
-						foreach($_POST as $key => $value){
-							if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches))
-								$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']]=$value;
+		// store values in xml configration file.
+		if (!$input_errors) {
+			$pkgarr = array();
+			foreach ($pkg['fields']['field'] as $fields) {
+				switch($fields['type']){
+					case "rowhelper":
+						// save rowhelper items.
+						#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
+						$rowhelpername="row";
+						foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield)
+							foreach($_POST as $key => $value){
+								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches))
+									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']]=$value;
+							}
+						break;
+					default:
+						$fieldname  = $fields['fieldname'];
+						if ($fieldname == "interface_array") {
+							$fieldvalue = $_POST[$fieldname];
+						} elseif (is_array($_POST[$fieldname])) {
+							$fieldvalue = implode(',', $_POST[$fieldname]);
+						} else {
+							$fieldvalue = trim($_POST[$fieldname]);
+							if ($fields['encoding'] == 'base64')
+								$fieldvalue = base64_encode($fieldvalue);
 						}
-					break;
-				default:
-					$fieldname  = $fields['fieldname'];
-					if ($fieldname == "interface_array") {
-						$fieldvalue = $_POST[$fieldname];
-					} elseif (is_array($_POST[$fieldname])) {
-						$fieldvalue = implode(',', $_POST[$fieldname]);
-					} else {
-						$fieldvalue = trim($_POST[$fieldname]);
-						if ($fields['encoding'] == 'base64')
-							$fieldvalue = base64_encode($fieldvalue);
+						if($fieldname)
+							$pkgarr[$fieldname] = $fieldvalue;
 					}
-					if($fieldname)
-						$pkgarr[$fieldname] = $fieldvalue;
-				}
+			}
+
+			if (isset($id) && $a_pkg[$id])
+				$a_pkg[$id] = $pkgarr;
+			else
+				$a_pkg[] = $pkgarr;
+
+			write_config($pkg['addedit_string']);
+			// late running code
+			if($pkg['custom_add_php_command_late'] <> "") {
+			    eval($pkg['custom_add_php_command_late']);
+			}
+
+			if (isset($pkg['filter_rules_needed']))
+				filter_configure();
+
+			// resync the configuration file code if defined.
+			if($pkg['custom_php_resync_config_command'] <> "") {
+			    eval($pkg['custom_php_resync_config_command']);
+			}
+
+			parse_package_templates();
+
+			/* if start_command is defined, restart w/ this */
+			if($pkg['start_command'] <> "")
+			    exec($pkg['start_command'] . ">/dev/null 2&>1");
+
+			/* if restart_command is defined, restart w/ this */
+			if($pkg['restart_command'] <> "")
+			    exec($pkg['restart_command'] . ">/dev/null 2&>1");
+
+			if($pkg['aftersaveredirect'] <> "") {
+			    pfSenseHeader($pkg['aftersaveredirect']);
+			} elseif(!$pkg['adddeleteeditpagefields']) {
+			    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
+			} elseif(!$pkg['preoutput']) {
+			    pfSenseHeader("pkg.php?xml=" . $xml);
+			}
+			exit;
+		} else {
+			$get_from_post = true;
 		}
-
-		if (isset($id) && $a_pkg[$id])
-			$a_pkg[$id] = $pkgarr;
-		else
-			$a_pkg[] = $pkgarr;
-
-		write_config($pkg['addedit_string']);
-		// late running code
-		if($pkg['custom_add_php_command_late'] <> "") {
-		    eval($pkg['custom_add_php_command_late']);
-		}
-
-		if (isset($pkg['filter_rules_needed'])) 
-			filter_configure();
-
-		// resync the configuration file code if defined.
-		if($pkg['custom_php_resync_config_command'] <> "") {
-		    eval($pkg['custom_php_resync_config_command']);
-		}
-
-		parse_package_templates();
-
-		/* if start_command is defined, restart w/ this */
-		if($pkg['start_command'] <> "")
-		    exec($pkg['start_command'] . ">/dev/null 2&>1");
-
-		/* if restart_command is defined, restart w/ this */
-		if($pkg['restart_command'] <> "")
-		    exec($pkg['restart_command'] . ">/dev/null 2&>1");
-
-		if($pkg['aftersaveredirect'] <> "") {
-		    pfSenseHeader($pkg['aftersaveredirect']);
-		} elseif(!$pkg['adddeleteeditpagefields']) {
-		    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
-		} elseif(!$pkg['preoutput']) {
-		    pfSenseHeader("pkg.php?xml=" . $xml);
-		}
+	} elseif (!$input_errors) {
 		exit;
-	} else {
-		$get_from_post = true;
 	}
 }
 

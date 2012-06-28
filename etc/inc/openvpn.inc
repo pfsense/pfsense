@@ -335,8 +335,9 @@ function openvpn_reconfigure($mode, $settings) {
 	$cipher = $settings['crypto'];
 
 	$interface = get_failover_interface($settings['interface']);
-	$ipaddr = $settings['ipaddr'];
-	$ipaddrv6 = $settings['ipaddrv6'];
+	/* we will fill out these variables below. */
+	// $ipaddr = $settings['ipaddr'];
+	// $ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it
@@ -389,9 +390,8 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if (is_ipaddrv4($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	
-	}
-	if (is_ipaddrv6($iface_ipv6)) {
-		// $conf .= "local {$iface_ipv6}\n";	
+	} elseif (is_ipaddrv6($iface_ipv6)) {
+		$conf .= "local {$iface_ipv6}\n";	
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))

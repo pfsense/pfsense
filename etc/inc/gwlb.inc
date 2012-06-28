@@ -1,7 +1,7 @@
 <?php
 /*
   Copyright (C) 2008 Bill Marquette, Seth Mos
-  Copyright (C) 2010 Ermal Luçi
+  Copyright (C) 2010 Ermal Luï¿½i
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -693,7 +693,7 @@ function return_gateway_groups_array() {
 				$dfltgwdown = true;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
-			if (preg_match("/dynamic", $gateways_arr[$upgw]['gateway']))
+			if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
 				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 				log_error("Default gateway down setting {$upgw} as default!");

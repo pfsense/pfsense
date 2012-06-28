@@ -1131,7 +1131,7 @@ if ($savemsg)
 									</option>
 								<?php endforeach; ?>
 							</select> <br>
-							<?=gettext("The interface to which this tap instance will be, " .
+							<?=gettext("The interface to which this tap instance will be " .
 							"bridged. This is not done automatically. You must assign this " .
 							"interface and create the bridge separately. " .
 							"This setting controls which existing IP address and subnet " .
@@ -1144,7 +1144,7 @@ if ($savemsg)
 						<td width="78%" class="vtable">
 							<input name="serverbridge_dhcp_start" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['serverbridge_dhcp_start']);?>">
 							<br>
-							<?=gettext("When using tap mode as multi-point server, " .
+							<?=gettext("When using tap mode as a multi-point server, " .
 							"you may optionally supply a DHCP range to use on the " .
 							"interface to which this tap instance is bridged. " .
 							"If these settings are left blank, DHCP will be passed " .
@@ -1213,7 +1213,7 @@ if ($savemsg)
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the " .
 							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter here the " .
+							"this is a site-to-site VPN, enter the " .
 							"remote LAN here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
 						</td>

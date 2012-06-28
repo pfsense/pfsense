@@ -772,7 +772,7 @@ if ($savemsg)
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the " .
 							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter here the " .
+							"this is a site-to-site VPN, enter the " .
 							"remote LAN here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
@@ -952,4 +952,3 @@ function set_checked($var,& $chk) {
 }
 
 ?>
-

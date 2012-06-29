@@ -126,6 +126,8 @@ PHPMODULES="$PHPMODULES ssh2"
 PHPMODULES="$PHPMODULES pfSense"
 # json
 PHPMODULES="$PHPMODULES json"
+# bcmath
+PHPMODULES="$PHPMODULES bcmath"
 
 PHP_ZEND_MODULES="ioncube_loader"
 PHP_ZEND_MODULES_TS="ioncube_loader_ts"

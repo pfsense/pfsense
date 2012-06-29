@@ -683,8 +683,8 @@ function openvpn_restart($mode, $settings) {
 	if (isset($settings['disable']))
 		return;
 
-	/* Do not start if we are a CARP backup on this vip! */
-	if (strstr($settings['interface'], "_vip") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
+	/* Do not start a client if we are a CARP backup on this vip! */
+	if (($mode == "client") && strstr($settings['interface'], "_vip") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
 		return;
 
 	/* start the new process */

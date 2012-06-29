@@ -120,6 +120,8 @@ PHPMODULES="$PHPMODULES zmq"
 PHPMODULES="$PHPMODULES ssh2"
 # pfSense extensions
 PHPMODULES="$PHPMODULES pfSense"
+# bcmath
+PHPMODULES="$PHPMODULES bcmath"
 
 PHP_ZEND_MODULES="ioncube_loader"
 PHP_ZEND_MODULES_TS="ioncube_loader_ts"

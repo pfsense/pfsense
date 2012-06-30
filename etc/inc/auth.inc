@@ -639,7 +639,7 @@ function ldap_test_connection($authcfg) {
                         $ldapproto = "ldap";
                 else
                         $ldapproto = "ldaps";
-                $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
+                $ldapserver         = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
                 $ldapport           = $authcfg['ldap_port'];
 		if (!empty($ldapport))
 			$ldapserver .= ":{$ldapport}";
@@ -706,7 +706,7 @@ function ldap_test_bind($authcfg) {
                         $ldapproto = "ldap";
                 else
                         $ldapproto = "ldaps";
-                $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
+                $ldapserver         = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
                 $ldapport           = $authcfg['ldap_port'];
 		if (!empty($ldapport))
 			$ldapserver .= ":{$ldapport}";
@@ -769,7 +769,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
                         $ldapproto = "ldap";
                 else
                         $ldapproto = "ldaps";
-                $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
+                $ldapserver         = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
                 $ldapport           = $authcfg['ldap_port'];
 		if (!empty($ldapport))
 			$ldapserver .= ":{$ldapport}";
@@ -876,7 +876,7 @@ function ldap_get_groups($username, $authcfg) {
                         $ldapproto = "ldap";
                 else
                         $ldapproto = "ldaps";
-                $ldapserver         = "{$ldapproto}://{$authcfg['host']}";
+                $ldapserver         = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
                 $ldapport           = $authcfg['ldap_port'];
 		if (!empty($ldapport))
 			$ldapserver .= ":{$ldapport}";
@@ -968,6 +968,10 @@ function ldap_get_groups($username, $authcfg) {
 	return $memberof;
 }
 
+function ldap_format_host($host) {
+	return is_ipaddrv6($host) ? "[$host]" : $host ;
+}
+
 function ldap_backed($username, $passwd, $authcfg) {
 	global $debug, $config;
 	
@@ -991,7 +995,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 			$ldapproto = "ldap";
 		else
 			$ldapproto = "ldaps";
-		$ldapserver         = "{$ldapproto}://{$authcfg['host']}";
+		$ldapserver         = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport	    = $authcfg['ldap_port'];
 		if (!empty($ldapport))
 			$ldapserver .= ":{$ldapport}";

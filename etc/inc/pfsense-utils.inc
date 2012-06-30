@@ -1632,7 +1632,7 @@ function read_header($ch, $string) {
         global $file_size, $fout;
         $length = strlen($string);
         $regs = "";
-        ereg("(Content-Length:) (.*)", $string, $regs);
+        preg_match("/(Content-Length:) (.*)/", $string, $regs);
         if($regs[2] <> "") {
                 $file_size = intval($regs[2]);
         }

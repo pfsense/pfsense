@@ -223,7 +223,7 @@ class smtp_class
 			|| !extension_loaded("openssl"))
 				return(gettext("establishing SSL connections requires the OpenSSL extension enabled"));
 		}
-		if(ereg('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$',$domain))
+		if(preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/',$domain))
 			$ip=$domain;
 		else
 		{

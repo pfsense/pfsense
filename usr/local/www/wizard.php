@@ -3,7 +3,7 @@
 /*
     wizard.php
     Copyright (C) 2004 Scott Ullrich
-    Copyright (C) 2010 Ermal Luçi
+    Copyright (C) 2010 Ermal LuÃ§i
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -353,7 +353,7 @@ function showchange() {
 		    $value = $field['value'];
 		    $name  = $field['name'];
 
-		    $name = ereg_replace(" ", "", $name);
+		    $name = preg_replace("/\s+/", "", $name);
 		    $name = strtolower($name);
 
 		    if($field['bindstofield'] <> "") {
@@ -838,7 +838,7 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 		if($field['type'] <> "submit" and $field['type'] <> "listtopic") {
 			if(!$field['donotdisable'] <> "") {
 				array_push($fieldnames_array, $field['name']);
-				$fieldname = ereg_replace(" ", "", $field['name']);
+				$fieldname = preg_replace("/\s+/", "", $field['name']);
 				$fieldname = strtolower($fieldname);
 				echo "\tdocument.forms[0]." . $fieldname . ".disabled = 1;\n";
 			}
@@ -857,7 +857,7 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 						echo "\t\tcase " . $idcounter . ":\n";
 						$enablefields_split = explode(",", $opt['enablefields']);
 						foreach ($enablefields_split as $efs) {
-							$fieldname = ereg_replace(" ", "", $efs);
+							$fieldname = preg_replace("/\s+/", "", $efs);
 							$fieldname = strtolower($fieldname);
 							if($fieldname <> "") {
 								$onchange = "\t\t\tdocument.forms[0]." . $fieldname . ".disabled = 0; \n";

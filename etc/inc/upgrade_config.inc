@@ -1907,7 +1907,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				// Gateway Groups have to have valid names in pf, old lb pools did not. Clean them up.
-				$group_name = ereg_replace("[^A-Za-z0-9]", "", $lbpool['name'] );
+				$group_name = preg_replace("/[^A-Za-z0-9]/", "", $lbpool['name'] );
 				// If we made and changes, check for collisions and note the change.
 				if ($group_name != $lbpool['name']) {
 					// Make sure the name isn't already in use.

@@ -1632,7 +1632,7 @@ function read_header($ch, $string) {
         global $file_size, $fout;
         $length = strlen($string);
         $regs = "";
-        ereg("(Content-Length:) (.*)", $string, $regs);
+        preg_match("/(Content-Length:) (.*)/", $string, $regs);
         if($regs[2] <> "") {
                 $file_size = intval($regs[2]);
         }
@@ -1686,7 +1686,7 @@ function read_body($ch, $string) {
  */
 function update_output_window($text) {
         global $pkg_interface;
-        $log = ereg_replace("\n", "\\n", $text);
+        $log = preg_replace("/\n/", "\\n", $text);
         if($pkg_interface != "console") {
                 echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
 				echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";	

@@ -122,7 +122,7 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 			/* config is on floppy disk for CD-ROM version */
 			$cfgdevice = $cfgpartition = "fd0";
 			$dmesg = `dmesg -a`;
-			if(ereg("da0", $dmesg) == true) {
+			if(preg_match("/da0/", $dmesg) == true) {
 				$cfgdevice = $cfgpartition = "da0" ;
 				if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
 					/* could not mount, fallback to floppy */

@@ -71,7 +71,7 @@ if($_POST)
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 
-function isBlank( $arg ) { return ereg( "^\s*$", $arg ); }
+function isBlank( $arg ) { return preg_match( "/^\s*$/", $arg ); }
 
 
 // Function: Puts

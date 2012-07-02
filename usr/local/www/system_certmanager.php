@@ -1097,6 +1097,9 @@ function internalca_change() {
 							<?php if (is_ipsec_cert($cert['refid'])): ?>
 							IPsec Tunnel<br/>
 							<?php endif; ?>
+							<?php if (is_captiveportal_cert($cert['refid'])): ?>
+							Captive Portal<br/>
+							<?php endif; ?>
 						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">

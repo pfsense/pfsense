@@ -1473,6 +1473,7 @@ function is_interface_mismatch() {
 
 	$do_assign = false;
 	$i = 0;
+	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
@@ -1481,7 +1482,7 @@ function is_interface_mismatch() {
 				continue;
 			}
 			else if (does_interface_exist($ifcfg['if']) == false) {
-				echo "Warning: Interface '{$ifcfg['if']}' does not exist.\n";
+				$missing_interfaces[] = $ifcfg['if'];
 				$do_assign = true;
 			} else
 				$i++;
@@ -1491,7 +1492,12 @@ function is_interface_mismatch() {
 	if ($g['minimum_nic_count'] > $i) {
 		$do_assign = true;
 	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
-	$do_assign = false;
+		$do_assign = false;
+
+	if (!empty($missing_interfaces) && $do_assign)
+		file_put_contents("{$g['tmp_path']}/missing_interfaces", implode(' ', $missing_interfaces));
+	else
+		@unlink("{$g['tmp_path']}/missing_interfaces");
 
 	return $do_assign;
 }

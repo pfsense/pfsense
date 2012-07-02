@@ -190,9 +190,12 @@ if($g['platform'] == "jail") {
 	 */
 	while(is_interface_mismatch() == true) {
 		led_assigninterfaces();
-		if (file_exists("{$g['tmp_path']}/missing_interfaces"))
-			echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
-		echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+		if (isset($config['revision'])) {
+			if (file_exists("{$g['tmp_path']}/missing_interfaces"))
+				echo "Warning: Configuration references interfaces that do not exist: " . file_get_contents("{$g['tmp_path']}/missing_interfaces") . "\n";
+			echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+		} else
+			echo "\nDefault interfaces not found -- Running interface assignment option.\n";
 		$ifaces = get_interface_list();
 		if (is_array($ifaces)) {
 			foreach($ifaces as $iface => $ifdata)

@@ -454,19 +454,16 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	$use_fastcgi = true;
 
 	if (isset($cpcfg['httpslogin'])) {
-		$cert = lookup_cert($cpcfg['certref']);
-		$cert_crt = base64_decode($cert['crt']);
-		$cert_prv = base64_decode($cert['prv']);
-		if (isset($cpcfg['caref'])) {
-			$ca = lookup_ca($cpcfg['caref']);
-			$ca_crt = base64_decode($ca['crt']);
-		}
-		else 
-			$ca_crt = "";
+		$cert = base64_decode($cpcfg['certificate']);
+		if (isset($cpcfg['cacertificate']))
+			$cacert = base64_decode($cpcfg['cacertificate']);
+		else
+			$cacert = "";
+		$key = base64_decode($cpcfg['private-key']);
 		/* generate lighttpd configuration */
 		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
-			$cert_crt, $cert_prv, $ca_crt, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
+			$cert, $key, $cacert, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-portal.pem", "ca-portal.pem", "1", $use_fastcgi, $cpzone);
 	}
 

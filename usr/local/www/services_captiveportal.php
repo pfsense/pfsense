@@ -76,16 +76,6 @@ if ($_GET['act'] == "viewhtml") {
 	exit;
 }
 
-if (!is_array($config['ca']))
-	$config['ca'] = array();
-
-$a_ca =& $config['ca'];
-
-if (!is_array($config['cert']))
-	$config['cert'] = array();
-
-$a_cert =& $config['cert'];
-
 if ($a_cp[$cpzone]) {
 	$pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
 	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
@@ -107,8 +97,9 @@ if ($a_cp[$cpzone]) {
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
-	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
-	$pconfig['caref'] = $a_cp[$cpzone]['caref'];
+	$pconfig['cert'] = base64_decode($a_cp[$cpzone]['certificate']);
+	$pconfig['cacert'] = base64_decode($a_cp[$cpzone]['cacertificate']);
+	$pconfig['key'] = base64_decode($a_cp[$cpzone]['private-key']);
 	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
 	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
 	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
@@ -172,9 +163,17 @@ if ($_POST) {
 		}
 
 		if ($_POST['httpslogin_enable']) {
-		 	if (!$_POST['certref']) {
-				$input_errors[] = gettext("Certificate must be specified for HTTPS login.");
+		 	if (!$_POST['cert'] || !$_POST['key']) {
+				$input_errors[] = gettext("Certificate and key must be specified for HTTPS login.");
+			} else {
+				if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
+					$input_errors[] = gettext("This certificate does not appear to be valid.");
+				if (!strstr($_POST['cacert'], "BEGIN CERTIFICATE") || !strstr($_POST['cacert'], "END CERTIFICATE"))
+					$input_errors[] = gettext("This intermmediate certificate does not appear to be valid.");
+				if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
+					$input_errors[] = gettext("This key does not appear to be valid.");
 			}
+
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
 				$input_errors[] = gettext("The HTTPS server name must be specified for HTTPS login.");
 			}
@@ -264,8 +263,9 @@ if ($_POST) {
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
 		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
-		$newcp['certref'] = $_POST['certref'];
-		$newcp['caref'] = $_POST['caref'];
+		$newcp['certificate'] = base64_encode($_POST['cert']);
+		$newcp['cacertificate'] = base64_encode($_POST['cacert']);
+		$newcp['private-key'] = base64_encode($_POST['key']);
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
@@ -350,7 +350,6 @@ function enable_change(enable_change) {
 	var endis, radius_endis;
 	endis = !(document.iform.enable.checked || enable_change);
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
-	https_endis = !((!endis && document.iform.httpslogin_enable.checked) || enable_change);
 
 	document.iform.cinterface.disabled = endis;
 	//document.iform.maxproc.disabled = endis;
@@ -389,9 +388,10 @@ function enable_change(enable_change) {
 	document.iform.radmac_enable.disabled = radius_endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.radmac_format.disabled = radius_endis;
-	document.iform.httpsname.disabled = https_endis;
-	document.iform.certref.disabled = https_endis;
-	document.iform.caref.disabled = https_endis;
+	document.iform.httpsname.disabled = endis;
+	document.iform.cert.disabled = endis;
+	document.iform.cacert.disabled = endis;
+	document.iform.key.disabled = endis;
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.noconcurrentlogins.disabled = endis;
@@ -860,66 +860,37 @@ function enable_change(enable_change) {
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
       <td class="vtable">
-        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
+        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
         <strong><?=gettext("Enable HTTPS login"); ?></strong><br>
-    <?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name and certificate must also be specified below."); ?></td>
-	</tr>
+    <?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name, certificate and matching private key must also be specified below."); ?></td>
+	  </tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
 	<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
-	</tr>
-  <tr id="tls_ca">
-    <td width="22%" valign="top" class="vncell"><?=gettext("Certificate Authority"); ?></td>
-      <td width="78%" class="vtable">
-      <?php if (count($a_ca)): ?>
-      <select name='caref' class="formselect">
-        <option value=""><?=gettext("None"); ?></option>
-      <?php
-        foreach ($a_ca as $ca):
-          $selected = "";
-          if ($pconfig['caref'] == $ca['refid'])
-            $selected = "selected";
-      ?>
-        <option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
-      <?php endforeach; ?>
-      </select>
-      <?php else: ?>
-        <b><?=gettext("No Certificate Authorities defined."); ?></b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
-      <?php endif; ?>
-      </td>
-  </tr>
-  <tr id="tls_cert">
-    <td width="22%" valign="top" class="vncell"><?=gettext("Server Certificate"); ?></td>
-      <td width="78%" class="vtable">
-      <?php if (count($a_cert)): ?>
-      <select name='certref' class="formselect">
-        <option value=""><?=gettext("None"); ?></option>
-      <?php
-      foreach ($a_cert as $cert):
-        $selected = "";
-        $caname = "";
-        $inuse = "";
-        $revoked = "";
-        $ca = lookup_ca($cert['caref']);
-        if ($ca)
-          $caname = " (CA: {$ca['descr']})";
-        if ($pconfig['certref'] == $cert['refid'])
-          $selected = "selected";
-        if (cert_in_use($cert['refid']))
-          $inuse = " *In Use";
-        if (is_cert_revoked($cert))
-        $revoked = " *Revoked";
-      ?>
-        <option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
-      <?php endforeach; ?>
-      </select>
-      <?php else: ?>
-        <b><?=gettext("No Certificates defined."); ?></b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
-      <?php endif; ?>
-    </td>
-  </tr>
+	  </tr>
+	<tr>
+      <td valign="top" class="vncell"><?=gettext("HTTPS certificate"); ?></td>
+      <td class="vtable">
+        <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
+        <br>
+    <?=gettext("Paste a signed certificate in X.509 PEM format here."); ?></td>
+	  </tr>
+	<tr>
+      <td valign="top" class="vncell"><?=gettext("HTTPS private key"); ?></td>
+      <td class="vtable">
+        <textarea name="key" cols="65" rows="7" id="key" class="formpre"><?=htmlspecialchars($pconfig['key']);?></textarea>
+        <br>
+    <?=gettext("Paste an RSA private key in PEM format here."); ?></td>
+	  </tr>
+        <tr>
+      <td valign="top" class="vncell"><?=gettext("HTTPS intermediate certificate"); ?></td>
+      <td class="vtable">
+        <textarea name="cacert" cols="65" rows="7" id="cacert" class="formpre"><?=htmlspecialchars($pconfig['cacert']);?></textarea>
+        <br>
+    <?=gettext("Paste a certificate in X.509 PEM format here."); ?></td>
+          </tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Portal page contents"); ?></td>
 	  <td width="78%" class="vtable">
@@ -927,7 +898,7 @@ function enable_change(enable_change) {
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			$zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
-			if ($pconfig['httpslogin_enable']) {
+			if (isset($pconfig['httpslogin'])) {
 				$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 1);
 				$href = "https://{$host}:{$port}";
 			} else {

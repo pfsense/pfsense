@@ -2883,4 +2883,43 @@ function upgrade_087_to_088() {
 		$config['system']['crypto_hardware'] = "glxsb";
 	}
 }
+
+function upgrade_088_to_089() {
+  global $config;
+  if (!is_array($config['ca']))
+    $config['ca'] = array();
+  if (!is_array($config['cert']))
+    $config['cert'] = array();
+    
+  /* migrate captive portal ssl to certifcate mngr */
+  if (is_array($config['captiveportal'])) {
+    foreach ($config['captiveportal'] as $id => &$setting) {
+      if (isset($setting['httpslogin'])) {
+        /* create cert entry */
+        $cert = array();
+        $cert['refid'] = uniqid();
+        $cert['descr'] = "Captive Portal SSL Cert - {$setting['zone']}";
+        $cert['crt'] = $setting['certificate'];
+        $cert['prv'] = $setting['private-key'];
+        $config['cert'][] = $cert;
+        
+        /* create cert reference */
+        unset($setting['certificate']);
+        unset($setting['private-key']);
+        $setting['certref'] = $cert['refid'];
+        
+        /* create ca entry */
+        $ca = array();
+        $ca['refid'] = uniqid();
+        $ca['descr'] = "Captive Portal SSL CA - {$setting['zone']}";
+        $ca['crt'] = $setting['cacertificate'];
+        $config['ca'][] = $ca;
+
+        /* create ca reference */
+        unset($setting['cacertificate']);
+        $setting['caref'] = $ca['refid'];
+      }
+    }
+  }
+}
 ?>

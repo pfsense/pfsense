@@ -108,7 +108,6 @@ if ($a_cp[$cpzone]) {
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
 	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
-	$pconfig['caref'] = $a_cp[$cpzone]['caref'];
 	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
 	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
 	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
@@ -265,7 +264,6 @@ if ($_POST) {
 		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
 		$newcp['certref'] = $_POST['certref'];
-		$newcp['caref'] = $_POST['caref'];
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
@@ -391,7 +389,6 @@ function enable_change(enable_change) {
 	document.iform.radmac_format.disabled = radius_endis;
 	document.iform.httpsname.disabled = https_endis;
 	document.iform.certref.disabled = https_endis;
-	document.iform.caref.disabled = https_endis;
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.noconcurrentlogins.disabled = endis;
@@ -870,59 +867,28 @@ function enable_change(enable_change) {
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
 	<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	</tr>
-  <tr id="tls_ca">
-    <td width="22%" valign="top" class="vncell"><?=gettext("Certificate Authority"); ?></td>
-      <td width="78%" class="vtable">
-      <?php if (count($a_ca)): ?>
-      <select name='caref' class="formselect">
-        <option value=""><?=gettext("None"); ?></option>
-      <?php
-        foreach ($a_ca as $ca):
-          $selected = "";
-          if ($pconfig['caref'] == $ca['refid'])
-            $selected = "selected";
-      ?>
-        <option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
-      <?php endforeach; ?>
-      </select>
-      <?php else: ?>
-        <b><?=gettext("No Certificate Authorities defined."); ?></b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
-      <?php endif; ?>
-      </td>
-  </tr>
-  <tr id="tls_cert">
-    <td width="22%" valign="top" class="vncell"><?=gettext("Server Certificate"); ?></td>
-      <td width="78%" class="vtable">
-      <?php if (count($a_cert)): ?>
-      <select name='certref' class="formselect">
-        <option value=""><?=gettext("None"); ?></option>
-      <?php
-      foreach ($a_cert as $cert):
-        $selected = "";
-        $caname = "";
-        $inuse = "";
-        $revoked = "";
-        $ca = lookup_ca($cert['caref']);
-        if ($ca)
-          $caname = " (CA: {$ca['descr']})";
-        if ($pconfig['certref'] == $cert['refid'])
-          $selected = "selected";
-        if (cert_in_use($cert['refid']))
-          $inuse = " *In Use";
-        if (is_cert_revoked($cert))
-        $revoked = " *Revoked";
-      ?>
-        <option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
-      <?php endforeach; ?>
-      </select>
-      <?php else: ?>
-        <b><?=gettext("No Certificates defined."); ?></b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
-      <?php endif; ?>
-    </td>
-  </tr>
+	<tr id="ssl_opts">
+		<td width="22%" valign="top" class="vncell"><?=gettext("SSL Certificate"); ?></td>
+		<td width="78%" class="vtable">
+			<?php if (count($a_cert)): ?>
+			<select name="certref" id="certref" class="formselect">
+				<?php
+					foreach($a_cert as $cert):
+						$selected = "";
+						if ($pconfig['certref'] == $cert['refid'])
+							$selected = "selected";
+				?>
+				<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
+			<?php endforeach; ?>
+			</select>
+			<?php else: ?>
+				<b><?=gettext("No Certificates defined."); ?></b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
+			<?php endif; ?>
+		</td>
+	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Portal page contents"); ?></td>
-	  <td width="78%" class="vtable">
+		<td width="22%" valign="top" class="vncell"><?=gettext("Portal page contents"); ?></td>
+		<td width="78%" class="vtable">
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld file" id="htmlfile"><br>
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);

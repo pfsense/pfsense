@@ -533,7 +533,7 @@ function is_captiveportal_cert($certref) {
 	if (!is_array($config['captiveportal']))
 		return;
 	foreach ($config['captiveportal'] as $portal) {
-		if ($portal['enable'] && $portal['httpslogin_enable'] && ($portal['certref'] == $certref))
+		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref))
 			return true;
 	}
 	return false;

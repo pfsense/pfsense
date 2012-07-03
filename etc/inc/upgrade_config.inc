@@ -2898,26 +2898,34 @@ function upgrade_088_to_089() {
         /* create cert entry */
         $cert = array();
         $cert['refid'] = uniqid();
-        $cert['descr'] = "Captive Portal SSL Cert - {$setting['zone']}";
+        $cert['descr'] = "Captive Portal Cert - {$setting['zone']}";
         $cert['crt'] = $setting['certificate'];
         $cert['prv'] = $setting['private-key'];
+        
+        if (!empty($setting['cacertificate'])) {
+          /* create ca entry */
+          $ca = array();
+          $ca['refid'] = uniqid();
+          $ca['descr'] = "Captive Portal CA - {$setting['zone']}";
+          $ca['crt'] = $setting['cacertificate'];
+          $config['ca'][] = $ca;
+          
+          /* add ca reference to certificate */
+          $cert['caref'] = $ca['refid'];
+          
+          /* create ca reference */
+          $setting['caref'] = $ca['refid'];
+        }
+        
         $config['cert'][] = $cert;
         
         /* create cert reference */
-        unset($setting['certificate']);
-        unset($setting['private-key']);
         $setting['certref'] = $cert['refid'];
         
-        /* create ca entry */
-        $ca = array();
-        $ca['refid'] = uniqid();
-        $ca['descr'] = "Captive Portal SSL CA - {$setting['zone']}";
-        $ca['crt'] = $setting['cacertificate'];
-        $config['ca'][] = $ca;
-
-        /* create ca reference */
+        unset($setting['certificate']);
+        unset($setting['private-key']);
         unset($setting['cacertificate']);
-        $setting['caref'] = $ca['refid'];
+        
       }
     }
   }

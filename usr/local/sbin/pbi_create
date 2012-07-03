@@ -1524,14 +1524,18 @@ get_pbi_progversion() {
 
 # Get the PBI_PROGNAME
 get_pbi_progname() {
-	if [ -z "${PBI_PROGNAME}" ] ; then
+	if [ -z "${PBI_PROGNAME}" -o "${PBI_PROGNAME}" = " " ] ; then
 		load_pbi_conffile
 	else
 		return 0
 	fi
 
 	if [ -z "${PBI_PROGNAME}" -a -n "${PORTSDIR}" -a -n "${PBI_MAKEPORT}" ] ; then
-		PBI_PROGNAME="`make -C ${PORTSDIR}/${PBI_MAKEPORT} -V PORTNAME`"
+		# Get the proper package name from the prefix + name + suffix
+		local pkgPrefix="`make -C ${PORTSDIR}/${PBI_MAKEPORT} -V PKGNAMEPREFIX`"
+		local pkgName="`make -C ${PORTSDIR}/${PBI_MAKEPORT} -V PORTNAME`"
+		local pkgSuffix="`make -C ${PORTSDIR}/${PBI_MAKEPORT} -V PKGNAMESUFFIX`"
+		PBI_PROGNAME="${pkgPrefix}${pkgName}${pkgSuffix}"
 	else
 		exit_err "Failed to locate PBI_PROGNAME"
 	fi
@@ -2733,6 +2737,14 @@ pbi_display_info() {
 		echo "MimeRegistration: YES"
 	fi
 
+	# If verbose mode, show file contents
+	if [ "$PBI_VERBOSE" = "YES" ] ; then
+	  	pbi_find_archive_header
+                echo "TOTALFILES: ${PBI_ARCHIVE_COUNT}"
+                echo "Archive Contents:"
+                echo "--------------------------------------"
+                tail +$PBI_SKIP_ARCHLINES "${PBI_FILENAME}" | tar tvf - 
+        fi
 }
 
 # See if we need to display gui header info
@@ -3399,6 +3411,7 @@ check_create_required_vars() {
 
 # Start the pbi_create process
 do_pbi_create() {
+	get_pbi_progname
 	echo "Creating PBI: ${PBI_PROGNAME}-${PBI_PROGVERSION}"
 
 	mk_header_dir
@@ -3900,9 +3913,9 @@ mk_stage_dir() {
 		for excl in $PBI_EXCLUDELIST
 		do
 			if [ -z "$_excOpts" ] ; then
-				_excOpts = "--exclude ${excl}"
+				_excOpts="--exclude ${excl}"
 			else
-				_excOpts = "$_excOpts --exclude ${excl}"
+				_excOpts="$_excOpts --exclude ${excl}"
 			fi
 		done
 	fi
@@ -5305,7 +5318,7 @@ pbi_update_dl() {
 	local _CKSUM="$2"
 	
 	# Set local download location
-	_dl_loc="${PBI_APPDIR}/.`basename $PBI_UPFILE`.$$"
+	_dl_loc="${PBI_APPDIR}/.`basename $PBI_UPFILE`"
 
 	# Have a patch file to download instead, make that the active file to try
 	if [ -n "$_tPatch" ] ; then
@@ -5349,14 +5362,13 @@ pbi_get_file() {
 	_rf="${1}"
 	_lf="${2}"
 
-	# Wait a sec
-	sleep 1
-
 	init_tmpdir
-	if [ -e "${_lf}" ] ; then rm "$_lf" ; fi
+	if [ -e "${_lf}" ] ; then 
+		echo "Resuming download of: ${_lf}"
+	fi
 
 	if [ "$PBI_FETCH_PARSING" != "YES" ] ; then
-		fetch -o "${_lf}" "${_rf}"
+		fetch -r -o "${_lf}" "${_rf}"
 		_err=$?
 	else
 		# Doing a front-end download, parse the output of fetch
@@ -5365,13 +5377,11 @@ pbi_get_file() {
 		_fSize=`cat ${PBI_TMPDIR}/.fetch-size.$$ 2>/dev/null`
 		_fSize="`expr ${_fSize} / 1024 2>/dev/null`"
 		rm "${PBI_TMPDIR}/.fetch-size.$$" 2>/dev/null
-		_time=0
+		_time=1
 
-		( fetch -o "${_lf}" "${_rf}" >/dev/null 2>/dev/null ; echo "$?" > ${_eFile} ) &
-		FETCH_PID=`ps -auwwwx | grep -v grep | grep "fetch -o ${_lf}" | awk '{print $2}'`
-		FETCH_TFILE="${_lf}"
-		while
-		z=1
+		( fetch -r -o "${_lf}" "${_rf}" >/dev/null 2>/dev/null ; echo "$?" > ${_eFile} ) &
+		FETCH_PID=`ps -auwwwx | grep -v grep | grep "fetch -r -o ${_lf}" | awk '{print $2}'`
+		while : 
 		do
 			if [ -e "${_lf}" ] ; then
 				_dSize=`du -k ${_lf} | tr -d '\t' | cut -d '/' -f 1`
@@ -5391,7 +5401,7 @@ pbi_get_file() {
 
 		_err="`cat ${_eFile}`"
 		if [ "$_err" = "0" ]; then echo "FETCHDONE" ; fi
-		unset FETCH_PID FETCH_TFILE
+		unset FETCH_PID
 	fi
 
 	echo ""
@@ -6698,9 +6708,8 @@ exit_trap() {
 	# If a download is running, kill it
 	if [ -n  "${FETCH_PID}" ] ; then 
 	   echo "Killing ${FETCH_PID}"
-	   kill -9 ${FETCH_PID}
-	   sleep 1
-	   rm ${FETCH_TFILE}
+	   kill -s INT ${FETCH_PID}
+           sleep 2
 	fi
         chroot_make_cleanup
 	rm_tmpdir

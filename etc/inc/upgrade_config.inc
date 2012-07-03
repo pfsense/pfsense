@@ -2912,9 +2912,6 @@ function upgrade_088_to_089() {
           
           /* add ca reference to certificate */
           $cert['caref'] = $ca['refid'];
-          
-          /* create ca reference */
-          $setting['caref'] = $ca['refid'];
         }
         
         $config['cert'][] = $cert;

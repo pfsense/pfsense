@@ -610,6 +610,8 @@ EOD;
 
 	/* activate ipfw(4) so CP can work */
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
+	/* Make sure not re-entrancy is allowed in ipfw(4) */
+	mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
 
 	return $cprules;
 }

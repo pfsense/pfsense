@@ -1,7 +1,7 @@
 <?php
 /*
   Copyright (C) 2008 Bill Marquette, Seth Mos
-  Copyright (C) 2010 Ermal Lu�i
+  Copyright (C) 2010 Ermal Luçi
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -179,7 +179,7 @@ EOD;
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;
-		if (!empty($gateway['lowloss'])) {
+		if (!empty($gateway['losslow'])) {
 			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
 			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
        			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";

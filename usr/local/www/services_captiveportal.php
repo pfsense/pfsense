@@ -257,7 +257,10 @@ if ($_POST) {
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
 		$newcp['reauthenticateacct'] = $_POST['reauthenticateacct'];
-		$newcp['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
+		if (isset($_POST['httpslogin_enable']))
+			$newcp['httpslogin'] = true;
+		else
+			unset($newcp['httpslogin']);
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;

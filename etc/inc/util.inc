@@ -1754,8 +1754,10 @@ function get_staticroutes($returnsubnetsonly = false) {
 		if (is_alias($route['network'])) {
 			$subnets = filter_expand_alias_array($route['network']);
 			foreach ($subnets as $net) {
-				if (is_ipaddr($net))
+				if (is_ipaddrv4($net))
 					$net .= "/32";
+				if (is_ipaddrv6($net) && !is_subnetv6($net))
+					$net .= "/128";
 				/* This must be a hostname, we can't use it. */
 				if (!is_subnet($net))
 					continue;

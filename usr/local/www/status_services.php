@@ -289,11 +289,11 @@ $pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
 
 if (is_array($config['captiveportal'])) {
-	foreach ($config['captiveportal'] as $id => $setting) {
+	foreach ($config['captiveportal'] as $zone => $setting) {
 		if (isset($setting['enable'])) {
 			$pconfig = array();
 			$pconfig['name'] = "captiveportal";
-			$pconfig['zone'] = $setting['zone'];
+			$pconfig['zone'] = $zone;
 			$pconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
 			$services[] = $pconfig;
 		}

@@ -82,11 +82,11 @@ $svcconfig['description'] = gettext("NTP clock sync");
 $services[] = $svcconfig;
 
 if (is_array($config['captiveportal'])) {
-	foreach ($config['captiveportal'] as $id => $setting) {
+	foreach ($config['captiveportal'] as $zone => $setting) {
 		if (isset($setting['enable'])) {
 			$svcconfig = array();
 			$svcconfig['name'] = "captiveportal";
-			$svcconfig['zone'] = $setting['zone'];
+			$svcconfig['zone'] = $zone;
 			$svcconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
 			$services[] = $svcconfig;
 		}

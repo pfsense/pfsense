@@ -704,7 +704,7 @@ EOD;
 	typesel_change();
 	update_box_type();
 
-	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list("port"))) ?>;
+	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
 
 	function createAutoSuggest() {
 		<?php  

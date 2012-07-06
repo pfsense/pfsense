@@ -470,10 +470,10 @@ function system_routing_configure($interface = "") {
 			if(preg_match("/^Null/i", $rtent['gateway']))
 				$blackhole = "-blackhole";
 
-			if (is_ipaddr($gatewayip)) {
+			if (is_ipaddr($gatewayip) && ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
 				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
-			} else if (!empty($interfacegw)) {
+			} else if (!empty($interfacegw) &&  ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
 				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}

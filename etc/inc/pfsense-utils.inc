@@ -956,7 +956,7 @@ function setup_serial_port($when="save", $path="") {
 	else
 		$boot_config = "";
 
-	if($g['platform'] <> "cdrom") {
+	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
@@ -973,6 +973,8 @@ function setup_serial_port($when="save", $path="") {
 			}
 			fclose($fd);
 		}
+	}
+	if($g['platform'] != "cdrom") {
 		/* serial console - write out /boot/loader.conf */
 		$boot_config = file_get_contents($loader_conf_file);
 		$boot_config_split = explode("\n", $boot_config);

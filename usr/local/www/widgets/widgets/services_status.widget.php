@@ -134,7 +134,7 @@ if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['
 	$services[] = $svcconfig;
 }
 
-if (isset($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (isset($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	$svcconfig = array();
 	$svcconfig['name'] = "miniupnpd";
 	$svcconfig['description'] = gettext("UPnP Service");

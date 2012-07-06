@@ -65,6 +65,7 @@ $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
+$pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 
@@ -76,6 +77,9 @@ else
 $crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
 			'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
+$thermal_hardware_modules = array(	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
+					'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor"));
+
 if ($_POST) {
 
     unset($input_errors);
@@ -86,6 +90,9 @@ if ($_POST) {
 
 	if (!empty($_POST['crypto_hardware']) && !array_key_exists($_POST['crypto_hardware'], $crypto_modules))
 		$input_errors[] = gettext("Please select a valid Cryptographic Accelerator.");
+
+	if (!empty($_POST['thermal_hardware']) && !array_key_exists($_POST['thermal_hardware'], $thermal_hardware_modules))
+		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
 
 	if (!$input_errors) {
 
@@ -172,6 +179,11 @@ if ($_POST) {
 		else
 			unset($config['system']['crypto_hardware']);
 
+		if($_POST['thermal_hardware'])
+			$config['system']['thermal_hardware'] = $_POST['thermal_hardware'];
+		else
+			unset($config['system']['thermal_hardware']);
+
 		if($_POST['schedule_states'] == "yes")
                         $config['system']['schedule_states'] = true;
                 else
@@ -194,6 +206,7 @@ if ($_POST) {
 		
 		activate_powerd();
 		load_crypto();
+		load_thermal_hardware();
 		vpn_ipsec_configure_preferoldsa();
 		if ($need_racoon_restart)
 			vpn_ipsec_force_reload();
@@ -386,6 +399,30 @@ function maxmss_checked(obj) {
 								     <br/><br/>
 								     <?=gettext("If you do not have a crypto chip in your system, this option will have no " .
 								     "effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Thermal Sensors"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Thermal Sensors"); ?></td>
+								<td width="78%" class="vtable">
+								<select name="thermal_hardware" id="thermal_hardware">
+									<option value=""><?php echo gettext("None/ACPI"); ?></option>
+									<?php foreach ($thermal_hardware_modules as $themalmod_name => $themalmod_descr): ?>
+										<option value="<?php echo $themalmod_name; ?>" <?php if ($pconfig['thermal_hardware'] == $themalmod_name) echo " selected"; ?>><?php echo "{$themalmod_descr} ({$themalmod_name})"; ?></option>
+									<?php endforeach; ?>
+								</select>
+								<br />
+								<?=gettext("If you have a supported CPU, selecting a themal sensor will load the appropirate " .
+										"driver to read its temperature. Setting this to 'None' will attempt to read the " .
+										"temperature from an ACPI-compliant motherboard sensor instead, if one is present."); ?>
+								<br/><br/>
+								<?=gettext("If you do not have a supported thermal sensor chip in your system, this option will have no " .
+									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
 							</tr>
 							<tr>

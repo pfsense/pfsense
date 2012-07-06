@@ -1567,6 +1567,23 @@ function load_crypto() {
 	}
 }
 
+/*
+ * load_thermal_hardware() - Load temperature monitor kernel module
+ */
+function load_thermal_hardware() {
+	global $config, $g;
+	$thermal_hardware_modules = array('coretemp', 'amdtemp');
+
+	if (!in_array($config['system']['thermal_hardware'], $thermal_hardware_modules))
+		return false;
+
+	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c {$config['system']['thermal_hardware']}`;
+	if (!empty($config['system']['thermal_hardware']) && ($is_loaded == 0)) {
+		log_error("Loading {$config['system']['thermal_hardware']} thermal monitor module.");
+		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+	}
+}
+
 /****f* pfsense-utils/isvm
  * NAME
  *   isvm

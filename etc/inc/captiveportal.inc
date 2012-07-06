@@ -476,7 +476,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
-	if (isset($cpcfg['httpslogin']) && $cpcfg['httpslogin'])
+	if (isset($cpcfg['httpslogin']))
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
 }
 

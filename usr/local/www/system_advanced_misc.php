@@ -417,7 +417,7 @@ function maxmss_checked(obj) {
 									<?php endforeach; ?>
 								</select>
 								<br />
-								<?=gettext("If you have a supported CPU, selecting a themal sensor will load the appropirate " .
+								<?=gettext("If you have a supported CPU, selecting a themal sensor will load the appropriate " .
 										"driver to read its temperature. Setting this to 'None' will attempt to read the " .
 										"temperature from an ACPI-compliant motherboard sensor instead, if one is present."); ?>
 								<br/><br/>

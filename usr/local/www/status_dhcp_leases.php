@@ -371,7 +371,9 @@ foreach ($leases as $data) {
 					break;
 			}
 		} else {
-                	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {	
+			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				if (!is_array($dhcpifconf['range']))
+					continue;
                         	if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
                                 	$data['if'] = $dhcpif;
                                 	break;

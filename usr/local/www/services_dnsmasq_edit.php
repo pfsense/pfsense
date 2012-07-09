@@ -212,7 +212,7 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br> <span class="vexpl"><?=gettext("IP address of the host"); ?><br>
-                   <?=gettext("e.g."); ?> <em>192.168.100.100</em></span></td>
+                   <?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

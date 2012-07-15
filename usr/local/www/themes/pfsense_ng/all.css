@@ -218,7 +218,7 @@ iframe {
 #header-right {
 	position: relative;
 	/* background: url('images/header.gif') no-repeat; */
-	height: 30px;
+	height: 70px;
 	color: #fff;
 	left: 0px;
 	margin-left: 165px;
@@ -319,8 +319,6 @@ div#marquee-text {
 	font-weight: normal;
 	font-style: italic;
 	color: #000000;
-    padding-left: 30px;
-    padding-top: 2px;
 }
 table#marquee div#container {
 	position: relative;
@@ -333,6 +331,9 @@ table#marquee div#container div#scroller {
 	left: 0px;
 	top: 0px;
 }
+
+
+
 
 
 #content {
@@ -396,10 +397,13 @@ table#marquee div#container div#scroller {
 
 /* Style the List */
 #navigation {
+	/* background: url('images/menu.gif') no-repeat; */
+	/* width: 693px; */
+/*	position: relative; */
 	position: fixed;
 	top: 0px;
 	left: 100px;
-	width: 750px;
+	width: 810px;
 	padding: 0px;
 	height: 28px;
 	z-index: 3;
@@ -413,7 +417,6 @@ table#marquee div#container div#scroller {
 #navigation ul#menu {
 	padding-top: 3px;
 	padding-left: 5px;
-	margin-left: 10px;
 }
 
 /* Style the List Elements */
@@ -422,10 +425,11 @@ table#marquee div#container div#scroller {
 	position: relative;
 	width: 7.0em;
 	top: 0px;
+	/* top: -1px; */
 }
-
 /* Text mainmenubar */
 #navigation ul li div {
+
 	background-image: url(images/mainmenu-right.gif);
 	background-position: 5% 50%;
 	background-repeat: no-repeat;
@@ -435,48 +439,36 @@ table#marquee div#container div#scroller {
 	color: #ffffff;
 	text-align: center;
 	height: 13px;
-}
 
+
+
+
+/*
+background: url("images/mainmenuitem.gif") top left no-repeat;
+vertical-align: top;
+border: 0px;
+width: 100px;
+height:20px;
+*/	
+	
+	
+}
 /* Make the List inside the List Elements */
 /* initially hidden with absolute position */
 #navigation ul li ul {
 	display: none;
 	position: absolute; 
+/*	top: 2em;
+	left: -2px; */
+	width: 120px;
 	font-weight: normal;
-	margin-top: 1px;
+/*	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
+	/* background-color: #202020; */
+	background: url("images/menubgr_footer.png") no-repeat;
+	background-position: bottom;
+/*	padding: 0em 0 0.4em 0; */
 	padding-top: 5px;
-	background: #850000;
-	border: 0px;
-	/* transparent */
-	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);
-	-moz-opacity: 0.95;
-	-khtml-opacity: 0.95;
-	opacity: 0.95;
-	/* borders */
-	border-bottom-right-radius: 0px;
-	border-bottom-left-radius: 6px;
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-	/* Mozilla */
-	-moz-border-radius-bottomright: 0px;
-	-moz-border-radius-bottomleft: 6px;
-	-moz-border-radius-topright: 6px
-	-moz-border-radius-topleft: 6px;
-	/* WebKit */
-	-webkit-border-bottom-right-radius: 0px;
-	-webkit-border-bottom-left-radius: 6px;
-	-webkit-border-top-right-radius: 6px;
-	-webkit-border-top-left-radius: 6px;
-	/* Shadow Effect */
-	box-shadow: 5px 5px 10px #000000;
-	-webkit-box-shadow: 5px 5px 10px #000000;
-	-moz-box-shadow: 5px 5px 10px #000000;
-	/* Vertical menu max size */
-	/* max-height: 259px; /
-	/* Horizontal menu max size */
-	max-width: 128px;
-	overflow-x: hidden;
-	overflow-y: auto;
+	padding-bottom: 10px;
 }
 /* to override top and left in browsers other than IE */
 /* which will position to the top right of the containing */
@@ -494,12 +486,14 @@ table#marquee div#container div#scroller {
 }
 #navigation ul li:hover {
 	cursor: pointer;
+	cursor: pointer;
 }
 #navigation ul li:hover div {
 	text-decoration: none;
 	background-image: url(images/mainmenu-down.gif);
 	background-position: 5% 50%;
 	background-repeat: no-repeat;
+
 }
 
 #navigation ul li {
@@ -509,37 +503,22 @@ table#marquee div#container div#scroller {
 /* dropdownmenu */
 #navigation ul li ul li {
 	border: 0px solid #850000;
-	width: 128px;
+	width: 120px;
 	height: 1.6em;
 	line-height: 1.6em;
-	background-color: #850000;
-	/* borders */
-	border-bottom-right-radius: 0px;
-	border-bottom-left-radius: 3px;
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
-	/* Mozilla */
-	-moz-border-radius-bottomright: 0px;
-	-moz-border-radius-bottomleft: 3px;
-	-moz-border-radius-topright: 3px
-	-moz-border-radius-topleft: 3px;
-	/* WebKit */
-	-webkit-border-bottom-right-radius: 0px;
-	-webkit-border-bottom-left-radius: 3px;
-	-webkit-border-top-right-radius: 3px;
-	-webkit-border-top-left-radius: 3px;
-}
-/* last element in dropdown menu*/
-#navigation ul li ul li:last-child {
-	margin-bottom: 5px;
+/*	background-color: #850000; */
+	background: url(images/menubgr.png) repeat-y;
+	z-index: 2;
+/*	color: #000000; */
+/*	filter:alpha(opacity=95);
+	-moz-opacity:0.95;
+	-khtml-opacity: 0.95;
+	opacity: 0.95; 	*/
 }
 #navigation ul li ul li:hover {
-	margin-left: 5px;
-	background-color: #666666;      
-	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);
-	-moz-opacity: 0.95;
-	-khtml-opacity: 0.95;
-	opacity: 0.95;
+/*	background-color: #666666; */
+	background-image: url(images/menubgr_highlight.png);
+	background-repeat: repeat-y;
 }
 
 /* textcolor in dropdownmenu */
@@ -551,6 +530,11 @@ table#marquee div#container div#scroller {
 	font-size: 11px;
 	font-weight: normal;
 	text-align: left;
+/*
+	background-image: url(images/menu-dot.gif);
+	background-position: 0% 50%;
+	background-repeat: no-repeat;
+*/
 }
 
 #navigation ul li ul li a.navlnk:hover {
@@ -563,7 +547,9 @@ table#marquee div#container div#scroller {
 	border-right: 0px;
 }
 #navigation ul li.last {
+
 }
+
 #navigation ul li.dropfirst {
 	border-bottom: 0px;
 }
@@ -1130,7 +1116,7 @@ div#log div.log-entry {
 div#log div.log-entry span,
 div#log div.log-header span {
 	padding: 3px 2px 3px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log div.log-entry span.log-action {
@@ -1292,10 +1278,11 @@ div#log div.log-entry-mini {
 
 div#log div.log-entry-mini span {
 	padding: 2px 2px 2px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log span.log-action-mini-header,
+div#log span.log-time-mini-header,
 div#log span.log-interface-mini-header,
 div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header,
@@ -1327,14 +1314,22 @@ div#log span.log-action-mini-header {
 	width: 6%;
 }
 
+div#log span.log-time-mini,
+div#log span.log-time-mini-header {
+	width: 18%;
+}
+
 div#log span.log-interface-mini,
 div#log span.log-interface-mini-header {
 	width: 8%;
 }
 
 div#log span.log-source-mini,
+div#log span.log-source-mini-header {
+	width: 24%;
+}
+
 div#log span.log-destination-mini,
-div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header {
 	width: 31%;
 }

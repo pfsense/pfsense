@@ -58,7 +58,7 @@ function domTT_title($title_msg){
 	if (!empty($title_msg)){
 		$title_msg=preg_replace("/\s+/"," ",$title_msg);
         $title_msg=preg_replace("/'/","\'",$title_msg);
-		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
+		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'delay',300,'styleClass', 'niceTitle');\"";
 	}
 }
 
@@ -596,6 +596,11 @@ if ($pkg['tabs'] <> "") {
 				$source_url = $pkga['source'];
 				eval("\$pkg_source_txt = &$source_url;");
 				$input="";
+				#check if show disable option is present on xml
+				if(isset($pkga['show_disable_value'])){
+					array_push($pkg_source_txt, array(($pkga['source_name']? $pkga['source_name'] : $pkga['name'])=> $pkga['show_disable_value'],
+													  ($pkga['source_value']? $pkga['source_value'] : $pkga['value'])=> $pkga['show_disable_value']));
+					}
 				foreach ($pkg_source_txt as $opt) {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
@@ -937,7 +942,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 				$fieldname .= '[]';
 				$multiple = 'multiple';
 			}
-			echo "<select id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
+			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
 			$additional_ifaces = $rowhelper['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
@@ -955,7 +960,9 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "</select>\n";
 			break;
 		case "select_source":
-			echo "<select id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
+			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
+			if(isset($rowhelper['show_disable_value']))
+				echo "<option value='{$rowhelper['show_disable_value']}'>{$rowhelper['show_disable_value']}</option>\n";
 			$source_url = $rowhelper['source'];
 			eval("\$pkg_source_txt = &$source_url;");
 			foreach($pkg_source_txt as $opt) {

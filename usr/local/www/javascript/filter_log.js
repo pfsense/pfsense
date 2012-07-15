@@ -61,10 +61,25 @@ function fetch_new_rules_callback(callback_data) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
 		lastsawtime = row_split[6];
-		new_data_to_add[new_data_to_add.length] = format_log_line(row_split);
+//		new_data_to_add[new_data_to_add.length] = format_log_line(row_split);
+
+		var tmp = format_log_line(row_split);
+		if ( !(tmp) ) continue;
+
+		new_data_to_add[new_data_to_add.length] = tmp;
 	}
 	update_div_rows(new_data_to_add);
 	isBusy = false;
+}
+
+function in_arrayi(needle, haystack) {
+	var i = haystack.length;
+	while (i--) {
+		if (haystack[i].toLowerCase() === needle.toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function update_div_rows(data) {
@@ -85,9 +100,9 @@ function update_div_rows(data) {
 	}
 	data = data.slice(startat, data.length);
 
-	var rows = jQuery('.log-entry-mini');
-	if (jQuery(rows).length == 0) {
-		rows = jQuery('.log-entry');
+	var rows = $$('.log-entry-mini');
+	if (rows.length == 0) {
+		rows = $$('.log-entry');
 	}
 
 	for(var x=0; x<data.length; x++) {
@@ -96,15 +111,15 @@ function update_div_rows(data) {
 		 *    on the top
 		 */
 		if(isReverse == false) {
-			for (var i = 1; i < jQuery(rows).length; i++) {
-				jQuery(rows[i-1]).html(jQuery(rows[i]).html());
+			for (var i = 1; i < rows.length; i++) {
+				rows[i-1].innerHTML = rows[i].innerHTML;
 			}
 		} else {
-			for (var i = jQuery(rows).length - 1; i > 0; i--) {
-				jQuery(rows[i]).html(jQuery(rows[i-1]).html());
+			for (var i = rows.length - 1; i > 0; i--) {
+				rows[i].innerHTML = rows[i-1].innerHTML;
 			}
 		}
-		jQuery('#firstrow').html(data[x]);
+		$('firstrow').update(data[x]);
 	}
 }
 

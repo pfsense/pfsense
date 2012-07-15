@@ -69,7 +69,9 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
 			break;
 
 		$flent = parse_filter_line($logent);
-		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+//		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+		if ( ( ($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) || 
+		     ( ($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)) ) ) {
 			$counter++;
 			$filterlog[] = $flent;
 		}
@@ -83,6 +85,19 @@ function match_filter_line($flent, $filtertext = "") {
 		return true;
 	$filtertext = str_replace(' ', '\s+', $filtertext);
 	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
+}
+
+function match_filter_field($flent, $fields) {
+	foreach ($fields as $field) {
+		if ($fields[$field] == "All") continue;
+		if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+	}	
+	return true;
+}
+
+// Case Insensitive in_array function
+function in_arrayi($needle, $haystack) {
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 function collapse_filter_lines($logarr) {
@@ -126,7 +141,7 @@ function parse_filter_line($line) {
 
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
 
-	$tmp = explode("/", $rule);
+	$tmp = split("/", $rule);
 	$flent['rulenum'] = $tmp[0];
 
 	$proto = array(" ", "(?)");
@@ -135,8 +150,6 @@ function parse_filter_line($line) {
 	 * boolean FALSE because it could return a valid answer of 0 upon success. */
 	if (!(strpos($details, 'proto ') === FALSE)) {
 		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($details, 'next-header ') === FALSE)) {
-		preg_match("/.*\snext-header\s(.*)\s\(/", $details, $proto);
 	} elseif (!(strpos($details, 'proto: ') === FALSE)) {
 		preg_match("/.*\sproto\:(.*)\s\(/", $details, $proto);
 	} elseif (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
@@ -144,13 +157,13 @@ function parse_filter_line($line) {
 	} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
 		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
 	}
-	$proto = explode(" ", trim($proto[1]));
+	$proto = split(" ", trim($proto[1]));
 	$flent['proto'] = rtrim($proto[0], ",");
 
 	/* If we're dealing with TCP, try to determine the flags/control bits */
 	$flent['tcpflags'] = "";
 	if ($flent['proto'] == "TCP") {
-		$flags = preg_split('/[, ]/', $leftovers);
+		$flags = split('[\, ]', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	} elseif ($flent['proto'] == "Options") {
 		$flent['proto'] = "none";
@@ -161,7 +174,7 @@ function parse_filter_line($line) {
 		return $flent;
 	} else {
 		if($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s.   Please report to mailing list or forum."), $errline));
+			log_error("There was a error parsing rule: $errline.   Please report to mailing list or forum.");
 		}
 		return "";
 	}
@@ -169,26 +182,24 @@ function parse_filter_line($line) {
 
 function parse_ipport($addr) {
 	$addr = rtrim($addr, ":");
-	if (substr($addr, 0, 4) == "kip ")
-		$addr = substr($addr, 4);
 	$port = '';
 	if (substr_count($addr, '.') > 1) {
 		/* IPv4 */
-		$addr_split = explode(".", $addr);
+		$addr_split = split("\.", $addr);
 		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
 
 		if ($ip == "...")
 			return array($addr, '');
 
 		if($addr_split[4] != "") {
-			$port_split = explode(":", $addr_split[4]);
+			$port_split = split("\:", $addr_split[4]);
 			$port = $port_split[0];
 		}
 	} else {
 		/* IPv6 */
-		$addr = explode(" ", $addr);
+		$addr = split(" ", $addr);
 		$addr = rtrim($addr[0], ":");
-		$addr_split = explode(".", $addr);
+		$addr_split = split("\.", $addr);
 		if (count($addr_split) > 1) {
 			$ip   = $addr_split[0];
 			$port = $addr_split[1];
@@ -207,7 +218,7 @@ function get_port_with_service($port, $proto) {
 	$service = getservbyport($port, $proto);
 	$portstr = "";
 	if ($service) {
-		$portstr = sprintf('<span title="' . gettext('Service %1$s/%2$s: %3$s') . '">' . htmlspecialchars($port) . '</span>', $port, $proto, $service);
+		$portstr = "<span title=\"Service {$port}/{$proto}: {$service}\">" . htmlspecialchars($port) . "</span>";
 	} else {
 		$portstr = htmlspecialchars($port);
 	}

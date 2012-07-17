@@ -115,7 +115,7 @@ function format_log_line(row) {
 	line  = '  <span class="log-action-mini" nowrap>&nbsp;'	+ row[0]							+ '&nbsp;</span>';
 	line += '  <span class="log-time-mini" nowrap>'			+ row[1].slice(0,-3)				+ '</span>';
 	line += '  <span class="log-interface-mini" nowrap>'	+ row[2]							+ '</span>';
-	line += '  <span class="log-source-mini" nowrap>'		+ row[3].replace(/(.*):.*/, '$1')	+ '</span>';
+	line += '  <span class="log-source-mini" nowrap>'		+ row[3]				+ '</span>';
 	line += '  <span class="log-destination-mini" nowrap>'	+ row[4]							+ '</span>';
 //	line += '  <span class="log-protocol-mini" nowrap>'		+ row[5]							+ '</span>';
 
@@ -175,7 +175,7 @@ function format_log_line(row) {
 	&nbsp;<a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);"><img border="0" src="<?php echo find_action_image($filterent['act']);?>" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" /></a>&nbsp;</span>
 	<span class="log-time-mini"><?php echo substr(htmlspecialchars($filterent['time']), 0, -3);?></span>
 	<span class="log-interface-mini"><?php echo htmlspecialchars($filterent['interface']);?></span>
-	<span class="log-source-mini"><?php echo preg_replace('/(.*):.*/', '$1', htmlspecialchars($filterent['src']));?></span>
+	<span class="log-source-mini"><?php echo htmlspecialchars($filterent['srcip']);?></span>
 	<span class="log-destination-mini"><?php echo htmlspecialchars($filterent['dst']);?></span>
 	<?php
 	if ($filterent['proto'] == "TCP")

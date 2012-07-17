@@ -69,7 +69,9 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
 			break;
 
 		$flent = parse_filter_line($logent);
-		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+//		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+		if ( ( ($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) || 
+		     ( ($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)) ) ) {
 			$counter++;
 			$filterlog[] = $flent;
 		}
@@ -83,6 +85,19 @@ function match_filter_line($flent, $filtertext = "") {
 		return true;
 	$filtertext = str_replace(' ', '\s+', $filtertext);
 	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
+}
+
+function match_filter_field($flent, $fields) {
+	foreach ($fields as $field) {
+		if ($fields[$field] == "All") continue;
+		if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+	}	
+	return true;
+}
+
+// Case Insensitive in_array function
+function in_arrayi($needle, $haystack) {
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 function collapse_filter_lines($logarr) {

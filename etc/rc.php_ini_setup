@@ -155,6 +155,9 @@ if [ -f /usr/local/lib/php.ini ]; then
 fi
 LOADED_MODULES=`/usr/local/bin/php -m | /usr/bin/grep -v "\["`
 
+# Fetch the timezone from the XML and set it here. We set it later too in the running scripts
+TIMEZONE=`cat /conf/config.xml | egrep -E '<timezone>(.*?)</timezone>' | awk -F'>' '{print $2}'|awk -F'<' '{print $1}'`
+
 # Get a loaded module list in the stock php
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
@@ -165,9 +168,9 @@ output_buffering = "0"
 expose_php = Off
 implicit_flush = true
 magic_quotes_gpc = Off
-max_execution_time = 99999999
-max_input_time = 99999999
-set_time_limit = 0
+max_execution_time = 900
+max_input_time = 300
+set_time_limit = 3600
 register_argc_argv = On
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}
@@ -182,6 +185,7 @@ display_errors=on
 log_errors=on
 error_log=/tmp/PHP_errors.log
 extension_dir=${EXTENSIONSDIR}
+date.timezone="${TIMEZONE}"
 
 ; Extensions
 

@@ -52,6 +52,8 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
+if (isset($config['ipsec']['enable']))
+	$ifdescrs['enc0'] = "IPsec";
 
 if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {

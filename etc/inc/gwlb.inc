@@ -373,7 +373,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			}
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic") && ($gateway['ipprotocol'] == "inet")) {
+			if((empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) && ($gateway['ipprotocol'] == "inet")) {
 				/* we know which interfaces is dynamic, this should be made a function */
 				switch($wancfg['ipaddr']) {
 					case "dhcp":
@@ -395,7 +395,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			}
 
 			/* if the gateway is dynamic6 and we can find the IPv6, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")  && ($gateway['ipprotocol'] == "inet6")) {
+			if((empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) && ($gateway['ipprotocol'] == "inet6")) {
 				/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 				switch($wancfg['ipaddrv6']) {
 					case "6rd":

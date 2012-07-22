@@ -56,6 +56,12 @@ $pconfig['dns2gw'] = $config['system']['dns2gw'];
 $pconfig['dns3gw'] = $config['system']['dns3gw'];
 $pconfig['dns4gw'] = $config['system']['dns4gw'];
 
+## DNS Forwarder Strict Order - Added 20120611
+foreach(preg_split("/[\s]+/", $config['dnsmasq']['custom_options']) as $dnsmasq_custom_option) {
+	if($dnsmasq_custom_option == "strict-order") $pconfig['enforce_dnsmasq_strict_order'] = true;
+}
+## DNS Forwarder Strict Order - Added 20120611
+
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
@@ -196,6 +202,19 @@ if ($_POST) {
 			$config['system']['dnsserver'][] = $_POST['dns3'];
 		if ($_POST['dns4'])
 			$config['system']['dnsserver'][] = $_POST['dns4'];
+
+## DNS Forwarder Strict Order - Added 20120611
+		if($pconfig['enforce_dnsmasq_strict_order']) {
+			foreach(preg_split("/[\s]+/", $config['dnsmasq']['custom_options']) as $dnsmasq_custom_option) {
+				if($dnsmasq_custom_option == "strict-order") $strict_order_option_already_set = true;
+			}
+			if(!$strict_order_option_already_set) $config['dnsmasq']['custom_options'] .= "\n" . "strict-order";
+		}
+		else {
+			$config['dnsmasq']['custom_options'] = str_ireplace("strict-order\n", "", $config['dnsmasq']['custom_options']);
+			$config['dnsmasq']['custom_options'] = str_ireplace("strict-order",   "", $config['dnsmasq']['custom_options']);
+		}
+## DNS Forwarder Strict Order - Added 20120611
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
@@ -368,6 +387,21 @@ include("head.inc");
 							<br />
 							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS forwarder is enabled, so system can use the DNS forwarder to perform lookups. ".
 							"Checking this box omits localhost from the list of DNS servers."); ?>
+<!-- ## DNS Forwarder Strict Order - Added 20120611 -->
+							<br />
+							<br />
+							<?php if (!$enforce_dnsmasq_strict_order): $enforce_dnsmasq_strict_order = true; ?>
+							<input name="enforce_dnsmasq_strict_order" type="checkbox" id="enforce_dnsmasq_strict_order" value="yes" <?php if ($pconfig['enforce_dnsmasq_strict_order']) echo "checked"; ?>>
+							<strong>
+								<?=gettext("DNS Forwarder Strict Order"); ?>
+							</strong>
+							<br/>
+							<?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will " .
+							"query the DNS servers sequentially in the order specified, rather than in parallel (all at once). " .
+#							"<br>(Services: DNS Forwarder: Advanced)" . 
+							""), $g['product_name']); ?>
+							<?php endif; ?>
+<!-- ## DNS Forwarder Strict Order - Added 20120611 -->
 						</span>
 					</p>
 				</td>

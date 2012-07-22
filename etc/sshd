@@ -121,6 +121,15 @@
 	$sshconf .= "Protocol 2\n";
 	/* Run the server on another port if we have one defined */
 	$sshconf .= "Port $sshport\n";
+	
+	/* Apply package SSHDCond settings if config file exists */
+	if(file_exists("/etc/sshd_extra"))
+	{
+		$fdExtra = fopen("/etc/sshd_extra", 'r');
+		$szExtra = fread($fdExtra, 1048576); // Read up to 1MB from extra file
+		$sshconf .= $szExtra;
+		fclose($fdExtra);
+	}
 
 	/* Write the new sshd config file */
 	$fd = fopen("/etc/ssh/sshd_config", "w");

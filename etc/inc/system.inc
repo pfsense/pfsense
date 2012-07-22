@@ -271,8 +271,11 @@ function system_hosts_generate() {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
 			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
 					foreach ($dhcpifconf['staticmap'] as $host)
-						if ($host['ipaddr'] && $host['hostname'])
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+						if ($host['ipaddr'] && $host['hostname']) {
+							if ($config['dhcpd'][$dhcpif]['domain']) $dyndhcpifdomainname = $config['dhcpd'][$dhcpif]['domain'];	// Use Services DHCP Interface Domain Name
+							else $dyndhcpifdomainname = $syscfg['domain'];									// Use System General Domain Name
+							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$dyndhcpifdomainname} {$host['hostname']}\n";
+						}
 	}
 	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf)
@@ -319,8 +322,11 @@ function system_dhcpleases_configure() {
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
 				sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else
-			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+		else {
+			if ($config['dhcpd']['lan']['domain']) $dyndhcpifdomainname = $config['dhcpd']['lan']['domain'];	// Use Services DHCP 'LAN' Interface Domain Name
+			else $dyndhcpifdomainname = $config['system']['domain'];						// Use System General Domain Name
+			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$dyndhcpifdomainname} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+		}
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");

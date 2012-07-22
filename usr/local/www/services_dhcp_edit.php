@@ -90,12 +90,14 @@ if (isset($id) && $a_maps[$id]) {
 	    $pconfig['filename'] = $a_maps[$id]['filename'];
 		$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
+        $pconfig['arp_table_static_entry'] = isset($a_maps[$id]['arp_table_static_entry']);
 } else {
         $pconfig['mac'] = $_GET['mac'];
 		$pconfig['hostname'] = $_GET['hostname'];
 	    $pconfig['filename'] = $_GET['filename'];
 		$pconfig['rootpath'] = $_GET['rootpath'];
         $pconfig['descr'] = $_GET['descr'];
+        $pconfig['arp_table_static_entry'] = $_GET['arp_table_static_entry'];
 }
 
 if ($_POST) {
@@ -168,6 +170,7 @@ if ($_POST) {
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
+		$mapent['arp_table_static_entry'] = ($_POST['arp_table_static_entry']) ? true : false;
 		$mapent['filename'] = $_POST['filename'];
 		$mapent['rootpath'] = $_POST['rootpath'];
 
@@ -253,6 +256,13 @@ include("head.inc");
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
                     <br> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell"><?=gettext("ARP Table Static Entry");?></td>
+                  <td width="78%" class="vtable"> 
+                    <input name="arp_table_static_entry" id="arp_table_static_entry" type="checkbox" value="yes" <?php if ($pconfig['arp_table_static_entry']) echo "checked"; ?>> 
+                    <br> <span class="vexpl"><?=gettext("Create an ARP Table Static Entry for this MAC & IP Address pair. ".
+                    "");?></span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>

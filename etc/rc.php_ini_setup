@@ -54,7 +54,7 @@ fi
 if [ "$AVAILMEM" -lt "96" ]; then
 	APCSHMEMSIZE="5M"
 fi
-if [ "$AVAILMEM" -lt "128" ]; then
+if [ "$AVAILMEM" -le "128" ]; then
 	APCSHMEMSIZE="10M"
 fi
 if [ "$AVAILMEM" -gt "128" ]; then
@@ -170,7 +170,6 @@ implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 900
 max_input_time = 1800
-set_time_limit = 3600
 register_argc_argv = On
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}

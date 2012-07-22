@@ -1023,7 +1023,7 @@ div#log div.log-entry {
 div#log div.log-entry span,
 div#log div.log-header span {
 	padding: 3px 2px 3px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log div.log-entry span.log-action {
@@ -1189,10 +1189,11 @@ div#log div.log-entry-mini {
 
 div#log div.log-entry-mini span {
 	padding: 2px 2px 2px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log span.log-action-mini-header,
+div#log span.log-time-mini-header,
 div#log span.log-interface-mini-header,
 div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header,
@@ -1224,14 +1225,22 @@ div#log span.log-action-mini-header {
 	width: 6%;
 }
 
+div#log span.log-time-mini,
+div#log span.log-time-mini-header {
+	width: 18%;
+}
+
 div#log span.log-interface-mini,
 div#log span.log-interface-mini-header {
 	width: 8%;
 }
 
 div#log span.log-source-mini,
+div#log span.log-source-mini-header {
+	width: 24%;
+}
+
 div#log span.log-destination-mini,
-div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header {
 	width: 31%;
 }

@@ -357,8 +357,11 @@ if ($_POST) {
 
 		write_config();
 
-		header("Location: firewall_aliases.php");
-		exit;		
+		if($_POST['tab'])
+			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($_POST['tab']));
+		else
+			header("Location: firewall_aliases.php");
+		exit;
 	}
 	//we received input errors, copy data to prevent retype
 	else
@@ -573,6 +576,7 @@ EOD;
 <div id="inputerrors"></div>
 
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
+<input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($pconfig['type']);?>" />
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
 	<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>

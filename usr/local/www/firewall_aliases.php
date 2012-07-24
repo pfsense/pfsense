@@ -52,7 +52,8 @@ $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST) {
 
-	$pconfig = $_POST;
+	if($_POST['tab'])
+		$tab = $_POST['tab'];
 
 	if ($_POST['apply']) {
 		$retval = 0;
@@ -164,19 +165,20 @@ include("head.inc");
 <?php endif; ?>
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases/pre_table"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" >
-<tr><td class="tabnavtbl">
-		<?php
-	$tab=($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
-	$tab_array = array();
-	$tab_array[] = array(gettext("IP"),($tab=="ip"? true : false), "/firewall_aliases.php?tab=ip");
-	$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-	$tab_array[] = array(gettext("Urls"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
-	$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
-	display_top_tabs($tab_array);
-
-	?>
-		</td></tr>
-
+	<tr>
+		<td class="tabnavtbl">
+			<?php
+				$tab=($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
+				$tab_array = array();
+				$tab_array[] = array(gettext("IP"),($tab=="ip"? true : false), "/firewall_aliases.php?tab=ip");
+				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
+				$tab_array[] = array(gettext("Urls"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
+				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
+				display_top_tabs($tab_array);
+			?>
+		<input type="hidden" name="tab" value="<?=htmlspecialchars($tab);?>">
+		</td>
+	</tr>
 <tr><td><div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>

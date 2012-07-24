@@ -224,8 +224,12 @@ include("head.inc");
 					echo $alias["url"] . "<br/>";
 				}
 				if(is_array($alias["aliasurl"])) {
-					foreach($alias["aliasurl"] as $aliasurl)
-						echo $aliasurl . "<br/>";
+					$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
+					echo $aliasurls;
+					if(count($aliasurls) > 10) {
+						echo "...<br/>";
+					}
+					echo "<br/>\n";
 				}
 				$tmpaddr = explode(" ", $alias['address']);
 				$addresses = implode(", ", array_slice($tmpaddr, 0, 10));

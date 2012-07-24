@@ -42,6 +42,16 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
+/* Default values of advanced gateway monitoring parameters. */
+/* Note: These are also in gwlb.inc $a_def_settings array. */
+$a_def_settings = array();
+$a_def_settings['latencylow'] = "200";
+$a_def_settings['latencyhigh'] = "500";
+$a_def_settings['losslow'] = "10";
+$a_def_settings['losshigh'] = "20";
+$a_def_settings['interval'] = "1";
+$a_def_settings['down'] = "10";
+
 $a_gateways = return_gateways_array(true);
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
@@ -75,10 +85,10 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
-        $pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
-        $pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
-        $pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
-        $pconfig['down'] = $a_gateway_item[$id]['down'];
+	$pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
+	$pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
+	$pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
+	$pconfig['down'] = $a_gateway_item[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
@@ -199,44 +209,140 @@ if ($_POST) {
 	}
 
 	/* input validation */
-        if($_POST['latencylow']) {
-                if (! is_numeric($_POST['latencylow'])) {
-                        $input_errors[] = gettext("The low latency watermark needs to be a numeric value.");
-                }
-        }
+	if($_POST['latencylow']) {
+		if (! is_numeric($_POST['latencylow'])) {
+			$input_errors[] = gettext("The low latency threshold needs to be a numeric value.");
+		} else {
+			if ($_POST['latencylow'] < 1) {
+				$input_errors[] = gettext("The low latency threshold needs to be positive.");
+			}
+		}
+	}
 
-        if($_POST['latencyhigh']) {
-                if (! is_numeric($_POST['latencyhigh'])) {
-                        $input_errors[] = gettext("The high latency watermark needs to be a numeric value.");
-                }
-        }
-        if($_POST['losslow']) {
-                if (! is_numeric($_POST['losslow'])) {
-                        $input_errors[] = gettext("The low loss watermark needs to be a numeric value.");
-                }
-        }
-        if($_POST['losshigh']) {
-                if (! is_numeric($_POST['losshigh'])) {
-                        $input_errors[] = gettext("The high loss watermark needs to be a numeric value.");
-                }
-        }
+	if($_POST['latencyhigh']) {
+		if (! is_numeric($_POST['latencyhigh'])) {
+			$input_errors[] = gettext("The high latency threshold needs to be a numeric value.");
+		} else {
+			if ($_POST['latencyhigh'] < 1) {
+				$input_errors[] = gettext("The high latency threshold needs to be positive.");
+			}
+		}
+	}
 
-        if(($_POST['latencylow']) && ($_POST['latencyhigh'])){
-                if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
-                        $input_errors[] = gettext("The High latency watermark needs to be higher then the low latency watermark");
-                }
-        }
+	if($_POST['losslow']) {
+		if (! is_numeric($_POST['losslow'])) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be a numeric value.");
+		} else {
+			if ($_POST['losslow'] < 1) {
+				$input_errors[] = gettext("The low Packet Loss threshold needs to be positive.");
+			}
+			if ($_POST['losslow'] >= 100) {
+				$input_errors[] = gettext("The low Packet Loss threshold needs to be less than 100.");
+			}
+		}
+	}
 
-        if(($_POST['losslow']) && ($_POST['losshigh'])){
-                if($_POST['losslow'] > $_POST['losshigh']) {
-                        $input_errors[] = gettext("The High packet loss watermark needs to be higher then the low packet loss watermark");
-                }
-        }
+	if($_POST['losshigh']) {
+		if (! is_numeric($_POST['losshigh'])) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be a numeric value.");
+		} else {
+			if ($_POST['losshigh'] < 1) {
+				$input_errors[] = gettext("The high Packet Loss threshold needs to be positive.");
+			}
+			if ($_POST['losshigh'] > 100) {
+				$input_errors[] = gettext("The high Packet Loss threshold needs to be 100 or less.");
+			}
+		}
+	}
+
+	if(($_POST['latencylow']) && ($_POST['latencyhigh'])) {
+		if ((is_numeric($_POST['latencylow'])) && (is_numeric($_POST['latencyhigh']))) {
+			if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
+				$input_errors[] = gettext("The high latency threshold needs to be higher than the low latency threshold");
+			}
+		}
+	} else {
+		if($_POST['latencylow']){
+			if (is_numeric($_POST['latencylow'])) {
+				if($_POST['latencylow'] > $a_def_settings['latencyhigh']) {
+					$input_errors[] = gettext(sprintf("The low latency threshold needs to be less than the default high latency threshold (%d)", $a_def_settings['latencyhigh']));
+				}
+			}
+		}
+		if($_POST['latencyhigh']){
+			if (is_numeric($_POST['latencyhigh'])) {
+				if($_POST['latencyhigh'] < $a_def_settings['latencylow']) {
+					$input_errors[] = gettext(sprintf("The high latency threshold needs to be higher than the default low latency threshold (%d)", $a_def_settings['latencylow']));
+				}
+			}
+		}
+	}
+
+	if(($_POST['losslow']) && ($_POST['losshigh'])){
+		if ((is_numeric($_POST['losslow'])) && (is_numeric($_POST['losshigh']))) {
+			if($_POST['losslow'] > $_POST['losshigh']) {
+				$input_errors[] = gettext("The high Packet Loss threshold needs to be higher than the low Packet Loss threshold");
+			}
+		}
+	} else {
+		if($_POST['losslow']){
+			if (is_numeric($_POST['losslow'])) {
+				if($_POST['losslow'] > $a_def_settings['losshigh']) {
+					$input_errors[] = gettext(sprintf("The low Packet Loss threshold needs to be less than the default high Packet Loss threshold (%d)", $a_def_settings['losshigh']));
+				}
+			}
+		}
+		if($_POST['losshigh']){
+			if (is_numeric($_POST['losshigh'])) {
+				if($_POST['losshigh'] < $a_def_settings['losslow']) {
+					$input_errors[] = gettext(sprintf("The high Packet Loss threshold needs to be higher than the default low Packet Loss threshold (%d)", $a_def_settings['losslow']));
+				}
+			}
+		}
+	}
+
+	if($_POST['interval']) {
+		if (! is_numeric($_POST['interval'])) {
+			$input_errors[] = gettext("The frequency probe interval needs to be a numeric value.");
+		} else {
+			if ($_POST['interval'] < 1) {
+				$input_errors[] = gettext("The frequency probe interval needs to be positive.");
+			}
+		}
+	}
+
 	if($_POST['down']) {
-                if (! is_numeric($_POST['down']) || $_POST['down'] < 1) {
-                        $input_errors[] = gettext("The low latency watermark needs to be a numeric value.");
-                }
-        }
+		if (! is_numeric($_POST['down'])) {
+			$input_errors[] = gettext("The down time setting needs to be a numeric value.");
+		} else {
+			if ($_POST['down'] < 1) {
+				$input_errors[] = gettext("The down time setting needs to be positive.");
+			}
+		}
+	}
+
+	if(($_POST['interval']) && ($_POST['down'])){
+		if ((is_numeric($_POST['interval'])) && (is_numeric($_POST['down']))) {
+			if($_POST['interval'] > $_POST['down']) {
+				$input_errors[] = gettext("The Frequency Probe interval needs to be less than the down time setting.");
+			}
+		}
+	} else {
+		if($_POST['interval']){
+			if (is_numeric($_POST['interval'])) {
+				if($_POST['interval'] > $a_def_settings['down']) {
+					$input_errors[] = gettext(sprintf("The Frequency Probe interval needs to be less than the default down time setting (%d)", $a_def_settings['down']));
+				}
+			}
+		}
+		if($_POST['down']){
+			if (is_numeric($_POST['down'])) {
+				if($_POST['down'] < $a_def_settings['interval']) {
+					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default Frequency Probe interval (%d)", $a_def_settings['interval']));
+				}
+			}
+		}
+	}
 
 	if (!$input_errors) {
 		$reloadif = "";
@@ -444,7 +550,7 @@ function monitor_change() {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
-			<?php $showbutton = (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && $pconfig['interval'])); ?>
+			<?php $showbutton = (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && ($pconfig['interval'] > $a_def_settings['interval'])) || (isset($pconfig['down']) && !($pconfig['down'] == $a_def_settings['down']))); ?>
 			<div id="showadvgatewaybox" <? if ($showbutton) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 			</div>
@@ -475,7 +581,7 @@ function monitor_change() {
                                 <?=gettext("To");?>
                                     <input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
                                         value="<?=htmlspecialchars($pconfig['latencyhigh']);?>">
-                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for latency in milliseconds. Default is 100/200.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $a_def_settings['latencylow'], $a_def_settings['latencyhigh']));?></span></td>
                                 </td>
                         </tr>
                         <tr>
@@ -487,7 +593,7 @@ function monitor_change() {
                                 <?=gettext("To");?>
                                     <input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2"
                                         value="<?=htmlspecialchars($pconfig['losshigh']);?>">
-                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for packet loss in %. Default is 10/20.");?></span></td>
+                                    <br> <span class="vexpl"><?=gettext(sprintf("Low and high thresholds for packet loss in %%. Default is %d/%d.", $a_def_settings['losslow'], $a_def_settings['losshigh']));?></span></td>
                                 </td>
                         </tr>
 			<tr>
@@ -496,7 +602,7 @@ function monitor_change() {
 					<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
 						value="<?=htmlspecialchars($pconfig['interval']);?>">
 					<br><span class="vexpl">
-						<?=gettext("This defines how often that an icmp probe will be sent in seconds. Default is 1.");?><br/><br/>
+						<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $a_def_settings['interval']));?><br/><br/>
 						<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the frequency probe is increased the accuracy of the quality graph is decreased.");?>
 					</span></td>
 				</td>
@@ -506,18 +612,12 @@ function monitor_change() {
 				<td width="78%" class="vtable">
 					<input name="down" type="text" class="formfld unknown" id="down" size="2"
 						value="<?=htmlspecialchars($pconfig['down']);?>">
-					<br> <span class="vexpl"><?=gettext("This defines the number of bad probes before the alarm will fire. Default is 10.");?></span></td>
+					<br> <span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $a_def_settings['down']));?></span></td>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					<?= gettext("NOTE: The total time before a gateway is down is the product of the Frequency Probe and the Down fields. By default this is 1*10=10 seconds."); ?><br/>
-					<?php if (is_numeric($pconfig['interval']) || is_numeric($pconfig['down'])) {
-						echo "<br/>";
-						$interval = is_numeric($pconfig['interval']) ? $pconfig['interval'] : 1;
-						$down = is_numeric($pconfig['down']) ? $pconfig['down'] : 10;
-						echo gettext(sprintf("With the current configuration, the total time before this gateway would be considered down would be: %d*%d=%d seconds.", $interval, $down, $interval*$down));
-					} ?>
+					<?= gettext("NOTE: The Frequency Probe interval must be less than the Down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/>
 				</td>
 			</tr>
                         </table>

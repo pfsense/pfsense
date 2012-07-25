@@ -147,6 +147,16 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"debug.pfftpproxy" => "0"
 );
 
+/* Defaults for apinger gateway monitoring parameters. */
+$apinger_default = array(
+	"latencylow" => "200",
+	"latencyhigh" => "500",
+	"losslow" => "10",
+	"losshigh" => "20",
+	"interval" => "1",
+	"down" => "10"
+);
+
 $config_parsed = false;
 
 ?>

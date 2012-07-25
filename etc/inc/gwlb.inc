@@ -36,7 +36,7 @@ require_once("config.inc");
  * adds apropriate static routes.
  */
 function setup_gateways_monitor() {
-	global $config, $g;
+	global $config, $g, $apinger_default;
 
 	$gateways_arr = return_gateways_array();
 	if (!is_array($gateways_arr)) {
@@ -45,13 +45,6 @@ function setup_gateways_monitor() {
 		@unlink("{$g['tmp_path']}/apinger.status");
 		return;
 	}
-
-	/* Default settings. Probably should move to globals.inc? */
-	$a_settings = array();
-	$a_settings['latencylow'] = "200";
-	$a_settings['latencyhigh'] = "500";
-	$a_settings['losslow'] = "10";
-	$a_settings['losshigh'] = "20";
 
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
@@ -94,28 +87,28 @@ alarm default {
 ## "Down" alarm definition. 
 ## This alarm will be fired when target doesn't respond for 30 seconds.
 alarm down "down" {
-	time 10s
+	time {$apinger_default['down']}s
 }
 
 ## "Delay" alarm definition. 
 ## This alarm will be fired when responses are delayed more than 200ms
 ## it will be canceled, when the delay drops below 100ms
 alarm delay "delay" {
-	delay_low {$a_settings['latencylow']}ms
-	delay_high {$a_settings['latencyhigh']}ms
+	delay_low {$apinger_default['latencylow']}ms
+	delay_high {$apinger_default['latencyhigh']}ms
 }
 
 ## "Loss" alarm definition. 
 ## This alarm will be fired when packet loss goes over 20%
 ## it will be canceled, when the loss drops below 10%
 alarm loss "loss" {
-	percent_low {$a_settings['losslow']}
-	percent_high {$a_settings['losshigh']}
+	percent_low {$apinger_default['losslow']}
+	percent_high {$apinger_default['losshigh']}
 }
 
 target default {
 	## How often the probe should be sent	
-	interval 1s
+	interval {$apinger_default['interval']}s
 	
 	## How many replies should be used to compute average delay 
 	## for controlling "delay" alarms

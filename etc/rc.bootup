@@ -141,7 +141,7 @@ system_check_reset_button();
 if (file_exists("/root/firmware.tgz")) 
 	unlink("/root/firmware.tgz");
 
-/* start devd (dhclient now uses it */
+/* start devd (dhclient now uses it) */
 echo "Starting device manager (devd)...";
 mute_kernel_msgs();
 start_devd();
@@ -318,6 +318,7 @@ echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
 system_ntp_configure(false);
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
+echo "done.\n";
 
 /* start load balancer daemon */
 relayd_configure();

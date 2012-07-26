@@ -62,8 +62,8 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (preg_match('/[\s\r\n]/', $_POST['zone'])) {
-		$input_errors[] = gettext("The zone name must not contain any spaces.");
+	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
+		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores (_).");
 	}
 	
 	foreach ($a_cp as $cpkey => $cpent) {
@@ -104,7 +104,7 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="zone" type="text" class="formfld unknown" id="zone" size="64">
                     <br> 
-                    <span class="vexpl"><?=gettext("Zone name. Cannot contain spaces."); ?></span></td>
+                    <span class="vexpl"><?=gettext("Zone name. Can only contain letters, digits, and underscores (_)."); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>

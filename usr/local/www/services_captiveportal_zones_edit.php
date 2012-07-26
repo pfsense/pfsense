@@ -61,6 +61,10 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Zone name"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if (preg_match('/[\s\r\n]/', $_POST['zone'])) {
+		$input_errors[] = gettext("The zone name must not contain any spaces.");
+	}
 	
 	foreach ($a_cp as $cpkey => $cpent) {
 		if ($cpent['zone'] == $_POST['zone']){

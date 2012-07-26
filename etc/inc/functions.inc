@@ -127,7 +127,7 @@ if(!function_exists("get_menu_messages")) {
 }
 				
 if(!function_exists("dom_title")) {
-	function dom_title($title_msg,$width){
+	function dom_title($title_msg,$width=NULL){
 		$width=preg_replace("/\D+/","",$width);
 		if (!empty($width)){
 			$width=",'width',$width";

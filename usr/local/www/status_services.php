@@ -289,11 +289,11 @@ $pconfig['description'] = gettext("NTP clock sync");
 $services[] = $pconfig;
 
 if (is_array($config['captiveportal'])) {
-	foreach ($config['captiveportal'] as $id => $setting) {
+	foreach ($config['captiveportal'] as $zone => $setting) {
 		if (isset($setting['enable'])) {
 			$pconfig = array();
 			$pconfig['name'] = "captiveportal";
-			$pconfig['zone'] = $setting['zone'];
+			$pconfig['zone'] = $zone;
 			$pconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
 			$services[] = $pconfig;
 		}
@@ -334,14 +334,14 @@ if(isset($config['snmpd']['enable'])) {
 	$services[] = $pconfig;
 }
 
-if (count($config['igmpproxy']['igmpentry']) > 0) {
+if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
 	$pconfig = array();
 	$pconfig['name'] = "igmpproxy";
-	$pconfig['descritption'] = gettext("IGMP proxy");
+	$pconfig['description'] = gettext("IGMP proxy");
 	$services[] = $pconfig;
 }
 
-if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (isset($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	$pconfig = array();
 	$pconfig['name'] = "miniupnpd";
 	$pconfig['description'] = gettext("UPnP Service");

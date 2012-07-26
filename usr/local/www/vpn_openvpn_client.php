@@ -464,6 +464,16 @@ if ($savemsg)
 									$aliaslist = get_configured_ip_aliases_list();
 									foreach ($aliaslist as $aliasip => $aliasif)
 										$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+									$grouplist = return_gateway_groups_array();
+									foreach ($grouplist as $name => $group) {
+										if($group['ipprotocol'] != inet)
+											continue;
+										if($group[0]['vip'] <> "")
+											$vipif = $group[0]['vip'];
+										else
+											$vipif = $group[0]['int'];
+										$interfaces[$name] = "GW Group {$name}";
+									}
 									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
@@ -772,7 +782,7 @@ if ($savemsg)
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the " .
 							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter here the " .
+							"this is a site-to-site VPN, enter the " .
 							"remote LAN here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
@@ -952,4 +962,3 @@ function set_checked($var,& $chk) {
 }
 
 ?>
-

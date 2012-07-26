@@ -82,11 +82,11 @@ $svcconfig['description'] = gettext("NTP clock sync");
 $services[] = $svcconfig;
 
 if (is_array($config['captiveportal'])) {
-	foreach ($config['captiveportal'] as $id => $setting) {
+	foreach ($config['captiveportal'] as $zone => $setting) {
 		if (isset($setting['enable'])) {
 			$svcconfig = array();
 			$svcconfig['name'] = "captiveportal";
-			$svcconfig['zone'] = $setting['zone'];
+			$svcconfig['zone'] = $zone;
 			$svcconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
 			$services[] = $svcconfig;
 		}
@@ -127,14 +127,14 @@ if(isset($config['snmpd']['enable'])) {
 	$services[] = $svcconfig;
 }
 
-if (count($config['igmpproxy']['igmpentry']) > 0) {
+if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
 	$svcconfig = array();
 	$svcconfig['name'] = "igmpproxy";
 	$svcconfig['descritption'] = gettext("IGMP proxy");
 	$services[] = $svcconfig;
 }
 
-if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+if (isset($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	$svcconfig = array();
 	$svcconfig['name'] = "miniupnpd";
 	$svcconfig['description'] = gettext("UPnP Service");
@@ -194,7 +194,7 @@ if(isset($_POST['servicestatusfilter'])) {
 		<td class="widgetsubheader">&nbsp;</td>
 	</tr>
 <?php
-$skipservices = explode(",", str_replace(" ", "", $config['widgets']['servicestatusfilter']));
+$skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
 function service_name_compare($a, $b) {
 	if (strtolower($a['name']) == strtolower($b['name']))

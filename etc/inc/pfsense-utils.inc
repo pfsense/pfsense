@@ -956,7 +956,7 @@ function setup_serial_port($when="save", $path="") {
 	else
 		$boot_config = "";
 
-	if($g['platform'] <> "cdrom") {
+	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
@@ -973,7 +973,11 @@ function setup_serial_port($when="save", $path="") {
 			}
 			fclose($fd);
 		}
+	}
+	if($g['platform'] != "cdrom") {
 		/* serial console - write out /boot/loader.conf */
+		if ($when == "upgrade")
+			system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 		$boot_config = file_get_contents($loader_conf_file);
 		$boot_config_split = explode("\n", $boot_config);
 		if(count($boot_config_split) > 0) {
@@ -1565,6 +1569,23 @@ function load_crypto() {
 	}
 }
 
+/*
+ * load_thermal_hardware() - Load temperature monitor kernel module
+ */
+function load_thermal_hardware() {
+	global $config, $g;
+	$thermal_hardware_modules = array('coretemp', 'amdtemp');
+
+	if (!in_array($config['system']['thermal_hardware'], $thermal_hardware_modules))
+		return false;
+
+	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c {$config['system']['thermal_hardware']}`;
+	if (!empty($config['system']['thermal_hardware']) && ($is_loaded == 0)) {
+		log_error("Loading {$config['system']['thermal_hardware']} thermal monitor module.");
+		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
+	}
+}
+
 /****f* pfsense-utils/isvm
  * NAME
  *   isvm
@@ -1632,7 +1653,7 @@ function read_header($ch, $string) {
         global $file_size, $fout;
         $length = strlen($string);
         $regs = "";
-        ereg("(Content-Length:) (.*)", $string, $regs);
+        preg_match("/(Content-Length:) (.*)/", $string, $regs);
         if($regs[2] <> "") {
                 $file_size = intval($regs[2]);
         }
@@ -1686,7 +1707,7 @@ function read_body($ch, $string) {
  */
 function update_output_window($text) {
         global $pkg_interface;
-        $log = ereg_replace("\n", "\\n", $text);
+        $log = preg_replace("/\n/", "\\n", $text);
         if($pkg_interface != "console") {
                 echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
 				echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";	
@@ -2424,7 +2445,7 @@ function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
 	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
-	bindtextdomain("pfSense","/usr/share/locale");
+	bindtextdomain("pfSense","/usr/local/share/locale");
 	bind_textdomain_codeset("pfSense","{$lang}.{$encoding}");
 }
 

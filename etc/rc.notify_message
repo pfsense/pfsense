@@ -32,7 +32,7 @@ require("config.inc");
 require("functions.inc");
 require("notices.inc");
 
-$arguments = getopt("e:g:m:");
+$arguments = getopt("egm:");
 
 $send_email = false;
 $send_growl = false;

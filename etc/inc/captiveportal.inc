@@ -454,16 +454,15 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	$use_fastcgi = true;
 
 	if (isset($cpcfg['httpslogin'])) {
-		$cert = base64_decode($cpcfg['certificate']);
-		if (isset($cpcfg['cacertificate']))
-			$cacert = base64_decode($cpcfg['cacertificate']);
-		else
-			$cacert = "";
-		$key = base64_decode($cpcfg['private-key']);
+		$cert = lookup_cert($cpcfg['certref']);
+		$crt = base64_decode($cert['crt']);
+		$key = base64_decode($cert['prv']);
+		$ca = ca_chain($cert);
+    
 		/* generate lighttpd configuration */
 		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
-			$cert, $key, $cacert, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
+			$crt, $key, $ca, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-portal.pem", "ca-portal.pem", "1", $use_fastcgi, $cpzone);
 	}
 
@@ -477,7 +476,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
-	if (isset($cpcfg['httpslogin']) && $cpcfg['httpslogin'])
+	if (isset($cpcfg['httpslogin']))
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
 }
 
@@ -666,6 +665,8 @@ EOD;
 
 	/* activate ipfw(4) so CP can work */
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
+	/* Make sure not re-entrancy is allowed in ipfw(4) */
+	mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
 
 	return $cprules;
 }
@@ -1680,7 +1681,7 @@ function portal_mac_radius($clientmac,$clientip) {
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {
-	global $config, $cpzone;
+	global $config, $cpzone, $g;
                          
         /* Add rules for traffic shaping
          * We don't need to add extra rules since traffic will pass due to the following kernel option

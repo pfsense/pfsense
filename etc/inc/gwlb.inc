@@ -1,7 +1,7 @@
 <?php
 /*
   Copyright (C) 2008 Bill Marquette, Seth Mos
-  Copyright (C) 2010 Ermal Luçi
+  Copyright (C) 2010 Ermal LuÃ§i
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,20 @@
  */
 require_once("config.inc");
 
+/* Returns an array of default values used for apinger.conf */
+function return_apinger_defaults() {
+	return array(
+		"latencylow" => "200",
+		"latencyhigh" => "500",
+		"losslow" => "10",
+		"losshigh" => "20",
+		"interval" => "1",
+		"down" => "10");
+	}
+
 /*
  * Creates monitoring configuration file and
- * adds apropriate static routes.
+ * adds appropriate static routes.
  */
 function setup_gateways_monitor() {
 	global $config, $g;
@@ -46,13 +57,7 @@ function setup_gateways_monitor() {
 		return;
 	}
 
-	/* Default settings. Probably should move to globals.inc? */
-	$a_settings = array();
-	$a_settings['latencylow'] = "200";
-	$a_settings['latencyhigh'] = "500";
-	$a_settings['losslow'] = "10";
-	$a_settings['losshigh'] = "20";
-
+	$apinger_default = return_apinger_defaults();
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
@@ -72,7 +77,7 @@ pid_file "{$g['varrun_path']}/apinger.pid"
 #timestamp_format "%Y%m%d%H%M%S"
 
 status {
-	## File where the status information whould be written to
+	## File where the status information should be written to
 	file "{$g['tmp_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
@@ -84,38 +89,38 @@ status {
 # Interval between RRD updates
 rrd interval 60s;
 
-## These parameters can be overriden in a specific alarm configuration
+## These parameters can be overridden in a specific alarm configuration
 alarm default { 
-	command on "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload'"
-	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload'"
+	command on "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload' -c 'service reload openvpn'"
+	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload' -c 'service reload openvpn'"
 	combine 10s
 }
 
 ## "Down" alarm definition. 
 ## This alarm will be fired when target doesn't respond for 30 seconds.
 alarm down "down" {
-	time 10s
+	time {$apinger_default['down']}s
 }
 
 ## "Delay" alarm definition. 
 ## This alarm will be fired when responses are delayed more than 200ms
 ## it will be canceled, when the delay drops below 100ms
 alarm delay "delay" {
-	delay_low {$a_settings['latencylow']}ms
-	delay_high {$a_settings['latencyhigh']}ms
+	delay_low {$apinger_default['latencylow']}ms
+	delay_high {$apinger_default['latencyhigh']}ms
 }
 
 ## "Loss" alarm definition. 
 ## This alarm will be fired when packet loss goes over 20%
 ## it will be canceled, when the loss drops below 10%
 alarm loss "loss" {
-	percent_low {$a_settings['losslow']}
-	percent_high {$a_settings['losshigh']}
+	percent_low {$apinger_default['losslow']}
+	percent_high {$apinger_default['losshigh']}
 }
 
 target default {
 	## How often the probe should be sent	
-	interval 1s
+	interval {$apinger_default['interval']}s
 	
 	## How many replies should be used to compute average delay 
 	## for controlling "delay" alarms
@@ -179,7 +184,7 @@ EOD;
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;
-		if (!empty($gateway['lowloss'])) {
+		if (!empty($gateway['losslow'])) {
 			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
 			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
        			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
@@ -240,8 +245,8 @@ EOD;
 			} else {
 				$inetfamily = "-inet";
 			}
-			mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
-				" " . escapeshellarg($gateway['gateway']), true);
+			// mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
+			//	" " . escapeshellarg($gateway['gateway']), true);
 		}
 
 		$apingerconfig .= $alarmscfg;
@@ -282,6 +287,7 @@ function return_gateways_status($byname = false) {
 			$target = $info[0];
 		else
 			$target = $info[2];
+
 		$status[$target]['monitorip'] = $info[0];
 		$status[$target]['srcip'] = $info[1];
 		$status[$target]['name'] = $info[2];
@@ -291,7 +297,8 @@ function return_gateways_status($byname = false) {
 		$status[$target]['status'] = trim($info[8]);
 	}
 
-	/* tack on any gateways that have monitoring disabled */
+	/* tack on any gateways that have monitoring disabled
+	 * or are down, which could cause gateway groups to fail */
 	$gateways_arr = return_gateways_array();
 	foreach($gateways_arr as $gwitem) {
 		if(isset($gwitem['monitor_disable'])) {
@@ -308,13 +315,23 @@ function return_gateways_status($byname = false) {
 			else
 				$target = $tgtip;
 
-			$status[$target]['monitorip'] = $tgtip;
-			$status[$target]['srcip'] = $srcip;
-			$status[$target]['name'] = $gwitem['name'];
-			$status[$target]['lastcheck'] = date('r');
-			$status[$target]['delay'] = "0.0ms";
-			$status[$target]['loss'] = "0.0%";
-			$status[$target]['status'] = "none";
+			/* failsafe for down interfaces */
+			if($target == "") {
+				$target = $gwitem['name'];
+				$status[$target]['name'] = $gwitem['name'];
+				$status[$target]['lastcheck'] = date('r');
+				$status[$target]['delay'] = "0.0ms";
+				$status[$target]['loss'] = "100.0%";
+				$status[$target]['status'] = "down";
+			} else {
+				$status[$target]['monitorip'] = $tgtip;
+				$status[$target]['srcip'] = $srcip;
+				$status[$target]['name'] = $gwitem['name'];
+				$status[$target]['lastcheck'] = date('r');
+				$status[$target]['delay'] = "0.0ms";
+				$status[$target]['loss'] = "0.0%";
+				$status[$target]['status'] = "none";
+			}
 		}
 	}
 	return($status);
@@ -361,7 +378,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			}
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic") && ($gateway['ipprotocol'] == "inet")) {
+			if((empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) && ($gateway['ipprotocol'] == "inet")) {
 				/* we know which interfaces is dynamic, this should be made a function */
 				switch($wancfg['ipaddr']) {
 					case "dhcp":
@@ -383,7 +400,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			}
 
 			/* if the gateway is dynamic6 and we can find the IPv6, Great! */
-			if(empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")  && ($gateway['ipprotocol'] == "inet6")) {
+			if((empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) && ($gateway['ipprotocol'] == "inet6")) {
 				/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 				switch($wancfg['ipaddrv6']) {
 					case "6rd":
@@ -681,7 +698,7 @@ function return_gateway_groups_array() {
 				$dfltgwdown = true;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
-			if (preg_match("/dynamic", $gateways_arr[$upgw]['gateway']))
+			if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
 				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 				log_error("Default gateway down setting {$upgw} as default!");
@@ -705,7 +722,6 @@ function return_gateway_groups_array() {
 				
 		unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
 	}
-
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members seperated by tier */
@@ -789,7 +805,10 @@ function return_gateway_groups_array() {
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */
-				break;
+				if(is_array($gateway_groups_array[$group['name']]))
+					break;
+				else
+					log_error("GATEWAYS: We did not find the first tier of the gateway group {$group['name']}! That's odd.");
 			}
 		}
 	}

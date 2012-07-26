@@ -58,7 +58,7 @@ function domTT_title($title_msg){
 	if (!empty($title_msg)){
 		$title_msg=preg_replace("/\s+/"," ",$title_msg);
         $title_msg=preg_replace("/'/","\'",$title_msg);
-		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
+		return "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'delay',300,'styleClass', 'niceTitle');\"";
 	}
 }
 
@@ -123,6 +123,25 @@ if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
 if ($_POST) {
+	$firstfield = "";
+	$rows = 0;
+
+	$input_errors = array();
+	$reqfields = array();
+	$reqfieldsn = array();
+	foreach ($pkg['fields']['field'] as $field) {
+		if (($field['type'] == 'input') && isset($field['required'])) {
+			if($field['fieldname'])
+				$reqfields[] = $field['fieldname'];
+			if($field['fielddescr'])
+				$reqfieldsn[] = $field['fielddescr'];
+		}
+	}
+	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
+
+	if ($pkg['custom_php_validation_command'])
+		eval($pkg['custom_php_validation_command']);
+
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {
 		    if($pkg['custom_php_command_before_form'] <> "")
@@ -137,7 +156,7 @@ if ($_POST) {
 			eval($pkg['custom_php_resync_config_command']);
 		}
 	} else {
-		if($pkg['custom_add_php_command']) {
+		if(!$input_errors && $pkg['custom_add_php_command']) {
 			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
 			?>
 
@@ -153,97 +172,81 @@ if ($_POST) {
 	}
 
 	// donotsave is enabled.  lets simply exit.
-	if($pkg['donotsave'] <> "") exit;
+	if(empty($pkg['donotsave'])) {
 
-	$firstfield = "";
-	$rows = 0;
-
-	$input_errors = array();
-	$reqfields = array();
-	$reqfieldsn = array();
-	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && isset($field['required'])) {
-			if($field['fieldname'])
-				$reqfields[] = $field['fieldname'];
-			if($field['fielddescr'])	
-				$reqfieldsn[] = $field['fielddescr'];
-		}
-	}
-	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
-
-	if ($pkg['custom_php_validation_command'])
-		eval($pkg['custom_php_validation_command']);
-
-	// store values in xml configration file.
-	if (!$input_errors) {
-		$pkgarr = array();
-		foreach ($pkg['fields']['field'] as $fields) {
-			switch($fields['type']){
-				case "rowhelper":
-					// save rowhelper items.
-					#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
-					$rowhelpername="row";
-					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield)
-						foreach($_POST as $key => $value){
-							if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches))
-								$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']]=$value;
+		// store values in xml configration file.
+		if (!$input_errors) {
+			$pkgarr = array();
+			foreach ($pkg['fields']['field'] as $fields) {
+				switch($fields['type']){
+					case "rowhelper":
+						// save rowhelper items.
+						#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
+						$rowhelpername="row";
+						foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield)
+							foreach($_POST as $key => $value){
+								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/",$key,$matches))
+									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']]=$value;
+							}
+						break;
+					default:
+						$fieldname  = $fields['fieldname'];
+						if ($fieldname == "interface_array") {
+							$fieldvalue = $_POST[$fieldname];
+						} elseif (is_array($_POST[$fieldname])) {
+							$fieldvalue = implode(',', $_POST[$fieldname]);
+						} else {
+							$fieldvalue = trim($_POST[$fieldname]);
+							if ($fields['encoding'] == 'base64')
+								$fieldvalue = base64_encode($fieldvalue);
 						}
-					break;
-				default:
-					$fieldname  = $fields['fieldname'];
-					if ($fieldname == "interface_array") {
-						$fieldvalue = $_POST[$fieldname];
-					} elseif (is_array($_POST[$fieldname])) {
-						$fieldvalue = implode(',', $_POST[$fieldname]);
-					} else {
-						$fieldvalue = trim($_POST[$fieldname]);
-						if ($fields['encoding'] == 'base64')
-							$fieldvalue = base64_encode($fieldvalue);
+						if($fieldname)
+							$pkgarr[$fieldname] = $fieldvalue;
 					}
-					if($fieldname)
-						$pkgarr[$fieldname] = $fieldvalue;
-				}
+			}
+
+			if (isset($id) && $a_pkg[$id])
+				$a_pkg[$id] = $pkgarr;
+			else
+				$a_pkg[] = $pkgarr;
+
+			write_config($pkg['addedit_string']);
+			// late running code
+			if($pkg['custom_add_php_command_late'] <> "") {
+			    eval($pkg['custom_add_php_command_late']);
+			}
+
+			if (isset($pkg['filter_rules_needed']))
+				filter_configure();
+
+			// resync the configuration file code if defined.
+			if($pkg['custom_php_resync_config_command'] <> "") {
+			    eval($pkg['custom_php_resync_config_command']);
+			}
+
+			parse_package_templates();
+
+			/* if start_command is defined, restart w/ this */
+			if($pkg['start_command'] <> "")
+			    exec($pkg['start_command'] . ">/dev/null 2&>1");
+
+			/* if restart_command is defined, restart w/ this */
+			if($pkg['restart_command'] <> "")
+			    exec($pkg['restart_command'] . ">/dev/null 2&>1");
+
+			if($pkg['aftersaveredirect'] <> "") {
+			    pfSenseHeader($pkg['aftersaveredirect']);
+			} elseif(!$pkg['adddeleteeditpagefields']) {
+			    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
+			} elseif(!$pkg['preoutput']) {
+			    pfSenseHeader("pkg.php?xml=" . $xml);
+			}
+			exit;
+		} else {
+			$get_from_post = true;
 		}
-
-		if (isset($id) && $a_pkg[$id])
-			$a_pkg[$id] = $pkgarr;
-		else
-			$a_pkg[] = $pkgarr;
-
-		write_config($pkg['addedit_string']);
-		// late running code
-		if($pkg['custom_add_php_command_late'] <> "") {
-		    eval($pkg['custom_add_php_command_late']);
-		}
-
-		if (isset($pkg['filter_rules_needed'])) 
-			filter_configure();
-
-		// resync the configuration file code if defined.
-		if($pkg['custom_php_resync_config_command'] <> "") {
-		    eval($pkg['custom_php_resync_config_command']);
-		}
-
-		parse_package_templates();
-
-		/* if start_command is defined, restart w/ this */
-		if($pkg['start_command'] <> "")
-		    exec($pkg['start_command'] . ">/dev/null 2&>1");
-
-		/* if restart_command is defined, restart w/ this */
-		if($pkg['restart_command'] <> "")
-		    exec($pkg['restart_command'] . ">/dev/null 2&>1");
-
-		if($pkg['aftersaveredirect'] <> "") {
-		    pfSenseHeader($pkg['aftersaveredirect']);
-		} elseif(!$pkg['adddeleteeditpagefields']) {
-		    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
-		} elseif(!$pkg['preoutput']) {
-		    pfSenseHeader("pkg.php?xml=" . $xml);
-		}
+	} elseif (!$input_errors) {
 		exit;
-	} else {
-		$get_from_post = true;
 	}
 }
 
@@ -593,6 +596,11 @@ if ($pkg['tabs'] <> "") {
 				$source_url = $pkga['source'];
 				eval("\$pkg_source_txt = &$source_url;");
 				$input="";
+				#check if show disable option is present on xml
+				if(isset($pkga['show_disable_value'])){
+					array_push($pkg_source_txt, array(($pkga['source_name']? $pkga['source_name'] : $pkga['name'])=> $pkga['show_disable_value'],
+													  ($pkga['source_value']? $pkga['source_value'] : $pkga['value'])=> $pkga['show_disable_value']));
+					}
 				foreach ($pkg_source_txt as $opt) {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
@@ -934,7 +942,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 				$fieldname .= '[]';
 				$multiple = 'multiple';
 			}
-			echo "<select id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
+			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
 			$additional_ifaces = $rowhelper['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
@@ -952,7 +960,9 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "</select>\n";
 			break;
 		case "select_source":
-			echo "<select id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
+			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}'>\n";
+			if(isset($rowhelper['show_disable_value']))
+				echo "<option value='{$rowhelper['show_disable_value']}'>{$rowhelper['show_disable_value']}</option>\n";
 			$source_url = $rowhelper['source'];
 			eval("\$pkg_source_txt = &$source_url;");
 			foreach($pkg_source_txt as $opt) {

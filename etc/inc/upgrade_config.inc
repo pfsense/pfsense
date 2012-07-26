@@ -1907,7 +1907,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				// Gateway Groups have to have valid names in pf, old lb pools did not. Clean them up.
-				$group_name = ereg_replace("[^A-Za-z0-9]", "", $lbpool['name'] );
+				$group_name = preg_replace("/[^A-Za-z0-9]/", "", $lbpool['name'] );
 				// If we made and changes, check for collisions and note the change.
 				if ($group_name != $lbpool['name']) {
 					// Make sure the name isn't already in use.
@@ -2882,5 +2882,49 @@ function upgrade_087_to_088() {
 		unset($config['system']['glxsb_enable']);
 		$config['system']['crypto_hardware'] = "glxsb";
 	}
+}
+
+function upgrade_088_to_089() {
+  global $config;
+  if (!is_array($config['ca']))
+    $config['ca'] = array();
+  if (!is_array($config['cert']))
+    $config['cert'] = array();
+    
+  /* migrate captive portal ssl to certifcate mngr */
+  if (is_array($config['captiveportal'])) {
+    foreach ($config['captiveportal'] as $id => &$setting) {
+      if (isset($setting['httpslogin'])) {
+        /* create cert entry */
+        $cert = array();
+        $cert['refid'] = uniqid();
+        $cert['descr'] = "Captive Portal Cert - {$setting['zone']}";
+        $cert['crt'] = $setting['certificate'];
+        $cert['prv'] = $setting['private-key'];
+        
+        if (!empty($setting['cacertificate'])) {
+          /* create ca entry */
+          $ca = array();
+          $ca['refid'] = uniqid();
+          $ca['descr'] = "Captive Portal CA - {$setting['zone']}";
+          $ca['crt'] = $setting['cacertificate'];
+          $config['ca'][] = $ca;
+          
+          /* add ca reference to certificate */
+          $cert['caref'] = $ca['refid'];
+        }
+        
+        $config['cert'][] = $cert;
+        
+        /* create cert reference */
+        $setting['certref'] = $cert['refid'];
+        
+        unset($setting['certificate']);
+        unset($setting['private-key']);
+        unset($setting['cacertificate']);
+        
+      }
+    }
+  }
 }
 ?>

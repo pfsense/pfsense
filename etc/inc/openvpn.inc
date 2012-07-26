@@ -334,21 +334,24 @@ function openvpn_reconfigure($mode, $settings) {
 	$dev_mode = $settings['dev_mode'];
 	$cipher = $settings['crypto'];
 
-	$interface = $settings['interface'];
-	$ipaddr = $settings['ipaddr'];
-	$ipaddrv6 = $settings['ipaddrv6'];
+	$interface = get_failover_interface($settings['interface']);
+	/* we will fill out these variables below. */
+	// $ipaddr = $settings['ipaddr'];
+	// $ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it
 	// If "any" interface was selected, local directive will be ommited.
 	if (is_ipaddrv4($ipaddr)) {
 		$iface_ip=$ipaddr;
-	} elseif (is_ipaddrv6($ipaddrv6)) {
-		$iface_ipv6=$ipaddrv6;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ip=get_interface_ip($interface);
 		}
+	}
+	if (is_ipaddrv6($ipaddrv6)) {
+		$iface_ipv6=$ipaddrv6;
+	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
 			$iface_ipv6=get_interface_ipv6($interface);
 		}
@@ -387,9 +390,8 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if (is_ipaddrv4($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	
-	}
-	if (is_ipaddrv6($iface_ipv6)) {
-		// $conf .= "local {$iface_ipv6}\n";	
+	} elseif (is_ipaddrv6($iface_ipv6)) {
+		$conf .= "local {$iface_ipv6}\n";	
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))
@@ -681,8 +683,8 @@ function openvpn_restart($mode, $settings) {
 	if (isset($settings['disable']))
 		return;
 
-	/* Do not start if we are a CARP backup on this vip! */
-	if (strstr($settings['interface'], "_vip") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
+	/* Do not start a client if we are a CARP backup on this vip! */
+	if (($mode == "client") && strstr($settings['interface'], "_vip") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
 		return;
 
 	/* start the new process */

@@ -69,7 +69,7 @@ function set_networking_interfaces_ports() {
 	$key = null;
 
 /* Only present auto interface option if running from LiveCD and interface mismatch*/
-	if ((ereg("cdrom", $g['platform'])) && is_interface_mismatch())
+	if ((preg_match("/cdrom/", $g['platform'])) && is_interface_mismatch())
 		$auto_assign = false;
 
 	echo <<<EOD

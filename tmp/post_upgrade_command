@@ -72,7 +72,14 @@ echo "$detect_command" > $CVS_CO_DIR/root/.shrc
 echo "$detect_command" >> $CVS_CO_DIR/root/.profile
 
 # Now turn on or off serial console as needed
-/tmp/post_upgrade_command.php $1
+echo "Checking for /tmp/$1/tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
+if [ -x /tmp/$1/tmp/post_upgrade_command.php ]; then
+	echo "Running /tmp/$1/tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
+	/tmp/$1/tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
+elif [ -f /tmp/post_upgrade_command.php ]; then
+	echo "Running /tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
+	/tmp/post_upgrade_command.php $1
+fi
 
 # Remove any previous MD5 sum files
 rm -f /root/*.md5

@@ -528,12 +528,24 @@ function is_webgui_cert($certref) {
 		return true;
 }
 
+function is_captiveportal_cert($certref) {
+	global $config;
+	if (!is_array($config['captiveportal']))
+		return;
+	foreach ($config['captiveportal'] as $portal) {
+		if (isset($portal['enable']) && isset($portal['httpslogin']) && ($portal['certref'] == $certref))
+			return true;
+	}
+	return false;
+}
+
 function cert_in_use($certref) {
 	return (is_webgui_cert($certref) ||
 		is_user_cert($certref) ||
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
-		is_ipsec_cert($certref));
+		is_ipsec_cert($certref) ||
+		is_captiveportal_cert($certref));
 }
 
 /*

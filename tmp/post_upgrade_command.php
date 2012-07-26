@@ -19,8 +19,9 @@
 	}
 
 	$newslicedir = "";
-	if ($ARGV[1] != "")
-		$newslicedir = '/tmp' . $ARGV[1];
+	if ($argv[1] != "")
+		$newslicedir = '/tmp/' . $argv[1];
+	system("echo \"Adding serial port settings ({$newslicedir})...\" >> /conf/upgrade_log.txt");
 	setup_serial_port("upgrade", $newslicedir);
 		
 	$files_to_process = file("/etc/pfSense.obsoletedfiles");

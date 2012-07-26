@@ -149,7 +149,7 @@ function parse_duid($duid_string) {
 $awk = "/usr/bin/awk";
 
 /* this pattern sticks comments into a single array item */
-$cleanpattern = "'{ gsub(\"^#.*\", \"\");} { gsub(\"^server-duid.*\", \"\");} { gsub(\";\", \"\"); print;}'";
+$cleanpattern = "'{ gsub(\"^#.*\", \"\");} { gsub(\"^server-duid.*\", \"\");} { gsub(\";$\", \"\"); print;}'";
 /* We then split the leases file by } */
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 

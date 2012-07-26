@@ -518,12 +518,11 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			$fetchdir = $g['tmp_path'];
 		}
 
-		$osname = php_uname("s");
-		$arch =  php_uname("m");
-		$rel = strtolower(php_uname("r"));
-		if (substr_count($rel, '-') > 1)
-			$rel = substr($rel, 0, strrpos($rel, "-"));
-		$priv_url = "http://ftp2.{$osname}.org/pub/{$osname}/ports/{$arch}/packages-{$rel}/All";
+		/* FreeBSD has no PBI's hosted, so fall back to our own URL for now. (Maybe fail to PC-BSD?) */
+		$arch = php_uname("m");
+		$arch = ($arch == "i386") ? "" : $arch . '/';
+		$rel = get_freebsd_version();
+		$priv_url = "http://files.pfsense.org/packages/{$arch}{$rel}/All/";
 		if (empty($base_url))
 			$base_url = $priv_url;
 		if (substr($base_url, -1) == "/")
@@ -551,7 +550,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
-
+		setup_library_paths();
 		exec("/usr/local/sbin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 		$pbidir = $pbidir[0];
 		$linkdirs = array('bin','sbin');
@@ -825,7 +824,7 @@ function install_package_xml($pkg) {
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
 				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
-				exec("find /usr/local/etc/ -name *.conf | grep {$pkg}",$files);
+				exec("find /usr/local/etc/ -name *.conf | grep \"{$pkg}\"",$files);
 				foreach($files as $f) {
 					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
 					if(is_file($pbiconf) || is_link($pbiconf)) {

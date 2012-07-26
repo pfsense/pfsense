@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 require_once("openvpn.inc");
 
 function has_special_chars($text) {
-	return ereg('[^A-Za-z0-9 _-]', $text);
+	return preg_match('/[^A-Za-z0-9 _-]/', $text);
 }
 
 function step1_submitphpaction() {

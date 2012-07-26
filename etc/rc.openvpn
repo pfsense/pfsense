@@ -1,22 +1,23 @@
-#! /usr/local/bin/php -f
+#!/usr/local/bin/php -f
 <?php
 /*
-	sshd - Modified to work on disk based system
-	Copyright 2004 Scott K Ullrich
-
-	Original Copyright (C) 2004 Fred Mol <fredmol@xs4all.nl>.
+	$Id$
+	part of m0n0wall (http://m0n0.ch/wall)
+	
+	Copyright (C) 2007 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2009 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
-
+	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-
+	
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-
+	
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-
+	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -29,41 +30,25 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("config.inc");
-require_once("functions.inc");
+	/* parse the configuration and include all functions used below */
+	require_once("config.inc");
+	require_once("functions.inc");
+	require_once("filter.inc");
+	require_once("openvpn.inc");
+	require_once("util.inc");
 
-conf_mount_rw();
-
-$fp = fopen('php://stdin', 'r');
-
-if (isset($config['system']['enablesshd'])) {
-	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
-	$yn = chop(fgets($fp));
-	if ($yn[0] == "y") {
-		unset($config['system']['enablesshd']);
-		echo "\nWriting configuration...";
-		write_config();
-		echo " done.\n";
-		echo "\nDisabling SSHD...";
-		exec("/etc/sshd");
-		echo " done.\n";
-		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
+	/* make sure to wait until the boot scripts have finished */
+	while (file_exists("{$g['varrun_path']}/booting")) {
+		sleep(1);
 	}
+	$openvpnlck = lock('openvpn', LOCK_EX);
 	
-} else {
-	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
-	$yn = chop(fgets($fp));
-	if ($yn[0] == "y") {
-		$config['system']['enablesshd'] = true;
-		echo "\nWriting configuration...";
-		write_config();
-		echo " done.\n";
-		echo "\nEnabling SSHD...";
-		exec("/etc/sshd");
-		echo " done.\n\n";
-	}	
-}
+	if(isset($config['openvpn']['enable']))
+		log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading.");
 
-fclose($fp);
+	openvpn_resync_all();
 
-conf_mount_ro();
+	filter_configure();
+
+	unlock($openvpnlck);
+?>

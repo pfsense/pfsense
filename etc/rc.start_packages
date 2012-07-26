@@ -39,6 +39,7 @@ require_once("pfsense-utils.inc");
 require_once("service-utils.inc");
 
 log_error("Restarting/Starting all packages.");
+setup_library_paths();
 
 $rcfiles = glob("{$rcfileprefix}*.sh");
 if (!$rcfiles)

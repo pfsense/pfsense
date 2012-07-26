@@ -470,10 +470,10 @@ function system_routing_configure($interface = "") {
 			if(preg_match("/^Null/i", $rtent['gateway']))
 				$blackhole = "-blackhole";
 
-			if (is_ipaddr($gatewayip)) {
+			if (is_ipaddr($gatewayip) && ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
 				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($gatewayip));
-			} else if (!empty($interfacegw)) {
+			} else if (!empty($interfacegw) &&  ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
 				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg($interfacegw));
 			}
@@ -1193,7 +1193,7 @@ EOD;
 
 		// Harden SSL a bit for PCI conformance testing
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
-		$lighty_config .= "ssl.cipher-list = \"TLSv1+HIGH !SSLv2 RC4+MEDIUM !aNULL !eNULL !3DES @STRENGTH\"\n";
+		$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:RC4-SHA:RC4-MD5:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
 
 		if(!(empty($ca) || (strlen(trim($ca)) == 0)))
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
@@ -1271,7 +1271,7 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg .= "driftfile {$driftfile}\n";
 
 	if (empty($config['ntpd']['interface']))
-		if (!empty($config['installedpackages']['openntpd']['config'][0]['interface']))
+		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface']))
 			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		else
 			$interfaces = array();

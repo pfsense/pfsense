@@ -117,7 +117,6 @@ function is_private_ip($iptocheck) {
                "10.0.0.0/8",
                "172.16.0.0/12",
                "192.168.0.0/16",
-               "99.0.0.0/8"
         );
         foreach($ip_private_list as $private) {
                 if(ip_in_subnet($iptocheck,$private)==true)

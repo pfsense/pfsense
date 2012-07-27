@@ -75,7 +75,7 @@ $authcfg = auth_get_authserver($authserver);
 if (!$authcfg) {
 	printf(gettext("Could not find settings for %s%s"), $authserver, "<p/>");
 } else {
-	echo gettext("Testing pfSense LDAP settings... One moment please...") . "<p/>";
+	echo sprintf(gettext("Testing %s LDAP settings... One moment please..."), $g['product_name']) . "<p/>";
 
 	echo "<table width='100%'>";
 

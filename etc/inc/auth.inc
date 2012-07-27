@@ -1027,7 +1027,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap)))
                         $error = true;
-	} else if (!($res = ldap_bind($ldap, $ldapbindun, $ldapbindpw)))
+	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw)))
 		$error = true;
 
 	if ($error == true) {

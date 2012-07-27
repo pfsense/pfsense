@@ -45,7 +45,8 @@ header("Pragma: no-cache");
 header("Connection: close");
 
 $orig_host = $_ENV['HTTP_HOST'];
-$orig_request = $_REQUEST['redirurl'];
+/* NOTE: IE 8/9 is buggy and that is why this is needed */
+$orig_request = trim($_REQUEST['redirurl'], " /");
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {

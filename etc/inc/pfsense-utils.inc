@@ -115,6 +115,7 @@ function is_private_ip($iptocheck) {
         $isprivate = false;
         $ip_private_list=array(
                "10.0.0.0/8",
+               "100.64.0.0/10",
                "172.16.0.0/12",
                "192.168.0.0/16",
         );

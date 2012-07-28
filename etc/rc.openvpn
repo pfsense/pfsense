@@ -48,7 +48,5 @@
 
 	openvpn_resync_all();
 
-	filter_configure();
-
 	unlock($openvpnlck);
 ?>

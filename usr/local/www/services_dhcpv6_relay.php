@@ -84,10 +84,10 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
-		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
-		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay']['server'] = $_POST['server'];
+		$config['dhcrelay6']['enable'] = $_POST['enable'] ? true : false;
+		$config['dhcrelay6']['interface'] = implode(",", $_POST['interface']);
+		$config['dhcrelay6']['agentoption'] = $_POST['agentoption'] ? true : false;
+		$config['dhcrelay6']['server'] = $_POST['server'];
 
 		write_config();
 

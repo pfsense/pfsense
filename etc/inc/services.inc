@@ -1262,12 +1262,14 @@ function services_dhcrelay6_configure() {
 		if (is_ipaddrv6(get_interface_ipv6($dhcrelayif)))
 			$dhcrelayifs[] = get_real_interface($dhcrelayif);
 	}
+	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/*
 	 * In order for the relay to work, it needs to be active
 	 * on the interface in which the destination server sits.
 	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
+        $srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
 		unset($destif);
 		foreach ($iflist as $ifname) {
@@ -1322,23 +1324,24 @@ function services_dhcrelay6_configure() {
 				$destif = get_real_interface("wan");
 		}
 
-		if (!empty($destif))
-			$dhcrelayifs[] = $destif;
+		if (!empty($destif)) {
+			$srvifaces[] = "{$srvip}%{$destif}";
+		}
 	}
-	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/* fire up dhcrelay */
-	if (empty($dhcrelayifs)) {
+	if (empty($dhcrelayifs) || empty($srvifaces) ) {
 		log_error("No suitable interface found for running dhcrelay -6!");
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -6 -pf \"{$g['varetc_path']}/dhcrelay6.pid\" -i " .  implode(" -i ", $dhcrelayifs);
-
-	if (isset($dhcrelaycfg['agentoption']))
-		$cmd .=  " -a -m replace";
-
-	$cmd .= " " . implode(" ", $srvips);
+	$cmd = "/usr/local/sbin/dhcrelay -6 -pf \"{$g['varetc_path']}/dhcrelay6.pid\"";
+	foreach ($dhcrelayifs as $dhcrelayif) {
+		$cmd .= " -l {$dhcrelayif}";
+	}
+	foreach ($srvifaces as $srviface) {
+		$cmd .= " -u \"{$srviface}\"";
+	}
 	mwexec($cmd);
 
 	return 0;

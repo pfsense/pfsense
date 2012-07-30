@@ -200,7 +200,7 @@ function refcount_reference($reference) {
 			$shmid = @shmop_open($reference, "w", 0, 0);
 		}
 		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) + 1;
+		$shm_data = str_pad(intval($shm_data) + 1, 4, "0", STR_PAD_LEFT);
 		@shmop_write($shmid, $shm_data, 0);
 		@shmop_close($shmid);
 	} catch (Exception $e) {
@@ -215,7 +215,7 @@ function refcount_unreference($reference) {
 		/* We assume that the shared memory exists. */
 		$shmid = @shmop_open($reference, "w", 0, 0);
 		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) - 1;
+		$shm_data = str_pad(intval($shm_data) - 1, 4, "0", STR_PAD_LEFT);
 		if ($shm_data < 0) {
 			//debug_backtrace();
 			log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));

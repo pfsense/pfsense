@@ -187,60 +187,60 @@ function send_multiple_events($cmds) {
 }
 
 function refcount_init($reference) {
-	/* Take out a lock while creating the shared memory, just in case something else tries at the same time. */
-	$shm_lck_filename = "shm$reference";
-	$shm_lck = lock($shm_lck_filename, LOCK_EX);
-	$shm_size = 10;
-	$shmid = shmop_open($reference, "c", 0644, $shm_size);
-	shmop_write($shmid, str_pad("0", 10, "\x0", STR_PAD_RIGHT), 0);
-	shmop_close($shmid);
-	unlock($shm_lck);
+	$shmid = @shmop_open($reference, "c", 0644, 10);
+	@shmop_write($shmid, str_pad("0", 10, "\x0", STR_PAD_RIGHT), 0);
+	@shmop_close($shmid);
 }
 
 function refcount_reference($reference) {
+	/* Take out a lock across the shared memory read, increment, write sequence to make it atomic. */
+	$shm_lck = lock("shm{$reference}", LOCK_EX);
 	try {
-		/* The first time through the shared memory will not be there. */
-		/* So suppress the warning here and handle the init in the if. */
+		/* NOTE: A warning is generated when shared memory does not exist */
 		$shmid = @shmop_open($reference, "w", 0, 0);
 		if (!$shmid) {
 			refcount_init($reference);
-			$shmid = shmop_open($reference, "w", 0, 0);
+			$shmid = @shmop_open($reference, "w", 0, 0);
+			if (!$shmid) {
+				log_error(gettext("Could not open shared memory {$reference}"));
+				return;
+			}
 		}
-		/* Take out a lock across the shared memory read, increment, write sequence to make it atomic. */
-		$shm_lck_filename = "shm$reference";
-		$shm_lck = lock($shm_lck_filename, LOCK_EX);
-		$shm_size = shmop_size($shmid);
-		$shm_data = shmop_read($shmid, 0, $shm_size);
+		$shm_data = @shmop_read($shmid, 0, 10);
 		$shm_data = intval($shm_data) + 1;
-		shmop_write($shmid, str_pad($shm_data, $shm_size, "\x0", STR_PAD_RIGHT), 0);
-		shmop_close($shmid);
+		@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
+		@shmop_close($shmid);
 		unlock($shm_lck);
 	} catch (Exception $e) {
 		log_error($e->getMessage());
+		unlock($shm_lck);
 	}
 
 	return $shm_data;
 }
 
 function refcount_unreference($reference) {
+	/* Take out a lock across the shared memory read, decrement, write sequence to make it atomic. */
+	$shm_lck = lock("shm{$reference}", LOCK_EX);
 	try {
-		/* We assume that the shared memory exists. */
 		$shmid = @shmop_open($reference, "w", 0, 0);
-		/* Take out a lock across the shared memory read, decrement, write sequence to make it atomic. */
-		$shm_lck_filename = "shm$reference";
-		$shm_lck = lock($shm_lck_filename, LOCK_EX);
-		$shm_size = shmop_size($shmid);
-		$shm_data = @shmop_read($shmid, 0, $shm_size);
+		if (!$shmid) {
+			refcount_init($reference);
+			log_error(gettext("Could not open shared memory {$reference}"));
+			return;
+		}
+		$shm_data = @shmop_read($shmid, 0, 10);
 		$shm_data = intval($shm_data) - 1;
 		if ($shm_data < 0) {
 			//debug_backtrace();
 			log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
 		} else
-			shmop_write($shmid, str_pad($shm_data, $shm_size, "\x0", STR_PAD_RIGHT), 0);
-		shmop_close($shmid);
+			@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
+		@shmop_close($shmid);
 		unlock($shm_lck);
 	} catch (Exception $e) {
 		log_error($e->getMessage());
+		unlock($shm_lck);
 	}
 
 	return $shm_data;

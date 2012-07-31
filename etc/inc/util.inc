@@ -203,6 +203,7 @@ function refcount_reference($reference) {
 			$shmid = @shmop_open($reference, "w", 0, 0);
 			if (!$shmid) {
 				log_error(gettext("Could not open shared memory {$reference}"));
+				unlock($shm_lck);
 				return;
 			}
 		}
@@ -227,6 +228,7 @@ function refcount_unreference($reference) {
 		if (!$shmid) {
 			refcount_init($reference);
 			log_error(gettext("Could not open shared memory {$reference}"));
+			unlock($shm_lck);
 			return;
 		}
 		$shm_data = @shmop_read($shmid, 0, 10);

@@ -358,8 +358,8 @@ function uninstall_package($pkg_name) {
 	if(!$builder_package_install) {
 		$static_output .= "Cleaning up... ";
 		update_output_window($static_output);
-		exec("/usr/bin/tar xzPfU /tmp/pkg_libs.tgz -C /");
-		exec("/usr/bin/tar xzPfU /tmp/pkg_bins.tgz -C /");
+		exec("/usr/bin/tar xzPfk /tmp/pkg_libs.tgz -C /");
+		exec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /");
 		@unlink("/tmp/pkg_libs.tgz");
 		@unlink("/tmp/pkg_bins.tgz");
 	}

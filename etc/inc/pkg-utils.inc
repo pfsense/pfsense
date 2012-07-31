@@ -8,7 +8,7 @@
  *   $Id$
  ******
  *
- * Copyright (C) 2010 Ermal Lu�i
+ * Copyright (C) 2010 Ermal Luci
  * Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -81,12 +81,12 @@ $vardb = "/var/db/pkg";
 safe_mkdir($vardb);
 $g['platform'] = trim(file_get_contents("/etc/platform"));
 
-conf_mount_rw();
 if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
+	conf_mount_rw();
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
+	conf_mount_ro();
 }
-conf_mount_ro();
 
 /****f* pkg-utils/remove_package
  * NAME

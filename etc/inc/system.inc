@@ -838,7 +838,7 @@ function system_generate_lighty_config($filename,
 		echo "system_generate_lighty_config() being called $mt\n";
 	}
 
-	if($captive_portal != false)  {
+	if($captive_portal !== false)  {
 		$captiveportal = ",\"mod_rewrite\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 		$captive_portal_module = "";
@@ -880,7 +880,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM 
-	if($captive_portal == true)  {
+	if($captive_portal !== false)  {
 		if($avail > 107 and $avail < 256) {
 			$max_procs += 1; // 2 worker processes
 		}
@@ -896,9 +896,6 @@ function system_generate_lighty_config($filename,
 		if($avail > 447) {
 			$max_procs += 4; // 6 worker processes
 		}
-	}
-
-	if($captive_portal == true)  {	
 		$bin_environment =  <<<EOC
 			"bin-environment" => (
 				"PHP_FCGI_CHILDREN" => "0",
@@ -924,7 +921,7 @@ EOC;
 
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
-		if ($captive_portal != false)
+		if ($captive_portal !== false)
 			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
 		else
 			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
@@ -1088,35 +1085,19 @@ url.access-deny             = ( "~", ".inc" )
 
 EOD;
 
-	if($captive_portal == true) {
-		$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
-		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::1]:{$lighty_port}\" { \n";
-		if($cert <> "" and $key <> "") {
-			$lighty_config .= "\n";
-			$lighty_config .= "## ssl configuration\n";
-			$lighty_config .= "ssl.engine = \"enable\"\n";
-			$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-			if($ca <> "")
-				$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
-		}
-		$lighty_config .= " }\n";
-	} else {
-		$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
-		$lighty_config .= "server.port  = {$lighty_port}\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
-		$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:{$lighty_port}\" { \n";
-		if($cert <> "" and $key <> "") {
-			$lighty_config .= "\n";
-			$lighty_config .= "## ssl configuration\n";
-			$lighty_config .= "ssl.engine = \"enable\"\n";
-			$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-			if($ca <> "")
-				$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
-		}
-		$lighty_config .= " }\n";
+	$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
+	$lighty_config .= "server.port  = {$lighty_port}\n";
+	$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
+	$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:{$lighty_port}\" { \n";
+	if($cert <> "" and $key <> "") {
+		$lighty_config .= "\n";
+		$lighty_config .= "## ssl configuration\n";
+		$lighty_config .= "ssl.engine = \"enable\"\n";
+		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
+		if($ca <> "")
+			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
+	$lighty_config .= " }\n";
 
 
 	$lighty_config .= <<<EOD
@@ -1200,7 +1181,7 @@ EOD;
 	}
 
 	// Add HTTP to HTTPS redirect	
-	if ($captive_portal == false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
+	if ($captive_portal === false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
 		if($lighty_port != "443") 
 			$redirectport = ":{$lighty_port}";
 		$lighty_config .= <<<EOD

@@ -333,8 +333,8 @@ function uninstall_package($pkg_name) {
 		if(!file_exists("/tmp/pkg_libs.tgz")) {
 			$static_output .= "Backing up libraries... ";
 			update_output_window($static_output);
-			exec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
-			exec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`");
+			mwexec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
+			mwexec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
 			$static_output .= "\n";
 		}
 	}
@@ -358,8 +358,8 @@ function uninstall_package($pkg_name) {
 	if(!$builder_package_install) {
 		$static_output .= "Cleaning up... ";
 		update_output_window($static_output);
-		exec("/usr/bin/tar xzPfk /tmp/pkg_libs.tgz -C /");
-		exec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /");
+		mwexec("/usr/bin/tar xzPfk /tmp/pkg_libs.tgz -C /", true);
+		mwexec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /", true);
 		@unlink("/tmp/pkg_libs.tgz");
 		@unlink("/tmp/pkg_bins.tgz");
 	}

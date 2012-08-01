@@ -2608,6 +2608,9 @@ function upgrade_077_to_078() {
 		$radarr['server'] = $radsvr;
 		$config['pptpd']['radius'] = $radarr;
 	}
+	if (is_array($config['pptpd'])) {
+		$config['pptpd']['n_pptp_units'] = empty($config['pptpd']['n_pptp_units']) ? 16 : $config['pptpd']['n_pptp_units'];
+	}
 }
 function upgrade_078_to_079() {
 	global $g;

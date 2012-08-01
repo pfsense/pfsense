@@ -255,9 +255,6 @@ function captiveportal_configure_zone($cpcfg) {
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
-		/* stop accounting on all clients */
-		captiveportal_radius_stop_all();
-
 		/* initialize minicron interval value */
 		$croninterval = $cpcfg['croninterval'] ? $cpcfg['croninterval'] : 60;
 
@@ -371,7 +368,7 @@ EOD;
 		captiveportal_init_webgui_zone($cpcfg);
 
 		/* Kill any existing prunecaptiveportal processes */
-		if(file_exists("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid"))
+		if (file_exists("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid"))
 			killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 
 		/* start pruning process (interval defaults to 60 seconds) */
@@ -391,6 +388,11 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal_{$cpzone}.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+		/* remove old information */
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac_{$cpzone}.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip_{$cpzone}.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 
 		captiveportal_radius_stop_all();
 
@@ -400,8 +402,6 @@ EOD;
 			mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 
 		/* unload ipfw */
-		//if (is_module_loaded("ipfw.ko"))		
-		//	mwexec("/sbin/kldunload ipfw.ko");
 		$listifs = get_configured_interface_list();
 		$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
 		foreach ($cpinterfaces as $cpifgrp) {
@@ -496,10 +496,6 @@ function captiveportal_init_rules($reinit = false) {
 			continue;
 		$tmpif = get_real_interface($cpifgrp);
 		if (!empty($tmpif)) {
-			if ($firsttime > 0)
-				$cpinterface .= " or ";
-			$cpinterface .= "via {$tmpif}";
-			$firsttime = 1;
 			$cpipm = get_interface_ip($cpifgrp);
 			if (is_ipaddr($cpipm)) {
 				$carpif = link_ip_to_carp_interface($cpipm);
@@ -514,15 +510,14 @@ function captiveportal_init_rules($reinit = false) {
 					}
 				}
 				$cpips[] = $cpipm;
-				mwexec("/usr/local/sbin/ipfw_context -a {$cpzone} -n {$tmpif}", true);
-				pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
 			}
+			mwexec("/usr/local/sbin/ipfw_context -a {$cpzone} -n {$tmpif}", true);
+			pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
 		}
 	}
 	if (count($cpips) > 0) {
 		$cpactive = true;
-		$cpinterface = "{ {$cpinterface} } ";
-		} else
+	} else
 		return false;
 
 	if ($reinit == false)

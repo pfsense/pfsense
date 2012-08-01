@@ -1673,25 +1673,25 @@ function read_body($ch, $string) {
                 $downloadProgress = 0;
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
-					if($pkg_interface == "console") {
-						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
-                        	$tostatus = $static_status . $downloadProgress . "%";
-                        	update_status($tostatus);
-						}
-					} else {
-                        $tostatus = $static_status . $downloadProgress . "%";
-                        update_status($tostatus);						
-					}
+			if($pkg_interface == "console") {
+				if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+					$tostatus = $static_status . $downloadProgress . "%";
+					update_status($tostatus);
+				}
+			} else {
+				$tostatus = $static_status . $downloadProgress . "%";
+				update_status($tostatus);						
+			}
                 } else {
-					if($pkg_interface == "console") {
-						if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
-                        	$tooutput = $static_output . $downloadProgress . "%";
-                        	update_output_window($tooutput);
-						}
-					} else {
-                        $tooutput = $static_output . $downloadProgress . "%";
-                        update_output_window($tooutput);
-					}
+			if($pkg_interface == "console") {
+				if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+					$tooutput = $static_output . $downloadProgress . "%";
+					update_output_window($tooutput);
+				}
+			} else {
+				$tooutput = $static_output . $downloadProgress . "%";
+				update_output_window($tooutput);
+			}
                 }
                 update_progress_bar($downloadProgress);
                 $lastseen = $downloadProgress;
@@ -1723,7 +1723,7 @@ function update_output_window($text) {
 function update_status($status) {
         global $pkg_interface;
         if($pkg_interface == "console") {
-                echo $status . "\n";
+                echo "\r{$status}";
         } else {
                 echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
         }
@@ -1742,7 +1742,7 @@ function update_progress_bar($percent) {
                 echo "\ndocument.progressbar.style.width='" . $percent . "%';";
                 echo "\n</script>";
         } else {
-                echo " {$percent}%";
+                echo "\r {$percent}%";
         }
 }
 

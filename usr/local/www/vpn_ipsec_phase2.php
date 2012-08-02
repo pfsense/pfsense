@@ -624,12 +624,6 @@ function change_protocol() {
 							<?php endforeach; ?>
 							</select>
 							<br>
-							<span class="vexpl">
-								<em>
-									<?=gettext("1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit"); ?>
-								</em>
-							</span>
-							
 							<?php else: ?>
 
 							<select class="formselect" disabled>

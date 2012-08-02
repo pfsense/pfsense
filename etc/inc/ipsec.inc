@@ -67,12 +67,31 @@ $p2_ealgos = array(
 	'des' => array( 'name' => 'DES' ));
 
 $p1_halgos = array(
+	'md5' => 'MD5',
 	'sha1' => 'SHA1',
-	'md5' => 'MD5');
+	'sha256' => 'SHA256',
+	'sha384' => 'SHA384',
+	'sha512' => 'SHA512'
+);
+
+$p1_dhgroups = array(
+	1  => '1 (768 bit)',
+	2  => '2 (1024 bit)',
+	5  => '5 (1536 bit)',
+	14 => '14 (2048 bit)',
+	15 => '15 (3072 bit)',
+	16 => '16 (4096 bit)',
+	17 => '17 (6144 bit)',
+	18 => '18 (8192 bit)'
+);
 
 $p2_halgos = array(
+	'hmac_md5' => 'MD5',
 	'hmac_sha1' => 'SHA1',
-	'hmac_md5' => 'MD5');
+	'hmac_sha256' => 'SHA256',
+	'hmac_sha384' => 'SHA384',
+	'hmac_sha512' => 'SHA512'
+);
 
 $p1_authentication_methods = array(
 	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
@@ -91,10 +110,16 @@ $p2_protos = array(
 	'ah' => 'AH');
 
 $p2_pfskeygroups = array(
-	'0' => 'off',
-	'1' => '1',
-	'2' => '2',
-	'5' => '5');
+	0 => 'off',
+	1  => '1 (768 bit)',
+	2  => '2 (1024 bit)',
+	5  => '5 (1536 bit)',
+	14 => '14 (2048 bit)',
+	15 => '15 (3072 bit)',
+	16 => '16 (4096 bit)',
+	17 => '17 (6144 bit)',
+	18 => '18 (8192 bit)'
+);
 
 /*
  * ikeid management functions

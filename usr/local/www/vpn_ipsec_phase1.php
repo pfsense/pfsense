@@ -753,16 +753,14 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("DH key group"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="dhgroup" class="formselect">
-							<?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
+							<?php foreach ($p1_dhgroups as $keygroup => $keygroupname): ?>
 								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected"; ?>>
-									<?=htmlspecialchars($keygroup);?>
+									<?=htmlspecialchars($keygroupname);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
 							<br>
 							<span class="vexpl">
-								<em><?=gettext("1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit"); ?></em>
-								<br>
 								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
 						</td>

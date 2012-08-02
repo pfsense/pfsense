@@ -1674,8 +1674,11 @@ function read_body($ch, $string) {
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
 			if($pkg_interface == "console") {
-				if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tostatus = $static_status . $downloadProgress . "%";
+					if ($downloadProgress == 100) {
+						$tostatus = $tostatus . "\n";
+					}
 					update_status($tostatus);
 				}
 			} else {
@@ -1684,8 +1687,11 @@ function read_body($ch, $string) {
 			}
                 } else {
 			if($pkg_interface == "console") {
-				if(substr($downloadProgress,2,1) == "0" || count($downloadProgress) < 2) {
+				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tooutput = $static_output . $downloadProgress . "%";
+					if ($downloadProgress == 100) {
+						$tostatus = $tostatus . "\n";
+					}
 					update_output_window($tooutput);
 				}
 			} else {

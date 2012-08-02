@@ -2659,6 +2659,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
 
+		/* remove the interface description */
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -description");
+
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
 			interface_bring_down($interface);
@@ -2778,6 +2781,13 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	unset($interface_sn_arr_cache[$realif]);
 	unset($interface_ipv6_arr_cache[$realif]);
 	unset($interface_snv6_arr_cache[$realif]);
+
+	/* description */
+	if ($wancfg['descr']) {
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " description " . escapeshellarg($wancfg['descr']));
+	} else {
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " description " . escapeshellarg($interface));
+	}
 
 	switch ($wancfg['ipaddr']) {
 		case 'dhcp':

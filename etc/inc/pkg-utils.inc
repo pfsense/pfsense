@@ -391,6 +391,8 @@ function uninstall_package($pkg_name) {
 		mwexec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /", true);
 		@unlink("/tmp/pkg_libs.tgz");
 		@unlink("/tmp/pkg_bins.tgz");
+		$static_output .= gettext("done.") . "\n";
+		update_output_window($static_output);
 	}
 }
 

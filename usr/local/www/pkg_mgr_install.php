@@ -120,11 +120,20 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 
 ob_flush();
 
-// Write out configuration to creatae a backup prior to pkg install
-write_config(gettext("Creating restore point before package installation."));
-
-/* mount rw fs */
-conf_mount_rw();
+switch($_GET['mode']) {
+	case "showlog":
+	case "installedinfo":
+		/* These cases do not make changes. */
+		$fs_mounted_rw = false;
+		break;
+	default:
+		/* All other cases make changes, so mount rw fs */
+		conf_mount_rw();
+		$fs_mounted_rw = true;
+		/* Write out configuration to create a backup prior to pkg install. */
+		write_config(gettext("Creating restore point before package installation."));
+		break;
+}
 
 switch($_GET['mode']) {
 	case "delete":
@@ -213,7 +222,8 @@ rmdir_recursive("/var/tmp/instmp*");
 if($fd_log)
         fclose($fd_log);
 
-/* read only fs */
-conf_mount_ro();
-
+if($fs_mounted_rw) {
+	/* Restore to read only fs */
+	conf_mount_ro();
+}
 ?>

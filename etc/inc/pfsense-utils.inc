@@ -1690,7 +1690,7 @@ function read_body($ch, $string) {
 				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tooutput = $static_output . $downloadProgress . "%";
 					if ($downloadProgress == 100) {
-						$tostatus = $tostatus . "\n";
+						$tooutput = $tooutput . "\n";
 					}
 					update_output_window($tooutput);
 				}
@@ -1699,7 +1699,9 @@ function read_body($ch, $string) {
 				update_output_window($tooutput);
 			}
                 }
-                update_progress_bar($downloadProgress);
+				if(($pkg_interface != "console") || (($downloadProgress % 10) == 0) || ($downloadProgress < 10)) {
+					update_progress_bar($downloadProgress);
+				}
                 $lastseen = $downloadProgress;
         }
         if($fout)
@@ -1724,7 +1726,7 @@ function update_output_window($text) {
 }
 
 /*
- *   update_output_window: update top textarea dynamically.
+ *   update_status: update top textarea dynamically.
  */
 function update_status($status) {
         global $pkg_interface;

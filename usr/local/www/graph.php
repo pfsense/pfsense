@@ -218,8 +218,8 @@ function plot_data(obj) {
 
   var t = obj.content.split("|");
   var ugmt = parseFloat(t[0]);  // ugmt is an unixtimestamp style
-  var ifin = parseInt(t[1]);    // number of bytes received by the interface
-  var ifout = parseInt(t[2]);   // number of bytes sent by the interface
+  var ifin = parseInt(t[1], 10);    // number of bytes received by the interface
+  var ifout = parseInt(t[2], 10);   // number of bytes sent by the interface
   var scale;
 
   if (!isNumber(ifin) || !isNumber(ifout))

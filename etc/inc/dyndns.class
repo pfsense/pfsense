@@ -67,7 +67,7 @@
 	 * @version 	0.8
 	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
-	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi
+	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luci
 	 * Custom DNS support by Matt Corallo
 	 *
 	 */
@@ -102,7 +102,7 @@
 		 *   - Gets the dice rolling for the update. 
 		 *   - $dnsResultMatch should only be used with $dnsService = 'custom'
 		 *   -  $dnsResultMatch is parsed for '%IP%', which is the IP the provider was updated to, 
-		 *   -  it is otherwise expected to be exactly identical to what is returned by the Prover.
+		 *   -  it is otherwise expected to be exactly identical to what is returned by the Provider.
 		 *   - $dnsUser, and $dnsPass indicate HTTP Auth for custom DNS, if they are needed in the URL (GET Variables), include them in $dnsUpdateURL.
 		 *   - $For custom requests, $dnsUpdateURL is parsed for '%IP%', which is replaced with the new IP.
 		 */
@@ -500,13 +500,13 @@
                                         /* Check if we need update DNS Record */
                                         if ($OldIP !== $NewIP) {
                                                 if(!empty($OldIP)) {
-                                                        /* Your Hostname already exist, deleting and creating it again */
+                                                        /* Your Hostname already exists, deleting and creating it again */
                                                         $changes = array();
                                                         $changes[] = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
                                                         $changes[] = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
                                                         $result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
                                                         } else {
-                                                        /* Your Hostname dosent exist yet, creating it */
+                                                        /* Your Hostname does not exist yet, creating it */
                                                         $changes = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
                                                         $result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
                                                         }
@@ -807,7 +807,7 @@
 					} else if (preg_match('/yours/i', $data)) {
 						$status = "phpDynDNS: (Error) hostname specified exists, but not under the username specified.";
 					} else if (preg_match('/abuse/i', $data)) {
-						$status = "phpDynDns: (Error) Updating to frequently, considered abuse.";
+						$status = "phpDynDns: (Error) Updating too frequently, considered abuse.";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
@@ -1062,7 +1062,7 @@
 			}
 			if ($initial == true) {
 				$needs_updating = true;
-				$update_reason .= "Inital update. ";
+				$update_reason .= "Initial update. ";
 			}
 
 			/*   finally if we need updating then store the

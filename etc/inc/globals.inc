@@ -60,6 +60,7 @@ $g = array(
 	"cf_path" => "/cf",
 	"cf_conf_path" => "/cf/conf",
 	"www_path" => "/usr/local/www",
+	"local_rc_path" => "/usr/local/etc/rc.d",
 	"xml_rootobj" => "pfsense",
 	"admin_group" => "admins",
 	"product_name" => "pfSense",

@@ -960,7 +960,7 @@ function delete_package($pkg) {
 }
 
 function delete_package_xml($pkg) {
-	global $g, $config, $static_output, $pkg_interface, $rcfileprefix;
+	global $g, $config, $static_output, $pkg_interface;
 
 	conf_mount_rw();
 
@@ -1033,7 +1033,7 @@ function delete_package_xml($pkg) {
 							if($g['booting'] != true)
 								stop_service($service['name']);
 							if($service['rcfile']) {
-								$prefix = $rcfileprefix;
+								$prefix = $g['local_rc_path'] . "/";
 								if (!empty($service['prefix']))
 									$prefix = $service['prefix'];
 								if (file_exists("{$prefix}{$service['rcfile']}"))
@@ -1265,11 +1265,11 @@ function stop_packages() {
 	require_once("pfsense-utils.inc");
 	require_once("service-utils.inc");
 
-	global $config, $g, $rcfileprefix;
+	global $config, $g;
 
 	log_error("Stopping all packages.");
 
-	$rcfiles = glob("{$rcfileprefix}*.sh");
+	$rcfiles = glob("{$g['local_rc_path']}/*.sh");
 	if (!$rcfiles)
 		$rcfiles = array();
 	else {
@@ -1282,7 +1282,7 @@ function stop_packages() {
 		foreach($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
 			stop_service($package['name']);
-			unset($rcfiles["{$rcfileprefix}{$package['name']}.sh"]);
+			unset($rcfiles["{$g['local_rc_path']}/{$package['name']}.sh"]);
 			echo "done.\n";
 		}
 	}

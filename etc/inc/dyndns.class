@@ -844,6 +844,8 @@
 					$ncresponse = @xml2array($tmp);
 					if (preg_match("/internal server error/i", $data)) {
 						$status = "phpDynDNS: (Error) Server side error.";
+					} else if (preg_match("/request is badly formed/i", $data)) {
+						$status = "phpDynDNS: (Error) Badly Formed Request (check your settings).";
 					} else if ($ncresponse['interface-response']['ErrCount'] === "0") {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 						$successful_update = true;

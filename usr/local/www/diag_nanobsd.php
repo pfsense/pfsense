@@ -234,7 +234,7 @@ if ($savemsg)
 								echo "\nFile list:\n";
 								echo file_get_contents("/conf/file_upgrade_log.txt");
 								echo "\nMisc log:\n";
-								echo file_get_contents("/conf/firmware_update_misc.log");
+								echo file_get_contents("/conf/firmware_update_misc_log.txt");
 								echo "\nfdisk/bsdlabel log:\n";
 								echo file_get_contents("/conf/fdisk_upgrade_log.txt");
 								echo "</textarea>";

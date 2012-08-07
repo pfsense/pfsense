@@ -38,15 +38,15 @@
 	pfSense_MODULE:	utils
 */
 
-$rcfileprefix = "/usr/local/etc/rc.d/";
+define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
 	global $g;
-	global $rcfileprefix;
 
-	if (!file_exists("{$rcfileprefix}{$params['file']}") && !touch("{$rcfileprefix}{$params['file']}"))
+	$rcfile_fullname = RCFILEPREFIX . $params['file'];
+	if (!file_exists($rcfile_fullname) && !touch($rcfile_fullname))
 		return false;
 
-	if (!is_writable("{$rcfileprefix}{$params['file']}") || empty($params['start']))
+	if (!is_writable($rcfile_fullname) || empty($params['start']))
 		return false;
 
 	$towrite = "#!/bin/sh\n";
@@ -72,15 +72,14 @@ function write_rcfile($params) {
 	/* begin rcfile logic */
 	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
 
-	file_put_contents("{$rcfileprefix}{$params['file']}", $towrite);
-	@chmod("{$rcfileprefix}{$params['file']}", 0755);
+	file_put_contents($rcfile_fullname, $towrite);
+	@chmod("{$rcfile_fullname}", 0755);
 
 	return;
 }
 
 function start_service($name) {
 	global $config;
-	global $rcfileprefix;
 
 	if (empty($name))
 		return;
@@ -89,15 +88,16 @@ function start_service($name) {
 	stop_service($name);
 	sleep(2);
 
-	if(file_exists("{$rcfileprefix}{$name}.sh")) {
-		mwexec_bg("/bin/sh {$rcfileprefix}{$name}.sh start");
+	$rcfile_fullname = RCFILEPREFIX . $name . '.sh';
+	if(file_exists($rcfile_fullname)) {
+		mwexec_bg("/bin/sh {$rcfile_fullname} start");
 		return;
 	}
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
-					$prefix = $rcfileprefix;
+					$prefix = RCFILEPREFIX;
 					if (!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
@@ -115,7 +115,6 @@ function start_service($name) {
 
 function stop_service($name) {
 	global $config;
-	global $rcfileprefix;
 
 	if (empty($name))
 		return;
@@ -124,7 +123,7 @@ function stop_service($name) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
-					$prefix = $rcfileprefix;
+					$prefix = RCFILEPREFIX;
 					if(!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}

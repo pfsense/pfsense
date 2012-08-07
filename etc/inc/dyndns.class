@@ -420,12 +420,13 @@
 					$needsIP = FALSE;
 					log_error("Namecheap: DNS update() starting.");
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					$dparts = explode(".", $this->_dnsHost);
+					$dparts = explode(".", trim($this->_dnsHost));
 					$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
 					$domain_offset = count($dparts) - $domain_part_count;
 					$hostname = implode(".", array_slice($dparts, 0, $domain_offset));
 					$domain = implode(".", array_slice($dparts, $domain_offset));
-					$server = "https://dynamicdns.park-your-domain.com/update?host={$hostname}&domain={$domain}&password={$this->_dnsPass}&ip={$this->_dnsIP}";
+					$dnspass = trim($this->_dnsPass);
+					$server = "https://dynamicdns.park-your-domain.com/update?host={$hostname}&domain={$domain}&password={$dnspass}&ip={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'he-net':

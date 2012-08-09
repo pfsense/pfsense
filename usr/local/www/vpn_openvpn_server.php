@@ -467,7 +467,8 @@ function mode_change() {
 	switch(value) {
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
-			document.getElementById("remote_opts").style.display="";
+			document.getElementById("remote_optsv4").style.display="";
+			document.getElementById("remote_optsv6").style.display="";
 			document.getElementById("gwredir_opts").style.display="none";
 			document.getElementById("local_optsv4").style.display="none";
 			document.getElementById("local_optsv6").style.display="none";
@@ -476,7 +477,8 @@ function mode_change() {
 			break;
 		case "p2p_tls":
 			document.getElementById("client_opts").style.display="none";
-			document.getElementById("remote_opts").style.display="";
+			document.getElementById("remote_optsv4").style.display="";
+			document.getElementById("remote_optsv6").style.display="";
 			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_optsv4").style.display="";
 			document.getElementById("local_optsv6").style.display="";
@@ -487,7 +489,8 @@ function mode_change() {
                 case "server_tls_user":
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
-			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("remote_optsv4").style.display="none";
+			document.getElementById("remote_optsv6").style.display="none";
 			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_optsv4").style.display="";
 			document.getElementById("local_optsv6").style.display="";
@@ -497,7 +500,8 @@ function mode_change() {
 			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
-			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("remote_optsv4").style.display="none";
+			document.getElementById("remote_optsv6").style.display="none";
 			document.getElementById("gwredir_opts").style.display="";
 			document.getElementById("local_optsv4").style.display="";
 			document.getElementById("local_optsv6").style.display="";
@@ -1210,7 +1214,7 @@ if ($savemsg)
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
-					<tr id="remote_opts">
+					<tr id="remote_optsv4">
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
@@ -1224,7 +1228,7 @@ if ($savemsg)
 							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>
-					<tr id="remote_opts">
+					<tr id="remote_optsv6">
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">

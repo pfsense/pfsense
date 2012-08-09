@@ -386,13 +386,13 @@ function add_to_menu($url, $name) {
 <span class="pgtitle"><a href="<?= $_SERVER['SCRIPT_NAME'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
 <span style="float:right; margin: 0 0 20px 20px;">
 <?php if(! empty($statusurl)): ?>
-<a href="<?php echo $statusurl; ?>" target="_new" title="<?php echo gettext("Status of items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
+<a href="<?php echo $statusurl; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
 <?php endif; ?>
 <?php if(! empty($logurl)): ?>
-<a href="<?php echo $logurl; ?>" target="_new" title="<?php echo gettext("Log entries for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
+<a href="<?php echo $logurl; ?>" title="<?php echo gettext("Log entries for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
 <?php endif; ?>
 <?php if(! $g['disablehelpicon']): ?>
-<a href="<?php echo $helpurl; ?>" target="_new" title="<?php echo gettext("Help for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
+<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
 <?php endif; ?>
 </span>
 </div>

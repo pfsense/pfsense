@@ -15,12 +15,12 @@ $shortcuts['relayd-virtualservers']['service'] = "relayd";
 $shortcuts['captiveportal'] = array();
 $shortcuts['captiveportal']['log'] = "diag_logs_auth.php";
 $shortcuts['captiveportal']['status'] = "status_captiveportal.php";
-//$shortcuts['captiveportal']['service'] = "captiveportal";
+$shortcuts['captiveportal']['service'] = "captiveportal";
 
 $shortcuts['captiveportal-vouchers'] = array();
 $shortcuts['captiveportal-vouchers']['log'] = "diag_logs_auth.php";
 $shortcuts['captiveportal-vouchers']['status'] = "status_captiveportal_vouchers.php";
-//$shortcuts['captiveportal-vouchers']['service'] = "captiveportal";
+$shortcuts['captiveportal-vouchers']['service'] = "captiveportal";
 
 $shortcuts['dhcp'] = array();
 $shortcuts['dhcp']['log'] = "diag_logs_dhcp.php";

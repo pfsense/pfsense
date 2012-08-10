@@ -385,16 +385,18 @@ function get_service_status_icon($service, $withtext = true) {
 	global $g;
 	$output = "";
 	if(get_service_status($service)) {
+		$statustext = gettext("Running");
 		$output .= '<td class="listr"><center>' . "\n";
-		$output .= "<img style=\"vertical-align:middle\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\">";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\">";
 		if ($withtext)
-			$output .= " " . gettext("Running");
+			$output .= " " . $statustext;
 		$output .= "</td>\n";
 	} else {
+		$statustext = gettext("Stopped");
 		$output .= '<td class="listbg"><center>' . "\n";
-		$output .= "<img style=\"vertical-align:middle\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\">";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\">";
 		if ($withtext)
-			$output .= "<font color=\"white\"> " . gettext("Stopped") . "</font>";
+			$output .= "<font color=\"white\">{$statustext}</font>";
 		$output .= "</td>\n";
 	}
 	return $output;

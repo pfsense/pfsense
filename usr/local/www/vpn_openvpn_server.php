@@ -37,9 +37,6 @@
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
-$shortcut_section = "openvpn";
-
 if (!is_array($config['openvpn']['openvpn-server']))
 	$config['openvpn']['openvpn-server'] = array();
 
@@ -72,6 +69,11 @@ $act = $_GET['act'];
 if (isset($_POST['act']))
 	$act = $_POST['act'];
 
+if (isset($id) && $a_server[$id])
+	$vpnid = $a_server[$id]['vpnid'];
+else
+	$vpnid = 0;
+
 if ($_GET['act'] == "del") {
 
 	if (!$a_server[$id]) {
@@ -100,7 +102,6 @@ if($_GET['act']=="new"){
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_server[$id]) {
-
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
@@ -416,6 +417,8 @@ if ($_POST) {
 	if (!empty($pconfig['authmode']))
 		$pconfig['authmode'] = implode(",", $pconfig['authmode']);
 }
+$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
+$shortcut_section = "openvpn";
 
 include("head.inc");
 

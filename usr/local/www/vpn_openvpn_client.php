@@ -68,6 +68,11 @@ $act = $_GET['act'];
 if (isset($_POST['act']))
 	$act = $_POST['act'];
 
+if (isset($id) && $a_client[$id])
+	$vpnid = $a_client[$id]['vpnid'];
+else
+	$vpnid = 0;
+
 if ($_GET['act'] == "del") {
 
 	if (!$a_client[$id]) {

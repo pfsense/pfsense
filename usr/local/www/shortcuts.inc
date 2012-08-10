@@ -40,7 +40,7 @@ $shortcuts['ipsec']['service'] = "racoon";
 $shortcuts['openvpn'] = array();
 $shortcuts['openvpn']['log'] = "diag_logs_openvpn.php";
 $shortcuts['openvpn']['status'] = "status_openvpn.php";
-//$shortcuts['openvpn']['service'] = "openvpn";
+$shortcuts['openvpn']['service'] = "openvpn";
 
 $shortcuts['firewall'] = array();
 $shortcuts['firewall']['log'] = "diag_logs_filter.php";

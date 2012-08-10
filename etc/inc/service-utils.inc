@@ -347,6 +347,22 @@ function find_service_by_name($name) {
 	return array();
 }
 
+function find_service_by_openvpn_vpnid($vpnid) {
+	$services = get_services();
+	foreach ($services as $service)
+		if ($service["vpnid"] == $vpnid)
+			return $service;
+	return array();
+}
+
+function find_service_by_cp_zone($zone) {
+	$services = get_services();
+	foreach ($services as $service)
+		if ($service["zone"] == $zone)
+			return $service;
+	return array();
+}
+
 function service_name_compare($a, $b) {
 	if (strtolower($a['name']) == strtolower($b['name']))
 		return 0;

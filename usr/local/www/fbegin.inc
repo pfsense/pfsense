@@ -390,9 +390,21 @@ function add_to_menu($url, $name) {
 <span style="float:right; margin: 0 0 20px 20px">
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
-	$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
-	echo get_service_status_icon($ssvc, false);
-	echo get_service_control_links($ssvc, true);
+	switch ($shortcut_section) {
+		case "openvpn":
+			$ssvc = find_service_by_openvpn_vpnid($vpnid);
+			break;
+		case "captiveportal":
+			$ssvc = find_service_by_cp_zone($cpzone);
+			break;
+		default:
+			$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
+
+	}
+	if (!empty($ssvc)) {
+		echo get_service_status_icon($ssvc, false);
+		echo get_service_control_links($ssvc, true);
+	}
 } ?>
 <?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['status'])): ?>
 <a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>

@@ -259,7 +259,7 @@ if (count($services) > 0) {
 		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
 		echo get_service_status_icon($service);
 		echo '<td valign="middle" class="list" nowrap>';
-		echo get_service_control_links($service, $running);
+		echo get_service_control_links($service);
 		echo "</td></tr>\n";
 	}
 } else {

@@ -52,6 +52,7 @@ if ($_POST['clear'])
 	clear_log_file($routing_logfile);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Routing"));
+$shortcut_section = "routing";
 include("head.inc");
 
 ?>

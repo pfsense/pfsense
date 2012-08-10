@@ -431,8 +431,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DHCP server"));
-$statusurl = "status_dhcp_leases.php";
-$logurl = "diag_logs_dhcp.php";
+$shortcut_section = "dhcp";
 
 include("head.inc");
 

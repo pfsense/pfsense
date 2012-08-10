@@ -41,15 +41,13 @@
 ##|*MATCH=firewall_rules.php*
 ##|-PRIV
 
-$statusurl = "status_filter_reload.php";
-$logurl = "diag_logs_filter.php";
-
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"));
+$shortcut_section = "firewall";
 
 function delete_nat_association($id) {
 	global $config;

@@ -95,9 +95,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
-#$statusurl = "status_lb_vs.php";
-$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd";
 
 include("head.inc");
 

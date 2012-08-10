@@ -45,8 +45,6 @@
 
 require("guiconfig.inc");
 
-$shortcut_section = "resolver";
-
 $system_logfile = "{$g['varlog_path']}/resolver.log";
 
 $nentries = $config['syslog']['nentries'];
@@ -66,6 +64,7 @@ if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Resolver"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

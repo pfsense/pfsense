@@ -92,9 +92,7 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Servers"));
-$statusurl = "status_lb_vs.php";
-#$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 

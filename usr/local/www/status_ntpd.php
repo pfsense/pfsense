@@ -92,6 +92,7 @@ foreach ($ntpq_output as $line) {
 }
 
 $pgtitle = array(gettext("Status"),gettext("NTP"));
+$shortcut_section = "ntp";
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

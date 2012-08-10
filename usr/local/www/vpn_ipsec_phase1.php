@@ -358,8 +358,7 @@ if ($pconfig['mobile'])
 	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"), gettext("Mobile Client"));
 else
 	$pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Edit Phase 1"));
-$statusurl = "diag_ipsec.php";
-$logurl = "diag_logs_ipsec.php";
+$shortcut_section = "ipsec";
 
 
 include("head.inc");

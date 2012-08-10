@@ -36,6 +36,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("L2TP"));
+$shortcut_section = "l2tps";
 
 require("guiconfig.inc");
 require_once("vpn.inc");

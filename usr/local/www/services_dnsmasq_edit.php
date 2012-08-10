@@ -39,8 +39,6 @@
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
 
-$shortcut_section = "resolver";
-
 function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }
@@ -166,6 +164,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit host"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

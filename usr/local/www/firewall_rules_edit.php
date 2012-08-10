@@ -658,8 +658,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"),gettext("Edit"));
-$statusurl = "status_filter_reload.php";
-$logurl = "diag_logs_filter.php";
+$shortcut_section = "firewall";
 
 $closehead = false;
 

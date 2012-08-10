@@ -69,6 +69,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("NTP"));
+$shortcut_section = "ntp";
 include("head.inc");
 
 ?>

@@ -36,9 +36,6 @@
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV
 
-$statusurl = "status_captiveportal_vouchers.php";
-$logurl = "diag_logs_auth.php";
-
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
@@ -83,6 +80,7 @@ if (!is_array($config['voucher']))
 	$config['voucher'] = array();
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
+$shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) 
 	$config['voucher'][$cpzone]['roll'] = array();

@@ -144,7 +144,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
-$statusurl = "status_gateway_groups.php";
+$shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {
 	$result = array();

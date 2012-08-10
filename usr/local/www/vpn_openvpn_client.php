@@ -38,8 +38,7 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client"));
-$statusurl = "status_openvpn.php";
-$logurl = "diag_logs_openvpn.php";
+$shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-client']))
 	$config['openvpn']['openvpn-client'] = array();

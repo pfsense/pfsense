@@ -376,6 +376,7 @@ if ($_POST) {
 
 $closehead = false;
 $pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 

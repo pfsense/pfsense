@@ -35,9 +35,6 @@
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
-$statusurl = "status_captiveportal_vouchers.php";
-$logurl = "diag_logs_auth.php";
-
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -46,6 +43,7 @@ require("captiveportal.inc");
 require_once("voucher.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
+$shortcut_section = "captiveportal-vouchers";
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))

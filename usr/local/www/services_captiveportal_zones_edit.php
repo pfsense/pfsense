@@ -36,9 +36,6 @@
 ##|*MATCH=services_captiveportal_zones_edit.php*
 ##|-PRIV
 
-$statusurl = "status_captiveportal_zones_edit.php";
-$logurl = "diag_logs_auth.php";
-
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -46,6 +43,7 @@ require("shaper.inc");
 require("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit Zones"));
+$shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();

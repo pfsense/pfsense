@@ -43,6 +43,7 @@
 include('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
+$shortcut_section = "routing";
 
 include('head.inc');
 

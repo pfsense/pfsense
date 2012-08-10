@@ -37,6 +37,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
+$shortcut_section = "interfaces";
 
 require("guiconfig.inc");
 

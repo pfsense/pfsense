@@ -137,6 +137,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("VLAN"),gettext("Edit"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

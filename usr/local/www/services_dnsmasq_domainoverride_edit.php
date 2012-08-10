@@ -40,8 +40,6 @@
 
 require("guiconfig.inc");
 
-$shortcut_section = "resolver";
-
 if (!is_array($config['dnsmasq']['domainoverrides'])) {
        $config['dnsmasq']['domainoverrides'] = array();
 }
@@ -118,6 +116,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit Domain Override"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

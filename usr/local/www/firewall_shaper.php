@@ -52,7 +52,7 @@ if($_GET['reset'] <> "") {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"));
-$statusurl = "status_queues.php";
+$shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();

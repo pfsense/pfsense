@@ -50,9 +50,6 @@ function allowedhostnames_sort() {
 	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostname");
 }
 
-$statusurl = "status_captiveportal.php";
-$logurl = "diag_logs_auth.php";
-
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -60,6 +57,7 @@ require("shaper.inc");
 require("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
+$shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))

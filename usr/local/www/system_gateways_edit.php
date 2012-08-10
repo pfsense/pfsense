@@ -423,7 +423,7 @@ if ($_POST) {
 
 
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
-$statusurl = "status_gateways.php";
+$shortcut_section = "gateways";
 
 include("head.inc");
 

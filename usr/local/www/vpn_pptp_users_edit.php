@@ -133,6 +133,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"),gettext("User"),gettext("Edit"));
+$shortcut_section = "pptps";
 include("head.inc");
 
 ?>

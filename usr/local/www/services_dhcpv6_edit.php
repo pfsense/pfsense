@@ -173,8 +173,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DHCPv6"),gettext("Edit static mapping"));
-$statusurl = "status_dhcpv6_leases.php";
-$logurl = "diag_logs_dhcp.php";
+$shortcut_section = "dhcp6";
 
 include("head.inc");
 

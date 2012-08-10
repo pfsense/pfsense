@@ -56,6 +56,7 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 }
 
 $pgtitle = array(gettext("Status: Captive portal"));
+$shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();

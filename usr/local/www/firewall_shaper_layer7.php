@@ -57,7 +57,7 @@ $show_proto_form = false;
 
 //More variables
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Layer7"));
-$statusurl = "status_queues.php";
+$shortcut_section = "trafficshaper";
 
 $output_form = "";
 

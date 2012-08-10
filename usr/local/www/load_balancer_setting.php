@@ -96,8 +96,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Settings"));
-$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd";
 
 include("head.inc");
 

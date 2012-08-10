@@ -89,6 +89,7 @@ if ($_POST['clear'])
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("IPsec VPN"));
+$shortcut_section = "ipsec";
 include("head.inc");
 
 ?>

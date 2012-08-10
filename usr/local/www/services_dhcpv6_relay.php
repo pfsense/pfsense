@@ -99,6 +99,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DHCPv6 Relay"));
+$shortcut_section = "dhcp6";
 include("head.inc");
 
 ?>

@@ -117,8 +117,7 @@ if ($_GET['act'] == "delph2")
 }
 
 $pgtitle = array(gettext("VPN"),gettext("IPsec"));
-$statusurl = "diag_ipsec.php";
-$logurl = "diag_logs_ipsec.php";
+$shortcut_section = "ipsec";
 
 include("head.inc");
 

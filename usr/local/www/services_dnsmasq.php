@@ -44,8 +44,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$shortcut_section = "resolver";
-
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
@@ -119,6 +117,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

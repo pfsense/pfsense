@@ -125,6 +125,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

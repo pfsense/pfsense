@@ -92,7 +92,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("System"),gettext("Static Routes"));
-$statusurl = "diag_routes.php";
+$shortcut_section = "routing";
 
 include("head.inc");
 

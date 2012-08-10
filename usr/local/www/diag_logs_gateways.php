@@ -64,6 +64,7 @@ if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Gateways"));
+$shortcut_section = "gateways";
 include("head.inc");
 
 ?>

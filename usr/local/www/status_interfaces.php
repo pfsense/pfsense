@@ -57,6 +57,7 @@ if ($_GET['if']) {
 }
 
 $pgtitle = array(gettext("Status"),gettext("Interfaces"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

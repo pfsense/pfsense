@@ -1099,7 +1099,7 @@ foreach ($mediaopts as $mediaopt){
 }
 
 $pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
-$statusurl = "status_interfaces.php";
+$shortcut_section = "interfaces";
 
 $closehead = false;
 include("head.inc");

@@ -84,6 +84,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("VPN"),gettext("PPPoE"));
+$shortcut_section = "pppoes";
 include("head.inc");
 
 ?>

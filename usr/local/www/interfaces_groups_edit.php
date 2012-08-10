@@ -42,6 +42,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 
 $pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
+$shortcut_section = "interfaces";
 
 if (!is_array($config['ifgroups']['ifgroupentry']))
 	$config['ifgroups']['ifgroupentry'] = array();

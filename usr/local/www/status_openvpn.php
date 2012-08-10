@@ -44,6 +44,8 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Status"), gettext("OpenVPN"));
+$shortcut_section = "openvpn";
+
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

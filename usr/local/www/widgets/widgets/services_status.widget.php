@@ -38,138 +38,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("/usr/local/www/widgets/include/services_status.inc");
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
-function get_pkg_descr($package_name) {
-	global $config;
-	if (is_array($config['installedpackages']['package'])) {
-		foreach($config['installedpackages']['package'] as $pkg) {
-			if($pkg['name'] == $package_name)
-				return $pkg['descr'];
-		}
-	}
-	return gettext("Not available.");
-}
-
-if (is_array($config['installedpackages']['service']))
-	$services = $config['installedpackages']['service'];
-else
-	$services = array();
-
-/*    Add services that are in the base.
- *
- */
- if(is_radvd_enabled()) {
-	$svcconfig = array();
-	$svcconfig['name'] = "radvd";
-	$svcconfig['description'] = gettext("Router Advertisement Daemon");
-	$services[] = $svcconfig;
-}
-
-if(isset($config['dnsmasq']['enable'])) {
-	$svcconfig = array();
-	$svcconfig['name'] = "dnsmasq";
-	$svcconfig['description'] = gettext("DNS Forwarder");
-	$services[] = $svcconfig;
-}
-
-$svcconfig = array();
-$svcconfig['name'] = "ntpd";
-$svcconfig['description'] = gettext("NTP clock sync");
-$services[] = $svcconfig;
-
-if (is_array($config['captiveportal'])) {
-	foreach ($config['captiveportal'] as $zone => $setting) {
-		if (isset($setting['enable'])) {
-			$svcconfig = array();
-			$svcconfig['name'] = "captiveportal";
-			$svcconfig['zone'] = $zone;
-			$svcconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
-			$services[] = $svcconfig;
-		}
-	}
-}
-
-$iflist = array();
-$ifdescrs = get_configured_interface_list();
-foreach ($ifdescrs as $if) {
-	$oc = $config['interfaces'][$if];
-	if ($oc['if'] && (!link_interface_to_bridge($if)))
-		$iflist[$if] = $if;
-}
-$show_dhcprelay = false;
-foreach($iflist as $if) {
-	if(isset($config['dhcrelay'][$if]['enable']))
-		$show_dhcprelay = true;
-}
-
-if($show_dhcprelay == true) {
-	$svcconfig = array();
-	$svcconfig['name'] = "dhcrelay";
-	$svcconfig['description'] = gettext("DHCP Relay");
-	$services[] = $svcconfig;
-}
-
-if(is_dhcp_server_enabled()) {
-	$svcconfig = array();
-	$svcconfig['name'] = "dhcpd";
-	$svcconfig['description'] = gettext("DHCP Service");
-	$services[] = $svcconfig;
-}
-
-if(isset($config['snmpd']['enable'])) {
-	$svcconfig = array();
-	$svcconfig['name'] = "bsnmpd";
-	$svcconfig['description'] = gettext("SNMP Service");
-	$services[] = $svcconfig;
-}
-
-if (is_array($config['igmpproxy']['igmpentry']) && (count($config['igmpproxy']['igmpentry']) > 0)) {
-	$svcconfig = array();
-	$svcconfig['name'] = "igmpproxy";
-	$svcconfig['descritption'] = gettext("IGMP proxy");
-	$services[] = $svcconfig;
-}
-
-if (isset($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']) && $config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-	$svcconfig = array();
-	$svcconfig['name'] = "miniupnpd";
-	$svcconfig['description'] = gettext("UPnP Service");
-	$services[] = $svcconfig;
-}
-
-if (isset($config['ipsec']['enable'])) {
-	$svcconfig = array();
-	$svcconfig['name'] = "racoon";
-	$svcconfig['description'] = gettext("IPsec VPN");
-	$services[] = $svcconfig;
-}
-
-foreach (array('server', 'client') as $mode) {
-	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-			if (!isset($setting['disable'])) {
-				$svcconfig = array();
-				$svcconfig['name'] = "openvpn";
-				$svcconfig['mode'] = $mode;
-				$svcconfig['id'] = $id;
-				$svcconfig['vpnid'] = $setting['vpnid'];
-				$svcconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
-				$services[] = $svcconfig;
-			}
-		}
-	}
-}
-
-if (count($config['load_balancer']['virtual_server']) && count($config['load_balancer']['lbpool'])) {
-	$svcconfig = array();
-	$svcconfig['name'] = "relayd";
-	$svcconfig['description'] = gettext("Server load balancing daemon");
-	$services[] = $svcconfig;
-}
+$services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
 	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
@@ -196,12 +65,6 @@ if(isset($_POST['servicestatusfilter'])) {
 <?php
 $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
-function service_name_compare($a, $b) {
-	if (strtolower($a['name']) == strtolower($b['name']))
-		return 0;
-	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
-}
-
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
 	foreach($services as $service) {
@@ -211,63 +74,9 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
-		switch ($service['name']) {
-			case "openvpn":
-				$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
-				break;
-			case "captiveportal":
-				$running = is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal.pid");
-				if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
-					$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
-				break;
-			default:
-				$running = is_service_running($service['name']);
-		}
-		if($running) {
-			echo '<td class="listr"><center>' . "\n";
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Running") . "</td>\n";
-		} else {
-			echo '<td class="listbg"><center>' . "\n";
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Stopped") . "</td>\n";
-		}
+		echo get_service_status_icon($service);
 		echo '<td valign="middle" class="list" nowrap>';
-		if($running) {
-			switch ($service['name']) {
-				case "openvpn":
-					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-					break;
-				case "captiveportal":
-					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}&zone={$service['zone']}'>";
-					break;
-				default:
-					echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
-			}
-			echo "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
-			switch ($service['name']) {
-				case "openvpn":
-					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-					break;
-				case "captiveportal":
-					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}&zone={$service['zone']}'>";
-					break;
-				default:
-					echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
-			}
-			echo "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
-			echo "</a>";
-		} else {
-			switch ($service['name']) {
-				case "openvpn":
-					echo "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
-					break;
-				case "captiveportal":
-					echo "<a href='status_services.php?mode=startservice&service={$service['name']}&zone={$service['zone']}'>";
-					break;
-				default:
-					echo "<a href='status_services.php?mode=startservice&service={$service['name']}'>";
-			}
-			echo "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
-		}
+		echo get_service_control_links($service);
 		echo "</td></tr>\n";
 	}
 } else {

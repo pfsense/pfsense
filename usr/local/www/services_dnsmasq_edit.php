@@ -39,6 +39,8 @@
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
 
+$shortcut_section = "resolver";
+
 function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }

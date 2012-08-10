@@ -45,6 +45,8 @@
 
 require("guiconfig.inc");
 
+$shortcut_section = "resolver";
+
 $system_logfile = "{$g['varlog_path']}/resolver.log";
 
 $nentries = $config['syslog']['nentries'];

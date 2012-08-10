@@ -40,6 +40,8 @@
 
 require("guiconfig.inc");
 
+$shortcut_section = "resolver";
+
 if (!is_array($config['dnsmasq']['domainoverrides'])) {
        $config['dnsmasq']['domainoverrides'] = array();
 }

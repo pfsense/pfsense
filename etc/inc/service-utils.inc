@@ -339,6 +339,14 @@ function get_services() {
 	return $services;
 }
 
+function find_service_by_name($name) {
+	$services = get_services();
+	foreach ($services as $service)
+		if ($service["name"] == $name)
+			return $service;
+	return array();
+}
+
 function service_name_compare($a, $b) {
 	if (strtolower($a['name']) == strtolower($b['name']))
 		return 0;

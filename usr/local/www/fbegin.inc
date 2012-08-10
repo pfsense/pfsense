@@ -13,6 +13,8 @@ if (self === top) { var antiClickjack = document.getElementById("antiClickjack")
 
 require_once("globals.inc");
 require_once("functions.inc");
+require_once("shortcuts.inc");
+require_once("service-utils.inc");
 
 /* $Id$ */
 
@@ -380,19 +382,26 @@ function add_to_menu($url, $name) {
 	if (isAllowedPage($url))
 		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }
+
 ?>
 
 <div>
 <span class="pgtitle"><a href="<?= $_SERVER['SCRIPT_NAME'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
-<span style="float:right; margin: 0 0 20px 20px;">
-<?php if(! empty($statusurl)): ?>
-<a href="<?php echo $statusurl; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
+<span style="float:right; margin: 0 0 20px 20px">
+<?php
+if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+	$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
+	echo get_service_status_icon($ssvc, false);
+	echo get_service_control_links($ssvc);
+} ?>
+<?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['status'])): ?>
+<a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
 <?php endif; ?>
-<?php if(! empty($logurl)): ?>
-<a href="<?php echo $logurl; ?>" title="<?php echo gettext("Log entries for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
+<?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])): ?>
+<a href="<?php echo $shortcuts[$shortcut_section]['log']; ?>" title="<?php echo gettext("Log entries for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
 <?php endif; ?>
 <?php if(! $g['disablehelpicon']): ?>
-<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
+<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
 <?php endif; ?>
 </span>
 </div>

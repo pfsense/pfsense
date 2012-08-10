@@ -378,15 +378,15 @@ function get_service_status_icon($service, $withtext = true) {
 	$output = "";
 	if(get_service_status($service)) {
 		$output .= '<td class="listr"><center>' . "\n";
-		$output .= "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\">";
+		$output .= "<img style=\"vertical-align:middle\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\">";
 		if ($withtext)
 			$output .= " " . gettext("Running");
 		$output .= "</td>\n";
 	} else {
 		$output .= '<td class="listbg"><center>' . "\n";
-		$output .= "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">";
+		$output .= "<img style=\"vertical-align:middle\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\">";
 		if ($withtext)
-			$output .= " " . gettext("Stopped");
+			$output .= "<font color=\"white\"> " . gettext("Stopped") . "</font>";
 		$output .= "</td>\n";
 	}
 	return $output;
@@ -406,7 +406,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 		}
-		$output .= "<img title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
@@ -417,7 +417,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
 		}
-		$output .= "<img title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
+		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
 		$output .= "</a>";
 	} else {
 		switch ($service['name']) {
@@ -430,7 +430,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=startservice&service={$service['name']}'>";
 		}
-		$output .= "<img title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
 	}
 	return $output;
 }

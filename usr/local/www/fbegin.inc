@@ -392,7 +392,7 @@ function add_to_menu($url, $name) {
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
 	echo get_service_status_icon($ssvc, false);
-	echo get_service_control_links($ssvc);
+	echo get_service_control_links($ssvc, true);
 } ?>
 <?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['status'])): ?>
 <a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>

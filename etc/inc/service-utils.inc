@@ -400,9 +400,10 @@ function get_service_status_icon($service, $withtext = true) {
 	return $output;
 }
 
-function get_service_control_links($service) {
+function get_service_control_links($service, $addname = false) {
 	global $g;
 	$output = "";
+	$stitle = ($addname) ? $service['name'] . " " : "";
 	if(get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
@@ -414,7 +415,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Restart Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
@@ -425,7 +426,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Stop Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
 		$output .= "</a>";
 	} else {
 		switch ($service['name']) {
@@ -438,7 +439,7 @@ function get_service_control_links($service) {
 			default:
 				$output .= "<a href='status_services.php?mode=startservice&service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . gettext("Start Service") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
 	}
 	return $output;
 }

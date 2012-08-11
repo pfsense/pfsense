@@ -407,13 +407,16 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	}
 } ?>
 <?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['status'])): ?>
-<a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
+
+<a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_status.gif" border="0"></a>
 <?php endif; ?>
 <?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])): ?>
-<a href="<?php echo $shortcuts[$shortcut_section]['log']; ?>" title="<?php echo gettext("Log entries for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
+
+<a href="<?php echo $shortcuts[$shortcut_section]['log']; ?>" title="<?php echo gettext("Log entries for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_logs.gif" border="0"></a>
 <?php endif; ?>
 <?php if(! $g['disablehelpicon']): ?>
-<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
+
+<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page."); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0"></a>
 <?php endif; ?>
 </span>
 </div>

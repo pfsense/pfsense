@@ -4,6 +4,8 @@
 	require_once("functions.inc");
 	require_once("shaper.inc");
 
+	$shortcut_section = "upnp";
+
 	/* MiniUPnPd */
 
 	function upnp_notice ($msg) { log_error("miniupnpd: {$msg}"); }

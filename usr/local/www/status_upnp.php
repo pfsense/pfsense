@@ -56,6 +56,7 @@ $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP Status"));
+$shortcut_section = "upnp";
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

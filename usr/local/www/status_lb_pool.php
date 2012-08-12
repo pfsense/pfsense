@@ -60,6 +60,7 @@ $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Pool"));
+$shortcut_section = "relayd";
 include("head.inc");
 
 $relay_hosts = get_lb_summary();

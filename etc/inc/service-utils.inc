@@ -397,22 +397,26 @@ function get_service_status($service) {
 	return $running;
 }
 
-function get_service_status_icon($service, $withtext = true) {
+function get_service_status_icon($service, $withtext = true, $smallicon = false) {
 	global $g;
 	$output = "";
 	if(get_service_status($service)) {
 		$statustext = gettext("Running");
 		$output .= '<td class="listr"><center>' . "\n";
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_service_running.gif\">";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
+		$output .= "\">";
 		if ($withtext)
-			$output .= " " . $statustext;
+			$output .= "&nbsp;&nbsp;" . $statustext;
 		$output .= "</td>\n";
 	} else {
 		$statustext = gettext("Stopped");
 		$output .= '<td class="listbg"><center>' . "\n";
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/icon_service_stopped.gif\">";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
+		$output .= "\">";
 		if ($withtext)
-			$output .= "<font color=\"white\">{$statustext}</font>";
+			$output .= "&nbsp;&nbsp;" . "<font color=\"white\">{$statustext}</font>";
 		$output .= "</td>\n";
 	}
 	return $output;

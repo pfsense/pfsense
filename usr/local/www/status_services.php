@@ -257,7 +257,7 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
-		echo get_service_status_icon($service);
+		echo get_service_status_icon($service, true, true);
 		echo '<td valign="middle" class="list" nowrap>';
 		echo get_service_control_links($service);
 		echo "</td></tr>\n";

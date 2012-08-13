@@ -350,7 +350,7 @@ function find_service_by_name($name) {
 function find_service_by_openvpn_vpnid($vpnid) {
 	$services = get_services();
 	foreach ($services as $service)
-		if ($service["vpnid"] == $vpnid)
+		if (($service["name"] == "openvpn") && isset($service["vpnid"]) && ($service["vpnid"] == $vpnid))
 			return $service;
 	return array();
 }
@@ -358,7 +358,7 @@ function find_service_by_openvpn_vpnid($vpnid) {
 function find_service_by_cp_zone($zone) {
 	$services = get_services();
 	foreach ($services as $service)
-		if ($service["zone"] == $zone)
+		if (($service["name"] == "captiveportal") && isset($service["zone"]) && ($service["zone"] == $zone))
 			return $service;
 	return array();
 }

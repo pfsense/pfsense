@@ -77,12 +77,12 @@ $shortcuts['trafficshaper'] = array();
 $shortcuts['trafficshaper']['main'] = "firewall_shaper.php";
 $shortcuts['trafficshaper']['status'] = "status_queues.php";
 
-$shortcuts['resolver']['log'] = array();
+$shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_dnsmasq.php";
 $shortcuts['resolver']['log'] = "diag_logs_resolver.php";
 $shortcuts['resolver']['service'] = "dnsmasq";
 
-$shortcuts['wireless']['log'] = array();
+$shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
 $shortcuts['wireless']['log'] = "diag_logs_wireless.php";
 $shortcuts['wireless']['status'] = "status_wireless.php";

@@ -390,6 +390,7 @@ function add_to_menu($url, $name) {
 <span style="float:right; margin: 0 0 20px 20px">
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+	$ssvc = array();
 	switch ($shortcut_section) {
 		case "openvpn":
 			$ssvc = find_service_by_openvpn_vpnid($vpnid);

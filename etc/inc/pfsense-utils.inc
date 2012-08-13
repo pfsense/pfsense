@@ -2001,7 +2001,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
 		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
 		if (file_exists($urltable_filename . ".tmp")) {
-			mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			mwexec("/usr/bin/sed 's/\;.*//g' ". escapeshellarg($urltable_filename . ".tmp") . "| /usr/bin/egrep -v '^[[:space:]]*$|^#' > " . escapeshellarg($urltable_filename));
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");

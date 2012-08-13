@@ -359,7 +359,11 @@ display_top_tabs($tab_array);
 				</div>
 			</td>
 			</tr>
-
+			
+			<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
+			
 			<tr>
 			<td colspan="2" valign="top" class="listtopic">DNS</td>
 			</tr>
@@ -367,8 +371,8 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="radns1" type="text" class="formfldalias" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
-				<input name="radns2" type="text" class="formfldalias" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
+				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
+				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>

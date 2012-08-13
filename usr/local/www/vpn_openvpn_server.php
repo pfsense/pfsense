@@ -549,10 +549,13 @@ function autotls_change() {
 
 function gwredir_change() {
 
-	if (document.iform.gwredir.checked)
-		document.getElementById("local_opts").style.display="none";
-	else
-		document.getElementById("local_opts").style.display="";
+	if (document.iform.gwredir.checked) {
+		document.getElementById("local_optsv4").style.display="none";
+		document.getElementById("local_optsv6").style.display="none";
+	} else {
+		document.getElementById("local_optsv4").style.display="";
+		document.getElementById("local_optsv6").style.display="";
+	}
 }
 
 function dns_domain_change() {

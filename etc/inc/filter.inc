@@ -3183,7 +3183,7 @@ function filter_process_carp_rules() {
 	}
 	$lines = "";
 	/* return if there are no carp configured items */
-	if(isset($config['hasync']) && $config['hasync'] <> "" or $config['virtualip']['vip'] <> "") {
+	if((isset($config['hasync']) && $config['hasync'] <> "") or $config['virtualip']['vip'] <> "") {
 		$lines .= "block in log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";

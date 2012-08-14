@@ -546,7 +546,7 @@ function write_config($desc="Unknown", $backup = true) {
 			if ($g['booting']) {
 				echo "\n\n ************** WARNING **************";
 				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
-				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad} \n\n";
+				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad \n\n";
 			}
 		} else
 			log_error(gettext("Could not restore config.xml."));

@@ -505,7 +505,6 @@ function backup_config_section($section_name) {
  */
 function restore_config_section($section_name, $new_contents) {
 	global $config, $g;
-	conf_mount_rw();
 	$fout = fopen("{$g['tmp_path']}/tmpxml","w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
@@ -530,6 +529,7 @@ function restore_config_section($section_name, $new_contents) {
 	$config[$section_name] = &$section_xml;
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
+	conf_mount_rw();
 	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
 	conf_mount_ro();
@@ -1995,7 +1995,6 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		|| $forceupdate) {
 
 		// Try to fetch the URL supplied
-		conf_mount_rw();
 		unlink_if_exists($urltable_filename . ".tmp");
 		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
 		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
@@ -2005,7 +2004,6 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");
-		conf_mount_ro();
 		return true;
 	} else {
 		// File exists, and it doesn't need updated.

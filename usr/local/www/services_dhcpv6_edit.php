@@ -201,7 +201,10 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
                     <br>
-                    <?=gettext("If no IPv6 address is given, one will be dynamically allocated  from the pool.");?></td>
+			<?=gettext("If an IPv6 address is entered, the address must be outside of the pool.");?>
+			<br/>
+			<?=gettext("If no IPv6 address is given, one will be dynamically allocated from the pool.");?>
+			</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>

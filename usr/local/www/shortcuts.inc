@@ -1,6 +1,75 @@
 <?php
+/* $Id$ */
+/*
+	Copyright (C) 2012 Jim Pingle
+	All rights reserved.
+
+	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+/*
+	pfSense_MODULE:	system
+*/
+
 // On the page, add in like so:
 //   $shortcut_section = "relayd";
+
+/* Load and process custom shortcuts. */
+function get_shortcut_files($directory) {
+	$dir_array = array();
+	if(!is_dir($directory)) 
+		return;
+	if ($dh = opendir($directory)) {
+		while (($file = readdir($dh)) !== false) {
+			$canadd = 0;
+			if($file == ".") 
+				$canadd = 1;
+			if($file == "..") 
+				$canadd = 1;
+			if($canadd == 0)
+				array_push($dir_array, $file);
+		}
+		closedir($dh);
+	}
+	if(!is_array($dir_array))
+		return;
+	return $dir_array;
+}
+
+// Load shortcuts
+$dir_array = get_shortcut_files("/usr/local/www/shortcuts");
+foreach ($dir_array as $file) 
+	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc")) 
+		include("/usr/local/www/shortcuts/{$file}");
+if(is_dir("/usr/local/pkg/shortcuts")) {
+	$dir_array = get_shortcut_files("/usr/local/pkg/shortcuts");
+	foreach ($dir_array as $file) 
+		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc")) 
+			include("/usr/local/pkg/shortcuts/{$file}");
+}
 
 $shortcuts['relayd'] = array();
 $shortcuts['relayd']['main'] = "load_balancer_pool.php";
@@ -92,11 +161,6 @@ $shortcuts['ntp']['main'] = "services_ntpd.php";
 $shortcuts['ntp']['log'] = "diag_logs_ntpd.php";
 $shortcuts['ntp']['status'] = "status_ntpd.php";
 $shortcuts['ntp']['service'] = "ntpd";
-
-$shortcuts['upnp'] = array();
-$shortcuts['upnp']['main'] = "pkg_edit.php?xml=miniupnpd.xml&id=0";
-$shortcuts['upnp']['status'] = "status_upnp.php";
-$shortcuts['upnp']['service'] = "miniupnpd";
 
 $shortcuts['pptps'] = array();
 $shortcuts['pptps']['main'] = "vpn_pptp.php";

@@ -28,6 +28,8 @@
 
 */
 
+$shortcut_section = "routed";
+
 function setup_routed() {
 	global $config;
 	$gw = "";

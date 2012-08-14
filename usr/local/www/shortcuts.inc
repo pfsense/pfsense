@@ -148,6 +148,10 @@ $shortcuts['trafficshaper'] = array();
 $shortcuts['trafficshaper']['main'] = "firewall_shaper.php";
 $shortcuts['trafficshaper']['status'] = "status_queues.php";
 
+$shortcuts['trafficshaper-limiters'] = array();
+$shortcuts['trafficshaper-limiters']['main'] = "firewall_shaper_vinterface.php";
+$shortcuts['trafficshaper-limiters']['status'] = "diag_limiter_info.php";
+
 $shortcuts['resolver'] = array();
 $shortcuts['resolver']['main'] = "services_dnsmasq.php";
 $shortcuts['resolver']['log'] = "diag_logs_resolver.php";
@@ -179,4 +183,16 @@ $shortcuts['l2tps']['log'] = "diag_logs_vpn.php?vpntype=l2tp";
 $shortcuts['carp'] = array();
 $shortcuts['carp']['main'] = "system_hasync.php";
 $shortcuts['carp']['status'] = "carp_status.php";
+
+$shortcuts['snmp'] = array();
+$shortcuts['snmp']['main'] = "services_snmp.php";
+$shortcuts['snmp']['service'] = "bsnmpd";
+
+$shortcuts['authentication'] = array();
+$shortcuts['authentication']['main'] = "system_authservers.php";
+$shortcuts['authentication']['status'] = "diag_authentication.php";
+
+$shortcuts['aliases'] = array();
+$shortcuts['aliases']['main'] = "firewall_aliases.php";
+$shortcuts['aliases']['status'] = "diag_tables.php";
 ?>

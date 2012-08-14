@@ -152,6 +152,8 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"));
+$shortcut_section = "aliases";
+
 include("head.inc");
 
 ?>

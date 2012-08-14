@@ -42,6 +42,7 @@ require("guiconfig.inc");
 require_once("auth.inc");
 
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
+$shortcut_section = "authentication";
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

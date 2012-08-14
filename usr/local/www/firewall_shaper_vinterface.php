@@ -52,7 +52,7 @@ if($_GET['reset'] <> "") {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Limiter"));
-$shortcut_section = "trafficshaper";
+$shortcut_section = "trafficshaper-limiters";
 
 read_dummynet_config();
 /* 

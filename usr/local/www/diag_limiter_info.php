@@ -44,6 +44,7 @@ require("guiconfig.inc");
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
 $pgtitle = gettext("Diagnostics: Limiter Info");
+$shortcut_section = "trafficshaper-limiters";
 
 if($_REQUEST['getactivity']) {
 	$text = `/sbin/ipfw pipe show`;

@@ -37,6 +37,8 @@
 // On the page, add in like so:
 //   $shortcut_section = "relayd";
 
+$shortcuts = array();
+
 /* Load and process custom shortcuts. */
 function get_shortcut_files($directory) {
 	$dir_array = array();

@@ -3155,17 +3155,16 @@ function filter_process_carp_nat_rules() {
 		echo "filter_process_carp_nat_rules() being called $mt\n";
 	}
 	$lines = "";
-	if(isset($config['installedpackages']['carp']['config']) &&
-			is_array($config['installedpackages']['carp']['config'])) {
-		foreach($config['installedpackages']['carp']['config'] as $carp) {
+	if (is_array($config['hasync'])) {
+		foreach($config['hasync'] as $carp) {
 			$ip = $carp['ipaddress'];
-			if($ip <> "any") {
+			if($ip == "any") {
 				$ipnet = "any";
 			} else {
 				$int = find_ip_interface($ip);
 				$carp_int = find_carp_interface($ip);
 			}
-			if($int != false and $int != $wan_interface) {
+			if ($int != false and $int != $wan_interface) {
 				$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
 				if($int)
 					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
@@ -3183,7 +3182,7 @@ function filter_process_carp_rules() {
 	}
 	$lines = "";
 	/* return if there are no carp configured items */
-	if((isset($config['hasync']) && $config['hasync'] <> "") or $config['virtualip']['vip'] <> "") {
+	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
 		$lines .= "block in log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";

@@ -406,19 +406,13 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 		echo get_service_status_icon($ssvc, false);
 		echo get_service_control_links($ssvc, true);
 	}
-} ?>
-<?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['main']) && ($_SERVER['SCRIPT_NAME'] != "/" . $shortcuts[$shortcut_section]['main'])): ?>
+}
 
-<a href="<?php echo $shortcuts[$shortcut_section]['main']; ?>" title="<?php echo gettext("Main page for this section"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" border="0"></a>
-<?php endif; ?>
-<?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['status'])): ?>
+echo get_shortcut_main_link($shortcut_section, true);
+echo get_shortcut_status_link($shortcut_section, true);
+echo get_shortcut_log_link($shortcut_section, true);
 
-<a href="<?php echo $shortcuts[$shortcut_section]['status']; ?>" title="<?php echo gettext("Status of items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_status.gif" border="0"></a>
-<?php endif; ?>
-<?php if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])): ?>
-
-<a href="<?php echo $shortcuts[$shortcut_section]['log']; ?>" title="<?php echo gettext("Log entries for items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_logs.gif" border="0"></a>
-<?php endif; ?>
+?>
 <?php if(! $g['disablehelpicon']): ?>
 
 <a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0"></a>

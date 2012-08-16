@@ -247,7 +247,6 @@ include("fbegin.inc");
 
 $services = get_services();
 
-
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
 	foreach($services as $service) {
@@ -255,11 +254,17 @@ if (count($services) > 0) {
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
-		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
-		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
+		echo '<tr><td class="listlr" width="20%">' . $service['name'] . '</td>' . "\n";
+		echo '<td class="listr" width="55%">' . $service['description'] . '</td>' . "\n";
 		echo get_service_status_icon($service, true, true);
 		echo '<td valign="middle" class="list" nowrap>';
 		echo get_service_control_links($service);
+		$scut = get_shortcut_by_service_name($service['name']);
+		if (!empty($scut)) {
+			echo get_shortcut_main_link($scut, true, $service);
+			echo get_shortcut_status_link($scut, true, $service);
+			echo get_shortcut_log_link($scut, true);
+		}
 		echo "</td></tr>\n";
 	}
 } else {

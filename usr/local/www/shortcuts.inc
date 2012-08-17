@@ -92,7 +92,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			$link = $shortcuts[$shortcut_section]['main'];
 			break;
 	}
-	if(!empty($link) && ($_SERVER['SCRIPT_NAME'] != "/{$link}"))
+	if(!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}"))
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" border=\"0\"></a>";
 }
 

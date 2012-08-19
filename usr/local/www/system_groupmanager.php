@@ -293,7 +293,7 @@ function presubmit() {
 												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
 												<?php
 													foreach ($config['system']['user'] as $user):
-														if (in_array($user['uid'],$pconfig['members']))
+														if (is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members']))
 															continue;
 												?>
 												<option value="<?=$user['uid'];?>" <?=$selected;?>>

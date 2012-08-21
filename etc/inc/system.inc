@@ -1236,7 +1236,6 @@ function system_timezone_configure() {
 }
 
 function system_ntp_setup_gps($serialport) {
-	global $g;
 	$gps_device = '/dev/gps0';
 	$serialport = '/dev/'.$serialport;
 
@@ -1262,8 +1261,8 @@ function system_ntp_setup_gps($serialport) {
 \$PUBX,41,1,0007,0003,4800,0
 \$PUBX,40,ZDA,1,1,1,1
 EOF;
-	file_put_contents("{$g['tmp_path']}/gps.init", $gps_init);
-	`cat {$g['tmp_path']}/gps.init > $serialport`;
+	file_put_contents("/tmp/gps.init", $gps_init);
+	`cat /tmp/gps.init > $serialport`;
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
 	if (intval(`grep -c '^gps0' /etc/remote`) == 0)
@@ -1291,7 +1290,6 @@ function system_ntp_configure($start_ntpd=true) {
 
 	if (!empty($config['ntpd']['gpsport'])
 		&& file_exists('/dev/'.$config['ntpd']['gpsport'])
-		&& file_exists($gps_device)
 		&& system_ntp_setup_gps($config['ntpd']['gpsport'])) {
 		$ntpcfg .= "# GPS Setup\n";
 		$ntpcfg .= "server 127.127.20.0 mode 0 minpoll 4 maxpoll 4 prefer\n";

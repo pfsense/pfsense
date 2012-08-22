@@ -137,7 +137,7 @@ include("head.inc");
 			<?php endforeach; ?>
 		</select>
 		<br/>
-		<br/><?php echo gettext("The GPS must provide NEMA format output!"); ?>
+		<br/><?php echo gettext("The GPS must provide NMEA format output!"); ?>
 		<br/>
 		<br/><?php echo gettext("All serial ports are listed, be sure to pick only the port with the GPS attached."); ?>
 		<br/>

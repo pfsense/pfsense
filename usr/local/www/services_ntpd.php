@@ -141,7 +141,7 @@ include("head.inc");
 		<br/>
 		<br/><?php echo gettext("All serial ports are listed, be sure to pick only the port with the GPS attached."); ?>
 		<br/>
-		<br/><?php echo gettext("It is best to configure at least 2 servers under"); ?> <a href="system.php"><?php echo gettext("System > General"); ?></a> <?php echo gettext("to avoid loss of sync if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when proving time to clients."); ?>
+		<br/><?php echo gettext("It is best to configure at least 2 servers under"); ?> <a href="system.php"><?php echo gettext("System > General"); ?></a> <?php echo gettext("to avoid loss of sync if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients."); ?>
 	</td>
 </tr>
 <?php endif; ?>

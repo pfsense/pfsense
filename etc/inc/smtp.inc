@@ -463,7 +463,9 @@ class smtp_class
 			$this->OutputDebug(sprintf(gettext("Connected to SMTP server \"%s\"."), $domain));
 		if(!strcmp($localhost=$this->localhost,"")
 		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
-		&& !strcmp($localhost=getenv("HOST"),""))
+		&& !strcmp($localhost=getenv("HOST"),"")
+		&& !strcmp($localhost=getenv("HOSTNAME"),"")
+		&& !strcmp($localhost=exec("/bin/hostname"),""))
 			$localhost="localhost";
 		$success=0;
 		if($this->VerifyResultLines("220",$responses)>0)

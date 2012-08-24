@@ -812,7 +812,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
 							<br>
 							<?=gettext("This is an IPv6 network that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .

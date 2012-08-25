@@ -1305,8 +1305,8 @@ function system_ntp_configure($start_ntpd=true) {
 		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
 
 	$ntpcfg .= "enable monitor\n";
-	$ntpcfg .= "enable statistics\n";
-	$ntpcfg .= "enable clockstats\n";
+	$ntpcfg .= "enable stats\n";
+	$ntpcfg .= "statistics clockstats\n";
 	$ntpcfg .= "statsdir {$statsdir}\n";
 	$ntpcfg .= "logconfig =syncall +clockall\n";
 	$ntpcfg .= "driftfile {$driftfile}\n";

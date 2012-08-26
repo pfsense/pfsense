@@ -1609,9 +1609,10 @@ function get_freebsd_version() {
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-        global $ch, $fout, $file_size, $downloaded, $config;
+        global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
         $file_size  = 1;
         $downloaded = 1;
+	$first_progress_update = TRUE;
         /* open destination file */
         $fout = fopen($destination_file, "wb");
 
@@ -1662,7 +1663,7 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
+        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $first_progress_update;
 		global $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
@@ -1700,7 +1701,8 @@ function read_body($ch, $string) {
 			}
                 }
 				if(($pkg_interface != "console") || (($downloadProgress % 10) == 0) || ($downloadProgress < 10)) {
-					update_progress_bar($downloadProgress);
+					update_progress_bar($downloadProgress, $first_progress_update);
+					$first_progress_update = FALSE;
 				}
                 $lastseen = $downloadProgress;
         }
@@ -1740,9 +1742,9 @@ function update_status($status) {
 }
 
 /*
- * update_progress_bar($percent): updates the javascript driven progress bar.
+ * update_progress_bar($percent, $first_time): updates the javascript driven progress bar.
  */
-function update_progress_bar($percent) {
+function update_progress_bar($percent, $first_time) {
         global $pkg_interface;
         if($percent > 100) $percent = 1;
         if($pkg_interface <> "console") {
@@ -1750,7 +1752,9 @@ function update_progress_bar($percent) {
                 echo "\ndocument.progressbar.style.width='" . $percent . "%';";
                 echo "\n</script>";
         } else {
-                echo "\r {$percent}%";
+		if(!($first_time))
+			echo "\x08\x08\x08\x08\x08";
+		echo sprintf("%4d%%", $percent);
         }
 }
 

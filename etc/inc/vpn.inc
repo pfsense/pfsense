@@ -650,7 +650,7 @@ EOD;
 								$localid_type = "subnet";
 							}
 							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-							if (!is_subnet($localid_data)) {
+							if (!is_ipaddr($localid_data) && !is_subnet($localid_data)) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
 							}
@@ -825,11 +825,10 @@ EOD;
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
 
-				// Error will be logged above, no need to log this twice. #2201
-				if (!is_subnet($localid))
-					continue;
-
 				if($ph2ent['mode'] == "tunnel") {
+					// Error will be logged above, no need to log this twice. #2201
+					if (!is_subnet($localid))
+						continue;
 
 					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";

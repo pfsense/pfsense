@@ -1817,46 +1817,49 @@ function update_alias_url_data() {
 			if (empty($alias['aliasurl']))
 				continue;
 
-			/* fetch down and add in */
+			$address = "";
 			$isfirst = 0;
-			$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-			unlink($temp_filename);
-			$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-			fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
-			fclose($fda);
-			mwexec("/bin/mkdir -p {$temp_filename}");
-			mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
-			/* if the item is tar gzipped then extract */
-			if(stristr($alias['aliasurl'], ".tgz"))
-				process_alias_tgz($temp_filename);
-			else if(stristr($alias['aliasurl'], ".zip"))
-				process_alias_unzip($temp_filename);
-			if(file_exists("{$temp_filename}/aliases")) {
-				$file_contents = file_get_contents("{$temp_filename}/aliases");
-				$file_contents = str_replace("#", "\n#", $file_contents);
-				$file_contents_split = explode("\n", $file_contents);
-				foreach($file_contents_split as $fc) {
-					$tmp = trim($fc);
-					if(stristr($fc, "#")) {
-						$tmp_split = explode("#", $tmp);
-						$tmp = trim($tmp_split[0]);
+			foreach ($alias['aliasurl'] as $alias_url) {
+				/* fetch down and add in */
+				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+				unlink($temp_filename);
+				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
+				fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				fclose($fda);
+				mwexec("/bin/mkdir -p {$temp_filename}");
+				mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				/* if the item is tar gzipped then extract */
+				if (stristr($alias_url, ".tgz"))
+					process_alias_tgz($temp_filename);
+				else if (stristr($alias_url, ".zip"))
+					process_alias_unzip($temp_filename);
+				if (file_exists("{$temp_filename}/aliases")) {
+					$file_contents = file_get_contents("{$temp_filename}/aliases");
+					$file_contents = str_replace("#", "\n#", $file_contents);
+					$file_contents_split = explode("\n", $file_contents);
+					foreach ($file_contents_split as $fc) {
+						$tmp = trim($fc);
+						if (stristr($fc, "#")) {
+							$tmp_split = explode("#", $tmp);
+							$tmp = trim($tmp_split[0]);
+						}
+						if (trim($tmp) <> "") {
+							if ($isfirst == 1)
+								$address .= " ";
+							$address .= $tmp;
+							$isfirst = 1;
+						}
 					}
-					if(trim($tmp) <> "") {
-						if($isfirst == 1)
-							$address .= " ";
-						$address .= $tmp;
-						$isfirst = 1;
-					}
+					mwexec("/bin/rm -rf {$temp_filename}");
 				}
-				if($isfirst > 0) {
-					$config['aliases']['alias'][$x]['address'] = $address;
-					$updated = true;
-				}
-				mwexec("/bin/rm -rf {$temp_filename}");
+			}
+			if($isfirst > 0) {
+				$config['aliases']['alias'][$x]['address'] = $address;
+				$updated = true;
 			}
 		}
 	}
-	if($updated)
+	if ($updated)
 		write_config();
 	unlock($lockkey);
 }

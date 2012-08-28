@@ -3166,7 +3166,7 @@ function filter_process_carp_nat_rules() {
 			}
 			if ($int != false and $int != $wan_interface) {
 				$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
-				if($int)
+				if ($int && $carp_int)
 					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
 			}
 		}

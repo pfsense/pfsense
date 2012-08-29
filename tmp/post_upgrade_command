@@ -11,6 +11,9 @@ case "$OLDKERNEL" in
 	"wrap")
 	KERNELTYPE=wrap
 	;;
+	"wrap_vga")
+	KERNELTYPE=wrap_vga
+	;;
 	"Developers")
 	KERNELTYPE=SMP
 	;;
@@ -35,6 +38,12 @@ case "$KERNELTYPE" in
 			HAVE_KERNEL=true
 			tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
 			cp /etc/ttys_wrap /etc/ttys
+		fi
+		;;
+	"wrap_vga")
+		if [ -f /kernels/kernel_wrap_vga.gz ]; then
+			HAVE_KERNEL=true
+			tar xzpf /kernels/kernel_wrap_vga.gz --exclude loader.conf -C /boot/
 		fi
 		;;
 	"Developers")

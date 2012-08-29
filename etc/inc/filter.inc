@@ -2935,14 +2935,15 @@ function filter_tdr_install_cron($should_install) {
 	if($g['booting']==true)
 		return;
 
-	$is_installed = false;
-
-	if(!$config['cron']['item'])
-		return;
+	if (!is_array($config['cron']))
+		$config['cron'] = array();
+	if (!is_array($config['cron']['item']))
+		$config['cron']['item'] = array();
 
 	$x=0;
+	$is_installed = false;
 	foreach($config['cron']['item'] as $item) {
-		if(strstr($item['command'], "filter_configure_sync")) {
+		if (strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			break;
 		}
@@ -2951,7 +2952,7 @@ function filter_tdr_install_cron($should_install) {
 
 	switch($should_install) {
 		case true:
-			if(!$is_installed) {
+			if (!$is_installed) {
 				$cron_item = array();
 				$cron_item['minute'] = "0,15,30,45";
 				$cron_item['hour'] = "*";
@@ -2966,11 +2967,9 @@ function filter_tdr_install_cron($should_install) {
 			}
 			break;
 		case false:
-			if($is_installed == true) {
-				if($x > 0) {
-					unset($config['cron']['item'][$x]);
-					write_config();
-				}
+			if ($is_installed == true) {
+				unset($config['cron']['item'][$x]);
+				write_config(gettext("Removed 15 minute filter reload for Time Based Rules"));
 				configure_cron();
 			}
 			break;

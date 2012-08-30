@@ -2610,7 +2610,7 @@ function filter_tdr_install_cron($should_install) {
  </schedules>
 */
 function filter_get_time_based_rule_status($schedule) {
-	$should_add_rule = false;
+
 	/* no schedule? rule should be installed */
 	if (empty($schedule))
 		return true;
@@ -2619,48 +2619,28 @@ function filter_get_time_based_rule_status($schedule) {
 	 * if the rule should be installed or not.
 	 */
 	foreach($schedule['timerange'] as $timeday) {
-		if ($timeday['month'])
-			$month = $timeday['month'];
-		else
-			$week = "";
-		if ($timeday['day'])
-			$day = $timeday['day'];
-		else
-			$day = "";
-		if ($timeday['hour'])
-			$hour = $timeday['hour'];
-		else
-			$hour = "";
-		if ($timeday['position'])
-			$position = $timeday['position'];
-		else
-			$position = "";
-		if($timeday['descr'])
-			$desc = $timeday['descr'];
-		else
-			$desc = "";
-		if ($month)
-			$monthstatus = filter_tdr_month($month);
-		else
+		if (empty($timeday['month']))
 			$monthstatus = true;
-		if ($day)
-			$daystatus = filter_tdr_day($day);
 		else
+			$monthstatus = filter_tdr_month($timeday['month']);
+		if (empty($timeday['day']))
 			$daystatus = true;
-		if ($hour)
-			$hourstatus = filter_tdr_hour($hour);
 		else
+			$daystatus = filter_tdr_day($timeday['day']);
+		if (empty($timeday['hour']))
 			$hourstatus = true;
-		if ($position)
-			$positionstatus = filter_tdr_position($position);
 		else
+			$hourstatus = filter_tdr_hour($timeday['hour']);
+		if (empty($timeday['position']))
 			$positionstatus = true;
+		else
+			$positionstatus = filter_tdr_position($timeday['position']);
 
-		if($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
-			$should_add_rule = true;
+		if ($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
+			return true;
 	}
 
-	return $should_add_rule;
+	return false;
 }
 
 function filter_tdr_day($schedule) {

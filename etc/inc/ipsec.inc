@@ -105,6 +105,13 @@ $p2_modes = array(
 	'tunnel6' => 'Tunnel IPv6',
 	'transport' => 'Transport');
 
+$p2_protocal = array(
+	'any' => 'Any',
+	'tcp' => 'TCP',
+	'udp' => 'UDP',
+	'gre' => 'GRE'
+	);
+	
 $p2_protos = array(
 	'esp' => 'ESP',
 	'ah' => 'AH');

@@ -3003,81 +3003,60 @@ function filter_tdr_install_cron($should_install) {
  </schedules>
 */
 function filter_get_time_based_rule_status($schedule) {
-	$should_add_rule = false;
+
 	/* no schedule? rule should be installed */
-	if(empty($schedule))
+	if (empty($schedule))
 		return true;
 	/*
 	 * iterate through time blocks and determine
 	 * if the rule should be installed or not.
 	 */
 	foreach($schedule['timerange'] as $timeday) {
-		if($timeday['month'])
-			$month = $timeday['month'];
-		else
-			$month = "";
-		if($timeday['day'])
-			$day = $timeday['day'];
-		else
-			$day = "";
-		if($timeday['hour'])
-			$hour = $timeday['hour'];
-		else
-			$hour = "";
-		if($timeday['position'])
-			$position = $timeday['position'];
-		else
-			$position = "";
-		if($timeday['descr'])
-			$desc = $timeday['descr'];
-		else
-			$desc = "";
-		if($month) {
-			$monthstatus = filter_tdr_month($month);
-		} else {
+		if (empty($timeday['month']))
 			$monthstatus = true;
-		}
-		if($day) {
-			$daystatus = filter_tdr_day($day);
-		} else {
+		else
+			$monthstatus = filter_tdr_month($timeday['month']);
+		if (empty($timeday['day']))
 			$daystatus = true;
-		}
-		if($hour) {
-			$hourstatus = filter_tdr_hour($hour);
-		} else {
+		else
+			$daystatus = filter_tdr_day($timeday['day']);
+		if (empty($timeday['hour']))
 			$hourstatus = true;
-		}
-		if($position) {
-			$positionstatus = filter_tdr_position($position);
-		} else {
+		else
+			$hourstatus = filter_tdr_hour($timeday['hour']);
+		if (empty($timeday['position']))
 			$positionstatus = true;
-		}
+		else
+			$positionstatus = filter_tdr_position($timeday['position']);
 
-		if($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
-			$should_add_rule = true;
+		if ($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
+			return true;
 	}
 
-	return $should_add_rule;
+	return false;
 }
 
 function filter_tdr_day($schedule) {
 	global $g;
+
+	if($g['debug'])
+		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+
 	/*
 	 * Calculate day of month.
 	 * IE: 29th of may
 	 */
 	$date = date("d");
 	$defined_days = explode(",", $schedule);
-	if($g['debug'])
-		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
 	foreach($defined_days as $dd) {
-		if($date == $dd)
+		if ($date == $dd)
 			return true;
 	}
 	return false;
 }
 function filter_tdr_hour($schedule) {
 	global $g;
+
 	/* $schedule should be a string such as 16:00-19:00 */
 	$tmp = explode("-", $schedule);
 	$starting_time = strtotime($tmp[0]);
@@ -3092,6 +3071,7 @@ function filter_tdr_hour($schedule) {
 
 function filter_tdr_position($schedule) {
 	global $g;
+
 	/*
 	 * Calculate position, ie: day of week.
 	 * Sunday = 7, Monday = 1, Tuesday = 2
@@ -3114,6 +3094,7 @@ function filter_tdr_position($schedule) {
 
 function filter_tdr_month($schedule) {
 	global $g;
+
 	/*
 	 * Calculate month
 	 */
@@ -3130,6 +3111,7 @@ function filter_tdr_month($schedule) {
 
 function filter_setup_logging_interfaces() {
 	global $config, $FilterIflist;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_setup_logging_interfaces() being called $mt\n";
@@ -3145,6 +3127,7 @@ function filter_setup_logging_interfaces() {
 
 function filter_process_carp_nat_rules() {
 	global $g, $config;
+
 	update_filter_reload_status("Creating CARP NAT rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -3172,6 +3155,7 @@ function filter_process_carp_nat_rules() {
 
 function filter_process_carp_rules() {
 	global $g, $config;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_process_carp_rules() being called $mt\n";

@@ -3015,7 +3015,7 @@ function filter_get_time_based_rule_status($schedule) {
 		if($timeday['month'])
 			$month = $timeday['month'];
 		else
-			$week = "";
+			$month = "";
 		if($timeday['day'])
 			$day = $timeday['day'];
 		else
@@ -3066,9 +3066,6 @@ function filter_tdr_day($schedule) {
 	 * Calculate day of month.
 	 * IE: 29th of may
 	 */
-	$weekday = date("w");
-	if($weekday == 0)
-		$weekday = 7;
 	$date = date("d");
 	$defined_days = explode(",", $schedule);
 	if($g['debug'])
@@ -3096,7 +3093,7 @@ function filter_tdr_hour($schedule) {
 function filter_tdr_position($schedule) {
 	global $g;
 	/*
-	 * Calculate possition, ie: day of week.
+	 * Calculate position, ie: day of week.
 	 * Sunday = 7, Monday = 1, Tuesday = 2
 	 * Weds = 3, Thursday = 4, Friday = 5,
 	 * Saturday = 6

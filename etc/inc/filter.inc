@@ -113,7 +113,7 @@ function filter_load_ipfw() {
 	}
 }
 
-function filter_pflog_start() {
+function filter_pflog_start($kill_first = false) {
 	global $config, $g;
 	if ($g['platform'] == 'jail')
 		return;
@@ -124,6 +124,10 @@ function filter_pflog_start() {
 	mute_kernel_msgs();
 	$output = 0;
 	exec("/bin/pgrep -af 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	if ($kill_first && ($output[0] > 1)) {
+		mwexec("/bin/kill {$output[0]}");
+		usleep(1000);
+	}
 	if($retval != 0)
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();

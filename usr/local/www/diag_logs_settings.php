@@ -129,6 +129,8 @@ if ($_POST) {
 		if ($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
 			$retval |= filter_configure();
 
+		filter_pflog_start(true);
+
 		$savemsg = get_std_save_message($retval);
 	}
 }

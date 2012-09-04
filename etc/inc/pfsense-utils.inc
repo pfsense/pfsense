@@ -998,8 +998,14 @@ function setup_serial_port($when="save", $path="") {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 				$new_boot_config[] = 'console="comconsole,vidconsole"';
 			} elseif ($g['platform'] == "nanobsd") {
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-				$new_boot_config[] = 'console="comconsole"';
+				if (file_exists("/etc/nano_use_vga.txt")) {
+					$new_boot_config[] = 'boot_multicons="YES"';
+					$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+					$new_boot_config[] = 'console="vidconsole,comconsole"';
+				} else {
+					$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+					$new_boot_config[] = 'console="comconsole"';
+				}
 			}
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}

@@ -417,30 +417,33 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 			/* end mode_cfg section */
 			
-			if ($a_client['user_source'] != "system") {
-				if (is_array($config['system']['authserver'])) {
-					foreach ($config['system']['authserver'] as $authcfg) {
-						if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
-							$thisauthcfg = $authcfg;
-					}
-
-					/* begin ldapcfg */                        
-					$racoonconf .= "ldapcfg {\n";
-					$racoonconf .= "\tversion 3;\n";
-					$racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
-					$lport = "389";
-					if ($authcfg['port'] != "")
-						$lport = $authcfg['port'];
-					$racoonconf .= "\tport ".$lport.";\n";
-					$racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
-					$racoonconf .= "\tsubtree on;\n";
-					$racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
-					$racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
-					$racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
-					$racoonconf .= "}\n\n";
-					/* end ldapcfg */
-				}
-			}
+// Disable this for now, when LDAP support returns it will be via external script auth, 
+//    since we no longer build racoon with LDAP integrated. This is only preventing racoon from running.
+//
+//			if ($a_client['user_source'] != "system") {
+//				if (is_array($config['system']['authserver'])) {
+//					foreach ($config['system']['authserver'] as $authcfg) {
+//						if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
+//							$thisauthcfg = $authcfg;
+//					}
+//
+//					/* begin ldapcfg */
+//					$racoonconf .= "ldapcfg {\n";
+//					$racoonconf .= "\tversion 3;\n";
+//					$racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
+//					$lport = "389";
+//					if ($authcfg['port'] != "")
+//						$lport = $authcfg['port'];
+//					$racoonconf .= "\tport ".$lport.";\n";
+//					$racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
+//					$racoonconf .= "\tsubtree on;\n";
+//					$racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
+//					$racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
+//					$racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
+//					$racoonconf .= "}\n\n";
+//					/* end ldapcfg */
+//				}
+//			}
 
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {

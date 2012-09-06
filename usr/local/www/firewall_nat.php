@@ -229,10 +229,18 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 		$alias_dst_span_begin      = $alias_popup["dst"];
 		$alias_dst_port_span_begin = $alias_popup["dstport"];
 
+		$alias_src_span_end        = $alias_popup["src_end"];
+		$alias_src_port_span_end   = $alias_popup["srcport_end"];
+		$alias_dst_span_end        = $alias_popup["dst_end"];
+		$alias_dst_port_span_end   = $alias_popup["dstport_end"];
+
 		$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
 
 		$alias_target_span_begin     = $alias_popup["dst"];
 		$alias_local_port_span_begin = $alias_popup["dstport"];
+
+		$alias_target_span_end       = $alias_popup["dst_end"];
+		$alias_local_port_span_end   = $alias_popup["dstport_end"];
 
 		if (isset($natent['disabled']))
 			$textss = "<span class=\"gray\">";

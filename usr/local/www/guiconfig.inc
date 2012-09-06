@@ -1097,15 +1097,24 @@ function rule_popup($src,$srcport,$dst,$dstport){
 				$width="350";
 				break;
 			}
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g["theme"]}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
-			if ($alias_name['name'] == $src)
-				$descriptions['src']= $span_begin;
-			if ($alias_name['name'] == $srcport)
+			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g["theme"]}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
+			$span_end = "</u></span>";
+			if ($alias_name['name'] == $src) {
+				$descriptions['src'] = $span_begin;
+				$descriptions['src_end'] = $span_end;
+			}
+			if ($alias_name['name'] == $srcport) {
 				$descriptions['srcport'] = $span_begin;
-			if ($alias_name['name'] == $dst )
+				$descriptions['srcport_end'] = $span_end;
+			}
+			if ($alias_name['name'] == $dst ) {
 				$descriptions['dst'] = $span_begin;
-			if ($alias_name['name'] == $dstport)
-				$descriptions['dstport'] =  $span_begin;
+				$descriptions['dst_end'] = $span_end;
+			}
+			if ($alias_name['name'] == $dstport) {
+				$descriptions['dstport'] = $span_begin;
+				$descriptions['dstport_end'] = $span_end;
+			}
 		}
 		return $descriptions;
   	}

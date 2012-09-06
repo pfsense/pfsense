@@ -1027,37 +1027,37 @@ function alias_info_popup($alias_id){
 			exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
 			$alias_objects_with_details .= "<tr><td colspan='3' $close_title class='vncell'>{$alias_name['url']}</td></tr>";
 			$x=0;
-			foreach ($alias_addresses as $alias_ports_address ){
-				switch ($x){
-					case 0:
-						$x++;
-						$alias_objects_with_details .= "<tr><td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
-						break;
-					case 1:
-						$x++;
-						$alias_objects_with_details .= "<td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
-						break;
-					default:
-						$x=0;
-						$alias_objects_with_details .= "<td  $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td><tr>";
-						break;
-					}
-				}
-				for ($y=$x;$y<=$x;$y++){
-					$alias_objects_with_details .= "<td $close_title class='vncell' width='33%'>&nbsp;</td>";
-					}
-				if ($x > 0)
-					$alias_objects_with_details .= "</tr>";
-				if ($counter > 10002){
-					$alias_objects_with_details .= "<tr><td colspan='3'> listing only first 10k items</td><tr>";
+			foreach ($alias_addresses as $alias_ports_address ) {
+				switch ($x) {
+				case 0:
+					$x++;
+					$alias_objects_with_details .= "<tr><td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+					break;
+				case 1:
+					$x++;
+					$alias_objects_with_details .= "<td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+					break;
+				default:
+					$x=0;
+					$alias_objects_with_details .= "<td  $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td><tr>";
+					break;
 				}
 			}
+			for ($y = $x; $y <= $x; $y++) {
+				$alias_objects_with_details .= "<td $close_title class='vncell' width='33%'>&nbsp;</td>";
+			}
+			if ($x > 0) {
+				$alias_objects_with_details .= "</tr>";
+			}
+			if ($counter > 10002) {
+				$alias_objects_with_details .= "<tr><td colspan='3'> listing only first 10k items</td><tr>";
+			}
+		}
 		else{
 			$alias_addresses = explode (" ", $alias_name['address']);
 			$alias_details = explode ("||", $alias_name['detail']);
-			$counter=0;
-			foreach($alias_addresses as $alias_ports_address)
-				{
+			$counter = 0;
+			foreach ($alias_addresses as $alias_ports_address) {
 				$alias_objects_with_details .= "<tr><td $close_title width='5%' class='vncell' style='background: #FFFFFF;color: #000000;'>{$alias_addresses[$counter]}</td>";
 				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
 				if ($alias_details[$counter] != "" && $alias_detail_default === False)
@@ -1066,50 +1066,48 @@ function alias_info_popup($alias_id){
 					$alias_objects_with_details .="<td $close_title width='95%' class='vncell' style='background: #FFFFFF;color: #000000;'>&nbsp;</td>";
 				$alias_objects_with_details .= "</tr>";
 				$counter++;
-				}
-				
-				}
-		$alias_objects_with_details .="</table>";
+			}
 		}
-		$alias_descr_substr = $alias_name['descr'];
-		if ($strlength >= $maxlength)
-			$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
-		$item_text=($counter > 1 ? "items" : "item");
-		$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href='/firewall_aliases_edit.php?id={$alias_id}' title='".gettext('edit this alias')."'>&nbsp;&nbsp;edit </a>";
-		$strlength = strlen ($alias_caption);
-	print "<h1>{$alias_caption}</h1>".$alias_objects_with_details;
+		$alias_objects_with_details .= "</table>";
+	}
+	$alias_descr_substr = $alias_name['descr'];
+	if ($strlength >= $maxlength)
+		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
+	$item_text = ($counter > 1 ? "items" : "item");
+	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href='/firewall_aliases_edit.php?id={$alias_id}' title='".gettext('edit this alias')."'>&nbsp;&nbsp;edit </a>";
+	$strlength = strlen ($alias_caption);
+	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
 }
 
 function rule_popup($src,$srcport,$dst,$dstport){
 	global $config,$g;
 	$aliases_array = array();
-	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
-		{
+	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		$descriptions = array ();
-        foreach($config['aliases']['alias'] as $alias_id=>$alias_name){
-				$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\'> " .gettext("loading...")."</a>";
-				switch ($alias_name['type']){
-					case "port":
-						$width="250";
-						break;
-					case "urltable":
-						$width="500";
-						break;
-					default:
-						$width="350";
-						break;
-					}
-				$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g["theme"]}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
-				if ($alias_name['name'] == $src)
-	        		$descriptions['src']= $span_begin;
-	        	if ($alias_name['name'] == $srcport)
-	        		$descriptions['srcport'] = $span_begin;
-	        	if ($alias_name['name'] == $dst )
-	        		$descriptions['dst'] = $span_begin;
-	        	if ($alias_name['name'] == $dstport)
-	        		$descriptions['dstport'] =  $span_begin;
-	       		}
-        return $descriptions;
+		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
+			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\'> " .gettext("loading...")."</a>";
+			switch ($alias_name['type']){
+			case "port":
+				$width="250";
+				break;
+			case "urltable":
+				$width="500";
+				break;
+			default:
+				$width="350";
+				break;
+			}
+			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g["theme"]}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+			if ($alias_name['name'] == $src)
+				$descriptions['src']= $span_begin;
+			if ($alias_name['name'] == $srcport)
+				$descriptions['srcport'] = $span_begin;
+			if ($alias_name['name'] == $dst )
+				$descriptions['dst'] = $span_begin;
+			if ($alias_name['name'] == $dstport)
+				$descriptions['dstport'] =  $span_begin;
+		}
+		return $descriptions;
   	}
 }
 

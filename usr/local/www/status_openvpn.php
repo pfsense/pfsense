@@ -111,7 +111,7 @@ include("head.inc"); ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 	function killClient(mport, remipp) {
-		var busy = function(icon) {
+		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
 			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
 			jQuery(icon).css("cursor","wait");

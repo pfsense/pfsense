@@ -226,6 +226,41 @@ function find_rule_by_number($rulenum, $type="rules") {
 		return `pfctl -vvsr | grep '^@{$rulenum} '`;
 }
 
+function buffer_rules_load() {
+    global $buffer_rules_rdr, $buffer_rules_normal;
+	$buffer = explode("\n",`pfctl -vvsn -a "miniupnpd" | grep '^@'`);
+	foreach ($buffer as $line) {
+		list($key, $value) = explode (" ", $line, 2);
+		$buffer_rules_rdr[$key] = $value;
+	}	
+	$buffer = explode("\n",`pfctl -vvsr | grep '^@'`);
+	foreach ($buffer as $line) {
+		list($key, $value) = explode (" ", $line, 2);
+		$buffer_rules_normal[$key] = $value;
+	}	
+}
+
+function buffer_rules_clear() {
+	unset($GLOBALS['buffer_rules_normal']);
+	unset($GLOBALS['buffer_rules_rdr']);
+}
+
+function find_rule_by_number_buffer($rulenum, $type){
+    global $g, $buffer_rules_rdr, $buffer_rules_normal;
+	
+	if ($type == "rdr")
+	{
+		$ruleString = $buffer_rules_rdr["@".$rulenum];
+		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
+		$rulename = substr($ruleString,0,30);
+	} else {
+		$ruleString = $buffer_rules_normal["@".$rulenum];
+		list(,$rulename,) = explode("\"",$ruleString);
+		$rulename = str_replace("USER_RULE: ","<img src=\"/themes/".$g['theme'].'/images/icons/icon_frmfld_user.png\" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
+	}
+	return "@".$rulenum." ".$rulename;
+}
+
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr"))

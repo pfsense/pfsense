@@ -118,23 +118,24 @@ include("head.inc");
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
-				<td colspan="3" align="left" valign="middle">
-					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
-					<br/><br/>
-				</td>
-				<td colspan="3" align="right" valign="middle">
-					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-						<input id="filtertext" name="filtertext" class="formfld search" value="<?=gettext($filtertext);?>" />
-						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-						<br/><br/>
+				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
+				<div style="float: right;" valign="middle">
+					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
+						<input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" value="<?=gettext($filtertext);?>" />
+						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" />
 					</form>
+					<br/>
+				</div>
+				<div style="float: left;">
+					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
+				</div>
 				</td>	
 			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
 ?>
 		<tr>
-		  <td colspan="6" class="listtopic">
+		  <td colspan="7" class="listtopic">
 				<?php if (!$filtertext) { ?>
 				<?php printf(gettext("Last %s firewall log entries."),count($filterlog));?>
 				<?php } else { ?>
@@ -144,18 +145,22 @@ include("head.inc");
 			</tr>
 			<tr>
 			  <td width="10%" class="listhdrr"><?=gettext("Act");?></td>
+			  <td width="10%" class="listhdrr"><?=gettext("Rule");?></td>
 			  <td width="10%" class="listhdrr"><?=gettext("Time");?></td>
 			  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
 			  <td width="25%" class="listhdrr"><?=gettext("Source");?></td>
 			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
 			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
-			</tr><?php foreach ($filterlog as $filterent): ?>
+			</tr><?php 			
+			buffer_rules_load();
+			foreach ($filterlog as $filterent): ?>
 			<tr>
 			  <td class="listlr" nowrap align="middle">
 			  <center>
 			  <a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
 			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="absmiddle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
-			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
+			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
+			  <td class="listr" nowrap><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['act']);?></td>
 			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['time']);?></td>
 			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php
@@ -187,7 +192,8 @@ include("head.inc");
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			  ?>
 			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['proto']);?></td>
-			</tr><?php endforeach; ?>
+			</tr><?php endforeach; 
+			buffer_rules_clear(); ?>
 <?php else: ?>
 		  <tr>
 			<td colspan="2" class="listtopic">

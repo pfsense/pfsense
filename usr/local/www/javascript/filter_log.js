@@ -127,7 +127,7 @@ function showRuleDescriptions(){
 		var rules = ss[i].cssRules || ss[i].rules;
 		for (var j=0; j<rules.length; j++) {
 			if (rules[j].selectorText === ".listFirewall") {
-				rules[j].style.display = "table-cell";
+				rules[j].style.display = rules[j].style.display === "none" ? "table-cell" : "none";
 			}
 		}
 	}

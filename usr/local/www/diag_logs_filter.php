@@ -130,7 +130,7 @@ include("head.inc");
 					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
 					<br/><br/>
 					<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
-					<a href="#" onclick="showRuleDescriptions()">Show rule descriptions</a>
+					<a href="#" onclick="showRuleDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
 					<br/>
 				</div>

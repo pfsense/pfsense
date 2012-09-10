@@ -248,15 +248,14 @@ function buffer_rules_clear() {
 function find_rule_by_number_buffer($rulenum, $type){
     global $g, $buffer_rules_rdr, $buffer_rules_normal;
 	
-	if ($type == "rdr")
-	{
+	if ($type == "rdr")	{
 		$ruleString = $buffer_rules_rdr["@".$rulenum];
 		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
 		$rulename = substr($ruleString,0,30);
 	} else {
 		$ruleString = $buffer_rules_normal["@".$rulenum];
 		list(,$rulename,) = explode("\"",$ruleString);
-		$rulename = str_replace("USER_RULE: ","<img src=\"/themes/".$g['theme'].'/images/icons/icon_frmfld_user.png\" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
+		$rulename = str_replace("USER_RULE: ",'<img src="/themes/'.$g['theme'].'/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
 	}
 	return "@".$rulenum." ".$rulename;
 }

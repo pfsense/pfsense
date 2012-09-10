@@ -2432,7 +2432,7 @@ block quick from any to <snort2c> label "Block snort2c hosts"
 
 EOD;
 
-	$ipfrules .= filter_process_carp_rules();
+	$ipfrules .= filter_process_carp_rules($log);
 
 	$ipfrules .= "\n# SSH lockout\n";
 	if(is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
@@ -3157,17 +3157,17 @@ function filter_process_carp_nat_rules() {
 	return $lines;
 }
 
-function filter_process_carp_rules() {
+function filter_process_carp_rules($log) {
 	global $g, $config;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "filter_process_carp_rules() being called $mt\n";
+		echo "filter_process_carp_rules($log) being called $mt\n";
 	}
 	$lines = "";
 	/* return if there are no carp configured items */
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
-		$lines .= "block in log quick proto carp from (self) to any\n";
+		$lines .= "block in $log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";
 	}

@@ -920,6 +920,10 @@ ul#wzdnav a:active {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.listFirewall {
+	border-bottom: 2px solid #999999;
+	display:none; 
+}
 .listlrns {
 	background-color: #FFFFFF;
 	border-right: 1px solid #999999;

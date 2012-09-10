@@ -120,3 +120,15 @@ function toggle_pause() {
 if (typeof updateDelay != 'undefined') {
 	timer = setInterval('fetch_new_rules()', updateDelay);
 }
+
+function showRuleDescriptions(){
+	var ss = document.styleSheets;
+	for (var i=0; i<ss.length; i++) {
+		var rules = ss[i].cssRules || ss[i].rules;
+		for (var j=0; j<rules.length; j++) {
+			if (rules[j].selectorText === ".listFirewall") {
+				rules[j].style.display = "table-cell";
+			}
+		}
+	}
+}

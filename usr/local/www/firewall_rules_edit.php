@@ -206,9 +206,6 @@ if ($_POST) {
 			$_POST['icmptype'] = $pconfig['icmptype'];
 	}
 
-	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
-		$input_errors[] = gettext("Reject type rules only works when the protocol is set to TCP.");
-
 	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
 		$input_errors[] = gettext("Queue type rules only work with queues.");
 

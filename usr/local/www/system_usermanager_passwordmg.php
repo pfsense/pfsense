@@ -70,11 +70,12 @@ foreach($config['system']['user'] as $user)
 	if($user['name'] == $_SESSION['Username'])
 		$islocal = true;
 
+include("head.inc");
+
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php
-include("head.inc");
 include("fbegin.inc");
 
 if ($input_errors)

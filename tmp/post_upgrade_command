@@ -11,6 +11,11 @@ if [ $KERNELTYPE = "wrap" ]; then
 		cp /etc/ttys_wrap /etc/ttys
 	fi
 fi
+if [ $KERNELTYPE = "wrap_vga" ]; then
+	if [ -f /kernels/kernel_wrap_vga.gz ]; then
+		tar xzpf /kernels/kernel_wrap_vga.gz --exclude loader.conf -C /boot/
+	fi
+fi
 if [ $KERNELTYPE = "Developers" ]; then
 	if [ -f /kernels/kernel_Dev.gz ]; then 
 		tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/

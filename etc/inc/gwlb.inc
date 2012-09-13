@@ -860,7 +860,7 @@ function lookup_gateway_interface_by_name($name) {
 
         $gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
-		$interfacegw = $gateway['interface'];
+		$interfacegw = $gateways_arr[$name]['interface'];
 		return ($interfacegw);
         }
 

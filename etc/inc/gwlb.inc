@@ -989,9 +989,9 @@ function interface_gateway_group_member($interface) {
 			foreach($group['item'] as $item) {
 				$elements = explode("|", $item);
 				$gwname = $elements[0];
-				$gwif = lookup_gateway_interface_by_name($gwname);
-				if($gwif == $interface)
-				return $group['name'];
+				$gwif = get_real_interface(lookup_gateway_interface_by_name($gwname));
+				if($gwif == $realif)
+					return true;
 			}
 		}
 	}

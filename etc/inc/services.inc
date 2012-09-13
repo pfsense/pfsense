@@ -1382,16 +1382,19 @@ function services_dyndns_configure($int = "") {
 	}
 
 	$dyndnscfg = $config['dyndnses']['dyndns'];
-
+	$gwgroups = return_gateway_groups_array();
 	if (is_array($dyndnscfg)) {
 		if ($g['booting'])
 			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
 			$failovergroup = interface_gateway_group_member($int);
-			if ((!empty($int) && $int == $dyndns['interface']) || (!empty($failovergroup) && ($failovergroup == $dyndns['interface']))) {
+			if (!empty($int) && $int == $dyndns['interface']) {
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
+			} elseif (is_array($gwgroups[$dyndns['interface']])){
+				services_dyndns_configure_client($dyndns);
+				sleep(1);				
 			} else {
 				continue;
 			}

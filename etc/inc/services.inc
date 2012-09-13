@@ -1388,12 +1388,13 @@ function services_dyndns_configure($int = "") {
 			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
-			if (!empty($int) && $int != $dyndns['interface'])
+			$failovergroup = interface_gateway_group_member($int);
+			if ((!empty($int) && $int == $dyndns['interface']) || (!empty($failovergroup) && ($failovergroup == $dyndns['interface']))) {
+				services_dyndns_configure_client($dyndns);
+				sleep(1);
+			} else {
 				continue;
-
-			services_dyndns_configure_client($dyndns);
-
-			sleep(1);
+			}
 		}
 
 		if ($g['booting'])

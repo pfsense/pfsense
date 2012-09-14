@@ -541,6 +541,7 @@ EOPP;
 			if (empty($mac))
 				continue;
 			$dhcpdconf .= 'class "' . str_replace(':', '', $mac) . '" {' . "\n";
+			// Skip the first octet of the MAC address - for media type, typically Ethernet ("01") and match the rest.
 			$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
 			$dhcpdconf .= '}' . "\n";
 		}

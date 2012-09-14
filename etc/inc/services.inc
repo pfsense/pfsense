@@ -538,6 +538,8 @@ EOPP;
 		/* Create classes */
 		$all_mac_list = array_unique(explode(',', $dhcpifconf['mac_allow'] . ',' . $dhcpifconf['mac_deny']));
 		foreach ($all_mac_list as $mac) {
+			if (empty($mac))
+				continue;
 			$dhcpdconf .= 'class "' . str_replace(':', '', $mac) . '" {' . "\n";
 			$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
 			$dhcpdconf .= '}' . "\n";
@@ -557,10 +559,14 @@ EOPP;
 		/* allow/deny MACs */
 		$mac_allow_list = array_unique(explode(',', $dhcpifconf['mac_allow']));
 		foreach ($mac_allow_list as $mac) {
+			if (empty($mac))
+				continue;
 			$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
 		}
 		$mac_deny_list = array_unique(explode(',', $dhcpifconf['mac_deny']));
 		foreach ($mac_deny_list as $mac) {
+			if (empty($mac))
+				continue;
 			$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
 		}
 

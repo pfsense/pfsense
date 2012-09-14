@@ -141,6 +141,8 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
 	$pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
+	$pconfig['mac_allow'] = $config['dhcpd'][$if]['mac_allow'];
+	$pconfig['mac_deny'] = $config['dhcpd'][$if]['mac_deny'];
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
@@ -181,6 +183,16 @@ function is_inrange($test, $start, $end) {
 		return true;
 	else
 		return false;
+}
+
+function validate_partial_mac_list($maclist) {
+	$macs = explode(',', $maclist);
+
+	// Loop through and look for invalid MACs.
+	foreach ($macs as $mac)
+		if (!is_macaddr($mac, true))
+			return false;
+	return true;
 }
 
 if ($_POST) {
@@ -241,7 +253,13 @@ if ($_POST) {
 				}
 			}
 		}
-			
+
+		// Validate MACs
+		if (!empty($_POST['mac_allow']) && !validate_partial_mac_list($_POST['mac_allow']))
+			$input_errors[] = gettext("If you specify a mac allow list, it must contain only valid partial MAC addresses.");
+		if (!empty($_POST['mac_deny']) && !validate_partial_mac_list($_POST['mac_deny']))
+			$input_errors[] = gettext("If you specify a mac deny list, it must contain only valid partial MAC addresses.");
+
 		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
@@ -368,6 +386,8 @@ if ($_POST) {
 		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
 		$config['dhcpd'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpd'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$config['dhcpd'][$if]['mac_allow'] = $_POST['mac_allow'];
+		$config['dhcpd'][$if]['mac_deny'] = $_POST['mac_deny'];
 
 		unset($config['dhcpd'][$if]['ntpserver']);
 		if ($_POST['ntp1'])
@@ -482,6 +502,8 @@ include("head.inc");
 		document.iform.dhcpleaseinlocaltime.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
+		document.iform.mac_allow.disabled = endis;
+		document.iform.mac_deny.disabled = endis;
 		document.iform.ntp1.disabled = endis;
 		document.iform.ntp2.disabled = endis;
 		document.iform.tftp.disabled = endis;
@@ -502,6 +524,12 @@ include("head.inc");
 	function show_ddns_config() {
 		document.getElementById("showddnsbox").innerHTML='';
 		aodiv = document.getElementById('showddns');
+		aodiv.style.display = "block";
+	}
+
+	function show_maccontrol_config() {
+		document.getElementById("showmaccontrolbox").innerHTML='';
+		aodiv = document.getElementById('showmaccontrol');
 		aodiv.style.display = "block";
 	}
 
@@ -768,6 +796,20 @@ include("head.inc");
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+				</div>
+			</td>
+			</tr>
+			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("MAC Address Control");?></td>
+			<td width="78%" class="vtable">
+				<div id="showmaccontrolbox">
+					<input type="button" onClick="show_maccontrol_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show MAC Address Control");?></a>
+				</div>
+				<div id="showmaccontrol" style="display:none">
+					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=htmlspecialchars($pconfig['mac_allow']);?>"><br />
+					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
+					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=htmlspecialchars($pconfig['mac_deny']);?>"><br />
+					<?=gettext("Enter a list of partial MAC addresses to deny access, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 				</div>
 			</td>
 			</tr>

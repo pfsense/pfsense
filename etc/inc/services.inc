@@ -535,6 +535,14 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
 
+		/* Create classes */
+		$all_mac_list = array_unique(explode(',', $dhcpifconf['mac_allow'] . ',' . $dhcpifconf['mac_deny']));
+		foreach ($all_mac_list as $mac) {
+			$dhcpdconf .= 'class "' . str_replace(':', '', $mac) . '" {' . "\n";
+			$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
+			$dhcpdconf .= '}' . "\n";
+		}
+
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 		$dhcpdconf .= "	pool {\n";
 
@@ -544,6 +552,16 @@ EOPP;
 			if($dhcpifconf['dnsserver'][1] <> "")
 				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
 			$dhcpdconf .= ";\n";
+		}
+
+		/* allow/deny MACs */
+		$mac_allow_list = array_unique(explode(',', $dhcpifconf['mac_allow']));
+		foreach ($mac_allow_list as $mac) {
+			$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
+		}
+		$mac_deny_list = array_unique(explode(',', $dhcpifconf['mac_deny']));
+		foreach ($mac_deny_list as $mac) {
+			$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
 		}
 
 		if($dhcpifconf['failover_peerip'] <> "")

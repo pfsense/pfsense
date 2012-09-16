@@ -68,7 +68,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<script src="/javascript/sorttable.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <form action="diag_dump_states_sources.php" method="get" name="iform">
 

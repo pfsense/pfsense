@@ -121,12 +121,12 @@ if (typeof updateDelay != 'undefined') {
 	timer = setInterval('fetch_new_rules()', updateDelay);
 }
 
-function toggleListDescriptions(){
+function showRuleDescriptions(){
 	var ss = document.styleSheets;
 	for (var i=0; i<ss.length; i++) {
 		var rules = ss[i].cssRules || ss[i].rules;
 		for (var j=0; j<rules.length; j++) {
-			if (rules[j].selectorText === ".listMRDescriptionL" || rules[j].selectorText === ".listMRDescriptionR") {
+			if (rules[j].selectorText === ".listFirewall") {
 				rules[j].style.display = rules[j].style.display === "none" ? "table-cell" : "none";
 			}
 		}

@@ -955,7 +955,7 @@ div#log span.log-protocol-mini-header {
 /* Sortable tables */
 table.sortable thead {
     cursor: default;
-<!--	background-color: #EEEEEE;-->
+	background-color: #EEEEEE;
 	padding-right: 12px;
 	padding-left: 12px;
 	padding-top: 12px;

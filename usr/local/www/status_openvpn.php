@@ -106,6 +106,7 @@ $clients = openvpn_get_active_clients();
 include("head.inc"); ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
+<script src="/javascript/sorttable.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
@@ -187,11 +188,9 @@ include("head.inc"); ?>
 			</tr>
 
 			<?php endforeach; ?>
-			<tfoot>
 			<tr>
 				<td colspan="6" class="list" height="12"></td>
 			</tr>
-			</tfoot>
 
 		</table>
 		</td>

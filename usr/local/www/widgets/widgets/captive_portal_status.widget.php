@@ -42,6 +42,7 @@ require_once("captiveportal.inc");
 
 ?>
 
+<script src="/javascript/sorttable.js"></script>
 <?php
 
 if ($_GET['act'] == "del") {

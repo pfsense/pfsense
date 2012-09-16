@@ -33,15 +33,7 @@ $pagetitle = gentitle( $pgtitle );
 	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
-		<?php 
-		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
-			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
-        else:
-        	echo "<link rel=\"stylesheet\" href=\"/css/table.css\" media=\"all\" />";
-        endif;
-		?>
-		
-		<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
+        <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
 					<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
         <?php else: ?>

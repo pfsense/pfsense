@@ -60,6 +60,7 @@ $sk_servers = openvpn_get_active_servers("p2p");
 $clients = openvpn_get_active_clients();
 ?>
 
+<script src="/javascript/sorttable.js" type="text/javascript"></script>
 <br/>
 <script type="text/javascript">
 	function killClient(mport, remipp) {
@@ -101,45 +102,40 @@ $clients = openvpn_get_active_clients();
 	</tr>
 	<tr>
 		<td>
-			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="2">
+			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="listhdrr">Name/Time</td>
 				<td class="listhdrr">Real/Virtual IP</td>
 			</tr>
-			<?php $rowIndex = 0;
-			foreach ($server['conns'] as $conn): 
-			$evenRowClass = $rowIndex % 2 ? " listEven" : " listOdd";
-			$rowIndex++;			
-			?>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listlrg">
+			<?php foreach ($server['conns'] as $conn): ?>
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
+				<td class="listlr">
 					<?=$conn['common_name'];?>
 				</td>
-				<td class="listrg">
+				<td class="listr">
 					<?=$conn['remote_host'];?>
 				</td>
-				<td class='listg' rowspan="2">
+				<td class='list' rowspan="2">
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
 					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
 					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>
 			</tr>
-			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listlrg">
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
+				<td class="listlr">
 					<?=$conn['connect_time'];?>
 				</td>
-				<td class="listrg">
+				<td class="listr">
 					<?=$conn['virtual_addr'];?>
 				</td>
 			</tr>
 
 			<?php endforeach; ?>
-			<tfoot>
 			<tr>
 				<td colspan="6" class="list" height="12"></td>
 			</tr>
-			</tfoot>
+
 		</table>
 		</td>
 	</tr>

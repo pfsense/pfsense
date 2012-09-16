@@ -510,6 +510,12 @@ EOPP;
 			if($dhcpifconf['netmask'])
 				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
 
+		$all_pools = array();
+		$all_pools[] = $dhcpifconf;
+		if (is_array($dhcpifconf['pool'])) {
+			$all_pools = array_merge($all_pools, $dhcpifconf['pool']);
+		}
+
 		$dnscfg = "";
 
 		if ($dhcpifconf['domain']) {
@@ -535,8 +541,18 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
 
-		/* Create classes */
-		$all_mac_list = array_unique(explode(',', $dhcpifconf['mac_allow'] . ',' . $dhcpifconf['mac_deny']));
+		/* Create classes - These all contain comma separated lists. Join them into one 
+		   big comma separated string then split them all up. */
+		$all_mac_strings = array();
+		if (is_array($dhcpifconf['pool'])) {
+			foreach($all_pools as $poolconf) {
+				$all_mac_strings[] = $poolconf['mac_allow'];
+				$all_mac_strings[] = $poolconf['mac_deny'];
+			}
+		}
+		$all_mac_strings[] = $dhcpifconf['mac_allow'];
+		$all_mac_strings[] = $dhcpifconf['mac_deny'];
+		$all_mac_list = array_unique(explode(',', implode(',', $all_mac_strings)));
 		foreach ($all_mac_list as $mac) {
 			if (empty($mac))
 				continue;
@@ -547,35 +563,110 @@ EOPP;
 		}
 
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
-		$dhcpdconf .= "	pool {\n";
 
-		/* is failover dns setup? */
-		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "") {
-			$dhcpdconf .= "		option domain-name-servers {$dhcpifconf['dnsserver'][0]}";
-			if($dhcpifconf['dnsserver'][1] <> "")
-				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
-			$dhcpdconf .= ";\n";
+// Setup pool options
+		foreach($all_pools as $poolconf) {
+			$dhcpdconf .= "	pool {\n";
+			/* is failover dns setup? */
+			if (is_array($poolconf['dnsserver']) && $poolconf['dnsserver'][0] <> "") {
+				$dhcpdconf .= "		option domain-name-servers {$poolconf['dnsserver'][0]}";
+				if($poolconf['dnsserver'][1] <> "")
+					$dhcpdconf .= ",{$poolconf['dnsserver'][1]}";
+				$dhcpdconf .= ";\n";
+			}
+
+			/* allow/deny MACs */
+			$mac_allow_list = array_unique(explode(',', $poolconf['mac_allow']));
+			foreach ($mac_allow_list as $mac) {
+				if (empty($mac))
+					continue;
+				$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
+			}
+			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));
+			foreach ($mac_deny_list as $mac) {
+				if (empty($mac))
+					continue;
+				$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
+			}
+
+			if($poolconf['failover_peerip'] <> "")
+				$dhcpdconf .= "		deny dynamic bootp clients;\n";
+
+			if (isset($poolconf['denyunknown']))
+			   $dhcpdconf .= "		deny unknown-clients;\n";
+
+			if ($poolconf['gateway'] && ($poolconf['gateway'] != $dhcpifconf['gateway']))
+				$dhcpdconf .= "	option routers {$routers};\n";
+
+			if($dhcpifconf['failover_peerip'] <> "") {
+				$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
+				$dhcpnum++;
+			}
+
+			$pdnscfg = "";
+
+			if ($poolconf['domain'] && ($poolconf['domain'] != $dhcpifconf['domain'])) {
+				$pdnscfg .= "		option domain-name \"{$poolconf['domain']}\";\n";
+			}
+
+			if(!empty($poolconf['domainsearchlist']) && ($poolconf['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
+				$pdnscfg .= "		option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $poolconf['domainsearchlist'])) . "\";\n";
+			}
+
+			if (isset($poolconf['ddnsupdate']) && ($poolconf['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
+				if($poolconf['ddnsdomain'] <> "") {
+					$pdnscfg .= "		ddns-domainname \"{$poolconf['ddnsdomain']}\";\n";
+				}
+				$pdnscfg .= "		ddns-update-style interim;\n";
+			}
+
+			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $poolconf['dnsserver'][0])) {
+				$pdnscfg .= "		option domain-name-servers " . join(",", $poolconf['dnsserver']) . ";\n";
+			}
+			$dhcpdconf .= "{$pdnscfg}";
+
+			// default-lease-time
+			if ($poolconf['defaultleasetime'] && ($poolconf['defaultleasetime'] != $dhcpifconf['defaultleasetime']))
+				$dhcpdconf .= "		default-lease-time {$poolconf['defaultleasetime']};\n";
+
+			// max-lease-time
+			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime']))
+				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
+
+			// netbios-name*
+			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $poolconf['winsserver'][0])) {
+				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
+				$dhcpdconf .= "		option netbios-node-type 8;\n";
+			}
+
+			// ntp-servers
+			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $poolconf['ntpserver'][0]))
+				$dhcpdconf .= "		option ntp-servers " . join(",", $poolconf['ntpserver']) . ";\n";
+
+			// tftp-server-name
+			if (!empty($poolconf['tftp']) && ($poolconf['tftp'] != $dhcpifconf['tftp']))
+				$dhcpdconf .= "		option tftp-server-name \"{$poolconf['tftp']}\";\n";
+
+			// ldap-server
+			if (!empty($poolconf['ldap']) && ($poolconf['ldap'] != $dhcpifconf['ldap']))
+				$dhcpdconf .= "		option ldap-server \"{$poolconf['ldap']}\";\n";
+
+			// net boot information
+			if(isset($poolconf['netboot'])) {
+				if (!empty($poolconf['nextserver']) && ($poolconf['nextserver'] != $dhcpifconf['nextserver'])) {
+					$dhcpdconf .= "		next-server {$poolconf['nextserver']};\n";
+				}
+				if (!empty($poolconf['filename']) && ($poolconf['filename'] != $dhcpifconf['filename'])) {
+					$dhcpdconf .= "		filename \"{$poolconf['filename']}\";\n";
+				}
+				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
+					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
+				}
+			}
+			$dhcpdconf .= "		range {$poolconf['range']['from']} {$poolconf['range']['to']};\n";
+			$dhcpdconf .= "	}\n\n";
 		}
-
-		/* allow/deny MACs */
-		$mac_allow_list = array_unique(explode(',', $dhcpifconf['mac_allow']));
-		foreach ($mac_allow_list as $mac) {
-			if (empty($mac))
-				continue;
-			$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
-		}
-		$mac_deny_list = array_unique(explode(',', $dhcpifconf['mac_deny']));
-		foreach ($mac_deny_list as $mac) {
-			if (empty($mac))
-				continue;
-			$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
-		}
-
-		if($dhcpifconf['failover_peerip'] <> "")
-			$dhcpdconf .= "		deny dynamic bootp clients;\n";
-
-		if (isset($dhcpifconf['denyunknown']))
-		   $dhcpdconf .= "		deny unknown-clients;\n";
+// End of settings inside pools
 
 		if ($dhcpifconf['gateway']) {
 			$routers = $dhcpifconf['gateway'];
@@ -583,20 +674,9 @@ EOPP;
 		} else {
 			$routers = $ifcfgip;
 		}
-
-		if($dhcpifconf['failover_peerip'] <> "") {
-			$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
-			$dhcpnum++;
-		}
-
-		$dhcpdconf .= <<<EOD
-		range {$dhcpifconf['range']['from']} {$dhcpifconf['range']['to']};
-	}
-
-EOD;
-
 		if($add_routers)
 			$dhcpdconf .= "	option routers {$routers};\n";
+
 		$dhcpdconf .= <<<EOD
 $dnscfg
 
@@ -648,7 +728,7 @@ EOD;
 			}
 			if ($dhcpifconf['rootpath'] <> "") {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
-      		}
+			}
 		}
 
 		$dhcpdconf .= <<<EOD

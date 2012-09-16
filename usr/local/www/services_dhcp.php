@@ -94,7 +94,7 @@ function dhcp_clean_leases() {
 }
 
 $if = $_GET['if'];
-if ($_POST['if'])
+if (!empty($_POST['if']))
 	$if = $_POST['if'];
 
 /* if OLSRD is enabled, allow WAN to house DHCP. */
@@ -124,39 +124,73 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
+$act = $_GET['act'];
+if (!empty($_POST['act']))
+	$act = $_POST['act'];
+
+
 if (is_array($config['dhcpd'][$if])){
-	if (is_array($config['dhcpd'][$if]['range'])) {
-		$pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
-		$pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
+	$pool = $_GET['pool'];
+	if (is_numeric($_POST['pool']))
+		$pool = $_POST['pool'];
+
+	// If we have a pool but no interface name, that's not valid. Redirect away.
+	if (is_numeric($pool) && empty($if)) {
+		header("Location: services_dhcp.php");
+		exit;
 	}
-	$pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
-	$pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
-	$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
-	$pconfig['domain'] = $config['dhcpd'][$if]['domain'];
-	$pconfig['domainsearchlist'] = $config['dhcpd'][$if]['domainsearchlist'];
-	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
-	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
-	$pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
-	$pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
-	$pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
-	$pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
-	$pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
-	$pconfig['mac_allow'] = $config['dhcpd'][$if]['mac_allow'];
-	$pconfig['mac_deny'] = $config['dhcpd'][$if]['mac_deny'];
-	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
-	$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
-	$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
-	$pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
-	$pconfig['nextserver'] = $config['dhcpd'][$if]['nextserver'];
-	$pconfig['filename'] = $config['dhcpd'][$if]['filename'];
-	$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
-	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
-	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
-	$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
-	$pconfig['dhcpleaseinlocaltime'] = $config['dhcpd'][$if]['dhcpleaseinlocaltime'];
-	if (!is_array($config['dhcpd'][$if]['staticmap']))
-		$config['dhcpd'][$if]['staticmap'] = array();
-	$a_maps = &$config['dhcpd'][$if]['staticmap'];
+
+	if (!is_array($config['dhcpd'][$if]['pool']))
+		$config['dhcpd'][$if]['pool'] = array();
+	$a_pools = &$config['dhcpd'][$if]['pool'];
+
+	if (is_numeric($pool) && $a_pools[$pool])
+		$dhcpdconf = &$a_pools[$pool];
+	elseif ($act == "newpool")
+		$dhcpdconf = array();
+	else
+		$dhcpdconf = &$config['dhcpd'][$if];
+}
+if (is_array($dhcpdconf)) {
+	// Global Options
+	if (!is_numeric($pool) && !($act == "newpool")) {
+		$pconfig['enable'] = isset($dhcpdconf['enable']);
+		$pconfig['staticarp'] = isset($dhcpdconf['staticarp']);
+		// No reason to specify this per-pool, per the dhcpd.conf man page it needs to be in every
+		//   pool and should be specified in every pool both nodes share, so we'll treat it as global
+		$pconfig['failover_peerip'] = $dhcpdconf['failover_peerip'];
+		$pconfig['dhcpleaseinlocaltime'] = $dhcpdconf['dhcpleaseinlocaltime'];
+		if (!is_array($dhcpdconf['staticmap']))
+			$dhcpdconf['staticmap'] = array();
+		$a_maps = &$dhcpdconf['staticmap'];
+	}
+
+	// Options that can be global or per-pool.
+	if (is_array($dhcpdconf['range'])) {
+		$pconfig['range_from'] = $dhcpdconf['range']['from'];
+		$pconfig['range_to'] = $dhcpdconf['range']['to'];
+	}
+	$pconfig['deftime'] = $dhcpdconf['defaultleasetime'];
+	$pconfig['maxtime'] = $dhcpdconf['maxleasetime'];
+	$pconfig['gateway'] = $dhcpdconf['gateway'];
+	$pconfig['domain'] = $dhcpdconf['domain'];
+	$pconfig['domainsearchlist'] = $dhcpdconf['domainsearchlist'];
+	list($pconfig['wins1'],$pconfig['wins2']) = $dhcpdconf['winsserver'];
+	list($pconfig['dns1'],$pconfig['dns2']) = $dhcpdconf['dnsserver'];
+	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
+	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
+	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
+	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
+	list($pconfig['ntp1'],$pconfig['ntp2']) = $dhcpdconf['ntpserver'];
+	$pconfig['tftp'] = $dhcpdconf['tftp'];
+	$pconfig['ldap'] = $dhcpdconf['ldap'];
+	$pconfig['netboot'] = isset($dhcpdconf['netboot']);
+	$pconfig['nextserver'] = $dhcpdconf['nextserver'];
+	$pconfig['filename'] = $dhcpdconf['filename'];
+	$pconfig['rootpath'] = $dhcpdconf['rootpath'];
+	$pconfig['netmask'] = $dhcpdconf['netmask'];
+	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -215,7 +249,7 @@ if ($_POST) {
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
-	if ($_POST['enable']) {
+	if ($_POST['enable'] || is_numeric($pool) || $act == "newpool") {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = array(gettext("Range begin"),gettext("Range end"));
 
@@ -329,6 +363,10 @@ if ($_POST) {
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 
+			// TODO: Ensure range and pools do not overlap!
+			// If we're editing the main range, check pools
+			// If we're editing a pool, locate parent range and other pools.
+
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
@@ -350,64 +388,91 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if (!is_array($config['dhcpd'][$if]))
-			$config['dhcpd'][$if] = array();
-		if (!is_array($config['dhcpd'][$if]['range']))
-			$config['dhcpd'][$if]['range'] = array();
+		if (!is_numeric($pool)) {
+			if ($act == "newpool") {
+				$dhcpdconf = array();
+			} else {
+				if (!is_array($config['dhcpd'][$if]))
+					$config['dhcpd'][$if] = array();
+				$dhcpdconf = $config['dhcpd'][$if];
+			}
+		} else {
+			if (is_array($a_pools[$pool])) {
+				$dhcpdconf = $a_pools[$pool];
+			} else {
+				// Someone specified a pool but it doesn't exist. Punt.
+				header("Location: services_dhcp.php");
+				exit;
+			}
+		}
+		if (!is_array($dhcpdconf['range']))
+			$dhcpdconf['range'] = array();
 
-		$config['dhcpd'][$if]['range']['from'] = $_POST['range_from'];
-		$config['dhcpd'][$if]['range']['to'] = $_POST['range_to'];
-		$config['dhcpd'][$if]['defaultleasetime'] = $_POST['deftime'];
-		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
-		$config['dhcpd'][$if]['netmask'] = $_POST['netmask'];
-		$previous = $config['dhcpd'][$if]['failover_peerip'];
-		if($previous <> $_POST['failover_peerip'])
-			mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
+		// Global Options
+		if (!is_numeric($pool) && !($act == "newpool")) {
+			$dhcpdconf['enable'] = ($_POST['enable']) ? true : false;
+			$dhcpdconf['staticarp'] = ($_POST['staticarp']) ? true : false;
+			$previous = $dhcpdconf['failover_peerip'];
+			if($previous <> $_POST['failover_peerip'])
+				mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
+			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
+			$dhcpdconf['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+		}
 
-		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
+		// Options that can be global or per-pool.
+		$dhcpdconf['range']['from'] = $_POST['range_from'];
+		$dhcpdconf['range']['to'] = $_POST['range_to'];
+		$dhcpdconf['defaultleasetime'] = $_POST['deftime'];
+		$dhcpdconf['maxleasetime'] = $_POST['maxtime'];
+		$dhcpdconf['netmask'] = $_POST['netmask'];
 
-		unset($config['dhcpd'][$if]['winsserver']);
+		unset($dhcpdconf['winsserver']);
 		if ($_POST['wins1'])
-			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins1'];
+			$dhcpdconf['winsserver'][] = $_POST['wins1'];
 		if ($_POST['wins2'])
-			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
+			$dhcpdconf['winsserver'][] = $_POST['wins2'];
 
-		unset($config['dhcpd'][$if]['dnsserver']);
+		unset($dhcpdconf['dnsserver']);
 		if ($_POST['dns1'])
-			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns1'];
+			$dhcpdconf['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
-			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
+			$dhcpdconf['dnsserver'][] = $_POST['dns2'];
 
-		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
-		$config['dhcpd'][$if]['domain'] = $_POST['domain'];
-		$config['dhcpd'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
-		$config['dhcpd'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
-		$config['dhcpd'][$if]['enable'] = ($_POST['enable']) ? true : false;
-		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
-		$config['dhcpd'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
-		$config['dhcpd'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
-		$config['dhcpd'][$if]['mac_allow'] = $_POST['mac_allow'];
-		$config['dhcpd'][$if]['mac_deny'] = $_POST['mac_deny'];
+		$dhcpdconf['gateway'] = $_POST['gateway'];
+		$dhcpdconf['domain'] = $_POST['domain'];
+		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
+		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
+		$dhcpdconf['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
+		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
 
-		unset($config['dhcpd'][$if]['ntpserver']);
+		unset($dhcpdconf['ntpserver']);
 		if ($_POST['ntp1'])
-			$config['dhcpd'][$if]['ntpserver'][] = $_POST['ntp1'];
+			$dhcpdconf['ntpserver'][] = $_POST['ntp1'];
 		if ($_POST['ntp2'])
-			$config['dhcpd'][$if]['ntpserver'][] = $_POST['ntp2'];
+			$dhcpdconf['ntpserver'][] = $_POST['ntp2'];
 
-		$config['dhcpd'][$if]['tftp'] = $_POST['tftp'];
-		$config['dhcpd'][$if]['ldap'] = $_POST['ldap'];
-		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
-		$config['dhcpd'][$if]['nextserver'] = $_POST['nextserver'];
-		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
-		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
-		$config['dhcpd'][$if]['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+		$dhcpdconf['tftp'] = $_POST['tftp'];
+		$dhcpdconf['ldap'] = $_POST['ldap'];
+		$dhcpdconf['netboot'] = ($_POST['netboot']) ? true : false;
+		$dhcpdconf['nextserver'] = $_POST['nextserver'];
+		$dhcpdconf['filename'] = $_POST['filename'];
+		$dhcpdconf['rootpath'] = $_POST['rootpath'];
 
 		// Handle the custom options rowhelper
-		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
-			unset($config['dhcpd'][$if]['numberoptions']['item']);
+		if(isset($dhcpdconf['numberoptions']['item']))
+			unset($dhcpdconf['numberoptions']['item']);
 
-		$config['dhcpd'][$if]['numberoptions'] = $numberoptions;
+		$dhcpdconf['numberoptions'] = $numberoptions;
+
+		if (is_numeric($pool) && is_array($a_pools[$pool])) {
+			$a_pools[$pool] = $dhcpdconf;
+		} elseif ($act == "newpool") {
+			$a_pools[] = $dhcpdconf;
+		} else {
+			$config['dhcpd'][$if] = $dhcpdconf;
+		}
 
 		write_config();
 
@@ -436,7 +501,16 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
+if ($act == "delpool") {
+	if ($a_pools[$_GET['id']]) {
+		unset($a_pools[$_GET['id']]);
+		write_config();
+		header("Location: services_dhcp.php?if={$if}");
+		exit;
+	}
+}
+
+if ($act == "del") {
 	if ($a_maps[$_GET['id']]) {
 		unset($a_maps[$_GET['id']]);
 		write_config();
@@ -485,6 +559,9 @@ include("head.inc");
 <script type="text/javascript" language="JavaScript">
 	function enable_change(enable_over) {
 		var endis;
+		<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+			enable_over = true;
+		<?php endif; ?>
 		endis = !(document.iform.enable.checked || enable_over);
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
@@ -608,6 +685,7 @@ include("head.inc");
 <td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
@@ -616,6 +694,11 @@ include("head.inc");
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
 			</tr>
+			<?php else: ?>
+			<tr>
+				<td colspan="2" class="listtopic"><?php echo gettext("Editing Pool-Specific Options. To return to the Interface, click its tab above."); ?></td>
+			</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
@@ -649,6 +732,15 @@ include("head.inc");
 				$range_to--;
 				echo long2ip32($range_to);
 			?>
+			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+				<br/>In-use DHCP Pool Ranges:
+				<?php if (is_array($config['dhcpd'][$if]['range'])): ?>
+					<br/><?php echo $config['dhcpd'][$if]['range']['from']; ?>-<?php echo $config['dhcpd'][$if]['range']['to']; ?>
+				<?php endif; ?>
+				<?php foreach ($a_pools as $p): ?>
+					<br/><?php echo $p['range']['from']; ?>-<?php echo $p['range']['to']; ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			</td>
 			</tr>
 			<?php if($is_olsr_enabled): ?>
@@ -676,6 +768,61 @@ include("head.inc");
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
 			</tr>
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
+			<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Additional Pools");?></td>
+			<td width="78%" class="vtable">
+				<?php echo gettext("If you need additional pools of addresses inside of this subnet outside the above Range, they may be specified here."); ?>
+				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td width="45%" class="listhdrr"><?=gettext("Pool Start");?></td>
+					<td width="45%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="10%" class="list">
+					<table border="0" cellspacing="0" cellpadding="1">
+					<tr>
+					<td valign="middle" width="17"></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					</tr>
+					</table>
+					</td>
+				</tr>
+					<?php if(is_array($a_pools)): ?>
+					<?php $i = 0; foreach ($a_pools as $poolent): ?>
+					<?php if(!empty($poolent['range']['from']) && !empty($poolent['range']['to'])): ?>
+				<tr>
+				<td class="listlr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+					<?=htmlspecialchars($poolent['range']['from']);?>
+				</td>
+				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+					<?=htmlspecialchars($poolent['range']['to']);?>&nbsp;
+				</td>
+				<td valign="middle" nowrap class="list">
+					<table border="0" cellspacing="0" cellpadding="1">
+					<tr>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&act=delpool&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this pool?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+				<?php endif; ?>
+				<?php $i++; endforeach; ?>
+				<?php endif; ?>
+				<tr>
+				<td class="list" colspan="2"></td>
+				<td class="list">
+					<table border="0" cellspacing="0" cellpadding="1">
+					<tr>
+					<td valign="middle" width="17"></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+				</table>
+			</td>
+			</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("WINS servers");?></td>
 			<td width="78%" class="vtable">
@@ -732,6 +879,7 @@ include("head.inc");
 				<?=gettext("The default is 86400 seconds.");?>
 			</td>
 			</tr>
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
@@ -739,6 +887,8 @@ include("head.inc");
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
 			</tr>
+			<?php endif; ?>
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Static ARP");?></td>
 			<td width="78%" class="vtable">
@@ -758,6 +908,8 @@ include("head.inc");
 				</table>
 			</td>
 			</tr>
+			<?php endif; ?>
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Time format change"); ?></td>
 				<td width="78%" class="vtable">
@@ -783,6 +935,7 @@ include("head.inc");
 				</table>
 				</td>
 			</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 			<td width="78%" class="vtable">
@@ -871,6 +1024,7 @@ include("head.inc");
 				</div>
 			</td>
 			</tr>
+			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Additional BOOTP/DHCP Options");?></td>
 			<td width="78%" class="vtable">
@@ -943,9 +1097,16 @@ include("head.inc");
 
 				</td>
 			</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
+				<?php if ($act == "newpool"): ?>
+				<input type="hidden" name="act" value="newpool">
+				<?php endif; ?>
+				<?php if (is_numeric($pool)): ?>
+				<input type="hidden" name="pool" value="<?php echo $pool; ?>">
+				<?php endif; ?>
 				<input name="if" type="hidden" value="<?=htmlspecialchars($if);?>">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
 			</td>

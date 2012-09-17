@@ -255,6 +255,20 @@ foreach($merge_repos as $merge_repo) {
 	}
 }
 
+// Check if minimal file copy was specified.
+// Not recommended if the system has files modified by any method other than gitsync.
+if(in_array("--minimal", $argv) || (is_array($command_split) && in_array("--minimal", $command_split))) {
+	if(file_exists("/etc/version.gitsync"))
+		$old_revision = trim(file_get_contents("/etc/version.gitsync"));
+	else if(file_exists("/etc/version.lastcommit"))
+		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
+	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+} else
+	$files_to_copy = '--exclude .git .';
+
+// Save new commit ID for later minimal file copies
+exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rev-parse -q --verify HEAD > /etc/version.gitsync");
+
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
 // Nuke CVS and pfSense tarballs
@@ -283,10 +297,15 @@ exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null")
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - --exclude .git . | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - --exclude .git . | (cd / ; tar -xpf -) 2>/dev/null";
-exec($command);
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
+if(!empty($files_to_copy))
+	exec($command);
+else {
+	echo "Already up-to-date.\n";
+	$upgrading = true;
+}
 
 // Reset the repository to restore the deleted files
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");

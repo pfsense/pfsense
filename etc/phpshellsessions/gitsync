@@ -1,7 +1,7 @@
 /*   cvs_sync
  *   Written by Scott Ullrich
  *   (C)2005-2007 Scott Ullrich
- *   (C)2010 Erik Fonnesbeck
+ *   (C)2010-2012 Erik Fonnesbeck
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
@@ -11,8 +11,6 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("pfsense-utils.inc");
 	
-conf_mount_rw();
-
 $GIT_PKG = "git"; // Either "git" or the full package URL
 $GIT_REPO = "git://github.com/bsdperimeter/pfsense.git";
 $DEFAULT_BRANCH = "master";
@@ -31,11 +29,46 @@ global $g;
 global $argv;
 global $command_split;
 
-// If this parameter is set, all interactive functions are disabled
-// and neither PHP nor the web gui will be killed or restarted.
-$upgrading = in_array("--upgrading", $argv);
+if(is_array($command_split))
+	$temp_args = array_slice($command_split, 2);
+else
+	$temp_args = array_slice($argv, 3);
+
+$valid_args = array(
+	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
+	               "\tNot recommended if the system has files modified by any method other\n" .
+	               "\tthan gitsync.\n",
+	"--help" => "\tDisplay this help list.\n"
+	);
+$args = array();
+$arg_count = 0;
+while(!empty($temp_args)) {
+	$arg = array_shift($temp_args);
+	if($arg[0] == '-') {
+		switch($arg) {
+			case "--help":
+				echo "Usage: playback gitsync [options] [[repository] <branch>]\nOptions:\n";
+				foreach($valid_args as $arg_name => $arg_desc)
+					echo $arg_name . "\n" . $arg_desc;
+				exit;
+			case "--upgrading":
+				// Disables all interactive functions and neither PHP
+				// nor the web GUI will be killed or restarted.
+				$upgrading = true;
+			case (isset($valid_args[$arg])):
+				$args[$arg] = true;
+				break;
+			default:
+				echo "Invalid option: {$arg}\nUse --help for usage information.\n";
+				exit;
+		}
+	} else {
+		$args[$arg_count++] = $arg;
+	}
+}
 
 unlink_if_exists("/tmp/config.cache");
+conf_mount_rw();
 
 if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching...";
@@ -74,24 +107,20 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	unset($output_str);
 }
 
-if($command_split[2]) {
-	$branch = $command_split[2];
-} else {
-	if(!$argv[3] && !$upgrading) {
-		echo "\nCurrent repository is $GIT_REPO\n";
-		echo "\nPlease select which branch you would like to sync against:\n\n";
-		foreach($branches as $branchname => $branchdesc) {
-			echo "{$branchname} \t {$branchdesc}\n";
-		}
-		echo "\nOr alternatively you may enter a custom RCS branch URL (Git or HTTP).\n\n";
-		$branch = readline("> ");
-		echo "\n";
-	} else {
-		$branch = $argv[3];
+if(!$args[0] && !$upgrading) {
+	echo "\nCurrent repository is $GIT_REPO\n";
+	echo "\nPlease select which branch you would like to sync against:\n\n";
+	foreach($branches as $branchname => $branchdesc) {
+		echo "{$branchname} \t {$branchdesc}\n";
 	}
+	echo "\nOr alternatively you may enter a custom RCS branch URL (Git or HTTP).\n\n";
+	$branch = readline("> ");
+	echo "\n";
+} else {
+	$branch = $args[0];
 }
 
-if($argv[4] == "NOBACKUP") 
+if($args[1] == "NOBACKUP") 
 	$nobackup = true;
 else 
 	$nobackup = false;
@@ -115,14 +144,9 @@ foreach($branches as $branchname => $branchdesc) {
 }
 if(!$found) {
 	if(isURL($branch) && !$upgrading) {
-		if($command_split[3]) {
+		if($args[1]) {
 			$GIT_REPO = $branch;
-			$branch = $command_split[3];
-			$found = true;
-		}
-		else if($argv[4]) {
-			$GIT_REPO = $branch;
-			$branch = $argv[4];
+			$branch = $args[1];
 			$found = true;
 		}
 		else {
@@ -170,7 +194,7 @@ if(file_exists($GITSYNC_MERGE)) {
 		}
 	}
 }
-if(!$command_split[2] && !$argv[3] && !$upgrading) {
+if(!$args[0] && !$upgrading) {
 	do {
 		echo "\nAdd a custom RCS branch URL (Git or HTTP) to merge in or press enter if done.\n\n";
 		$merge_repo = readline("> ");
@@ -255,9 +279,7 @@ foreach($merge_repos as $merge_repo) {
 	}
 }
 
-// Check if minimal file copy was specified.
-// Not recommended if the system has files modified by any method other than gitsync.
-if(in_array("--minimal", $argv) || (is_array($command_split) && in_array("--minimal", $command_split))) {
+if(isset($args["--minimal"])) {
 	if(file_exists("/etc/version.gitsync"))
 		$old_revision = trim(file_get_contents("/etc/version.gitsync"));
 	else if(file_exists("/etc/version.lastcommit"))

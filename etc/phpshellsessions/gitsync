@@ -215,7 +215,7 @@ if($branch == "build_commit") {
 	$git_cmd = array(
 		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch " . escapeshellarg($branch) . " 2>/dev/null",
 		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard " . escapeshellarg(file_get_contents("/etc/version.lastcommit"))
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard " . escapeshellarg(trim(file_get_contents("/etc/version.lastcommit")))
 	);
 } else {
 	$git_cmd = array(

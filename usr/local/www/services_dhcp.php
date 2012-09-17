@@ -738,7 +738,9 @@ include("head.inc");
 					<br/><?php echo $config['dhcpd'][$if]['range']['from']; ?>-<?php echo $config['dhcpd'][$if]['range']['to']; ?>
 				<?php endif; ?>
 				<?php foreach ($a_pools as $p): ?>
+					<?php if (is_array($p['range'])): ?>
 					<br/><?php echo $p['range']['from']; ?>-<?php echo $p['range']['to']; ?>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</td>

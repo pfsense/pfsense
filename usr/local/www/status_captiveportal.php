@@ -67,7 +67,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php
 

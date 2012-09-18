@@ -13,6 +13,12 @@
   Thanks to many, many people for contributions and suggestions.
   Licenced as X11: http://www.kryogenix.org/code/browser/licence.html
   This basically means: do what you want with it.
+
+  -- pfSense modifications --
+  Allow for sorting of IP adresses
+  2012-09-15 Allow for multiple header rows, using "sortableHeaderRowIdentifier" class for the TR that has the column headers. (used in firewall-log)
+  2012-09-15 Allow sorting multiple dual/mutlti rows together, using sortablemultirow="2" attribute for the table
+  2012-09-15 Allow sorting of IP:Port texts, changed sort compare function
 */
 
  
@@ -50,7 +56,27 @@ sorttable = {
 		// Safari doesn't support table.tHead, sigh
 		if (table.tHead == null) table.tHead = table.getElementsByTagName('thead')[0];
 		
-		if (table.tHead.rows.length != 1) return; // can't cope with two header rows
+		headrow = undefined;
+		if (table.tHead.rows.length == 1)
+			headrow = table.tHead.rows[0].cells;
+		else
+		{			
+			//if multiple rows are found one must be marked with class <tr class="sortableHeaderRowIdentifier">
+			for (var i=0; i<table.tHead.rows.length; i++) {
+				if (table.tHead.rows[i].className.search(/\bsortableHeaderRowIdentifier\b/)  != -1)
+				{
+					headrow = table.tHead.rows[i].cells;
+					break;
+				}
+			}
+		}
+		if (headrow == undefined)
+			return;
+		
+		if (table.getAttribute("sortableMultirow") != undefined)
+			sortableMultirow = parseInt(table.getAttribute("sortableMultirow"));
+		else
+			sortableMultirow = 1;
 		
 		// Sorttable v1 put rows with a class of "sortbottom" at the bottom (as
 		// "total" rows, for example). This is B&R, since what you're supposed
@@ -75,7 +101,6 @@ sorttable = {
 		}
 		
 		// work through each column and calculate its type
-		headrow = table.tHead.rows[0].cells;
 		for (var i=0; i<headrow.length; i++) {
 			// manually override the type with a sorttable_type attribute
 			if (!headrow[i].className.match(/\bsorttable_nosort\b/)) { // skip this col
@@ -84,7 +109,7 @@ sorttable = {
 				if (mtch && typeof sorttable["sort_"+override] == 'function') {
 					headrow[i].sorttable_sortfunction = sorttable["sort_"+override];
 				} else {
-					headrow[i].sorttable_sortfunction = sorttable.guessType(table,i);
+					headrow[i].sorttable_sortfunction = sorttable.guessType(table,i, sortableMultirow);
 				}
 				// make it clickable to sort
 				headrow[i].sorttable_columnindex = i;
@@ -94,7 +119,7 @@ sorttable = {
 					if (this.className.search(/\bsorttable_sorted\b/) != -1) {
 						// if we're already sorted by this column, just 
 						// reverse the table, which is quicker
-						sorttable.reverse(this.sorttable_tbody);
+						sorttable.reverse(this.sorttable_tbody, sortableMultirow);
 						this.className = this.className.replace('sorttable_sorted',
 											'sorttable_sorted_reverse');
 						this.removeChild(document.getElementById('sorttable_sortfwdind'));
@@ -107,7 +132,7 @@ sorttable = {
 					if (this.className.search(/\bsorttable_sorted_reverse\b/) != -1) {
 						// if we're already sorted by this column in reverse, just 
 						// re-reverse the table, which is quicker
-						sorttable.reverse(this.sorttable_tbody);
+						sorttable.reverse(this.sorttable_tbody, sortableMultirow);
 						this.className = this.className.replace('sorttable_sorted_reverse',
 											'sorttable_sorted');
 						this.removeChild(document.getElementById('sorttable_sortrevind'));
@@ -144,8 +169,12 @@ sorttable = {
 					row_array = [];
 					col = this.sorttable_columnindex;
 					rows = this.sorttable_tbody.rows;
-					for (var j=0; j<rows.length; j++) {
+					for (var j=0; j<rows.length; j+=sortableMultirow) {
 						row_array[row_array.length] = [sorttable.getInnerText(rows[j].cells[col]), rows[j]];
+						for(var k=1; k < sortableMultirow;k++)
+						{
+						  row_array[row_array.length-1][k+1]=rows[j+k];
+						}
 					}
 					/* If you want a stable sort, uncomment the following line */
 					//sorttable.shaker_sort(row_array, this.sorttable_sortfunction);
@@ -154,7 +183,15 @@ sorttable = {
 					
 					tb = this.sorttable_tbody;
 					for (var j=0; j<row_array.length; j++) {
-						tb.appendChild(row_array[j][1]);
+						for(var k=0; k<sortableMultirow; k++) {
+							row = row_array[j][k+1];
+							if (j % 2 == 0)
+								row.className = row.className.replace(' listMReven',' listMRodd');
+							else
+								row.className = row.className.replace(' listMRodd',' listMReven');
+
+							tb.appendChild(row);
+						}
 					}
 					
 					delete row_array;
@@ -163,13 +200,13 @@ sorttable = {
 		}
 	},
 	
-	guessType: function(table, column) {
+	guessType: function(table, column, sortableMultirow) {
 		// guess the type of a column based on its first non-blank row
 		sortfn = sorttable.sort_alpha;
-		for (var i=0; i<table.tBodies[0].rows.length; i++) {
+		for (var i=0; i<table.tBodies[0].rows.length; i+=sortableMultirow) {
 			text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
 			if (text != '') {
-      				if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+      				if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\:[0-9]{1,5})?\b/)) {
       					return sorttable.sort_ipaddr;
       				}
 				if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
@@ -244,14 +281,17 @@ sorttable = {
 		}
 	},
 	
-	reverse: function(tbody) {
+	reverse: function(tbody, sortableMultirow) {
 		// reverse the rows in a tbody
 		newrows = [];
 		for (var i=0; i<tbody.rows.length; i++) {
 			newrows[newrows.length] = tbody.rows[i];
 		}
-		for (var i=newrows.length-1; i>=0; i--) {
-			tbody.appendChild(newrows[i]);
+		for (var i=newrows.length-1; i>=0; i-=sortableMultirow) {
+			for(var j=sortableMultirow-1;j>=0;j--)
+			{
+				tbody.appendChild(newrows[i-j]);
+			}
 		}
 		delete newrows;
 	},
@@ -346,12 +386,25 @@ sorttable = {
 function ip2ulong(ip) {
 	ip += "";
 	var ulip = false;
-	var octets = [];
-	if (ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
-		octets = ip.split('.');
+	var octets = [];	
+	ipmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);// IP only
+	if (ipmatch) {
+		ipmatch+="";
+		octets = ipmatch.split('.');
 		for (i=0; i < 4; i++) {
-			ulip += octets[i] * Math.pow(256, (3-i));
+			ulip += octets[i] * Math.pow(256, (5-i));
 		}
+	} else {
+		ipportmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:[0-9]{1,5}\b/);// IP:port
+		if (ipportmatch) {
+			ipportmatch += "";
+			ipport = ipportmatch.split(':');
+			octets = ipport[0].split('.');
+			for (i=0; i < 4; i++) {
+				ulip += octets[i] * Math.pow(256, (5-i));
+			}
+			ulip += parseInt(ipport[1]);
+		}	
 	}
 	return ulip;
 }

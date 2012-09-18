@@ -56,16 +56,17 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	killbyname("dhcpd");
 
 	/* Read existing leases */
+	/* $leases_contents has the lines of the file, including the newline char at the end of each line. */
 	$leases_contents = file($leasesfile);
 	$newleases_contents = array();
 	$i=0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
-		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {") {
+		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {\n") {
 			/* Skip to the end of the lease declaration */
 			do {
 				$i++;
-			} while ($leases_contents[$i] != "}");
+			} while ($leases_contents[$i] != "}\n");
 		} else {
 			/* It's a line we want to keep, copy it over. */
 			$newleases_contents[] = $leases_contents[$i];

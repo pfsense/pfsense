@@ -52,6 +52,10 @@
 			openvpn_resync('server', $server);
 		}
 	}
-
+	foreach($config['openvpn']['openvpn-client'] as &$client) {
+		if(is_array($gwgroups[$client['interface']])) {
+			openvpn_resync('client', $client);
+		}
+	}
 	unlock($openvpnlck);
 ?>

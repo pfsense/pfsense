@@ -2503,8 +2503,8 @@ EOD;
 				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
                                 $portalias = $listenporthttps;
                                 $portalias .= " {$listenporthttp}";
-                                $ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
-                                $ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+                                $ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
+                                $ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
                         }
                 }
         }

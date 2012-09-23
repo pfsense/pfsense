@@ -1113,6 +1113,7 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";
 	$ntpcfg .= "# \n\n";
+	$ntpcfg .= "tinker panic 0 \n";
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts)

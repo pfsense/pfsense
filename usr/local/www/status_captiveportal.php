@@ -56,6 +56,7 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 }
 
 $pgtitle = array(gettext("Status: Captive portal"));
+$shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
@@ -66,7 +67,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php
 

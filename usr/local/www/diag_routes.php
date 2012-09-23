@@ -43,6 +43,7 @@
 include('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
+$shortcut_section = "routing";
 
 include('head.inc');
 
@@ -85,18 +86,24 @@ include('head.inc');
 		$elements = ($tabindex == 0 ? 8 : 8);
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
-<table class="tabcont" width="100%" cellspacing="0" cellpadding="6" border="0">
+<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0">
+<thead>
 <tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
 <?php
 		foreach (explode("\n", $table) as $i => $line) {
 			if ($i == 0) continue;
+			if ($line == "") continue;
 
 			if ($i == 1)
 				$class = 'listhdrr';
 			else
 				$class = 'listlr';
 
-			print("<tr>\n");
+			if ($i == 1)
+				print("<tr class=\"sortableHeaderRowIdentifier\">\n");
+			else
+				print("<tr>\n");
+				
 			$j = 0;
 			foreach (explode(' ', $line) as $entry) {
 				if ($entry == '') continue;
@@ -111,6 +118,8 @@ include('head.inc');
 			if ($j == $elements - 1)
 				print('<td class="listr">&nbsp;</td>' . "\n");
 			print("</tr>\n");
+			if ($i == 1)
+				print("</thead>\n");
 		}
 		print("</table>\n");
 	} 

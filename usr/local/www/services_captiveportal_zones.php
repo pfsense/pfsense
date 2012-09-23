@@ -35,6 +35,7 @@ if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 }
 
 $pgtitle = array(gettext("Captiveportal"),gettext("Zones"));
+$shortcut_section = "captiveportal";
 include("head.inc");
 
 ?>

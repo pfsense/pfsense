@@ -57,6 +57,7 @@ if ($_POST['clear']) {
 }
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("DHCP"));
+$shortcut_section = "dhcp";
 include("head.inc");
 
 ?>

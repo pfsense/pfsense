@@ -87,7 +87,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("System"),gettext("Gateway Groups"));
-$statusurl = "status_gateway_groups.php";
+$shortcut_section = "gateway-groups";
 
 include("head.inc");
 

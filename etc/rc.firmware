@@ -467,6 +467,9 @@ pfSenseupgrade)
 		sh /etc/init_bootloader.sh >> /conf/upgrade_log.txt 2>&1
 	fi
 
+	# Remove saved commit ID for gitsync
+	rm -f /etc/version.gitsync
+
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
 	if [ -f /tmp/post_upgrade_command ]; then

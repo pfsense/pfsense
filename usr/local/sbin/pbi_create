@@ -1502,9 +1502,10 @@ get_pbi_progversion() {
   		PORTREV="`make -C ${PORTSDIR}/${PBI_MAKEPORT} -V PORTREVISION 2>/dev/null`"
   		if [ -n "${PORTREV}" -a "${PORTREV}" != "0" ]
  		then
-   			PORTVER="${PORTVER}_${PORTREV}"
+			PBI_PROGVERSION="${PORTVER}_${PORTREV}"
+		else
+			PBI_PROGVERSION="${PORTVER}"
 		fi
-		PBI_PROGVERSION="${PORTVER}"
 
 		if [ -z "${PBI_PROGVERSION}" ] ; then
 			echo "Warning: Unable to set PBI_PROGVERSION with:"
@@ -2739,11 +2740,13 @@ pbi_display_info() {
 
 	# If verbose mode, show file contents
 	if [ "$PBI_VERBOSE" = "YES" ] ; then
-	  	pbi_find_archive_header
-                echo "TOTALFILES: ${PBI_ARCHIVE_COUNT}"
-                echo "Archive Contents:"
-                echo "--------------------------------------"
-                tail +$PBI_SKIP_ARCHLINES "${PBI_FILENAME}" | tar tvf - 
+		if [ -n "${PBI_FILENAME}" -a -e "${PBI_FILENAME}" ] ; then
+	  		pbi_find_archive_header
+                	echo "TOTALFILES: ${PBI_ARCHIVE_COUNT}"
+                	echo "Archive Contents:"
+                	echo "--------------------------------------"
+                	tail +$PBI_SKIP_ARCHLINES "${PBI_FILENAME}" | tar tvf - 
+		fi
         fi
 }
 
@@ -5031,6 +5034,11 @@ update_repo_icons() {
 		fi
 		iName=`echo $line | cut -d ';' -f 1`
 		ext=`echo $aIcon | sed 's/.*\.//'`
+	
+		# If we already have this icon, we can skip
+		if [ -e "${PBI_DBICONDIR}/${_repoMd5}-${iName}.${ext}" ] ; then
+			continue
+		fi
 
 		# Now fetch the file
 		sFile="${PBI_DBICONDIR}/${_repoMd5}-${iName}.${ext}"
@@ -5388,7 +5396,7 @@ pbi_get_file() {
 				if [ $(is_num "$_dSize") ] ; then
 					if [ ${_fSize} -lt ${_dSize} ] ; then _dSize="$_fSize" ; fi
 					_kbs=`expr ${_dSize} \/ $_time`
-					echo "SIZE: ${_fSize} DOWNLOADED: ${_dSize} SPEED: ${_kbs}KBs"
+					echo "SIZE: ${_fSize} DOWNLOADED: ${_dSize} SPEED: ${_kbs} KB/s"
 				fi
 			fi
 
@@ -5461,16 +5469,15 @@ do_pbi_autob() {
   	  AB_FOUND="0"
 	  unset CUR_PRIORITY_PBI CUR_WORKING_PBI
 		
+	  cd "${PBI_AB_CONFDIR}"
 	  for pbi in `find . -type f -name "${PBI_CONFFILE}" | grep -v '\.svn' | sort`
 	  do
 		# Figure out the target port for this build
 		unset PBI_MAKEPORT PBI_BUILDKEY PBI_PROGVERSION PBI_REQUIRESROOT PBI_PROGNAME PBI_PROGWEB PBI_PROGAUTHOR PBI_PROGICON PBI_MKPORTBEFORE PBI_MKPORTAFTER PBI_MAKEOPTS PBI_EXCLUDELIST PBI_AB_PRIORITY PBI_HASH_EXCLUDES PBI_AB_NOTMPFS PBI_PROGREVISION
 		. ${pbi}
 
-		# If we have a PBI already and this one has no version we can continue
-	        if [ -z "${PBI_AB_PRIORITY}" -a -n "${CUR_WORKING_PBI}"  ] ; then continue ; fi
-
 		_cd=$(dirname $pbi | sed 's|./||')
+		PBI_CONFDIR="$_cd"
 
 		# Make sure PBI_MAKEPORT is set
 		if [ -z "${PBI_MAKEPORT}" ] ; then
@@ -5486,7 +5493,7 @@ do_pbi_autob() {
 		# Check if this port can be built on this architecture
 		check_port_compat_arch "${PORTSDIR}/${PBI_MAKEPORT}"
 		if [ "$?" = "1" ] ; then
-			#echo "Incompatiable port arch: ${PORTSDIR}/${PBI_MAKEPORT}"
+			echo "${PBI_MAKEPORT} - Skipping for invalid system arch"
 			continue
 		fi
 		
@@ -5500,26 +5507,35 @@ do_pbi_autob() {
 	 	if [ "$?" = "0" ] ; then	
 		   AB_FOUND="1"
 
+  	           # Unset the priority if set to 00 / 0
+	           if [ "${PBI_AB_PRIORITY}" = "00" -o "${PBI_AB_PRIORITY}" = "0" ] ; then 
+		   	unset PBI_AB_PRIORITY
+     	           fi
+
 		   # Check the priority of this PBI, see if it rises to the top
 		   if [ -z "${CUR_PRIORITY_PBI}" ] ; then 
 		     CUR_WORKING_PBI="${pbi}"
 		     if [ -z "$PBI_AB_PRIORITY" ] ; then 
-                       CUR_PRIORITY_PBI="0"
+                       CUR_PRIORITY_PBI="$internal_ab_priority"
 	             else
-                       CUR_PRIORITY_PBI="$PBI_AB_PRIORITY"
+                       CUR_PRIORITY_PBI=`expr $PBI_AB_PRIORITY + 10`
                      fi
+		     echo "Setting higher priority target: ${pbi} - Priority: ${CUR_PRIORITY_PBI}"
                      continue
                    fi
 
-		   # No priority set, keep the previous build
-		   if [ -z "${PBI_AB_PRIORITY}" ] ; then continue ; fi
-
-		   if [ $CUR_PRIORITY_PBI -lt $PBI_AB_PRIORITY ] ; then
-		     CUR_WORKING_PBI="${pbi}"
-                     CUR_PRIORITY_PBI="$PBI_AB_PRIORITY"
-		     continue
+		   # Bump up the supplied AB priority
+		   if [ -n "${PBI_AB_PRIORITY}" ] ; then 
+                      internal_ab_priority=`expr $PBI_AB_PRIORITY + 10`
 		   fi
 
+		   # Check if this PBI is a higher priority
+		   if [ $CUR_PRIORITY_PBI -lt $internal_ab_priority ] ; then
+		     echo "Setting higher priority target: ${pbi} - Priority: ${internal_ab_priority}"
+		     CUR_WORKING_PBI="${pbi}"
+                     CUR_PRIORITY_PBI="$internal_ab_priority"
+		     continue
+		   fi
 		   continue
 		fi
 
@@ -5530,14 +5546,18 @@ do_pbi_autob() {
 	      pbi="$CUR_WORKING_PBI"
 	      unset PBI_MAKEPORT PBI_BUILDKEY PBI_PROGVERSION PBI_REQUIRESROOT PBI_PROGNAME PBI_PROGWEB PBI_PROGAUTHOR PBI_PROGICON PBI_MKPORTBEFORE PBI_MKPORTAFTER PBI_MAKEOPTS PBI_EXCLUDELIST PBI_AB_PRIORITY PBI_HASH_EXCLUDES PBI_AB_NOTMPFS PBI_PROGREVISION
 	      . ${pbi}
-	      get_pbi_progversion
 
 	      _cd=$(dirname $pbi | sed 's|./||')
+	      PBI_CONFDIR="$_cd"
+
+	      # Get the prog version
+	      get_pbi_progversion
+
 	      if [ -z "${PBI_MAKEPORT}" ] ; then
 	 	PBI_MAKEPORT=$(dirname $pbi | sed 's|./||')
 	      fi	
 
-	      echo "Starting build of: $pbi  - Priority: $CUR_PRIORITY_PBI"
+	      echo "Starting build of: $PBI_MAKEPORT  - Priority: $CUR_PRIORITY_PBI"
 
 	      # Start the build now
 	      start_ext_ab "$PBI_MAKEPORT" \
@@ -5590,8 +5610,10 @@ start_ext_ab() {
 	fi
 
 	# Check if we need to enable tmpfs
- 	if [ "$PBI_AB_TMPFS" = "YES" -a -z "$PBI_AB_NOTMPFS" ] ; then
-		_flags="${_flags} --tmpfs"
+ 	if [ "$PBI_AB_TMPFS" = "YES" ] ; then
+		if [ -z "${PBI_AB_NOTMPFS}" -o "$PBI_AB_NOTMPFS" != "YES" ] ; then
+		   	_flags="${_flags} --tmpfs"
+		fi
 	fi
 
 	# Check if we need to enable pkgcaching
@@ -5952,8 +5974,8 @@ gen_bsdiffs_dirs() {
 		if [ -c "${1}/$line" ] ; then continue ; fi
 
 		# Check sha256 of each file, see if we have differences
-		sha1="`sha256 -q ${1}/${line}`" 
-		sha2="`sha256 -q ${2}/${line}`"
+		sha1=`sha256 -q "${1}/${line}"`
+		sha2=`sha256 -q "${2}/${line}"`
 		if [ "$sha1" != "$sha2" ] ; then
 			# These files differ, get a binary patch made of them
 			_tDir="${3}/`dirname $line`"
@@ -6101,21 +6123,27 @@ check_ab_needed() {
 	_bk="$2"
 	_cd="$3"
 	local _abkey="$4"
-
+        internal_ab_priority="1"
+	export internal_ab_priority
         unset PBI_PROGVERSION
-	get_pbi_progversion
 
 	# Check PBI_BUILDKEY, see if we have a manual rebuild triggered
 	if [ -e "${PBI_AB_OUTDIR}/${_cd}/pbi-buildkey" ] ; then
 		if [ "`cat ${PBI_AB_OUTDIR}/${_cd}/pbi-buildkey`" != "$_bk" \
-			 -a -n "${_bk}" ]
-        	then echo "BUILDKEY bump, rebuild triggered." ; return 0 ; fi
+			 -a -n "${_bk}" ]; then 
+                   echo "$_port BUILDKEY bump, rebuild triggered."
+                   internal_ab_priority="9"
+                   return 0
+                fi
 	fi
 
 	# Make sure this PBI hasn't already failed during this run
-	if [ -e "${PBI_AB_OUTDIR}/${_cd}/.abkey" ] ; then
+	if [ -e "${PBI_AB_OUTDIR}/${_cd}/.abkey" -a -e "${PBI_AB_OUTDIR}/${_cd}/pbi-result" ] ; then
 	  if [ "`cat ${PBI_AB_OUTDIR}/${_cd}/.abkey`" = "$_abkey" ] ; then
-	    return 1
+	    if [ "`cat ${PBI_AB_OUTDIR}/${_cd}/pbi-result`" != "OK" ] ; then
+              echo "$_port - Skipping failed from this run"
+	      return 1
+  	    fi
   	  fi
 	fi
 
@@ -6126,6 +6154,7 @@ check_ab_needed() {
 		_fcsum="`cat ${PBI_AB_OUTDIR}/${_cd}/.failed-csum`"
 		_ncsum="`tar cvf - -C "${PORTSDIR}/${_port}" . 2>/dev/null | md5 -q`"
 		if [ "$_fcsum" != "$_ncsum" ] ; then
+            		echo "$_port - Skipping failed"
 			return 1
 		fi
  	fi	
@@ -6133,23 +6162,39 @@ check_ab_needed() {
 	# See if we have an existing PBI
 	ls ${PBI_AB_OUTDIR}/${_cd}/*.pbi >/dev/null 2>/dev/null
 	if [ "${?}" != "0" ]; then 
-	  #echo "No existing PBI"
+	  echo "$_port - No existing PBI"
+          internal_ab_priority="8"
           return 0 
         fi
 
 	# See if we have a saved version
 	if [ ! -e "${PBI_AB_OUTDIR}/${_cd}/pbi-version" ]; then 
 		#echo "No saved pbi-version"
+	  	echo "$_port - No existing version"
+          	internal_ab_priority="7"
 		return 0
 	fi
+
+	# Get the programs port version
+	get_pbi_progversion
 
 	# See if the version is different now
 	oldVersion=`cat ${PBI_AB_OUTDIR}/${_cd}/pbi-version`
 	if [ "$oldVersion" != "$PBI_PROGVERSION" ]; then 
-		echo "$_port version bump: $oldVersion -> $PBI_PROGVERSION"
+		oldPortVer="`echo $oldVersion | rev | cut -d '_' -f 2- | rev`"
+		if [ "$PORTVER" = "$oldPortVer" ] ; then
+			# Just a minor portrev bump
+          		internal_ab_priority="2"
+			echo "$_port revision bump: $oldVersion -> $PBI_PROGVERSION"
+		else
+			# Real version change
+          		internal_ab_priority="3"
+			echo "$_port version bump: $oldVersion -> $PBI_PROGVERSION"
+		fi
 		return 0
 	fi
 
+	#echo "$_port - is Up2Date!"
 	return 1
 }
 
@@ -6362,7 +6407,7 @@ chroot_extract() {
 	cp /etc/resolv.conf ${PBI_CHROOTDIR}/etc/resolv.conf
 
 	# Copy our binary wrapper
-	mkdir ${PBI_CHROOTDIR}${PBI_APPDIR}
+	mkdir ${PBI_CHROOTDIR}${PBI_APPDIR} 2>/dev/null
 	cp ${PBI_WRAPPERFILE} ${PBI_CHROOTDIR}${PBI_WRAPPERFILE}
 
 	# If we have a custom PBI_MAKECONF include it
@@ -6371,7 +6416,7 @@ chroot_extract() {
 	#echo "Copying ${PORTSDIR} -> ${PBI_CHROOTDIR}/usr/ports"
 	#tar cvf - -C "${PORTSDIR}" --exclude ./distfiles . 2>/dev/null | tar xvf - -C "${PBI_CHROOTDIR}/usr/ports" 2>/dev/null
 	[ -d "${PORTSDIR}/distfiles" ] || mkdir -p ${PORTSDIR}/distfiles
-	mkdir -p ${PBI_CHROOTDIR}/usr/ports
+	mkdir -p ${PBI_CHROOTDIR}/usr/ports 2>/dev/null
 	mount_nullfs ${PORTSDIR} ${PBI_CHROOTDIR}/usr/ports
 
 	# Using tmpfs?
@@ -6387,7 +6432,7 @@ chroot_extract() {
 	fi
 	
 	# Now copy over the pbi_* scripts
-	mkdir ${PBI_CHROOTDIR}/usr/local/sbin
+	mkdir ${PBI_CHROOTDIR}/usr/local/sbin 2>/dev/null
 	cp ${PROGBASE}/sbin/pbi_* ${PBI_CHROOTDIR}/usr/local/sbin
 	cp ${PBI_CHROOTDIR}/usr/local/sbin/pbi_makeport ${PBI_CHROOTDIR}/usr/local/sbin/pbi_makeport_chroot
 	chmod 755 ${PBI_CHROOTDIR}/usr/local/sbin/pbi_*
@@ -6396,10 +6441,10 @@ chroot_extract() {
 	cp ${PBI_DEFAULT_ICON} ${PBI_CHROOTDIR}${PBI_DEFAULT_ICON_CHROOT}
 
 	# Make sure the outgoing dir is created
-	mkdir -p ${PBI_CHROOTDIR}/pbiout
+	mkdir -p ${PBI_CHROOTDIR}/pbiout 2>/dev/null
 
 	# Copy over the PBI DB
-	mkdir -p ${PBI_CHROOTDIR}/var/db
+	mkdir -p ${PBI_CHROOTDIR}/var/db 2>/dev/null
 	cp -r ${PBI_DBDIR} ${PBI_CHROOTDIR}${PBI_DBDIR}
 	
 	# Copy over the confdir as well
@@ -6825,19 +6870,19 @@ do_port_build()
 
   # Not installed, see if we have a pkg to install instead
   if [ -e "/pkgs/${pkgName}.txz" ] ; then
-     echo "Checking package: ${pkgName}"
      REBUILDPKG="NO"
-     pkg_info -r /pkgs/${pkgName}.txz | grep "Dependency:" | cut -d ' ' -f 2 > /tmp/deps.$$
-     while read dLine
-     do
-	pkg_info $dLine >/dev/null 2>/dev/null
-        if [ $? -ne 0 ] ; then
-	   echo "Package dependencies updated! Rebuilding port..."
-           REBUILDPKG="YES"
-	   break
-        fi
-     done < /tmp/deps.$$
-     rm /tmp/deps.$$
+     #echo "Checking package: ${pkgName}"
+     #pkg_info -r /pkgs/${pkgName}.txz | grep "Dependency:" | cut -d ' ' -f 2 > /tmp/deps.$$
+     #while read dLine
+     #do
+     #	pkg_info $dLine >/dev/null 2>/dev/null
+     #   if [ $? -ne 0 ] ; then
+     #	   echo "Package dependencies updated! Rebuilding port..."
+     #     REBUILDPKG="YES"
+     #	   break
+     #  fi
+     #done < /tmp/deps.$$
+     #rm /tmp/deps.$$
 
      # Fix some pkgs bugging us with license questions
      PACKAGE_BUILDING=yes

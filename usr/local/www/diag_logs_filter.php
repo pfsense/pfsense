@@ -88,6 +88,7 @@ if ($_POST['clear'])
 	clear_log_file($filter_logfile);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall"));
+$shortcut_section = "firewall";
 include("head.inc");
 
 ?>
@@ -115,49 +116,70 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>">
+			<thead>
 			<tr>
-				<td colspan="3" align="left" valign="middle">
+				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
+				<div style="float: right; vertical-align:middle">
+					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
+						<input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" value="<?=gettext($filtertext);?>" />
+						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" />
+					</form>
+					<br/>
+				</div>
+				<div style="float: left;">
 					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
 					<br/><br/>
-				</td>
-				<td colspan="3" align="right" valign="middle">
-					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
-						<input id="filtertext" name="filtertext" class="formfld search" value="<?=gettext($filtertext);?>" />
-						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-						<br/><br/>
-					</form>
+					<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
+					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
+					<?php endif;?>
+					<br/>
+				</div>
 				</td>	
 			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
 ?>
-		<tr>
-		  <td colspan="6" class="listtopic">
-				<?php if (!$filtertext) { ?>
-				<?php printf(gettext("Last %s firewall log entries."),count($filterlog));?>
-				<?php } else { ?>
-				<?php echo count($filterlog). ' ' . gettext("matched log entries."); ?>
-				<?php } ?>
-			    	<?php printf(gettext("Max(%s)"),$nentries);?>
+			<tr>
+			  <td colspan="<?=$config['syslog']['filterdescriptions']==="1"?7:6?>" class="listtopic">
+				<?php if (!$filtertext)
+					printf(gettext("Last %s firewall log entries."),count($filterlog));
+				else
+					echo count($filterlog). ' ' . gettext("matched log entries.");
+			    printf(gettext("Max(%s)"),$nentries);?>
+			  </td>
 			</tr>
-			<tr>
-			  <td width="10%" class="listhdrr"><?=gettext("Act");?></td>
-			  <td width="10%" class="listhdrr"><?=gettext("Time");?></td>
-			  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
-			  <td width="25%" class="listhdrr"><?=gettext("Source");?></td>
-			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
-			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
-			</tr><?php foreach ($filterlog as $filterent): ?>
-			<tr>
-			  <td class="listlr" nowrap align="middle">
+			<tr class="sortableHeaderRowIdentifier">
+			  <td width="10%" class="listhdrr"><?=gettext("Act");?></ td>
+			  <td width="10%" class="listhdrr"><?=gettext("Time");?></ td>
+			  <td width="15%" class="listhdrr"><?=gettext("If");?></ td>
+			  <?php if ($config['syslog']['filterdescriptions'] === "1"):?>
+				<td width="10%" class="listhdrr"><?=gettext("Rule");?></ td>
+			  <?php endif;?>
+			  <td width="25%" class="listhdrr"><?=gettext("Source");?></ td>
+			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></ td>
+			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></ td>
+			</tr>
+			</thead>
+			<?php
+			if ($config['syslog']['filterdescriptions'])
+				buffer_rules_load();
+			$rowIndex = 0;
+			foreach ($filterlog as $filterent): 
+			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+			$rowIndex++;?>
+			<tr class="<?=$evenRowClass?>">
+			  <td class="listMRlr" nowrap="nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
 			  <center>
-			  <a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
-			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="absmiddle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
-			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
-			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['time']);?></td>
-			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['interface']);?></td>
-			  <?php
+			  <a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
+			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
+			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
+			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
+			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
+			  <?php 
+			  if ($config['syslog']['filterdescriptions'] === "1")
+				echo("<td class=\"listrg\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
+				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
 			  if(is_ipaddrv6($filterent['srcip'])) {
@@ -171,22 +193,34 @@ include("head.inc");
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 			  ?>
-			  <td class="listr" nowrap>
-				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif"></a>
-				<a href="easyrule.php?<?php echo "action=block&int={$int}&src={$filterent['srcip']}&ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List");?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.")?>')"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_block_add.gif"></a>
+			  <td class="listMRr" nowrap="nowrap">
+				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/></a>
+				<a href="easyrule.php?<?php echo "action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List");?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.")?>')">
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_block_add.gif" alt="Icon Easy Rule: Add to Block List" /></a>
 				<?php echo $srcstr;?>
 			  </td>
-			  <td class="listr" nowrap>
-				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif"></a>
-				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['srcip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}&ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif"></a>
+			  <td class="listMRr" nowrap="nowrap">
+				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS" /></a>
+				<a href="easyrule.php?<?php echo "action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')">
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif" alt="Icon Easy Rule: Pass this traffic" /></a>
 				<?php echo $dststr;?>
 			  </td>
 			  <?php
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			  ?>
-			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['proto']);?></td>
-			</tr><?php endforeach; ?>
+			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+			</tr>
+			<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
+			<tr class="<?=$evenRowClass?>">
+			  <td colspan="2" class="listMRDescriptionL listMRlr" />
+			  <td colspan="4" class="listMRDescriptionR listMRr" nowrap="nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['act']);?></td>
+			</tr>
+			<?php endif;
+			endforeach; 
+			buffer_rules_clear(); ?>
 <?php else: ?>
 		  <tr>
 			<td colspan="2" class="listtopic">
@@ -199,6 +233,7 @@ include("head.inc");
 				dump_clog($filter_logfile, $nentries);
 		  ?>
 <?php endif; ?>
+		<tfoot>
 		<tr>
 			<td align="left" valign="top" colspan="3">
 				<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
@@ -206,6 +241,7 @@ include("head.inc");
 				</form>
 			</td>
 		</tr>
+		</tfoot>
 		</table>
 		</div>
 	</td>

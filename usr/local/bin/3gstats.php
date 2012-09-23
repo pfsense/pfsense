@@ -1,6 +1,8 @@
 #!/usr/local/bin/php -f
 <?php
 
+ini_set("max_execution_time", "0");
+
 if(empty($argv[1])) {
 	echo "No modem device given \n";
 	exit(0);

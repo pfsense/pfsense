@@ -47,6 +47,7 @@ require("guiconfig.inc");
 require("ipsec.inc");
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
+$shortcut_section = "ipsec";
 include("head.inc");
 
 /* delete any SP? */

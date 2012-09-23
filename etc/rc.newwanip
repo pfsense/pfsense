@@ -162,14 +162,21 @@ setup_gateways_monitor();
 filter_configure();
 
 if (is_ipaddr($oldip) && $curwanip == $oldip) {
-	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-	if (in_array($config['interfaces'][$interface]['ipaddr'], array('pppoe', 'pptp', 'ppp'))) {
-		/* reconfigure IPsec tunnels */
-		vpn_ipsec_force_reload();
+	/* We need to force sync VPNs on such even when the IP is the same. Even with 
+	 * the same IP the VPN software is unhappy with the IP disappearing, and we 
+	 * could be failing back in which case we need to switch IPs back anyhow. */
 
-		/* start OpenVPN server & clients */
-		openvpn_resync_all($interface);
-	}
+	/* reconfigure IPsec tunnels */
+	vpn_ipsec_force_reload();
+
+	/* start OpenVPN server & clients */
+	openvpn_resync_all($interface);
+
+	/* perform RFC 2136 DNS update */
+	services_dnsupdate_process($interface);
+
+	/* signal dyndns update */
+	services_dyndns_configure($interface);
 	exit;
 }
 

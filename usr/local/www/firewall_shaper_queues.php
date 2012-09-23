@@ -170,7 +170,7 @@ if ($_POST['apply']) {
 }
 
 $pgtitle = gettext("Firewall: Shaper: By Queues View");
-$statusurl = "status_queues.php";
+$shortcut_section = "trafficshaper";
 
 include("head.inc");
 ?>

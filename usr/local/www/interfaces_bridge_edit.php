@@ -233,6 +233,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

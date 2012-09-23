@@ -41,15 +41,13 @@
 ##|*MATCH=firewall_rules.php*
 ##|-PRIV
 
-$statusurl = "status_filter_reload.php";
-$logurl = "diag_logs_filter.php";
-
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"));
+$shortcut_section = "firewall";
 
 function delete_nat_association($id) {
 	global $config;
@@ -535,22 +533,22 @@ if($_REQUEST['undodrag']) {
 				<?php
 				
 				//build Alias popup box
-				$span_end = "";
 				$alias_src_span_begin = "";
 				$alias_src_port_span_begin = "";
 				$alias_dst_span_begin = "";
 				$alias_dst_port_span_begin = "";
 				
 				$alias_popup = rule_popup($filterent['source']['address'],pprint_port($filterent['source']['port']),$filterent['destination']['address'],pprint_port($filterent['destination']['port']));
-				$span_end = "</U></span>";
 					
 				$alias_src_span_begin = $alias_popup["src"];
-				 									
 				$alias_src_port_span_begin = $alias_popup["srcport"];
-													
 				$alias_dst_span_begin = $alias_popup["dst"];
-														
 				$alias_dst_port_span_begin = $alias_popup["dstport"];
+					
+				$alias_src_span_end = $alias_popup["src_end"];
+				$alias_src_port_span_end = $alias_popup["srcport_end"];
+				$alias_dst_span_end = $alias_popup["dst_end"];
+				$alias_dst_port_span_end = $alias_popup["dstport_end"];
 					
 				//build Schedule popup box
 				$a_schedules = &$config['schedules']['schedule'];
@@ -657,8 +655,8 @@ if($_REQUEST['undodrag']) {
 								}
 							}
 							$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
-							$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>{$sched_caption_escaped}</h1><p>{$sched_content}</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
-							$schedule_span_end = "</U></span>";
+							$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>{$sched_caption_escaped}</h1><p>{$sched_content}</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
+							$schedule_span_end = "</u></span>";
 						}
 					}
 				}

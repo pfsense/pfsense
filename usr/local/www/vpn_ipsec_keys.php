@@ -69,8 +69,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = gettext("VPN: IPsec: Keys");
-$statusurl = "diag_ipsec.php";
-$logurl = "diag_logs_ipsec.php";
+$shortcut_section = "ipsec";
 
 include("head.inc");
 

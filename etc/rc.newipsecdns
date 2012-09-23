@@ -56,7 +56,5 @@
 	
 	vpn_ipsec_configure();
 
-	filter_configure();
-
 	unlock($ipseclck);
 ?>

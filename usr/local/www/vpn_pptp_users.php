@@ -69,6 +69,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"),gettext("Users"));
+$shortcut_section = "pptps";
 include("head.inc");
 
 ?>

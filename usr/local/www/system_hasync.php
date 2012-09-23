@@ -94,6 +94,7 @@ $ifaces = get_configured_interface_with_descr();
 $ifaces["lo0"] = "loopback";
 
 $pgtitle = array(gettext("System"),gettext("High Availability Sync"));
+$shortcut_section = "carp";
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

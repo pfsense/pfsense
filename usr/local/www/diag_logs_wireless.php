@@ -54,6 +54,7 @@ if ($_POST['clear'])
 	clear_log_file($wireless_logfile);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Wireless"));
+$shortcut_section = "wireless";
 include("head.inc");
 
 ?>

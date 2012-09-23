@@ -117,6 +117,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

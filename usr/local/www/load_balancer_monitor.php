@@ -86,9 +86,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"));
-#$statusurl = "status_lb_vs.php";
-$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd";
 
 include("head.inc");
 

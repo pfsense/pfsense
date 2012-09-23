@@ -36,6 +36,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("User"),gettext("Edit"));
+$shortcut_section = "l2tps";
 
 function  l2tpusercmp($a,  $b)  {
 	return  strcasecmp($a['name'],  $b['name']);

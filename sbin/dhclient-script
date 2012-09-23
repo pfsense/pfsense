@@ -58,6 +58,27 @@ arp_flush() {
 		/bin/sh >/dev/null 2>&1
 }
 
+delete_old_states() {
+	# If the IP changed, remove states from the old one
+	if [ -f /var/db/${interface}_ip ]; then
+		$OLD_IP = `cat /var/db/${interface}_ip`
+		if [ "${OLD_IP}" != "${new_ip_address}" ]; then
+			echo "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')" | logger -t dhclient
+			/sbin/pfctl -k 0.0.0.0/0 -k ${OLD_IP}/32
+			/sbin/pfctl -k ${OLD_IP}/32
+			pfctl -K ${OLD_IP}/32
+		fi
+	fi
+	# Delete states through old gateway if it's not the same
+	if [ -f /tmp/${interface}_router ]; then
+		$OLD_ROUTER = `cat /tmp/${interface}_router`
+		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
+			echo "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')" | logger -t dhclient
+			/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
+		fi
+	fi
+}
+
 delete_old_address() {
 	/bin/rm -f /var/db/${interface}_ip
 	$IFCONFIG $interface inet -alias $old_ip_address $medium
@@ -307,6 +328,7 @@ BOUND|RENEW|REBIND|REBOOT)
 		fi
 		if [ "$old_ip_address" != "$new_ip_address" ]; then
 			delete_old_address
+			delete_old_states
 			delete_old_routes
 			changes="yes"
 		fi
@@ -334,6 +356,7 @@ EXPIRE|FAIL)
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address
+		delete_old_states
 		delete_old_routes
 	fi
 	;;
@@ -356,6 +379,7 @@ TIMEOUT)
 		fi
 	fi
 	$IFCONFIG $interface inet -alias $new_ip_address $medium
+	delete_old_states
 	delete_old_routes
 	;;
 esac

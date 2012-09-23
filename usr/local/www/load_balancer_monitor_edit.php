@@ -191,9 +191,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"),gettext("Edit"));
-#$statusurl = "status_lb_vs.php";
-$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd";
 
 include("head.inc");
 $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => gettext("HTTP"), "https" => gettext("HTTPS"), "send" => gettext("Send/Expect"));

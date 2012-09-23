@@ -74,6 +74,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("GIF"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

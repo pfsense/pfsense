@@ -76,6 +76,7 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = $config['ppps']['ppp'];
 
 $pgtitle = gettext("Interfaces: PPPs");
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

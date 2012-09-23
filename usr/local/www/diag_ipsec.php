@@ -46,6 +46,7 @@
 global $g;
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"));
+$shortcut_section = "ipsec";
 
 require("guiconfig.inc");
 include("head.inc");

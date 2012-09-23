@@ -74,6 +74,7 @@ if ($_GET['act'] == "del") {
 
 
 $pgtitle = array(gettext("Interfaces"),gettext("Wireless"));
+$shortcut_section = "wireless";
 include("head.inc");
 
 ?>

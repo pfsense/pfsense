@@ -113,7 +113,7 @@ function filter_load_ipfw() {
 	}
 }
 
-function filter_pflog_start() {
+function filter_pflog_start($kill_first = false) {
 	global $config, $g;
 	if ($g['platform'] == 'jail')
 		return;
@@ -124,6 +124,10 @@ function filter_pflog_start() {
 	mute_kernel_msgs();
 	$output = 0;
 	exec("/bin/pgrep -af 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	if ($kill_first && ($output[0] > 1)) {
+		mwexec("/bin/kill {$output[0]}");
+		usleep(1000);
+	}
 	if($retval != 0)
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();
@@ -2428,7 +2432,7 @@ block quick from any to <snort2c> label "Block snort2c hosts"
 
 EOD;
 
-	$ipfrules .= filter_process_carp_rules();
+	$ipfrules .= filter_process_carp_rules($log);
 
 	$ipfrules .= "\n# SSH lockout\n";
 	if(is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
@@ -2499,8 +2503,8 @@ EOD;
 				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
                                 $portalias = $listenporthttps;
                                 $portalias .= " {$listenporthttp}";
-                                $ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
-                                $ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+                                $ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
+                                $ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
                         }
                 }
         }
@@ -2935,14 +2939,15 @@ function filter_tdr_install_cron($should_install) {
 	if($g['booting']==true)
 		return;
 
-	$is_installed = false;
-
-	if(!$config['cron']['item'])
-		return;
+	if (!is_array($config['cron']))
+		$config['cron'] = array();
+	if (!is_array($config['cron']['item']))
+		$config['cron']['item'] = array();
 
 	$x=0;
+	$is_installed = false;
 	foreach($config['cron']['item'] as $item) {
-		if(strstr($item['command'], "filter_configure_sync")) {
+		if (strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			break;
 		}
@@ -2951,7 +2956,7 @@ function filter_tdr_install_cron($should_install) {
 
 	switch($should_install) {
 		case true:
-			if(!$is_installed) {
+			if (!$is_installed) {
 				$cron_item = array();
 				$cron_item['minute'] = "0,15,30,45";
 				$cron_item['hour'] = "*";
@@ -2966,11 +2971,9 @@ function filter_tdr_install_cron($should_install) {
 			}
 			break;
 		case false:
-			if($is_installed == true) {
-				if($x > 0) {
-					unset($config['cron']['item'][$x]);
-					write_config();
-				}
+			if ($is_installed == true) {
+				unset($config['cron']['item'][$x]);
+				write_config(gettext("Removed 15 minute filter reload for Time Based Rules"));
 				configure_cron();
 			}
 			break;
@@ -3004,84 +3007,60 @@ function filter_tdr_install_cron($should_install) {
  </schedules>
 */
 function filter_get_time_based_rule_status($schedule) {
-	$should_add_rule = false;
+
 	/* no schedule? rule should be installed */
-	if(empty($schedule))
+	if (empty($schedule))
 		return true;
 	/*
 	 * iterate through time blocks and determine
 	 * if the rule should be installed or not.
 	 */
 	foreach($schedule['timerange'] as $timeday) {
-		if($timeday['month'])
-			$month = $timeday['month'];
-		else
-			$week = "";
-		if($timeday['day'])
-			$day = $timeday['day'];
-		else
-			$day = "";
-		if($timeday['hour'])
-			$hour = $timeday['hour'];
-		else
-			$hour = "";
-		if($timeday['position'])
-			$position = $timeday['position'];
-		else
-			$position = "";
-		if($timeday['descr'])
-			$desc = $timeday['descr'];
-		else
-			$desc = "";
-		if($month) {
-			$monthstatus = filter_tdr_month($month);
-		} else {
+		if (empty($timeday['month']))
 			$monthstatus = true;
-		}
-		if($day) {
-			$daystatus = filter_tdr_day($day);
-		} else {
+		else
+			$monthstatus = filter_tdr_month($timeday['month']);
+		if (empty($timeday['day']))
 			$daystatus = true;
-		}
-		if($hour) {
-			$hourstatus = filter_tdr_hour($hour);
-		} else {
+		else
+			$daystatus = filter_tdr_day($timeday['day']);
+		if (empty($timeday['hour']))
 			$hourstatus = true;
-		}
-		if($position) {
-			$positionstatus = filter_tdr_position($position);
-		} else {
+		else
+			$hourstatus = filter_tdr_hour($timeday['hour']);
+		if (empty($timeday['position']))
 			$positionstatus = true;
-		}
+		else
+			$positionstatus = filter_tdr_position($timeday['position']);
 
-		if($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
-			$should_add_rule = true;
+		if ($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
+			return true;
 	}
 
-	return $should_add_rule;
+	return false;
 }
 
 function filter_tdr_day($schedule) {
 	global $g;
+
+	if($g['debug'])
+		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+
 	/*
 	 * Calculate day of month.
 	 * IE: 29th of may
 	 */
-	$weekday = date("w");
-	if($weekday == 0)
-		$weekday = 7;
 	$date = date("d");
 	$defined_days = explode(",", $schedule);
-	if($g['debug'])
-		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
 	foreach($defined_days as $dd) {
-		if($date == $dd)
+		if ($date == $dd)
 			return true;
 	}
 	return false;
 }
 function filter_tdr_hour($schedule) {
 	global $g;
+
 	/* $schedule should be a string such as 16:00-19:00 */
 	$tmp = explode("-", $schedule);
 	$starting_time = strtotime($tmp[0]);
@@ -3096,8 +3075,9 @@ function filter_tdr_hour($schedule) {
 
 function filter_tdr_position($schedule) {
 	global $g;
+
 	/*
-	 * Calculate possition, ie: day of week.
+	 * Calculate position, ie: day of week.
 	 * Sunday = 7, Monday = 1, Tuesday = 2
 	 * Weds = 3, Thursday = 4, Friday = 5,
 	 * Saturday = 6
@@ -3118,6 +3098,7 @@ function filter_tdr_position($schedule) {
 
 function filter_tdr_month($schedule) {
 	global $g;
+
 	/*
 	 * Calculate month
 	 */
@@ -3134,6 +3115,7 @@ function filter_tdr_month($schedule) {
 
 function filter_setup_logging_interfaces() {
 	global $config, $FilterIflist;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_setup_logging_interfaces() being called $mt\n";
@@ -3149,25 +3131,25 @@ function filter_setup_logging_interfaces() {
 
 function filter_process_carp_nat_rules() {
 	global $g, $config;
+
 	update_filter_reload_status("Creating CARP NAT rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_process_carp_nat_rules() being called $mt\n";
 	}
 	$lines = "";
-	if(isset($config['installedpackages']['carp']['config']) &&
-			is_array($config['installedpackages']['carp']['config'])) {
-		foreach($config['installedpackages']['carp']['config'] as $carp) {
+	if (is_array($config['hasync'])) {
+		foreach($config['hasync'] as $carp) {
 			$ip = $carp['ipaddress'];
-			if($ip <> "any") {
+			if($ip == "any") {
 				$ipnet = "any";
 			} else {
 				$int = find_ip_interface($ip);
 				$carp_int = find_carp_interface($ip);
 			}
-			if($int != false and $int != $wan_interface) {
+			if ($int != false and $int != $wan_interface) {
 				$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
-				if($int)
+				if ($int && $carp_int)
 					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
 			}
 		}
@@ -3175,16 +3157,17 @@ function filter_process_carp_nat_rules() {
 	return $lines;
 }
 
-function filter_process_carp_rules() {
+function filter_process_carp_rules($log) {
 	global $g, $config;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "filter_process_carp_rules() being called $mt\n";
+		echo "filter_process_carp_rules($log) being called $mt\n";
 	}
 	$lines = "";
 	/* return if there are no carp configured items */
-	if(isset($config['hasync']) && $config['hasync'] <> "" or $config['virtualip']['vip'] <> "") {
-		$lines .= "block in log quick proto carp from (self) to any\n";
+	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
+		$lines .= "block in $log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";
 	}
@@ -3254,6 +3237,8 @@ function filter_generate_ipsec_rules() {
 			} else {
 				$parentinterface = $ph1ent['interface'];
 			}
+			if (empty($FilterIflist[$parentinterface]['descr']))
+				return "# Could not locate interface for IPsec: {descr}\n";
 
 			/* add endpoint routes to correct gateway on interface */
 			if(interface_has_gateway($parentinterface)) {

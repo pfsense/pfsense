@@ -604,8 +604,9 @@ function is_domain($domain) {
 }
 
 /* returns true if $macaddr is a valid MAC address */
-function is_macaddr($macaddr) {
-	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){5}$/i', $macaddr) == 1 ? true : false;
+function is_macaddr($macaddr, $partial=false) {
+	$repeat = ($partial) ? '1,5' : '5';
+	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
 }
 
 /* returns true if $name is a valid name for an alias */

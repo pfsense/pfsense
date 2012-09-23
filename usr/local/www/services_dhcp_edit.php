@@ -191,8 +191,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DHCP"),gettext("Edit static mapping"));
-$statusurl = "status_dhcp_leases.php";
-$logurl = "diag_logs_dhcp.php";
+$shortcut_section = "dhcp";
 
 include("head.inc");
 
@@ -225,7 +224,10 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     <br>
-                    <?=gettext("If no IP address is given, one will be dynamically allocated  from the pool.");?></td>
+			<?=gettext("If an IPv4 address is entered, the address must be outside of the pool.");?>
+			<br/>
+			<?=gettext("If no IPv4 address is given, one will be dynamically allocated from the pool.");?>
+			</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>

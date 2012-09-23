@@ -37,10 +37,6 @@
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
-$statusurl = "status_openvpn.php";
-$logurl = "diag_logs_openvpn.php";
-
 if (!is_array($config['openvpn']['openvpn-server']))
 	$config['openvpn']['openvpn-server'] = array();
 
@@ -73,6 +69,11 @@ $act = $_GET['act'];
 if (isset($_POST['act']))
 	$act = $_POST['act'];
 
+if (isset($id) && $a_server[$id])
+	$vpnid = $a_server[$id]['vpnid'];
+else
+	$vpnid = 0;
+
 if ($_GET['act'] == "del") {
 
 	if (!$a_server[$id]) {
@@ -101,7 +102,6 @@ if($_GET['act']=="new"){
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_server[$id]) {
-
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
@@ -139,6 +139,7 @@ if($_GET['act']=="edit"){
 		$pconfig['tunnel_networkv6'] = $a_server[$id]['tunnel_networkv6'];
 
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
+		$pconfig['remote_networkv6'] = $a_server[$id]['remote_networkv6'];
 		$pconfig['gwredir'] = $a_server[$id]['gwredir'];
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
@@ -200,6 +201,9 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if ($pconfig['dev_mode'] <> $a_server[$id]['dev_mode'])
+		openvpn_delete('server', $a_server[$id]);// delete(rename) interface so a new TUN or TAP interface can be created.
 
 	if (isset($id) && $a_server[$id])
 		$vpnid = $a_server[$id]['vpnid'];
@@ -352,6 +356,7 @@ if ($_POST) {
 		$server['tunnel_network'] = $pconfig['tunnel_network'];
 		$server['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
 		$server['remote_network'] = $pconfig['remote_network'];
+		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
@@ -415,6 +420,8 @@ if ($_POST) {
 	if (!empty($pconfig['authmode']))
 		$pconfig['authmode'] = implode(",", $pconfig['authmode']);
 }
+$pgtitle = array(gettext("OpenVPN"), gettext("Server"));
+$shortcut_section = "openvpn";
 
 include("head.inc");
 
@@ -465,17 +472,21 @@ function mode_change() {
 	switch(value) {
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
-			document.getElementById("remote_opts").style.display="";
+			document.getElementById("remote_optsv4").style.display="";
+			document.getElementById("remote_optsv6").style.display="";
 			document.getElementById("gwredir_opts").style.display="none";
-			document.getElementById("local_opts").style.display="none";
+			document.getElementById("local_optsv4").style.display="none";
+			document.getElementById("local_optsv6").style.display="none";
 			document.getElementById("authmodetr").style.display="none";
 			document.getElementById("inter_client_communication").style.display="none";
 			break;
 		case "p2p_tls":
 			document.getElementById("client_opts").style.display="none";
-			document.getElementById("remote_opts").style.display="";
+			document.getElementById("remote_optsv4").style.display="";
+			document.getElementById("remote_optsv6").style.display="";
 			document.getElementById("gwredir_opts").style.display="";
-			document.getElementById("local_opts").style.display="";
+			document.getElementById("local_optsv4").style.display="";
+			document.getElementById("local_optsv6").style.display="";
 			document.getElementById("authmodetr").style.display="none";
 			document.getElementById("inter_client_communication").style.display="none";
 			break;
@@ -483,18 +494,22 @@ function mode_change() {
                 case "server_tls_user":
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
-			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("remote_optsv4").style.display="none";
+			document.getElementById("remote_optsv6").style.display="none";
 			document.getElementById("gwredir_opts").style.display="";
-			document.getElementById("local_opts").style.display="";
+			document.getElementById("local_optsv4").style.display="";
+			document.getElementById("local_optsv6").style.display="";
 			document.getElementById("inter_client_communication").style.display="";
 			break;
 		case "server_tls":
 			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
-			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("remote_optsv4").style.display="none";
+			document.getElementById("remote_optsv6").style.display="none";
 			document.getElementById("gwredir_opts").style.display="";
-			document.getElementById("local_opts").style.display="";
+			document.getElementById("local_optsv4").style.display="";
+			document.getElementById("local_optsv6").style.display="";
 			document.getElementById("inter_client_communication").style.display="";
 			break;
 	}
@@ -537,10 +552,13 @@ function autotls_change() {
 
 function gwredir_change() {
 
-	if (document.iform.gwredir.checked)
-		document.getElementById("local_opts").style.display="none";
-	else
-		document.getElementById("local_opts").style.display="";
+	if (document.iform.gwredir.checked) {
+		document.getElementById("local_optsv4").style.display="none";
+		document.getElementById("local_optsv6").style.display="none";
+	} else {
+		document.getElementById("local_optsv4").style.display="";
+		document.getElementById("local_optsv6").style.display="";
+	}
 }
 
 function dns_domain_change() {
@@ -1085,7 +1103,7 @@ if ($savemsg)
 							"communications between this server and client " .
 							"hosts expressed using CIDR (eg. fe80::/64). " .
 							"The first network address will be assigned to " .
-							"the	server virtual interface. The remaining " .
+							"the server virtual interface. The remaining " .
 							"network addresses can optionally be assigned " .
 							"to connecting clients. (see Address Pool)"); ?>
 						</td>
@@ -1178,7 +1196,7 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
-					<tr id="local_opts">
+					<tr id="local_optsv4">
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
@@ -1191,7 +1209,7 @@ if ($savemsg)
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
-					<tr id="local_opts">
+					<tr id="local_optsv6">
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="local_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
@@ -1204,8 +1222,8 @@ if ($savemsg)
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
-					<tr id="remote_opts">
-						<td width="22%" valign="top" class="vncell"><?=gettext("Remote Network"); ?></td>
+					<tr id="remote_optsv4">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
@@ -1213,6 +1231,20 @@ if ($savemsg)
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the " .
 							"routing tables. Expressed as a CIDR range. If " .
+							"this is a site-to-site VPN, enter the " .
+							"remote LAN here. You may leave this blank if " .
+							"you don't want a site-to-site VPN"); ?>.
+						</td>
+					</tr>
+					<tr id="remote_optsv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<br>
+							<?=gettext("This is an IPv6 network that will be routed through " .
+							"the tunnel, so that a site-to-site VPN can be " .
+							"established without manually changing the " .
+							"routing tables. Expressed as an IP/PREFIX. If " .
 							"this is a site-to-site VPN, enter the " .
 							"remote LAN here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
@@ -1578,8 +1610,7 @@ if ($savemsg)
 				</table>
 
 				<br/>
-
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 

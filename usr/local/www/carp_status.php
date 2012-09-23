@@ -90,6 +90,7 @@ if($_POST['disablecarp'] <> "") {
 $status = get_carp_status();
 
 $pgtitle = array(gettext("Status"),gettext("CARP"));
+$shortcut_section = "carp";
 include("head.inc");
 
 ?>

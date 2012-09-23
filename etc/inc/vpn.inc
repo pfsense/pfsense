@@ -417,30 +417,33 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 			/* end mode_cfg section */
 			
-			if ($a_client['user_source'] != "system") {
-				if (is_array($config['system']['authserver'])) {
-					foreach ($config['system']['authserver'] as $authcfg) {
-						if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
-							$thisauthcfg = $authcfg;
-					}
-
-					/* begin ldapcfg */                        
-					$racoonconf .= "ldapcfg {\n";
-					$racoonconf .= "\tversion 3;\n";
-					$racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
-					$lport = "389";
-					if ($authcfg['port'] != "")
-						$lport = $authcfg['port'];
-					$racoonconf .= "\tport ".$lport.";\n";
-					$racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
-					$racoonconf .= "\tsubtree on;\n";
-					$racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
-					$racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
-					$racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
-					$racoonconf .= "}\n\n";
-					/* end ldapcfg */
-				}
-			}
+// Disable this for now, when LDAP support returns it will be via external script auth, 
+//    since we no longer build racoon with LDAP integrated. This is only preventing racoon from running.
+//
+//			if ($a_client['user_source'] != "system") {
+//				if (is_array($config['system']['authserver'])) {
+//					foreach ($config['system']['authserver'] as $authcfg) {
+//						if ($authcfg['type'] == 'ldap' and $authcfg['name'] == $a_client['user_source']) 
+//							$thisauthcfg = $authcfg;
+//					}
+//
+//					/* begin ldapcfg */
+//					$racoonconf .= "ldapcfg {\n";
+//					$racoonconf .= "\tversion 3;\n";
+//					$racoonconf .= "\thost \"".$thisauthcfg['host']."\";\n";
+//					$lport = "389";
+//					if ($authcfg['port'] != "")
+//						$lport = $authcfg['port'];
+//					$racoonconf .= "\tport ".$lport.";\n";
+//					$racoonconf .= "\tbase \"".$thisauthcfg['ldap_basedn']."\";\n";
+//					$racoonconf .= "\tsubtree on;\n";
+//					$racoonconf .= "\tbind_dn \"".$thisauthcfg['ldap_binddn']."\";\n";
+//					$racoonconf .= "\tbind_pw \"".$thisauthcfg['ldap_bindpw']."\";\n";
+//					$racoonconf .= "\tattr_user \"".$thisauthcfg['ldap_attr_user']."\";\n";
+//					$racoonconf .= "}\n\n";
+//					/* end ldapcfg */
+//				}
+//			}
 
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {
@@ -693,7 +696,7 @@ EOD;
 								$localid_type = "subnet";
 							}
 							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-							if (!is_subnet($localid_data)) {
+							if (!is_ipaddr($localid_data) && !is_subnet($localid_data)) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
 							}
@@ -876,11 +879,11 @@ EOD;
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
 
-				// Error will be logged above, no need to log this twice. #2201
-				if (!is_subnet($localid))
-					continue;
-
 				if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == 'tunnel6')) {
+					// Error will be logged above, no need to log this twice. #2201
+					if (!is_subnet($localid))
+						continue;
+
 					if($ph2ent['mode'] == "tunnel6")
 						$family = "-6";
 					else

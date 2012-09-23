@@ -38,9 +38,6 @@
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
 
-$statusurl = "status_captiveportal.php";
-$logurl = "diag_logs_auth.php";
-
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -61,6 +58,7 @@ if (!is_array($config['captiveportal']))
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext'])

@@ -64,6 +64,7 @@ if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Resolver"));
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

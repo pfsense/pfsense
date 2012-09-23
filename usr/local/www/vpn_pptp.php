@@ -191,6 +191,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"));
+$shortcut_section = "pptps";
 include("head.inc");
 
 ?>
@@ -293,6 +294,7 @@ function enable_change(enable_over) {
 <form action="vpn_pptp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php print_info_box(gettext("PPTP is no longer considered a secure VPN technology because it relies upon MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware that intercepted traffic can be decrypted by a third party, so it should be considered unencrypted. We advise migrating to another VPN type such as OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days+for+MS-CHAPv2/13807\">Read More</a>")); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php

@@ -55,6 +55,7 @@ if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Voucher Rolls"), $a_cp[$cpzone]['zone']);
+$shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
     $config['voucher'][$cpzone]['roll'] = array();

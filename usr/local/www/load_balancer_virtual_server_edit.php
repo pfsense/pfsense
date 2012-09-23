@@ -134,9 +134,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Server"),gettext("Edit"));
-$statusurl = "status_lb_vs.php";
-#$statusurl = "status_lb_pool.php";
-$logurl = "diag_logs_relayd.php";
+$shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 

@@ -123,6 +123,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("GIF"),gettext("Edit"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

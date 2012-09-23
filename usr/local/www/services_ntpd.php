@@ -59,6 +59,11 @@ if ($_POST) {
 		elseif (isset($config['ntpd']['interface']))
 			unset($config['ntpd']['interface']);
 
+		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
+			$config['ntpd']['gpsport'] = $_POST['gpsport'];
+		else
+			unset($config['ntpd']['gpsport']);
+
 		write_config("Updated NTP Server Settings");
 
 		$retval = 0;
@@ -69,6 +74,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("NTP"));
+$shortcut_section = "ntp";
 include("head.inc");
 
 ?>
@@ -109,12 +115,36 @@ include("head.inc");
 		echo ">{$ifacename}</option>\n";
 	} ?>
 	</select>
-	<br/>Interfaces without an IP address will not be shown.
 	<br/>
-	<br/>Selecting no interfaces will listen on all interfaces with a wildcard.
-	<br/>Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.
+	<br/><?php echo gettext("Interfaces without an IP address will not be shown."); ?>
+	<br/>
+	<br/><?php echo gettext("Selecting no interfaces will listen on all interfaces with a wildcard."); ?>
+	<br/><?php echo gettext("Selecting all interfaces will explicitly listen on only the interfaces/IPs specified."); ?>
 	</td>
 </tr>
+<?php /* Probing would be nice, but much more complex. Would need to listen to each port for 1s+ and watch for strings. */ ?>
+<?php $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE); ?>
+<?php if (!empty($serialports)): ?>
+<tr>
+	<td width="22%" valign="top" class="vncellreq">Serial GPS</td>
+	<td width="78%" class="vtable">
+		<select name="gpsport">
+			<option value="">none</option>
+			<?php foreach ($serialports as $port):
+				$shortport = substr($port,5);
+				$selected = ($shortport == $config['ntpd']['gpsport']) ? " selected" : "";?>
+				<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
+			<?php endforeach; ?>
+		</select>
+		<br/>
+		<br/><?php echo gettext("The GPS must provide NMEA format output!"); ?>
+		<br/>
+		<br/><?php echo gettext("All serial ports are listed, be sure to pick only the port with the GPS attached."); ?>
+		<br/>
+		<br/><?php echo gettext("It is best to configure at least 2 servers under"); ?> <a href="system.php"><?php echo gettext("System > General"); ?></a> <?php echo gettext("to avoid loss of sync if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients."); ?>
+	</td>
+</tr>
+<?php endif; ?>
 <tr>
 	<td width="22%" valign="top">&nbsp;</td>
 	<td width="78%">

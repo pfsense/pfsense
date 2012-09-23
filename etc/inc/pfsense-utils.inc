@@ -999,7 +999,6 @@ function setup_serial_port($when="save", $path="") {
 				$new_boot_config[] = 'console="comconsole,vidconsole"';
 			} elseif ($g['platform'] == "nanobsd") {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-				$new_boot_config[] = 'console="comconsole"';
 			}
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
@@ -1609,9 +1608,10 @@ function get_freebsd_version() {
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-        global $ch, $fout, $file_size, $downloaded, $config;
+        global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
         $file_size  = 1;
         $downloaded = 1;
+	$first_progress_update = TRUE;
         /* open destination file */
         $fout = fopen($destination_file, "wb");
 
@@ -1662,7 +1662,7 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen;
+        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $first_progress_update;
 		global $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
@@ -1700,7 +1700,8 @@ function read_body($ch, $string) {
 			}
                 }
 				if(($pkg_interface != "console") || (($downloadProgress % 10) == 0) || ($downloadProgress < 10)) {
-					update_progress_bar($downloadProgress);
+					update_progress_bar($downloadProgress, $first_progress_update);
+					$first_progress_update = FALSE;
 				}
                 $lastseen = $downloadProgress;
         }
@@ -1740,9 +1741,9 @@ function update_status($status) {
 }
 
 /*
- * update_progress_bar($percent): updates the javascript driven progress bar.
+ * update_progress_bar($percent, $first_time): updates the javascript driven progress bar.
  */
-function update_progress_bar($percent) {
+function update_progress_bar($percent, $first_time) {
         global $pkg_interface;
         if($percent > 100) $percent = 1;
         if($pkg_interface <> "console") {
@@ -1750,7 +1751,9 @@ function update_progress_bar($percent) {
                 echo "\ndocument.progressbar.style.width='" . $percent . "%';";
                 echo "\n</script>";
         } else {
-                echo "\r {$percent}%";
+		if(!($first_time))
+			echo "\x08\x08\x08\x08\x08";
+		echo sprintf("%4d%%", $percent);
         }
 }
 
@@ -1813,46 +1816,49 @@ function update_alias_url_data() {
 			if (empty($alias['aliasurl']))
 				continue;
 
-			/* fetch down and add in */
+			$address = "";
 			$isfirst = 0;
-			$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-			unlink($temp_filename);
-			$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-			fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
-			fclose($fda);
-			mwexec("/bin/mkdir -p {$temp_filename}");
-			mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
-			/* if the item is tar gzipped then extract */
-			if(stristr($alias['aliasurl'], ".tgz"))
-				process_alias_tgz($temp_filename);
-			else if(stristr($alias['aliasurl'], ".zip"))
-				process_alias_unzip($temp_filename);
-			if(file_exists("{$temp_filename}/aliases")) {
-				$file_contents = file_get_contents("{$temp_filename}/aliases");
-				$file_contents = str_replace("#", "\n#", $file_contents);
-				$file_contents_split = explode("\n", $file_contents);
-				foreach($file_contents_split as $fc) {
-					$tmp = trim($fc);
-					if(stristr($fc, "#")) {
-						$tmp_split = explode("#", $tmp);
-						$tmp = trim($tmp_split[0]);
+			foreach ($alias['aliasurl'] as $alias_url) {
+				/* fetch down and add in */
+				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+				unlink($temp_filename);
+				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
+				fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				fclose($fda);
+				mwexec("/bin/mkdir -p {$temp_filename}");
+				mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				/* if the item is tar gzipped then extract */
+				if (stristr($alias_url, ".tgz"))
+					process_alias_tgz($temp_filename);
+				else if (stristr($alias_url, ".zip"))
+					process_alias_unzip($temp_filename);
+				if (file_exists("{$temp_filename}/aliases")) {
+					$file_contents = file_get_contents("{$temp_filename}/aliases");
+					$file_contents = str_replace("#", "\n#", $file_contents);
+					$file_contents_split = explode("\n", $file_contents);
+					foreach ($file_contents_split as $fc) {
+						$tmp = trim($fc);
+						if (stristr($fc, "#")) {
+							$tmp_split = explode("#", $tmp);
+							$tmp = trim($tmp_split[0]);
+						}
+						if (trim($tmp) <> "") {
+							if ($isfirst == 1)
+								$address .= " ";
+							$address .= $tmp;
+							$isfirst = 1;
+						}
 					}
-					if(trim($tmp) <> "") {
-						if($isfirst == 1)
-							$address .= " ";
-						$address .= $tmp;
-						$isfirst = 1;
-					}
+					mwexec("/bin/rm -rf {$temp_filename}");
 				}
-				if($isfirst > 0) {
-					$config['aliases']['alias'][$x]['address'] = $address;
-					$updated = true;
-				}
-				mwexec("/bin/rm -rf {$temp_filename}");
+			}
+			if($isfirst > 0) {
+				$config['aliases']['alias'][$x]['address'] = $address;
+				$updated = true;
 			}
 		}
 	}
-	if($updated)
+	if ($updated)
 		write_config();
 	unlock($lockkey);
 }
@@ -2001,7 +2007,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
 		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
 		if (file_exists($urltable_filename . ".tmp")) {
-			mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			mwexec("/usr/bin/sed 's/\;.*//g' ". escapeshellarg($urltable_filename . ".tmp") . "| /usr/bin/egrep -v '^[[:space:]]*$|^#' > " . escapeshellarg($urltable_filename));
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");

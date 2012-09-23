@@ -1235,21 +1235,80 @@ function system_timezone_configure() {
 		echo gettext("done.") . "\n";
 }
 
+function system_ntp_setup_gps($serialport) {
+	$gps_device = '/dev/gps0';
+	$serialport = '/dev/'.$serialport;
+
+	if (!file_exists($serialport))
+		return false;
+
+	conf_mount_rw();
+	// Create symlink that ntpd requires
+	unlink_if_exists($gps_device);
+	symlink($serialport, $gps_device);
+
+	/* Send the following to the GPS port to initialize the GPS */
+	$gps_init = <<<EOF
+\$PUBX,40,GSV,0,0,0,0*59
+\$PUBX,40,GLL,0,0,0,0*5C
+\$PUBX,40,ZDA,0,0,0,0*44
+\$PUBX,40,VTG,0,0,0,0*5E
+\$PUBX,40,GSV,0,0,0,0*59
+\$PUBX,40,GSA,0,0,0,0*4E
+\$PUBX,40,GGA,0,0,0,0
+\$PUBX,40,TXT,0,0,0,0
+\$PUBX,40,RMC,0,0,0,0*46
+\$PUBX,41,1,0007,0003,4800,0
+\$PUBX,40,ZDA,1,1,1,1
+EOF;
+	file_put_contents("/tmp/gps.init", $gps_init);
+	`cat /tmp/gps.init > $serialport`;
+
+	/* Add /etc/remote entry in case we need to read from the GPS with tip */
+	if (intval(`grep -c '^gps0' /etc/remote`) == 0)
+		`echo "gps0:dv={$serialport}:br#4800:pa=none:" >> /etc/remote`;
+
+	conf_mount_ro();
+
+	return true;
+}
+
 function system_ntp_configure($start_ntpd=true) {
 	global $config, $g;
 	$driftfile = "/var/db/ntpd.drift";
+	$statsdir = "/var/log/ntp";
+	$gps_device = '/dev/gps0';
 
 	if ($g['platform'] == 'jail')
 		return;
+
+	safe_mkdir($statsdir);
 
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";
 	$ntpcfg .= "# \n\n";
 
+	if (!empty($config['ntpd']['gpsport'])
+		&& file_exists('/dev/'.$config['ntpd']['gpsport'])
+		&& system_ntp_setup_gps($config['ntpd']['gpsport'])) {
+		$ntpcfg .= "# GPS Setup\n";
+		$ntpcfg .= "server 127.127.20.0 mode 0 minpoll 4 maxpoll 4 prefer\n";
+		$ntpcfg .= "fudge 127.127.20.0 time1 0.155 time2 0.000 flag1 1 flag2 0 flag3 1\n";
+		// Fall back to local clock if GPS is out of sync?
+		$ntpcfg .= "server 127.127.1.0\n";
+		$ntpcfg .= "fudge 127.127.1.0 stratum 12\n";
+	}
+
+	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts)
 		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
 
+	$ntpcfg .= "enable monitor\n";
+	$ntpcfg .= "enable stats\n";
+	$ntpcfg .= "statistics clockstats\n";
+	$ntpcfg .= "statsdir {$statsdir}\n";
+	$ntpcfg .= "logconfig =syncall +clockall\n";
 	$ntpcfg .= "driftfile {$driftfile}\n";
 
 	if (empty($config['ntpd']['interface']))

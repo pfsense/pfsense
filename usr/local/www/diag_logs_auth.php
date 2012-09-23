@@ -52,6 +52,7 @@ if ($_POST['clear'])
 	clear_log_file($portal_logfile);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Portal Auth"));
+$shortcut_section = "captiveportal";
 include("head.inc");
 
 ?>

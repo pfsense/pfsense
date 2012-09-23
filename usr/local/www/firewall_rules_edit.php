@@ -206,9 +206,6 @@ if ($_POST) {
 			$_POST['icmptype'] = $pconfig['icmptype'];
 	}
 
-	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
-		$input_errors[] = gettext("Reject type rules only works when the protocol is set to TCP.");
-
 	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
 		$input_errors[] = gettext("Queue type rules only work with queues.");
 
@@ -658,8 +655,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"),gettext("Edit"));
-$statusurl = "status_filter_reload.php";
-$logurl = "diag_logs_filter.php";
+$shortcut_section = "firewall";
 
 $closehead = false;
 

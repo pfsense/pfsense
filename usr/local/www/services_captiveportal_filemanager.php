@@ -49,10 +49,6 @@ function cpelements_sort() {
         usort($config['captiveportal'][$cpzone]['element'],"cpelementscmp");
 }
 
-$statusurl = "status_captiveportal.php";
-$logurl = "diag_logs_auth.php";
-
-
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -73,6 +69,7 @@ if (!is_array($config['captiveportal']))
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$shortcut_section = "captiveportal";
 
 if (!is_array($a_cp[$cpzone]['element']))
 	$a_cp[$cpzone]['element'] = array();

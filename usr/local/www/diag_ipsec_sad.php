@@ -47,6 +47,7 @@ require("guiconfig.inc");
 require("ipsec.inc");
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
+$shortcut_section = "ipsec";
 include("head.inc");
 
 $sad = ipsec_dump_sad();

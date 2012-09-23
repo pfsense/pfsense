@@ -53,6 +53,7 @@ if ($_POST['clear'])
 	clear_log_file($relayd_logfile);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Load Balancer"));
+$shortcut_section = "relayd";
 include("head.inc");
 
 ?>

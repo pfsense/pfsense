@@ -43,6 +43,7 @@
 require_once("guiconfig.inc");
 
 exec("/usr/local/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+
 $ntpq_servers = array();
 foreach ($ntpq_output as $line) {
 	$server = array();
@@ -91,7 +92,22 @@ foreach ($ntpq_output as $line) {
 	$ntpq_servers[] = $server;
 }
 
+exec("/usr/local/bin/ntpq -c clockvar", $ntpq_clockvar_output);
+foreach ($ntpq_clockvar_output as $line) {
+	if (substr($line, 0, 9) == "timecode=") {
+		$tmp = explode('"', $line);
+		$tmp = $tmp[1];
+		if (substr($tmp, 0, 6) == '$GPRMC') {
+			$gps_vars = explode(",", $tmp);
+			$gps_ok  = ($gps_vars[2] == "A");
+			$gps_lat = $gps_vars[3] / 100.0 . $gps_vars[4];
+			$gps_lon = $gps_vars[5] / 100.0 . $gps_vars[6];
+		}
+	}
+}
+
 $pgtitle = array(gettext("Status"),gettext("NTP"));
+$shortcut_section = "ntp";
 include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -162,6 +178,25 @@ include("head.inc");
 <?php $i++; endforeach; endif; ?>
 	</tbody>
 	</table>
+<?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
+	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<thead>
+	<tr>
+		<th class="listhdrr"><?=gettext("Clock Latitude"); ?></th>
+		<th class="listhdrr"><?=gettext("Clock Longitude"); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td class="listlr" align="center"><?php echo $gps_lat; ?></td>
+			<td class="listlr" align="center"><?php echo $gps_lon; ?></td>
+		</tr>
+		<tr>
+			<td class="listlr" colspan="2" align="center"><a href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">Google Maps Link</a></td>
+		</tr>
+	</tbody>
+	</table>
+<?php endif; ?>
 </div></td></tr>
 </table>
 <?php include("fend.inc"); ?>

@@ -13,6 +13,8 @@ if (self === top) { var antiClickjack = document.getElementById("antiClickjack")
 
 require_once("globals.inc");
 require_once("functions.inc");
+require_once("shortcuts.inc");
+require_once("service-utils.inc");
 
 /* $Id$ */
 
@@ -227,6 +229,7 @@ $diagnostics_menu[] = array(gettext("pfTop"), "/diag_system_pftop.php");
 $diagnostics_menu[] = array(gettext("Reboot"), "/reboot.php");
 $diagnostics_menu[] = array(gettext("Routes"), "/diag_routes.php");
 $diagnostics_menu[] = array(gettext("SMART Status"), "/diag_smart.php");
+$diagnostics_menu[] = array(gettext("Sockets listening"), "/diag_sockets.php" );
 $diagnostics_menu[] = array(gettext("States"), "/diag_dump_states.php");
 $diagnostics_menu[] = array(gettext("States Summary"), "/diag_states_summary.php");
 $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.php");
@@ -380,19 +383,40 @@ function add_to_menu($url, $name) {
 	if (isAllowedPage($url))
 		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }
+
 ?>
 
 <div>
-<span class="pgtitle"><a href="<?= $_SERVER['SCRIPT_NAME'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
-<span style="float:right; margin: 0 0 20px 20px;">
-<?php if(! empty($statusurl)): ?>
-<a href="<?php echo $statusurl; ?>" target="_new" title="<?php echo gettext("Status of items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/status.png" border="0"></a>
-<?php endif; ?>
-<?php if(! empty($logurl)): ?>
-<a href="<?php echo $logurl; ?>" target="_new" title="<?php echo gettext("Log entries for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/log.png" border="0"></a>
-<?php endif; ?>
+<span class="pgtitle"><a href="<?= $_SERVER['REQUEST_URI'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
+<span style="float:right; margin: 0 0 20px 20px">
+<?php
+if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+	$ssvc = array();
+	switch ($shortcut_section) {
+		case "openvpn":
+			$ssvc = find_service_by_openvpn_vpnid($vpnid);
+			break;
+		case "captiveportal":
+			$ssvc = find_service_by_cp_zone($cpzone);
+			break;
+		default:
+			$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
+
+	}
+	if (!empty($ssvc)) {
+		echo get_service_status_icon($ssvc, false);
+		echo get_service_control_links($ssvc, true);
+	}
+}
+
+echo get_shortcut_main_link($shortcut_section, true);
+echo get_shortcut_status_link($shortcut_section, true);
+echo get_shortcut_log_link($shortcut_section, true);
+
+?>
 <?php if(! $g['disablehelpicon']): ?>
-<a href="<?php echo $helpurl; ?>" target="_new" title="<?php echo gettext("Help for items on this page."); ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a>
+
+<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0"></a>
 <?php endif; ?>
 </span>
 </div>

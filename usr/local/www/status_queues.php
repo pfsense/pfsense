@@ -99,6 +99,7 @@ if ($_REQUEST['getactivity']) {
 }
 
 $pgtitle = array(gettext("Status"),gettext("Traffic shaper"),gettext("Queues"));
+$shortcut_section = "trafficshaper";
 include("head.inc");
 
 ?>

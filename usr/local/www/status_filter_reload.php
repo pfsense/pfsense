@@ -42,6 +42,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 $pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
+$shortcut_section = "firewall";
 
 if(file_exists("{$g['varrun_path']}/filter_reload_status"))
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");

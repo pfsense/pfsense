@@ -1153,8 +1153,8 @@ function captiveportal_init_radius_servers() {
 		($config['captiveportal'][$cpzone]['auth_method'] == "radius"))) {
 		$radiusip = $config['captiveportal'][$cpzone]['radiusip'];
 		$radiusip2 = ($config['captiveportal'][$cpzone]['radiusip2']) ? $config['captiveportal'][$cpzone]['radiusip2'] : null;
-		$radiusip3 = ($config['captiveportal']['radiusip3']) ? $config['captiveportal']['radiusip3'] : null;
-		$radiusip4 = ($config['captiveportal']['radiusip4']) ? $config['captiveportal']['radiusip4'] : null;
+		$radiusip3 = ($config['captiveportal'][$cpzone]['radiusip3']) ? $config['captiveportal'][$cpzone]['radiusip3'] : null;
+		$radiusip4 = ($config['captiveportal'][$cpzone]['radiusip4']) ? $config['captiveportal'][$cpzone]['radiusip4'] : null;
 
 		if ($config['captiveportal'][$cpzone]['radiusport'])
 			$radiusport = $config['captiveportal'][$cpzone]['radiusport'];
@@ -1168,19 +1168,19 @@ function captiveportal_init_radius_servers() {
 			$radiusport2 = $config['captiveportal'][$cpzone]['radiusport2'];
 		else
 			$radiusport2 = 1812;
-		if ($config['captiveportal']['radiusport3'])
-			$radiusport3 = $config['captiveportal']['radiusport3'];
+		if ($config['captiveportal'][$cpzone]['radiusport3'])
+			$radiusport3 = $config['captiveportal'][$cpzone]['radiusport3'];
 		else
 			$radiusport3 = 1812;
-		if ($config['captiveportal']['radiusport4'])
-			$radiusport4 = $config['captiveportal']['radiusport4'];
+		if ($config['captiveportal'][$cpzone]['radiusport4'])
+			$radiusport4 = $config['captiveportal'][$cpzone]['radiusport4'];
 		else
 			$radiusport4 = 1812;
 
 		$radiuskey = $config['captiveportal'][$cpzone]['radiuskey'];
 		$radiuskey2 = ($config['captiveportal'][$cpzone]['radiuskey2']) ? $config['captiveportal'][$cpzone]['radiuskey2'] : null;
-		$radiuskey3 = ($config['captiveportal']['radiuskey3']) ? $config['captiveportal']['radiuskey3'] : null;
-		$radiuskey4 = ($config['captiveportal']['radiuskey4']) ? $config['captiveportal']['radiuskey4'] : null;
+		$radiuskey3 = ($config['captiveportal'][$cpzone]['radiuskey3']) ? $config['captiveportal'][$cpzone]['radiuskey3'] : null;
+		$radiuskey4 = ($config['captiveportal'][$cpzone]['radiuskey4']) ? $config['captiveportal'][$cpzone]['radiuskey4'] : null;
 
 		$cprdsrvlck = lock("captiveportalradius{$cpzone}", LOCK_EX);
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db", "w");

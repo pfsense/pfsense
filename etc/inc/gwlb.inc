@@ -91,8 +91,8 @@ rrd interval 60s;
 
 ## These parameters can be overridden in a specific alarm configuration
 alarm default { 
-	command on "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload' -c 'service reload openvpn'"
-	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'filter reload' -c 'service reload openvpn'"
+	command on "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'service reload openvpn' -c 'filter reload' "
+	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'service reload openvpn' -c 'filter reload' "
 	combine 10s
 }
 
@@ -860,7 +860,7 @@ function lookup_gateway_interface_by_name($name) {
 
         $gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
-		$interfacegw = $gateway['interface'];
+		$interfacegw = $gateways_arr[$name]['interface'];
 		return ($interfacegw);
         }
 
@@ -975,5 +975,27 @@ function validate_address_family($ipaddr, $gwname) {
 	return false;
 }
 
+/* check if a interface is part of a gateway group */
+function interface_gateway_group_member($interface) {
+	global $config;
+	$realif = get_real_interface($interface);
+	if(is_array($config['gateways']['gateway_group']))
+		$groups = $config['gateways']['gateway_group'];
+	else
+		return false;
+
+	foreach($groups as $group) {
+		if(is_array($group['item'])) {
+			foreach($group['item'] as $item) {
+				$elements = explode("|", $item);
+				$gwname = $elements[0];
+				$gwif = get_real_interface(lookup_gateway_interface_by_name($gwname));
+				if($gwif == $realif)
+					return true;
+			}
+		}
+	}
+	return false;
+}
 
 ?>

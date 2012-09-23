@@ -521,6 +521,8 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 		if ($settings['local_networkv6']) {
 			list($ipv6, $prefix) = explode('/', $settings['local_networkv6']);
+			if (empty($prefix))
+				$prefix = "128";
 			$conf .= "push \"route-ipv6 $ipv6/$prefix\"\n";
 		}
 
@@ -599,6 +601,13 @@ function openvpn_reconfigure($mode, $settings) {
 		list($ip, $mask) = explode('/', $settings['remote_network']);
 		$mask = gen_subnet_mask($mask);
 		$conf .= "route $ip $mask\n";
+	}
+	// Add a remote network route if set, and only for p2p modes.
+	if ((substr($settings['mode'], 0, 3) == "p2p") && is_subnet($settings['remote_networkv6'])) {
+		list($ipv6, $prefix) = explode('/', $settings['remote_networkv6']);
+		if (empty($prefix))
+			$prefix = "128";
+		$conf .= "route-ipv6 ${ipv6}/${prefix}\n";
 	}
 
 	// Write the settings for the keys
@@ -701,7 +710,12 @@ function openvpn_delete($mode, & $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	$tunname = "tun{$vpnid}";
+	if (isset($settings['dev_mode']))
+		$tunname = "{$settings['dev_mode']}{$vpnid}";
+	else {	/* defaults to tun */
+		$tunname = "tun{$vpnid}";
+	}
+
 	if ($mode == "server")
 		$devname = "ovpns{$vpnid}";
 	else

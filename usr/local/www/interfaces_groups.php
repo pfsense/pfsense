@@ -61,6 +61,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Interfaces"),gettext("Groups"));
+$shortcut_section = "interfaces";
 include("head.inc");
 
 ?>

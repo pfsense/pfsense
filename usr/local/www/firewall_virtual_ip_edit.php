@@ -359,7 +359,7 @@ function typesel_change() {
 					<input name="mode" type="radio" onclick="enable_change()" value="carp"
 					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
                     <input name="mode" type="radio" onclick="enable_change()" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
+					<?php if ($pconfig['mode'] == "proxyarp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change()" value="other"
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 				  </td>

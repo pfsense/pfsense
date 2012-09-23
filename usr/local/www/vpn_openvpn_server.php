@@ -202,6 +202,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if ($pconfig['dev_mode'] <> $a_server[$id]['dev_mode'])
+		openvpn_delete('server', $a_server[$id]);// delete(rename) interface so a new TUN or TAP interface can be created.
+
 	if (isset($id) && $a_server[$id])
 		$vpnid = $a_server[$id]['vpnid'];
 	else

@@ -41,39 +41,46 @@
 
 include('guiconfig.inc');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Sockets listening"));
+$pgtitle = array(gettext("Diagnostics"),gettext("Sockets"));
 
 include('head.inc');
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<?php include("fbegin.inc");
 
+$showAll = isset($_GET['showAll']);
+$showAllText = $showAll ? "Show only listening sockets" : "Show all socket connections";
+$showAllOption = $showAll ? "" : "?showAll";
+
+?>
 <div id="mainarea">
-<table class="tabcont" style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" border="1">
-	<tr><td colspan="2" class="listtopic" >Socket information explanation</td></tr>
-<tr><td colspan="2"  class="">
-This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br/>
-The information listed for each socket is:<br/></td></tr>
-	<tr><td class="listlr">USER	      </td><td class="listr">The user who owns the socket.</td></tr>
-	<tr><td class="listlr">COMMAND	      </td><td class="listr">The command which holds the socket.</td></tr>
-	<tr><td class="listlr">PID	      </td><td class="listr">The process ID of the command which holds the socket.</td></tr>
-	<tr><td class="listlr">FD 	      </td><td class="listr">The file descriptor number of the socket.</td></tr>
-	<tr><td class="listlr">PROTO	      </td><td class="listr">The transport protocol associated with the socket for Internet sockets, or the type of socket (stream or data-gram) for UNIX sockets.</td></tr>
-	<tr><td class="listlr">ADDRESS	      </td><td class="listr">(UNIX sockets only) For bound sockets, this is the file-name of the socket.  For other sockets, it is the name, PID and file descriptor number of the peer, or ``(none)'' if the socket is neither bound nor connected.</td></tr>
-	<tr><td class="listlr">LOCAL ADDRESS    </td><td class="listr">(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</td></tr>
-	<tr><td class="listlr">FOREIGN ADDRESS  </td><td class="listr">(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</td></tr>
+<table class="tabcont" width="100%">
+<tr>
+<td>Information about listening sockets for both <a href="#IPv4">IPv4</a> and <a href="#IPv6">IPv6</a>.</td>
+</tr>
+<tr>
+<td>For explanation about the meaning of the information listed for each socket click <a href="#about">here</a>.</td>
+</tr>
+<tr>
+<td><input type="button" value="<?=$showAllText?>" ONCLICK="window.location.href='diag_sockets.php<?=$showAllOption?>'"/>To show information about both listening and connected sockets click this.</td>
+</tr>
 </table>
+
 <?php
-
-	$internet4 = shell_exec('sockstat -4lL');
-	$internet6 = shell_exec('sockstat -6lL');
-
+	if (isset($_GET['showAll']))
+	{
+		$internet4 = shell_exec('sockstat -4');
+		$internet6 = shell_exec('sockstat -6');
+	} else {
+		$internet4 = shell_exec('sockstat -4lL');
+		$internet6 = shell_exec('sockstat -6lL');
+	}
 	foreach (array(&$internet4, &$internet6) as $tabindex => $table) {
 		$elements = ($tabindex == 0 ? 7 : 7);
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
-<br/>
+<a name="<?=$name;?>"></a>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
 <tr><td>
@@ -107,9 +114,25 @@ The information listed for each socket is:<br/></td></tr>
 	} 
 ?>
 </table>
-
+<br/>
+<a name="about"></a>
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" border="1">
+	<tr><td colspan="2" class="listtopic" >Socket information explanation</td></tr>
+<tr><td colspan="2"  class="">
+This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br/>
+Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br/>
+<br/>
+The information listed for each socket is:</td></tr>
+	<tr><td class="listlr">USER	      </td><td class="listr">The user who owns the socket.</td></tr>
+	<tr><td class="listlr">COMMAND	      </td><td class="listr">The command which holds the socket.</td></tr>
+	<tr><td class="listlr">PID	      </td><td class="listr">The process ID of the command which holds the socket.</td></tr>
+	<tr><td class="listlr">FD 	      </td><td class="listr">The file descriptor number of the socket.</td></tr>
+	<tr><td class="listlr">PROTO	      </td><td class="listr">The transport protocol associated with the socket for Internet sockets, or the type of socket (stream or data-gram) for UNIX sockets.</td></tr>
+	<tr><td class="listlr">ADDRESS	      </td><td class="listr">(UNIX sockets only) For bound sockets, this is the file-name of the socket.  For other sockets, it is the name, PID and file descriptor number of the peer, or ``(none)'' if the socket is neither bound nor connected.</td></tr>
+	<tr><td class="listlr">LOCAL ADDRESS    </td><td class="listr">(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</td></tr>
+	<tr><td class="listlr">FOREIGN ADDRESS  </td><td class="listr">(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</td></tr>
+</table>
 </div>
-
 <?php
 include('fend.inc');
 ?>

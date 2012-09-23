@@ -276,97 +276,71 @@ function get_radio_value(obj)
         }
         return null;
 }
-function enable_change(enable_over) {
-		var note = document.getElementById("typenote");
-		var carpnote = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
-		var proxyarpnote = document.createTextNode("<?=gettext("This is a CIDR block of proxy ARP addresses.");?>");
-		var ipaliasnote = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
-        if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
-                document.iform.vhid.disabled = 0;
-                document.iform.password.disabled = 0;
-                document.iform.advskew.disabled = 0;
-                document.iform.advbase.disabled = 0;
-                document.iform.type.disabled = 1;
-                document.iform.subnet_bits.disabled = 0;
-		document.iform.subnet.disabled = 0;
-		document.iform.noexpand.disabled = 1;
-		jQuery('#noexpandrow').css('display','none');
-		if (note.firstChild == null) {
-			note.appendChild(carpnote);
-		} else {
-			note.removeChild(note.firstChild);
-			note.appendChild(carpnote);
-		}
-        } else {
-                document.iform.vhid.disabled = 1;
-                document.iform.password.disabled = 1;
-                document.iform.advskew.disabled = 1;
-                document.iform.advbase.disabled = 1;
-                document.iform.type.disabled = 0;
-                document.iform.subnet_bits.disabled = 1;
-		document.iform.subnet.disabled = 0;
-		document.iform.noexpand.disabled = 0;
-		jQuery('#noexpandrow').css('display','');
-		if (note.firstChild == null) {
-			note.appendChild(proxyarpnote);
-		} else {
-			note.removeChild(note.firstChild);
-			note.appendChild(proxyarpnote);
-		}
-        }
-	if (get_radio_value(document.iform.mode) == "other") {
-		document.iform.type.disabled = 1;
-		if (note.firstChild != null) {
-			note.removeChild(note.firstChild);
-		}
-		document.iform.subnet.disabled = 0;
-		document.iform.noexpand.disabled = 1;
-		jQuery('#noexpandrow').css('display','none');
-	}
-	if (get_radio_value(document.iform.mode) == "ipalias") {
-		document.iform.type.disabled = 1;
+function set_note(noteMessage){
+	var note = document.getElementById("typenote");
+	if (note.firstChild != null)
 		note.removeChild(note.firstChild);
-		note.appendChild(ipaliasnote);
-		document.iform.subnet_bits.disabled = 0;
-		document.iform.subnet.disabled = 0;		
-		document.iform.noexpand.disabled = 1;
-		jQuery('#noexpandrow').css('display','none');
+	if (noteMessage)
+		note.appendChild(noteMessage);
+}
+function enable_change() {
+	var carpnote     = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
+	var proxyarpnote = document.createTextNode("<?=gettext("This is a CIDR block of proxy ARP addresses.");?>");
+	var ipaliasnote  = document.createTextNode("<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>");
+	
+	$mode = get_radio_value(document.iform.mode);
+	
+	document.iform.password.disabled = $mode != "carp";
+	document.iform.vhid.disabled     = $mode != "carp";
+	document.iform.advskew.disabled  = $mode != "carp";
+	document.iform.advbase.disabled  = $mode != "carp";
+	document.iform.type.disabled     = $mode in {"carp":1,"ipalias":1};
+	
+	if ($mode in {"carp":1,"ipalias":1})
+		document.iform.type.selectedIndex = 0;// single-adress
+	switch($mode)
+	{
+		case "carp"    : set_note(carpnote);		break;
+		case "ipalias" : set_note(ipaliasnote);		break;
+		case "proxyarp": set_note(proxyarpnote);	break;
+		default: set_note(undefined);
 	}
 	typesel_change();
 }
+
 function typesel_change() {
-    switch (document.iform.type.selectedIndex) {
-        case 0: // single
-            document.iform.subnet.disabled = 0;
-            if((get_radio_value(document.iform.mode) == "proxyarp")) document.iform.subnet_bits.disabled = 1;
-	    document.iform.noexpand.disabled = 1;
-	    jQuery('#noexpandrow').css('display','none');
-            break;
-        case 1: // network
-            document.iform.subnet.disabled = 0;
-            document.iform.subnet_bits.disabled = 0;
-	    document.iform.noexpand.disabled = 0;
-	    jQuery('#noexpandrow').css('display','');
-            //document.iform.range_from.disabled = 1;
-            //document.iform.range_to.disabled = 1;
-            break;
-        case 2: // range
-            document.iform.subnet.disabled = 1;
-            document.iform.subnet_bits.disabled = 1;
-	    document.iform.noexpand.disabled = 1;
-	    jQuery('#noexpandrow').css('display','none');
-            //document.iform.range_from.disabled = 0;
-            //document.iform.range_to.disabled = 0;
-            break;
+	switch (document.iform.type.selectedIndex) {
+	case 0: // single
+		document.iform.subnet.disabled = 0;
+		document.iform.subnet_bits.disabled = (get_radio_value(document.iform.mode) == "proxyarp") || (get_radio_value(document.iform.mode) == "other");
+		document.iform.noexpand.disabled = 1;
+		jQuery('#noexpandrow').css('display','none');
+		break;
+	case 1: // network
+		document.iform.subnet.disabled = 0;
+		document.iform.subnet_bits.disabled = 0;
+		document.iform.noexpand.disabled = 0;
+		jQuery('#noexpandrow').css('display','');
+		//document.iform.range_from.disabled = 1;
+		//document.iform.range_to.disabled = 1;
+		break;
+	case 2: // range
+		document.iform.subnet.disabled = 1;
+		document.iform.subnet_bits.disabled = 1;
+		document.iform.noexpand.disabled = 1;
+		jQuery('#noexpandrow').css('display','none');
+		//document.iform.range_from.disabled = 0;
+		//document.iform.range_to.disabled = 0;
+		break;
 	case 3: // IP alias
-            document.iform.subnet.disabled = 1;
-            document.iform.subnet_bits.disabled = 0;
-	    document.iform.noexpand.disabled = 1;
-	    jQuery('#noexpandrow').css('display','none');
-            //document.iform.range_from.disabled = 0;
-            //document.iform.range_to.disabled = 0;
-            break;
-    }
+		document.iform.subnet.disabled = 1;
+		document.iform.subnet_bits.disabled = 0;
+		document.iform.noexpand.disabled = 1;
+		jQuery('#noexpandrow').css('display','none');
+		//document.iform.range_from.disabled = 0;
+		//document.iform.range_to.disabled = 0;
+		break;
+	}
 }
 //-->
 </script>
@@ -380,14 +354,14 @@ function typesel_change() {
                 <tr>
 		  		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Type");?></td>
                   <td width="78%" class="vtable">
-                    <input name="mode" type="radio" onclick="enable_change(false)" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
-					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
-					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
-					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
-					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
-					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
+					<input name="mode" type="radio" onclick="enable_change()" value="ipalias"
 					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> <?=gettext("IP Alias");?>
+					<input name="mode" type="radio" onclick="enable_change()" value="carp"
+					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
+                    <input name="mode" type="radio" onclick="enable_change()" value="proxyarp"
+					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
+					<input name="mode" type="radio" onclick="enable_change()" value="other"
+					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 				  </td>
 				</tr>
 				<tr>
@@ -526,8 +500,7 @@ function typesel_change() {
 </form>
 <script language="JavaScript">
 <!--
-enable_change(false);
-typesel_change();
+enable_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>

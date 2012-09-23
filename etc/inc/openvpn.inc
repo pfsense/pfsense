@@ -710,7 +710,12 @@ function openvpn_delete($mode, & $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	$tunname = "tun{$vpnid}";
+	if (isset($settings['dev_mode']))
+		$tunname = "{$settings['dev_mode']}{$vpnid}";
+	else {	/* defaults to tun */
+		$tunname = "tun{$vpnid}";
+	}
+
 	if ($mode == "server")
 		$devname = "ovpns{$vpnid}";
 	else

@@ -2,7 +2,7 @@
 /*
     system_authservers.php
 
-    Copyright (C) 2010 Ermal Lu�i
+    Copyright (C) 2010 Ermal Luçi
     Copyright (C) 2008 Shrew Soft Inc.
     All rights reserved.
 
@@ -733,54 +733,60 @@ function select_clicked() {
 
 				<?php else: ?>
 
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
-					<tr>
-						<td width="25%" class="listhdrr"><?=gettext("Server Name");?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Type");?></td>
-						<td width="35%" class="listhdrr"><?=gettext("Host Name");?></td>
-						<td width="10%" class="list"></td>
-					</tr>
-					<?php
-						$i = 0;
-						foreach($a_server as $server):
-							$name = htmlspecialchars($server['name']);
-							$type = htmlspecialchars($auth_server_types[$server['type']]);
-							$host = htmlspecialchars($server['host']);
-					?>
-					<tr <?php if ($i < (count($a_server) - 1)): ?> ondblclick="document.location='system_authservers.php?act=edit&id=<?=$i;?>'" <?php endif; ?>>
-						<td class="listlr"><?=$name?>&nbsp;</td>
-						<td class="listr"><?=$type;?>&nbsp;</td>
-						<td class="listr"><?=$host;?>&nbsp;</td>
-						<td valign="middle" nowrap class="list">
-						<?php if ($i < (count($a_server) - 1)): ?>
-							<a href="system_authservers.php?act=edit&id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit server");?>" alt="<?=gettext("edit server");?>" width="17" height="17" border="0" />
-							</a>
-							&nbsp;
-							<a href="system_authservers.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Server?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete server");?>" alt="<?=gettext("delete server");?>" width="17" height="17" border="0" />
-							</a>
-						<?php endif; ?>
-						</td>
-					</tr>
-					<?php
-						$i++; endforeach;
-					?>
-					<tr>
-						<td class="list" colspan="3"></td>
-						<td class="list">
-							<a href="system_authservers.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add server");?>" alt="<?=gettext("add server");?>" width="17" height="17" border="0" />
-							</a>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3">
-							<p>
-								<?=gettext("Additional authentication servers can be added here.");?>
-							</p>
-						</td>
-					</tr>
+				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th width="25%" class="listhdrr"><?=gettext("Server Name");?></th>
+							<th width="25%" class="listhdrr"><?=gettext("Type");?></th>
+							<th width="35%" class="listhdrr"><?=gettext("Host Name");?></th>
+							<th width="10%" class="list"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+							$i = 0;
+							foreach($a_server as $server):
+								$name = htmlspecialchars($server['name']);
+								$type = htmlspecialchars($auth_server_types[$server['type']]);
+								$host = htmlspecialchars($server['host']);
+						?>
+						<tr <?php if ($i < (count($a_server) - 1)): ?> ondblclick="document.location='system_authservers.php?act=edit&id=<?=$i;?>'" <?php endif; ?>>
+							<td class="listlr"><?=$name?>&nbsp;</td>
+							<td class="listr"><?=$type;?>&nbsp;</td>
+							<td class="listr"><?=$host;?>&nbsp;</td>
+							<td valign="middle" nowrap class="list">
+							<?php if ($i < (count($a_server) - 1)): ?>
+								<a href="system_authservers.php?act=edit&id=<?=$i;?>">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit server");?>" alt="<?=gettext("edit server");?>" width="17" height="17" border="0" />
+								</a>
+								&nbsp;
+								<a href="system_authservers.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Server?");?>')">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete server");?>" alt="<?=gettext("delete server");?>" width="17" height="17" border="0" />
+								</a>
+							<?php endif; ?>
+							</td>
+						</tr>
+						<?php
+							$i++; endforeach;
+						?>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td class="list" colspan="3"></td>
+							<td class="list">
+								<a href="system_authservers.php?act=new">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add server");?>" alt="<?=gettext("add server");?>" width="17" height="17" border="0" />
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<p>
+									<?=gettext("Additional authentication servers can be added here.");?>
+								</p>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 
 				<?php endif; ?>

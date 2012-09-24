@@ -399,78 +399,84 @@ function presubmit() {
 
 				<?php else: ?>
 
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
-					<tr>
-						<td width="25%" class="listhdrr"><?=gettext("Group name");?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Description");?></td>
-						<td width="30%" class="listhdrr"><?=gettext("Member Count");?></td>
-						<td width="10%" class="list"></td>
-					</tr>
-					<?php
-						$i = 0;
-						foreach($a_group as $group):
+				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
+							<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
+							<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
+							<th width="10%" class="list"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+							$i = 0;
+							foreach($a_group as $group):
 
-							if($group['scope'] == "system")
-								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
-							else
-								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
-							$groupcount = count($group['member']);
-							if ($group["name"] == "all")
-								$groupcount = count($config['system']['user']);
-					?>
-					<tr ondblclick="document.location='system_groupmanager.php?act=edit&id=<?=$i;?>'">
-						<td class="listlr">
-							<table border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td align="left" valign="center">
-										<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
-									</td>
-									</td>
-									<td align="left" valign="middle">
-										<?=htmlspecialchars($group['name']); ?>&nbsp;
-									</td>
-								</tr>
-							</table>
-						</td>
-						<td class="listr">
-							<?=htmlspecialchars($group['description']);?>&nbsp;
-						</td>
-						<td class="listbg">
-							<?=$groupcount;?>
-						</td>
-						<td valign="middle" nowrap class="list">
-							<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
-								<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0">
-							</a>
-							&nbsp;
-							<?php if($group['scope'] != "system"): ?>
-							<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
-								<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0">
-							</a>
-							<?php endif; ?>
-						</td>
-					</tr>
-					<?php
-						$i++;
-						endforeach;
-					?>
-					<tr> 
-						<td class="list" colspan="3"></td>
-						<td class="list">
-							<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0">
-							</a>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3">
-							<p>
-								<?=gettext("Additional webConfigurator groups can be added here. 
-								Group permissions can be assigned which are inherited by users who are members of the group.
-								An icon that appears grey indicates that it is a system defined object.
-								Some system object properties can be modified but they cannot be deleted.");?>
-							</p>
-						</td>
-					</tr>
+								if($group['scope'] == "system")
+									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
+								else
+									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+								$groupcount = count($group['member']);
+								if ($group["name"] == "all")
+									$groupcount = count($config['system']['user']);
+						?>
+						<tr ondblclick="document.location='system_groupmanager.php?act=edit&id=<?=$i;?>'">
+							<td class="listlr">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td align="left" valign="center">
+											<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
+										</td>
+										</td>
+										<td align="left" valign="middle">
+											<?=htmlspecialchars($group['name']); ?>&nbsp;
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td class="listr">
+								<?=htmlspecialchars($group['description']);?>&nbsp;
+							</td>
+							<td class="listbg">
+								<?=$groupcount;?>
+							</td>
+							<td valign="middle" nowrap class="list">
+								<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
+									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0">
+								</a>
+								&nbsp;
+								<?php if($group['scope'] != "system"): ?>
+								<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
+									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0">
+								</a>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<?php
+							$i++;
+							endforeach;
+						?>
+					</tbody>
+					<tfoot>
+						<tr> 
+							<td class="list" colspan="3"></td>
+							<td class="list">
+								<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0">
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<p>
+									<?=gettext("Additional webConfigurator groups can be added here. 
+									Group permissions can be assigned which are inherited by users who are members of the group.
+									An icon that appears grey indicates that it is a system defined object.
+									Some system object properties can be modified but they cannot be deleted.");?>
+								</p>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 			
 				<?php endif; ?>

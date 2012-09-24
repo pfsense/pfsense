@@ -60,6 +60,12 @@ $priv_list['page-diagnostics-showstates']['descr'] = gettext("Allow access to th
 $priv_list['page-diagnostics-showstates']['match'] = array();
 $priv_list['page-diagnostics-showstates']['match'][] = "diag_dump_states.php*";
 
+$priv_list['page-diagnostics-sockets'] = array();
+$priv_list['page-diagnostics-sockets']['name'] = gettext("WebCfg - Diagnostics: Sockets page");
+$priv_list['page-diagnostics-sockets']['descr'] = gettext("Allow access to the 'Diagnostics: Sockets' page.");
+$priv_list['page-diagnostics-sockets']['match'] = array();
+$priv_list['page-diagnostics-sockets']['match'][] = "diag_sockets.php*";
+
 $priv_list['page-status-ipsec'] = array();
 $priv_list['page-status-ipsec']['name'] = gettext("WebCfg - Status: IPsec page");
 $priv_list['page-status-ipsec']['descr'] = gettext("Allow access to the 'Status: IPsec' page.");

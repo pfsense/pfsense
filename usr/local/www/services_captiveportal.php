@@ -816,7 +816,7 @@ function enable_change(enable_change) {
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Type"); ?></td>
 				<td class="vtable"><select name="radiusvendor" id="radiusvendor">
-				<option><?=gettext("default"); ?></option>
+				<option value="default"><?php echo gettext("default"); ?></option>
 				<?php
 				$radiusvendors = array("cisco");
 				foreach ($radiusvendors as $radiusvendor){
@@ -836,14 +836,14 @@ function enable_change(enable_change) {
         <td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
         <td class="vtable">
         <select name="radmac_format" id="radmac_format">
-        <option><?=gettext("default"); ?></option>
+        <option value="default"><?php echo gettext("default"); ?></option>
         <?php
-        $macformats = array(gettext("singledash"),gettext("ietf"),gettext("cisco"),gettext("unformatted"));
+        $macformats = array("singledash","ietf","cisco","unformatted");
         foreach ($macformats as $macformat) {
             if ($pconfig['radmac_format'] == $macformat)
-                echo "<option selected value=\"$macformat\">$macformat</option>\n";
+                echo "<option selected value=\"$macformat\">",gettext($macformat),"</option>\n";
             else
-                echo "<option value=\"$macformat\">$macformat</option>\n";
+                echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
         }
         ?>
         </select></br>

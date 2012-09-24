@@ -849,11 +849,11 @@ function enable_change(enable_change) {
         </select></br>
         <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
         <?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
-        <?="default:" ?> 00:11:22:33:44:55<br>
-        <?="singledash:"; ?> 001122-334455<br>
-        <?="ietf:"; ?> 00-11-22-33-44-55<br>
-        <?="cisco:"; ?> 0011.2233.4455<br>
-        <?="unformatted:"; ?> 001122334455
+        default: 00:11:22:33:44:55<br>
+        singledash: 001122-334455<br>
+        ietf: 00-11-22-33-44-55<br>
+        cisco: 0011.2233.4455<br>
+        unformatted: 001122334455
     </tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>

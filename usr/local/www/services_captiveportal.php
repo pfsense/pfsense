@@ -816,7 +816,7 @@ function enable_change(enable_change) {
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Type"); ?></td>
 				<td class="vtable"><select name="radiusvendor" id="radiusvendor">
-				<option><?=gettext("default"); ?></option>
+				<option><?="default"; ?></option>
 				<?php
 				$radiusvendors = array("cisco");
 				foreach ($radiusvendors as $radiusvendor){
@@ -836,9 +836,9 @@ function enable_change(enable_change) {
         <td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
         <td class="vtable">
         <select name="radmac_format" id="radmac_format">
-        <option><?=gettext("default"); ?></option>
+        <option><?="default"; ?></option>
         <?php
-        $macformats = array(gettext("singledash"),gettext("ietf"),gettext("cisco"),gettext("unformatted"));
+        $macformats = array("singledash","ietf","cisco","unformatted");
         foreach ($macformats as $macformat) {
             if ($pconfig['radmac_format'] == $macformat)
                 echo "<option selected value=\"$macformat\">$macformat</option>\n";
@@ -849,11 +849,11 @@ function enable_change(enable_change) {
         </select></br>
         <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
         <?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
-        <?=gettext("default:"); ?> 00:11:22:33:44:55<br>
-        <?=gettext("singledash:"); ?> 001122-334455<br>
-        <?=gettext("ietf:"); ?> 00-11-22-33-44-55<br>
-        <?=gettext("cisco:"); ?> 0011.2233.4455<br>
-        <?=gettext("unformatted:"); ?> 001122334455
+        default: 00:11:22:33:44:55<br>
+        singledash: 001122-334455<br>
+        ietf: 00-11-22-33-44-55<br>
+        cisco: 0011.2233.4455<br>
+        unformatted: 001122334455
     </tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>

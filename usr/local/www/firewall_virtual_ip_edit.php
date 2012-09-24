@@ -122,12 +122,12 @@ if ($_POST) {
 	}
 
 	if(is_ipaddrv4($_POST['subnet'])) {
-		if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
-		 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");
+		if(($_POST['subnet_bits'] == "31" or $_POST['subnet_bits'] == "32") and $_POST['mode'] == "carp")
+		 	$input_errors[] = gettext("The /31 and /32 subnet mask are invalid for CARP IPs.");
 	}
 	if(is_ipaddrv6($_POST['subnet'])) {
-		if($_POST['subnet_bits'] == "128" and $_POST['type'] == "carp")
-		 	$input_errors[] = gettext("The /128 subnet mask is invalid for CARP IPs.");
+		if(($_POST['subnet_bits'] == "127" or $_POST['subnet_bits'] == "128")  and $_POST['mode'] == "carp")
+		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
 	}
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {

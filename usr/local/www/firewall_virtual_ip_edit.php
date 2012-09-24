@@ -122,12 +122,12 @@ if ($_POST) {
 	}
 
 	if(is_ipaddrv4($_POST['subnet'])) {
-		if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
-		 	$input_errors[] = gettext("The /32 subnet mask is invalid for CARP IPs.");
+		if(($_POST['subnet_bits'] == "31" or $_POST['subnet_bits'] == "32") and $_POST['mode'] == "carp")
+		 	$input_errors[] = gettext("The /31 and /32 subnet mask are invalid for CARP IPs.");
 	}
 	if(is_ipaddrv6($_POST['subnet'])) {
-		if($_POST['subnet_bits'] == "128" and $_POST['type'] == "carp")
-		 	$input_errors[] = gettext("The /128 subnet mask is invalid for CARP IPs.");
+		if(($_POST['subnet_bits'] == "127" or $_POST['subnet_bits'] == "128")  and $_POST['mode'] == "carp")
+		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
 	}
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {
@@ -359,7 +359,7 @@ function typesel_change() {
 					<input name="mode" type="radio" onclick="enable_change()" value="carp"
 					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
                     <input name="mode" type="radio" onclick="enable_change()" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
+					<?php if ($pconfig['mode'] == "proxyarp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change()" value="other"
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 				  </td>

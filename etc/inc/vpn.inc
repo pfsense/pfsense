@@ -1834,14 +1834,16 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		}
 	}
 	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$family} {$local_subnet} " .
-		"{$remote_subnet} any -P out ipsec " .
-		"{$phase2['protocol']}/tunnel/{$ep}-" .
-		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$family} {$remote_subnet} " .
-		"{$local_subnet} any -P in ipsec " .
-		"{$phase2['protocol']}/tunnel/{$rgip}-" .
-		"{$ep}/unique;\n";
+	if (!isset($phase1['disabled'])) {
+		$spdconf .= "spdadd {$family} {$local_subnet} " .
+			"{$remote_subnet} any -P out ipsec " .
+			"{$phase2['protocol']}/tunnel/{$ep}-" .
+			"{$rgip}/unique;\n";
+		$spdconf .= "spdadd {$family} {$remote_subnet} " .
+			"{$local_subnet} any -P in ipsec " .
+			"{$phase2['protocol']}/tunnel/{$rgip}-" .
+			"{$ep}/unique;\n";
+	}
 
 	log_error(sprintf(gettext("Reloading IPsec tunnel '%1\$s'. Previous IP '%2\$s', current IP '%3\$s'. Reloading policy"), $phase1['descr'], $old_gw, $rgip));
 

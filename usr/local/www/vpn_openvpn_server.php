@@ -76,12 +76,12 @@ else
 
 if ($_GET['act'] == "del") {
 
-	if (!$a_server[$id]) {
+	if (!isset($a_server[$id])) {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
-
-	openvpn_delete('server', $a_server[$id]);
+	if (!empty($a_server[$id]))
+		openvpn_delete('server', $a_server[$id]);
 	unset($a_server[$id]);
 	write_config();
 	$savemsg = gettext("Server successfully deleted")."<br/>";

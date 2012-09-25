@@ -75,12 +75,12 @@ else
 
 if ($_GET['act'] == "del") {
 
-	if (!$a_client[$id]) {
+	if (!isset($a_client[$id])) {
 		pfSenseHeader("vpn_openvpn_client.php");
 		exit;
 	}
-
-	openvpn_delete('client', $a_client[$id]);
+	if (!empty($a_client[$id]))
+		openvpn_delete('client', $a_client[$id]);
 	unset($a_client[$id]);
 	write_config();
 	$savemsg = gettext("Client successfully deleted")."<br/>";

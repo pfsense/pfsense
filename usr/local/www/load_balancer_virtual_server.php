@@ -63,7 +63,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_vs[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_vs)) {
 
 		if (!$input_errors) {
 			unset($a_vs[$_GET['id']]);

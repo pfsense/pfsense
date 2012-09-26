@@ -65,7 +65,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_action[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_action)) {
 		/* make sure no relay protocols reference this entry */
 		if (is_array($config['load_balancer']['lbprotocol'])) {
 			foreach ($config['load_balancer']['lbprotocol'] as $lbp) {

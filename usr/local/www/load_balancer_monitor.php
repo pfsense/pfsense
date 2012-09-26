@@ -64,7 +64,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_monitor[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_monitor)) {
 		/* make sure no pools reference this entry */
 		if (is_array($config['load_balancer']['lbpool'])) {
 			foreach ($config['load_balancer']['lbpool'] as $pool) {

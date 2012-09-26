@@ -63,7 +63,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_protocol[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_protocol)) {
 		/* make sure no virtual servers reference this entry */
 		if (is_array($config['load_balancer']['virtual_server'])) {
 			foreach ($config['load_balancer']['virtual_server'] as $vs) {

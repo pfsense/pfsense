@@ -67,7 +67,7 @@ if ($_GET['act'] == "del") {
 	if ($a_monitor[$_GET['id']]) {
 		/* make sure no pools reference this entry */
 		if (is_array($config['load_balancer']['lbpool'])) {
-			foreach ($config['load_balancer']['pool'] as $pool) {
+			foreach ($config['load_balancer']['lbpool'] as $pool) {
 				if ($pool['monitor'] == $a_monitor[$_GET['id']]['name']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one pool.");
 					break;

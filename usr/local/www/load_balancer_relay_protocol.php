@@ -88,7 +88,7 @@ if ($_GET['act'] == "del") {
 /* for ($i = 0; isset($config['load_balancer']['lbprotocol'][$i]); $i++) {
 	for ($o = 0; isset($config['load_balancer']['lbprotocol'][$i]['options'][$o]); o++) {
 		$a_vs[$i]['options'][$o] = "	
-	$a_vs[$i]['pool'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['pool']]}\">{$a_vs[$i]['pool']}</a>";
+	$a_vs[$i]['poolname'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['poolname']]}\">{$a_vs[$i]['poolname']}</a>";
 	if ($a_vs[$i]['sitedown'] != '') {
 		$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">{$a_vs[$i]['sitedown']}</a>";
 	} else {

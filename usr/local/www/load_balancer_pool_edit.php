@@ -138,8 +138,8 @@ if ($_POST) {
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-				if ($config['load_balancer']['virtual_server'][$i]['pool'] == $a_pool[$id]['name'])
-					$config['load_balancer']['virtual_server'][$i]['pool'] = $poolent['name'];
+				if ($config['load_balancer']['virtual_server'][$i]['lbpool'] == $a_pool[$id]['name'])
+					$config['load_balancer']['virtual_server'][$i]['lbpool'] = $poolent['name'];
 			}
 			$a_pool[$id] = $poolent;
 		} else

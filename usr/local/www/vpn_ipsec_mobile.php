@@ -61,6 +61,7 @@ if (count($a_client)) {
 	$pconfig['net_list'] = $a_client['net_list'];
 	$pconfig['save_passwd'] = $a_client['save_passwd'];
 	$pconfig['dns_domain'] = $a_client['dns_domain'];
+	$pconfig['dns_split'] = $a_client['dns_split'];
 	$pconfig['dns_server1'] = $a_client['dns_server1'];
 	$pconfig['dns_server2'] = $a_client['dns_server2'];
 	$pconfig['dns_server3'] = $a_client['dns_server3'];
@@ -86,6 +87,9 @@ if (count($a_client)) {
 
 	if ($pconfig['dns_domain'])
 		$pconfig['dns_domain_enable'] = true;
+
+	if ($pconfig['dns_split'])
+		$pconfig['dns_split_enable'] = true;
 
 	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4'])
 		$pconfig['dns_server_enable'] = true;
@@ -137,6 +141,18 @@ if ($_POST['submit']) {
 		if (!is_domain($pconfig['dns_domain']))
 			$input_errors[] = gettext("A valid value for 'DNS Default Domain' must be specified.");
 
+	if ($pconfig['dns_split_enable']) {
+		if (!empty($pconfig['dns_split'])) {
+			$domain_array=preg_split("/[ ,]+/",$pconfig['dns_split']);
+			foreach ($domain_array as $curdomain) {
+				if (!is_domain($curdomain)) {
+					$input_errors[] = gettext("A valid split DNS domain list must be specified.");
+					break;
+				}
+			}
+		}
+	}
+
 	if ($pconfig['dns_server_enable']) {
 		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
 			!$pconfig['dns_server3'] && !$pconfig['dns_server4'] )
@@ -186,6 +202,9 @@ if ($_POST['submit']) {
 
 		if ($pconfig['dns_domain_enable'])
 			$client['dns_domain'] = $pconfig['dns_domain'];
+
+		if ($pconfig['dns_split_enable'])
+			$client['dns_split'] = $pconfig['dns_split'];
 
 		if ($pconfig['dns_server_enable']) {
 			$client['dns_server1'] = $pconfig['dns_server1'];
@@ -246,6 +265,14 @@ function dns_domain_change() {
 		document.iform.dns_domain.disabled = 0;
 	else
 		document.iform.dns_domain.disabled = 1;
+}
+
+function dns_split_change() {
+
+	if (document.iform.dns_split_enable.checked)
+		document.iform.dns_split.disabled = 0;
+	else
+		document.iform.dns_split.disabled = 1;
 }
 
 function dns_server_change() {
@@ -475,6 +502,30 @@ function login_banner_change() {
 							</table>
 						</td>
 					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Split DNS"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['dns_split_enable'],$chk); ?>
+										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onClick="dns_split_change()">
+									</td>
+									<td>
+										<?=gettext("Provide a list of split DNS domain names to clients. Enter a comma separated list."); ?><br>
+										<?=gettext("NOTE: If left blank, and a default domain is set, it will be used for this value."); ?>
+									</td>
+								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<input name="dns_split" type="text" class="formfld unknown" id="dns_split" size="30" value="<?=htmlspecialchars($pconfig['dns_split']);?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
@@ -616,6 +667,7 @@ function login_banner_change() {
 <script language="JavaScript">
 pool_change();
 dns_domain_change();
+dns_split_change();
 dns_server_change();
 wins_server_change();
 pfs_group_change();

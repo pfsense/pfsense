@@ -327,8 +327,8 @@ BOUND|RENEW|REBIND|REBOOT)
 			changes="yes"
 		fi
 		if [ "$old_ip_address" != "$new_ip_address" ]; then
-			delete_old_address
 			delete_old_states
+			delete_old_address
 			delete_old_routes
 			changes="yes"
 		fi
@@ -355,8 +355,8 @@ BOUND|RENEW|REBIND|REBOOT)
 EXPIRE|FAIL)
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
-		delete_old_address
 		delete_old_states
+		delete_old_address
 		delete_old_routes
 	fi
 	;;

@@ -390,7 +390,14 @@ function vpn_ipsec_configure($ipchg = false)
 
 				if ($a_client['dns_domain']) {
 					$racoonconf .= "\tdefault_domain \"{$a_client['dns_domain']}\";\n";
-					$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+					if (empty($a_client['dns_split']))
+						$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+				}
+
+				if ($a_client['dns_split']) {
+					$domain_array = preg_split("/[ ,]+/",$a_client['dns_split']);
+					$domain_string = implode('", "', $domain_array);
+					$racoonconf .= "\tsplit_dns \"{$domain_string}\";\n";
 				}
 
 				if ($a_client['pfs_group'])

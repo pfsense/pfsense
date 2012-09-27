@@ -38,6 +38,9 @@ require_once("guiconfig.inc");
 require_once('notices.inc');
 
 if($_REQUEST['getupdatestatus']) {
+	if(isset($config['system']['firmware']['disablecheck'])) {
+		exit;
+	}
 	if(isset($config['system']['firmware']['alturl']['enable']))
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
@@ -93,9 +96,11 @@ $curcfg = $config['system']['firmware'];
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
-                <br />
-                <div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
-                <div id='updatestatus'><br/>Obtaining update status...</div>
+		<br />
+		<div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
+		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
+		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
+		<?php endif; ?>
 			</td>
 		</tr>
 		<?php if(!$g['hideplatform']): ?>
@@ -248,6 +253,10 @@ $curcfg = $config['system']['firmware'];
 	</tbody>
 </table>
 <script type="text/javascript">
+	function swapuname() {
+		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
+	}
+	<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
 	function getstatus() {
 		scroll(0,0);
 		var url = "/widgets/widgets/system_information.widget.php";
@@ -265,8 +274,6 @@ $curcfg = $config['system']['firmware'];
 		// to avoid this we set the innerHTML property
 		jQuery('#updatestatus').prop('innerHTML',transport.responseText);
 	}
-	function swapuname() {
-		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
-	}
 	setTimeout('getstatus()', 4000);
+	<?php endif; ?>
 </script>

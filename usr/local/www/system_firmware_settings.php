@@ -50,12 +50,17 @@ if ($_POST) {
 			unset($config['system']['firmware']['alturl']['enable']);
 			unset($config['system']['firmware']['alturl']['firmwareurl']);
 			unset($config['system']['firmware']['alturl']);
-			unset($config['system']['firmware']);			
+			unset($config['system']['firmware']);
 		}
 		if($_POST['allowinvalidsig'] == "yes")
-                        $config['system']['firmware']['allowinvalidsig'] = true;
-                else
-                        unset($config['system']['firmware']['allowinvalidsig']);
+			$config['system']['firmware']['allowinvalidsig'] = true;
+		else
+			unset($config['system']['firmware']['allowinvalidsig']);
+
+		if($_POST['disablecheck'] == "yes")
+			$config['system']['firmware']['disablecheck'] = true;
+		else
+			unset($config['system']['firmware']['disablecheck']);
 
 		if($_POST['synconupgrade'] == "yes")
 			$config['system']['gitsync']['synconupgrade'] = true;
@@ -164,6 +169,14 @@ function enable_altfirmwareurl(enable_over) {
 			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
 			<br />
 			<?=gettext("Allow auto-update firmware images with a missing or invalid digital signature to be used."); ?>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Dashboard check"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="disablecheck" type="checkbox" id="disablecheck" value="yes" <?php if (isset($curcfg['disablecheck'])) echo "checked"; ?> />
+			<br />
+			<?=gettext("Disable the automatic dashboard auto-update check."); ?>
 		</td>
 	</tr>
 <?php if(file_exists("/usr/local/bin/git") && $g['platform'] == "pfSense"): ?>

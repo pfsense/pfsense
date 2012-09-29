@@ -180,6 +180,7 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="30%" class="listhdrr"><?=gettext("Virtual IP address");?></td>
+                  <td width="10%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Type");?></td>
                   <td width="40%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
@@ -204,6 +205,9 @@ include("head.inc");
 					?>
 					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
                   </td>
+                  <td class="listr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
+                    <?=htmlspecialchars(strtoupper($config['interfaces'][$vipent['interface']]['descr']));?>&nbsp;
+                  </td>
                   <td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias'>";?>
                   </td>
@@ -222,7 +226,7 @@ include("head.inc");
 		<?php endif; ?>
                 <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="3"></td>
+                  <td class="list" colspan="4"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -233,7 +237,7 @@ include("head.inc");
                   </td>
                 </tr>
 		<tr>
-		  <td colspan="4">
+		  <td colspan="5">
 		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
                       </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br>
                       <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>

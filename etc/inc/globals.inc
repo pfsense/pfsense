@@ -100,7 +100,7 @@ $g = array(
 $iptos = array("lowdelay", "throughput", "reliability");
 
 /* TCP flags */
-$tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
+$tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
 if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");

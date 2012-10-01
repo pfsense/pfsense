@@ -202,7 +202,7 @@ include("head.inc");
 			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
-				echo("<td class=\"listrg\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
+				echo("<td class=\"listMRr\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);

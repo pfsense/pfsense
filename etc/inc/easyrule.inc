@@ -136,6 +136,7 @@ function easyrule_block_alias_getid($int = 'wan') {
 function easyrule_block_alias_add($host, $int = 'wan') {
 	global $blockaliasname, $config;
 	/* If the host isn't a valid IP address, bail */
+	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host))
 		return false;
 
@@ -156,6 +157,8 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		list($host, $mask) = explode("/", $host);
 	} elseif (is_specialnet($host)) {
 		$mask = 0;
+	} elseif (is_ipaddrv6($host)) {
+		$mask = 128;
 	} else {
 		$mask = 32;
 	}
@@ -196,6 +199,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 function easyrule_block_host_add($host, $int = 'wan') {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
+	$host = trim($host, "[]");
 	if (!is_ipaddr($host) && !is_subnet($host))
 		return false;
 
@@ -299,6 +303,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 
 function easyrule_parse_block($int, $src) {
 	if (!empty($src) && !empty($int)) {
+		$src = trim($src, "[]");
 		if (!is_ipaddr($src) && !is_subnet($src)) {
 			return gettext("Tried to block invalid IP:") . ' ' . htmlspecialchars($src);
 		}
@@ -319,6 +324,8 @@ function easyrule_parse_block($int, $src) {
 function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = inet) {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;
+	$src = trim($src, "[]");
+	$dst = trim($dst, "[]");
 
 	if (!empty($int) && !empty($proto) && !empty($src) && !empty($dst)) {
 		$int = easyrule_find_rule_interface($int);

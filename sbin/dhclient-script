@@ -59,21 +59,29 @@ arp_flush() {
 }
 
 delete_old_states() {
+	$LOGGER "Starting delete_old_states()"
 	# If the IP changed, remove states from the old one
 	if [ -f /var/db/${interface}_ip ]; then
-		$OLD_IP = `cat /var/db/${interface}_ip`
-		if [ "${OLD_IP}" != "${new_ip_address}" ]; then
-			echo "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')" | logger -t dhclient
+		OLD_IP = `cat /var/db/${interface}_ip`
+		$LOGGER "Comparing IPs: Old: ${OLD_IP} New: ${new_ip_address}"
+		if [ -n "${OLD_IP}" ] && [ "${OLD_IP}" != "${new_ip_address}" ]; then
+			$LOGGER "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')"
 			/sbin/pfctl -k 0.0.0.0/0 -k ${OLD_IP}/32
 			/sbin/pfctl -k ${OLD_IP}/32
 			pfctl -K ${OLD_IP}/32
 		fi
 	fi
 	# Delete states through old gateway if it's not the same
-	if [ -f /tmp/${interface}_router ]; then
-		$OLD_ROUTER = `cat /tmp/${interface}_router`
+	if [ -n "${old_routers}" ]; then
+		OLD_ROUTER = $old_routers
+	fi
+	if [ -z "${OLD_ROUTER}" ] && [ -f /tmp/${interface}_router ]; then
+		OLD_ROUTER = `cat /tmp/${interface}_router`
+	fi
+	if [ -n $OLD_ROUTER ]; then
+		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
 		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
-			echo "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')" | logger -t dhclient
+			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"
 			/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
 		fi
 	fi
@@ -103,7 +111,7 @@ add_new_address() {
 
 
 	# This is necessary otherwise apinger will try to ping all 1s address
-	if [ "$new_routers" != "255.255.255.255" ]; then
+	if [ -n "$new_routers" ] && [ "$new_routers" != "255.255.255.255" ]; then
 		echo $new_routers > /tmp/${interface}_router
 	fi
 	echo $new_ip_address > /var/db/${interface}_ip
@@ -311,6 +319,7 @@ MEDIUM)
 PREINIT)
 	delete_old_alias
 	$IFCONFIG $interface inet 0.0.0.0 netmask 0.0.0.0 broadcast 255.255.255.255 up
+	delete_old_states
 	/bin/rm -f /tmp/${interface}_router
 	;;
 
@@ -320,6 +329,9 @@ ARPCHECK|ARPSEND)
 BOUND|RENEW|REBIND|REBOOT)
 	check_hostname
 	changes="no"
+	if [ "$old_ip_address" != "$new_ip_address" ]; then
+		delete_old_states
+	fi
 	if [ -n "$old_ip_address" ]; then
 		if [ -n "$alias_ip_address" ] && \
 		   [ "$old_ip_address" != "$alias_ip_address" ]; then
@@ -328,7 +340,6 @@ BOUND|RENEW|REBIND|REBOOT)
 		fi
 		if [ "$old_ip_address" != "$new_ip_address" ]; then
 			delete_old_address
-			delete_old_states
 			delete_old_routes
 			changes="yes"
 		fi
@@ -354,9 +365,9 @@ BOUND|RENEW|REBIND|REBOOT)
 
 EXPIRE|FAIL)
 	delete_old_alias
+	delete_old_states
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address
-		delete_old_states
 		delete_old_routes
 	fi
 	;;

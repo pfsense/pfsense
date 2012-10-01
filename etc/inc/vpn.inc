@@ -390,7 +390,14 @@ function vpn_ipsec_configure($ipchg = false)
 
 				if ($a_client['dns_domain']) {
 					$racoonconf .= "\tdefault_domain \"{$a_client['dns_domain']}\";\n";
-					$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+					if (empty($a_client['dns_split']))
+						$racoonconf .= "\tsplit_dns \"{$a_client['dns_domain']}\";\n";
+				}
+
+				if ($a_client['dns_split']) {
+					$domain_array = preg_split("/[ ,]+/",$a_client['dns_split']);
+					$domain_string = implode('", "', $domain_array);
+					$racoonconf .= "\tsplit_dns \"{$domain_string}\";\n";
 				}
 
 				if ($a_client['pfs_group'])
@@ -1834,14 +1841,16 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		}
 	}
 	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$family} {$local_subnet} " .
-		"{$remote_subnet} any -P out ipsec " .
-		"{$phase2['protocol']}/tunnel/{$ep}-" .
-		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$family} {$remote_subnet} " .
-		"{$local_subnet} any -P in ipsec " .
-		"{$phase2['protocol']}/tunnel/{$rgip}-" .
-		"{$ep}/unique;\n";
+	if (!isset($phase1['disabled'])) {
+		$spdconf .= "spdadd {$family} {$local_subnet} " .
+			"{$remote_subnet} any -P out ipsec " .
+			"{$phase2['protocol']}/tunnel/{$ep}-" .
+			"{$rgip}/unique;\n";
+		$spdconf .= "spdadd {$family} {$remote_subnet} " .
+			"{$local_subnet} any -P in ipsec " .
+			"{$phase2['protocol']}/tunnel/{$rgip}-" .
+			"{$ep}/unique;\n";
+	}
 
 	log_error(sprintf(gettext("Reloading IPsec tunnel '%1\$s'. Previous IP '%2\$s', current IP '%3\$s'. Reloading policy"), $phase1['descr'], $old_gw, $rgip));
 

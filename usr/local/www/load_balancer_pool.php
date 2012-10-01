@@ -64,11 +64,11 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_pool[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_pool)) {
 		/* make sure no virtual servers reference this entry */
 		if (is_array($config['load_balancer']['virtual_server'])) {
 			foreach ($config['load_balancer']['virtual_server'] as $vs) {
-				if ($vs['pool'] == $a_pool[$_GET['id']]['name']) {
+				if ($vs['poolname'] == $a_pool[$_GET['id']]['name']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one virtual server.");
 					break;
 				}

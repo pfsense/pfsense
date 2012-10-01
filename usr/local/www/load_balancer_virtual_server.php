@@ -63,7 +63,7 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_vs[$_GET['id']]) {
+	if (array_key_exists($_GET['id'], $a_vs)) {
 
 		if (!$input_errors) {
 			unset($a_vs[$_GET['id']]);
@@ -82,7 +82,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 }
 for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	if($a_vs[$i]) {
-		$a_vs[$i]['pool'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['pool']]}\">{$a_vs[$i]['pool']}</a>";
+		$a_vs[$i]['poolname'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['poolname']]}\">{$a_vs[$i]['poolname']}</a>";
 		if ($a_vs[$i]['sitedown'] != '') {
 			$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">{$a_vs[$i]['sitedown']}</a>";
 		} else {
@@ -128,7 +128,7 @@ include("head.inc");
 			$t->add_column(gettext('Protocol'),'relay_protocol',10);
 			$t->add_column(gettext('IP Address'),'ipaddr',15);
 			$t->add_column(gettext('Port'),'port',10);
-			$t->add_column(gettext('Pool'),'pool',15);
+			$t->add_column(gettext('Pool'),'poolname',15);
 			$t->add_column(gettext('Fall Back Pool'),'sitedown',15);
 			$t->add_column(gettext('Description'),'descr',30);
 			$t->add_button('edit');

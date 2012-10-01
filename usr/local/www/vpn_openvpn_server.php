@@ -76,12 +76,12 @@ else
 
 if ($_GET['act'] == "del") {
 
-	if (!$a_server[$id]) {
+	if (!isset($a_server[$id])) {
 		pfSenseHeader("vpn_openvpn_server.php");
 		exit;
 	}
-
-	openvpn_delete('server', $a_server[$id]);
+	if (!empty($a_server[$id]))
+		openvpn_delete('server', $a_server[$id]);
 	unset($a_server[$id]);
 	write_config();
 	$savemsg = gettext("Server successfully deleted")."<br/>";
@@ -201,9 +201,6 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-
-	if ($pconfig['dev_mode'] <> $a_server[$id]['dev_mode'])
-		openvpn_delete('server', $a_server[$id]);// delete(rename) interface so a new TUN or TAP interface can be created.
 
 	if (isset($id) && $a_server[$id])
 		$vpnid = $a_server[$id]['vpnid'];

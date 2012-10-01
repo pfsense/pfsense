@@ -905,6 +905,8 @@ function upgrade_045_to_046() {
 				$pool['behaviour'] = 'balance';
 				$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
 				$pool['descr'] = sprintf(gettext("Sitedown pool for VS: %s"), $vs_a[$i]['name']);
+				if (is_array($vs_a[$i]['pool']))
+					$vs_a[$i]['pool'] = $vs_a[$i]['pool'][0];
 				$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
 				$pool['servers'] = array();
 				$pool['servers'][] = $vs_a[$i]['sitedown'];
@@ -2929,5 +2931,20 @@ function upgrade_088_to_089() {
       }
     }
   }
+}
+function upgrade_089_to_090() {
+	global $config;
+	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
+		$vs_a = &$config['load_balancer']['virtual_server'];
+		for ($i = 0; isset($vs_a[$i]); $i++) {
+			if (is_array($vs_a[$i]['pool'])) {
+				$vs_a[$i]['poolname'] = $vs_a[$i]['pool'][0];
+				unset($vs_a[$i]['pool']);
+			} elseif (!empty($vs_a[$i]['pool'])) {
+				$vs_a[$i]['poolname'] = $vs_a[$i]['pool'];
+				unset($vs_a[$i]['pool']);
+			}
+		}
+	}
 }
 ?>

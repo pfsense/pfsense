@@ -657,6 +657,58 @@ function return_gateways_array($disabled = false, $localhost = false) {
 	return($gateways_arr);
 }
 
+function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
+	global $config, $g;
+	/*
+	 * NOTE: The code below is meant to replace the default gateway when it goes down.
+	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
+	 */
+	$upgw = "";
+	$dfltgwdown = false;
+	$dfltgwfound = false;
+	foreach ($gateways_arr as $gwname => $gwsttng) {
+		if (($gwsttng['ipprotocol'] == $ipprotocol) && isset($gwsttng['defaultgw'])) {
+			$dfltgwfound = true;
+			$dfltgwname = $gwname;
+			if (!isset($gwsttng['monitor_disable']) && stristr($gateways_status[$gwname]['status'], "down"))
+				$dfltgwdown = true;
+		}
+		/* Keep a record of the last up gateway */
+		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
+		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")) && $gwsttng[$gwname]['friendlyiface'] != "lan")
+			$upgw = $gwname;
+		if ($dfltgwdown == true && !empty($upgw))
+			break;
+	}
+	if ($dfltgwfound == false) {
+		$gwname = convert_friendly_interface_to_friendly_descr("wan");
+		if (!empty($gateways_status[$gwname]) && stristr($gateways_status[$gwname]['status'], "down"))
+			$dfltgwdown = true;
+	}
+	if ($dfltgwdown == true && !empty($upgw)) {
+		if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
+			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
+		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
+			log_error("Default gateway down setting {$upgw} as default!");
+			if(is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
+				$inetfamily = "-inet6";
+			} else {
+				$inetfamily = "-inet";
+			}
+			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
+		}
+	} else {
+		$defaultgw = trim(`/sbin/route -n get -{$ipprotocol} default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
+		if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
+			$inetfamily = "-inet6";
+		} else {
+			$inetfamily = "-inet";
+		}
+		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
+			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$dfltgwname]['gateway']}");
+	}
+}
+
 /*
  * Return an array with all gateway groups with name as key
  * All gateway groups will be processed before returning the array.
@@ -671,56 +723,8 @@ function return_gateway_groups_array() {
 	$carplist = get_configured_carp_interface_list();
 
 	if (isset($config['system']['gw_switch_default'])) {
-		/* 
-		 * NOTE: The code below is meant to replace the default gateway when it goes down.
-		 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
-		 */
-		$upgw = "";
-		$dfltgwdown = false;
-		$dfltgwfound = false;
-		foreach ($gateways_arr as $gwname => $gwsttng) {
-			if (isset($gwsttng['defaultgw'])) {
-				$dfltgwfound = true;
-				$dfltgwname = $gwname;
-				if (!isset($gwsttng['monitor_disable']) && stristr($gateways_status[$gwname]['status'], "down"))
-					$dfltgwdown = true;
-			}
-			/* Keep a record of the last up gateway */
-			/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-			if (empty($upgw) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")) && $gwsttng[$gwname]['friendlyiface'] != "lan")
-				$upgw = $gwname;
-			if ($dfltgwdown == true && !empty($upgw))
-				break;
-		}
-		if ($dfltgwfound == false) {
-			$gwname = convert_friendly_interface_to_friendly_descr("wan");
-			if (!empty($gateways_status[$gwname]) && stristr($gateways_status[$gwname]['status'], "down"))
-				$dfltgwdown = true;
-		}
-		if ($dfltgwdown == true && !empty($upgw)) {
-			if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
-				$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
-			if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
-				log_error("Default gateway down setting {$upgw} as default!");
-				if(is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
-					$inetfamily = "-inet6";
-				} else {
-					$inetfamily = "-inet";
-				}
-				mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
-			}
-		} else {
-			$defaultgw = trim(`/sbin/route -n get -inet default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
-			if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
-				$inetfamily = "-inet6";
-			} else {
-				$inetfamily = "-inet";
-			}
-			if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
-				mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$dfltgwname]['gateway']}");
-		}
-				
-		unset($upgw, $dfltgwfound, $dfltgwdown, $gwname, $gwsttng);
+		fixup_default_gateway("inet", $gateways_status, $gateways_arr);
+		fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 	}
 	if (is_array($config['gateways']['gateway_group'])) {
 		foreach($config['gateways']['gateway_group'] as $group) {

@@ -1153,6 +1153,12 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
+	$old_router = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"));
+//	log_error("Checking for old router states: {$g['tmp_path']}/{$realif}_router = {$old_router}");
+	if (!empty($old_router)) {
+		log_error("Clearing states to old gateway {$old_router}.");
+		mwexec("/sbin/pfctl -b 0.0.0.0/32 -b {$old_router}/32");
+	}
 
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");

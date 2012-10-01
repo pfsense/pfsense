@@ -780,80 +780,86 @@ function sshkeyClicked(obj) {
 
 				<?php else: ?>
 
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
-					<tr>
-						<td width="25%" class="listhdrr"><?=gettext("Username"); ?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Full name"); ?></td>
-						<td width="5%" class="listhdrr"><?=gettext("Disabled"); ?></td>
-						<td width="25%" class="listhdrr"><?=gettext("Groups"); ?></td>
-						<td width="10%" class="list"></td>
-					</tr>
-					<?php
-						$i = 0;
-						foreach($a_user as $userent):
-					?>
-					<tr ondblclick="document.location='system_usermanager.php?act=edit&id=<?=$i;?>'">
-						<td class="listlr">
-							<table border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td align="left" valign="center">
-										<?php
-											if($userent['scope'] != "user")
-												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
-											else
-												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
-										?>
-										<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
-									</td>
-									<td align="left" valign="middle">
-										<?=htmlspecialchars($userent['name']);?>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
-						<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
-						<td class="listbg">
-								<?=implode(",",local_user_get_groups($userent));?>
-							&nbsp;
-						</td>
-						<td valign="middle" nowrap class="list">
-							<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" alt="<?=gettext("edit user"); ?>" width="17" height="17" border="0" />
-							</a>
-							<?php if($userent['scope'] != "system"): ?>
-							&nbsp;
-							<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" alt="<?=gettext("delete user"); ?>" width="17" height="17" border="0" />
-							</a>
-							<?php endif; ?>
-						</td>
-					</tr>
-					<?php
-							$i++;
-						endforeach;
-					?>
-					<tr>
-						<td class="list" colspan="4"></td>
-						<td class="list">
-							<a href="system_usermanager.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" alt="<?=gettext("add user"); ?>" width="17" height="17" border="0" />
-							</a>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<p>
-								<?=gettext("Additional users can be added here. User permissions for accessing " .
-								"the webConfigurator can be assigned directly or inherited from group memberships. " .
-								"An icon that appears grey indicates that it is a system defined object. " .
-								"Some system object properties can be modified but they cannot be deleted."); ?>
-								<br/><br/>
-								<?=gettext("Accounts created here are also used for other parts of the system " .
-								"such as OpenVPN, IPsec, and Captive Portal.");?>
-							</p>
-						</td>
-					</tr>
+				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th width="25%" class="listhdrr"><?=gettext("Username"); ?></th>
+							<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
+							<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
+							<th width="25%" class="listhdrr"><?=gettext("Groups"); ?></th>
+							<th width="10%" class="list"></td>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+							$i = 0;
+							foreach($a_user as $userent):
+						?>
+						<tr ondblclick="document.location='system_usermanager.php?act=edit&id=<?=$i;?>'">
+							<td class="listlr">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td align="left" valign="center">
+											<?php
+												if($userent['scope'] != "user")
+													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
+												else
+													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
+											?>
+											<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
+										</td>
+										<td align="left" valign="middle">
+											<?=htmlspecialchars($userent['name']);?>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
+							<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
+							<td class="listbg">
+									<?=implode(",",local_user_get_groups($userent));?>
+								&nbsp;
+							</td>
+							<td valign="middle" nowrap class="list">
+								<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" alt="<?=gettext("edit user"); ?>" width="17" height="17" border="0" />
+								</a>
+								<?php if($userent['scope'] != "system"): ?>
+								&nbsp;
+								<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" alt="<?=gettext("delete user"); ?>" width="17" height="17" border="0" />
+								</a>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<?php
+								$i++;
+							endforeach;
+						?>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td class="list" colspan="4"></td>
+							<td class="list">
+								<a href="system_usermanager.php?act=new">
+									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" alt="<?=gettext("add user"); ?>" width="17" height="17" border="0" />
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4">
+								<p>
+									<?=gettext("Additional users can be added here. User permissions for accessing " .
+									"the webConfigurator can be assigned directly or inherited from group memberships. " .
+									"An icon that appears grey indicates that it is a system defined object. " .
+									"Some system object properties can be modified but they cannot be deleted."); ?>
+									<br/><br/>
+									<?=gettext("Accounts created here are also used for other parts of the system " .
+									"such as OpenVPN, IPsec, and Captive Portal.");?>
+								</p>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 
 				<?php endif; ?>

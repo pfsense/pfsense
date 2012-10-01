@@ -107,7 +107,7 @@ if ($_POST) {
 
 		update_if_changed("name", $vsent['name'], $_POST['name']);
 		update_if_changed("descr", $vsent['descr'], $_POST['descr']);
-		update_if_changed("pool", $vsent['pool'], $_POST['pool']);
+		update_if_changed("poolname", $vsent['poolname'], $_POST['poolname']);
 		update_if_changed("port", $vsent['port'], $_POST['port']);
 		update_if_changed("sitedown", $vsent['sitedown'], $_POST['sitedown']);
 		update_if_changed("ipaddr", $vsent['ipaddr'], $_POST['ipaddr']);
@@ -198,11 +198,11 @@ include("head.inc");
 			<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
 				<b><?=gettext("NOTE:"); ?></b> <?=gettext("Please add a pool on the Pools tab to use this feature."); ?>
 			<?php else: ?>
-				<select id="pool" name="pool">
+				<select id="poolname" name="poolname">
 			<?php
 				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 					$selected = "";
-					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] )
+					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['poolname'] )
 						$selected = " SELECTED";
 					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 				}

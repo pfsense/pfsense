@@ -9,14 +9,15 @@ if [ "$3" != "" ]; then
 	/sbin/pfctl -k $3/32
 	pfctl -K $3/32
 fi
-if [ "$4" != "" ]; then
-	echo "Removing states to $4" | logger -t ppp-linkdown
-	/sbin/pfctl -b 0.0.0.0/32 -b $4/32
+
+OLD_ROUTER=`/bin/cat /tmp/${1}_router`
+if [ "${OLD_ROUTER}" != "" ]; then
+	echo "Removing states to ${OLD_ROUTER}" | logger -t ppp-linkdown
+	/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
 
 	if [ -f "/tmp/${interface}_defaultgw" ]; then
-		route delete default $4
+		route delete default ${OLD_ROUTER}
 	fi
-
 fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:

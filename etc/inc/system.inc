@@ -1287,6 +1287,7 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";
 	$ntpcfg .= "# \n\n";
+	$ntpcfg .= "tinker panic 0 \n";
 
 	if (!empty($config['ntpd']['gpsport'])
 		&& file_exists('/dev/'.$config['ntpd']['gpsport'])

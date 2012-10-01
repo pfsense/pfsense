@@ -18,7 +18,7 @@ else
  *  If this device is an apple ipod/iphone
  *  switch the theme to one that works with it.
  */
-$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi");
+$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook");
 foreach($lowres_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = empty($g['theme_lowres']) ? "pfsense" : $g['theme_lowres'];

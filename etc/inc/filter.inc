@@ -2213,7 +2213,7 @@ function filter_generate_user_rule($rule) {
 					$flags2 = explode(",", $rule['tcpflags2']);
 					foreach ($flags2 as $flag2) {
 						// CWR flag needs special treatment
-						if($flag1[0] == "c")
+						if($flag2[0] == "c")
 							$aline['flags'] .= "W";
 						else
 							$aline['flags'] .= strtoupper($flag2[0]);

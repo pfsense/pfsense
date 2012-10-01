@@ -219,7 +219,7 @@ $wkports = array(
 	5900 => "VNC");
 
 /* TCP flags */
-$tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
+$tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg", "ece", "cwr");
 
 $specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 

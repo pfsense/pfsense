@@ -37,7 +37,7 @@
 require 'config.inc';
 
 /* format filter logs */
-function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
+function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
 	global $config, $g;
 
 	/* Make sure this is a number before using it in a system call */
@@ -63,15 +63,18 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
 	$counter = 0;
 
 	$logarr = array_reverse(collapse_filter_lines(array_reverse($logarr)));
-
+	$filterinterface = strtoupper($filterinterface);
 	foreach ($logarr as $logent) {
 		if($counter >= $nentries)
 			break;
 
 		$flent = parse_filter_line($logent);
-		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
-			$counter++;
-			$filterlog[] = $flent;
+		if (!$filterinterface || ($filterinterface == $flent['interface']))
+		{
+			if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+				$counter++;
+				$filterlog[] = $flent;
+			}
 		}
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */

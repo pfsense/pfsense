@@ -46,37 +46,26 @@
 require("guiconfig.inc");
 require_once("filter_log.inc");
 
-if($_GET['getrulenum'] or $_POST['getrulenum']) {
-	if($_GET['getrulenum'])
-		$rulenum = $_GET['getrulenum'];
-	if($_POST['getrulenum'])
-		$rulenum = $_POST['getrulenum'];
+function getGETPOSTsettingvalue($settingname, $default)
+{
+	$settingvalue = $default;
+	if($_GET[$settingname])
+		$settingvalue = $_GET[$settingname];
+	if($_POST[$settingname])
+		$settingvalue = $_POST[$settingname];
+	return $settingvalue;
+}
+
+$rulenum = getGETPOSTsettingvalue('getrulenum', null);
+if($rulenum) {
 	list($rulenum, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $type);
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
 }
 
-if($_GET['dnsip'] or $_POST['dnsip']) {
-	if($_GET['dnsip'])
-		$dnsip = $_GET['dnsip'];
-	if($_POST['dnsip'])
-		$dnsip = $_POST['dnsip'];
-	$host = get_reverse_dns($dnsip);
-	if ($host == $ip) {
-		$host = "No PTR Record";
-	}
-	echo "IP: {$dnsip}\nHost: {$host}";
-	exit;
-}
-
-$filtertext = "";
-if($_GET['filtertext'] or $_POST['filtertext']) {
-	if($_GET['filtertext'])
-		$filtertext = htmlspecialchars($_GET['filtertext']);
-	if($_POST['filtertext'])
-		$filtertext = htmlspecialchars($_POST['filtertext']);
-}
+$interfacefilter = getGETPOSTsettingvalue('interface', null);
+$filtertext = htmlspecialchars(getGETPOSTsettingvalue('filtertext', ""));
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
@@ -122,6 +111,38 @@ include("head.inc");
 				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
 				<div style="float: right; vertical-align:middle">
 					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
+						<select name="interface" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
+						<option value="" <?=$interfacefilter?"":"selected"?>>*Any interface</option>
+						<?php						
+						$iflist = get_configured_interface_with_descr(false, true);
+						//$iflist = get_interface_list();
+						// Allow extending of the firewall edit interfaces 
+						pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
+						foreach ($iflist as $if => $ifdesc)
+							$interfaces[$if] = $ifdesc;
+
+						if ($config['l2tp']['mode'] == "server")
+							$interfaces['l2tp'] = "L2TP VPN";
+
+						if ($config['pptpd']['mode'] == "server")
+							$interfaces['pptp'] = "PPTP VPN";
+
+						if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+							$interfaces['pppoe'] = "PPPoE VPN";
+
+						/* add ipsec interfaces */
+						if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+							$interfaces["enc0"] = "IPsec";
+
+						/* add openvpn/tun interfaces */
+						if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+							$interfaces["openvpn"] = "OpenVPN";
+						
+						foreach ($interfaces as $iface => $ifacename): ?>
+						<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected":"";?>><?=htmlspecialchars($ifacename);?></option>
+						<?php endforeach; ?>
+						</select>	
+						
 						<input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" value="<?=gettext($filtertext);?>" />
 						<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" />
 					</form>
@@ -138,7 +159,10 @@ include("head.inc");
 				</td>	
 			</tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
-	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
+	$iflist = get_configured_interface_with_descr(false, true);
+	if ($iflist[$interfacefilter])
+		$interfacefilter = $iflist[$interfacefilter];
+	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
 ?>
 			<tr>
 			  <td colspan="<?=$config['syslog']['filterdescriptions']==="1"?7:6?>" class="listtopic">
@@ -178,7 +202,7 @@ include("head.inc");
 			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
-				echo("<td class=\"listrg\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
+				echo("<td class=\"listMRr\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);

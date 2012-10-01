@@ -1822,10 +1822,15 @@ function interfaces_carp_setup() {
 	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issues
 	 * for existing sessions.
 	 */
-	$i = 0;
-	while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
-		$i++;
-		sleep(1);
+	if ($config['hasync']['pfsyncenabled'] === "on"){
+		echo "waiting for pfsync...";
+		$i = 0;
+		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
+			$i++;
+			sleep(1);
+		}
+		echo "pfsync done in $i seconds.\n";
+		echo "Configuring CARP settings finalize...";
 	}
 
 	if($config['virtualip']['vip'])

@@ -108,17 +108,17 @@ $clients = openvpn_get_active_clients();
 			</tr>
 			<?php $rowIndex = 0;
 			foreach ($server['conns'] as $conn): 
-			$evenRowClass = $rowIndex % 2 ? " listEven" : " listOdd";
+			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;			
 			?>
 			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listlrg">
+				<td class="listMRlr">
 					<?=$conn['common_name'];?>
 				</td>
-				<td class="listrg">
+				<td class="listMRr">
 					<?=$conn['remote_host'];?>
 				</td>
-				<td class='listg' rowspan="2">
+				<td class='listMR' rowspan="2">
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
 					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
@@ -126,10 +126,10 @@ $clients = openvpn_get_active_clients();
 				</td>
 			</tr>
 			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
-				<td class="listlrg">
+				<td class="listMRlr">
 					<?=$conn['connect_time'];?>
 				</td>
-				<td class="listrg">
+				<td class="listMRr">
 					<?=$conn['virtual_addr'];?>
 				</td>
 			</tr>

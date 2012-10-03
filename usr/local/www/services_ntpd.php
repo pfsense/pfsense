@@ -61,7 +61,7 @@ if ($_POST) {
 
 		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
 			$config['ntpd']['gpsport'] = $_POST['gpsport'];
-		else
+		elseif (isset($config['ntpd']['gpsport']))
 			unset($config['ntpd']['gpsport']);
 
 		write_config("Updated NTP Server Settings");

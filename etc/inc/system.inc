@@ -1311,6 +1311,8 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg .= "statsdir {$statsdir}\n";
 	$ntpcfg .= "logconfig =syncall +clockall\n";
 	$ntpcfg .= "driftfile {$driftfile}\n";
+	$ntpcfg .= "restrict default kod nomodify notrap nopeer\n";
+	$ntpcfg .= "restrict -6 default kod nomodify notrap nopeer\n";
 
 	if (empty($config['ntpd']['interface']))
 		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface']))

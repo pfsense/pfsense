@@ -257,7 +257,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$limitrules .= "set limit tables {$maxtables}\n";
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries']))
-		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
+		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
 
 	if ($config['system']['optimization'] <> "") {
 		$limitrules .= "set optimization {$config['system']['optimization']}\n";

@@ -708,6 +708,19 @@ EOD;
 								continue;
 							}
 							$localid_spec = $localid_type." ".$localid_data." any";
+							if (!empty($ph2ent['natlocalid'])) {
+								$localid_spec += "nat ";
+								if ($ph2ent['natlocalid']['type'] != "address")
+									$localid_spec += "subnet ";
+								else
+									$localid_spec += "address ";
+								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
+								if (!is_ipaddr($natlocalid_data) && !is_subnet($natlocalid_data)) {
+									log_error("Invalid IPsec Phase 2(NAT) \"{$ph2ent['descr']}\" - {$ph2ent['natlocalid']['type']} has no subnet.");
+									continue;
+								}
+								$localid_spec += "{$natlocalid_data} any";
+							}
 						}
 
 						if (!isset($ph2ent['mobile'])) {
@@ -841,6 +854,7 @@ EOD;
 		}
 
 		$spdconf = "";
+		$natfilterrules = false;
 		if (is_array($a_phase2) && count($a_phase2)) {
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
 			if ($config['interfaces']['lan']) {
@@ -899,8 +913,14 @@ EOD;
 					$spdconf .= "spdadd {$family} {$localid} {$remoteid} any -P out ipsec " .
 						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
 
-					$spdconf .= "spdadd {$family} {$remoteid} {$localid} any -P in ipsec " .
-						"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
+					if (!empty($ph2ent['natlocalid'])) {
+						$natlocalid = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true);
+						$spdconf .= "spdadd {$family} {$remoteid} {$natlocalid} any -P in ipsec " .
+							"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
+						$natfilterrules = true;
+					} else
+						$spdconf .= "spdadd {$family} {$remoteid} {$localid} any -P in ipsec " .
+							"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
 
 				} else {
 
@@ -940,7 +960,6 @@ EOD;
 					}
 				} 
 			}
-
 		}
 		fwrite($fd, $spdconf);
 		fclose($fd);
@@ -969,6 +988,8 @@ EOD;
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 
 		}
+		if ($natfilterrules == true)
+			filter_configure();
 		/* start filterdns, if necessary */
 		if (count($filterdns_list) > 0) {
 			$interval = 60;
@@ -1809,6 +1830,8 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 			"{$old_remote_subnet} any -P out ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_ep}-" .
 			"{$old_gw}/unique;\n";
+		if (!empty($old_phase2['natlocalid']))
+			$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['natlocalid']);
 		$spdconf .= "spddelete {$family} {$old_remote_subnet} " .
 			"{$old_local_subnet} any -P in ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_gw}-" .
@@ -1846,6 +1869,9 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 			"{$remote_subnet} any -P out ipsec " .
 			"{$phase2['protocol']}/tunnel/{$ep}-" .
 			"{$rgip}/unique;\n";
+
+		if (!empty($phase2['natlocalid']))
+			$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid']);
 		$spdconf .= "spdadd {$family} {$remote_subnet} " .
 			"{$local_subnet} any -P in ipsec " .
 			"{$phase2['protocol']}/tunnel/{$rgip}-" .

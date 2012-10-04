@@ -1435,6 +1435,27 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	/* ipsec nat */
+	if (is_array($config['ipsec']) && isset($config['ipsec']['enable'])) {
+		if (is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as $ph2ent) {
+				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
+					require_once("ipsec.inc");
+					if ($ph2ent['natlocalid']['type'] == "address")
+						$nataction = "nat";
+					else
+						$nataction = "binat";
+					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
+					if ($local_subnet == "0.0.0.0/0")
+						continue;
+					$natlocal_subnet = ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
+					if ($natlocal_subnet == "0.0.0.0/0")
+						continue;
+					$natrules .= "{$nataction} on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
+				}
+			}
+		}
+	}
 
 	$natrules .= "\n# Outbound NAT rules\n";
 	/* outbound rules - advanced or standard */

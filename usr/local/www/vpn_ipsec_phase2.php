@@ -66,6 +66,8 @@ if (isset($p2index) && $a_phase2[$p2index])
 	$pconfig['descr'] = $a_phase2[$p2index]['descr'];
 	$old_ph2ent = $a_phase2[$p2index];
 
+	if (!empty($a_phase2[$p2index]['natlocalid']))
+		idinfo_to_pconfig("natlocal",$a_phase2[$p2index]['natlocalid'],$pconfig);
 	idinfo_to_pconfig("local",$a_phase2[$p2index]['localid'],$pconfig);
 	idinfo_to_pconfig("remote",$a_phase2[$p2index]['remoteid'],$pconfig);
 
@@ -129,12 +131,29 @@ if ($_POST) {
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
 				break;
 		}
+		switch ($pconfig['natlocalid_type']) {
+			case "network":
+				if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
+					$input_errors[] = gettext("A valid nat local network bit count must be specified.");
+			case "address":
+				if (!$pconfig['natlocalid_address'] || !is_ipaddr($pconfig['natlocalid_address']))
+					$input_errors[] = gettext("A valid nat local network IP address must be specified.");
+				break;
+		}
 
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
 		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
 			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
 			$address = get_interface_ip($pconfig['localid_type']);
 			$netbits = get_interface_subnet($pconfig['localid_type']);
+
+			if (empty($address) || empty($netbits))
+				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
+		}
+		if (is_array($config['interfaces'][$pconfig['natlocalid_type']])) {
+			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
+			$address = get_interface_ip($pconfig['natlocalid_type']);
+			$netbits = get_interface_subnet($pconfig['natlocalid_type']);
 
 			if (empty($address) || empty($netbits))
 				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
@@ -227,6 +246,8 @@ if ($_POST) {
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
 
 		if(($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6")){
+			if (!empty($pconfig['natlocalid_type']))
+				$ph2ent['natlocalid'] = pconfig_to_idinfo("natlocal",$pconfig);
 			$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
 			$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
 		}
@@ -294,6 +315,47 @@ function change_mode() {
 <?php if (!isset($pconfig['mobile'])): ?>
 		document.getElementById('opt_remoteid').style.display = 'none';
 <?php endif; ?>
+	}
+}
+
+function typesel_change_natlocal(bits) {
+	var value = document.iform.mode.options[index].value;
+	if (typeof(bits) === "undefined") {
+		if (value === "tunnel") {
+			bits = 24;
+		}
+		else if (value === "tunnel6") {
+			bits = 64;
+		}
+	}
+	var address_is_blank = !/\S/.test(document.iform.natlocalid_address.value);
+	switch (document.iform.natlocalid_type.selectedIndex) {
+		case 0:	/* single */
+			document.iform.natlocalid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.natlocalid_netbits.value = 0;
+			}
+			document.iform.natlocalid_netbits.disabled = 1;
+			break;
+		case 1:	/* network */
+			document.iform.natlocalid_address.disabled = 0;
+			if (address_is_blank) {
+				document.iform.natlocalid_netbits.value = bits;
+			}
+			document.iform.natlocalid_netbits.disabled = 0;
+			break;
+		case 3:	/* none */
+			document.iform.natlocalid_address.disabled = 1;
+			document.iform.natlocalid_netbits.disabled = 1;
+			break;
+		default:
+			document.iform.natlocalid_address.value = "";
+			document.iform.natlocalid_address.disabled = 1;
+			if (address_is_blank) {
+				document.iform.natlocalid_netbits.value = 0;
+			}
+			document.iform.natlocalid_netbits.disabled = 1;
+			break;
 	}
 }
 
@@ -470,6 +532,42 @@ function change_protocol() {
 										<select name="localid_netbits" class="formselect ipv4v6" id="localid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--): ?>
 											<option value="<?=$i;?>" <?php if (isset($pconfig['localid_netbits']) && $i == $pconfig['localid_netbits']) echo "selected"; ?>>
+												<?=$i;?>
+											</option>
+										<?php endfor; ?>
+										</select>
+									</td>
+								</tr>
+								<tr> <td colspan="3">
+								<br/>
+								<?php echo gettext("In case you need NAT/BINAT on this network specify the address to be translated"); ?>
+								</td></tr>
+								<tr>
+									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
+									<td></td>
+									<td>
+										<select name="natlocalid_type" class="formselect" onChange="typesel_change_natlocal()">
+											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
+											<?php
+												$iflist = get_configured_interface_with_descr();
+												foreach ($iflist as $ifname => $ifdescr):
+											?>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['natlocalid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<?php endforeach; ?>
+											<option value="none" <?php if ($pconfig['natlocalid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
+									<td><?=$mandfldhtmlspc;?></td>
+									<td>
+										<input name="natlocalid_address" type="text" class="formfld unknown ipv4v6" id="natlocalid_address" size="28" value="<?=htmlspecialchars($pconfig['natlocalid_address']);?>">
+										/
+										<select name="natlocalid_netbits" class="formselect ipv4v6" id="natlocalid_netbits">
+										<?php for ($i = 128; $i >= 0; $i--): ?>
+											<option value="<?=$i;?>" <?php if (isset($pconfig['natlocalid_netbits']) && $i == $pconfig['natlocalid_netbits']) echo "selected"; ?>>
 												<?=$i;?>
 											</option>
 										<?php endfor; ?>
@@ -679,6 +777,7 @@ function change_protocol() {
 change_mode('<?=htmlspecialchars($pconfig['mode'])?>');
 change_protocol('<?=htmlspecialchars($pconfig['proto'])?>');
 typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
+typesel_change_natlocal(<?=htmlspecialchars($pconfig['natlocalid_netbits'])?>);
 <?php if (!isset($pconfig['mobile'])): ?>
 typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 <?php endif; ?>

@@ -65,10 +65,10 @@ function activate_sysctls() {
 	global $config, $g;
 	if ($g['platform'] == 'jail')
 		return;
-	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000001");
-	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000001");
-	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000002");
-	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
+	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=1");
+	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=1");
+	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=2");
+	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=2");
 
 	if(is_array($config['sysctl'])) {
 		foreach($config['sysctl']['item'] as $tunable) {

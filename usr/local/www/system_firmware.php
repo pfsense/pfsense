@@ -50,6 +50,13 @@ require_once("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
 
+$kerneltypes = array(
+	'SMP' => gettext("Multiprocessor kernel"),
+	'single' => gettext("Uniprocessor kernel"),
+	'wrap' => gettext("Embedded kernel"),
+	'Developers' => gettext("Developers kernel")
+);
+
 require_once("xmlrpc_client.inc");
 
 /* Allow additional execution time 0 = no limit. */
@@ -111,7 +118,7 @@ if(is_subsystem_dirty('firmwarelock')) {
 	exit;
 }
 
-if($_POST['kerneltype']) {
+if($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes))) {
 	if($_POST['kerneltype'] == "single") 
 		system("touch /boot/kernel/pfsense_kernel.txt");
 	else 
@@ -275,10 +282,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 						  			if($g['platform'] == "pfSense") { 
 										echo gettext("Please select kernel type") , ": ";
 										echo "<select name='kerneltype'>";
-										echo "<option value='SMP'>" . gettext("Multiprocessor kernel") . "</option>";
-										echo "<option value='single'>". gettext("Uniprocessor kernel") . "</option>";
-										echo "<option value='wrap'>" . gettext("Embedded kernel") . "</option>";
-										echo "<option value='Developers'>" . gettext("Developers kernel") . "</option>";
+										foreach($kerneltypes as $kerntype => $kerndescr) {
+											echo "<option value='{$kerntype}'>{$kerndescr}</option>";
+										}
 										echo "</select>";
 										echo "<br><br>";
 									}

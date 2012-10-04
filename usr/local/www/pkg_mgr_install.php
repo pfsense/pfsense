@@ -172,7 +172,7 @@ switch($_GET['mode']) {
 			update_status($_GET['pkg']  . " " . gettext("installation completed."));
 			update_output_window($status);
 		} else
-			update_output_window(sprintf(gettext("Could not find %s."), $_GET['pkg']));
+			update_output_window(sprintf(gettext("Could not find %s."), htmlspecialchars($_GET['pkg'])));
 		break;
 	case "reinstallall":
 		if (is_array($config['installedpackages']['package']))
@@ -194,21 +194,22 @@ switch($_GET['mode']) {
 		filter_configure();
 		break;
 	default:
-		$status = install_package(htmlspecialchars($_GET['id']));
+		$pkgid = htmlspecialchars($_GET['id']);
+		$status = install_package($pkgid);
 		if($status == -1) {
-			update_status(gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("FAILED!"));
+			update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
 			$static_output .= "\n" . gettext("Installation halted.");
 			update_output_window($static_output);
 		} else {
-			$status_a = gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("completed.");
+			$status_a = gettext("Installation of") . " {$pkgid} " . gettext("completed.");
 			update_status($status_a);
-			$status = get_after_install_info($_GET['id']);
+			$status = get_after_install_info($pkgid);
 			if($status) 
-				$static_output .= "\n" . gettext("Installation completed.") . "\n{$_GET['id']} " . gettext("setup instructions") . ":\n{$status}";
+				$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
 			else
 				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
-		file_put_contents("/tmp/{$_GET['id']}.info", $static_output);
-		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
+		file_put_contents("/tmp/{$pkgid}.info", $static_output);
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
 		}
 		filter_configure();
 		break;

@@ -120,9 +120,9 @@ if(is_subsystem_dirty('firmwarelock')) {
 
 if($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes))) {
 	if($_POST['kerneltype'] == "single") 
-		system("touch /boot/kernel/pfsense_kernel.txt");
+		touch("/boot/kernel/pfsense_kernel.txt");
 	else 
-		system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
+		file_put_contents("/boot/kernel/pfsense_kernel.txt", $_POST['kerneltype']);
 }
 
 /* Handle manual upgrade */

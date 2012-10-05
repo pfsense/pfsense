@@ -141,7 +141,7 @@ if ($_POST) {
 				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
 		}
 
-		if (!empty($pconfig['natlocalid_type'])) {
+		if (!empty($pconfig['natlocalid_address'])) {
 			switch ($pconfig['natlocalid_type']) {
 				case "network":
 					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
@@ -249,7 +249,7 @@ if ($_POST) {
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
 
 		if(($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6")){
-			if (!empty($pconfig['natlocalid_type']))
+			if (!empty($pconfig['natlocalid_address']))
 				$ph2ent['natlocalid'] = pconfig_to_idinfo("natlocal",$pconfig);
 			$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
 			$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);

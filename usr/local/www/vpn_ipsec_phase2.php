@@ -131,16 +131,6 @@ if ($_POST) {
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
 				break;
 		}
-		switch ($pconfig['natlocalid_type']) {
-			case "network":
-				if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
-					$input_errors[] = gettext("A valid nat local network bit count must be specified.");
-			case "address":
-				if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
-					$input_errors[] = gettext("A valid nat local network IP address must be specified.");
-				break;
-		}
-
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
 		if (is_array($config['interfaces'][$pconfig['localid_type']])) {
 			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
@@ -150,13 +140,26 @@ if ($_POST) {
 			if (empty($address) || empty($netbits))
 				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
 		}
-		if (is_array($config['interfaces'][$pconfig['natlocalid_type']])) {
-			// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-			$address = get_interface_ip($pconfig['natlocalid_type']);
-			$netbits = get_interface_subnet($pconfig['natlocalid_type']);
 
-			if (empty($address) || empty($netbits))
-				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
+		if (!empty($pconfig['natlocalid_type'])) {
+			switch ($pconfig['natlocalid_type']) {
+				case "network":
+					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
+						$input_errors[] = gettext("A valid nat local network bit count must be specified.");
+				case "address":
+					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
+						$input_errors[] = gettext("A valid nat local network IP address must be specified.");
+					break;
+			}
+
+			if (is_array($config['interfaces'][$pconfig['natlocalid_type']])) {
+				// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
+				$address = get_interface_ip($pconfig['natlocalid_type']);
+				$netbits = get_interface_subnet($pconfig['natlocalid_type']);
+
+				if (empty($address) || empty($netbits))
+					$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['natlocalid_type']) . " " . gettext("has no subnet.");
+			}
 		}
 
 		switch ($pconfig['remoteid_type']) {

@@ -329,12 +329,17 @@ function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
 	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
 
 	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
+	if (!empty($ph2ent['natlocalid']))
+		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true);
 	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
 
 	/* check for established SA in both directions */
-	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id) &&
-		ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
-		return true;
+	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
+		if (empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
+			return true;
+		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$natloc_id))
+			return true;
+	}
 
 	return false;
 }

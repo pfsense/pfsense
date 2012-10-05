@@ -668,7 +668,7 @@ EOD;
 
 /* remove clients that have been around for longer than the specified amount of time
  * db file structure:
- * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time
+ * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time,zone,acct_interim_interval
  * (password is in Base64 and only saved when reauthentication is enabled)
  */
 function captiveportal_prune_old() {
@@ -798,15 +798,30 @@ function captiveportal_prune_old() {
 						$cpentry[2], // clientip
 						$cpentry[3]); // clientmac
 				} else if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "interimupdate") {
-					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-						$cpentry[4], // username
-						$cpentry[5], // sessionid
-						$cpentry[0], // start time
-						$radiusservers,
-						$cpentry[2], // clientip
-						$cpentry[3], // clientmac
-						10, // NAS Request
-						true); // Interim Updates
+					$session_time = $pruning_time - $cpentry[0];
+					//use configured interval if present
+					if (isset($config['captiveportal'][$cpzone]['interimacctinterval']) && $config['captiveportal'][$cpzone]['interimacctinterval'] > 0) {
+						$interval = $config['captiveportal'][$cpzone]['interimacctinterval'];
+					//else use server-provided value if present
+					} elseif (isset($cpentry[11]) && $cpentry[11] > 0) {
+						$interval = $cpentry[11];
+					//otherwise just do it
+					} else {
+						$interval = 0;
+					}
+					$past_interval_min = ($session_time > $interval);
+					$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
+					if (($interval > 0 && $past_interval_min && $within_interval) || $interval === 0) {
+						RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+							$cpentry[4], // username
+							$cpentry[5], // sessionid
+							$cpentry[0], // start time
+							$radiusservers,
+							$cpentry[2], // clientip
+							$cpentry[3], // clientmac
+							10, // NAS Request
+							true); // Interim Updates
+					}
 				}
 			}
 
@@ -1910,7 +1925,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
 			$cpdb[] = array($allow_time, $ruleno, $clientip, $clientmac, $username, $sessionid, $bpassword,
-				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time'], $radiusctx);
+				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time'], 
+				$radiusctx, $attributes['acct_interim_interval']);
 
 			/* rewrite information to database */
 			captiveportal_write_db($cpdb, true);

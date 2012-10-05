@@ -1446,10 +1446,10 @@ function filter_nat_rules_generate() {
 					else
 						$nataction = "binat";
 					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
-					if ($local_subnet == "0.0.0.0/0")
+					if (empty($local_subnet) || !is_subnet($local_subnet) || $local_subnet == "0.0.0.0/0")
 						continue;
 					$natlocal_subnet = ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
-					if (empty($natlocal_subnet) || ($natlocal_subnet == "0.0.0.0/0"))
+					if (empty($natlocal_subnet) || !is_subnet($natlocal_subnet) || $natlocal_subnet == "0.0.0.0/0")
 						continue;
 					$natrules .= "{$nataction} on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
 				}

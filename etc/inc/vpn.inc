@@ -709,17 +709,17 @@ EOD;
 							}
 							$localid_spec = $localid_type." ".$localid_data." any";
 							if (!empty($ph2ent['natlocalid'])) {
-								$localid_spec += "nat ";
+								$localid_spec .= " nat ";
 								if ($ph2ent['natlocalid']['type'] != "address")
-									$localid_spec += "subnet ";
+									$localid_spec .= "subnet ";
 								else
-									$localid_spec += "address ";
+									$localid_spec .= "address ";
 								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
 								if (!is_ipaddr($natlocalid_data) && !is_subnet($natlocalid_data)) {
 									log_error("Invalid IPsec Phase 2(NAT) \"{$ph2ent['descr']}\" - {$ph2ent['natlocalid']['type']} has no subnet.");
 									continue;
 								}
-								$localid_spec += "{$natlocalid_data} any";
+								$localid_spec .= "{$natlocalid_data} any";
 							}
 						}
 

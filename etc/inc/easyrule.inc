@@ -82,13 +82,13 @@ function easyrule_block_rule_exists($int = 'wan') {
 	foreach ($config['filter']['rule'] as $rule) {
 		if (!is_array($rule) || !is_array($rule['source']))
 			continue;
-		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int))
+		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int) && ($rule['ipprotocol'] == $ipproto))
 			return true;
 	}
 	return false;
 }
 
-function easyrule_block_rule_create($int = 'wan') {
+function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname, $config;
 	/* If the alias doesn't exist, exit.
 	 * Can't create an empty alias, and we don't know a host */
@@ -96,7 +96,7 @@ function easyrule_block_rule_create($int = 'wan') {
 		return false;
 
 	/* If the rule already exists, no need to do it again */
-	if (easyrule_block_rule_exists($int))
+	if (easyrule_block_rule_exists($int, $ipproto))
 		return true;
 
 	/* No rules, start a new array */
@@ -111,6 +111,7 @@ function easyrule_block_rule_create($int = 'wan') {
 	$filterent = array();
 	$filterent['type'] = 'block';
 	$filterent['interface'] = $int;
+	$filterent['ipprotocol'] = $ipproto;
 	$filterent['source']['address'] = $blockaliasname . strtoupper($int);
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
@@ -196,7 +197,7 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	return true;
 }
 
-function easyrule_block_host_add($host, $int = 'wan') {
+function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 	global $retval;
 	/* Bail if the supplied host is not a valid IP address */
 	$host = trim($host, "[]");
@@ -219,8 +220,8 @@ function easyrule_block_host_add($host, $int = 'wan') {
 	 * have been modified by the user in some way. Adding to the
 	 * Alias is what's important.
 	 */
-	if (!easyrule_block_rule_exists($int)) {
-		if (easyrule_block_rule_create($int)) {
+	if (!easyrule_block_rule_exists($int, $ipproto)) {
+		if (easyrule_block_rule_create($int, $ipproto)) {
 			$dirty = true;
 		} else {
 			return false;
@@ -301,7 +302,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	}
 }
 
-function easyrule_parse_block($int, $src) {
+function easyrule_parse_block($int, $src, $ipproto = "inet") {
 	if (!empty($src) && !empty($int)) {
 		$src = trim($src, "[]");
 		if (!is_ipaddr($src) && !is_subnet($src)) {
@@ -311,7 +312,7 @@ function easyrule_parse_block($int, $src) {
 		if ($int === false) {
 			return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
 		}
-		if (easyrule_block_host_add($src, $int)) {
+		if (easyrule_block_host_add($src, $int, $ipproto)) {
 			return gettext("Host added successfully");
 		} else {
 			return gettext("Failed to create block rule, alias, or add host.");
@@ -321,7 +322,7 @@ function easyrule_parse_block($int, $src) {
 	}
 	return gettext("Unknown block error.");
 }
-function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = inet) {
+function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;
 	$src = trim($src, "[]");

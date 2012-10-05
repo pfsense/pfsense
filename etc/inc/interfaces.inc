@@ -1060,8 +1060,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	if (!isset($config['interfaces'][$interface]))
 		return; 
-
-	log_error("Calling interface down for interface {$interface}, destroy is {$destroy}");
+	log_error("Calling interface down for interface {$interface}, destroy is " . (($destroy) ? 'true' : 'false'));
 
 	$ifcfg = $config['interfaces'][$interface];
 

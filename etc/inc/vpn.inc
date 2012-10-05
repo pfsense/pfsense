@@ -709,14 +709,13 @@ EOD;
 							}
 							$localid_spec = "{$localid_type} {$localid_data} any";
 							if (!empty($ph2ent['natlocalid'])) {
-								$natlocalid_spec = " nat ";
 								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
 								if ($ph2ent['natlocalid']['type'] != "address") {
 									if (is_subnet($natlocalid_data))
-										$localid_spec .= "subnet {$natlocalid_data} any";
+										$localid_spec .= " nat subnet {$natlocalid_data} any";
 								} else {
 									if (is_ipaddr($natlocalid_data))
-										$localid_spec .= "address {$natlocalid_data} any";
+										$localid_spec .= " nat address {$natlocalid_data} any";
 								}
 							}
 						}

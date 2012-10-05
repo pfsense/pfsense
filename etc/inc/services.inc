@@ -596,7 +596,7 @@ EOPP;
 			   $dhcpdconf .= "		deny unknown-clients;\n";
 
 			if ($poolconf['gateway'] && ($poolconf['gateway'] != $dhcpifconf['gateway']))
-				$dhcpdconf .= "	option routers {$routers};\n";
+				$dhcpdconf .= "		option routers {$poolconf['gateway']};\n";
 
 			if($dhcpifconf['failover_peerip'] <> "") {
 				$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";

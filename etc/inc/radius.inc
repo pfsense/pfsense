@@ -501,6 +501,10 @@ class Auth_RADIUS extends PEAR {
                 $this->attributes['reply_message'] = radius_cvt_string($data);
                 break;
 
+            case 85: //Acct-Interim-Interval
+                $this->attributes['acct_interim_interval'] = radius_cvt_int($data);
+                break;
+
             case RADIUS_VENDOR_SPECIFIC:
                 $attribv = radius_get_vendor_attr($data);
                 if (!is_array($attribv)) {
@@ -1067,7 +1071,7 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
         if (isset($this->authentic)) {
             $this->putAttribute(RADIUS_ACCT_AUTHENTIC, $this->authentic);
         }
-
+        $this->putStandardAttributes();
     }
 
 }

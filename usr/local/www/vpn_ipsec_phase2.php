@@ -550,8 +550,8 @@ function change_protocol() {
 									<td></td>
 									<td>
 										<select name="natlocalid_type" class="formselect" onChange="typesel_change_natlocal()">
-											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
-											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
+											<option value="address" <?php if ($pconfig['natlocalid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['natlocalid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
 											<?php
 												$iflist = get_configured_interface_with_descr();
 												foreach ($iflist as $ifname => $ifdescr):

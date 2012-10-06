@@ -182,12 +182,11 @@ if ($act == "delcert") {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($pconfig['method'] == "existing") {
+	if (($pconfig['method'] == "existing") || ($act == "editimported")) {
 		$reqdfields = explode(" ", "descr crltext");
 		$reqdfieldsn = array(
 				gettext("Descriptive name"),
@@ -221,10 +220,12 @@ if ($_POST) {
 		}
 
 		$crl['descr'] = $pconfig['descr'];
-		$crl['caref'] = $pconfig['caref'];
-		$crl['method'] = $pconfig['method'];
+		if ($act != "editimported") {
+			$crl['caref'] = $pconfig['caref'];
+			$crl['method'] = $pconfig['method'];
+		}
 
-		if ($pconfig['method'] == "existing") {
+		if (($pconfig['method'] == "existing") || ($act == "editimported")) {
 			$crl['text'] = base64_encode($pconfig['crltext']);
 		}
 
@@ -238,7 +239,7 @@ if ($_POST) {
 			$a_crl[] = $crl;
 
 		write_config("Saved CRL {$crl['descr']}");
-
+		openvpn_refresh_crls();
 		pfSenseHeader("system_crlmanager.php");
 	}
 }
@@ -392,6 +393,38 @@ function method_change() {
 						</tr>
 					</table>
 				</form>
+				<?php elseif ($act == "editimported"): ?>
+				<?php 	$crl = $thiscrl; ?>
+				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="editimported">
+						<tr>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Imported Certificate Revocation List");?></td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+							<td width="78%" class="vtable">
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($crl['descr']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
+							<td width="78%" class="vtable">
+								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=base64_decode($crl['text']);?></textarea>
+								<br>
+								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?></td>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="act" type="hidden" value="editimported" />
+							</td>
+						</tr>
+					</table>
+				</form>
+
 				<?php elseif ($act == "edit"): ?>
 				<?php 	$crl = $thiscrl; ?>
 				<form action="system_crlmanager.php" method="post" name="iform" id="iform">
@@ -554,6 +587,10 @@ function method_change() {
 							<?php endif; ?>
 							<?php if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&id=<?=$tmpcrl['refid'];?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
+							</a>
+							<?php else: ?>
+							<a href="system_crlmanager.php?act=editimported&id=<?=$tmpcrl['refid'];?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>

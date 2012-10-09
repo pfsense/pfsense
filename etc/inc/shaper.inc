@@ -2811,7 +2811,7 @@ class dummynet_class {
 
 class dnpipe_class extends dummynet_class {
         var $delay;
-	var $qbandwidth;
+	var $qbandwidth = array();
 	var $qbandwidthtype;
 
 		/* This is here to help on form building and building rules/lists */
@@ -2826,12 +2826,6 @@ class dnpipe_class extends dummynet_class {
 	function GetDelay() {
 		return $this->delay;
 	}
-	function GetBwscale() {
-                return $this->qbandwidthtype;
-        }
-        function SetBwscale($scale) {
-               	$this->qbandwidthtype = $scale;
-        }		
 	function delete_queue() {
 		cleanup_dnqueue_from_rules($this->GetQname());
 		foreach ($this->subqueues as $q)
@@ -2900,8 +2894,29 @@ class dnpipe_class extends dummynet_class {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
-			$input_errors[] = gettext("Bandwidth must be an integer.");
+		$schedule = 0;
+		$schedulenone = 0;
+		$entries = 0;
+		for ($i = 0; $i < 30; $i++) {
+			if (!empty($data["bwsched{$i}"])) {
+				if ($data["bwsched{$i}"] != "none")
+					$schedule++;
+				else
+					$schedulenone++;
+			}
+			if (!empty($data["bandwidth{$i}"])) {
+				if (!is_numeric($data["bandwidth{$i}"]))
+					$input_errors[] = sprintf(gettext("Bandwidth for schedule %s must be an integer."), $data["bwsched{$i}"]);
+				else
+					$entries++;
+			}
+		}
+		if ($schedule == 0 && $entries > 1)
+			$input_errors[] = gettext("You need to specify a schedule for every additional entry");
+		if ($schedulenone > 0 && $entries > 1)
+			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected");
+		if ($entries == 0)
+			$input_errors[] = gettext("At least one bw specification is necessary");
 		if ($data['delay'] && (!is_numeric($data['delay'])))
 			$input_errors[] = gettext("Delay must be an integer.");
 	}
@@ -2915,11 +2930,25 @@ class dnpipe_class extends dummynet_class {
 			$this->SetQname($q['name']);
 		}
 		$this->SetNumber($q['number']);
-		if (isset($q['bandwidth']) && $q['bandwidth'] <> "") { 
-			$this->SetBandwidth($q['bandwidth']);
-			if (isset($q['bandwidthtype']) && $q['bandwidthtype'])
-				$this->SetBwscale($q['bandwidthtype']);
+
+		if (!empty($_POST)) {
+			$bandwidth = array();
+			for ($i = 0; $i < 30; $i++) {
+				if (isset($q["bandwidth{$i}"]) && $q["bandwidth{$i}"] <> "") { 
+					$bw = array();
+					$bw['bw'] = $q["bandwidth{$i}"];
+					if (isset($q["bwtype{$i}"]) && $q["bwtype{$i}"])
+						$bw['bwscale'] = $q["bwtype{$i}"];
+					if (isset($q["bwsched{$i}"]) && $q["bwsched{$i}"])
+						$bw['bwsched'] = $q["bwsched{$i}"];
+					$bandwidth[] = $bw;
+				}
+			}
+			$this->SetBandwidth($bandwidth);
 		}
+		if (is_array($q['bandwidth']) && is_array($q['bandwidth']['item']))
+			$this->SetBandwidth($q['bandwidth']['item']);
+
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
               		$this->SetQlimit($q['qlimit']);
 		else
@@ -2964,12 +2993,29 @@ class dnpipe_class extends dummynet_class {
 	}
 
         function build_rules() {
+		global $config, $time_based_rules;
+
 		if ($this->GetEnabled() == "")
 			return;
 
-       		$pfq_rule = "\npipe ". $this->GetNumber() . " config ";
-		if ($this->GetBandwidth() && $this->GetBwscale())
-                    	$pfq_rule .= " bw ".trim($this->GetBandwidth()).$this->GetBwscale();
+		$bandwidth = $this->GetBandwidth();
+		if (is_array($bandwidth)) {
+			foreach ($bandwidth as $bw) {
+				if ($bw['sched'] != "none") {
+					$time_based_rules = true;
+					foreach ($config['schedules']['schedule'] as $schedule) {
+						if ($bw['bwsched'] == $schedule['name']) {
+							if (filter_get_time_based_rule_status($schedule)) {
+								$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+								break;
+							}
+						}
+					}
+				} else
+					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+			}
+		}
+
 		if ($this->GetQlimit())
                     	$pfq_rule .= " queue " . $this->GetQlimit();
 		if ($this->GetPlr())
@@ -3008,7 +3054,76 @@ class dnpipe_class extends dummynet_class {
 		$this->ReadConfig($data);
 	}
 
+	function build_javascript() {
+		global $g, $config;
+
+		//build list of schedules
+		$schedules = "<option value='none'>none</option>";
+		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
+			foreach ($config['schedules']['schedule'] as $schedule) {
+				if ($schedule['name'] <> "")
+					$schedules .= "<option value='{$schedule['name']}'>{$schedule['name']}</option>";
+			}
+		}
+		$bwopt = "";
+		foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwidx => $bw)
+			$bwopt .= "<option value='{$bwidx}'>{$bw}</option>";
+
+	$javasr = <<<EOD
+<script text='type/javascript'>
+var addBwRowTo = (function() {
+	return (function (tableId) {
+	var d, tbody, tr, td;
+	d = document;
+	tbody = d.getElementById(tableId).getElementsByTagName("tbody").item(0);
+	tr = d.createElement("tr");
+	td = d.createElement("td");
+	td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='bandwidth_row-" + totalrows + "'></input><input size='10' type='text' class='formfld unknown' name='bandwidth" + totalrows + "' id='bandwidth" + totalrows + "'></input> ";
+	tr.appendChild(td);
+	td = d.createElement("td");
+	td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='bwtype_row-" + totalrows + "'></input><select class='formselect' name='bwtype" + totalrows + "'>{$bwopt}</select>";
+	tr.appendChild(td);
+	td = d.createElement("td");
+	td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='bwsched_row-" + totalrows + "'></input><select class='formselect' name='bwsched" + totalrows + "'>{$schedules}</select>";
+	tr.appendChild(td);
+	td = d.createElement("td");
+	td.rowSpan = "1";
+	td.innerHTML = '<a onclick="removeBwRow(this); return false;" href="#"><img border="0" src="/themes/{$g['theme']}/images/icons/icon_x.gif" /></a>';
+	tr.appendChild(td);
+	tbody.appendChild(tr);
+	totalrows++;
+	});
+})();
+
+function removeBwRow(el) {
+	var cel;
+	while (el && el.nodeName.toLowerCase() != "tr")
+	    el = el.parentNode;
+		if (el && el.parentNode) {
+			cel = el.getElementsByTagName("td").item(0);
+			el.parentNode.removeChild(el);
+		}
+}
+</script>
+
+EOD;
+
+	       return $javasr;
+	}
+
         function build_form() { 
+		global $g, $config;
+
+		//build list of schedules
+		$schedules = array();
+		$schedules[] = "none";//leave none to leave rule enabled all the time
+		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
+			foreach ($config['schedules']['schedule'] as $schedule) {
+				if ($schedule['name'] <> "")
+					$schedules[] = $schedule['name'];
+			}
+		}
+
 		$form = "<tr><td valign=\"center\" class=\"vncellreq\"><br>";
                 $form .= gettext("Enable");
                 $form .= "</td><td class=\"vncellreq\">";
@@ -3029,27 +3144,45 @@ class dnpipe_class extends dummynet_class {
 		}
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">" . gettext("Bandwidth");
+		$bandwidth = $this->GetBandwidth();
 		$form .= "</td><td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" id=\"bandwidth\" name=\"bandwidth\" value=\"";
-		$form .= $this->GetBandwidth() . "\">"; 
-		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
-		$form .= "<option value=\"Kb\"";
-		if ($this->GetBwscale() == "Kb")
-			$form .= " selected=\"yes\"";
-		$form .= ">" .gettext( "Kbit/s") . "</option>";
-		$form .= "<option value=\"Mb\"";
-		if ($this->GetBwscale() == "Mb")
-			$form .= " selected=\"yes\"";
-		$form .= ">" . gettext("Mbit/s") . "</option>";
-		$form .= "<option value=\"Gb\"";
-		if ($this->GetBwscale() == "Gb")
-			$form .= " selected=\"yes\"";
-		$form .= ">" . gettext("Gbit/s") . "</option>";		
-		$form .= "<option value=\"b\"";
-		if ($this->GetBwscale() == "b")
-			$form .= " selected=\"yes\"";
-		$form .= ">" . gettext("Bit/s") . "</option>";
-		$form .= "</select>";
+		$form .= "<table id='maintable'>";
+		$form .= "<tbody><tr>";
+		$form .= "<td width='40%'><div id='onecolumn'>Bandwidth</div></td>";
+		$form .= "<td width='20%'><div id='twocolumn'>Bw type</div></td>";
+		$form .= "<td width='35%' ><div id='thirdcolumn'>Schedule</div></td>";
+		$form .= "<td width='5%'><div id='fourthcolumn'></div></td>";
+		$form .= "</tr>";
+		if (is_array($bandwidth)) {
+			foreach ($bandwidth as $bwidx => $bw) {
+				$form .= "\n<tr><td width='40%'>";
+				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\">";
+				$form .= "</td><td width='20%'>";
+				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"formselect\">";
+				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
+					$form .= "<option value=\"{$bwsidx}\"";
+					if ($bw['bwscale'] == $bwsidx)
+						$form .= " selected=\"yes\"";
+					$form .= ">{$bwscale}</option>";
+				}
+				$form .= "</select>";
+				$form .= "</td><td width='35%' >";
+				$form .= "<select id=\"bwsched{$bwidx}\" name=\"bwsched{$bwidx}\" class=\"formselect\">";
+				foreach ($schedules as $schd) {
+					$selected = "";
+					if ($bw['bwsched'] == $schd)
+						$selected = "selected";
+					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
+				}
+				$form .= "</select>";
+				$form .= "</td><td width='5%' >";
+				$form .= "<a onclick=\"removeBwRow(this); return false;\" href='#'><img border='0' src='/themes/{$g['theme']}/images/icons/icon_x.gif' /></a>";
+				$form .= "</td></tr>";
+			}
+		}
+		$form .= "</tbody></table>";
+		$form .= "<a onclick=\"javascript:addBwRowTo('maintable'); return false;\" href='#'>";
+		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='' title='" . gettext("add another schedule") . "/></a>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3140,8 +3273,15 @@ class dnpipe_class extends dummynet_class {
             	$cflink['qlimit'] = $this->GetQlimit();
             	$cflink['plr'] = $this->GetPlr();
             	$cflink['description'] = $this->GetDescription();
-		$cflink['bandwidth'] = $this->GetBandwidth();
-            	$cflink['bandwidthtype'] = $this->GetBwscale();
+               
+		$bandwidth = $this->GetBandwidth();
+		if (is_array($bandwidth)) {
+			$cflink['bandwidth'] = array();
+			$cflink['bandwidth']['item'] = array();
+			foreach ($bandwidth as $bwidx => $bw)
+				$cflink['bandwidth']['item'][] = $bw;
+		}
+
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
 		$cflink['mask'] = $this->GetMask();

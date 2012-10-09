@@ -364,6 +364,10 @@ function show_source_port_range() {
 </script>
 
 <?php
+if ($queue)
+	echo $queue->build_javascript();
+echo $newjavascript;
+
 include("fbegin.inc"); 
 ?>
 <div id="inputerrors"></div>
@@ -418,8 +422,15 @@ include("fbegin.inc");
 	  </td>
 	</tr>
 </table>
-            </form>
-<?php include("fend.inc"); 
+</form>
+<script type='text/javascript'>
+<?php
+	$totalrows = 0;
+	if (is_array($config['dnshaper']) && is_array($config['dnshaper']['queue'])) 
+		$totalrows = count($config['dnshaper']['queue']);
+	echo "totalrows = {$totalrows}";
 ?>
+</script>
+<?php include("fend.inc"); ?>
 </body>
 </html>

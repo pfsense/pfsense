@@ -2947,4 +2947,22 @@ function upgrade_089_to_090() {
 		}
 	}
 }
+
+function upgrade_090_to_091() {
+	global $config;
+
+	if (is_array($config['dnshaper']) && is_array($config['dnshaper']['queue'])) {
+		foreach ($config['dnshaper']['queue'] as $idx => $dnqueue) {
+			if (!empty($dnqueue['bandwidth'])) {
+				$bw = array();
+				$bw['bw'] = $dnqueue['bandwidth'];
+				$bw['bwscale'] = $dnqueue['bandwidthtype'];
+				$bw['bwsched'] = "none";
+				$config['dnshaper']['queue'][$idx]['bandwidth'] = array();
+				$config['dnshaper']['queue'][$idx]['bandwidth']['item'] = array();
+				$config['dnshaper']['queue'][$idx]['bandwidth']['item'][] = $bw;
+			}
+		}
+	}
+}
 ?>

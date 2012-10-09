@@ -643,8 +643,9 @@ if ($_POST) {
 
 		filter_rules_sort();
 
-		write_config();
-		mark_subsystem_dirty('filter');
+		$retval = write_config();
+		if ($retval)
+			mark_subsystem_dirty('filter');
 
 		if (isset($_POST['floating']))
 			header("Location: firewall_rules.php?if=FloatingRules");

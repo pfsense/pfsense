@@ -26,6 +26,10 @@ $priv_list['page-dashboard-widgets']['descr'] = "Allow direct access to all Dash
 $priv_list['page-dashboard-widgets']['match'] = array();
 $priv_list['page-dashboard-widgets']['match'][] = "*.widget.php*";
 
+$priv_list['user-config-readonly'] = array();
+$priv_list['user-config-readonly']['name']  = "User - Config - Deny Config Write";
+$priv_list['user-config-readonly']['descr'] = "If present, ignores requests from this user to write config.xml.";
+
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = "User - System - Shell account access";
 $priv_list['user-shell-access']['descr'] = "Indicates whether the user is able to login for ".

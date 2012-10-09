@@ -133,9 +133,8 @@ if ($_POST) {
 			$a_npt[] = $natent;
 		nat_npt_rules_sort();
 
-		mark_subsystem_dirty('natconf');
-
-		write_config();
+		if (write_config())
+			mark_subsystem_dirty('natconf');
 
 		header("Location: firewall_nat_npt.php");
 		exit;

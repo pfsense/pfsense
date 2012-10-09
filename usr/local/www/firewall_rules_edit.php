@@ -643,8 +643,7 @@ if ($_POST) {
 
 		filter_rules_sort();
 
-		$retval = write_config();
-		if ($retval)
+		if (write_config())
 			mark_subsystem_dirty('filter');
 
 		if (isset($_POST['floating']))

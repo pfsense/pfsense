@@ -107,9 +107,10 @@ if ($_GET['act'] == "del") {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_aliases[$_GET['id']]);
-			write_config();
-			filter_configure();
-			mark_subsystem_dirty('aliases');
+			if (write_config()) {
+				filter_configure();
+				mark_subsystem_dirty('aliases');
+			}
 			header("Location: firewall_aliases.php");
 			exit;
 		}

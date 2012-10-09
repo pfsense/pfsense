@@ -211,10 +211,8 @@ if ($_POST) {
 			$a_1to1[] = $natent;
 		nat_1to1_rules_sort();
 
-		mark_subsystem_dirty('natconf');
-
-		write_config();
-
+		if (write_config())
+			mark_subsystem_dirty('natconf');
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}

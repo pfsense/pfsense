@@ -151,8 +151,8 @@ else if ($_POST) {
 		unset($non_dupes);
 		if(sizeof($dupes) == 0 && !$input_errors) {
 			$l7r->wconfig();
-			write_config();
-			mark_subsystem_dirty('shaper');
+			if (write_config())
+				mark_subsystem_dirty('shaper');
 
 			read_layer7_config();
 		}
@@ -195,8 +195,8 @@ else if ($_POST) {
 		}
 	} else if ($_POST['delete']) {
 		$container->delete_l7c();
-		write_config();
-		mark_subsystem_dirty('shaper');
+		if (write_config())
+			mark_subsystem_dirty('shaper');
 		unset($container);
 
 		header("Location: firewall_shaper_layer7.php");

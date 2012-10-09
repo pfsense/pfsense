@@ -109,8 +109,9 @@ if($_POST['aliasimport'] <> "") {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		write_config();
-		
+		if (write_config())
+			mark_subsystem_dirty('aliases');
+		}
 		pfSenseHeader("firewall_aliases.php");
 		
 		exit;

@@ -303,8 +303,8 @@ if ($_POST) {
 			}
 		}
 
-		mark_subsystem_dirty('natconf');
-        	write_config();
+		if (write_config())
+			mark_subsystem_dirty('natconf');
 		header("Location: firewall_nat_out.php");
 		exit;
 	}

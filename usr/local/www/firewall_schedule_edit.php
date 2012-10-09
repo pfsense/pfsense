@@ -183,10 +183,9 @@ if ($_POST) {
 			$a_schedules[] = $schedule;
 		}
 		schedule_sort();
-		write_config();
-		
-		filter_configure();
-			
+		if (write_config())
+			filter_configure();
+
 		header("Location: firewall_schedule.php");
 		exit;
 		

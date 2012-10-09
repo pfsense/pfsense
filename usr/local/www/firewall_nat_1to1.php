@@ -68,8 +68,8 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_1to1[$_GET['id']]) {
 		unset($a_1to1[$_GET['id']]);
-		write_config();
-		mark_subsystem_dirty('natconf');
+		if (write_config())
+			mark_subsystem_dirty('natconf');
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}

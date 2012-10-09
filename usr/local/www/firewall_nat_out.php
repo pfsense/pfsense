@@ -214,8 +214,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		}
 		break;
 	}
-        write_config();
-	mark_subsystem_dirty('natconf');
+	if (write_config())
+		mark_subsystem_dirty('natconf');
         header("Location: firewall_nat_out.php");
         exit;
 }
@@ -223,8 +223,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 if ($_GET['act'] == "del") {
 	if ($a_out[$_GET['id']]) {
 		unset($a_out[$_GET['id']]);
-		write_config();
-		mark_subsystem_dirty('natconf');
+		if (write_config())
+			mark_subsystem_dirty('natconf');
 		header("Location: firewall_nat_out.php");
 		exit;
 	}
@@ -236,8 +236,8 @@ if (isset($_POST['del_x'])) {
                 foreach ($_POST['rule'] as $rulei) {
                         unset($a_out[$rulei]);
                 }
-                write_config();
-		mark_subsystem_dirty('natconf');
+		if (write_config())
+			mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat_out.php");
                 exit;
         }
@@ -283,8 +283,8 @@ if (isset($_POST['del_x'])) {
 		else
 			unset($config['nat']['advancedoutbound']);
 
-                write_config();
-		mark_subsystem_dirty('natconf');
+		if (write_config())
+			mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat_out.php");
                 exit;
         }

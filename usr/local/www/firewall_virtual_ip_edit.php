@@ -249,10 +249,10 @@ if ($_POST) {
 		}
 		$a_vip[$id] = $vipent;
 
-		mark_subsystem_dirty('vip');
-		
-		write_config();
-		file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
+		if (write_config()) {
+			mark_subsystem_dirty('vip');
+			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
+		}
 		header("Location: firewall_virtual_ip.php");
 		exit;
 	}

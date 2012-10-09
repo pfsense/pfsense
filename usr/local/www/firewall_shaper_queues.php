@@ -81,8 +81,8 @@ if ($_GET) {
 			$qtmp =& $altq->find_queue("", $qname);
 			if ($qtmp) {
 				$qtmp->delete_queue(); 
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 			}
 			header("Location: firewall_shaper_queues.php");
 			exit;
@@ -119,8 +119,8 @@ if ($_GET) {
                                                 $newroot['queue'][] = $copycfg;
                                                 $config['shaper']['queue'][] = $newroot;
                                         }
-                                        write_config();
-					mark_subsystem_dirty('shaper');
+					if (write_config())
+						mark_subsystem_dirty('shaper');
                                         break;
                                 }
                         }

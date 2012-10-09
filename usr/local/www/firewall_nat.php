@@ -82,13 +82,18 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_nat[$_GET['id']]) {
+
 		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
 			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
-			mark_subsystem_dirty('filter');
+			$want_dirty_filter = true;
 		}
 		unset($a_nat[$_GET['id']]);
-		write_config();
-		mark_subsystem_dirty('natconf');
+
+		if (write_config()) {
+			mark_subsystem_dirty('natconf');
+			if ($want_dirty_filter)
+				mark_subsystem_dirty('filter');
+		}
 		header("Location: firewall_nat.php");
 		exit;
 	}
@@ -107,10 +112,10 @@ if (isset($_POST['del_x'])) {
 			}
 	        unset($a_nat[$rulei]);
 	    }
-	    write_config();
-	    mark_subsystem_dirty('natconf');
-	    header("Location: firewall_nat.php");
-	    exit;
+		if (write_config())
+			mark_subsystem_dirty('natconf');
+		header("Location: firewall_nat.php");
+		exit;
 	}
 
 } else {
@@ -150,8 +155,8 @@ if (isset($_POST['del_x'])) {
                                 $a_nat_new[] = $a_nat[$i];
                 }
                 $a_nat = $a_nat_new;
-                write_config();
-		mark_subsystem_dirty('natconf');
+		if (write_config())
+			mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat.php");
                 exit;
         }

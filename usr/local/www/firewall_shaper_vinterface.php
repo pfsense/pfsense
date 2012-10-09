@@ -104,8 +104,8 @@ if ($_GET) {
 			}
 			if (!$input_errors) {
 				$queue->delete_queue();
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 				header("Location: firewall_shaper_vinterface.php");
 				exit;
 			}
@@ -133,17 +133,17 @@ if ($_GET) {
 			if (isset($rule['pdnpipe']))
 				unset($config['filter']['rule'][$key]['pdnpipe']);
 		}
-		write_config();
-		
-		$retval = 0;
-		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
-
-		if (stristr($retval, "error") <> true)
+		if (write_config()) {
+			$retval = 0;
+			$retval = filter_configure();
 			$savemsg = get_std_save_message($retval);
-		else
-			$savemsg = $retval;
 
+			if (stristr($retval, "error") <> true)
+				$savemsg = get_std_save_message($retval);
+			else
+				$savemsg = $retval;
+		} else
+			$savemsg = gettext("Unable to write config.xml (Access Denied?)");
 		$output_form = $dn_default_shaper_message;
 
 		break;
@@ -176,8 +176,8 @@ if ($_GET) {
 			$queue->SetEnabled("on");
 			$output_form .= $queue->build_form();
 			$queue->wconfig();
-			write_config();
-			mark_subsystem_dirty('shaper');
+			if (write_config())
+				mark_subsystem_dirty('shaper');
 		} else
 			$input_errors[] = gettext("Queue not found!");
 		break;
@@ -186,8 +186,8 @@ if ($_GET) {
 			$queue->SetEnabled("");
 			$output_form .= $queue->build_form();
 			$queue->wconfig();
-			write_config();
-			mark_subsystem_dirty('shaper');
+			if (write_config())
+				mark_subsystem_dirty('shaper');
 		} else
 			$input_errors[] = gettext("Queue not found!");
 		break;
@@ -214,12 +214,12 @@ if ($_GET) {
 				$tmppath[] = $dnpipe->GetQname();
 				$dnpipe->SetLink(&$tmppath);	
 				$dnpipe->wconfig();
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 				$can_enable = true;
 				$can_add = true;
 			}
-			
+
 			read_dummynet_config();
 			$output_form .= $dnpipe->build_form();
 		}
@@ -233,14 +233,14 @@ if ($_GET) {
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
-				write_config();
-				$can_enable = true;
-                		$can_add = false;
-				mark_subsystem_dirty('shaper');
-				$can_enable = true;
+				if (write_config()) {
+					$can_enable = true;
+					$can_add = false;
+					mark_subsystem_dirty('shaper');
+				}
 			}
 			read_dummynet_config();
-			$output_form .= $tmp->build_form();			
+			$output_form .= $tmp->build_form();
 		} else
 			$input_errors[] = gettext("Could not add new queue.");
 	} else if ($_POST['apply']) {
@@ -274,8 +274,8 @@ if ($_GET) {
                 if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();
-			write_config();
-			mark_subsystem_dirty('shaper');
+			if (write_config())
+				mark_subsystem_dirty('shaper');
 			$dontshow = false;
                 } 
 		read_dummynet_config();

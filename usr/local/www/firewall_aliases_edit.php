@@ -350,12 +350,11 @@ if ($_POST) {
 		} else
 			$a_aliases[] = $alias;
 
-		mark_subsystem_dirty('aliases');
-
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		write_config();
+		if (write_config())
+			mark_subsystem_dirty('aliases');
 
 		if($_POST['tab'])
 			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($_POST['tab']));

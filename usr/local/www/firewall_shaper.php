@@ -94,8 +94,8 @@ if ($_GET) {
 	case "delete":
 			if ($queue) {
 				$queue->delete_queue();
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 			}
 			header("Location: firewall_shaper.php");
 			exit;
@@ -118,17 +118,18 @@ if ($_GET) {
 				if (isset($rule['wizard']) && $rule['wizard'] == "yes")
 					unset($config['filter']['rule'][$key]);
 			}
-			write_config();
-			
-			$retval = 0;
-                        $retval |= filter_configure();
-                        $savemsg = get_std_save_message($retval);
+			if (write_config()) {
+				$retval = 0;
+				$retval |= filter_configure();
+				$savemsg = get_std_save_message($retval);
 
-                        if (stristr($retval, "error") <> true)
-	                        $savemsg = get_std_save_message($retval);
-                        else
-       	                	$savemsg = $retval;
-			
+				if (stristr($retval, "error") <> true)
+					$savemsg = get_std_save_message($retval);
+				else
+					$savemsg = $retval;
+			} else {
+				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+			}
 			$output_form = $default_shaper_message;
 
 		break;
@@ -178,8 +179,8 @@ if ($_GET) {
 			if ($queue) {
 					$queue->SetEnabled("on");
 					$output_form .= $queue->build_form();
-					write_config();
-					mark_subsystem_dirty('shaper');
+					if (write_config())
+						mark_subsystem_dirty('shaper');
 			} else
 					$input_errors[] = gettext("Queue not found!");
 		break;
@@ -187,8 +188,8 @@ if ($_GET) {
 			if ($queue) {
 					$queue->SetEnabled("");
 					$output_form .= $queue->build_form();
-					write_config();
-					mark_subsystem_dirty('shaper');
+					if (write_config())
+						mark_subsystem_dirty('shaper');
 			} else
 					$input_errors[] = gettext("Queue not found!");
 		break;
@@ -230,8 +231,8 @@ if ($_GET) {
 			$tmppath[] = $altq->GetInterface();
 			$altq->SetLink(&$tmppath);	
 			$altq->wconfig();
-			write_config();
-			mark_subsystem_dirty('shaper');
+			if (write_config())
+				mark_subsystem_dirty('shaper');
 			$can_enable = true;
                         $can_add = true;
 		}
@@ -255,8 +256,8 @@ if ($_GET) {
                              			$can_add = true;
 				} else
 					$can_add = false;
-				write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 				$can_enable = true;
 				if ($altq->GetScheduler() != "PRIQ") /* XXX */
 					if ($tmp->GetDefault() <> "")
@@ -301,8 +302,8 @@ if ($_GET) {
                 if (!$input_errors) {
                             $queue->update_altq_queue_data($_POST);
                             $queue->wconfig();
-							write_config();
-				mark_subsystem_dirty('shaper');
+				if (write_config())
+					mark_subsystem_dirty('shaper');
 				$dontshow = false;
                 } 
 		read_altq_config();

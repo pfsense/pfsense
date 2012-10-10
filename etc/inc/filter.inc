@@ -1451,7 +1451,7 @@ function filter_nat_rules_generate() {
 					if (!is_subnet($local_subnet) && !is_ipaddr($local_subnet))
 						continue;
 					$natlocal_subnet = ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
-					if (empty($natlocal_subnet) || !is_subnet($natlocal_subnet) || $natlocal_subnet == "0.0.0.0/0")
+					if (empty($natlocal_subnet) || $natlocal_subnet == "0.0.0.0/0")
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;

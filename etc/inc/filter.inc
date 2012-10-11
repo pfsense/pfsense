@@ -1441,10 +1441,6 @@ function filter_nat_rules_generate() {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
 					require_once("ipsec.inc");
-					if ($ph2ent['natlocalid']['type'] == "address")
-						$nataction = "nat";
-					else
-						$nataction = "binat";
 					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
 					if (empty($local_subnet) || $local_subnet == "0.0.0.0/0")
 						continue;
@@ -1455,7 +1451,7 @@ function filter_nat_rules_generate() {
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;
-					$natrules .= "{$nataction} on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
+					$natrules .= "bniat on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
 				}
 			}
 		}

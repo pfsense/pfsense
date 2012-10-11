@@ -1451,7 +1451,7 @@ function filter_nat_rules_generate() {
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;
-					$natrules .= "bniat on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
+					$natrules .= "binat on enc0 from {$local_subnet} to any -> {$natlocal_subnet}\n";
 				}
 			}
 		}

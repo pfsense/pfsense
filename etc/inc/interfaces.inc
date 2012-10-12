@@ -37,7 +37,7 @@
 
 	pfSense_BUILDER_BINARIES:	/sbin/dhclient	/bin/sh	/usr/bin/grep	/usr/bin/xargs	/usr/bin/awk	/usr/local/sbin/choparp
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/route	/usr/sbin/ngctl	/usr/sbin/arp	/bin/kill	/usr/local/sbin/mpd5
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcp6c
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhclient
 	pfSense_MODULE:	interfaces
 
 */
@@ -2642,7 +2642,7 @@ function find_dhclient_process($interface) {
 
 function find_dhcp6c_process($interface) {
 	if ($interface)
-		$pid = `/bin/ps auxw|grep "[d]hcp6c" |grep "{$interface}"|awk '{print $2}'`;
+		$pid = `/bin/ps auxww|grep "[d]hclient[ ]-6" |grep "{$interface}"|awk '{print $2}'`;
 	else
 		return(false);
 
@@ -3078,10 +3078,21 @@ function interface_track6_dhcp6_configure($interface = "lan") {
 	if (empty($wancfg))
 		$wancfg = array();
 	
+	$realwanif = get_real_interface($wanif);
+	if(is_readable("{$g['vardb_path']}/{$realwanif}_pd_ipv6")) {
+		$ifcfgipv6pfx = file_get_contents("{$g['vardb_path']}/{$realwanif}_pd_ipv6");
+	} else {
+		log_error("No DHCP-PD delegated prefix found, exiting");
+		return false;
+	}		
+
+	log_error("Delegated IPv6 prefix is {$ifcfgipv6pfx}");
+	$ifcfgipv6pfxarr = explode("/", $ifcfgipv6pfx);
+	$ifcfgipv6 = $ifcfgipv6pfxarr[0];
 	
-	$ifcfgipv6 = find_interface_ipv6($lanif);
 	if(is_ipaddrv6($ifcfgipv6)) {
 		$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
+		/* we need to fold the $lancfg['track6-prefix-id'] into this address */
 		$dhcp6lanarr[4] = 0;
 		$dhcp6lanarr[5] = 0;
 		$dhcp6lanarr[6] = 0;
@@ -3089,6 +3100,8 @@ function interface_track6_dhcp6_configure($interface = "lan") {
 		$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
 		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
+	} else {
+		log_error("The DHCP-PD interface {$interface} address {$ifcfgipv6} is not a valid IPv6 address");
 	}
 	return 0;
 }
@@ -3287,70 +3300,19 @@ function interface_dhcpv6_configure($interface = "wan") {
 
 	$wanif = get_real_interface($interface);
 
-	/* Add ISC IPv6 dhclient here, only wide-dhcp6c works for now. */
+	/* Add ISC IPv6 dhclient here */
 	$fd = fopen("{$g['varetc_path']}/dhcp6c_{$interface}.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open dhcp6c_{$interface}.conf in interface_dhcpv6_configure() for writing.\n");
 		return 1;
 	}
 
-	$dhcp6cconf = "";
-	$dhcp6cconf .= "interface {$wanif} {\n";
+	$dhcp6cconf = "interface \"{$wanif}\" {\n";
+	$dhcp6cconf .= "script \"/sbin/dhclient6-script\";\n";
+	$dhcp6cconf .= "}\n";
 
-	/* for SLAAC interfaces we do fire off a dhcp6 client for just our name servers */
-	if($wancfg['ipaddrv6'] == "slaac") {
-		$dhcp6cconf .= "	information-only;\n";
-		$dhcp6cconf .= "	request domain-name-servers;\n";
-		$dhcp6cconf .= "	request domain-name;\n";
-		$dhcp6cconf .= "	script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
-		$dhcp6cconf .= "};\n";
-	} else {
-	
-		$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
-		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
-			$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
-		}
-		$dhcp6cconf .= "request domain-name-servers;\n";
-		$dhcp6cconf .= "request domain-name;\n";
-		$dhcp6cconf .= "script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
-
-		$dhcp6cconf .= "};\n";
-		$dhcp6cconf .= "id-assoc na 0 { };\n";
-		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
-			/* Setup the prefix delegation */
-			$dhcp6cconf .= "id-assoc pd 0 {\n";
-			foreach($iflist as $friendly => $ifdescr) {
-				if($config['interfaces'][$friendly]['track6-interface'] != $interface)
-					continue;
-				if(is_numeric($config['interfaces'][$friendly]['track6-prefix-id'])) {
-					log_error("setting up $friendly - {$config['interfaces'][$friendly]['track6-prefix-id']}");
-					$realif = get_real_interface($friendly);
-					$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-					$dhcp6cconf .= "		sla-id {$config['interfaces'][$friendly]['track6-prefix-id']};\n";
-					$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
-					$dhcp6cconf .= "	};\n";
-				}
-			}
-			$dhcp6cconf .= "};\n";
-		}
-	}
 	fwrite($fd, $dhcp6cconf);
 	fclose($fd);
-
-	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
-	$fds = fopen("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", "w");
-	if (!$fds) {
-		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
-		return 1;
-	}
-	$dhcp6cscript = "#!/bin/sh\n";
-	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
-	$dhcp6cscript .= "/etc/rc.newwanipv6 $interface \n";
-
-	fwrite($fds, $dhcp6cscript);
-	fclose($fds);
-	chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
-
 
 	/* accept router advertisements for this interface */
 	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
@@ -3358,34 +3320,29 @@ function interface_dhcpv6_configure($interface = "wan") {
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 
 	/* run a filter configure so that the filter rules allow traffic before we launch the client */
-	filter_configure();
+	filter_configure_sync();
 	sleep(3);
 
+	/* dhclient -6
+	 * -T temprorary address
+	 * -S information only
+	 * -P Prefix
+	 * -N request address with temporary or prefix
+	*/
+
+	$dhcp6c_options = "";
+	if($wancfg['ipaddrv6'] == "slaac") {
+		$dhcp6c_options .= "-S ";
+	}
+	if($wancfg['ipaddrv6'] == "dhcp6") {
+		$dhcp6c_options .= "-N ";
+	}
+	if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
+		$dhcp6c_options .= "-P ";		
+	}
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
-	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");
-	sleep(1);
-	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
-	if(!empty($out)) {
-		foreach($out as $line) {
-			if((stristr($line, "received")) && (!stristr($line, "unexpected"))) {
-				$parts = explode(" ", $line);
-				if(is_ipaddrv6($parts[3])) {
-					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
-					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
-					file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$parts[3]}\n");
-					break;
-				}
-			}
-		}
-	}
-	/* worst case is that the rc.newwanipv6 handles setting up the track6 interface */
-	if($wancfg['ippaddrv6'] != "slaac") {
-		/* configure dependent interfaces */
-		foreach($iflist as $if => $ifname) {
-			if($config['interfaces'][$if]['track6-interface'] == $interface)
-				interface_track6_configure($if);
-		}
-	}
+	mwexec("/usr/local/sbin/dhclient -6 {$dhcp6c_options} -cf {$g['varetc_path']}/dhcp6c_{$interface}.conf -lf {$g['varetc_path']}/dhcp6c_{$interface}.leases -pf {$g['varrun_path']}/dhcp6c_{$interface}.pid {$wanif}");
+	sleep(5);
 	return 0;
 }
 

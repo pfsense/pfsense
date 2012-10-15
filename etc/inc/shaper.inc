@@ -2998,6 +2998,7 @@ class dnpipe_class extends dummynet_class {
 		if ($this->GetEnabled() == "")
 			return;
 
+		$pfq_rule = "\npipe ". $this->GetNumber() . " config ";
 		$bandwidth = $this->GetBandwidth();
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {

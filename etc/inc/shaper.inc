@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -3183,7 +3183,7 @@ EOD;
 		}
 		$form .= "</tbody></table>";
 		$form .= "<a onclick=\"javascript:addBwRowTo('maintable'); return false;\" href='#'>";
-		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='' title='" . gettext("add another schedule") . "/></a>";
+		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='' title='" . gettext("add another schedule") . "' /></a>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"center\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
 		$form .= "<td class=\"vncellreq\">";

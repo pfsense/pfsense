@@ -111,7 +111,6 @@ if($_POST['aliasimport'] <> "") {
 
 		if (write_config())
 			mark_subsystem_dirty('aliases');
-		}
 		pfSenseHeader("firewall_aliases.php");
 		
 		exit;

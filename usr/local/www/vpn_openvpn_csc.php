@@ -557,7 +557,7 @@ function netbios_change() {
 									</td>
 								</tr>
 							</table>
-							<?=gettext("If this option is not set, all NetBIOS-over-TCP/IP options (includeing WINS) will be disabled"); ?>.
+							<?=gettext("If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled"); ?>.
 							<br/>
 							<table border="0" cellpadding="2" cellspacing="0" id="netbios_data">
 								<tr>

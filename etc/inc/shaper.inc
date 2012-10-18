@@ -3004,11 +3004,13 @@ class dnpipe_class extends dummynet_class {
 			foreach ($bandwidth as $bw) {
 				if ($bw['sched'] != "none") {
 					$time_based_rules = true;
-					foreach ($config['schedules']['schedule'] as $schedule) {
-						if ($bw['bwsched'] == $schedule['name']) {
-							if (filter_get_time_based_rule_status($schedule)) {
-								$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
-								break;
+					if (is_array($config['schedules']['schedule'])) {
+						foreach ($config['schedules']['schedule'] as $schedule) {
+							if ($bw['bwsched'] == $schedule['name']) {
+								if (filter_get_time_based_rule_status($schedule)) {
+									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+									break;
+								}
 							}
 						}
 					}

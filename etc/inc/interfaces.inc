@@ -3341,7 +3341,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 		$dhcp6c_options .= "-P ";		
 	}
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
-	mwexec("/usr/local/sbin/dhclient -6 {$dhcp6c_options} -cf {$g['varetc_path']}/dhcp6c_{$interface}.conf -lf {$g['varetc_path']}/dhcp6c_{$interface}.leases -pf {$g['varrun_path']}/dhcp6c_{$interface}.pid {$wanif}");
+	mwexec_bg("/usr/local/sbin/dhclient -6 {$dhcp6c_options} -cf {$g['varetc_path']}/dhcp6c_{$interface}.conf -lf {$g['varetc_path']}/dhcp6c_{$interface}.leases -pf {$g['varrun_path']}/dhcp6c_{$interface}.pid {$wanif}");
 	sleep(5);
 	return 0;
 }

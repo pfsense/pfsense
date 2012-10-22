@@ -536,9 +536,9 @@ function vpn_ipsec_configure($ipchg = false)
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
 						$passive = "passive on;";
+						$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
 						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
-							$pcheck = !empty($ph1ent['proposal_check']) ? $ph1ent['proposal_check'] : $pcheck = "obey";
 							$genp = !empty($ph1ent['generate_policy']) ? $ph1ent['generate_policy'] : "on";
 						} else {
 							$init = "off";

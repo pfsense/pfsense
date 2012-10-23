@@ -98,7 +98,7 @@ if ($_GET) {
 		if ($queue) {
 			if (is_array($config['filter']['rule'])) {
 				foreach ($config['filter']['rule'] as $rule) {
-					if ($rule['dnpipe'] == $queue->GetName() || $rule['pdnpipe'] == $queue->GetName())
+					if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname())
 						$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleteing.");
 				}
 			}
@@ -161,6 +161,7 @@ if ($_GET) {
 
 		if ($q) {
 			$output_form .= $q->build_form();
+			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
@@ -222,6 +223,7 @@ if ($_GET) {
 
 			read_dummynet_config();
 			$output_form .= $dnpipe->build_form();
+			$newjavascript = $dnpipe->build_javascript();
 		}
 	} else if ($parentqueue) { /* Add a new queue */
 		if (!empty($dummynet_pipe_list[$qname]))
@@ -326,7 +328,7 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "</a>";
 }
 $output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-$output_form .= $pipe . "&queue=";
+$output_form .= $pipe;
 if ($queue) {
 	$output_form .= "&queue=" . $queue->GetQname();
 }

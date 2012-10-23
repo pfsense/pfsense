@@ -146,6 +146,8 @@ if ($_POST) {
 				case "network":
 					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits']))
 						$input_errors[] = gettext("A valid nat local network bit count must be specified.");
+					if ($pconfig['localid_type'] == "address")
+						$input_errors[] = gettext("You cannot configure a network type address for NAT while only an address type is selected for local source."); 
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
 						$input_errors[] = gettext("A valid nat local network IP address must be specified.");

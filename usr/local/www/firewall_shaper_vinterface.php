@@ -368,7 +368,8 @@ function show_source_port_range() {
 <?php
 if ($queue)
 	echo $queue->build_javascript();
-echo $newjavascript;
+else
+	echo $newjavascript;
 
 include("fbegin.inc"); 
 ?>

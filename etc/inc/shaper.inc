@@ -3002,7 +3002,7 @@ class dnpipe_class extends dummynet_class {
 		$bandwidth = $this->GetBandwidth();
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {
-				if ($bw['sched'] != "none") {
+				if ($bw['bwsched'] != "none") {
 					$time_based_rules = true;
 					if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
 						foreach ($config['schedules']['schedule'] as $schedule) {
@@ -3072,7 +3072,7 @@ class dnpipe_class extends dummynet_class {
 		foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwidx => $bw)
 			$bwopt .= "<option value='{$bwidx}'>{$bw}</option>";
 
-	$javasr = <<<EOD
+		$javasr = <<<EOD
 <script text='type/javascript'>
 var addBwRowTo = (function() {
 	return (function (tableId) {

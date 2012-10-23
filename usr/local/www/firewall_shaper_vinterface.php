@@ -161,6 +161,7 @@ if ($_GET) {
 
 		if ($q) {
 			$output_form .= $q->build_form();
+			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
@@ -326,7 +327,7 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "</a>";
 }
 $output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-$output_form .= $pipe . "&queue=";
+$output_form .= $pipe;
 if ($queue) {
 	$output_form .= "&queue=" . $queue->GetQname();
 }

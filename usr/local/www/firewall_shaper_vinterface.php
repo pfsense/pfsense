@@ -98,7 +98,7 @@ if ($_GET) {
 		if ($queue) {
 			if (is_array($config['filter']['rule'])) {
 				foreach ($config['filter']['rule'] as $rule) {
-					if ($rule['dnpipe'] == $queue->GetName() || $rule['pdnpipe'] == $queue->GetName())
+					if ($rule['dnpipe'] == $queue->GetQName() || $rule['pdnpipe'] == $queue->GetQName())
 						$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleteing.");
 				}
 			}

@@ -223,6 +223,7 @@ if ($_GET) {
 
 			read_dummynet_config();
 			$output_form .= $dnpipe->build_form();
+			$newjavascript = $dnpipe->build_javascript();
 		}
 	} else if ($parentqueue) { /* Add a new queue */
 		if (!empty($dummynet_pipe_list[$qname]))

@@ -184,7 +184,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
-/* Allow the FlotingRules to work */
+/* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
 if (isset($_GET['dup']))
@@ -211,20 +211,22 @@ if ($_POST) {
 
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
 		$a_gatewaygroups = return_gateway_groups_array();
-		foreach($config['gateways']['gateway_group'] as $gw_group) {
-			if($gw_group['name'] == $_POST['gateway']) {
-				$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
-				if($_POST['ipprotocol'] == $family) {
-					continue;
-				}
-				if(($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
-					$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
-				}
-				if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-					$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
-				}
-				if(($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-					$input_errors[] = gettext("You can not assign a IPv6 gateway group on IPv4 Address Family rule");
+		if(is_array($config['gateways']['gateway_group'])) {
+			foreach($config['gateways']['gateway_group'] as $gw_group) {
+				if($gw_group['name'] == $_POST['gateway']) {
+					$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
+					if($_POST['ipprotocol'] == $family) {
+						continue;
+					}
+					if(($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
+						$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
+					}
+					if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
+						$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
+					}
+					if(($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
+						$input_errors[] = gettext("You can not assign a IPv6 gateway group on IPv4 Address Family rule");
+					}
 				}
 			}
 		}

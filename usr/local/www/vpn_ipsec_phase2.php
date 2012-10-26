@@ -472,7 +472,7 @@ function change_protocol() {
 				$tab_array = array();
 				$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
 				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array(gettext("Pre-shared keys"), false, "vpn_ipsec_keys.php");
+				$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>

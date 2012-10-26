@@ -91,7 +91,7 @@ if (is_subsystem_dirty('ipsec'))
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
 	$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array(gettext("Pre-shared keys"), true, "vpn_ipsec_keys.php");
+	$tab_array[2] = array(gettext("Pre-Shared Keys"), true, "vpn_ipsec_keys.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -101,7 +101,7 @@ if (is_subsystem_dirty('ipsec'))
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr> 
                   <td class="listhdrr"><?=gettext("Identifier"); ?></td>
-                  <td class="listhdr"><?=gettext("Pre-shared key"); ?></td>
+                  <td class="listhdr"><?=gettext("Pre-Shared Key"); ?></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
@@ -133,7 +133,7 @@ if (is_subsystem_dirty('ipsec'))
                     <?=htmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
                   <td class="list" nowrap> <a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this pre-shared key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 

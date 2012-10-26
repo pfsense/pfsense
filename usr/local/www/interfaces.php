@@ -2457,7 +2457,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td>&nbsp;</td>
-										<td>&nbsp;<?=gettext("WPA Pre Shared Key"); ?>&nbsp;</td>
+										<td>&nbsp;<?=gettext("WPA Pre-Shared Key"); ?>&nbsp;</td>
 									</tr>
 									<tr>
 										<td><?=gettext("PSK:"); ?>&nbsp;&nbsp;</td>
@@ -2483,7 +2483,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("WPA Key Management Mode"); ?></td>
 							<td class="vtable">
 								<select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre Shared Key"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre-Shared Key"); ?></option>
 									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
 									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
 								</select>

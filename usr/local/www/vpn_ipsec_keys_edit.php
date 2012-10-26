@@ -66,7 +66,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = array(gettext("Identifier"),gettext("Pre-shared key"));
+	$reqdfieldsn = array(gettext("Identifier"),gettext("Pre-Shared Key"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -111,7 +111,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = gettext("VPN: IPsec: Edit pre-shared key");
+$pgtitle = gettext("VPN: IPsec: Edit Pre-Shared Key");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -132,7 +132,7 @@ include("head.inc");
                   </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-shared key"); ?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
                   </td>

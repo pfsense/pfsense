@@ -55,22 +55,25 @@ function clientcmp($a, $b) {
 	return strcmp($a[$order], $b[$order]);
 }
 
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
 $cpdb = array();
-if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
-	$captiveportallck = lock('captiveportaldb');
-        $cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	unlock($captiveportallck);
-} else
-        $cpcontents = array();
 
-$concurrent = count($cpcontents);
-
-foreach ($cpcontents as $cpcontent) {
-	$cpent = explode(",", $cpcontent);
-	$sessionid = $cpent[5];
-	if ($_GET['showact'])
-		$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-	$cpdb[$sessionid] = $cpent;
+foreach ($a_cp as $cpzone => $cp) {
+	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db")) {
+		$captiveportallck = lock('captiveportaldb');
+		$cpcontents = file("{$g['vardb_path']}/captiveportal_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		unlock($captiveportallck);
+		foreach ($cpcontents as $cpcontent) {
+			$cpent = explode(",", $cpcontent);
+			$sessionid = $cpent[5];
+			if ($_GET['showact'])
+				$cpent[5] = captiveportal_get_last_activity($cpent[2]);
+			$cpdb[$sessionid] = $cpent;
+		}
+	}
 }
 
 if ($_GET['order']) {

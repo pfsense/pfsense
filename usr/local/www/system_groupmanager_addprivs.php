@@ -181,7 +181,7 @@ function update_description() {
 							<td width="78%" class="vtable">
 								<table>
 									<tr><td>
-								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple>
+								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple size="35">
 									<?php
 										foreach($priv_list as $pname => $pdata):
 											if (in_array($pname, $a_group['priv']))

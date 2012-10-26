@@ -85,8 +85,8 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
 			$input_errors[] = gettext("This virtual server name has already been used.  Virtual server names must be unique.");
 
-	if (strpos($_POST['name'], " ") !== false)
-		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+	if (preg_match('/[ \/]/', $_POST['name']))
+		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
 
 	if ($_POST['port'] != "" && !is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, a port alias, or left blank.");

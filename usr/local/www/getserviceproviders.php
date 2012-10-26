@@ -133,13 +133,15 @@ function provider_plans_list($country,$provider) {
 	}
 }
 
-if(isset($_POST['country']) && !isset($_POST['provider'])) {
-	providers_list($_POST['country']);
-} elseif(isset($_POST['country']) && isset($_POST['provider'])) {
-	if(isset($_POST['plan']))
-		provider_plan_data($_POST['country'],$_POST['provider'],$_POST['plan']);
+$_GET_OR_POST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_GET;
+
+if(isset($_GET_OR_POST['country']) && !isset($_GET_OR_POST['provider'])) {
+	providers_list($_GET_OR_POST['country']);
+} elseif(isset($_GET_OR_POST['country']) && isset($_GET_OR_POST['provider'])) {
+	if(isset($_GET_OR_POST['plan']))
+		provider_plan_data($_GET_OR_POST['country'],$_GET_OR_POST['provider'],$_GET_OR_POST['plan']);
 	else
-		provider_plans_list($_POST['country'],$_POST['provider']);
+		provider_plans_list($_GET_OR_POST['country'],$_GET_OR_POST['provider']);
 } else {
 	country_list();
 }

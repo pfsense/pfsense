@@ -2999,6 +2999,7 @@ class dnpipe_class extends dummynet_class {
 			return;
 
 		$pfq_rule = "\npipe ". $this->GetNumber() . " config ";
+		$found = false;
 		$bandwidth = $this->GetBandwidth();
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bw) {
@@ -3009,15 +3010,18 @@ class dnpipe_class extends dummynet_class {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+									$found = true;
 									break;
 								}
 							}
 						}
 					} else
-						return "";
+						$pfq_rule .= " bw 0";
 				} else
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
 			}
+			if ($found == false)
+				$pfq_rule .= " bw 0";
 		}
 
 		if ($this->GetQlimit())

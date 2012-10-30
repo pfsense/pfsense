@@ -3169,22 +3169,31 @@ function filter_process_carp_nat_rules() {
 		echo "filter_process_carp_nat_rules() being called $mt\n";
 	}
 	$lines = "";
-	if (is_array($config['hasync'])) {
-		foreach($config['hasync'] as $carp) {
-			$ip = $carp['ipaddress'];
-			if($ip == "any") {
+
+	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+		foreach($config['virtualip']['vip'] as $carp) {
+			// Bail if this isn't a CARP VIP, or if somehow the IP is empty to avoid further errors.
+			if (($carp['mode'] != 'carp') || empty($carp['subnet']))
+				continue;
+
+			$ip = $carp['subnet'];
+			if ($ip == "any") {
 				$ipnet = "any";
 			} else {
-				$int = find_ip_interface($ip);
+				$int = find_ip_interface($ip, $carp['subnet_bits']);
 				$carp_int = find_carp_interface($ip);
 			}
+
 			if ($int != false and $int != $wan_interface) {
-				$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
+				$ipnet = convert_ip_to_network_format($ip, $carp['subnet_bits']);
 				if ($int && $carp_int)
+				{
 					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
+				}
 			}
 		}
 	}
+
 	return $lines;
 }
 

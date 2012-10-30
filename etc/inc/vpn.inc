@@ -933,12 +933,15 @@ EOD;
 				}
 
 				/* static route needed? */
-				if (preg_match("/^carp|^[a-z0-9]+_vip/i", $ph1ent['interface']))
-					$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
-				else if (is_ipaddr($ph1ent['interface'])) {
+				if (is_ipaddr($ph1ent['interface'])) {
 					$vip = find_virtual_ip_alias($ph1ent['interface']);
-					$parentinterface = $vip['interface'];
-				} else
+					if (preg_match("/^carp|^[a-z0-9]+_vip/i", $vip['interface']))
+						$parentinterface = link_carp_interface_to_parent($vip['interface']);
+					else
+						$parentinterface = $vip['interface'];
+				} else if (preg_match("/^carp|^[a-z0-9]+_vip/i", $ph1ent['interface']))
+					$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
+				else
 					$parentinterface = $ph1ent['interface'];
 
 				if (is_ipaddr($rgip)) {

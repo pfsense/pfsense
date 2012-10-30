@@ -132,6 +132,7 @@ function vpn_ipsec_configure($ipchg = false)
 		$ipmap = array();
 		$rgmap = array();
 		$filterdns_list = array();
+		unset($iflist);
 		if (is_array($a_phase1) && count($a_phase1)) {
 
 			$ipsecpinghosts = "";
@@ -184,7 +185,8 @@ function vpn_ipsec_configure($ipchg = false)
 						$ph2ent['localid']['mode'] = $ph2ent['mode'];
 						/* add an ipsec pinghosts entry */
 						if ($ph2ent['pinghost']) {
-							$iflist = get_configured_interface_list();
+							if (!is_array($iflist))
+								$iflist = get_configured_interface_list();
 							foreach ($iflist as $ifent => $ifname) {
 								if(is_ipaddrv6($ph2ent['pinghost'])) {
 									$interface_ip = get_interface_ipv6($ifent);
@@ -200,7 +202,7 @@ function vpn_ipsec_configure($ipchg = false)
 									if(!is_ipaddrv4($interface_ip))
 										continue;
 									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-									if (ip_in_subnet($interface_ip, $local_subnet)) {
+									if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
 										$srcip = $interface_ip;
 										break;
 									}

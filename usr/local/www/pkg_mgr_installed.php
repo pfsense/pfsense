@@ -130,7 +130,7 @@ include("head.inc");
 										continue;
 
 									// get history/changelog git dir
-									$commit_dir=split("/",$pkg['config_file']);
+									$commit_dir=explode("/",$pkg['config_file']);
 									$changeloglink ="https://github.com/bsdperimeter/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)]; 
 									#check package version
 									$latest_package = $currentvers[$pkg['name']]['version'];

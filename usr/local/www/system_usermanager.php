@@ -459,7 +459,7 @@ function sshkeyClicked(obj) {
 	                    <tr>
 	                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
 	                        <td width="78%" class="vtable">
-	                            <strong><?=strtoupper($pconfig['utype']);?></strong>
+	                            <strong><?=strtoupper(htmlspecialchars($pconfig['utype']));?></strong>
 								<input name="utype" type="hidden" value="<?=htmlspecialchars($pconfig['utype'])?>"/>
 	                        </td>
 	                    </tr>

@@ -4376,7 +4376,7 @@ function is_altq_capable($int) {
 			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
-			"l2tp", "ppp");
+			"l2tp", "ppp", "vtnet");
 
         $int_family = preg_split("/[0-9]+/", $int);
 

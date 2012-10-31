@@ -212,7 +212,7 @@ if ($_GET['act'] == "del") {
 		unset($a_filter[$_GET['id']]);
 		if (write_config())
 			mark_subsystem_dirty('filter');
-		header("Location: firewall_rules.php?if={$if}");
+		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
 }
@@ -230,7 +230,7 @@ if (isset($_POST['del_x'])) {
 		}
 		if (write_config())
 			mark_subsystem_dirty('filter');
-		header("Location: firewall_rules.php?if={$if}");
+		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
 } else if ($_GET['act'] == "toggle") {
@@ -241,7 +241,7 @@ if (isset($_POST['del_x'])) {
                         $a_filter[$_GET['id']]['disabled'] = true;
 		if (write_config())
 			mark_subsystem_dirty('filter');
-		header("Location: firewall_rules.php?if={$if}");
+		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
 } else {
@@ -285,7 +285,7 @@ if (isset($_POST['del_x'])) {
 		$a_filter = $a_filter_new;
 		if (write_config())
 			mark_subsystem_dirty('filter');
-		header("Location: firewall_rules.php?if={$if}");
+		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
 }

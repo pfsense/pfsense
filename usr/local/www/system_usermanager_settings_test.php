@@ -73,7 +73,7 @@ $authcfg = auth_get_authserver($authserver);
 <?php
 
 if (!$authcfg) {
-	printf(gettext("Could not find settings for %s%s"), $authserver, "<p/>");
+	printf(gettext("Could not find settings for %s%s"), htmlspecialchars($authserver), "<p/>");
 } else {
 	echo sprintf(gettext("Testing %s LDAP settings... One moment please..."), $g['product_name']) . "<p/>";
 

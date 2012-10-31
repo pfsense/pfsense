@@ -53,7 +53,7 @@ if($_REQUEST['type'])
 	$tablename = $_REQUEST['type'];
 	
 if($_REQUEST['delete']) {
-	if(is_ipaddr($_REQUEST['delete'])) {
+	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
 		echo htmlentities($_REQUEST['delete']);
 	}
@@ -61,7 +61,7 @@ if($_REQUEST['delete']) {
 }
 
 if($_REQUEST['deleteall']) {
-	exec("/sbin/pfctl -t $tablename -T show", $entries);
+	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if(is_array($entries)) {
 		foreach($entries as $entryA) {
 			$entry = trim($entryA);
@@ -87,7 +87,7 @@ if(($tablename == "bogons") && ($_POST['Download'])) {
 		$savemsg = gettext("The bogons database has been updated.");
 }
 
-exec("/sbin/pfctl -t $tablename -T show", $entries);
+exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
@@ -103,7 +103,7 @@ include("fbegin.inc");
 		window.location='diag_tables.php?type=' + entrytype;
 	}
 	function del_entry(entry) {
-		jQuery.ajax("diag_tables.php?type=<?php echo $tablename;?>&delete=" + entry, {
+		jQuery.ajax("diag_tables.php?type=<?php echo htmlspecialchars($tablename);?>&delete=" + entry, {
 		complete: function(response) {
 			if (200 == response.status) {
 				// Escape all dots to not confuse jQuery selectors
@@ -140,7 +140,7 @@ include("fbegin.inc");
 		</td>
 		<td>
 			<?php if ($tablename != "bogons") { ?>
-			<a onClick='del_entry("<?=$entry?>");'>
+			<a onClick='del_entry("<?=htmlspecialchars($entry)?>");'>
 				<img img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif">
 			<?php } ?>
 			</a>
@@ -159,7 +159,7 @@ include("fbegin.inc");
   		if($tablename == "bogons")
 			echo "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
 		else
-			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type={$tablename}'>" . gettext("all") . "</a> " . gettext("entries in this table.");
+			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type=" . htmlspecialchars($tablename) . "'>" . gettext("all") . "</a> " . gettext("entries in this table.");
 ?>
 
 <?php include("fend.inc"); ?>

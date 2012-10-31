@@ -447,9 +447,9 @@ function monitor_change() {
 
 	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
+		echo "<input type='hidden' name='attribute' id='attribute' value='" . htmlspecialchars($pconfig['attribute']) . "' >\n";
 	}
-	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='{$pconfig['friendlyiface']}' >\n";
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='" . htmlspecialchars($pconfig['friendlyiface']) . "' >\n";
 	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
@@ -502,7 +502,7 @@ function monitor_change() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>">
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo htmlspecialchars($pconfig['gateway']); ?>">
                     <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
@@ -530,7 +530,7 @@ function monitor_change() {
 				else
 					$monitor = htmlspecialchars($pconfig['monitor']);
 			?>
-			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" size="28" />
+			<input name="monitor" type="text" id="monitor" value="<?php echo htmlspecialchars($monitor); ?>" size="28" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
 			<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .

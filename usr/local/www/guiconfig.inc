@@ -37,6 +37,9 @@
 if(!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
+		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ?  $config['system']['webgui']['session_timeout'] : 240;
+		csrf_conf('expires', $timeout_minutes * 60);
+		echo $GLOBALS['csrf']['expires'];
 	}
 	require_once("csrf/csrf-magic.php");
 }

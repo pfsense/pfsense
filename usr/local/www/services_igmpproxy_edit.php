@@ -207,7 +207,7 @@ include("head.inc");
   <tr>
     <td valign="top" class="vncell"><?=gettext("Threshold");?></td>
     <td class="vtable">
-      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo $pconfig['threshold'];?>">
+      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo htmlspecialchars($pconfig['threshold']);?>">
       <br />
       <span class="vexpl">
 	      <?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".

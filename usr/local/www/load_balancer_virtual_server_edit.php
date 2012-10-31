@@ -154,19 +154,19 @@ include("head.inc");
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?>size="32" maxlength="32">
+                    <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?>size="32" maxlength="32">
                   </td>
 			</tr>
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
+                    <input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?>size="64">
                   </td>
 			</tr>
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input class="formfldalias" id="ipaddr" name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="39" maxlength="39">
+                    <input class="formfldalias" id="ipaddr" name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"" . htmlspecialchars($pconfig['ipaddr']) . "\"";?> size="39" maxlength="39">
 					<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
 					<br><?=gettext("You may also specify a host alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
@@ -180,7 +180,7 @@ include("head.inc");
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncell"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input class="formfldalias" name="port" id="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
+                    <input class="formfldalias" name="port" id="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"" . htmlspecialchars($pconfig['port']) . "\"";?> size="16" maxlength="16">
 					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
 					<br><?=gettext("If left blank, listening ports from the pool will be used."); ?>
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
@@ -204,7 +204,7 @@ include("head.inc");
 					$selected = "";
 					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['poolname'] )
 						$selected = " SELECTED";
-					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+					echo "<option value=\"" . htmlspecialchars($config['load_balancer']['lbpool'][$i]['name']) . "\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 				}
 			?>
 			<?php endif; ?>
@@ -224,7 +224,7 @@ include("head.inc");
             					$selected = "";
             					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['sitedown'] )
             						$selected = " SELECTED";
-            					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+						echo "<option value=\"" . htmlspecialchars($config['load_balancer']['lbpool'][$i]['name']) . "\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
             				}
             			?>
             			</select>

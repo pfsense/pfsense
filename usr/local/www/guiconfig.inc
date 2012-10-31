@@ -297,8 +297,8 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
-		if($_POST['if']) 
-			$savebutton .= "<input type='hidden' name='if' value='{$_POST['if']}'>";
+		if($_POST['if'])
+			$savebutton .= "<input type='hidden' name='if' value='" . htmlspecialchars($_POST['if']) . "'>";
 		$savebutton.="</td>";
 	}
 	$nifty_redbox = "#990000";
@@ -361,7 +361,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 		$savebutton .= " <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		$savebutton.="</nobr></td>";
 		if($_POST['if']) 
-			$savebutton .= "<input type='hidden' name='if' value='{$_POST['if']}'>";
+			$savebutton .= "<input type='hidden' name='if' value='" . htmlspecialchars($_POST['if']) . "'>";
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";

@@ -212,6 +212,7 @@ function csrf_get_tokens() {
     // $ip implements a composite key, which is sent if the user hasn't sent
     // any cookies. It may or may not be used, depending on whether or not
     // the cookies "stick"
+    $secret = csrf_get_secret();
     if (!$has_cookies && $secret) {
         // :TODO: Harden this against proxy-spoofing attacks
         $ip = ';ip:' . csrf_hash($_SERVER['IP_ADDRESS']);
@@ -229,7 +230,7 @@ function csrf_get_tokens() {
     }
     if ($GLOBALS['csrf']['key']) return 'key:' . csrf_hash($GLOBALS['csrf']['key']) . $ip;
     // These further algorithms require a server-side secret
-    if ($secret === '') return 'invalid';
+    if (!$secret) return 'invalid';
     if ($GLOBALS['csrf']['user'] !== false) {
         return 'user:' . csrf_hash($GLOBALS['csrf']['user']);
     }
@@ -286,11 +287,11 @@ function csrf_check_token($token) {
         // that doesn't make me feel good then about the cookie-based
         // implementation.
         case 'user':
-            if ($GLOBALS['csrf']['secret'] === '') return false;
+            if (!csrf_get_secret()) return false;
             if ($GLOBALS['csrf']['user'] === false) return false;
             return $value === csrf_hash($GLOBALS['csrf']['user'], $time);
         case 'ip':
-            if (csrf_get_secret() === '') return false;
+            if (!csrf_get_secret()) return false;
             // do not allow IP-based checks if the username is set, or if
             // the browser sent cookies
             if ($GLOBALS['csrf']['user'] !== false) return false;
@@ -347,12 +348,12 @@ function csrf_get_secret() {
  * Generates a random string as the hash of time, microtime, and mt_rand.
  */
 function csrf_generate_secret($len = 32) {
-    $secret = '';
+    $r = '';
     for ($i = 0; $i < 32; $i++) {
-        $secret .= chr(mt_rand(0, 255));
+        $r .= chr(mt_rand(0, 255));
     }
-    $secret .= time() . microtime();
-    return sha1($secret);
+    $r .= time() . microtime();
+    return sha1($r);
 }
 
 /**
@@ -361,7 +362,7 @@ function csrf_generate_secret($len = 32) {
  */
 function csrf_hash($value, $time = null) {
     if (!$time) $time = time();
-    return sha1($secret . $value . $time) . ',' . $time;
+    return sha1($GLOBALS['csrf']['secret'] . $value . $time) . ',' . $time;
 }
 
 // Load user configuration

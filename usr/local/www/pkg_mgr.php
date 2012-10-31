@@ -177,7 +177,7 @@ include("head.inc");
 										(pfs_version_compare("", $version, $index['maximum_version']) > 0))
 										continue;
 									/* get history/changelog git dir */
-									$commit_dir=split("/",$index['config_file']);
+									$commit_dir=explode("/",$index['config_file']);
 									$changeloglink ="https://github.com/bsdperimeter/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 									/* Check package info link */
 									if($index['pkginfolink']){

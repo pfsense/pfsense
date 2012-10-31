@@ -110,7 +110,7 @@ CsrfMagic.end = function() {
 // Sets things up for Mozilla/Opera/nice browsers
 // We very specifically match against Internet Explorer, since they haven't
 // implemented prototypes correctly yet.
-if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != '\v') {
+if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
     var x = XMLHttpRequest.prototype;
     var c = CsrfMagic.prototype;
 

@@ -2725,7 +2725,7 @@ EOD;
 			break;
 		}
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
-                	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+                	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']}/$pdlen to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}
 	
 

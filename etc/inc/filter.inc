@@ -255,7 +255,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
-	$limitrules = "";
+	$limitrules = "set state-policy if-bound";
 	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
 	$maxtables = is_numeric($config['system']['maximumtables']) ? $config['system']['maximumtables'] : "3000";
 	$limitrules .= "set limit tables {$maxtables}\n";

@@ -651,7 +651,7 @@ if ($_POST) {
 		if (isset($_POST['floating']))
 			header("Location: firewall_rules.php?if=FloatingRules");
 		else
-			header("Location: firewall_rules.php?if=" . $_POST['interface']);
+			header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['interface']));
 		exit;
 	}
 }

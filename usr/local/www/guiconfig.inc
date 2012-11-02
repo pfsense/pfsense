@@ -62,23 +62,8 @@ foreach (scandir("/usr/local/www/classes/") as $file) {
 		require_once("classes/{$file}");
 	}
 }
-/*
- *   if user has selected a custom template, use it.
- *   otherwise default to pfsense template
- */
-if($config['theme'] <> "")
-        $g['theme'] = $config['theme'];
-else
-        $g['theme'] = "pfsense";
 
-/*
- *  If this device is an apple ipod/iphone
- *  switch the theme to one that works with it.
- */
-$apple_ua = array("iPhone","iPod", "iPad");
-foreach($apple_ua as $useragent)
-	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
-		$g['theme'] = "pfsense";
+$g['theme'] = get_current_theme();
 
 /* Set the default interface language */
 if($config['system']['language'] <> "") {

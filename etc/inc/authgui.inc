@@ -92,7 +92,7 @@ if (!$_SESSION['Post_Login']) {
  */
 function display_error_form($http_code, $desc) {
 	global $config, $g;
-	$g['theme'] = $config['theme'];
+	$g['theme'] = get_current_theme();
 	if(isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
 		return;
@@ -149,7 +149,7 @@ function display_error_form($http_code, $desc) {
 function display_login_form() {
 	require_once("globals.inc");
 	global $config, $g;
-	$g['theme'] = $config['theme'];
+	$g['theme'] = get_current_theme();
 
 	unset($input_errors);
 

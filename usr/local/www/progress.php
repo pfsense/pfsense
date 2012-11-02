@@ -4,10 +4,7 @@
 
 include("guiconfig.inc");
 
-if($config['theme'] <> "")
-	$g['theme'] = $config['theme'];
-else
-	$g['theme'] = "pfsense";
+$g['theme'] = get_current_theme();
 
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 

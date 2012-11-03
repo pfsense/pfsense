@@ -335,9 +335,8 @@ function openvpn_reconfigure($mode, $settings) {
 	$cipher = $settings['crypto'];
 
 	$interface = get_failover_interface($settings['interface']);
-	/* we will fill out these variables below. */
-	// $ipaddr = $settings['ipaddr'];
-	// $ipaddrv6 = $settings['ipaddrv6'];
+	$ipaddr = $settings['ipaddr'];
+	$ipaddrv6 = $settings['ipaddrv6'];
 
 	// If a specific ip address (VIP) is requested, use it.
 	// Otherwise, if a specific interface is requested, use it

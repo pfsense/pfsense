@@ -439,11 +439,11 @@ $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gett
 include("head.inc");
 
 ?>
-<link rel="stylesheet" href="/pfCenter/javascript/chosen/chosen.css" />
+<link rel="stylesheet" href="javascript/chosen/chosen.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/pfCenter/javascript/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="javascript/chosen/chosen.proto.js" type="text/javascript"></script>
 
 <?php
 include("fbegin.inc"); ?>

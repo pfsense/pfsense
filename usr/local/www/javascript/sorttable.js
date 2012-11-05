@@ -19,6 +19,7 @@
   2012-09-15 Allow for multiple header rows, using "sortableHeaderRowIdentifier" class for the TR that has the column headers. (used in firewall-log)
   2012-09-15 Allow sorting multiple dual/mutlti rows together, using sortablemultirow="2" attribute for the table
   2012-09-15 Allow sorting of IP:Port texts, changed sort compare function
+  2012-11-05 Allow sorting of IP:Port and *:port texts toghether also AAA_23 AAA_123 in 'numeric order' (used in Diagnostics\Sockets column LOCAL)
 */
 
  
@@ -341,10 +342,38 @@ sorttable = {
 		if (dt1<dt2) return -1;
 		return 1;
 	},
-	sort_ipaddr: function(a,b) {
-		if (ip2ulong(a[0]) == ip2ulong(b[0])) return 0;
-		if (ip2ulong(a[0]) < ip2ulong(b[0])) return -1;
+	sortWithNumber: function(a,b) {
+		amatch = a[0].match(/.*?(?=[0-9])/);
+		bmatch = b[0].match(/.*?(?=[0-9])/);		
+		if (amatch && bmatch && amatch[0] == bmatch[0])
+		{
+			anumber = a[0].substring(amatch.length+1);
+			bnumber = b[0].substring(bmatch.length+1);
+			a2match = parseInt(anumber.match(/[0-9]*/));
+			b2match = parseInt(bnumber.match(/[0-9]*/));
+			if (a2match > b2match) return 1;
+			if (a2match < b2match) return -1;
+		}
+		if (a[0] == b[0]) return 0;
+		if (a[0] < b[0]) return -1;
 		return 1;
+	},
+	sort_ipaddr: function(a,b) {
+		aip = ip2ulong(a[0]);
+		bip = ip2ulong(b[0]);
+		if (aip && bip)
+		{
+			if (aip == bip) return 0;
+			if (aip < bip) return -1;
+			return 1;
+		} else {
+			if (aip !== false || bip !== false)
+				return aip === false ? -1 : 1;
+			else
+			{			
+				return sorttable.sortWithNumber(a,b);
+			}
+		}
 	},
 	
 	shaker_sort: function(list, comp_func) {
@@ -386,25 +415,25 @@ sorttable = {
 function ip2ulong(ip) {
 	ip += "";
 	var ulip = false;
-	var octets = [];	
-	ipmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);// IP only
-	if (ipmatch) {
-		ipmatch+="";
-		octets = ipmatch.split('.');
+	var octets = [];
+	ipportmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:[0-9]{1,5}\b/);// IP:port
+	if (ipportmatch) {
+		ipportmatch += "";
+		ipport = ipportmatch.split(':');
+		octets = ipport[0].split('.');
 		for (i=0; i < 4; i++) {
 			ulip += octets[i] * Math.pow(256, (5-i));
 		}
+		ulip += parseInt(ipport[1]);
 	} else {
-		ipportmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:[0-9]{1,5}\b/);// IP:port
-		if (ipportmatch) {
-			ipportmatch += "";
-			ipport = ipportmatch.split(':');
-			octets = ipport[0].split('.');
+		ipmatch = ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);// IP only
+		if (ipmatch) {
+			ipmatch+="";
+			octets = ipmatch.split('.');
 			for (i=0; i < 4; i++) {
 				ulip += octets[i] * Math.pow(256, (5-i));
 			}
-			ulip += parseInt(ipport[1]);
-		}	
+		}
 	}
 	return ulip;
 }

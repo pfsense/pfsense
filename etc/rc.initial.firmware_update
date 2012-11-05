@@ -87,28 +87,28 @@ switch ($command) {
 				fclose($fp);
 				die;
 			}
-			$status = does_url_exist("$url.md5");
+			$status = does_url_exist("$url.sha256");
 			if($status) { 
-				echo "\nFetching MD5...\n";
-				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.md5 \"$url.md5\"");
+				echo "\nFetching sha256...\n";
+				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.sha256 \"$url.sha256\"");
 			} else {
 				echo "\n\nWARNING.\n";
-				echo "\nCould not locate a MD5 file.  We cannot verify the download once completed.\n\n";
+				echo "\nCould not locate a sha256 file.  We cannot verify the download once completed.\n\n";
 				sleep(15);
 			}
-			if(file_exists("/root/firmware.tgz.md5")) {
-				$source_md5 = trim(`cat /root/firmware.tgz.md5 | awk '{ print \$4 }'`,"\r");
-				$file_md5 = trim(`md5 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
-				echo "URL MD5: $source_md5\n";
-				echo "Downloaded file MD5: $file_md5\n";
-				if($source_md5 <> $file_md5) {
-					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
-					exec("rm -f /root/*.md5");
+			if(file_exists("/root/firmware.tgz.sha256")) {
+				$source_sha256 = trim(`cat /root/firmware.tgz.sha256 | awk '{ print \$4 }'`,"\r");
+				$file_sha256 = trim(`sha256 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
+				echo "URL sha256: $source_sha256\n";
+				echo "Downloaded file sha256: $file_sha256\n";
+				if($source_sha256 <> $file_sha256) {
+					echo "\n\nsha256 checksum does not match.  Cancelling upgrade.\n\n";
+					exec("rm -f /root/*.sha256");
 					fclose($fp);
 					die -1;
 				}
-				echo "\nMD5 checksum matches.\n";
-				exec("rm -f /root/*.md5");
+				echo "\nsha256 checksum matches.\n";
+				exec("rm -f /root/*.sha256");
 			}
 			if(strstr($url,"bdiff")) {
 				echo "Binary DIFF upgrade file detected...\n";
@@ -224,7 +224,7 @@ function do_upgrade($path, $type) {
 	clear_subsystem_dirty('firmwarelock');
 }
 
-exec("rm -f /root/*.md5");
+exec("rm -f /root/*.sha256");
 fclose($fp);
 
 ?>

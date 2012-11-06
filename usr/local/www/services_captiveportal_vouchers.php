@@ -94,10 +94,21 @@ if (!isset($config['voucher'][$cpzone]['checksumbits']))
 	$config['voucher'][$cpzone]['checksumbits'] = 5;
 if (!isset($config['voucher'][$cpzone]['magic'])) 
 	$config['voucher'][$cpzone]['magic'] = rand();   // anything slightly random will do
+if (!isset($config['voucher'][$cpzone]['exponent'])) {
+	while (true) {
+		while (($exponent = rand()) % 30000 < 5000)
+			continue;
+		$exponent = ($exponent * 2) + 1; // Make it odd number
+		if ($exponent <= 65537)
+			break;
+	}
+	$config['voucher'][$cpzone]['exponent'] = $exponent;
+	unset($exponent);
+}
 
 if (!isset($config['voucher'][$cpzone]['publickey'])) {
 	/* generate a random 64 bit RSA key pair using the voucher binary */
-	$fd = popen("/usr/local/bin/voucher -g 64", "r");
+	$fd = popen("/usr/local/bin/voucher -g 64 -e " . $config['voucher'][$cpzone]['exponent'], "r");
 	if ($fd !== false) {
 		$output = fread($fd, 16384);
 		pclose($fd);
@@ -162,6 +173,7 @@ $pconfig['rollbits'] = $config['voucher'][$cpzone]['rollbits'];
 $pconfig['ticketbits'] = $config['voucher'][$cpzone]['ticketbits'];
 $pconfig['checksumbits'] = $config['voucher'][$cpzone]['checksumbits'];
 $pconfig['magic'] = $config['voucher'][$cpzone]['magic'];
+$pconfig['exponent'] = $config['voucher'][$cpzone]['exponent'];
 $pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
 $pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['msgnoaccess'];
@@ -236,6 +248,7 @@ if ($_POST) {
 			$newvoucher['ticketbits'] = $_POST['ticketbits'];
 			$newvoucher['checksumbits'] = $_POST['checksumbits'];
 			$newvoucher['magic'] = $_POST['magic'];
+			$newvoucher['exponent'] = $_POST['exponent'];
 			$newvoucher['publickey'] = base64_encode($_POST['publickey']);
 			$newvoucher['privatekey'] = base64_encode($_POST['privatekey']);
 			$newvoucher['msgnoaccess'] = $_POST['msgnoaccess'];
@@ -306,6 +319,8 @@ EOF;
 							$config['voucher'][$cpzone]['checksumbits'] = $toreturn['voucher']['checksumbits'];
 						if($toreturn['voucher']['magic'])
 							$config['voucher'][$cpzone]['magic'] = $toreturn['voucher']['magic'];
+						if($toreturn['voucher']['exponent'])
+							$config['voucher'][$cpzone]['exponent'] = $toreturn['voucher']['exponent'];
 						if($toreturn['voucher']['publickey'])
 							$config['voucher'][$cpzone]['publickey'] = $toreturn['voucher']['publickey'];
 						if($toreturn['voucher']['privatekey'])
@@ -599,6 +614,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
+								<input type="hidden" name="exponent" id="exponent" value="<?=$pconfig['exponent'];?>" />
 								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="enable_change(true); before_save();"> 
 								<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 							</td>

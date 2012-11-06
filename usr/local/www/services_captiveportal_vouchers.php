@@ -82,10 +82,21 @@ if (!isset($config['voucher']['checksumbits']))
 	$config['voucher']['checksumbits'] = 5;
 if (!isset($config['voucher']['magic'])) 
 	$config['voucher']['magic'] = rand();   // anything slightly random will do
+if (!isset($config['voucher']['exponent'])) {
+	while (true) {
+		while (($exponent = rand()) % 30000 < 5000)
+			continue;
+		$exponent = ($exponent * 2) + 1; // Make it odd number
+		if ($exponent <= 65537)
+			break;
+	}
+	$config['voucher']['exponent'] = $exponent;
+	unset($exponent);
+}
 
 if (!isset($config['voucher']['publickey'])) {
 	/* generate a random 64 bit RSA key pair using the voucher binary */
-	$fd = popen("/usr/local/bin/voucher -g 64", "r");
+	$fd = popen("/usr/local/bin/voucher -g 64 -e {$config['voucher']['exponent']}", "r");
 	if ($fd !== false) {
 		$output = fread($fd, 16384);
 		pclose($fd);
@@ -150,6 +161,7 @@ $pconfig['rollbits'] = $config['voucher']['rollbits'];
 $pconfig['ticketbits'] = $config['voucher']['ticketbits'];
 $pconfig['checksumbits'] = $config['voucher']['checksumbits'];
 $pconfig['magic'] = $config['voucher']['magic'];
+$pconfig['exponent'] = $config['voucher']['exponent'];
 $pconfig['publickey'] = base64_decode($config['voucher']['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher']['privatekey']);
 $pconfig['msgnoaccess'] = $config['voucher']['msgnoaccess'];
@@ -220,6 +232,7 @@ if ($_POST) {
 			$config['voucher']['ticketbits'] = $_POST['ticketbits'];
 			$config['voucher']['checksumbits'] = $_POST['checksumbits'];
 			$config['voucher']['magic'] = $_POST['magic'];
+			$config['voucher']['exponent'] = $_POST['exponent'];
 			$config['voucher']['publickey'] = base64_encode($_POST['publickey']);
 			$config['voucher']['privatekey'] = base64_encode($_POST['privatekey']);
 			$config['voucher']['msgnoaccess'] = $_POST['msgnoaccess'];
@@ -289,6 +302,8 @@ EOF;
 							$config['voucher']['checksumbits'] = $toreturn['voucher']['checksumbits'];
 						if($toreturn['voucher']['magic'])
 							$config['voucher']['magic'] = $toreturn['voucher']['magic'];
+						if($toreturn['voucher']['exponent'])
+							$config['voucher']['exponent'] = $toreturn['voucher']['exponent'];
 						if($toreturn['voucher']['publickey'])
 							$config['voucher']['publickey'] = $toreturn['voucher']['publickey'];
 						if($toreturn['voucher']['privatekey'])
@@ -583,6 +598,7 @@ function enable_change(enable_change) {
 							<td width="78%">
 								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="enable_change(true); before_save();"> 
 								<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+								<input type="hidden" value="<?=$pconfig['exponent'];?>" name="exponent"/>
 							</td>
 						</tr>
 						<tr>

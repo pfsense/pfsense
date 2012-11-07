@@ -298,7 +298,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 		    <input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked=\"checked\""; ?> />
-                    <?=gettext("Enable l2tp server"); ?></td>
+                    <?=gettext("Enable L2TP server"); ?></td>
 		</tr>
 
                 <tr>
@@ -319,7 +319,7 @@ function enable_change(enable_over) {
 		  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Server address");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Server Address");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
 			<br/>
@@ -331,7 +331,7 @@ function enable_change(enable_over) {
 			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address range");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Address Range");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
                     <br />
@@ -339,7 +339,7 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet netmask"); ?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask"); ?></td>
                   <td width="78%" class="vtable">
                     <select id="l2tp_subnet" name="l2tp_subnet">
                     <?php
@@ -381,7 +381,7 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption type");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Type");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><select name="paporchap" id="paporchap">
 			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " SELECTED"; ?>><?=gettext("CHAP"); ?></option>
@@ -419,21 +419,21 @@ function enable_change(enable_over) {
                       <?=gettext("Sends accounting packets to the RADIUS server.");?></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS server");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Server");?></td>
                   <td width="78%" class="vtable">
                       <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
                       <br />
                       <?=gettext("Enter the IP address of the RADIUS server.");?></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS shared secret");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Shared Secret");?></td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
                       <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate to the RADIUS server.");?></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS issued IP's");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Issued IP's");?></td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
                       <br />

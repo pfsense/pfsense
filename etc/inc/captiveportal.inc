@@ -593,18 +593,10 @@ EOD;
 	$rulenum++;
 
 	/* Authenticated users rules. */
-	if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
-		$cprules .= "add {$rulenum} set 1 pipe tablearg ip from table(1) to any in\n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pipe tablearg ip from any to table(2) out\n";
-		$rulenum++;
-	} else {
-		$cprules .= "add {$rulenum} set 1 allow ip from table(1) to any in\n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 allow ip from any to table(2) out\n";
-		$rulenum++;
-	}
-
+	$cprules .= "add {$rulenum} set 1 pipe tablearg ip from table(1) to any in\n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pipe tablearg ip from any to table(2) out\n";
+	$rulenum++;
 	
 	$listenporthttp =
 		$config['captiveportal'][$cpzone]['listenporthttp'] ?
@@ -871,11 +863,9 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
 	* We could get an error if the pipe doesn't exist but everything should still be fine
 	*/
-	if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
-		captiveportal_ipfw_set_context($cpzone);
-		mwexec("/sbin/ipfw pipe " . ($dbent[1]+20000) . " delete");
-		mwexec("/sbin/ipfw pipe " . ($dbent[1]+20001) . " delete");
-	}
+	captiveportal_ipfw_set_context($cpzone);
+	mwexec("/sbin/ipfw pipe " . ($dbent[1]+20000) . " delete");
+	mwexec("/sbin/ipfw pipe " . ($dbent[1]+20001) . " delete");
 
 	/* Release the ruleno so it can be reallocated to new clients. */
 	captiveportal_free_ipfw_ruleno($dbent[1]);
@@ -948,7 +938,7 @@ function captiveportal_passthrumac_configure_entry($macent) {
 	$actionup = "allow";
 	$actiondown = "allow";
 
-	$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
+	$ruleno = captiveportal_get_next_ipfw_ruleno();
 
 	if ($enBwup) {
 		$bw_up = $ruleno + 20000;
@@ -1023,10 +1013,7 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	$tablein = array();
 	$tableout = array();
 
-	if (intval($enBwup) > 0 or intval($enBwdown) > 0)
-		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
-	else
-		$ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, false);
+	$ruleno = captiveportal_get_next_ipfw_ruleno();
 
 	if ($ipent['dir'] == "from") {
 		if ($enBwup)
@@ -1409,7 +1396,7 @@ function captiveportal_init_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_ma
  * within the range specified based on the actual logged on users
  *
  */
-function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899, $usebw = false) {
+function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {
 	global $config, $g, $cpzone;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1424,17 +1411,14 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_rang
 			if ($rules[$ridx]) {
 				/* 
 				 * This allows our traffic shaping pipes to be the in pipe the same as ruleno 
-				 * and the out pipe ruleno + 1. This removes limitation that where present in 
-				 * previous version of the peruserbw.
+				 * and the out pipe ruleno + 1.
 				 */
-				if (isset($cpcfg['peruserbw']) || $usebw == true)
-					$ridx++;
+				$ridx++;
 				continue;
 			}
 			$ruleno = $ridx;
 			$rules[$ridx] = "used";
-			if (isset($cpcfg['peruserbw']) || $usebw == true)
-				$rules[++$ridx] = "used";
+			$rules[++$ridx] = "used";
 			break;
 		}
 	} else {
@@ -1458,8 +1442,7 @@ function captiveportal_free_ipfw_ruleno($ruleno, $usedbw = false) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		$rules[$ruleno] = false;
-		if (isset($cpcfg['peruserbw']) || $usedbw == true)
-			$rules[++$ruleno] = false;
+		$rules[++$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
 	}
 	unlock($cpruleslck);
@@ -1678,47 +1661,20 @@ function portal_mac_radius($clientmac,$clientip) {
 function captiveportal_reapply_attributes($cpentry, $attributes) {
 	global $config, $cpzone, $g;
                          
-        /* Add rules for traffic shaping
-         * We don't need to add extra rules since traffic will pass due to the following kernel option
-         * net.inet.ip.fw.one_pass: 1
-         */
-        $peruserbw = isset($config['captiveportal'][$cpzone]['peruserbw']);
-                
-        $bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultup'];
-        $bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultdn'];
+	$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+	$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+        $bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+        $bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
         $bw_up_pipeno = $cpentry[1]+20000;
         $bw_down_pipeno = $cpentry[1]+20001;
+
         $commands = "";
-
-        if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
-                $commands .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
-        
-                if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
-                        $commands .= "table 1 del {$cpentry[2]} mac {$cpentry[3]}\n";
-                        $commands .= "table 1 add {$cpentry[2]} mac {$cpentry[3]} {$bw_up_pipeno}\n";
-                } else {
-                        $commands .= "table 1 del {$cpentry[2]}\n";
-                        $commands .= "table 1 add {$cpentry[2]} {$bw_up_pipeno}\n";
-                }
-        }
-        if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
-                $commands .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
-                        
-                if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
-                        $commands .= "table 2 del {$cpentry[2]} mac {$cpentry[3]}\n";
-                        $commands .= "table 2 add {$cpentry[2]} mac {$cpentry[3]} {$bw_down_pipeno}\n";
-                } else {
-                        $commands .= "table 2 del {$cpentry[2]}\n";
-                        $commands .= "table 2 add {$cpentry[2]} {$bw_down_pipeno}\n";
-                }
-        }
-
-        if (!empty($commands)) {
-                @file_put_contents("{$g['tmp_path']}/reattribute{$cpzone}.rule.tmp", $commands);
-                captiveportal_ipfw_set_context($cpzone);
-                mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute{$cpzone}.rule.tmp");
-                //captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
-        }
+	$commands .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
+	$commands .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
+	@file_put_contents("{$g['tmp_path']}/reattribute{$cpzone}.rule.tmp", $commands);
+	captiveportal_ipfw_set_context($cpzone);
+	mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute{$cpzone}.rule.tmp");
+	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
         unset($bw_up_pipeno, $bw_Down_pipeno, $bw_up, $bw_down);
 }
@@ -1842,14 +1798,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$tod = gettimeofday();
 		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
 
-		/* Add rules for traffic shaping
-		 * We don't need to add extra rules since traffic will pass due to the following kernel option
-		 * net.inet.ip.fw.one_pass: 1
-		 */
-		$peruserbw = isset($config['captiveportal'][$cpzone]['peruserbw']);
-
-		$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultup'];
-		$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $config['captiveportal'][$cpzone]['bwdefaultdn'];
+		$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+		$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+		$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+		$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 
 		if ($passthrumac) {
 			$mac = array();
@@ -1873,36 +1825,23 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		} else {
 			captiveportal_ipfw_set_context($cpzone);
 
-			if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
-				$bw_up_pipeno = $ruleno + 20000;
-				//$bw_up /= 1000; // Scale to Kbit/s
-				mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
+			$bw_up_pipeno = $ruleno + 20000;
+			//$bw_up /= 1000; // Scale to Kbit/s
+			mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
 
-				if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-					mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
-				else
-					mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
-			} else {
-				if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-					mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac}");
-				else
-					mwexec("/sbin/ipfw table 1 add {$clientip}");
-			}
-			if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
-				$bw_down_pipeno = $ruleno + 20001;
-				//$bw_down /= 1000; // Scale to Kbit/s
-				mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
+				mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
+			else
+				mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
 
-				if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-					mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
-				else
-					mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
-			} else {
-				if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-					mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac}");
-				else
-					mwexec("/sbin/ipfw table 2 add {$clientip}");
-			}
+			$bw_down_pipeno = $ruleno + 20001;
+			//$bw_down /= 1000; // Scale to Kbit/s
+			mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
+				mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
+			else
+				mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

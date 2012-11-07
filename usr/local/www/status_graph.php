@@ -81,6 +81,11 @@ if ($_GET['if']) {
 } else {
 	$curif = "wan";
 }
+if ($_GET['sort']) {
+	$cursort = $_GET['sort'];
+} else {
+	$cursort = "";
+}
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
@@ -94,11 +99,12 @@ include("head.inc");
 
 function updateBandwidth(){
     var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
-    bandwidthAjax(hostinterface);
+	var sorting = "<?php echo htmlspecialchars($cursort); ?>";
+    bandwidthAjax(hostinterface, sorting);
 }
 
-function bandwidthAjax(hostinterface) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface;
+function bandwidthAjax(hostinterface, sorting) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting;
 	var opt = {
 	    // Use GET
 	    type: 'get',
@@ -183,6 +189,11 @@ foreach ($ifdescrs as $ifn => $ifd) {
 	echo ">" . htmlspecialchars($ifd) . "</option>\n";
 }
 ?>
+</select>
+, Sort by: 
+<select name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">Bandwidth In</option>
+	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
 </select>
 </form>
 <p><form method="post" action="status_graph.php">

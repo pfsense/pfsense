@@ -3015,8 +3015,10 @@ class dnpipe_class extends dummynet_class {
 								}
 							}
 						}
-					} else
+					} else {
 						$pfq_rule .= " bw 0";
+						break;
+					}
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
 					break;

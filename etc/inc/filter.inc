@@ -3186,7 +3186,7 @@ function filter_process_carp_nat_rules() {
 
 			if ($int != false and $int != $wan_interface) {
 				$ipnet = convert_ip_to_network_format($ip, $carp['subnet_bits']);
-				if ($int && $carp_int)
+				if ($int && $carp_int && get_carp_interface_status($carp_int) == "MASTER")
 				{
 					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
 				}

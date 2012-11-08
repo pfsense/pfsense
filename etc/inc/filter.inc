@@ -1842,7 +1842,6 @@ function filter_nat_rules_generate() {
 
 	$natrules .= discover_pkg_rules("nat");
 
-	$natrules .= filter_process_carp_nat_rules();
 	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 
@@ -3158,43 +3157,6 @@ function filter_setup_logging_interfaces() {
 		$rules .= "set loginterface {$FilterIflist['wan']['if']}\n";
 
 	return $rules;
-}
-
-function filter_process_carp_nat_rules() {
-	global $g, $config;
-
-	update_filter_reload_status("Creating CARP NAT rules");
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "filter_process_carp_nat_rules() being called $mt\n";
-	}
-	$lines = "";
-
-	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		foreach($config['virtualip']['vip'] as $carp) {
-			// Bail if this isn't a CARP VIP, or if somehow the IP is empty to avoid further errors.
-			if (($carp['mode'] != 'carp') || empty($carp['subnet']))
-				continue;
-
-			$ip = $carp['subnet'];
-			if ($ip == "any") {
-				$ipnet = "any";
-			} else {
-				$int = find_ip_interface($ip, $carp['subnet_bits']);
-				$carp_int = find_carp_interface($ip);
-			}
-
-			if ($int != false and $int != $wan_interface) {
-				$ipnet = convert_ip_to_network_format($ip, $carp['subnet_bits']);
-				if ($int && $carp_int && get_carp_interface_status($carp_int) == "MASTER")
-				{
-					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
-				}
-			}
-		}
-	}
-
-	return $lines;
 }
 
 function filter_process_carp_rules($log) {

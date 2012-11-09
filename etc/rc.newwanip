@@ -170,7 +170,7 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	vpn_ipsec_force_reload();
 
 	/* start OpenVPN server & clients */
-	if (substr($interface, 0, 4) != "ovpn")
+	if (substr($interface_real, 0, 4) != "ovpn")
 		openvpn_resync_all($interface);
 
 	/* perform RFC 2136 DNS update */

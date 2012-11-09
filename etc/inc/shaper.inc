@@ -3017,10 +3017,12 @@ class dnpipe_class extends dummynet_class {
 						}
 					} else {
 						$pfq_rule .= " bw 0";
+						$found = true;
 						break;
 					}
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+					$found = true;
 					break;
 				}
 			}

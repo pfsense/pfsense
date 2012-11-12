@@ -1677,7 +1677,7 @@ function read_body($ch, $string) {
 				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tostatus = $static_status . $downloadProgress . "%";
 					if ($downloadProgress == 100) {
-						$tostatus = $tostatus . "\n";
+						$tostatus = $tostatus . "\r";
 					}
 					update_status($tostatus);
 				}
@@ -1690,7 +1690,7 @@ function read_body($ch, $string) {
 				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tooutput = $static_output . $downloadProgress . "%";
 					if ($downloadProgress == 100) {
-						$tooutput = $tooutput . "\n";
+						$tooutput = $tooutput . "\r";
 					}
 					update_output_window($tooutput);
 				}

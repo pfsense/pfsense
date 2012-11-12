@@ -42,7 +42,6 @@ if(!$nocsrf) {
 	}
 	require_once("csrf/csrf-magic.php");
 }
-require_once("authgui.inc");
 
 /* make sure nothing is cached */
 if (!$omit_nocacheheaders) {
@@ -52,6 +51,8 @@ if (!$omit_nocacheheaders) {
 	header("Cache-Control: post-check=0, pre-check=0", false);
 	header("Pragma: no-cache");
 }
+
+require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");

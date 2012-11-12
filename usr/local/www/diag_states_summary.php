@@ -103,6 +103,8 @@ function sort_by_ip($a, $b) {
 }
 
 function build_port_info($portarr, $proto) {
+	if (!portarr)
+		return '';
 	$ports = array();
 	asort($portarr);
 	foreach (array_reverse($portarr, TRUE) as $port => $count) {

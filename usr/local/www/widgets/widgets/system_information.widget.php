@@ -120,11 +120,12 @@ $curcfg = $config['system']['firmware'];
 			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
 			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
 			nanobsd_detect_slice_info();
+			$rw = is_writable("/") ? "(rw)" : "(ro)";
 			?>
 		<tr>
 			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
 			<td width="75%" class="listr">
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?> <?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
 				<br/><br/>Next Boot:<br/>
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>

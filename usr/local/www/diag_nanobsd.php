@@ -108,6 +108,25 @@ if (isset($_POST['dhcpbackup'])) {
 	install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 }
 
+if ($_POST['changero']) {
+	if (is_writable("/")) {
+		conf_mount_ro();
+	} else {
+		conf_mount_rw();
+	}
+}
+
+if ($_POST['setrw']) {
+	if (isset($_POST['nanobsd_force_rw'])) {
+		conf_mount_rw();
+		$config['system']['nanobsd_force_rw'] = true;
+	} else {
+		unset($config['system']['nanobsd_force_rw']);
+	}
+
+	write_config("Changed Permanent Read/Write Setting");
+	conf_mount_ro();
+}
 
 if ($savemsg)
 	print_info_box($savemsg)
@@ -154,6 +173,38 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
 					</tr>					
+					<tr>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("Media Read/Write Status");?></td>
+					</tr>
+					<tr>
+						<td valign="top" class="vncell">Current Read/Write Status:</td>
+						<td valign="top" class="vncell">
+							<form action="diag_nanobsd.php" method="post" name="iform">
+							<?php if (is_writable("/")) {
+								echo gettext("Read/Write");
+								if (!isset($config['system']['nanobsd_force_rw']))
+									echo "<br/><input type='submit' name='changero' value='" . gettext("Switch to Read-Only") . "'>";
+							} else {
+								echo gettext("Read-Only");
+								if (!isset($config['system']['nanobsd_force_rw']))
+									echo "<br/><input type='submit' name='changero' value='" . gettext("Switch to Read/Write") . "'>";
+							} ?>
+							</form>
+							<br/><?php echo gettext("NOTE: This setting is only temporary, and can be switched dynamically in the background."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" class="vncell">Permanent Read/Write:</td>
+						<td valign="top" class="vncell">
+							<form action="diag_nanobsd.php" method="post" name="iform">
+								<input type="checkbox" name="nanobsd_force_rw" <?php if (isset($config['system']['nanobsd_force_rw'])) echo "checked"; ?>> <?php echo gettext("Keep media mounted read/write at all times.") ?>
+								<br/><input type='submit' name='setrw' value='<?php echo gettext("Save") ?>'>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="">&nbsp;</td>
+					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Duplicate bootup slice to alternate");?></td>
 					</tr>

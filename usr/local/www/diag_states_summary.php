@@ -103,7 +103,7 @@ function sort_by_ip($a, $b) {
 }
 
 function build_port_info($portarr, $proto) {
-	if (!portarr)
+	if (!$portarr)
 		return '';
 	$ports = array();
 	asort($portarr);

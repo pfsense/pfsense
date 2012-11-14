@@ -120,14 +120,14 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user {$username} could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
 	exit(-1);
 }
 
 if (file_exists("/etc/inc/ipsec.attributes.php"))
         include_once("/etc/inc/ipsec.attributes.php");
         
-syslog(LOG_NOTICE, "user {$username} authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 
 exit(0);
 

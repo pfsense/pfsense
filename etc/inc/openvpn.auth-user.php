@@ -120,7 +120,7 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user {$username} could not authenticate.\n");
+	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
 	exit(-1);
 }
 
@@ -154,7 +154,7 @@ if (isset($attributes['framed_ip'])) {
 if (!empty($content))
         @file_put_contents("{$g['tmp_path']}/{$username}", $content);
 
-syslog(LOG_NOTICE, "user {$username} authenticated\n");
+syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 
 exit(0);
 

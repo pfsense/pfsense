@@ -401,7 +401,8 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="group_source" class="formselect" id="group_source">
-								<option value="system"><?=gettext("system"); ?></option>
+								<option value="none"><?=gettext("none"); ?></option>
+								<option value="system" <?php if ($pconfig['group_source'] == "system") echo "selected"; ?> ><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>

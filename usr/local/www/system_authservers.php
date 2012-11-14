@@ -400,7 +400,11 @@ function select_clicked() {
         url += '&urltype=' + document.getElementById("ldap_urltype").value;
         url += '&proto=' + document.getElementById("ldap_protver").value;
 	url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
-	url += '&cert=' + document.getElementById("ldap_caref").value;
+	<?php if (count($a_ca) > 0): ?>
+		url += '&cert=' + document.getElementById("ldap_caref").value;
+	<?php else: ?>
+		url += '&cert=';
+	<?php endif; ?>
 
         var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined")
@@ -574,7 +578,7 @@ function select_clicked() {
 									<tr>
 										<td><?=gettext("Containers:");?> &nbsp;</td>
 										<td>
-											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
+											<input id="ldapauthcontainers" name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">
 											<br /><?=gettext("Note: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
 											<br /><?=gettext("Example: CN=Users;DC=example");?>

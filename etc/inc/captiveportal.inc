@@ -820,6 +820,8 @@ function captiveportal_prune_old() {
 		}
 	}
 
+	captiveportal_prune_old_automac();
+
 	if ($voucher_needs_sync == true)
 		/* Triger a sync of the vouchers on config */
 		send_event("service sync vouchers");
@@ -827,6 +829,52 @@ function captiveportal_prune_old() {
 	/* write database */
 	if (!empty($unsetindexes))
 		captiveportal_write_db($cpdb, false, $unsetindexes);
+}
+
+function captiveportal_prune_old_automac() {
+	global $g, $config, $cpzone;
+
+	if (is_array($config['captiveportal'][$cpzone]['passthrumac']) && isset($config['captiveportal'][$cpzone]['passthrumacaddusername'])) {
+		$tmpvoucherdb = array();
+		$macrules = "";
+		$writecfg = false;
+		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $eid => $emac) {
+			if ($emac['logintype'] == "voucher") {
+				if (isset($tmpvoucherdb[$emac['username']])) {
+					$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
+					$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
+					if ($ruleno) {
+						captiveportal_free_ipfw_ruleno($ruleno, true);
+						$macrules .= "delete {$ruleno}";
+						++$ruleno;
+						$macrules .= "delete {$ruleno}";
+					}
+					$writecfg = true;
+					captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
+					unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
+				}
+				$tmpvoucherdb[$emac['username']] = $eid;
+				if (voucher_auth($emac['username']) <= 0) {
+					$ruleno = captiveportal_get_ipfw_passthru_ruleno($emac['mac']);
+					if ($ruleno) {
+						captiveportal_free_ipfw_ruleno($ruleno, true);
+						$macrules .= "delete {$ruleno}";
+						++$ruleno;
+						$macrules .= "delete {$ruleno}";
+					}
+					$writecfg = true;
+					captiveportal_logportalauth($emac['username'], $emac['mac'], $emac['ip'], "EXPIRED {$emac['username']} LOGIN - TERMINATING SESSION");
+					unset($config['captiveportal'][$cpzone]['passthrumac'][$eid]);
+				}
+			}
+		}
+		if (!empty($macrules)) {
+			@file_put_contents("{$g['tmp_path']}/macentry.prunerules.tmp", $macrules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.prunerules.tmp");
+		}
+		if ($writecfg === true)
+			write_config("Prune session for auto-added macs");
+	}
 }
 
 /* remove a single client according to the DB entry */
@@ -1806,8 +1854,12 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		if ($passthrumac) {
 			$mac = array();
 			$mac['mac'] = $clientmac;
-			if (isset($config['captiveportal'][$cpzone]['passthrumacaddusername']))
+			$mac['ip'] = $clientip; /* Used only for logging */
+			if (isset($config['captiveportal'][$cpzone]['passthrumacaddusername'])) {
 				$mac['username'] = $username;
+				if ($attributes['voucher'])
+					$mac['logintype'] = "voucher";
+			}
 			$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
 			if (!empty($bw_up))
 				$mac['bw_up'] = $bw_up;

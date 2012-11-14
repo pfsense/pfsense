@@ -1,8 +1,6 @@
 <?php
-
-/* $Id$ */
 /*
-	$RCSfile$
+	openvpn.inc part of pfSense
 	
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.

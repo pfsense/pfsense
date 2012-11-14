@@ -186,7 +186,8 @@ if ($_POST['submit']) {
 		if ($pconfig['enable'])
 			$client['enable'] = true;
 
-		$client['user_source'] = $pconfig['user_source'];
+		if (!empty($pconfig['user_source']))
+			$client['user_source'] = implode(",", $pconfig['user_source']);
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
@@ -376,24 +377,39 @@ function login_banner_change() {
 							<?=gettext("Extended Authentication (Xauth)"); ?>
 						</td>
 					</tr>
+<tr id="authmodetr" style="display:none">
+                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
+                                                        <td width="78%" class="vtable">
+                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="true" size="<?php echo count($auth_servers); ?>">
+							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
+                                                        <?php
+								$auth_servers = auth_get_authserver_list();
+                                                                foreach ($auth_servers as $auth_server):
+                                                                        $selected = "";
+                                                                        if (in_array($auth_server['name'], $authmodes))
+                                                                                $selected = "selected";
+                                                        ?>
+                                                                <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+                                                        <?php 	endforeach; ?>
+                                                        </select>
+                                                </td>
+                                        </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("User Authentication"); ?></td>
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
-							<select name="user_source" class="formselect" id="user_source">
-								<option value="system" <?php if ($pconfig['user_source'] == 'system') echo "selected"; ?>><?=gettext("system"); ?></option>
-								<?php
-									if (is_array($config['system']['authserver'])) {
-										foreach ($config['system']['authserver'] as $authcfg) {
-											if ($authcfg['type'] == 'ldap') {
-												$selected = "";
-												if ($pconfig['user_source'] == $authcfg['name'])
-													$selected = "selected";
-												echo "<option value='{$authcfg['name']}' {$selected} >{$authcfg['name']}</option>\n";
-											}
-										}
-									}
-								?>
+							<select name="user_source[]" class="formselect" id="user_source"  multiple="true" size="3">
+								<option value='none'>none</option>\n";
+							<?php
+								$authmodes = explode(",", $pconfig['user_source']);
+								$auth_servers = auth_get_authserver_list();
+								foreach ($auth_servers as $auth_server) {
+									$selected = "";
+									if (in_array($auth_server['name'], $authmodes))
+										$selected = "selected";
+									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
+								}
+							?>
 							</select>
 						</td>
 					</tr>

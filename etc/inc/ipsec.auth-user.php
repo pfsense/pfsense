@@ -115,8 +115,14 @@ foreach ($authmodes as $authmode) {
 		continue;
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
-	if ($authenticated == true)
+	if ($authenticated == true) {
+		if (stristr($authmode, "local") && !userHasPrivilege($username, "user-ipsec-xauth-dialin")) {
+			$authenticated = false;
+			syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPSec since the required priviledges are missing.\n");
+			continue;
+		}
 		break;
+	}
 }
 
 if ($authenticated == false) {

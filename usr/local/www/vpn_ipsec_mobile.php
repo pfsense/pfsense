@@ -377,23 +377,6 @@ function login_banner_change() {
 							<?=gettext("Extended Authentication (Xauth)"); ?>
 						</td>
 					</tr>
-<tr id="authmodetr" style="display:none">
-                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="true" size="<?php echo count($auth_servers); ?>">
-							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
-                                                        <?php
-								$auth_servers = auth_get_authserver_list();
-                                                                foreach ($auth_servers as $auth_server):
-                                                                        $selected = "";
-                                                                        if (in_array($auth_server['name'], $authmodes))
-                                                                                $selected = "selected";
-                                                        ?>
-                                                                <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-                                                        <?php 	endforeach; ?>
-                                                        </select>
-                                                </td>
-                                        </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("User Authentication"); ?></td>
 						<td width="78%" class="vtable">

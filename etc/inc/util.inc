@@ -248,6 +248,19 @@ function refcount_unreference($reference) {
 	return $shm_data;
 }
 
+function refcount_read($reference) {
+	/* This function just reads the current value of the refcount for information. */
+	/* There is no need for locking. */
+	$shmid = @shmop_open($reference, "a", 0, 0);
+	if (!$shmid) {
+		log_error(gettext("Could not open shared memory for read {$reference}"));
+		return -1;
+	}
+	$shm_data = @shmop_read($shmid, 0, 10);
+	@shmop_close($shmid);
+	return $shm_data;
+}
+
 function is_module_loaded($module_name) {
 	$running = `/sbin/kldstat | grep {$module_name} | /usr/bin/grep -v grep | /usr/bin/wc -l`;
 	if (intval($running) >= 1)

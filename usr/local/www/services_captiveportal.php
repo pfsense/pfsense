@@ -133,6 +133,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
+	$pconfig['interimacctinterval'] = $a_cp[$cpzone]['interimacctinterval'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext'])
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -221,6 +222,9 @@ if ($_POST) {
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
+	if ($_POST['interimacctinterval'] && (!is_numeric($_POST['interimacctinterval']) || ($_POST['interimacctinterval'] < 60) || ($_POST['interimacctinterval'] > 7200))) {
+		$input_errors[] = gettext("The RADIUS accounting interval must be between 60 and 7200 seconds.");
+	}
 
 	if (!$input_errors) {
 		$newcp =& $a_cp[$cpzone];
@@ -303,6 +307,7 @@ if ($_POST) {
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		$newcp['interimacctinterval'] = $_POST['interimacctinterval'];
 		if (!is_array($newcp['page']))
 			$newcp['page'] = array();
 
@@ -408,6 +413,7 @@ function enable_change(enable_change) {
 	document.iform.reauthenticateacct[0].disabled = radacct_dis;
 	document.iform.reauthenticateacct[1].disabled = radacct_dis;
 	document.iform.reauthenticateacct[2].disabled = radacct_dis;
+	document.iform.interimacctinterval.disabled = !((!radacct_dis && document.iform.reauthenticateacct[2].checked) || enable_change);
 }
 //-->
 </script>
@@ -743,10 +749,17 @@ function enable_change(enable_change) {
 			<tr>
 			  <td class="vncell" valign="top"><?=gettext("Accounting updates"); ?></td>
 			  <td class="vtable">
-			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> <?=gettext("no accounting updates"); ?><br>
-			  <input name="reauthenticateacct" type="radio" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> <?=gettext("stop/start accounting"); ?><br>
-			  <input name="reauthenticateacct" type="radio" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> <?=gettext("interim update"); ?>
+			  <input name="reauthenticateacct" type="radio" onclick="enable_change(false)" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> <?=gettext("no accounting updates"); ?><br>
+			  <input name="reauthenticateacct" type="radio" onclick="enable_change(false)" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> <?=gettext("stop/start accounting"); ?><br>
+			  <input name="reauthenticateacct" type="radio" onclick="enable_change(false)" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> <?=gettext("interim update"); ?>
 			  </td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Interim accounting interval"); ?></td>
+				<td class="vtable">
+					<input name="interimacctinterval" type="text" class="formfld unknown" id="interimacctinterval" size="4" value="<?=htmlspecialchars($pconfig['interimacctinterval']);?>"><br>
+					<?=gettext("Leave blank to use the server provided value or, failing that, the default interval (60s)"); ?>
+				</td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -774,7 +787,7 @@ function enable_change(enable_change) {
 
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
-				<td>
+				<td class="vtable">
 				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
 				<?php $iflist = get_configured_interface_with_descr();
 					foreach ($iflist as $ifdesc => $ifdescr) {

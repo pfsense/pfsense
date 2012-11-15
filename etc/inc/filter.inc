@@ -1451,7 +1451,12 @@ function filter_nat_rules_generate() {
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;
-					$natrules .= "binat on enc0 from {$local_subnet} to {$natlocal_subnet} -> {$natlocal_subnet}\n";
+					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if (empty($remote_subnet) || $remote_subnet == "0.0.0.0/0")
+						continue;
+					if (!is_subnet($remote_subnet) && !is_ipaddr($remote_subnet))
+						continue;
+					$natrules .= "binat on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
 			}
 		}

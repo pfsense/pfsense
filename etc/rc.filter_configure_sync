@@ -36,9 +36,6 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-/* invalidate interface cache */
-get_interface_arr(true);
-
 filter_configure_sync();
 
 ?>

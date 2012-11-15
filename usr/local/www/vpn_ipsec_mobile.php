@@ -382,7 +382,6 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="user_source[]" class="formselect" id="user_source"  multiple="true" size="3">
-								<option value='none'>none</option>\n";
 							<?php
 								$authmodes = explode(",", $pconfig['user_source']);
 								$auth_servers = auth_get_authserver_list();

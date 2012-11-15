@@ -330,7 +330,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$racoonconf .= "\nmode_cfg\n";
 				$racoonconf .= "{\n";
 
-				if (!empty($a_client['user_source']) && $a_client['user_source'] != "none")
+				if (!empty($a_client['user_source']))
 					$racoonconf .= "\tauth_source external;\n";
 				if (!empty($a_client['group_source']) && $a_client['group_source'] != "none")
 					$racoonconf .= "\tgroup_source {$a_client['group_source']};\n";

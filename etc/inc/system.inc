@@ -799,12 +799,6 @@ function system_webgui_start() {
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
 
-	/* fetch page to preload apc cache */
-	$proto = "http";
-	if ($config['system']['webgui']['protocol'])
-		$proto = $config['system']['webgui']['protocol'];
-	mwexec_bg("/usr/bin/fetch -o /dev/null -q {$proto}://localhost:{$portarg}/preload.php");
-
 	if ($g['booting']) {
 		if ($res == 0)
 			echo gettext("done.") . "\n";

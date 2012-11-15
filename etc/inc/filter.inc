@@ -728,7 +728,8 @@ function filter_get_vpns_list() {
 		if(is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
-					require_once("ipsec.inc");
+					if (!function_exists('ipsec_idinfo_to_cidr'))
+						require_once("ipsec.inc");
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 					if ($vpns_subnet == "0.0.0.0/0")
 						continue;
@@ -1440,7 +1441,8 @@ function filter_nat_rules_generate() {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
-					require_once("ipsec.inc");
+					if (!function_exists('ipsec_idinfo_to_cidr'))
+						require_once("ipsec.inc");
 					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
 					if (empty($local_subnet) || $local_subnet == "0.0.0.0/0")
 						continue;
@@ -3212,7 +3214,8 @@ function filter_generate_ipsec_rules() {
 				continue;
 			/* determine local and remote peer addresses */
 			if(!isset($ph1ent['mobile'])) {
-				require_once("ipsec.inc");
+				if (!function_exists('ipsec_idinfo_to_cidr'))
+					require_once("ipsec.inc");
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if(!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
@@ -3312,9 +3315,10 @@ function discover_pkg_rules($ruletype) {
 	$files = glob("/usr/local/pkg/*.inc");
 	foreach($files as $pkg_inc) {
 		update_filter_reload_status(sprintf(gettext('Checking for %1$s PF hooks in package %2$s'), $ruletype, $pkg_inc));
-		require_once($pkg_inc);
 		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
+		if (!function_exists($pkg_generate_rules))
+			require_once($pkg_inc);
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status(sprintf(gettext('Processing early %1$s rules for package %2$s'), $ruletype, $pkg_inc));
 			$tmprules = $pkg_generate_rules("$ruletype");

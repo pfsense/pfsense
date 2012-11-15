@@ -118,7 +118,9 @@ if ($_POST['changero']) {
 
 if ($_POST['setrw']) {
 	if (isset($_POST['nanobsd_force_rw'])) {
-		conf_mount_rw();
+		if (!is_writable("/")) {
+			conf_mount_rw();
+		}
 		$config['system']['nanobsd_force_rw'] = true;
 	} else {
 		unset($config['system']['nanobsd_force_rw']);
@@ -181,7 +183,13 @@ if ($savemsg)
 						<td valign="top" class="vncell">
 							<form action="diag_nanobsd.php" method="post" name="iform">
 							<?php if (is_writable("/")) {
-								echo gettext("Read/Write");
+								$refcount = refcount_read(1000);
+								if ($refcount == 1) {
+									$refdisplay = "";
+								} else {
+									$refdisplay = " (reference count " . $refcount . ")";
+								}
+								echo gettext("Read/Write") . $refdisplay;
 								if (!isset($config['system']['nanobsd_force_rw']))
 									echo "<br/><input type='submit' name='changero' value='" . gettext("Switch to Read-Only") . "'>";
 							} else {

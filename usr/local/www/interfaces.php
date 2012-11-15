@@ -960,7 +960,7 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_shared_secret2'] = $_POST['auth_server_shared_secret2'];
 	
 	if ($_POST['persistcommonwireless'] == "yes") {
-		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
+		if (is_array($config['wireless']) && is_array($config['wireless']['interfaces']) && !is_array($config['wireless']['interfaces'][$wlanbaseif]))
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
 		unset($config['wireless']['interfaces'][$wlanbaseif]);

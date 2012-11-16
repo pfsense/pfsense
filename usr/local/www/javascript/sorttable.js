@@ -168,7 +168,7 @@ sorttable = {
     sortfn = sorttable.sort_alpha;
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
-      if (text != '') {
+      if (text) {
       	if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
       	  return sorttable.sort_ipaddr;
       	}
@@ -205,41 +205,42 @@ sorttable = {
     // this is *not* a generic getInnerText function; it's special to sorttable.
     // for example, you can override the cell text with a customkey attribute.
     // it also gets .value for <input> fields.
+    if (node) {
+      hasInputs = (typeof node.getElementsByTagName == 'function') &&
+                   node.getElementsByTagName('input').length;
     
-    hasInputs = (typeof node.getElementsByTagName == 'function') &&
-                 node.getElementsByTagName('input').length;
-    
-    if (node.getAttribute("sorttable_customkey") != null) {
-      return node.getAttribute("sorttable_customkey");
-    }
-    else if (typeof node.textContent != 'undefined' && !hasInputs) {
-      return node.textContent.replace(/^\s+|\s+$/g, '');
-    }
-    else if (typeof node.innerText != 'undefined' && !hasInputs) {
-      return node.innerText.replace(/^\s+|\s+$/g, '');
-    }
-    else if (typeof node.text != 'undefined' && !hasInputs) {
-      return node.text.replace(/^\s+|\s+$/g, '');
-    }
-    else {
-      switch (node.nodeType) {
-        case 3:
-          if (node.nodeName.toLowerCase() == 'input') {
-            return node.value.replace(/^\s+|\s+$/g, '');
-          }
-        case 4:
-          return node.nodeValue.replace(/^\s+|\s+$/g, '');
-          break;
-        case 1:
-        case 11:
-          var innerText = '';
-          for (var i = 0; i < node.childNodes.length; i++) {
-            innerText += sorttable.getInnerText(node.childNodes[i]);
-          }
-          return innerText.replace(/^\s+|\s+$/g, '');
-          break;
-        default:
-          return '';
+      if (node.getAttribute("sorttable_customkey") != null) {
+        return node.getAttribute("sorttable_customkey");
+      }
+      else if (typeof node.textContent != 'undefined' && !hasInputs) {
+        return node.textContent.replace(/^\s+|\s+$/g, '');
+      }
+      else if (typeof node.innerText != 'undefined' && !hasInputs) {
+        return node.innerText.replace(/^\s+|\s+$/g, '');
+      }
+      else if (typeof node.text != 'undefined' && !hasInputs) {
+        return node.text.replace(/^\s+|\s+$/g, '');
+      }
+      else {
+        switch (node.nodeType) {
+          case 3:
+            if (node.nodeName.toLowerCase() == 'input') {
+              return node.value.replace(/^\s+|\s+$/g, '');
+            }
+          case 4:
+            return node.nodeValue.replace(/^\s+|\s+$/g, '');
+            break;
+          case 1:
+          case 11:
+            var innerText = '';
+            for (var i = 0; i < node.childNodes.length; i++) {
+              innerText += sorttable.getInnerText(node.childNodes[i]);
+            }
+            return innerText.replace(/^\s+|\s+$/g, '');
+            break;
+          default:
+            return '';
+        }
       }
     }
   },

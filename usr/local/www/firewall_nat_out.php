@@ -414,12 +414,14 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
-                      if (!$natent['target'])
-                          echo "*";
-                      elseif ($natent['target'] == "other-subnet")
-                          echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-                      else
-                          echo $natent['target'];
+					if (isset($natent['nonat']))
+						echo '<I>NO NAT</I>';
+					elseif (!$natent['target'])
+						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+					elseif ($natent['target'] == "other-subnet")
+						echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
+					else
+						echo $natent['target'];
                     ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">

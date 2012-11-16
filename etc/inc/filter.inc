@@ -720,35 +720,19 @@ function filter_generate_gateways() {
 /* returns space separated list of vpn subnets */
 function filter_get_vpns_list() {
 	global $config;
-	/* build list of vpns */
+
 	$vpns = "";
 	$vpns_arr = array();
-	/* ipsec */
-	if(isset($config['ipsec']['enable'])){
-		if(is_array($config['ipsec']['phase2'])) {
-			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
-					if (!function_exists('ipsec_idinfo_to_cidr'))
-						require_once("ipsec.inc");
-					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
-					if ($vpns_subnet == "0.0.0.0/0")
-						continue;
-					$vpns_arr[] = $vpns_subnet;
-				}
-			}
-		}
-	}
+
 	/* openvpn */
 	foreach (array('client', 'server') as $type) {
 		if(is_array($config['openvpn']["openvpn-$type"])) {
-			foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
+			foreach ($config['openvpn']["openvpn-$type"] as $settings) {
 				if(is_array($settings)) {
-					if(is_subnet($settings['remote_network']) && $settings['remote_network'] <> "0.0.0.0/0") {
+					if (is_subnet($settings['remote_network']) && $settings['remote_network'] <> "0.0.0.0/0")
 						$vpns_arr[] = $settings['remote_network'];
-					}
-					if(is_subnet($settings['tunnel_network']) && $settings['tunnel_network'] <> "0.0.0.0/0") {
+					if (is_subnet($settings['tunnel_network']) && $settings['tunnel_network'] <> "0.0.0.0/0")
 						$vpns_arr[] = $settings['tunnel_network'];
-					}
 				}
 			}
 		}
@@ -1633,14 +1617,11 @@ function filter_nat_rules_generate() {
 
 	$interface_counter = 0;
 	$vpns_list = filter_get_vpns_list();
-	$direct_networks_list = filter_get_direct_networks_list();
 	if($vpns_list)
 		$natrules .= "table <vpn_networks> { $vpns_list }\n";
 	
 	/* add a Negate_networks table */
 	$natrules .= "table <negate_networks> {";
-	if($direct_networks_list)
-		$natrules .= " $direct_networks_list ";
 	if($vpns_list)
 		$natrules .= " $vpns_list ";
 	$natrules .= "}\n";

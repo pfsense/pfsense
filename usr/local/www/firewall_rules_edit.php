@@ -385,6 +385,8 @@ if ($_POST) {
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
 		else if ($dnpipe[0] == "?" && $pdnpipe[0] <> "?")			
 			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
+		if ($_POST['direction'] == "out" && empty($_POST['gateway']))
+			$input_errors[] = gettext("Please select a gateway, normaly the interface selected gateway, so the limiters work correctly");
 	}
 	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
 		$input_errors[] = gettext('ID must be an integer');

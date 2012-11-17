@@ -1444,7 +1444,11 @@ function filter_nat_rules_generate() {
 						continue;
 					if ($remote_subnet == "0.0.0.0/0")
 						$remote_subnet = "any";
-					$natrules .= "binat on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
+					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
+						$nattype = "nat";
+					else					
+						$nattype = "binat";
+					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
 			}
 		}

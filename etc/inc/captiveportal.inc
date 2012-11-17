@@ -530,8 +530,10 @@ function captiveportal_init_rules($reinit = false) {
 	if (!is_module_loaded("ipfw.ko"))
 		filter_load_ipfw();
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
-	if (!is_module_loaded("dummynet.ko"))
+	if (!is_module_loaded("dummynet.ko")) {
 		mwexec("/sbin/kldload dummynet");
+		mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+	}
 
 	$cprules =	"add 65291 set 1 allow pfsync from any to any\n";
 	$cprules .= "add 65292 set 1 allow carp from any to any\n";

@@ -4234,8 +4234,10 @@ function filter_generate_dummynet_rules() {
 	read_dummynet_config();
 	
 	if (!empty($dummynet_pipe_list)) {
-		if (!is_module_loaded("dummynet.ko"))
+		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
+			mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+		}
 	}
 
 	$dn_rules = "";

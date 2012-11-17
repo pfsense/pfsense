@@ -1175,7 +1175,6 @@ if ($savemsg)
 						<td width="78%" class="vtable">
 							<input name="serverbridge_dhcp_end" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['serverbridge_dhcp_end']);?>">
 							<br>
-							<?=gettext(""); ?>
 						</td>
 					</tr>
 					<tr id="gwredir_opts">

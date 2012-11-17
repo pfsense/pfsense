@@ -139,7 +139,7 @@ include("head.inc");
 					<td colspan="1" class="listtopic"><?=gettext("Filename"); ?></td>
 					<td colspan="1" class="listtopic"><?=gettext("Date"); ?></td>
 					<td colspan="1" class="listtopic"><?=gettext("Size"); ?></td>
-					<td colspan="1" class="listtopic"><?=gettext(""); ?></td>
+					<td colspan="1" class="listtopic"></td>
 				</tr>
 <?php
 				chdir("/root");

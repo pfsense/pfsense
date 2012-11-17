@@ -94,16 +94,11 @@ function filter_load_ipfw() {
 		 * make sure ipfw is the first hook to make CP and schedules work
 		 * correctly on Multi-WAN.
 		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\"");
-		/*
-		 * TODO: Check if disabling ipfw hook
-		 * does not break accounting on CP.
-		 * XXX Not sure if we really do outbound filtering with ipfw!
-		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"pf\"");
+		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
+			" net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
 	}
 
-	/* Set ipfw state limit */
+	/* XXX: This are not used in pfSense, keep?! Set ipfw state limit */
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* Set ipfw states to user defined maximum states in Advanced menu. */
 		mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");

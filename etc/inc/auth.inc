@@ -1081,11 +1081,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/*  Person.  To later be used by ldap_get_groups.                */
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
-	log_error(sprintf(gettext("Now Searching for %s in directory."), $username));
+	log_auth(sprintf(gettext("Now Searching for %s in directory."), $username));
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
 		/* Make sure we just use the first user we find */
-		log_error(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
+		log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
 		if ($ldapscope == "one")
 			$ldapfunc = "ldap_list";
 		else
@@ -1123,7 +1123,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return false;
 	}
 
-	log_error(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
+	log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);

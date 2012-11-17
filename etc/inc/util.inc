@@ -968,7 +968,7 @@ function log_error($error) {
 
 /****f* util/log_auth
 * NAME
-*   log_error  - Sends a string to syslog as LOG_AUTH facility
+*   log_auth   - Sends a string to syslog as LOG_AUTH facility
 * INPUTS
 *   $error     - string containing the syslog message.
 * RESULT

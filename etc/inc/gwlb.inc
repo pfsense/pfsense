@@ -747,15 +747,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
@@ -772,7 +772,7 @@ function return_gateway_groups_array() {
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
 				if (!$g['booting']) {
-					$msg = gettext("Gateways status could not be determined, considering all as up/active.");
+					$msg = gettext("Gateways status could not be determined, considering all as up/active. (Group: {$group['name']})");
 					log_error($msg);
 					notify_via_growl($msg);
 					notify_via_smtp($msg);

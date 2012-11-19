@@ -1081,11 +1081,13 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/*  Person.  To later be used by ldap_get_groups.                */
 	/*  that way we don't have to search twice.                      */
 	/*****************************************************************/
-	log_auth(sprintf(gettext("Now Searching for %s in directory."), $username));
+	if ($debug)
+		log_auth(sprintf(gettext("Now Searching for %s in directory."), $username));
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
 		/* Make sure we just use the first user we find */
-		log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
+		if ($debug)
+			log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
 		if ($ldapscope == "one")
 			$ldapfunc = "ldap_list";
 		else

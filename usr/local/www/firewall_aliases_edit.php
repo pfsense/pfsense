@@ -181,7 +181,7 @@ if ($_POST) {
 			/* fetch down and add in */
 			$_POST['address0'] = trim($_POST['address0']);
 			$isfirst = 0;
-			$address = "";
+			$address[] = $_POST['address0'];
 			$alias['url'] = $_POST['address0'];
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {

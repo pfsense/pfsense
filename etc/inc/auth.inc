@@ -1125,7 +1125,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 		return false;
 	}
 
-	log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
+	if ($debug)
+		log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);

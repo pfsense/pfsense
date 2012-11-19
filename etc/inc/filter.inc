@@ -3194,7 +3194,7 @@ function filter_generate_ipsec_rules() {
 				continue;
 			/* determine local and remote peer addresses */
 			if(!isset($ph1ent['mobile'])) {
-				if (!function_exists('ipsec_idinfo_to_cidr'))
+				if (!function_exists('ipsec_get_phase1_dst'))
 					require_once("ipsec.inc");
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if(!$rgip) {

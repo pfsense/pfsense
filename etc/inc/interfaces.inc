@@ -3851,27 +3851,39 @@ function find_carp_interface($ip) {
 }
 
 function link_carp_interface_to_parent($interface) {
-        global $config;
+	global $config;
 
-        if ($interface == "")
-                return;
+	if ($interface == "")
+		return;
 
-        $carp_ip = get_interface_ip($interface);
-        if (!is_ipaddr($carp_ip))
-                return;
+	$carp_ip = get_interface_ip($interface);
+	$carp_ipv6 = get_interface_ipv6($interface);
 
-        /* if list */
-        $ifdescrs = get_configured_interface_list();
-        foreach ($ifdescrs as $ifdescr => $ifname) {
-                $interfaceip = get_interface_ip($ifname);
-                $subnet_bits = get_interface_subnet($ifname);
-                $subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
-                if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}"))
-                        return $ifname;
-        }
+	if((!is_ipaddrv4($carp_ip)) && (!is_ipaddrv6($carp_ipv6)))
+		return;
 
-        return "";
+	/* if list */
+	$ifdescrs = get_configured_interface_list();
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		/* check IPv4 */
+		if(is_ipaddrv4($carp_ip)) {
+			$interfaceip = get_interface_ip($ifname);
+			$subnet_bits = get_interface_subnet($ifname);
+			$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+			if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}"))
+				return $ifname;
+		}
+		/* Check IPv6 */
+		if(is_ipaddrv6($carp_ipv6)) {
+			$interfaceipv6 = get_interface_ipv6($ifname);
+			$prefixlen = get_interface_subnetv6($ifname);
+			if(ip_in_subnet($carp_ipv6, "{$interfaceipv6}/{$prefixlen}"))
+				return $ifname;
+		}
+	}
+	return "";
 }
+
 
 /****f* interfaces/link_ip_to_carp_interface
  * NAME

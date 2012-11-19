@@ -3231,8 +3231,10 @@ function filter_generate_ipsec_rules() {
 			} else {
 				$parentinterface = $ph1ent['interface'];
 			}
-			if (empty($FilterIflist[$parentinterface]['descr']))
-				return "# Could not locate interface for IPsec: {$descr}\n";
+			if (empty($FilterIflist[$parentinterface]['descr'])) {
+				$ipfrules = "# Could not locate interface for IPsec: {$descr}\n";
+				continue;
+			}
 
 			/* add endpoint routes to correct gateway on interface */
 			if(interface_has_gateway($parentinterface)) {

@@ -743,7 +743,7 @@ function return_gateway_groups_array() {
 				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
-				if (!empty($gateways_status[$gwname])) {
+				if (is_array($gateways_status[$gwname])) {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
@@ -762,9 +762,10 @@ function return_gateway_groups_array() {
 						log_error($msg);
 						notify_via_growl($msg);
 						notify_via_smtp($msg);
-					} else
+					} else {
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
+					}
 				} else if (isset($gateways_arr[$gwname]['monitor_disable']))
 					$tiers[$tier][] = $gwname;
 			}

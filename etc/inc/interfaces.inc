@@ -1825,11 +1825,12 @@ function interfaces_carp_setup() {
 	if ($config['hasync']['pfsyncenabled'] === "on"){
 		echo "waiting for pfsync...";
 		$i = 0;
-		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
+		while (intval(trim(`ifconfig pfsync0 | grep 'syncok:' | wc -l`)) != 1 && $i < 30) {
 			$i++;
 			sleep(1);
 		}
 		echo "pfsync done in $i seconds.\n";
+		echo `ifconfig pfsync0`;
 		echo "Configuring CARP settings finalize...";
 	}
 

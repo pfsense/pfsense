@@ -241,7 +241,7 @@ EOD;
 			if ($lanif === "a")
 				$lanif = autodetect_interface("LAN", $fp);
 			else if (!array_key_exists($lanif, $iflist)) {
-				printf(gettext("%sInvalid interface name '%s'%s)", "\n", $lanif), "\n");
+				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $lanif, "\n");
 				unset($lanif);
 				continue;
 			}

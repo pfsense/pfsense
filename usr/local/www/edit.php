@@ -53,6 +53,7 @@ if($_POST['action']) {
 				if($data === false) {
 					echo "|1|" . gettext("Failed to read file") . ".|";
 				} else {
+					$data = base64_encode($data);
 					echo "|0|{$_POST['file']}|{$data}|";	
 				}
 			}
@@ -114,8 +115,9 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 		if(values.shift() == "0") {
 			var file = values.shift();
+			var fileContent = Base64.decode(values.join("|"));
 			$("fileStatus").innerHTML = "<?=gettext("File successfully loaded"); ?>.";
-			$("fileContent").value    = values.join("|");
+			$("fileContent").value = fileContent; 
 
 			var lang = "none";
 				 if(file.indexOf(".php") > 0) lang = "php";

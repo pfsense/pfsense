@@ -58,10 +58,6 @@ if [ "$PLATFORM" = "nanobsd" ]; then
 	/etc/rc.embedded
 fi
 
-if [ "$PLATFORM" = "pfSense" ]; then
-	/sbin/mdmfs -S -M -s 4m md /var/run
-fi
-
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
 	if [ "$PLATFORM" = "nanobsd" ]; then
@@ -109,6 +105,10 @@ rm -f /etc/spwd.db.tmp
 product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
 varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
+
+if [ "$PLATFORM" = "pfSense" ]; then
+	/sbin/mdmfs -S -M -s 4m md $varrunpath
+fi
 
 if [ "$hideplatform" -gt "0" ]; then
 	platformbanner="" # hide the platform
@@ -252,8 +252,8 @@ fi
 /bin/chmod 0777 /tmp/uploadbar
 
 # make some directories in /var
-/bin/mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
-/bin/rm -rf /var/run/*
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/rm -rf $varrunpath/*
 if [ "$PLATFORM" != "pfSense" ]; then
 	/bin/rm /var/log/* 2>/dev/null
 fi
@@ -289,7 +289,7 @@ if [ ! "$PLATFORM" = "jail" ]; then
 fi
 
 # Create an initial utmp file
-cd /var/run && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
+cd $varrunpath && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
 
 echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
@@ -378,13 +378,13 @@ echo "done."
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
 # Start ping handler every 240 seconds
-/usr/local/bin/minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
+/usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 /var/run/expire_accounts.pid /etc/rc.expireaccounts
+/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid /etc/rc.expireaccounts
 
 # Start alias url updater every 24 hours
-/usr/local/bin/minicron 86400 /var/run/update_alias_url_data.pid /etc/rc.update_alias_url_data
+/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid /etc/rc.update_alias_url_data
 
 /bin/chmod a+rw /tmp/.
 

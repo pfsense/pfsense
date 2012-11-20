@@ -260,6 +260,7 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Remove old nameserver resolution files
 /bin/rm -f /var/etc/nameserver*
+/bin/rm -f /etc/newsyslog.conf
 
 # Create uploadbar tmp directory
 /bin/mkdir -p /tmp/uploadbar

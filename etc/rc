@@ -230,15 +230,6 @@ if [ ! -L /etc/dhclient.conf ]; then
     /bin/rm -rf /etc/dhclient.conf
 fi
 
-if [ ! -L /etc/sasyncd.conf ]; then
-    /bin/mkdir -p /var/etc/
-    /usr/bin/touch /var/etc/sasyncd.conf
-    /bin/rm -rf /etc/sasyncd.conf
-    /bin/ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf
-    /usr/sbin/chown root:wheel /var/etc/sasyncd.conf
-    /bin/chmod 0600 /var/etc/sasyncd.conf
-fi
-
 if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi

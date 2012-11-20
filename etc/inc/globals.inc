@@ -143,7 +143,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.icmp.icmplim" => "0",
 	"vfs.read_max" => "32",
 	"kern.ipc.maxsockbuf" => "4262144",
-	"debug.pfftpproxy" => "0"
+	"debug.pfftpproxy" => "0",
+	"net.inet.ip.process_options" => 0
 );
 
 $config_parsed = false;

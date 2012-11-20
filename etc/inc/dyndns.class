@@ -1085,7 +1085,11 @@
 		 *   - This function is only called when a unknown response
 		 *   - status is returned from a DynDNS service provider.
 		 */
-		function _debug ($data) {
+		function _debug($data) {
+			global $g;
+
+			if (!$g['debug'])
+				return;
 			$string = '\n'.date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
 			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');

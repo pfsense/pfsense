@@ -36,46 +36,46 @@
 ##|*MATCH=edit.php*
 ##|-PRIV
 
-if($_REQUEST['action'] === "load" || $_REQUEST['action'] === "save")
-	$nocsrf = true;
+//if($_POST['action'] === "load" || $_POST['action'] === "save")
+//	$nocsrf = true;
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
-if($_REQUEST['action']) {
-	switch($_REQUEST['action']) {
+if($_POST['action']) {
+	switch($_POST['action']) {
 		case 'load':
-			if(strlen($_REQUEST['file']) < 1) {
+			if(strlen($_POST['file']) < 1) {
 				echo "|5|" . gettext("No file name specified") . ".|";
-			} elseif(is_dir($_REQUEST['file'])) {
+			} elseif(is_dir($_POST['file'])) {
 				echo "|4|" . gettext("Loading a directory is not supported") . ".|";
-			} elseif(! is_file($_REQUEST['file'])) {
+			} elseif(! is_file($_POST['file'])) {
 				echo "|3|" . gettext("File does not exist or is not a regular file") . ".|";
 			} else {
-				$data = file_get_contents(urldecode($_REQUEST['file']));
+				$data = file_get_contents(urldecode($_POST['file']));
 				if($data === false) {
 					echo "|1|" . gettext("Failed to read file") . ".|";
 				} else {
-					echo "|0|{$_REQUEST['file']}|{$data}|";	
+					echo "|0|{$_POST['file']}|{$data}|";	
 				}
 			}
 			exit;
 		case 'save':
-			if(strlen($_REQUEST['file']) < 1) {
+			if(strlen($_POST['file']) < 1) {
 				echo "|" . gettext("No file name specified") . ".|";
 			} else {
 				conf_mount_rw();
-				$_REQUEST['data'] = str_replace("\r", "", base64_decode($_REQUEST['data']));
-				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
+				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
+				$ret = file_put_contents($_POST['file'], $_POST['data']);
 				conf_mount_ro();
-				if($_REQUEST['file'] == "/conf/config.xml" || $_REQUEST['file'] == "/cf/conf/config.xml") {
+				if($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
 					if(file_exists("/tmp/config.cache"))
 						unlink("/tmp/config.cache");
 					disable_security_checks();
 				}
 				if($ret === false) {
 					echo "|" . gettext("Failed to write file") . ".|";
-				} elseif($ret <> strlen($_REQUEST['data'])) {
+				} elseif($ret <> strlen($_POST['data'])) {
 					echo "|" . gettext("Error while writing file") . ".|";
 				} else {
 					echo "|" . gettext("File successfully saved") . ".|";

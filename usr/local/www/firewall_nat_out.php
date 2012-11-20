@@ -417,7 +417,7 @@ include("head.inc");
 					if (isset($natent['nonat']))
 						echo '<I>NO NAT</I>';
 					elseif (!$natent['target'])
-						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
 					elseif ($natent['target'] == "other-subnet")
 						echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
 					else

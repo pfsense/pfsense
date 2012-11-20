@@ -39,7 +39,6 @@
 ##|-PRIV
 
 global $g;
-$nocsrf = true;
 
 require("guiconfig.inc");
 require("ipsec.inc");

@@ -167,6 +167,9 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	echo "done."
 fi
 
+# Cleanup configuration files from previous instance
+/bin/rm -rf /var/etc/*
+
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
@@ -183,6 +186,9 @@ fi
 # Repair symlinks if they are broken
 if [ ! -L /etc/syslog.conf ]; then
 	/bin/rm -rf /etc/syslog.conf
+	if [ ! -f /var/etc/syslog.conf ]; then
+		touch /var/etc/syslog.conf
+	fi
 	/bin/ln -s /var/etc/syslog.conf /etc/syslog.conf
 fi
 

@@ -157,7 +157,7 @@ function check_for_kernel_file() {
 		echo "\nPlease select which kernel you would like to use:\n";
 		echo "\n1. Standard Kernel";
 		echo "\n2. Embedded kernel (no video or keyboard)";
-		echo "\nPlease enter a number [1-4]: ";
+		echo "\nPlease enter a number [1-2]: ";
 		$selection = strtoupper(chop(fgets($fp)));
 		switch ($selection) {
 			case "1":

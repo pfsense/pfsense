@@ -34,6 +34,8 @@
 ##|*NAME=Diagnostics: Edit FIle
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
 ##|*MATCH=edit.php*
+##|*MATCH=browser.php*
+##|*MATCH=filebrowser/browser.php*
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));

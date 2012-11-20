@@ -247,7 +247,7 @@ if($config['virtualip'])
 				<p>
 					<span style="text-align:left">
 						<?=gettext("Password"); ?>: <br>
-						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
+						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" autocomplete="off" class="formfld pwd" tabindex="2" />
 					</span>
 				</p>
 				<br>

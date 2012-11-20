@@ -269,18 +269,14 @@ $priv_list['page-diagnostics-edit']['name'] = gettext("WebCfg - Diagnostics: Edi
 $priv_list['page-diagnostics-edit']['descr'] = gettext("Allow access to the 'Diagnostics: Edit File' page.");
 $priv_list['page-diagnostics-edit']['match'] = array();
 $priv_list['page-diagnostics-edit']['match'][] = "edit.php*";
+$priv_list['page-diagnostics-edit']['match'][] = "browser.php*";
+$priv_list['page-diagnostics-edit']['match'][] = "filebrowser/browser.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = gettext("WebCfg - Diagnostics: Command page");
 $priv_list['page-diagnostics-command']['descr'] = gettext("Allow access to the 'Diagnostics: Command' page.");
 $priv_list['page-diagnostics-command']['match'] = array();
 $priv_list['page-diagnostics-command']['match'][] = "exec.php*";
-
-$priv_list['page-hidden-execraw'] = array();
-$priv_list['page-hidden-execraw']['name'] = gettext("WebCfg - Hidden: Exec Raw page");
-$priv_list['page-hidden-execraw']['descr'] = gettext("Allow access to the 'Hidden: Exec Raw' page.");
-$priv_list['page-hidden-execraw']['match'] = array();
-$priv_list['page-hidden-execraw']['match'][] = "exec_raw.php*";
 
 $priv_list['page-firewall-aliases'] = array();
 $priv_list['page-firewall-aliases']['name'] = gettext("WebCfg - Firewall: Aliases page");

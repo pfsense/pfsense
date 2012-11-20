@@ -556,6 +556,7 @@ function system_syslogd_start() {
 	
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
+		$syslogconf = "";
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
@@ -566,12 +567,6 @@ function system_syslogd_start() {
 			}
 		}
 		$facilitylist = implode(',', array_unique($separatelogfacilities));
-		/* write syslog.conf */		
-		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
-		if (!$fd) {
-			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
-			return 1;
-		}
 		$syslogconf .= "!radvd,routed,olsrd,zebra,ospfd,bgpd\n";
 		if (!isset($syslogcfg['disablelocallogging']))
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
@@ -681,22 +676,22 @@ EOD;
 
 EOD;
 		}
-		fwrite($fd, $syslogconf);
-		fclose($fd);
+		/* write syslog.conf */		
+		if (!@file_put_contents("{$g['varetc_path']}/syslog.conf", $syslogconf)) {
+			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
+			unset($syslogconf);
+			return 1;
+		}
+		unset($syslogconf);
 
 		// Ensure that the log directory exists
-		if(!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
+		if (!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
 			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
 
-		// Are we logging to a least one remote server ?
-		if(strpos($syslogconf, "@") != false)
-			$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
-		else {
-			$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log -f {$g['varetc_path']}/syslog.conf");
-		}
+		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l /var/dhcpd/var/run/log");
+		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l {$g['dhcpd_chroot_path']}/var/run/log");
 	}
 
 	if ($g['booting'])

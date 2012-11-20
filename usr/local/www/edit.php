@@ -36,9 +36,6 @@
 ##|*MATCH=edit.php*
 ##|-PRIV
 
-//if($_POST['action'] === "load" || $_POST['action'] === "save")
-//	$nocsrf = true;
-
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
@@ -56,6 +53,7 @@ if($_POST['action']) {
 				if($data === false) {
 					echo "|1|" . gettext("Failed to read file") . ".|";
 				} else {
+					$data = base64_encode($data);
 					echo "|0|{$_POST['file']}|{$data}|";	
 				}
 			}
@@ -117,8 +115,9 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 		if(values.shift() == "0") {
 			var file = values.shift();
+			var fileContent = Base64.decode(values.join("|"));
 			jQuery("#fileStatus").html("<?=gettext("File successfully loaded"); ?>.");
-			jQuery("#fileContent").val(values.join("|"));
+			jQuery("#fileContent").val(fileContent);
 
 			var lang = "none";
 				 if(file.indexOf(".php") > 0) lang = "php";

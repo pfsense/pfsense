@@ -524,7 +524,7 @@ include("fbegin.inc"); ?>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol"); ?></td>
                   <td width="78%" class="vtable">
                     <select name="proto" class="formselect" onChange="proto_change(); check_for_aliases();">
-                      <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP"); foreach ($protocols as $proto): ?>
+                      <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP ICMP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>
                     </select> <br> <span class="vexpl"><?=gettext("Choose which IP protocol " .

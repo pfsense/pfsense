@@ -548,7 +548,7 @@ function vpn_ipsec_configure($ipchg = false)
 						}
 
 						$certfile = "cert-".$ikeid.".crt";
-						$certpath = $g['varetc_path']."/".$certfile;
+						$certpath = "{$g['varetc_path']}/ipsec/{$certfile}";
 
 						if (!file_put_contents($certpath, base64_decode($cert['crt'])))
 						{
@@ -559,7 +559,7 @@ function vpn_ipsec_configure($ipchg = false)
 						chmod($certpath, 0600);
 
 						$keyfile = "cert-".$ikeid.".key";
-						$keypath = $g['varetc_path']."/".$keyfile;
+						$keypath = "{$g['varetc_path']}/ipsec/{$keyfile}";
 
 						if (!file_put_contents($keypath, base64_decode($cert['prv'])))
 						{
@@ -572,7 +572,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$ca = lookup_ca($ph1ent['caref']);
 						if ($ca) {
 							$cafile = "ca-".$ikeid.".crt";
-							$capath = $g['varetc_path']."/".$cafile;
+							$capath = "{$g['varetc_path']}/ipsec/{$cafile}";
 
 							if (!file_put_contents($capath, base64_decode($ca['crt'])))
 							{

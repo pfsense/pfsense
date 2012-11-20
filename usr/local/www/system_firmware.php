@@ -52,10 +52,8 @@ require_once("guiconfig.inc");
 $curcfg = $config['system']['firmware'];
 
 $kerneltypes = array(
-	'SMP' => gettext("Multiprocessor kernel"),
-	'single' => gettext("Uniprocessor kernel"),
-	'wrap' => gettext("Embedded kernel"),
-	'Developers' => gettext("Developers kernel")
+	'SMP' => gettext("Standard Kernel"),
+	'wrap' => gettext("Embedded Kernel"),
 );
 
 require_once("xmlrpc_client.inc");

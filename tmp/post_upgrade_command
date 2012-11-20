@@ -3,7 +3,13 @@
 /etc/rc.conf_mount_rw
 
 PFSENSETYPE=`cat /etc/platform`
-OLDKERNEL=`cat /boot/kernel/pfsense_kernel.txt`
+
+# check in two places for the old kernel type, since it could have been moved elsewhere in the upgrade process.
+if [ -f /boot/kernel/pfsense_kernel.txt ]; then
+	OLDKERNEL=`cat /boot/kernel/pfsense_kernel.txt`
+else
+	OLDKERNEL=`cat /tmp/pfsense_kernel.txt`
+fi
 
 # Massage the existing kernel into one that actually exists.
 #	Leaving old entries so we can bring back other kernels later if desired.
@@ -32,7 +38,7 @@ esac
 echo ${KERNELTYPE} > /boot/kernel/pfsense_kernel.txt
 HAVE_KERNEL=false
 
-case "$KERNELTYPE" in
+case "${KERNELTYPE}" in
 	"wrap")
 		if [ -f /kernels/kernel_wrap.gz ]; then
 			HAVE_KERNEL=true

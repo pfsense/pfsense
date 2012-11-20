@@ -155,25 +155,17 @@ function check_for_kernel_file() {
 	}	
 	if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 		echo "\nPlease select which kernel you would like to use:\n";
-		echo "\n1. Non SMP kernel";
-		echo "\n2. SMP kernel";
-		echo "\n3. Embedded kernel (no video or keyboard)";
-		echo "\n4. Developers kernel (slower performing, more debugging)\n";
-		echo "\nPlease enter a number [1-4]: ";
+		echo "\n1. Standard Kernel";
+		echo "\n2. Embedded Kernel (no video or keyboard)";
+		echo "\nPlease enter a number [1-2]: ";
 		$selection = strtoupper(chop(fgets($fp)));
 		switch ($selection) {
 			case "1":
-				exec("echo UP > /boot/kernel/pfsense_kernel.txt");
-			break;
-			case "2":
 				exec("echo SMP > /boot/kernel/pfsense_kernel.txt");
 			break;
-			case "3":
+			case "2":
 				exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
 			break;
-			case "4":
-				exec("echo Developers > /boot/kernel/pfsense_kernel.txt");
-			break;		
 		}
 		echo "\n";
 	}

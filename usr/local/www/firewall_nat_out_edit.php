@@ -599,7 +599,6 @@ any)");?></td>
 				<span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br>
 				<?=gettext("If you want this rule to apply to another IP address rather than the IP address of the interface chosen above, ".
 				"select it here (you will need to define ");?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP");?></a> <?=gettext("addresses on the interface first).");?>
-				<?=gettext("Also note that if you are trying to redirect connections on the LAN select the \"any\" option.");?>
 				</span><br/>
 			</td></tr>
 			<tr id="poolopts_tr">

@@ -1075,8 +1075,10 @@ function openvpn_get_client_status($client, $socket) {
 function openvpn_refresh_crls() {
 	global $g, $config;
 
-	if (!file_exists($g['varetc_path']."/openvpn"))
-		return;
+	if (!is_dir("{$g['varetc_path']}/openvpn"))
+		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
+	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
+		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $settings) {

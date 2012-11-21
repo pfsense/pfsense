@@ -805,11 +805,10 @@ function openvpn_resync_all($interface = "") {
 
 	if ($g['platform'] == 'jail')
 		return;
-	// delay our setup until the system
-	// has a chance to init our paths
-	if (!file_exists($g['varetc_path']."/openvpn") ||
-		!file_exists($g['varetc_path']."/openvpn-csc"))
-		return;
+	if (!is_dir("{$g['varetc_path']}/openvpn"))
+		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
+	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
+		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
 
 	if (!is_array($config['openvpn']))
 		$config['openvpn'] = array();

@@ -366,7 +366,7 @@ if ($_POST) {
 		configure_cron();
 
 		foreach ($iflist as $pppif => $ifdescr) {
-			if ($config['interfaces'][$if]['if'] == $ppp['if'])
+			if ($config['interfaces'][$pppif]['if'] == $ppp['if'])
 				interface_ppps_configure($pppif);
 		}
 		header("Location: interfaces_ppps.php");

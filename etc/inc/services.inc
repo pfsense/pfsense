@@ -1881,7 +1881,7 @@ EOD;
 				$upinst .= "\n";	/* mind that trailing newline! */
 
 				@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
-				unet($upinst);
+				unset($upinst);
 
 				/* invoke nsupdate */
 				$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";

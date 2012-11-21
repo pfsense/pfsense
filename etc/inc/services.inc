@@ -1940,6 +1940,7 @@ function configure_cron() {
 
 	/* please maintain the newline at the end of file */
 	file_put_contents("/etc/crontab", $crontab_contents);
+	unset($crontab_contents);
 
 	/* do a HUP kill to force sync changes */
 	exec('/bin/pkill -HUP cron');
@@ -1989,8 +1990,10 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 
 	$is_installed = false;
 
-	if(!$config['cron']['item'])
-		return;
+	if (!is_array($config['cron']))
+		$config['cron'] = array();
+	if (!is_array($config['cron']['item']))
+		$config['cron']['item'] = array();
 
 	$x=0;
 	foreach($config['cron']['item'] as $item) {

@@ -655,9 +655,9 @@ function openvpn_reconfigure($mode, $settings) {
 	openvpn_add_custom($settings, $conf);
 
 	if (!is_dir("{$g['varetc_path']}/openvpn"))
-		safe_mkdir("{$g['varetc_path']}/openvpn", 0600);
+		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
 	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
-		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0600);
+		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
 	$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.conf";
 	file_put_contents($fpath, $conf);
 	unset($conf);

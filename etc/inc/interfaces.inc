@@ -1687,6 +1687,7 @@ EOD;
 		// Write out mpd_ppp.conf
 		fwrite($fd, $mpdconf);
 		fclose($fd);
+		unset($mpdconf);
 	}
 
 	// Create the uptime log if requested and if it doesn't exist already, or delete it if it is no longer requested.

@@ -276,6 +276,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	global $g;
 
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.{$directive}";
+	openvpn_create_dirs();
 	file_put_contents($fpath, base64_decode($data));
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
@@ -291,7 +292,7 @@ function openvpn_reconfigure($mode, $settings) {
 		return;
 	if (isset($settings['disable'])) 
 		return;
-
+	openvpn_create_dirs();
 	/*
 	 * NOTE: Deleting tap devices causes spontaneous reboots. Instead,
 	 * we use a vpnid number which is allocated for a particular client
@@ -654,10 +655,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 	openvpn_add_custom($settings, $conf);
 
-	if (!is_dir("{$g['varetc_path']}/openvpn"))
-		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
-	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
-		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
+	openvpn_create_dirs();
 	$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.conf";
 	file_put_contents($fpath, $conf);
 	unset($conf);
@@ -754,6 +752,7 @@ function openvpn_resync_csc(& $settings) {
 		unlink_if_exists($fpath);
 		return;
 	}
+	openvpn_create_dirs();
 
 	$conf = '';
 	if ($settings['block'])
@@ -805,10 +804,7 @@ function openvpn_resync_all($interface = "") {
 
 	if ($g['platform'] == 'jail')
 		return;
-	if (!is_dir("{$g['varetc_path']}/openvpn"))
-		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
-	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
-		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
+	openvpn_create_dirs();
 
 	if (!is_array($config['openvpn']))
 		$config['openvpn'] = array();
@@ -1075,10 +1071,7 @@ function openvpn_get_client_status($client, $socket) {
 function openvpn_refresh_crls() {
 	global $g, $config;
 
-	if (!is_dir("{$g['varetc_path']}/openvpn"))
-		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
-	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
-		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
+	openvpn_create_dirs();
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $settings) {
@@ -1103,6 +1096,14 @@ function openvpn_refresh_crls() {
 			}
 		}
 	}
+}
+
+function openvpn_create_dirs() {
+	global $g;
+	if (!is_dir("{$g['varetc_path']}/openvpn"))
+		safe_mkdir("{$g['varetc_path']}/openvpn", 0750);
+	if (!is_dir("{$g['varetc_path']}/openvpn-csc"))
+		safe_mkdir("{$g['varetc_path']}/openvpn-csc", 0750);
 }
 
 ?>

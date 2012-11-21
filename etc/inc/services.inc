@@ -58,13 +58,6 @@ function services_radvd_configure() {
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 
-	/* write radvd.conf */
-	$fd = fopen("{$g['varetc_path']}/radvd.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
-		return 1;
-	}
-
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
 	/* Process all links which need the router advertise daemon */
@@ -271,8 +264,10 @@ function services_radvd_configure() {
 		}
 	}
 
-	fwrite($fd, $radvdconf);
-	fclose($fd);
+	/* write radvd.conf */
+	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf))
+		printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
+	unset($radvdconf);
 
 	if(count($radvdifs) > 0) {
 		if(is_process_running("radvd")) {
@@ -770,6 +765,7 @@ EOD;
 
 	fwrite($fd, $dhcpdconf);
 	fclose($fd);
+	unset($dhcpdconf);
 
 	/* create an empty leases database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
@@ -1145,9 +1141,10 @@ EOD;
 
 	fwrite($fdv6, $dhcpdv6conf);
 	fclose($fdv6);
+	unset($dhcpdv6conf);
+
 	/* create an empty leases v6 database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
-
 
 	/* fire up dhcpd in a chroot */
 	if(count($dhcpdv6ifs) > 0) {
@@ -1212,8 +1209,9 @@ EOD;
         }
         fwrite($igmpfl, $igmpconf);
         fclose($igmpfl);
+	unset($igmpconf);
 
-        mwexec("/usr/local/sbin/igmpproxy -c " . $g['tmp_path'] . "/igmpproxy.conf");
+        mwexec("/usr/local/sbin/igmpproxy -c {$g['tmp_path']}/igmpproxy.conf");
         log_error(gettext("Started IGMP proxy service."));
 
         return 0;
@@ -1329,6 +1327,7 @@ function services_dhcrelay_configure() {
 
 	$cmd .= " " . implode(" ", $srvips);
 	mwexec($cmd);
+	unset($cmd);
 
 	return 0;
 }
@@ -1448,6 +1447,7 @@ function services_dhcrelay6_configure() {
 		$cmd .= " -u \"{$srviface}\"";
 	}
 	mwexec($cmd);
+	unset($cmd);
 
 	return 0;
 }
@@ -1568,6 +1568,7 @@ function services_dnsmasq_configure() {
 
 		/* run dnsmasq */
 		mwexec_bg("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
+		unset($args);
 
 		if ($g['booting'])
 			echo gettext("done.") . "\n";
@@ -1795,6 +1796,7 @@ EOD;
 
 		fwrite($fd, $snmpdconf);
 		fclose($fd);
+		unset($snmpdconf);
 
 		if (isset($config['snmpd']['bindlan'])) {
 			$bindlan = "";
@@ -1878,9 +1880,8 @@ EOD;
 				$upinst .= "update add {$dnsupdate['host']} {$dnsupdate['ttl']} A {$wanip}\n";
 				$upinst .= "\n";	/* mind that trailing newline! */
 
-				$fd = fopen("{$g['varetc_path']}/nsupdatecmds{$i}", "w");
-				fwrite($fd, $upinst);
-				fclose($fd);
+				@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
+				unet($upinst);
 
 				/* invoke nsupdate */
 				$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
@@ -1889,6 +1890,7 @@ EOD;
 				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
 
 				mwexec_bg($cmd);
+				unset($cmd);
 			}
 		}
 	}

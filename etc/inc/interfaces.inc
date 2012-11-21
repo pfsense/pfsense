@@ -1614,6 +1614,7 @@ EOD;
 			$mpdconf .= <<<EOD
 	set modem device {$ppp['ports']}
 	set modem script DialPeer
+	set modem idle-script Ringback
 	set modem watch -cd
 	set modem var \$DialPrefix "DT"
 	set modem var \$Telephone "{$ppp['phone']}"

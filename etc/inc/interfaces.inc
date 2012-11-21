@@ -1671,7 +1671,7 @@ EOD;
 EOD;
 		}
 		
-		$mpdconf .= "\topen\r\n";
+		$mpdconf .= "\topen\n";
 	} //end foreach($port)
 
 

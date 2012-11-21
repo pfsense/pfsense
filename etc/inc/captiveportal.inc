@@ -288,6 +288,7 @@ function captiveportal_configure_zone($cpcfg) {
 			fwrite($fd, $htmltext);
 			fclose($fd);
 		}
+		unset($htmltext);
 
 		/* write error page */
 		if (is_array($cpcfg['page']) && $cpcfg['page']['errtext'])
@@ -315,6 +316,7 @@ function captiveportal_configure_zone($cpcfg) {
 			fwrite($fd, $errtext);
 			fclose($fd);
 		}
+		unset($errtext);
 
 		/* write logout page */
 		if (is_array($cpcfg['page']) && $cpcfg['page']['logouttext'])
@@ -361,6 +363,8 @@ EOD;
 			fwrite($fd, $logouttext);
 			fclose($fd);
 		}
+		unset($logouttext);
+
 		/* write elements */
 		captiveportal_write_elements();
 
@@ -872,6 +876,7 @@ function captiveportal_prune_old_automac() {
 		}
 		if (!empty($macrules)) {
 			@file_put_contents("{$g['tmp_path']}/macentry.prunerules.tmp", $macrules);
+			unset($macrules);
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.prunerules.tmp");
 		}
 		if ($writecfg === true)
@@ -1136,6 +1141,7 @@ function setup_dnsfilter_entries() {
 		}
 	}
 	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);
+	unset($cp_filterdns_conf);
 	killbypid("{$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid");
 	mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
 }

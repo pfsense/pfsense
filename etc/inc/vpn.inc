@@ -227,6 +227,7 @@ function vpn_ipsec_configure($ipchg = false)
 						}
 					}
 					@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
+					unset($ipsecpinghosts);
 				}
 			}
 		}
@@ -249,6 +250,7 @@ function vpn_ipsec_configure($ipchg = false)
 					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
 					continue;
 				}
+				unset($cert);
 			}
 		}
 		
@@ -303,6 +305,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 		@file_put_contents("{$g['varetc_path']}/ipsec/psk.txt", $pskconf);
 		chmod("{$g['varetc_path']}/ipsec/psk.txt", 0600);
+		unset($pskconf);
 			
 		/* begin racoon.conf */
 		$racoonconf = "";
@@ -401,7 +404,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 				if ($a_client['login_banner']) {
 					@file_put_contents("{$g['varetc_path']}/ipsec/racoon.motd", $a_client['login_banner']);
-					$racoonconf .= "\tbanner \"{$fn}\";\n";
+					$racoonconf .= "\tbanner \"{$g['varetc_path']}/ipsec/racoon.motd\";\n";
 				}
 
 				if (isset($a_client['save_passwd']))
@@ -547,7 +550,7 @@ function vpn_ipsec_configure($ipchg = false)
 							continue;
 						}
 
-						$certfile = "cert-".$ikeid.".crt";
+						$certfile = "cert-{$ikeid}.crt";
 						$certpath = "{$g['varetc_path']}/ipsec/{$certfile}";
 
 						if (!file_put_contents($certpath, base64_decode($cert['crt'])))
@@ -558,7 +561,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						chmod($certpath, 0600);
 
-						$keyfile = "cert-".$ikeid.".key";
+						$keyfile = "cert-{$ikeid}.key";
 						$keypath = "{$g['varetc_path']}/ipsec/{$keyfile}";
 
 						if (!file_put_contents($keypath, base64_decode($cert['prv'])))
@@ -571,7 +574,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						$ca = lookup_ca($ph1ent['caref']);
 						if ($ca) {
-							$cafile = "ca-".$ikeid.".crt";
+							$cafile = "ca-{$ikeid}.crt";
 							$capath = "{$g['varetc_path']}/ipsec/{$cafile}";
 
 							if (!file_put_contents($capath, base64_decode($ca['crt'])))
@@ -581,10 +584,10 @@ function vpn_ipsec_configure($ipchg = false)
 							}
 
 							chmod($capath, 0600);
-							$caline = "ca_type x509 \"".basename($capath)."\";";
+							$caline = "ca_type x509 \"{$cafile}\";";
 						}
 
-						$certline = "certificate_type x509 \"".basename($certpath)."\" \"".basename($keypath)."\";";
+						$certline = "certificate_type x509 \"{$certfile}\" \"{$keyfile}\";";
 
 					}
 
@@ -815,6 +818,7 @@ EOD;
 			/* end sainfo sections */
 		}
 		@file_put_contents("{$g['varetc_path']}/ipsec/racoon.conf", $racoonconf);
+		unset($racoonconf);
 		/* end racoon.conf */
 
 		/* generate IPsec policies */
@@ -934,6 +938,7 @@ EOD;
 			}
 		}
 		@file_put_contents("{$g['varetc_path']}/ipsec/spd.conf", $spdconf);
+		unset($spdconf);
 
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
@@ -968,6 +973,7 @@ EOD;
 			foreach ($filterdns_list as $hostname)
 				$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload ipsecdns\"'\n";
 			file_put_contents("{$g['varetc_path']}/ipsec/filterdns-ipsec.hosts", $hostnames);
+			unset($hostnames);
 
 			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 			sleep(1);
@@ -1195,6 +1201,7 @@ EOD;
 
 			fwrite($fd, $mpdconf);
 			fclose($fd);
+			unset($mpdconf);
 
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.links", "w");
@@ -1219,6 +1226,7 @@ EOD;
 
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
+			unset($mpdlinks);
 
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.secret", "w");
@@ -1239,6 +1247,7 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
+			unset($mpdsecret);
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
 			vpn_netgraph_support();
@@ -1403,6 +1412,7 @@ EOD;
 
 			fwrite($fd, $mpdconf);
 			fclose($fd);
+			unset($mpdconf);
 
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.links", "w");
@@ -1428,6 +1438,7 @@ EOD;
 
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
+			unset($mpdlinks);
 
 			if ($pppoecfg['username']) {
 				/* write mpd.secret */
@@ -1449,6 +1460,7 @@ EOD;
 
 				fwrite($fd, $mpdsecret);
 				fclose($fd);
+				unset($mpdsecret);
 				chmod("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.secret", 0600);
 			}
 
@@ -1598,6 +1610,7 @@ EOD;
 
 			fwrite($fd, $mpdconf);
 			fclose($fd);
+			unset($mpdconf);
 
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.links", "w");
@@ -1623,6 +1636,7 @@ EOD;
 
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
+			unset($mpdlinks);
 
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
@@ -1640,6 +1654,7 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
+			unset($mpdsecret);
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
 			vpn_netgraph_support();
@@ -1838,6 +1853,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");
 	/* generate temporary spd.conf */
 	@file_put_contents($spdfile, $spdconf);
+	unset($spdconf);
 	return true;
 }
 

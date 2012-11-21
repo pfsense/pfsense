@@ -121,7 +121,7 @@ function format_log_line(row) {
 	&nbsp;<a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);"><img border="0" src="<?php echo find_action_image($filterent['act']);?>" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" /></a>&nbsp;</span>
 	<span class="log-interface-mini"><?php echo htmlspecialchars($filterent['interface']);?>&nbsp;</span>
 	<span class="log-source-mini"><?php echo htmlspecialchars($filterent['src']);?>&nbsp;</span>
-	<span class="log-destination-mini"><?php echo (strlen($filterent['dst'] < 15) ? htmlspecialchars($filterent['dst']) : htmlspecialchars(substr($filterent['dst'],0,15)).".."); ?>&nbsp;</span>
+	<span class="log-destination-mini"><?php echo (strlen($filterent['dst'] < 19) ? htmlspecialchars($filterent['dst']) : htmlspecialchars(substr($filterent['dst'],0,18))."..."); ?>&nbsp;</span>
 	<?php
 	if ($filterent['proto'] == "TCP")
 		$filterent['proto'] .= ":{$filterent['tcpflags']}";

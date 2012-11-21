@@ -2657,7 +2657,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	log_error("Deny router advertisements for interface {$interface}");
 	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv");
 			
-	if (!$g['booting'] && !substr($realif, 0, 4) == "ovpn") {
+	if (!$g['booting'] && !(substr($realif, 0, 4) == "ovpn")) {
 		/* remove all IPv4 and IPv6 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);

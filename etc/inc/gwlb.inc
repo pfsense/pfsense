@@ -254,6 +254,7 @@ EOD;
 	}
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
+	unset($apingerconfig);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");
 	if (is_dir("{$g['tmp_path']}"))

@@ -102,15 +102,14 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;
 	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
 	$pconfig['port'] = $a_ppps[$pppid]['ports'];
-	if ($a_ppps[$pppid]['type'] == "ppp"){
+	if ($a_ppps[$pppid]['type'] == "ppp") {
 		$pconfig['username'] = $a_ppps[$pppid]['username'];
 		$pconfig['password'] = base64_decode($a_ppps[$pppid]['password']);
 
 		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
 		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
 	}
-
-	if ($a_ppps[$pppid]['type'] == "pppoe"){
+	else if ($a_ppps[$pppid]['type'] == "pppoe") {
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
 		$pconfig['provider'] = $a_ppps[$pppid]['provider'];
@@ -124,23 +123,21 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 		if (isset($a_ppps[$pppid]['pppoe-reset-type'])) {
 			$pconfig['pppoe-reset-type'] = $a_ppps[$pppid]['pppoe-reset-type'];
 			$itemhash = getMPDCRONSettings($a_ppps[$pppid]['if']);
-			$cronitem = $itemhash['ITEM'];
+			if ($itemhash)
+				$cronitem = $itemhash['ITEM'];
 			if (isset($cronitem)) {
 				$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
 			} else {
 				$resetTime = NULL;
 			}
-			log_error("ResetTime:".$resetTime);
+			//log_error("ResetTime:".$resetTime);
 			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
-				$resetTime_a = explode(" ", $resetTime);
-				$pconfig['pppoe_pr_custom'] = true;
-				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
-				$pconfig['pppoe_resethour'] = $resetTime_a[1];
-				/*  just initialize $pconfig['pppoe_resetdate'] if the
-				 *  coresponding item contains appropriate numeric values.
-				 */
-				if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*")
-					$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
+				if ($cronitem) {
+					$pconfig['pppoe_pr_custom'] = true;
+					$pconfig['pppoe_resetminute'] = $cronitem['minute'];
+					$pconfig['pppoe_resethour'] = $cronitem['hour'];
+					if ($cronitem['mday'] <> "*" && $cronitem['month'] <> "*")
+						$pconfig['pppoe_resetdate'] = "{$cronitem['month']}/{$cronitem['mday']}/" . date("Y");
 			} else if ($a_ppps[$pppid]['pppoe-reset-type'] == "preset") {
 				$pconfig['pppoe_pr_preset'] = true;
 				switch ($resetTime) {
@@ -701,7 +698,7 @@ if ($_POST['apply']) {
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
-		if (isset($wancfg['pppoe']['pppoe-reset-type']))
+		if (empty($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 		

@@ -138,6 +138,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 					$pconfig['pppoe_resethour'] = $cronitem['hour'];
 					if ($cronitem['mday'] <> "*" && $cronitem['month'] <> "*")
 						$pconfig['pppoe_resetdate'] = "{$cronitem['month']}/{$cronitem['mday']}/" . date("Y");
+				}
 			} else if ($a_ppps[$pppid]['pppoe-reset-type'] == "preset") {
 				$pconfig['pppoe_pr_preset'] = true;
 				switch ($resetTime) {

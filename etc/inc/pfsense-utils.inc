@@ -1241,7 +1241,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['inbytespass'] = $in4_pass + $in6_pass;
 	$ifinfo['outbytespass'] = $out4_pass + $out6_pass;
 	$ifinfo['inpktspass'] = $in4_pass_packets + $in6_pass_packets;
-	$ifinfo['outpktspass'] = $out4_pass_packets + $in6_pass_packets;
+	$ifinfo['outpktspass'] = $out4_pass_packets + $out6_pass_packets;
 
 	/* Block */
 	$pf_in4_block = preg_split("/ +/", $pfctlstats[4]);
@@ -1264,7 +1264,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['inbytes'] = $in4_pass + $in6_pass;
 	$ifinfo['outbytes'] = $out4_pass + $out6_pass;
 	$ifinfo['inpkts'] = $in4_pass_packets + $in6_pass_packets;
-	$ifinfo['outpkts'] = $in4_pass_packets + $out6_pass_packets;
+	$ifinfo['outpkts'] = $out4_pass_packets + $out6_pass_packets;
 		
 	$ifconfiginfo = "";
 	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];

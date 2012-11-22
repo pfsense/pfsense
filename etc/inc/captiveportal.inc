@@ -36,7 +36,7 @@
 	added rules which may have been created by other per-user code (index.php, etc).
 	These changes are (c) 2004 Keycom PLC.
 	
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/sysctl	/sbin/kldunload
+	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/lighttpd	/usr/local/bin/minicron /sbin/pfctl
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/cp 
 	pfSense_MODULE: captiveportal
@@ -204,10 +204,37 @@ EOD;
 	return $htmltext;
 }
 
+function captiveportal_load_modules() {
+        global $config;
+
+	mute_kernel_msgs();
+        if (!is_module_loaded("ipfw.ko")) {
+                mwexec("/sbin/kldload ipfw");
+                /* make sure ipfw is not on pfil hooks */
+                mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
+                        " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
+        }
+	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
+	if (!is_module_loaded("dummynet.ko")) {
+		mwexec("/sbin/kldload dummynet");
+		mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+	}
+	unmute_kernel_msgs();
+
+        /* XXX: This are not used in pfSense, if needed can be tuned 
+        if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+                mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+        } else {
+                mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
+        }
+	*/
+}
+
 function captiveportal_configure() {
 	global $config, $cpzone;
 
 	if (is_array($config['captiveportal'])) {
+		captiveportal_load_modules();
 		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 		foreach ($config['captiveportal'] as $cpkey => $cp) {
 			$cpzone = $cpkey;
@@ -491,6 +518,8 @@ function captiveportal_init_rules($reinit = false) {
 	if (!isset($config['captiveportal'][$cpzone]['enable']))
 		return;
 
+	captiveportal_load_modules();
+
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
 	$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
@@ -529,15 +558,6 @@ function captiveportal_init_rules($reinit = false) {
 
 	/* init dummynet/ipfw rules number database */
 	captiveportal_init_ipfw_ruleno();
-
-	/* make sure ipfw is loaded */
-	if (!is_module_loaded("ipfw.ko"))
-		filter_load_ipfw();
-	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
-	if (!is_module_loaded("dummynet.ko")) {
-		mwexec("/sbin/kldload dummynet");
-		mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
-	}
 
 	$cprules =	"add 65291 set 1 allow pfsync from any to any\n";
 	$cprules .= "add 65292 set 1 allow carp from any to any\n";

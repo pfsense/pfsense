@@ -83,31 +83,6 @@ function flowtable_configure() {
 	}
 }
 
-function filter_load_ipfw() {
-	global $config;
-
-	if(!is_module_loaded("ipfw.ko")) {
-		mute_kernel_msgs();
-		mwexec("/sbin/kldload ipfw");
-		unmute_kernel_msgs();
-		/*
-		 * make sure ipfw is the first hook to make CP and schedules work
-		 * correctly on Multi-WAN.
-		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
-			" net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
-	}
-
-	/* XXX: This are not used in pfSense, keep?! Set ipfw state limit */
-	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
-		/* Set ipfw states to user defined maximum states in Advanced menu. */
-		mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
-	} else {
-		/* Set to default 10,000 */
-		mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
-	}
-}
-
 function filter_pflog_start($kill_first = false) {
 	global $config, $g;
 	if ($g['platform'] == 'jail')

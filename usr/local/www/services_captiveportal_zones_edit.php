@@ -79,8 +79,7 @@ if ($_POST) {
 		write_config();
 
 		/* make sure ipfw is loaded */
-		if (!is_module_loaded("ipfw.ko"))
-			filter_load_ipfw();
+		captiveportal_load_modules();
 		mwexec("/usr/local/sbin/ipfw_context -a {$cpzone}", true);
 
 		header("Location: services_captiveportal.php?zone={$cpzone}");

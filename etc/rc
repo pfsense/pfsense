@@ -167,6 +167,13 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	echo "done."
 fi
 
+# make some directories in /var
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/rm -rf $varrunpath/*
+if [ "$PLATFORM" != "pfSense" ]; then
+	/bin/rm /var/log/* 2>/dev/null
+fi
+
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
 
@@ -184,6 +191,9 @@ if [ "$PLATFORM" = "nanobsd" ] ; then
 fi
 
 # Repair symlinks if they are broken
+if [ -f /etc/newsyslog.conf ]; then
+	/bin/rm -f /etc/newsyslog.conf
+fi
 if [ ! -L /etc/syslog.conf ]; then
 	/bin/rm -rf /etc/syslog.conf
 	if [ ! -f /var/etc/syslog.conf ]; then
@@ -243,20 +253,10 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Remove old nameserver resolution files
 /bin/rm -f /var/etc/nameserver*
-if [ -f /etc/newsyslog.conf ]; then
-	/bin/rm -f /etc/newsyslog.conf
-fi
 
 # Create uploadbar tmp directory
 /bin/mkdir -p /tmp/uploadbar
 /bin/chmod 0777 /tmp/uploadbar
-
-# make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
-/bin/rm -rf $varrunpath/*
-if [ "$PLATFORM" != "pfSense" ]; then
-	/bin/rm /var/log/* 2>/dev/null
-fi
 
 echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`

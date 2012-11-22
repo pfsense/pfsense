@@ -579,7 +579,6 @@ any)");?></td>
 				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
 <?php	endforeach; ?>
 				<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected"; ?>><?=gettext("Other Subnet (Enter Below)");?></option>
-				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>><?=gettext("any");?></option>
 			  </select>
 			  </td>
 			</tr>

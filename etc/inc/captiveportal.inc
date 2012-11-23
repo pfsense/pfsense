@@ -214,6 +214,9 @@ function captiveportal_load_modules() {
                 mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
                         " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
         }
+	/* Activate layer2 filtering */
+	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
+
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
 	if (!is_module_loaded("dummynet.ko")) {
 		mwexec("/sbin/kldload dummynet");
@@ -234,8 +237,6 @@ function captiveportal_configure() {
 	global $config, $cpzone;
 
 	if (is_array($config['captiveportal'])) {
-		captiveportal_load_modules();
-		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 		foreach ($config['captiveportal'] as $cpkey => $cp) {
 			$cpzone = $cpkey;
 			captiveportal_configure_zone($cp);
@@ -275,9 +276,6 @@ function captiveportal_configure_zone($cpcfg) {
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
-
-		mwexec("/usr/local/sbin/ipfw_context -a {$cpzone}", true);
-		captiveportal_ipfw_set_context($cpzone);
 
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
@@ -431,6 +429,19 @@ EOD;
 
 		if (empty($config['captiveportal']))
 			mwexec("/sbin/sysctl net.link.ether.ipfw=0");
+		else {
+			/* Deactivate ipfw(4) if not needed */
+			$cpactive = false;
+			foreach ($config['captiveportal'] as $cpkey => $cp) {
+				if (isset($cp['enable'])) {
+					$cpactive = true;
+					break;
+				}
+			}
+			if ($cpactive === false)
+				mwexec("/sbin/sysctl net.link.ether.ipfw=0");
+				
+		}
 
 		/* unload ipfw */
 		$listifs = get_configured_interface_list();
@@ -519,6 +530,8 @@ function captiveportal_init_rules($reinit = false) {
 		return;
 
 	captiveportal_load_modules();
+	mwexec("/usr/local/sbin/ipfw_context -a {$cpzone}", true);
+	captiveportal_ipfw_set_context($cpzone);
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -672,6 +685,7 @@ EOD;
 	captiveportal_ipfw_set_context($cpzone);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);
 	//@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules");
+	unset($cprules, $tmprules);
 
 	if ($reinit == false)
 		unlock($captiveportallck);
@@ -680,8 +694,6 @@ EOD;
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 	/* Make sure not re-entrancy is allowed in ipfw(4) */
 	mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
-
-	return $cprules;
 }
 
 /* remove clients that have been around for longer than the specified amount of time

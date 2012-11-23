@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2010 Ermal Luci <ermal.luci@gmail.com>
+	Copyright (C) 2010-2012 Ermal Luci <eri@pfsense.org>
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
     Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>
     All rights reserved.

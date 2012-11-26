@@ -459,7 +459,7 @@
 			<type>listtopic</type>
 		</field>
 		<field>
-			<type>cert_selection</type>
+			<type>cert_selection_server</type>
 			<name>certname</name>
 			<displayname>Certificate</displayname>
 			<bindstofield>ovpnserver->step9->authcertname</bindstofield>

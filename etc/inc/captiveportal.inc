@@ -638,7 +638,8 @@ EOD;
 	mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
 }
 
-/* remove clients that have been around for longer than the specified amount of time
+/* 
+ * Remove clients that have been around for longer than the specified amount of time
  * db file structure:
  * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time
  * (password is in Base64 and only saved when reauthentication is enabled)
@@ -649,21 +650,21 @@ function captiveportal_prune_old() {
 	if (empty($cpzone))
 		return;
 
+	$cpcfg = $config['captiveportal'][$cpzone];
+	$vcpcfg = $config['voucher'][$cpzone];
+
 	/* check for expired entries */
-	if (empty($config['captiveportal'][$cpzone]['timeout']) ||
-	!is_numeric($config['captiveportal'][$cpzone]['timeout']))
-		$timeout = 0;
-	else
-		$timeout = $config['captiveportal'][$cpzone]['timeout'] * 60;
+	$idletimeout = 0;
+	$timeout = 0;
+	if (!empty($cpcfg['timeout']) && is_numeric($cpcfg['timeout']))
+		$timeout = $cpcfg['timeout'] * 60;
 
-	if (empty($config['captiveportal'][$cpzone]['idletimeout']) ||
-	!is_numeric($config['captiveportal'][$cpzone]['idletimeout']))
-		$idletimeout = 0;
-	else
-		$idletimeout = $config['captiveportal'][$cpzone]['idletimeout'] * 60;
+	if (!empty($cpcfg['idletimeout']) && is_numeric($cpcfg['idletimeout']))
+		$idletimeout = $cpcfg['idletimeout'] * 60;
 
-	if (!$timeout && !$idletimeout && !isset($config['captiveportal'][$cpzone]['reauthenticate']) && 
-	!isset($config['captiveportal'][$cpzone]['radiussession_timeout']) && !isset($config['voucher'][$cpzone]['enable']))
+	/* Is there any job to do? */
+	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) && 
+	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable']))
 		return;
 
 	$radiussrvs = captiveportal_get_radius_servers();
@@ -671,10 +672,11 @@ function captiveportal_prune_old() {
 	/* read database */
 	$cpdb = captiveportal_read_db();
 
-	/*	To make sure we iterate over ALL accounts on every run the count($cpdb) is moved
-	 *	outside of the loop. Otherwise the loop would evaluate count() on every iteration
-	 *	and since $i would increase and count() would decrement they would meet before we
-	 *	had a chance to iterate over all accounts.
+	/*
+	 * To make sure we iterate over ALL accounts on every run the count($cpdb) is moved
+	 * outside of the loop. Otherwise the loop would evaluate count() on every iteration
+	 * and since $i would increase and count() would decrement they would meet before we
+	 * had a chance to iterate over all accounts.
 	 */
 	$unsetindexes = array();
 	$voucher_needs_sync = false;
@@ -725,7 +727,7 @@ function captiveportal_prune_old() {
 		}
 
 		/* if vouchers are configured, activate session timeouts */
-		if (!$timedout && isset($config['voucher'][$cpzone]['enable']) && !empty($cpentry[7])) {
+		if (!$timedout && isset($vcpcfg['enable']) && !empty($cpentry[7])) {
 			if ($pruning_time >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
@@ -734,7 +736,7 @@ function captiveportal_prune_old() {
 		}
 
 		/* if radius session_timeout is enabled and the session_timeout is not null, then check if the user should be logged out */
-		if (!$timedout && isset($config['captiveportal'][$cpzone]['radiussession_timeout']) && !empty($cpentry[7])) {
+		if (!$timedout && isset($cpcfg['radiussession_timeout']) && !empty($cpentry[7])) {
 			if ($pruning_time >= ($cpentry[0] + $cpentry[7])) {
 				$timedout = true;
 				$term_cause = 5; // Session-Timeout
@@ -749,8 +751,8 @@ function captiveportal_prune_old() {
 
 		/* do periodic RADIUS reauthentication? */
 		if (!$timedout && !empty($radiusservers)) {
-			if (isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
-				if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstart") {
+			if (isset($cpcfg['radacct_enable'])) {
+				if ($cpcfg['reauthenticateacct'] == "stopstart") {
 					/* stop and restart accounting */
 					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 						$cpentry[4], // username
@@ -769,7 +771,7 @@ function captiveportal_prune_old() {
 						$radiusservers,
 						$cpentry[2], // clientip
 						$cpentry[3]); // clientmac
-				} else if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "interimupdate") {
+				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
 					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -783,7 +785,7 @@ function captiveportal_prune_old() {
 			}
 
 			/* check this user against RADIUS again */
-			if (isset($config['captiveportal'][$cpzone]['reauthenticate'])) {
+			if (isset($cpcfg['reauthenticate'])) {
 				$auth_list = RADIUS_AUTHENTICATION($cpentry[4], // username
 					base64_decode($cpentry[6]), // password
 					$radiusservers,

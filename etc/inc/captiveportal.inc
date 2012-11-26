@@ -51,152 +51,94 @@ require_once("voucher.inc");
 
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
-	// Detect if vouchers are being used and default to the voucher page
-	if(isset($config['voucher'][$cpzone]['enable'])) {
-			$htmltext = <<<EOD
-<html> 
-	<body> 
-		<form method="post" action="\$PORTAL_ACTION\$"> 
-			<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$"> 
-			<input name="zone" type="hidden" value="\$PORTAL_ZONE\$"> 
-			<center>
-				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
-					<tr height="10" bgcolor="#990000">
-						<td style="border-bottom:1px solid #000000">
-							<font color='white'>
-								<b>
-									Guest Voucher code required to continue
-								</b>
-							</font>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div id="mainlevel">
-								<center>
-									<table width="100%" border="0" cellpadding="5" cellspacing="0">
-										<tr>
-											<td>
-												<center>
-													<div id="mainarea">
-														<center>
-															<table width="100%" border="0" cellpadding="5" cellspacing="5">
-																<tr>
-																	<td>
-																		<div id="maindivarea">
-																			<center>
-																				<div id='statusbox'>
-																					<font color='red' face='arial' size='+1'>
-																						<b>
-																							\$PORTAL_MESSAGE\$
-																						</b>
-																					</font>
-																				</div>
-																				<p/>
-																				<div id='loginbox'>
-																					Enter Voucher Code: 
-																					<input name="auth_voucher" type="text" style="border:1px dashed;" size="22"> 
-																					<input name="accept" type="submit" value="Continue"> 
-																				</div>
-																			</center>
-																		</div>
-																	</td>
-																</tr>
-															</table>
-														</center>
-													</div>
-												</center>
-											</td>
-										</tr>
-									</table>
-								</center>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</center>
-		</form>
-	</body> 
-</html>
 
-EOD;
-		return $htmltext;
-	}
-
-	// Vouchers are not found, return the normal user/pass auth page
 	$htmltext = <<<EOD
 <html> 
-	<body> 
-		<form method="post" action="\$PORTAL_ACTION\$"> 
-		<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
-		<input name="zone" type="hidden" value="\$PORTAL_ZONE\$">
+<body> 
+<form method="post" action="\$PORTAL_ACTION\$"> 
+	<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
+	<input name="zone" type="hidden" value="\$PORTAL_ZONE\$">
+	<center>
+	<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
+	<tr height="10" bgcolor="#990000">
+		<td style="border-bottom:1px solid #000000">
+			<font color='white'>
+			<b>
+				{$g['product_name']} captive portal
+			</b>
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainlevel">
 			<center>
-				<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
-					<tr height="10" bgcolor="#990000">
-						<td style="border-bottom:1px solid #000000">
-							<font color='white'>
-								<b>
-									{$g['product_name']} captive portal
-								</b>
-							</font>
-						</td>
-					</tr>
+			<table width="100%" border="0" cellpadding="5" cellspacing="0">
+			<tr>
+				<td>
+					<center>
+					<div id="mainarea">
+					<center>
+					<table width="100%" border="0" cellpadding="5" cellspacing="5">
 					<tr>
 						<td>
-							<div id="mainlevel">
-								<center>
-									<table width="100%" border="0" cellpadding="5" cellspacing="0">
-										<tr>
-											<td>
-												<center>
-													<div id="mainarea">
-														<center>
-															<table width="100%" border="0" cellpadding="5" cellspacing="5">
-																<tr>
-																	<td>
-																		<div id="maindivarea">
-																			<center>
-																				<div id='statusbox'>
-																					<font color='red' face='arial' size='+1'>
-																						<b>
-																							\$PORTAL_MESSAGE\$
-																						</b>
-																					</font>
-																				</div>
-																				<br/>
-																				<div id='loginbox'>
-																					<table>
-																					   <tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
-																					   <tr><td>&nbsp;</td></tr>
-																					   <tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
-																					   <tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
-																					   <tr><td>&nbsp;</td></tr>
-																					   <tr>
-																						 <td colspan="2">
-																							<center><input name="accept" type="submit" value="Continue"></center>
-																						 </td>
-																					   </tr>
-																					</table>
-																				</div>
-																			</center>
-																		</div>
-																	</td>
-																</tr>
-															</table>
-														</center>
-													</div>
-												</center>
-											</td>
-										</tr>
-									</table>
-								</center>
+							<div id="maindivarea">
+							<center>
+								<div id='statusbox'>
+									<font color='red' face='arial' size='+1'>
+									<b>
+										\$PORTAL_MESSAGE\$
+									</b>
+									</font>
+								</div>
+								<br/>
+								<div id='loginbox'>
+								<table>
+								   <tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
+								   <tr><td>&nbsp;</td></tr>
+								   <tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+								   <tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+								   <tr><td>&nbsp;</td></tr>
+
+EOD;
+
+	if(isset($config['voucher'][$cpzone]['enable'])) {
+	$htmltext .= <<<EOD
+								   <tr><td>
+									Enter Voucher Code: 
+									<input name="auth_voucher" type="text" style="border:1px dashed;" size="22"> 
+								   </td></tr>
+
+EOD;
+	}
+
+	$htmltext .= <<<EOD
+								   <tr>
+									 <td colspan="2">
+									<center><input name="accept" type="submit" value="Continue"></center>
+									 </td>
+								   </tr>
+								</table>
+								</div>
+							</center>
 							</div>
 						</td>
 					</tr>
-				</table>
+					</table>
+					</center>
+					</div>
+					</center>
+				</td>
+			</tr>
+			</table>
 			</center>
-		</form>
-	</body> 
+			</div>
+		</td>
+	</tr>
+	</table>
+	</center>
+</form>
+</body> 
 </html>
 
 EOD;

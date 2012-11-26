@@ -542,7 +542,7 @@ function showchange() {
 		    	}
 
 			break;
-		    case "cert_selection":
+			case "cert_selection_server":{
                         $size = "";
                         $multiple = "";
                         $name = strtolower($name);
@@ -557,7 +557,7 @@ function showchange() {
                                 if($field['add_to_cert_selection'] == $value) $SELECTED = " SELECTED";
                                 echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
                         }
-                        foreach($config['cert'] as $ca) {
+				foreach(get_certificates('server') as $ca) {
 				if (stristr($ca['descr'], "webconf"))
 					continue;
                                 $name = htmlspecialchars($ca['descr']);
@@ -580,8 +580,8 @@ function showchange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-
 			break;
+			}
 		    case "select":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";

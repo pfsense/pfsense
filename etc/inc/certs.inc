@@ -89,6 +89,49 @@ function & lookup_crl($refid) {
 	return false;
 }
 
+function get_certificates($certtypes,$forceincludecrtrefid=null) {
+	// call this function with the wanted certificate types like this:
+	// get_certificates('any'));                      // to get all certificate types
+	// get_certificates('server');                    // to get only server certificates
+	// get_certificates(array('ca','server','user')); // to get 3 certificate types
+	// get_certificates('server', '1a2b3c4d5e6f7');   // for reading 'old' configuration with for example a usercert choosen where only server-certs should be.
+	global $config;
+	$result = array();
+	if (!is_array($certtypes))
+	{
+		if ($certtypes == 'any')
+			$certtypes = array('ca','server','user');
+		else
+			$certtypes = array($certtypes);
+	}
+	if ((in_array('ca',$certtypes) || $forceincludecrtrefid != null) && is_array($config['ca']))
+	{
+		foreach ($config['ca'] as & $ca)
+		{
+			$add = in_array('ca',$certtypes);
+			$add |= $ca['refid'] == $forceincludecrtrefid;
+			if ($add)
+				$result[] = $ca;
+		}
+	}
+	if ((in_array('server',$certtypes) || in_array('user',$certtypes) || $forceincludecrtrefid != null) && is_array($config['cert']))
+	{
+		foreach ($config['cert'] as & $cert)
+		{
+			$add = false;
+			if (in_array('server',$certtypes) && $cert['type'] == 'server')
+				$add = true;
+			if (in_array('user',$certtypes) && $cert['type'] == 'user')
+				$add = true;
+			if ($cert['refid'] == $forceincludecrtrefid)
+				$add = true;
+			if ($add)
+				$result[] = $cert;
+		}
+	}
+	return $result;
+}
+
 function ca_chain_array(& $cert) {
 	if($cert['caref']) {
 		$chain = array();

@@ -50,8 +50,6 @@ $a_ca =& $config['ca'];
 if (!is_array($config['cert']))
 	$config['cert'] = array();
 
-$a_cert =& $config['cert'];
-
 if (!is_array($config['crl']))
 	$config['crl'] = array();
 
@@ -922,7 +920,9 @@ if ($savemsg)
 					<tr id="tls_cert">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Certificate"); ?></td>
 							<td width="78%" class="vtable">
-							<?php if (count($a_cert)): ?>
+							<?php 
+							$a_cert = get_certificates('server', $pconfig['certref']);
+							if (count($a_cert)): ?>
 							<select name='certref' class="formselect">
 							<?php
 							foreach ($a_cert as $cert):

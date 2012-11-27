@@ -206,9 +206,6 @@ if ($_POST) {
 			$_POST['icmptype'] = $pconfig['icmptype'];
 	}
 
-	if ($_POST['type'] == "match" && $_POST['defaultqueue'] == "none")
-		$input_errors[] = gettext("Queue type rules only work with queues.");
-
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
 		$a_gatewaygroups = return_gateway_groups_array();
 		if(is_array($config['gateways']['gateway_group'])) {
@@ -698,7 +695,7 @@ include("head.inc");
 					</option>
 					<?php endforeach; ?>
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected"; ?>>Queue</option>
+					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected"; ?>>Match</option>
 <?php endif; ?>
 				</select>
 				<br/>

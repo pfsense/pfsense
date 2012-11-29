@@ -55,6 +55,8 @@ if (!is_array($config['snmpd']['modules'])) {
 	$config['snmpd']['modules']['pf'] = true;
 	$config['snmpd']['modules']['hostres'] = true;
 	$config['snmpd']['modules']['bridge'] = true;
+	$config['snmpd']['modules']['ucd'] = true;
+	$config['snmpd']['modules']['regex'] = true;
 }
 $pconfig['enable'] = isset($config['snmpd']['enable']);
 $pconfig['pollport'] = $config['snmpd']['pollport'];
@@ -75,6 +77,8 @@ $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
 $pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
 $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
+$pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
+$pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
 $pconfig['bindip'] = $config['snmpd']['bindip'];
 
 if ($_POST) {
@@ -146,6 +150,8 @@ if ($_POST) {
 		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
 		$config['snmpd']['modules']['hostres'] = $_POST['hostres'] ? true : false;
 		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
+		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
+		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
 		$config['snmpd']['bindip'] = $_POST['bindip'];
 			
 		write_config();
@@ -235,6 +241,8 @@ function enable_change(whichone) {
 	    document.iform.netgraph.disabled = false;
 	    document.iform.pf.disabled = false;
 	    document.iform.hostres.disabled = false;
+	    document.iform.ucd.disabled = false;
+	    document.iform.regex.disabled = false;
 	    //document.iform.bridge.disabled = false;
 	}
 	else
@@ -256,6 +264,8 @@ function enable_change(whichone) {
             document.iform.netgraph.disabled = true;
             document.iform.pf.disabled = true;
             document.iform.hostres.disabled = true;
+            document.iform.ucd.disabled = true;
+            document.iform.regex.disabled = true;
             //document.iform.bridge.disabled = true;
 	}
 }
@@ -381,6 +391,11 @@ function enable_change(whichone) {
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> ><?=gettext("PF"); ?>
 		    <br />
 		    <input name="hostres" type="checkbox" id="hostres" value="yes" onClick="check_deps()" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources (Requires MibII)");?>
+		    <br />
+		    <input name="ucd" type="checkbox" id="ucd" value="yes" <?php if ($pconfig['ucd']) echo "checked"; ?> ><?=gettext("UCD"); ?>
+		    <br />
+		    <input name="regex" type="checkbox" id="regex" value="yes" <?php if ($pconfig['regex']) echo "checked"; ?> ><?=gettext("Regex"); ?>
+		    <br />
 		  </td>
 		</tr>
 

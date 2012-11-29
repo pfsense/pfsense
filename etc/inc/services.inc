@@ -1789,9 +1789,20 @@ EOD;
 begemotSnmpdModulePath."bridge"     = "/usr/lib/snmp_bridge.so"
 # config must end with blank line
 
-
 EOD;
 		    }
+			if(isset($config['snmpd']['modules']['ucd'])) {
+				$snmpdconf .= <<<EOD
+begemotSnmpdModulePath."ucd"     = "/usr/local/lib/snmp_ucd.so"
+
+EOD;
+			}
+			if(isset($config['snmpd']['modules']['regex'])) {
+				$snmpdconf .= <<<EOD
+begemotSnmpdModulePath."regex"     = "/usr/local/lib/snmp_regex.so"
+
+EOD;
+			}
 		}
 
 		fwrite($fd, $snmpdconf);

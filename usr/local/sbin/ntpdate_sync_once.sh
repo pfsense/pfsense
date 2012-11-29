@@ -23,8 +23,13 @@ done
 
 if [ "$NOTSYNCED" = "true" ]; then
 	echo "Giving up on time sync after ${MAX_ATTEMPTS} attempts." | /usr/bin/logger -t ntp;
+else
+	echo "Successfully synced time after ${ATTEMPT} attempts." | /usr/bin/logger -t ntp;
 fi
 
 if [ -f /var/etc/ntpd.conf ]; then
+	echo "Starting NTP Daemon." | /usr/bin/logger -t ntp;
 	/usr/local/bin/ntpd -g -c /var/etc/ntpd.conf
+else
+	echo "NTP configuration file missing, not starting daemon." | /usr/bin/logger -t ntp;
 fi

@@ -421,6 +421,8 @@ function openvpn_reconfigure($mode, $settings) {
 				if (!empty($ip) && !empty($mask) && ($cidr < 30)) {
 					$conf .= "server {$ip} {$mask}\n";
 					$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+					if(is_ipaddr($ipv6))
+						$conf .= "server-ipv6 {$ipv6}/{$prefix}\n";
 				}
 			case 'p2p_shared_key':
 				if (!empty($ip) && !empty($mask)) {
@@ -431,6 +433,18 @@ function openvpn_reconfigure($mode, $settings) {
 						$conf .= "ifconfig {$ip1} {$ip2}\n";
 					else
 						$conf .= "ifconfig {$ip1} {$mask}\n";
+				}
+				if (!empty($ipv6) && !empty($prefix)) {
+					$basev6 = gen_subnetv6($ipv6, $prefix);
+					// Is there a better way to do this math?
+					$ipv6_arr = explode(':', $basev6);
+					$last = hexdec(array_pop($ipv6_arr));
+					$ipv6_1 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 1));
+					$ipv6_2 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 2));
+					if ($settings['dev_mode'] == 'tun')
+						$conf .= "ifconfig-ipv6 {$ipv6_1} {$ipv6_2}\n";
+					else
+						$conf .= "ifconfig {$ipv6_1} {$prefix}\n";
 				}
 				break;
 			case 'server_tls':
@@ -580,6 +594,20 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig {$ip2} {$ip1}\n";
 			else
 				$conf .= "ifconfig {$ip2} {$mask}\n";
+		}
+
+		if (!empty($settings['tunnel_networkv6'])) {
+			list($ipv6, $prefix) = explode('/', $settings['tunnel_networkv6']);
+			$basev6 = gen_subnetv6($ipv6, $prefix);
+			// Is there a better way to do this math?
+			$ipv6_arr = explode(':', $basev6);
+			$last = hexdec(array_pop($ipv6_arr));
+			$ipv6_1 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 1));
+			$ipv6_2 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 2));
+			if ($settings['dev_mode'] == 'tun')
+				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
+			else
+				$conf .= "ifconfig {$ipv6_2} {$prefix}\n";
 		}
 
 		if ($settings['proxy_addr']) {

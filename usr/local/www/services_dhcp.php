@@ -201,17 +201,6 @@ $ifcfgsn = $config['interfaces'][$if]['subnet'];
  *   the two are not compatible with each other.
  */
 
-$dhcrelay_enabled = false;
-$dhcrelaycfg = $config['dhcrelay'];
-
-if(is_array($dhcrelaycfg)) {
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-		if (isset($dhcrelayifconf['enable']) && isset($iflist[$dhcrelayif]) &&
-			(!link_interface_to_bridge($dhcrelayif)))
-			$dhcrelay_enabled = true;
-	}
-}
-
 function is_inrange($test, $start, $end) {
 	if ( (ip2ulong($test) < ip2ulong($end)) && (ip2ulong($test) > ip2ulong($start)) )
 		return true;
@@ -641,7 +630,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-	if ($dhcrelay_enabled) {
+	if ($config['dhcrelay']['enable']) {
 		echo gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.");
 		include("fend.inc");
 		echo "</body>";

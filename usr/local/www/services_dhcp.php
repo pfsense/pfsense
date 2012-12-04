@@ -352,7 +352,7 @@ if ($_POST) {
 			// If we're editing a pool, locate parent range and other pools.
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
-			if (isset($config['dhcrelay'][$if]['enable']))
+			if (isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false))
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
@@ -625,7 +625,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-	if ($config['dhcrelay']['enable']) {
+	if (isset($config['dhcrelay']['enable'])) {
 		echo gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.");
 		include("fend.inc");
 		echo "</body>";

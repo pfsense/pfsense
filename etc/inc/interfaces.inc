@@ -1815,14 +1815,14 @@ function interfaces_carp_setup() {
 	 * for existing sessions.
 	 */
 	if ($config['hasync']['pfsyncenabled'] === "on"){
-		echo "waiting for pfsync...";
+		log_error("waiting for pfsync...");
 		$i = 0;
 		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
 			$i++;
 			sleep(1);
 		}
-		echo "pfsync done in $i seconds.\n";
-		echo "Configuring CARP settings finalize...";
+		log_error("pfsync done in $i seconds.");
+		log_error("Configuring CARP settings finalize...");
 	}
 
 	if($config['virtualip']['vip'])

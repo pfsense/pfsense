@@ -49,7 +49,7 @@ require_once("certs.inc");
 require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
-$openvpn_prots = array("UDP", "TCP");
+$openvpn_prots = array("UDP", "UDP6", "TCP", "TCP6");
 
 $openvpn_dev_mode = array("tun", "tap");
 
@@ -329,7 +329,9 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
-	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
+	$proto = strtolower($settings['protocol']);
+	if (substr($settings['protocol'], 0, 3) == "TCP")
+			$proto = "{$proto}-{$mode}";
 	$dev_mode = $settings['dev_mode'];
 	$cipher = $settings['crypto'];
 
@@ -386,10 +388,11 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 
-	if (is_ipaddrv4($iface_ip)) {
-		$conf .= "local {$iface_ip}\n";	
-	} elseif (is_ipaddrv6($iface_ipv6)) {
-		$conf .= "local {$iface_ipv6}\n";	
+	/* Determine the local IP to use - and make sure it matches with the selected protocol. */
+	if (is_ipaddrv4($iface_ip) && (stristr($settings['protocol'], "6") === false)) {
+		$conf .= "local {$iface_ip}\n";
+	} elseif (is_ipaddrv6($iface_ipv6) && (stristr($settings['protocol'], "6") !== false)) {
+		$conf .= "local {$iface_ipv6}\n";
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none"))

@@ -196,11 +196,6 @@ if (is_array($dhcpdconf)) {
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
 $ifcfgsn = $config['interfaces'][$if]['subnet'];
 
-/*   set the enabled flag which will tell us if DHCP relay is enabled
- *   on any interface. We will use this to disable DHCP server since
- *   the two are not compatible with each other.
- */
-
 function is_inrange($test, $start, $end) {
 	if ( (ip2ulong($test) < ip2ulong($end)) && (ip2ulong($test) > ip2ulong($start)) )
 		return true;

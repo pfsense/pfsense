@@ -383,7 +383,7 @@ if ($_POST) {
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
 				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
-				if ($filterentid == false)
+				if ($filterentid === false)
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
 				else
 					$filterent =& $config['filter']['rule'][$filterentid];

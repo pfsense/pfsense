@@ -136,8 +136,7 @@ case ${opmode} in
 10)
 		/usr/sbin/tcpdump -n -e -ttt -i pflog0
 		;;
-11)
-111)
+11 | 111)
 		/usr/bin/killall -9 php; /usr/bin/killall -9 lighttpd; /etc/rc.restart_webgui
 		;;
 12)

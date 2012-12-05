@@ -70,7 +70,7 @@ if($_REQUEST['deleteall']) {
 	}
 }
 
-if(($tablename == "bogons") && ($_POST['Download'])) {
+if((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download'])) {
 	mwexec_bg("/etc/rc.update_bogons.sh now");
 	$maxtimetowait = 0;
 	$loading = true;
@@ -139,7 +139,7 @@ include("fbegin.inc");
 			<?php echo $entry; ?>
 		</td>
 		<td>
-			<?php if ($tablename != "bogons") { ?>
+			<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
 			<a onClick='del_entry("<?=htmlspecialchars($entry)?>");'>
 				<img img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif">
 			<?php } ?>
@@ -149,17 +149,20 @@ include("fbegin.inc");
 <?php $count++; endforeach; ?>
 <?php
 	if($count == 0)
-		echo "<tr><td>" . gettext("No entries exist in this table.") . "</td></tr>";
+  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+			echo "<p/>" . gettext("No entries exist in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
+		else
+			echo "<p/>" . gettext("No entries exist in this table.");
 ?>
-
-</table>
 
 <?php
 	if($count > 0)
-  		if($tablename == "bogons")
-			echo "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
+  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+ 			echo "<p/>&nbsp<b>$count</b> " . gettext("entries in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
 		else
-			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type=" . htmlspecialchars($tablename) . "'>" . gettext("all") . "</a> " . gettext("entries in this table.");
+			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type=" . htmlspecialchars($tablename) . "'>" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
 ?>
+
+</table>
 
 <?php include("fend.inc"); ?>

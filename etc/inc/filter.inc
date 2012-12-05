@@ -2021,8 +2021,9 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['interface'] = "";
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
-			foreach($FilterIflist as $oc) $item .= $oc['descr'];
-				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
+			foreach($FilterIflist as $oc)
+				$items .= $oc['descr'] . " ";
+			return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
 	} else if((array_key_exists($rule['interface'], $FilterIflist))
 		&& (is_array($FilterIflist[$rule['interface']]))
 		&& (is_array($FilterIflist[$rule['interface']][0]))) {
@@ -2425,6 +2426,7 @@ EOD;
 # Snort package
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+
 
 EOD;
 

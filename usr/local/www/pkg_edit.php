@@ -266,6 +266,10 @@ if ($pkg['custom_php_after_head_command'])
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+
 <?php if($pkg['fields']['field'] <> "") { ?>
 <script type="text/javascript" language="javascript">
 	//Everything inside it will load as soon as the DOM is loaded and before the page contents are loaded
@@ -665,6 +669,45 @@ if ($pkg['tabs'] <> "") {
 				else
 					echo $input;
 				break;
+
+			case "aliases":
+				// Use xml tag <typealiases> to filter type aliases
+				$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
+				$fieldname = $pkga['fieldname'];
+				$a_aliases = &$config['aliases']['alias'];
+				$addrisfirst = 0;
+				$aliasesaddr = "";
+				$value = "value='{$value}'";
+
+				if(isset($a_aliases)) {
+					if(!empty($pkga['typealiases'])) {
+						foreach($a_aliases as $alias)
+							if($alias['type'] == $pkga['typealiases']) {
+								if($addrisfirst == 1) $aliasesaddr .= ",";
+								$aliasesaddr .= "'" . $alias['name'] . "'";
+								$addrisfirst = 1;
+							}
+					} else {
+						foreach($a_aliases as $alias) {
+							if($addrisfirst == 1) $aliasesaddr .= ",";
+							$aliasesaddr .= "'" . $alias['name'] . "'";
+							$addrisfirst = 1;
+						}
+					}
+				}
+
+				$input = "<input name='{$fieldname}' type='text' class='formfldalias' id='{$fieldname}' {$size} {$value}>\n<br />";
+				$input .= fixup_string($pkga['description']) . "\n";
+
+				$script = "<script type='text/javascript'>\n";
+				$script .= "var aliasarray = new Array({$aliasesaddr})\n";
+				$script .= "var oTextbox1 = new AutoSuggestControl(document.getElementById('{$fieldname}'), new StateSuggestions(aliasarray))\n";
+				$script .= "</script>";
+
+				echo $input;
+				echo $script;
+                                break;
+
 			case "interfaces_selection":
 				$ips=array();
 				$interface_regex=(isset($pkga['hideinterfaceregex']) ? $pkga['hideinterfaceregex'] : "nointerfacestohide");

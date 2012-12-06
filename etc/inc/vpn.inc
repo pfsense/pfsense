@@ -419,6 +419,8 @@ function vpn_ipsec_configure($ipchg = false)
 				$sed = "\$authmodes=array(";
 				$firstsed = 0;
 				foreach ($authcfgs as $authcfg) {
+					if ($authcfg == "system")
+						$authcfg = "Local Database";
 					if ($firstsed > 0)
 						$sed .= ",";
 					$firstsed = 1;

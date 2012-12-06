@@ -26,16 +26,20 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$nocsrf = true;
+
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/smart_status.inc");
+
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td class="widgetsubheader"><b><center><?php echo gettext("Drive") ?></center></b></td>
-		<td class="widgetsubheader"><b><center><?php echo gettext("Ident") ?></center></b></td>
-		<td class="widgetsubheader"><b><center><?php echo gettext("SMART Status") ?></center></b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("Drive") ?></b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("Ident") ?></b></td>
+		<td class="widgetsubheader" align="center"><b><?php echo gettext("SMART Status") ?></b></td>
 	</tr>
 
 <?php
@@ -50,13 +54,14 @@ if(count($devs) > 0)  {
 		# Use light green color for passed, light coral otherwise.
 		$color = ($dev_state == "PASSED") ? "#90EE90" : "#F08080";
 ?>
+
 		<tr>
 			<td class="listlr"><?php echo $dev; ?></td>
 			<td class="listr" align="center"><?php echo $dev_ident; ?></td>
-			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>"><?php echo $dev_state; ?></span></td>
+			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>">&nbsp;<?php echo $dev_state; ?>&nbsp;</span></td>
 		</tr>
 <?php	}
 }
 ?>
+
 </table>
-<center><a href="diag_smart.php" class="navlink">SMART Status</a></center>

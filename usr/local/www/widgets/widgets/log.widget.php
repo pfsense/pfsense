@@ -41,7 +41,19 @@ require_once("functions.inc");
 require_once("filter_log.inc");
 
 if($_POST['filterlogentries']) {
-	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+	unset($config['widgets']['filterlogentries']);
+	if( ($_POST['filterlogentries']) and ($_POST['filterlogentries'] != ' ') ) $config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+
+	unset($config['widgets']['filterlogentriesacts']);
+	if($_POST['actpass'])   $config['widgets']['filterlogentriesacts'] .= $_POST['actpass']   . " ";
+	if($_POST['actblock'])  $config['widgets']['filterlogentriesacts'] .= $_POST['actblock']  . " ";
+	if($_POST['actreject']) $config['widgets']['filterlogentriesacts'] .= $_POST['actreject'] . " ";
+	if (isset($config['widgets']['filterlogentriesacts'])) $config['widgets']['filterlogentriesacts'] = trim($config['widgets']['filterlogentriesacts']);
+
+	unset($config['widgets']['filterlogentriesinterfaces']);
+	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") ) $config['widgets']['filterlogentriesinterfaces'] = $_POST['filterlogentriesinterfaces'];
+	if (isset($config['widgets']['filterlogentriesinterfaces'])) $config['widgets']['filterlogentriesinterfaces'] = trim($config['widgets']['filterlogentriesinterfaces']);
+
 	write_config("Saved Filter Log Entries via Dashboard");
   $filename = $_SERVER['HTTP_REFERER'];
   if(headers_sent($file, $line)){
@@ -58,8 +70,16 @@ if($_POST['filterlogentries']) {
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
 
 //set variables for log
+
+$nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
+$nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
+
+$filterfieldsarray = array("act", "interface");
+$filterfieldsarray['act'] = $nentriesacts;
+$filterfieldsarray['interface'] = $nentriesinterfaces;
+
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-$filterlog = conv_log_filter($filter_logfile, $nentries);
+$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get log entries
 
 /* AJAX related routines */
 handle_ajax($nentries, $nentries + 20);
@@ -90,6 +110,16 @@ function format_log_line(row) {
 	line += '  <span class="log-source-mini" nowrap>' + row[3] + '</span>';
 	line += '  <span class="log-destination-mini" nowrap>' + row[4] + '</span>';
 	line += '  <span class="log-protocol-mini" nowrap>' + row[5] + '</span>';
+
+	var nentriesacts = "<?php echo $nentriesacts; ?>";
+	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
+
+	var Action = row[0].match(/alt=.*?(pass|block|reject)/i).join("").match(/pass|block|reject/i).join("");
+	var Interface = row[2];
+
+	if ( !(in_arrayi(Action,	nentriesacts.replace      (/\s+/g, ',').split(',') ) ) && (nentriesacts != 'All') )			return false;
+	if ( !(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(',') ) ) && (nentriesinterfaces != 'All') )	return false;
+
 	return line;
 }
 </script>
@@ -100,11 +130,24 @@ function format_log_line(row) {
 	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
 		Number of lines to display: 
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-		<?php for ($i = 1; $i <= 20; $i++) { ?>
-			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
+		<?php for ($i = 0; $i <= 20; $i++) { ?>
+			<option value="<?php if ($i > 0) echo $i; else echo ' ';?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php if ($i > 0) echo ' ' . $i; else echo ' ';?></option>
 		<?php } ?>
-		</select><br/>
-        <input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+		</select>
+
+<?php 
+		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
+		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
+?>
+		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked"; ?> /> Pass
+		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked"; ?> /> Block
+		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked"; ?> /> Reject
+		<br/>
+		Interfaces: 
+		<input id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formfld unknown" type="text" size="20" class="formfld unknown" value="<?= $nentriesinterfaces ?>" />
+        &nbsp &nbsp &nbsp 
+
+		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>
 </div>
 

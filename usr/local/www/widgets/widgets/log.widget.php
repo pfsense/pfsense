@@ -41,7 +41,6 @@ require_once("functions.inc");
 require_once("filter_log.inc");
 
 if($_POST['filterlogentries']) {
-// Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619
 	unset($config['widgets']['filterlogentries']);
 	if( ($_POST['filterlogentries']) and ($_POST['filterlogentries'] != ' ') ) $config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
@@ -54,9 +53,7 @@ if($_POST['filterlogentries']) {
 	unset($config['widgets']['filterlogentriesinterfaces']);
 	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") ) $config['widgets']['filterlogentriesinterfaces'] = $_POST['filterlogentriesinterfaces'];
 	if (isset($config['widgets']['filterlogentriesinterfaces'])) $config['widgets']['filterlogentriesinterfaces'] = trim($config['widgets']['filterlogentriesinterfaces']);
-// Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619
 
-//	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 	write_config("Saved Filter Log Entries via Dashboard");
   $filename = $_SERVER['HTTP_REFERER'];
   if(headers_sent($file, $line)){
@@ -73,10 +70,7 @@ if($_POST['filterlogentries']) {
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
 
 //set variables for log
-//$filter_logfile = "{$g['varlog_path']}/filter.log";
-//$filterlog = conv_log_filter($filter_logfile, $nentries);
 
-// Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619
 $nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
@@ -86,7 +80,6 @@ $filterfieldsarray['interface'] = $nentriesinterfaces;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get        log entries
-// Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619
 
 /* AJAX related routines */
 handle_ajax($nentries, $nentries + 20);
@@ -142,7 +135,6 @@ function format_log_line(row) {
 		<?php } ?>
 		</select>
 
-<!-- // Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619 -->
 <?php 
 		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
@@ -154,7 +146,6 @@ function format_log_line(row) {
 		Interfaces: 
 		<input id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formfld unknown" type="text" size="20" class="formfld unknown" value="<?= $nentriesinterfaces ?>" />
         &nbsp &nbsp &nbsp 
-<!-- // Passed / Blocked / Rejected Interfaces Filter Selection - Added 20120619 -->
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>

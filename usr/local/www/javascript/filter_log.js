@@ -60,7 +60,6 @@ function fetch_new_rules_callback(callback_data) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
 		lastsawtime = row_split[6];
-//		new_data_to_add[new_data_to_add.length] = format_log_line(row_split);
 
 		var tmp = format_log_line(row_split);
 		if ( !(tmp) ) continue;

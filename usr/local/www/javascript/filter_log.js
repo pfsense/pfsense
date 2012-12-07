@@ -1,4 +1,3 @@
-
 if (typeof getURL == 'undefined') {
 	getURL = function(url, callback) {
 		if (!url)
@@ -61,10 +60,24 @@ function fetch_new_rules_callback(callback_data) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
 		lastsawtime = row_split[6];
-		new_data_to_add[new_data_to_add.length] = format_log_line(row_split);
+
+		var tmp = format_log_line(row_split);
+		if ( !(tmp) ) continue;
+
+		new_data_to_add[new_data_to_add.length] = tmp;
 	}
 	update_div_rows(new_data_to_add);
 	isBusy = false;
+}
+
+function in_arrayi(needle, haystack) {
+	var i = haystack.length;
+	while (i--) {
+		if (haystack[i].toLowerCase() === needle.toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function update_div_rows(data) {

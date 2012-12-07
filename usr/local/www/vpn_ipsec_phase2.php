@@ -176,6 +176,8 @@ if ($_POST) {
 	}
 	/* Validate enabled phase2's are not duplicates */
 	if (isset($pconfig['mobile'])){
+		if (substr($pconfig['mode'], 0, 6) != "tunnel")
+			$input_errors[] = gettext("Mobile IPsec only supports Tunnel mode.");
 		/* User is adding phase 2 for mobile phase1 */
 		foreach($a_phase2 as $key => $name){
 			if (isset($name['mobile'])){

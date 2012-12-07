@@ -1120,31 +1120,30 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			$ip6 = get_interface_ipv6($interface);
+			if (is_ipaddrv6($ip6))
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
 	case "6rd":
-		$realif = "srd0";
-		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-			if ($destroy == true)
-				pfSense_interface_flags($realif, -IFF_UP);
-		}		
-		break;
 	case "6to4":
 		$realif = "stf0";
 		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			$ip6 = get_interface_ipv6($interface);
+			if (is_ipaddrv6($ip6))
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 		}		
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			$ip6 = get_interface_ipv6($interface);
+			if (is_ipaddrv6($ip6))
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
@@ -1177,7 +1176,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^[a-z0-9]+_vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|^stf|^srd/i", $realif))
+		if (preg_match("/^[a-z0-9]+_vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|^stf/i", $realif))
 			pfSense_interface_destroy($realif);
 	}	
 
@@ -3154,15 +3153,7 @@ function interface_6rd_configure($interface = "wan") {
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */ 
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
-	/* setup the stf interface */
-	/* use the srd device
-	mwexec("/sbin/ifconfig srd0 destroy");
-	mwexec("/sbin/ifconfig srd0 create");
-	mwexec("/sbin/ifconfig srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
-	log_error("Created 6rd interface srd0 v4plen {$wancfg['prefix-6rd-v4plen']} pfix {$rd6prefix} plen {$rd6prefixlen} braddr {$wancfg['gateway-6rd']}");
-	*/
 	/* stf approach only works when embedding the entire 32 bits of the v4 */
-	mwexec("/sbin/ifconfig stf0 destroy");
 	mwexec("/sbin/ifconfig stf0 create");
 	mwexec("/sbin/ifconfig stf0 inet6 {$rd6prefix}/{$rd6prefixlen}");
 	log_error("Created 6rd interface stf0 {$rd6prefix}/{$rd6prefixlen}");
@@ -3171,16 +3162,15 @@ function interface_6rd_configure($interface = "wan") {
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$rd6brgw}\n");
 
-	if (is_ipaddrv4($ip4gateway)) {
+	if (is_ipaddrv4($ip4gateway))
 		mwexec("route change -host " . $wancfg['gateway-6rd'] . " {$ip4gateway}");
-	}
 
 	/* configure dependent interfaces */
 	foreach($iflist as $if => $ifname) {
 		if($config['interfaces'][$if]['track6-interface'] == $interface)
 			interface_track6_configure($if);
 	}
-	
+
 	return 0;
 }
 

@@ -650,7 +650,7 @@ EOD;
 								$localid_type = "subnet";
 							}
 							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-							if (!is_ipaddr($localid_data) && !is_subnet($localid_data)) {
+							if (!is_ipaddr($localid_data) && !is_subnet($localid_data) && ($localid_data != "0.0.0.0/0")) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
 							}

@@ -1113,7 +1113,8 @@ include("head.inc");
 		</table>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
+			<td width="7%" class="listhdrr"><?=gettext("Static ARP");?></td>
+			<td width="18%" class="listhdrr"><?=gettext("MAC address");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>
 			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 			<td width="30%" class="listhdr"><?=gettext("Description");?></td>
@@ -1130,6 +1131,11 @@ include("head.inc");
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
 			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
 		<tr>
+		<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&id=<?=$i;?>';">
+			<?php if (isset($mapent['arp_table_static_entry'])): ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_alert.gif" alt="ARP Table Static Entry" width="17" height="17" border="0">
+			<?php endif; ?>
+		</td>
 		<td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['mac']);?>
 		</td>
@@ -1155,7 +1161,7 @@ include("head.inc");
 		<?php $i++; endforeach; ?>
 		<?php endif; ?>
 		<tr>
-		<td class="list" colspan="4"></td>
+		<td class="list" colspan="5"></td>
 		<td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>

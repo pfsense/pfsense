@@ -68,9 +68,12 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
+if (!is_array($config['dhcpd']))
+	$config['dhcpd'] = array();
+if (!is_array($config['dhcpd'][$if]))
+	$config['dhcpd'][$if] = array();
+if (!is_array($config['dhcpd'][$if]['staticmap']))
 	$config['dhcpd'][$if]['staticmap'] = array();
-}
 
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);

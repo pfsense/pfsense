@@ -40,6 +40,8 @@
 
 require("guiconfig.inc");
 
+if (!is_array($config['wireless']))
+	$config['wireless'] = array();
 if (!is_array($config['wireless']['clone']))
 	$config['wireless']['clone'] = array();
 

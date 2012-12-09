@@ -958,7 +958,11 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_shared_secret2'] = $_POST['auth_server_shared_secret2'];
 	
 	if ($_POST['persistcommonwireless'] == "yes") {
-		if (is_array($config['wireless']) && is_array($config['wireless']['interfaces']) && !is_array($config['wireless']['interfaces'][$wlanbaseif]))
+		if (!is_array($config['wireless']))
+			$config['wireless'] = array();
+		if (!is_array($config['wireless']['interfaces']))
+			$config['wireless']['interfaces'] = array();
+		if (!is_array($config['wireless']['interfaces'][$wlanbaseif]))
 			$config['wireless']['interfaces'][$wlanbaseif] = array();
 	} else if (isset($config['wireless']['interfaces'][$wlanbaseif]))
 		unset($config['wireless']['interfaces'][$wlanbaseif]);
@@ -1063,7 +1067,7 @@ function check_wireless_mode() {
 		$clone_count = 1;
 	else
 		$clone_count = 0;
-	if (is_array($config['wireless']['clone'])) {
+	if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone'])) {
 		foreach ($config['wireless']['clone'] as $clone) {
 			if ($clone['if'] == $wlanbaseif)
 				$clone_count++;

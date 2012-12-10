@@ -174,6 +174,25 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
+
+$pconfig['customdhcppttimeout'] = $wancfg['customdhcppttimeout'];
+$pconfig['customdhcpptretry'] = $wancfg['customdhcpptretry'];
+$pconfig['customdhcpptselecttimeout'] = $wancfg['customdhcpptselecttimeout'];
+$pconfig['customdhcpptreboot'] = $wancfg['customdhcpptreboot'];
+$pconfig['customdhcpptbackoffcutoff'] = $wancfg['customdhcpptbackoffcutoff'];
+$pconfig['customdhcpptinitialinterval'] = $wancfg['customdhcpptinitialinterval'];
+
+$pconfig['customdhcpptvalues'] = $wancfg['customdhcpptvalues'];
+
+$pconfig['customdhcpsendoptions'] = $wancfg['customdhcpsendoptions'];
+$pconfig['customdhcprequestoptions'] = $wancfg['customdhcprequestoptions'];
+$pconfig['customdhcprequiredoptions'] = $wancfg['customdhcprequiredoptions'];
+$pconfig['customdhcpoptionmodifiers'] = $wancfg['customdhcpoptionmodifiers'];
+
+$pconfig['customdhcpconfigadvanced'] = $wancfg['customdhcpconfigadvanced'];
+$pconfig['customdhcpconfigfileoverride'] = $wancfg['customdhcpconfigfileoverride'];
+$pconfig['customdhcpconfigfileoverridepath'] = $wancfg['customdhcpconfigfileoverridepath'];
+
 $pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
@@ -693,6 +712,25 @@ if ($_POST['apply']) {
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
+
+		unset($wancfg['customdhcppttimeout']);
+		unset($wancfg['customdhcpptretry']);
+		unset($wancfg['customdhcpptselecttimeout']);
+		unset($wancfg['customdhcpptreboot']);
+		unset($wancfg['customdhcpptbackoffcutoff']);
+		unset($wancfg['customdhcpptinitialinterval']);
+
+		unset($wancfg['customdhcpptvalues']);
+
+		unset($wancfg['customdhcpsendoptions']);
+		unset($wancfg['customdhcprequestoptions']);
+		unset($wancfg['customdhcprequiredoptions']);
+		unset($wancfg['customdhcpoptionmodifiers']);
+
+		unset($wancfg['customdhcpconfigadvanced']);
+		unset($wancfg['customdhcpconfigfileoverride']);
+		unset($wancfg['customdhcpconfigfileoverridepath']);
+
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -729,6 +767,25 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+
+				$wancfg['customdhcppttimeout'] = $_POST['customdhcppttimeout'];
+				$wancfg['customdhcpptretry'] = $_POST['customdhcpptretry'];
+				$wancfg['customdhcpptselecttimeout'] = $_POST['customdhcpptselecttimeout'];
+				$wancfg['customdhcpptreboot'] = $_POST['customdhcpptreboot'];
+				$wancfg['customdhcpptbackoffcutoff'] = $_POST['customdhcpptbackoffcutoff'];
+				$wancfg['customdhcpptinitialinterval'] = $_POST['customdhcpptinitialinterval'];
+
+				$wancfg['customdhcpptvalues'] = $_POST['customdhcpptvalues'];
+
+				$wancfg['customdhcpsendoptions'] = $_POST['customdhcpsendoptions'];
+				$wancfg['customdhcprequestoptions'] = $_POST['customdhcprequestoptions'];
+				$wancfg['customdhcprequiredoptions'] = $_POST['customdhcprequiredoptions'];
+				$wancfg['customdhcpoptionmodifiers'] = $_POST['customdhcpoptionmodifiers'];
+
+				$wancfg['customdhcpconfigadvanced'] = $_POST['customdhcpconfigadvanced'];
+				$wancfg['customdhcpconfigfileoverride'] = $_POST['customdhcpconfigfileoverride'];
+				$wancfg['customdhcpconfigfileoverridepath'] = $_POST['customdhcpconfigfileoverridepath'];
+
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -1663,7 +1720,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration"); ?>&nbsp &nbsp
+										<input name="customdhcpconfigadvanced" type="checkbox" id="customdhcpconfigadvanced" value="" onClick="advdhcp_show_customdhcpconfig(this)";>
+										<?=gettext('Advanced'); ?> &nbsp &nbsp
+										<input name="customdhcpconfigfileoverride" type="checkbox" id="customdhcpconfigfileoverride" value="" onClick="advdhcp_show_customdhcpconfig(this)";>
+										<?=gettext('Config File Override'); ?> &nbsp &nbsp
+										</td>
 									</tr>
 									<!-- Uncomment to expose DHCP+ in GUI
 									<tr>
@@ -1676,7 +1738,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
-									<tr>
+									<tr style='display:none' name="basicdhcp_show_dhcphostname" id="basicdhcp_show_dhcphostname">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
@@ -1686,7 +1748,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"this (for client identification)."); ?>
 										</td>
 									</tr>
-									<tr>
+									<tr style='display:none' name="basicdhcp_show_dhcpalias-address" id="basicdhcp_show_dhcpalias-address">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IPv4 address"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
@@ -1705,6 +1767,156 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"DHCP client."); ?>
 										</td>
 									</tr>
+
+									<tr style='display:none' name="advdhcp_show_customdhcppttimeout" id="advdhcp_show_customdhcppttimeout">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Protocol Timing</a>'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING'); ?></td>
+										<td width="48%" class="vtable">
+											Timeout: <input name="customdhcppttimeout" type="text" class="formfld unknown" id="customdhcppttimeout" size="2" value="<?=htmlspecialchars($pconfig['customdhcppttimeout']);?>" onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+											Retry:   <input name="customdhcpptretry"   type="text" class="formfld unknown" id="customdhcpptretry"   size="2" value="<?=htmlspecialchars($pconfig['customdhcpptretry']);?>"   onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+											Select Timeout: <input name="customdhcpptselecttimeout" type="text" class="formfld unknown" id="customdhcpptselecttimeout" size="2" value="<?=htmlspecialchars($pconfig['customdhcpptselecttimeout']);?>" onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+
+											&nbsp &nbsp &nbsp &nbsp 
+											Presets: &nbsp
+											<input name="customdhcpptvalues" type="radio" value="DHCP"	unchecked	enabled id="customdhcpptdhcpdefaults"	onClick="customdhcpptsetvalues(this, iform);">FreeBSD Default &nbsp 
+											<input name="customdhcpptvalues" type="radio" value="Clear"	unchecked	enabled id="customdhcpptclear"		onClick="customdhcpptsetvalues(this, iform);">Clear
+
+											<br>
+											Reboot: <input name="customdhcpptreboot" type="text" class="formfld unknown" id="customdhcpptreboot" size="2" value="<?=htmlspecialchars($pconfig['customdhcpptreboot']);?>" onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+											Backoff Cutoff:   <input name="customdhcpptbackoffcutoff"   type="text" class="formfld unknown" id="customdhcpptbackoffcutoff"   size="2" value="<?=htmlspecialchars($pconfig['customdhcpptbackoffcutoff']);?>"   onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+											Initial Interval: <input name="customdhcpptinitialinterval" type="text" class="formfld unknown" id="customdhcpptinitialinterval" size="2" value="<?=htmlspecialchars($pconfig['customdhcpptinitialinterval']);?>" onChange="customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, '');">
+
+											&nbsp &nbsp &nbsp &nbsp &nbsp 
+											<input name="customdhcpptvalues" type="radio" value="pfSense"	unchecked	enabled id="customdhcpptpfsensedefaults"	onClick="customdhcpptsetvalues(this, iform);">pfSense Default &nbsp 
+											<input name="customdhcpptvalues" type="radio" value="SavedCfg" checked	enabled id="customdhcpptsavedcfg"		onClick="customdhcpptsetvalues(this, iform);">Saved Cfg 
+
+											<br>
+											<?=gettext('The values in these fields are DHCP protocol timings used when requesting a DHCP lease.'); ?><br>
+
+											<script type="text/javascript">
+												function customdhcpptcheckradiobuton(T, BUTTON) {
+													for (var i = 0; i < T.length; i++) {
+														T[i].checked = false;
+														if (T[i].value == BUTTON) T[i].checked = true;
+													}
+													T.value = BUTTON;
+												}
+
+												function customdhcpptsetvalues(T, FORM) {
+													// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
+													if (T.value == "DHCP")	customdhcpptsetvaluesnow(T, FORM, "60", "300", "0", "10", "120", "10");
+													if (T.value == "pfSense")	customdhcpptsetvaluesnow(T, FORM, "60", "1", "0", "", "", "1");
+													if (T.value == "SavedCfg")	customdhcpptsetvaluesnow(T, FORM, "<?=htmlspecialchars($pconfig['customdhcppttimeout']);?>", "<?=htmlspecialchars($pconfig['customdhcpptretry']);?>", "<?=htmlspecialchars($pconfig['customdhcpptselecttimeout']);?>", "<?=htmlspecialchars($pconfig['customdhcpptreboot']);?>", "<?=htmlspecialchars($pconfig['customdhcpptbackoffcutoff']);?>", "<?=htmlspecialchars($pconfig['customdhcpptinitialinterval']);?>");
+													if (T.value == "Clear")	customdhcpptsetvaluesnow(T, FORM, "", "", "", "", "", "");
+												}
+
+												function customdhcpptsetvaluesnow(T, FORM, timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
+													FORM.customdhcppttimeout.value = timeout;
+													FORM.customdhcpptretry.value = retry;
+													FORM.customdhcpptselecttimeout.value = selecttimeout;
+													FORM.customdhcpptreboot.value = reboot;
+													FORM.customdhcpptbackoffcutoff.value = backoffcutoff;
+													FORM.customdhcpptinitialinterval.value = initialinterval;
+
+													FORM.customdhcpptvalues.value = T.value;
+												}
+
+												<!-- Set the customdhcpptvalues radio button from saved config -->
+												var RADIOBUTTON_VALUE = "<?=htmlspecialchars($pconfig['customdhcpptvalues']);?>";
+												if (RADIOBUTTON_VALUE == "") RADIOBUTTON_VALUE = "SavedCfg";
+												customdhcpptcheckradiobuton(document.iform.customdhcpptvalues, RADIOBUTTON_VALUE);
+											</script>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="advdhcp_show_customdhcpsendoptions" id="advdhcp_show_customdhcpsendoptions">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Send</a> <a target="%3$s" href="%4$s">Options</a>'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS', 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5'); ?></td>
+										<td width="78%" class="vtable">
+											<input name="customdhcpsendoptions" type="text" class="formfld unknown" id="customdhcpsendoptions" size="86" value="<?=htmlspecialchars($pconfig['customdhcpsendoptions']);?>">
+											<br>
+											<?=gettext('The values in this field are DHCP options to be sent when requesting a DHCP lease.  [option declaration [, ...]]'); ?><br>
+											<?=gettext('Value Substitutions:'); ?>
+											<?=sprintf('{interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}'); ?><br>
+											<?=sprintf('Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (omitted for none).'); ?><br>
+											<?=gettext('Some ISPs may require certain options be or not be sent.'); ?>
+										</td>
+									</tr>
+						
+									<tr style='display:none' name="advdhcp_show_customdhcprequestoptions" id="advdhcp_show_customdhcprequestoptions">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Request</a> <a target="%3$s" href="%4$s">Options</a>'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS', 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5'); ?></td>
+										<td width="78%" class="vtable">
+											<input name="customdhcprequestoptions" type="text" class="formfld unknown" id="customdhcprequestoptions" size="86" value="<?=htmlspecialchars($pconfig['customdhcprequestoptions']);?>">
+											<br>
+											<?=gettext('The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]] <br>' .
+											'Some ISPs may require certain options be or not be requested. '); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="advdhcp_show_customdhcprequiredoptions" id="advdhcp_show_customdhcprequiredoptions">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Require</a> <a target="%3$s" href="%4$s">Options</a>'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS', 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5'); ?></td>
+										<td width="78%" class="vtable">
+											<input name="customdhcprequiredoptions" type="text" class="formfld unknown" id="customdhcprequiredoptions" size="86" value="<?=htmlspecialchars($pconfig['customdhcprequiredoptions']);?>">
+											<br>
+											<?=gettext('The values in this field are DHCP optiions required by the client when requesting a DHCP lease.  [option [, ...]] '); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="advdhcp_show_customdhcpoptionmodifiers" id="advdhcp_show_customdhcpoptionmodifiers">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Option</a> <a target="%3$s" href="%4$s">Modifiers</a>'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5', 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#OPTION_MODIFIERS'); ?></td>
+										<td width="78%" class="vtable">
+											<input name="customdhcpoptionmodifiers" type="text" class="formfld unknown" id="customdhcpoptionmodifiers" size="86" value="<?=htmlspecialchars($pconfig['customdhcpoptionmodifiers']);?>">
+											<br>
+											<?=gettext('The values in this field are DHCP optiion modifires applied to obtained DHCP lease.  [modifier option declaration [, ...]] <br> ' . 
+											'modifiers: (default, supersede, prepend, append)'); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="advdhcp_show_customdhcpconfigfileoverride" id="advdhcp_show_customdhcpconfigfileoverride">
+										<td width="22%" valign="top" class="vncell"><?=sprintf(gettext('<a target="%1$s" href="%2$s">Configuration File</a> Override'), 'FreeBSD DHCP', 'http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5'); ?></td>
+										<td width="78%" class="vtable">
+ 											<input name="customdhcpconfigfileoverridepath"   type="text" class="formfld unknown" id="customdhcpconfigfileoverridepath"  size="86" value="<?=htmlspecialchars($pconfig['customdhcpconfigfileoverridepath']);?>">
+											<br>
+											<?=gettext('The value in this field is the full absolute path to a DHCP client configuration file.  [/[dirname/[.../]]filename[.ext]]'); ?><br>
+											<?=gettext('Value Substitutions in Config File:'); ?>
+											<?=sprintf('{interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}'); ?><br>
+											<?=sprintf('Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (omitted for none).'); ?><br>
+											<?=gettext('Some ISPs may require certain options be or not be sent.'); ?>
+										</td>
+									</tr>
+
+									<script type="text/javascript">
+										function advdhcp_show_customdhcpconfig(T) {
+
+											if (T.checked) T.value = "Selected";
+											else T.value = "";
+
+											     if (document.iform.customdhcpconfigfileoverride.checked)	advdhcp_show_hide('none', 'none', '');
+											else if (document.iform.customdhcpconfigadvanced.checked)	advdhcp_show_hide('', '', 'none');
+											else 									advdhcp_show_hide('', 'none', 'none');
+										}
+
+										function advdhcp_show_hide(basic, advanced, override) {
+
+											document.getElementById("basicdhcp_show_dhcphostname").style.display = basic;
+											document.getElementById("basicdhcp_show_dhcpalias-address").style.display = basic;
+
+											document.getElementById("advdhcp_show_customdhcppttimeout").style.display = advanced;
+											document.getElementById("advdhcp_show_customdhcpsendoptions").style.display = advanced;
+											document.getElementById("advdhcp_show_customdhcprequestoptions").style.display = advanced;
+											document.getElementById("advdhcp_show_customdhcprequiredoptions").style.display = advanced;
+											document.getElementById("advdhcp_show_customdhcpoptionmodifiers").style.display = advanced;
+
+											document.getElementById("advdhcp_show_customdhcpconfigfileoverride").style.display = override;
+										}
+
+										<!-- Set the customdhcpconfigadvanced checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['customdhcpconfigadvanced']);?>" == "Selected") document.iform.customdhcpconfigadvanced.checked = true;
+										advdhcp_show_customdhcpconfig(document.iform.customdhcpconfigadvanced);
+
+										<!-- Set the customdhcpconfigfileoverride checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['customdhcpconfigfileoverride']);?>" == "Selected") document.iform.customdhcpconfigfileoverride.checked = true;
+										advdhcp_show_customdhcpconfig(document.iform.customdhcpconfigfileoverride);
+									</script>
+
 								</table>
 							</td>
 						</tr>

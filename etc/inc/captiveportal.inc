@@ -520,18 +520,14 @@ function captiveportal_init_rules($reinit = false) {
 	$cprules .= <<<EOD
 # add 65300 set 1 skipto 65534 all from any to any not layer2
 # layer 2: pass ARP
-add 65301 set 1 pass layer2 mac-type arp
+add 65301 set 1 pass layer2 mac-type arp,rarp
 # pfsense requires for WPA
-add 65302 set 1 pass layer2 mac-type 0x888e
-add 65303 set 1 pass layer2 mac-type 0x88c7
+add 65302 set 1 pass layer2 mac-type 0x888e,0x88c7
+# PPP Over Ethernet Session Stage/Discovery Stage
+add 65303 set 1 pass layer2 mac-type pppoe_disc,pppoe_sess
 
-# PPP Over Ethernet Discovery Stage
-add 65304 set 1 pass layer2 mac-type 0x8863
-# PPP Over Ethernet Session Stage
-add 65305 set 1 pass layer2 mac-type 0x8864
-
-# layer 2: block anything else non-IP
-add 65307 set 1 deny layer2 not mac-type ip
+# layer 2: block anything else non-IP(v4/v6)
+add 65307 set 1 deny layer2 not mac-type ip,ipv6
 
 EOD;
 
@@ -1775,6 +1771,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                                 } else {
 					portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
 						$clientmac, $clientip, $username, $password);
+					unlock($cpdblck);
 					exit;
 				}
 			}

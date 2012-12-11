@@ -6,6 +6,11 @@
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
+			<descr><![CDATA[Enable mounting the FS read only with more checks.]]></descr>
+			<tunable>vfs.forcesync</tunable>
+			<value>default</value>
+		</item>
+		<item>
 			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
 			<tunable>debug.pfftpproxy</tunable>
 			<value>default</value>

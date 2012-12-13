@@ -384,24 +384,6 @@ EOD;
 				mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 				
 		}
-
-		/* unload ipfw */
-		$listifs = get_configured_interface_list();
-		$cpinterfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
-		foreach ($cpinterfaces as $cpifgrp) {
-			if (!isset($listifs[$cpifgrp]))
-				continue;
-			$listrealif = get_real_interface($cpifgrp);
-			if (does_interface_exist($listrealif)) {
-				pfSense_interface_flags($listrealif, -IFF_IPFW_FILTER);
-				$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
-				if (!empty($carpif)) {
-					$carpsif = explode(" ", $carpif);
-					foreach ($carpsif as $cpcarp)
-						pfSense_interface_flags($cpcarp, -IFF_IPFW_FILTER);
-				}
-			}
-		}
 	}
 
 	unlock($captiveportallck);
@@ -491,7 +473,6 @@ function captiveportal_init_rules($reinit = false) {
 					$carpsif = explode(" ", $carpif);
 					foreach ($carpsif as $cpcarp) {
 						mwexec("/usr/local/sbin/ipfw_context -a {$cpzone} -n {$cpcarp}", true);
-						pfSense_interface_flags($cpcarp, IFF_IPFW_FILTER);
 						$carpip = find_interface_ip($cpcarp);
 						if (is_ipaddr($carpip))
 							$cpips[] = $carpip;

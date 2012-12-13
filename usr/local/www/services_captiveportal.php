@@ -316,22 +316,6 @@ if ($_POST) {
 
 		write_config();
 
-		if (!empty($oldifaces) && $oldifaces != $newcp['interface']) {
-			$ocpinterfaces = explode(",", $oldifaces);
-			foreach ($ocpinterfaces as $cpifgrp) {
-				$listrealif = get_real_interface($cpifgrp);
-				if (does_interface_exist($listrealif)) {
-					pfSense_interface_flags($listrealif, -IFF_IPFW_FILTER);
-					$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
-					if (!empty($carpif)) {
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp)
-							pfSense_interface_flags($cpcarp, -IFF_IPFW_FILTER);
-					}
-				}
-			}
-		}
-
 		captiveportal_configure_zone($newcp);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");

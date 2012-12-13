@@ -500,7 +500,6 @@ function captiveportal_init_rules($reinit = false) {
 				$cpips[] = $cpipm;
 			}
 			mwexec("/usr/local/sbin/ipfw_context -a {$cpzone} -n {$tmpif}", true);
-			pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
 		}
 	}
 	if (count($cpips) > 0) {

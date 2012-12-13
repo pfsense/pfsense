@@ -513,20 +513,19 @@ function captiveportal_init_rules($reinit = false) {
 	/* init dummynet/ipfw rules number database */
 	captiveportal_init_ipfw_ruleno();
 
-	$cprules =	"add 65291 set 1 allow pfsync from any to any\n";
-	$cprules .= "add 65292 set 1 allow carp from any to any\n";
+	$cprules =	"add 65291 allow pfsync from any to any\n";
+	$cprules .= "add 65292 allow carp from any to any\n";
 
 	$cprules .= <<<EOD
-# add 65300 set 1 skipto 65534 all from any to any not layer2
 # layer 2: pass ARP
-add 65301 set 1 pass layer2 mac-type arp,rarp
+add 65301 pass layer2 mac-type arp,rarp
 # pfsense requires for WPA
-add 65302 set 1 pass layer2 mac-type 0x888e,0x88c7
+add 65302 pass layer2 mac-type 0x888e,0x88c7
 # PPP Over Ethernet Session Stage/Discovery Stage
-add 65303 set 1 pass layer2 mac-type 0x8863,0x8864
+add 65303 pass layer2 mac-type 0x8863,0x8864
 
 # layer 2: block anything else non-IP(v4/v6)
-add 65307 set 1 deny layer2 not mac-type ip,ipv6
+add 65307 deny layer2 not mac-type ip,ipv6
 
 EOD;
 
@@ -542,13 +541,13 @@ EOD;
 		$ipcount++;
 	}
 	$ips = "{ 255.255.255.255 or {$ips} }";
-	$cprules .= "add {$rulenum} set 1 pass ip from any to {$ips} in\n";
+	$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass ip from {$ips} to any out\n";
+	$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass icmp from {$ips} to any out icmptype 0\n";
+	$cprules .= "add {$rulenum} pass icmp from {$ips} to any out icmptype 0\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pass icmp from any to {$ips} in icmptype 8 \n";
+	$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
 	$rulenum++;
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} allow ip from table(3) to any in\n";
@@ -569,9 +568,9 @@ EOD;
 	$rulenum++;
 
 	/* Authenticated users rules. */
-	$cprules .= "add {$rulenum} set 1 pipe tablearg ip from table(1) to any in\n";
+	$cprules .= "add {$rulenum} pipe tablearg ip from table(1) to any in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} set 1 pipe tablearg ip from any to table(2) out\n";
+	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(2) out\n";
 	$rulenum++;
 	
 	$listenporthttp =
@@ -581,17 +580,17 @@ EOD;
 
 	if (isset($cpcfg['httpslogin'])) {
 		$listenporthttps = $listenporthttp + 1;
-		$cprules .= "add 65531 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
+		$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 	}
 	
 	$cprules .= <<<EOD
 
 # redirect non-authenticated clients to captive portal
-add 65532 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in 
+add 65532 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in 
 # let the responses from the captive portal web server back out
-add 65533 set 1 pass tcp from any to any out
+add 65533 pass tcp from any to any out
 # block everything else
-add 65534 set 1 deny all from any to any
+add 65534 deny all from any to any
 
 EOD;
 

@@ -525,6 +525,7 @@ function openvpn_reconfigure($mode, $settings) {
 		if ($settings['local_network']) {
 			list($ip, $mask) = explode('/', $settings['local_network']);
 			$mask = gen_subnet_mask($mask);
+			$conf .= "push \"route remote_host 255.255.255.255 net_gateway\"\n";
 			$conf .= "push \"route $ip $mask\"\n";
 		}
 		if ($settings['local_networkv6']) {
@@ -615,6 +616,7 @@ function openvpn_reconfigure($mode, $settings) {
 	if ((substr($settings['mode'], 0, 3) == "p2p") && is_subnet($settings['remote_network'])) {
 		list($ip, $mask) = explode('/', $settings['remote_network']);
 		$mask = gen_subnet_mask($mask);
+		$conf .= "route remote_host 255.255.255.255 net_gateway\n";
 		$conf .= "route $ip $mask\n";
 	}
 	// Add a remote network route if set, and only for p2p modes.

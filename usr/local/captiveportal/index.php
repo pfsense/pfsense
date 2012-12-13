@@ -57,7 +57,8 @@ if (!$clientip) {
 	log_error("Captive portal could not determine client's IP address.");
 	$error_message = "An error occurred.  Please check the system logs for more information.";
 	portal_reply_page($redirurl, "error", $errormsg);
-	exit;
+	ob_flush();
+	return;
 }
 
 $listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
@@ -82,7 +83,8 @@ if ($orig_host != $ourhostname) {
     else
         header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
 
-    exit;
+    ob_flush();
+    return;
 }
 if (!empty($config['captiveportal'][$cpzone]['redirurl']))
 	$redirurl = $config['captiveportal'][$cpzone]['redirurl'];
@@ -102,7 +104,8 @@ if ($macfilter || $passthrumac) {
 	    captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
 	    echo "An error occurred.  Please check the system logs for more information.";
 	    log_error("Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
-	    exit;
+	    ob_flush();
+	    return;
 	}
 }
 
@@ -136,10 +139,8 @@ setTimeout('window.close();',5000) ;
 
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);
-	exit;
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip, $radiusctx)) {
     /* radius functions handle everything so we exit here since we're done */
-    exit;
 
 } else if (portal_consume_passthrough_credit($clientmac)) {
     /* allow the client through if it had a pass-through credit for its MAC */
@@ -231,7 +232,6 @@ EOD;
     portal_reply_page($redirurl, "login",null,$clientmac,$clientip);
 }
 
-exit;
-
+ob_flush();
 
 ?>

@@ -581,7 +581,7 @@ EOD;
 
 	if (isset($cpcfg['httpslogin'])) {
 		$listenporthttps = $listenporthttp + 1;
-		$cprules .= "add 65531 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
+		$cprules .= "add 65530 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 	}
 	
 	$cprules .= <<<EOD

@@ -523,7 +523,7 @@ add 65301 set 1 pass layer2 mac-type arp,rarp
 # pfsense requires for WPA
 add 65302 set 1 pass layer2 mac-type 0x888e,0x88c7
 # PPP Over Ethernet Session Stage/Discovery Stage
-add 65303 set 1 pass layer2 mac-type pppoe_disc,pppoe_sess
+add 65303 set 1 pass layer2 mac-type 0x8863,0x8864
 
 # layer 2: block anything else non-IP(v4/v6)
 add 65307 set 1 deny layer2 not mac-type ip,ipv6

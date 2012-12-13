@@ -578,11 +578,16 @@ EOD;
 		$config['captiveportal'][$cpzone]['listenporthttp'] ?
 		$config['captiveportal'][$cpzone]['listenporthttp'] :
 		$config['captiveportal'][$cpzone]['zoneid'];
+
+	if (isset($cpcfg['httpslogin'])) {
+		$listenporthttps = $listenporthttp + 1;
+		$cprules .= "add 65531 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
+	}
 	
 	$cprules .= <<<EOD
 
 # redirect non-authenticated clients to captive portal
-add 65531 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any in
+add 65531 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in 
 # let the responses from the captive portal web server back out
 add 65532 set 1 pass tcp from any to any out
 # block everything else

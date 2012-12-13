@@ -581,19 +581,17 @@ EOD;
 
 	if (isset($cpcfg['httpslogin'])) {
 		$listenporthttps = $listenporthttp + 1;
-		$cprules .= "add 65530 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
+		$cprules .= "add 65531 set 1 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 	}
 	
 	$cprules .= <<<EOD
 
 # redirect non-authenticated clients to captive portal
-add 65531 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in 
+add 65532 set 1 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in 
 # let the responses from the captive portal web server back out
-add 65532 set 1 pass tcp from any to any out
+add 65533 set 1 pass tcp from any to any out
 # block everything else
-add 65533 set 1 deny all from any to any
-# pass everything else on layer2
-add 65534 set 1 pass all from any to any layer2
+add 65534 set 1 deny all from any to any
 
 EOD;
 

@@ -741,8 +741,8 @@ function captiveportal_prune_old() {
 						$cpentry[3], // clientmac
 						10); // NAS Request
 					captiveportal_ipfw_set_context($cpzone);
-					exec("/sbin/ipfw table 1 entryzerostats {$cpentry[2]}");
-					exec("/sbin/ipfw table 2 entryzerostats {$cpentry[2]}");
+					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2]);
+					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2]);
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -861,23 +861,24 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	if (is_ipaddr($dbent[2])) {
 		captiveportal_ipfw_set_context($cpzone);
 		/* Delete client's ip entry from tables 3 and 4. */
-		mwexec("/sbin/ipfw table 1 delete {$dbent[2]}");
-		mwexec("/sbin/ipfw table 2 delete {$dbent[2]}");
+		pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_DEL, $dbent[2]);
+		pfSense_ipfw_Tableaction($cpzone, 2, IP_FW_TABLE_DEL, $dbent[2]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
-		mwexec("pfctl -k {$dbent[2]}");
-		mwexec("pfctl -K {$dbent[2]}");
+		pfSense_kill_states($dbent[2]);
+		pfSense_kill_srcstates($dbent[2]);
 	}
 
 	/* 
 	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
 	* We could get an error if the pipe doesn't exist but everything should still be fine
 	*/
-	captiveportal_ipfw_set_context($cpzone);
-	mwexec("/sbin/ipfw pipe " . ($dbent[1]+20000) . " delete");
-	mwexec("/sbin/ipfw pipe " . ($dbent[1]+20001) . " delete");
+	if (!empty($dbent[1])) {
+		pfSense_pipe_action("pipe delete " . ($dbent[1]+20000));
+		pfSense_pipe_action("pipe delete " . ($dbent[1]+20001));
 
-	/* Release the ruleno so it can be reallocated to new clients. */
-	captiveportal_free_ipfw_ruleno($dbent[1]);
+		/* Release the ruleno so it can be reallocated to new clients. */
+		captiveportal_free_ipfw_ruleno($dbent[1]);
+	}
 
 	// XMLRPC Call over to the master Voucher node
 	if(!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
@@ -1678,12 +1679,8 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
         $bw_up_pipeno = $cpentry[1]+20000;
         $bw_down_pipeno = $cpentry[1]+20001;
 
-        $commands = "";
-	$commands .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
-	$commands .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
-	@file_put_contents("{$g['tmp_path']}/reattribute{$cpzone}.rule.tmp", $commands);
-	captiveportal_ipfw_set_context($cpzone);
-	mwexec("/sbin/ipfw -q {$g['tmp_path']}/reattribute{$cpzone}.rule.tmp");
+	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
+	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
 	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
         unset($bw_up_pipeno, $bw_Down_pipeno, $bw_up, $bw_down);
@@ -1838,25 +1835,22 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry_{$cpzone}.rules.tmp");
 			$writecfg = true;
 		} else {
-			captiveportal_ipfw_set_context($cpzone);
-
 			$bw_up_pipeno = $ruleno + 20000;
-			//$bw_up /= 1000; // Scale to Kbit/s
-			mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
-
-			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
-			else
-				mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
-
 			$bw_down_pipeno = $ruleno + 20001;
-			//$bw_down /= 1000; // Scale to Kbit/s
-			mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+			//$bw_up /= 1000; // Scale to Kbit/s
+			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
+			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+
+			captiveportal_ipfw_set_context($cpzone);
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
+				pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_ADD, $clientip, 32, $clientmac, $bw_up_pipeno);
+			else
+				pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_ADD, $clientip, 32, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
+				pfSense_ipfw_Tableaction("", 2, IP_FW_TABLE_ADD, $clientip, 32, $clientmac, $bw_down_pipeno);
 			else
-				mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
+				pfSense_ipfw_Tableaction("", 2, IP_FW_TABLE_ADD, $clientip, 32, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

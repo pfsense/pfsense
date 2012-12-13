@@ -96,7 +96,7 @@ $passthrumac = isset($config['captiveportal'][$cpzone]['passthrumacadd']);
 
 /* find MAC address for client */
 if ($macfilter || $passthrumac) {
-	$clientmac = arp_get_mac_by_ip($clientip);
+	$clientmac = pfSense_ip_to_mac($clientip);
 	if (!$clientmac) {
 	    /* unable to find MAC address - shouldn't happen! - bail out */
 	    captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");

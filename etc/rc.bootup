@@ -313,6 +313,9 @@ system_routing_configure();
 /* enable routing */
 system_routing_enable();
 
+/* start dnsmasq service */
+services_dnsmasq_configure();
+
 /* Do an initial time sync */
 echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
@@ -328,9 +331,6 @@ system_console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();
-
-/* start dnsmasq service */
-services_dnsmasq_configure();
 
 /* start dhcpleases dhpcp hosts leases program */
 system_dhcpleases_configure();

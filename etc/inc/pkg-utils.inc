@@ -168,6 +168,42 @@ function get_pkg_id($pkg_name) {
 	return -1;
 }
 
+/****f* pkg-utils/get_pkg_internal_name
+ * NAME
+ *   get_pkg_internal_name - Find a package's internal name (e.g. squid3 internal name is squid)
+ * INPUTS
+ *   $package - array of package data from config
+ * RESULT
+ *   string - internal name (if defined) or default to package name
+ ******/
+function get_pkg_internal_name($package) {
+	if (isset($package['internal_name']) && ($package['internal_name'] != "")) {
+		/* e.g. name is Cron, internal name is cron */
+		$pkg_internal_name = $package['internal_name'];
+	} else {
+		$pkg_internal_name = $package['name'];
+	}
+	return $pkg_internal_name;
+}
+
+/****f* pkg-utils/get_pkg_service_name
+ * NAME
+ *   get_pkg_service_name - Find the name of the service for a package (e.g. Ipguard_dev has service ipguard)
+ * INPUTS
+ *   $package - array of package data from config
+ * RESULT
+ *   string - service name (if defined) or then internal name (if defined) or default to package name
+ ******/
+function get_pkg_service_name($package) {
+	if (isset($package['service_name']) && ($package['service_name'] != "")) {
+		/* e.g. name is Ipguard-dev, service name is ipguard */
+		$pkg_service_name = $package['service_name'];
+	} else {
+		$pkg_service_name = get_pkg_internal_name($package);
+	}
+	return $pkg_service_name;
+}
+
 /****f* pkg-utils/get_pkg_info
  * NAME
  *   get_pkg_info - Retrieve package information from pfsense.com.
@@ -1281,8 +1317,8 @@ function stop_packages() {
 	if (is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
-			stop_service($package['name']);
-			unset($rcfiles[RCFILEPREFIX . $package['name'] . ".sh"]);
+			stop_service(get_pkg_service_name($package));
+			unset($rcfiles[RCFILEPREFIX . get_pkg_internal_name($package) . ".sh"]);
 			echo "done.\n";
 		}
 	}

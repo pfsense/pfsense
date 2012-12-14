@@ -98,8 +98,8 @@ $passthrumac = isset($config['captiveportal'][$cpzone]['passthrumacadd']);
 
 /* find MAC address for client */
 if ($macfilter || $passthrumac) {
-	$clientmac = pfSense_ip_to_mac($clientip);
-	if (!$clientmac) {
+	$tmpres = pfSense_ip_to_mac($clientip);
+	if (!is_array($tmpres)) {
 	    /* unable to find MAC address - shouldn't happen! - bail out */
 	    captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
 	    echo "An error occurred.  Please check the system logs for more information.";
@@ -107,6 +107,8 @@ if ($macfilter || $passthrumac) {
 	    ob_flush();
 	    return;
 	}
+	$clientmac = $tmpres['macaddr'];
+	unset($tmpres);
 }
 
 /* find out if we need RADIUS + RADIUSMAC or not */

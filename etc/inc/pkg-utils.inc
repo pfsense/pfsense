@@ -172,7 +172,7 @@ function get_pkg_id($pkg_name) {
  * NAME
  *   get_pkg_internal_name - Find a package's internal name (e.g. squid3 internal name is squid)
  * INPUTS
- *   $package - arrray of package data from config
+ *   $package - array of package data from config
  * RESULT
  *   string - internal name (if defined) or default to package name
  ******/
@@ -190,7 +190,7 @@ function get_pkg_internal_name($package) {
  * NAME
  *   get_pkg_service_name - Find the name of the service for a package (e.g. Ipguard_dev has service ipguard)
  * INPUTS
- *   $package - arrray of package data from config
+ *   $package - array of package data from config
  * RESULT
  *   string - service name (if defined) or then internal name (if defined) or default to package name
  ******/

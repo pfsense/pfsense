@@ -54,8 +54,8 @@ if (is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $package) {
 		echo " Starting package {$package['name']}...";
 		sync_package($package['name']);
-		start_service($package['name']);
-		unset($rcfiles[RCFILEPREFIX . $package['name'] . ".sh"]);
+		start_service(get_pkg_service_name($package));
+		unset($rcfiles[RCFILEPREFIX . get_pkg_internal_name($package) . ".sh"]);
 		echo "done.\n";
 	}
 }

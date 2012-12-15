@@ -1892,7 +1892,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$config['captiveportal'][$cpzone]['listenporthttps'] ?
 				$config['captiveportal'][$cpzone]['listenporthttps'] :
 				($config['captiveportal'][$cpzone]['zoneid'] + 1);
-			$logouturl = "https://{$config['captiveportal']['httpsname']}:{$httpsport}/";
+			$logouturl = "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/";
 		} else {
 			$ifip = portal_ip_from_client_ip($clientip);
 			$httpport =

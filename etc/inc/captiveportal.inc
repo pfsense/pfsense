@@ -861,8 +861,8 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	if (is_ipaddr($dbent[2])) {
 		captiveportal_ipfw_set_context($cpzone);
 		/* Delete client's ip entry from tables 3 and 4. */
-		pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_DEL, $dbent[2]);
-		pfSense_ipfw_Tableaction($cpzone, 2, IP_FW_TABLE_DEL, $dbent[2]);
+		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 1, $dbent[2]);
+		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 2, $dbent[2]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
 		pfSense_kill_states($dbent[2]);
 		pfSense_kill_srcstates($dbent[2]);
@@ -1843,14 +1843,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			captiveportal_ipfw_set_context($cpzone);
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_ADD, $clientip, 32, $clientmac, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, $clientmac, $bw_up_pipeno);
 			else
-				pfSense_ipfw_Tableaction($cpzone, 1, IP_FW_TABLE_ADD, $clientip, 32, NULL, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction("", 2, IP_FW_TABLE_ADD, $clientip, 32, $clientmac, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, $clientmac, $bw_down_pipeno);
 			else
-				pfSense_ipfw_Tableaction("", 2, IP_FW_TABLE_ADD, $clientip, 32, NULL, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

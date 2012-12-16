@@ -49,7 +49,8 @@ $cpcfg = $config['captiveportal'][$cpzone];
 
 $orig_host = $_ENV['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
-$orig_request = trim($_REQUEST['redirurl'], " /");
+$orig_request = trim($_REQUEST['redirurl'], " ");
+$orig_request = ($orig_request == '/') ? '' : $orig_request;
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
@@ -64,8 +65,8 @@ if (!$clientip) {
 $listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 $listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
 
-if (isset($config['captiveportal'][$cpzone]['httpslogin']))
-	$ourhostname = $config['captiveportal'][$cpzone]['httpsname'] . ":" . $listenporthttps;
+if (isset($cpcfg['httpslogin']))
+	$ourhostname = $cpcfg['httpsname'] . ":" . $listenporthttps;
 else {
 	$ifip = portal_ip_from_client_ip($clientip);
 	if (!$ifip)
@@ -78,7 +79,7 @@ if ($orig_host != $ourhostname) {
     /* the client thinks it's connected to the desired web server, but instead
        it's connected to us. Issue a redirect... */
 
-    if (isset($config['captiveportal'][$cpzone]['httpslogin']))
+    if (isset($cpcfg['httpslogin']))
         header("Location: https://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
     else
         header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
@@ -86,15 +87,15 @@ if ($orig_host != $ourhostname) {
     ob_flush();
     return;
 }
-if (!empty($config['captiveportal'][$cpzone]['redirurl']))
-	$redirurl = $config['captiveportal'][$cpzone]['redirurl'];
+if (!empty($cpcfg['redirurl']))
+	$redirurl = $cpcfg['redirurl'];
 else if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 	$redirurl = urldecode($matches[1]);
 else if ($_REQUEST['redirurl'])
 	$redirurl = $_REQUEST['redirurl'];
 
-$macfilter = !isset($config['captiveportal'][$cpzone]['nomacfilter']);
-$passthrumac = isset($config['captiveportal'][$cpzone]['passthrumacadd']);
+$macfilter = !isset($cpcfg['nomacfilter']);
+$passthrumac = isset($cpcfg['passthrumacadd']);
 
 /* find MAC address for client */
 if ($macfilter || $passthrumac) {
@@ -114,7 +115,7 @@ if ($macfilter || $passthrumac) {
 /* find out if we need RADIUS + RADIUSMAC or not */
 if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
     $radius_enable = TRUE;
-    if (isset($config['captiveportal'][$cpzone]['radmac_enable']))
+    if (isset($cpcfg['radmac_enable']))
         $radmac_enable = TRUE;
 }
 
@@ -212,7 +213,7 @@ EOD;
         portal_reply_page($redirurl, "error", $errormsg);
     }
 
-} else if ($_POST['accept'] && $config['captiveportal'][$cpzone]['auth_method'] == "local") {
+} else if ($_POST['accept'] && $cpcfg['auth_method'] == "local") {
 
     if ($_POST['auth_user'] && $_POST['auth_pass']) {
 	//check against local user manager
@@ -226,7 +227,7 @@ EOD;
 	}
     } else
         portal_reply_page($redirurl, "error", $errormsg);
-} else if ($_POST['accept'] && $clientip && $config['captiveportal'][$cpzone]['auth_method'] == "none") {
+} else if ($_POST['accept'] && $clientip && $cpcfg['auth_method'] == "none") {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {

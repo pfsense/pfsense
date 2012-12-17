@@ -155,9 +155,9 @@ function captiveportal_load_modules() {
                 /* make sure ipfw is not on pfil hooks */
                 mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
                         " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
+		/* Activate layer2 filtering */
+		mwexec("/sbin/sysctl net.link.ether.ipfw=1 net.inet.ip.fw.one_pass=1");
         }
-	/* Activate layer2 filtering */
-	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
 	if (!is_module_loaded("dummynet.ko")) {
@@ -491,9 +491,6 @@ function captiveportal_init_rules($reinit = false) {
 	if ($reinit == false)
 		$captiveportallck = lock("captiveportal{$cpzone}");
 
-	/* init dummynet/ipfw rules number database */
-	captiveportal_init_ipfw_ruleno();
-
 	$cprules =	"add 65291 allow pfsync from any to any\n";
 	$cprules .= "add 65292 allow carp from any to any\n";
 
@@ -531,21 +528,9 @@ EOD;
 	$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
 	$rulenum++;
 	/* Allowed ips */
-	$cprules .= "add {$rulenum} allow ip from table(3) to any in\n";
+	$cprules .= "add {$rulenum} pipe tablearg ip from table(3) to any in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} allow ip from any to table(4) out\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pipe tablearg ip from table(5) to any in\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(6) out\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} allow ip from any to table(7) in\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} allow ip from table(8) to any out\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(9) in\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pipe tablearg ip from table(10) to any out\n";
+	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(4) out\n";
 	$rulenum++;
 
 	/* Authenticated users rules. */
@@ -591,12 +576,6 @@ EOD;
 	else {
 		$tmprules = "table 3 flush\n";
 		$tmprules .= "table 4 flush\n";
-		$tmprules .= "table 5 flush\n";
-		$tmprules .= "table 6 flush\n";
-		$tmprules .= "table 7 flush\n";
-		$tmprules .= "table 8 flush\n";
-		$tmprules .= "table 9 flush\n";
-		$tmprules .= "table 10 flush\n";
 		$tmprules .= "flush\n";
 		$cprules = "{$tmprules}\n{$cprules}";
 	}
@@ -609,11 +588,6 @@ EOD;
 
 	if ($reinit == false)
 		unlock($captiveportallck);
-
-	/* activate ipfw(4) so CP can work */
-	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
-	/* Make sure not re-entrancy is allowed in ipfw(4) */
-	mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
 }
 
 /* 
@@ -803,11 +777,18 @@ function captiveportal_prune_old_automac() {
 				if (isset($tmpvoucherdb[$emac['username']])) {
 					$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
 					$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
+					$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
 					if ($ruleno) {
-						captiveportal_free_ipfw_ruleno($ruleno, true);
+						captiveportal_free_ipfw_ruleno($ruleno);
 						$macrules .= "delete {$ruleno}";
 						++$ruleno;
 						$macrules .= "delete {$ruleno}";
+					}
+					if ($pipeno) {
+						captiveportal_free_dn_ruleno($pipeno);
+						$macrules .= "pipe delete {$pipeno}\n";
+						++$pipeno;
+						$macrules .= "pipe delete {$pipeno}\n";
 					}
 					$writecfg = true;
 					captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
@@ -816,11 +797,18 @@ function captiveportal_prune_old_automac() {
 				$tmpvoucherdb[$emac['username']] = $eid;
 				if (voucher_auth($emac['username']) <= 0) {
 					$ruleno = captiveportal_get_ipfw_passthru_ruleno($emac['mac']);
+					$pipeno = captiveportal_get_dn_passthru_ruleno($emac['mac']);
 					if ($ruleno) {
-						captiveportal_free_ipfw_ruleno($ruleno, true);
+						captiveportal_free_ipfw_ruleno($ruleno);
 						$macrules .= "delete {$ruleno}";
 						++$ruleno;
 						$macrules .= "delete {$ruleno}";
+					}
+					if ($pipeno) {
+						captiveportal_free_dn_ruleno($pipeno);
+						$macrules .= "pipe delete {$pipeno}\n";
+						++$pipeno;
+						$macrules .= "pipe delete {$pipeno}\n";
 					}
 					$writecfg = true;
 					captiveportal_logportalauth($emac['username'], $emac['mac'], $emac['ip'], "EXPIRED {$emac['username']} LOGIN - TERMINATING SESSION");
@@ -873,11 +861,11 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	* We could get an error if the pipe doesn't exist but everything should still be fine
 	*/
 	if (!empty($dbent[1])) {
-		pfSense_pipe_action("pipe delete " . ($dbent[1]+20000));
-		pfSense_pipe_action("pipe delete " . ($dbent[1]+20001));
+		pfSense_pipe_action("pipe delete {$dbent[1]}");
+		pfSense_pipe_action("pipe delete " . ($dbent[1]+1));
 
 		/* Release the ruleno so it can be reallocated to new clients. */
-		captiveportal_free_ipfw_ruleno($dbent[1]);
+		captiveportal_free_dn_ruleno($dbent[1]);
 	}
 
 	// XMLRPC Call over to the master Voucher node
@@ -942,27 +930,21 @@ function captiveportal_radius_stop_all() {
 }
 
 function captiveportal_passthrumac_configure_entry($macent) {
-	$rules = "";
-	$enBwup = isset($macent['bw_up']);
-	$enBwdown = isset($macent['bw_down']);
-	$actionup = "allow";
-	$actiondown = "allow";
+
+	$bwUp = empty($macent['bw_up']) ? 0 : $macent['bw_up'];
+	$bwDown = empty($macent['bw_down']) ? 0 : $macent['bw_down'];
 
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
+	$pipeno = captiveportal_get_next_dn_ruleno();
 
-	if ($enBwup) {
-		$bw_up = $ruleno + 20000;
-		$rules .= "pipe {$bw_up} config bw {$macent['bw_up']}Kbit/s queue 100\n";
-		$actionup = "pipe {$bw_up}";
-	}
-	if ($enBwdown) {
-		$bw_down = $ruleno + 20001;
-		$rules .= "pipe {$bw_down} config bw {$macent['bw_down']}Kbit/s queue 100\n";
-		$actiondown = "pipe {$bw_down}";
-	}
-	$rules .= "add {$ruleno} {$actiondown} ip from any to any MAC {$macent['mac']} any\n";
+	$rules = "";
+	$pipeup = $pipeno;
+	$rules .= "pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100\n";
+	$pipedown = $pipeno + 1;
+	$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100\n";
+	$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC {$macent['mac']} any\n";
 	$ruleno++;
-	$rules .= "add {$ruleno} {$actionup} ip from any to any MAC any {$macent['mac']}\n";
+	$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC any {$macent['mac']}\n";
 
 	return $rules;
 }
@@ -1016,64 +998,18 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	}
 
 	$rules = "";
-	$enBwup = intval($ipent['bw_up']);
-	$enBwdown = intval($ipent['bw_down']);
-	$bw_up = "";
-	$bw_down = "";
-	$tablein = array();
-	$tableout = array();
+	$enBwup = empty($ipent['bw_up']) ? 0 : intval($ipent['bw_up']);
+	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
 
-	$ruleno = captiveportal_get_next_ipfw_ruleno();
-
-	if ($ipent['dir'] == "from") {
-		if ($enBwup)
-			$tablein[] = 5;
-		else
-			$tablein[] = 3;
-		if ($enBwdown)
-			$tableout[] = 6;
-		else
-			$tableout[] = 4;
-	} else if ($ipent['dir'] == "to") {
-		if ($enBwup)
-			$tablein[] = 9;
-		else
-			$tablein[] = 7;
-		if ($enBwdown)
-			$tableout[] = 10;
-		else
-			$tableout[] = 8;
-	} else if ($ipent['dir'] == "both") {
-		if ($enBwup) {
-			$tablein[] = 5;
-			$tablein[] = 9;
-		} else {
-			$tablein[] = 3;
-			$tablein[] = 7;
-		}
-		if ($enBwdown) {
-			$tableout[] = 6;
-			$tableout[] = 10;
-		} else {
-			$tableout[] = 4;
-			$tableout[] = 8;
-		}
-	}
-	if ($enBwup) {
-		$bw_up = $ruleno + 20000;
-		$rules .= "pipe {$bw_up} config bw {$ipent['bw_up']}Kbit/s queue 100\n";
-	}
+	$pipeno = captiveportal_get_next_dn_ruleno();
+	$rules .= "pipe {$pipeno} config bw {$ipent['bw_up']}Kbit/s queue 100\n";
+	$pipedown = $pipeno + 1;
+	$rules .= "pipe {$pipedown} config bw {$ipent['bw_down']}Kbit/s queue 100\n";
 	$subnet = "";
 	if (!empty($ipent['sn']))
 		$subnet = "/{$ipent['sn']}";
-	foreach ($tablein as $table)
-		$rules .= "table {$table} add {$ipaddress}{$subnet} {$bw_up}\n";
-	if ($enBwdown) {
-		$bw_down = $ruleno + 20001;
-		$rules .= "pipe {$bw_down} config bw {$ipent['bw_down']}Kbit/s queue 100\n";
-	}
-	foreach ($tableout as $table)
-		$rules .= "table {$table} add {$ipaddress}{$subnet} {$bw_down}\n";
+	$rules .= "table 3 add {$ipaddress}{$subnet} {$pipeno}\n";
+	$rules .= "table 4 add {$ipaddress}{$subnet} {$pipedown}\n";
 
 	return $rules;
 }
@@ -1262,10 +1198,10 @@ function captiveportal_syslog($message) {
 function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = null) {
 	global $g, $config;
 
-	$ruleno = captiveportal_get_next_ipfw_ruleno();
+	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($ruleno)) {
+	if (is_null($pipeno)) {
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";
@@ -1282,7 +1218,7 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 		$radiusservers[$radiusctx],
 		$clientip,
 		$clientmac,
-		$ruleno);
+		$pipeno);
 
 	if ($auth_list['auth_val'] == 2) {
 		captiveportal_logportalauth($username,$clientmac,$clientip,$type);
@@ -1291,7 +1227,7 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 			$username,
 			$password,
 			$auth_list,
-			$ruleno,
+			$pipeno,
 			$radiusctx);
 	}
 
@@ -1394,12 +1330,68 @@ function captiveportal_write_elements() {
 	return 0;
 }
 
-function captiveportal_init_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {
-	global $g, $cpzone;
+function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {
+	global $config, $g;
 
-	@unlink("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
-	$rules = array_pad(array(), $rulenos_range_max - $rulenos_start, false);
-	file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	$ruleno = 0;
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		for ($ridx = $rulenos_start; $ridx < $rulenos_range_max; $ridx++) {
+			if ($rules[$ridx]) {
+				$ridx++;
+				continue;
+			}
+			$ruleno = $ridx;
+			$rules[$ridx] = "used";
+			$rules[++$ridx] = "used";
+			break;
+		}
+	} else {
+		$rules = array_pad(array(), $rulenos_range_max - $rulenos_start, false);
+		$rules[$rulenos_start] = "used";
+		$rules[++$rulenos_start] = "used";
+		$ruleno = $rulenos_start;
+	}
+	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+	unlock($cpruleslck);
+
+	return $ruleno;
+}
+
+function captiveportal_free_dn_ruleno($ruleno) {
+        global $config, $g;
+
+        $cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+        if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
+                $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+                $rules[$ruleno] = false;
+                $rules[++$ruleno] = false;
+                file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+        }
+        unlock($cpruleslck);
+}
+
+function captiveportal_get_dn_passthru_ruleno($value) {
+	global $config, $g, $cpzone;
+
+	$cpcfg = $config['captiveportal'][$cpzone];
+	if(!isset($cpcfg['enable']))
+		return NULL;
+
+	$cpruleslck = lock("captiveportalrules{$cpzone}", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
+		captiveportal_ipfw_set_context($cpzone);
+		$ruleno = intval(`/sbin/ipfw show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 5 | /usr/bin/head -n 1`);
+		if ($rules[$ruleno]) {
+			unlock($cpruleslck);
+			return $ruleno;
+		}
+	}
+
+	unlock($cpruleslck);
+	return NULL;
 }
 
 /*
@@ -1407,7 +1399,7 @@ function captiveportal_init_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_ma
  * within the range specified based on the actual logged on users
  *
  */
-function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {
+function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_max = 64500) {
 	global $config, $g, $cpzone;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1434,7 +1426,8 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_rang
 		}
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max - $rulenos_start, false);
-		$rules[2] = "used";
+		$rules[$rulenos_start] = "used";
+		$rules[++$rulenos_start] = "used";
 		$ruleno = 2;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
@@ -1442,7 +1435,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_rang
 	return $ruleno;
 }
 
-function captiveportal_free_ipfw_ruleno($ruleno, $usedbw = false) {
+function captiveportal_free_ipfw_ruleno($ruleno) {
 	global $config, $g, $cpzone;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1676,30 +1669,19 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
         $bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
         $bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
-        $bw_up_pipeno = $cpentry[1]+20000;
-        $bw_down_pipeno = $cpentry[1]+20001;
+        $bw_up_pipeno = $cpentry[1];
+        $bw_down_pipeno = $cpentry[1]+1;
 
 	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
 	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
 	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
-        unset($bw_up_pipeno, $bw_Down_pipeno, $bw_up, $bw_down);
+        unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
 }
 
-function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null, $radiusctx = null)  {
+function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $pipeno = null, $radiusctx = null)  {
 
 	global $redirurl, $g, $config, $type, $passthrumac, $_POST, $cpzone;
-
-	/* See if a ruleno is passed, if not start sessions because this means there isn't one atm */
-	if ($ruleno == null)
-		$ruleno = captiveportal_get_next_ipfw_ruleno();
-
-	/* if the pool is empty, return appropriate message and exit */
-	if (is_null($ruleno)) {
-		portal_reply_page($redirurl, "error", "System reached maximum login capacity");
-		log_error("WARNING!  Captive portal has reached maximum login capacity");
-		exit;
-	}
 
 	// Ensure we create an array if we are missing attributes
 	if (!is_array($attributes))
@@ -1729,12 +1711,19 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 						if ($macent['mac'] == $mac['mac']) {
 							$macrules = "";
 							$ruleno = captiveportal_get_ipfw_passthru_ruleno($mac['mac']);
+							$pipeno = captiveportal_get_dn_passthru_ruleno($mac['mac']);
                                 			if ($ruleno) {
-								captiveportal_free_ipfw_ruleno($ruleno, true);
+								captiveportal_free_ipfw_ruleno($ruleno);
                                         			$macrules .= "delete {$ruleno}\n";
 								++$ruleno;
                                         			$macrules .= "delete {$ruleno}\n";
                                 			}
+							if ($pipeno) {
+								captiveportal_free_dn_ruleno($pipeno);
+                                        			$macrules .= "pipe delete {$pipeno}\n";
+								++$pipeno;
+                                        			$macrules .= "pipe delete {$pipeno}\n";
+							}
 							unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;
 							$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
@@ -1751,7 +1740,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 					portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
 						$clientmac, $clientip, $username, $password);
 					unlock($cpdblck);
-					exit;
+					return;
 				}
 			}
 		}
@@ -1835,8 +1824,20 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry_{$cpzone}.rules.tmp");
 			$writecfg = true;
 		} else {
-			$bw_up_pipeno = $ruleno + 20000;
-			$bw_down_pipeno = $ruleno + 20001;
+			/* See if a pipeno is passed, if not start sessions because this means there isn't one atm */
+			if (is_null($pipeno))
+				$pipeno = captiveportal_get_next_dn_ruleno();
+
+			/* if the pool is empty, return appropriate message and exit */
+			if (is_null($pipeno)) {
+				portal_reply_page($redirurl, "error", "System reached maximum login capacity");
+				log_error("WARNING!  Captive portal has reached maximum login capacity");
+				unlock($cpdblck);
+				return;
+			}
+
+			$bw_up_pipeno = $pipeno;
+			$bw_down_pipeno = $pipeno + 1;
 			//$bw_up /= 1000; // Scale to Kbit/s
 			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
 			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
@@ -1857,7 +1858,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$cpdb[] = array($allow_time, $ruleno, $clientip, $clientmac, $username, $sessionid, $bpassword,
+			$cpdb[] = array($allow_time, $pipeno, $clientip, $clientmac, $username, $sessionid, $bpassword,
 				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time'], $radiusctx);
 
 			/* rewrite information to database */
@@ -1865,7 +1866,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			unlock($cpdblck);
 
 			if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers[$radiusctx])) {
-				$acct_val = RADIUS_ACCOUNTING_START($ruleno,
+				$acct_val = RADIUS_ACCOUNTING_START($pipeno,
                                 		$username, $sessionid, $radiusservers[$radiusctx], $clientip, $clientmac);
 				if ($acct_val == 1)
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");

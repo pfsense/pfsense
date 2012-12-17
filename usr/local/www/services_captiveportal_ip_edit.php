@@ -84,7 +84,6 @@ $a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];
 	$pconfig['sn'] = $a_allowedips[$id]['sn'];
-	$pconfig['dir'] = $a_allowedips[$id]['dir'];
 	$pconfig['bw_up'] = $a_allowedips[$id]['bw_up'];
 	$pconfig['bw_down'] = $a_allowedips[$id]['bw_down'];
 	$pconfig['descr'] = $a_allowedips[$id]['descr'];
@@ -124,7 +123,6 @@ if ($_POST) {
 		$ip = array();
 		$ip['ip'] = $_POST['ip'];
 		$ip['sn'] = $_POST['sn'];
-		$ip['dir'] = $_POST['dir'];
 		$ip['descr'] = $_POST['descr'];
 		if ($_POST['bw_up'])
 			$ip['bw_up'] = $_POST['bw_up'];
@@ -172,23 +170,6 @@ include("head.inc");
 		<tr>
                         <td colspan="2" valign="top" class="listtopic"><?=gettext("Edit allowed ip rule");?></td>
                 </tr>
-		<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Direction"); ?></td>
-			<td width="78%" class="vtable"> 
-			<select name="dir" class="formfld">
-		<?php 
-			$dirs = array(gettext("Both"),gettext("From"),gettext("To")) ;
-			foreach ($dirs as $dir): 
-		?>
-				<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected";?> >
-				<?=htmlspecialchars($dir);?>
-				</option>
-		<?php endforeach; ?>
-			</select>
-			<br> 
-			<span class="vexpl"><?=gettext("Use"); ?> <em><?=gettext("From"); ?></em> <?=gettext("to always allow an IP address through the captive portal (without authentication)"); ?>. 
-			<?=gettext("Use"); ?> <em><?=gettext("To"); ?></em> <?=gettext("to allow access from all clients (even non-authenticated ones) behind the portal to this IP address"); ?>.</span></td>
-		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
 			<td width="78%" class="vtable"> 

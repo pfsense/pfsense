@@ -104,9 +104,15 @@ if ($_POST) {
 			if ($found == true) {
 				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
 				if ($ruleno) {
-					captiveportal_free_ipfw_ruleno($ruleno, true);
+					captiveportal_free_ipfw_ruleno($ruleno);
+					$pipeno = captiveportal_get_dn_passthru_ruleno($_POST['delmac']);
+					if ($pipeno)
+						captiveportal_free_dn_ruleno($pipeno);
 					captiveportal_ipfw_set_context($cpzone);
-					mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
+					if (!empty($pipeno))
+						mwexec("/sbin/ipfw -q delete {$ruleno}; /sbin/ipfw -q delete " . ++$ruleno . "; /sbin/ipfw -q pipe delete {$pipeno}; /sbin/ipfw -q pipe delete " . (++$pipeno));
+					else
+						mwexec("/sbin/ipfw -q delete {$ruleno}; /sbin/ipfw -q delete " . ++$ruleno);
 				}
 				unset($a_passthrumacs[$idx]);
 				write_config();
@@ -123,9 +129,15 @@ if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
 		if ($ruleno) {
-			captiveportal_ipfw_set_context($cpzone);
 			captiveportal_free_ipfw_ruleno($ruleno);
-			mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
+			$pipeno = captiveportal_get_dn_passthru_ruleno($_POST['delmac']);
+			if ($pipeno)
+				captiveportal_free_dn_ruleno($pipeno);
+			captiveportal_ipfw_set_context($cpzone);
+			if (!empty($pipeno))
+				mwexec("/sbin/ipfw -q delete {$ruleno}; /sbin/ipfw -q delete " . ++$ruleno . "; /sbin/ipfw -q pipe delete {$pipeno}; /sbin/ipfw -q pipe delete " . (++$pipeno));
+			else
+				mwexec("/sbin/ipfw -q delete {$ruleno}; /sbin/ipfw -q delete " . ++$ruleno);
 		}
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();

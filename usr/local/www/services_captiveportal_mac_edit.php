@@ -144,6 +144,13 @@ if ($_POST) {
 			$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
 			if ($ruleno) {
 				captiveportal_free_ipfw_ruleno($ruleno);
+				$pipeno = captiveportal_get_dn_passthru_ruleno($_POST['delmac']);
+				if ($pipeno) {
+					captiveportal_free_dn_ruleno($pipeno);
+					$rules .= "pipe delete {$pipeno}\n";
+					++$pipeno;
+					$rules .= "pipe delete {$pipeno}\n";
+				}
 				$rules = "delete {$ruleno}\n";
 				$rules .= "delete " . ++$ruleno . "\n";
 			}

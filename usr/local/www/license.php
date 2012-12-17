@@ -165,7 +165,7 @@ include("head.inc");
               <?=gettext("All rights reserved.");?><br>
               <br>
               <?=gettext("ISC DHCP server ");?>(<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br>
-              <?=gettext("Copyright"); ?> &copy; <?=gettext("2004-2012 Internet Software Consortium, Inc.");?<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("2004-2012 Internet Software Consortium, Inc.");?><br>
               <?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2003 Internet Software Consortium");?><br>
               <br>
               <?=gettext("PF"); ?> (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>

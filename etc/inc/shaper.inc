@@ -3421,8 +3421,8 @@ class dnqueue_class extends dummynet_class {
 			default:
 				break;
 			}
-			$pfq_rule .= "\n";
 		}
+		$pfq_rule .= "\n";
 
 		return $pfq_rule;
 	}

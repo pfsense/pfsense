@@ -939,9 +939,9 @@ function captiveportal_passthrumac_configure_entry($macent) {
 
 	$rules = "";
 	$pipeup = $pipeno;
-	$rules .= "pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100\n";
+	$rules .= "pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16\n";
 	$pipedown = $pipeno + 1;
-	$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100\n";
+	$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16\n";
 	$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC {$macent['mac']} any\n";
 	$ruleno++;
 	$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC any {$macent['mac']}\n";
@@ -1002,9 +1002,9 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
-	$rules .= "pipe {$pipeno} config bw {$ipent['bw_up']}Kbit/s queue 100\n";
+	$rules .= "pipe {$pipeno} config bw {$ipent['bw_up']}Kbit/s queue 100 buckets 16\n";
 	$pipedown = $pipeno + 1;
-	$rules .= "pipe {$pipedown} config bw {$ipent['bw_down']}Kbit/s queue 100\n";
+	$rules .= "pipe {$pipedown} config bw {$ipent['bw_down']}Kbit/s queue 100 buckets 16\n";
 	$subnet = "";
 	if (!empty($ipent['sn']))
 		$subnet = "/{$ipent['sn']}";
@@ -1672,8 +1672,8 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
         $bw_up_pipeno = $cpentry[1];
         $bw_down_pipeno = $cpentry[1]+1;
 
-	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
-	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
         unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
@@ -1839,8 +1839,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$bw_up_pipeno = $pipeno;
 			$bw_down_pipeno = $pipeno + 1;
 			//$bw_up /= 1000; // Scale to Kbit/s
-			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
-			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
 			captiveportal_ipfw_set_context($cpzone);
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))

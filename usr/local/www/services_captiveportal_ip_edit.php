@@ -144,11 +144,16 @@ if ($_POST) {
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
-			$rules = "";
-			for ($i = 3; $i < 10; $i++)
-				$rules .= "table {$i} delete {$oldip}\n";
+			$rules = "table 3 delete {$oldip}";
+			$rules .= "table 4 delete {$oldip}";
+			$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
+			if (is_array($ipfw)) {
+				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+				$rules .= "pipe delete {$ipfw['dnpipe']}";
+				$rules .= "pipe delete " . ($ipfw['dnpipe']+1);
+			}
 			$rules .= captiveportal_allowedip_configure_entry($ip);
-			file_put_contents("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}", $rules);
+			@file_put_contents("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}", $rules);
 			captiveportal_ipfw_set_context($cpzone);
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");
 			@unlink("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");

@@ -74,14 +74,14 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 			$ip = gethostbyname($ipent['ip']);
 			if(is_ipaddr($ip)) {
 				captiveportal_ipfw_set_context($zone);
-				mwexec("/sbin/ipfw table 3 delete {$ip}");
-				mwexec("/sbin/ipfw table 4 delete {$ip}");
 				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ip);
 				if (is_array($ipfw)) {
 					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 				}
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ip);
 			}
 		}
 			

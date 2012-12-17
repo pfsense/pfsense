@@ -69,10 +69,14 @@ if (isset($cpcfg['httpslogin']))
 	$ourhostname = $cpcfg['httpsname'] . ":" . $listenporthttps;
 else {
 	$ifip = portal_ip_from_client_ip($clientip);
-	if (!$ifip)
+	if (!$ifip) {
 		$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}:{$listenporthttp}";
-	else
-		$ourhostname = "{$ifip}:{$listenporthttp}";
+	} else {
+		if (is_ipaddrv6($ifip))
+			$ourhostname = "[{$ifip}]:{$listenporthttp}";
+		else
+			$ourhostname = "{$ifip}:{$listenporthttp}";
+	}
 }
 
 if ($orig_host != $ourhostname) {

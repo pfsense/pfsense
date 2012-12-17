@@ -1588,10 +1588,14 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	} else {
 		$httpport = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 		$ifip = portal_ip_from_client_ip($clientip);
-		if (!$ifip)
+		if (!$ifip) {
 			$ourhostname = $config['system']['hostname'] . ":{$httpport}";
-		else
-			$ourhostname = "{$ifip}:{$httpport}";
+		} else {
+			if (is_ipaddrv6($ifip))
+				$ourhostname = "[{$ifip}]:{$httpport}";
+			else
+				$ourhostname = "{$ifip}:{$httpport}";
+		}
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
 		$htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
 	}

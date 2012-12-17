@@ -198,29 +198,22 @@ function captiveportal_configure_zone($cpcfg) {
 	
 	if (isset($cpcfg['enable'])) {
 
-		if ($g['booting'])
+		if ($g['booting']) {
 			echo "Starting captive portal({$cpcfg['zone']})... ";
-		else
-			captiveportal_syslog("Restarting captive portal({$cpcfg['zone']}).");
 
-		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+			/* remove old information */
+			unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
 
-		/* remove old information */
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
-
-		/* setup new database in case someone tries to access the status -> captive portal page */
-		touch("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
-
-		/* kill any running minicron */
-		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
+			/* setup new database in case someone tries to access the status -> captive portal page */
+			touch("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
+		} else
+			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
+
+		/* kill any running minicron */
+		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 
 		/* initialize minicron interval value */
 		$croninterval = $cpcfg['croninterval'] ? $cpcfg['croninterval'] : 60;
@@ -335,6 +328,10 @@ EOD;
 		/* write elements */
 		captiveportal_write_elements();
 
+		/* kill any running mini_httpd */
+		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+
 		/* start up the webserving daemon */
 		captiveportal_init_webgui_zone($cpcfg);
 
@@ -347,6 +344,7 @@ EOD;
 			"/etc/rc.prunecaptiveportal {$cpzone}");
 
 		/* generate radius server database */
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		captiveportal_init_radius_servers();
 
 		if ($g['booting'])
@@ -361,8 +359,6 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac_{$cpzone}.db");
-		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip_{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 
 		captiveportal_radius_stop_all();
@@ -571,15 +567,7 @@ EOD;
 	$cprules .= captiveportal_allowedhostname_configure();
 	
 	/* load rules */
-	if ($reinit == true)
-		$cprules = "table all flush\nflush\n{$cprules}";
-	else {
-		$tmprules = "table 3 flush\n";
-		$tmprules .= "table 4 flush\n";
-		$tmprules .= "flush\n";
-		$cprules = "{$tmprules}\n{$cprules}";
-	}
-
+	$cprules = "flush\n{$cprules}";
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", $cprules);
 	captiveportal_ipfw_set_context($cpzone);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);

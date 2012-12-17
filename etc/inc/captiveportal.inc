@@ -1769,11 +1769,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$tod = gettimeofday();
 		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
 
-		$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-		$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
-		$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-		$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
-
 		if ($passthrumac) {
 			$mac = array();
 			$mac['mac'] = $clientmac;
@@ -1809,6 +1804,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				unlock($cpdblck);
 				return;
 			}
+
+			$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+			$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+			$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+			$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 
 			$bw_up_pipeno = $pipeno;
 			$bw_down_pipeno = $pipeno + 1;

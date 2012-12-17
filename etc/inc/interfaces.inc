@@ -1022,7 +1022,8 @@ function interfaces_configure() {
 		services_dnsmasq_configure();
 
 		/* reload captive portal */
-		captiveportal_init_rules();
+		if (function_exists('captiveportal_init_rules'))
+			captiveportal_init_rules();
 	}
 
 	return 0;

@@ -429,14 +429,14 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
-			"cert-portal.pem", "ca-portal.pem", "1", $use_fastcgi, $cpzone);
+			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", "1", $use_fastcgi, $cpzone);
 	}
 
 	/* generate lighttpd configuration */
 	$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
-		"cert-portal.pem", "ca-portal.pem", "1", $use_fastcgi, $cpzone);
+		"", "", "1", $use_fastcgi, $cpzone);
 
 	/* attempt to start lighttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");

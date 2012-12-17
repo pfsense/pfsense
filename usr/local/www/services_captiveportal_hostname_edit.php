@@ -138,8 +138,8 @@ if ($_POST) {
 		
 		write_config();
 
-		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) 
-			captiveportal_init_rules();
+		captiveportal_allowedip_configure_entry($ip, true);
+		captiveportal_allowedhostname_configure();
 		
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;

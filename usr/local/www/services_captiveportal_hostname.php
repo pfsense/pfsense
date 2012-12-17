@@ -76,12 +76,12 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 				captiveportal_ipfw_set_context($zone);
 				mwexec("/sbin/ipfw table 3 delete {$ip}");
 				mwexec("/sbin/ipfw table 4 delete {$ip}");
-				mwexec("/sbin/ipfw table 5 delete {$ip}");
-				mwexec("/sbin/ipfw table 6 delete {$ip}");
-				mwexec("/sbin/ipfw table 7 delete {$ip}");
-				mwexec("/sbin/ipfw table 8 delete {$ip}");
-				mwexec("/sbin/ipfw table 9 delete {$ip}");
-				mwexec("/sbin/ipfw table 10 delete {$ip}");
+				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ip);
+				if (is_array($ipfw)) {
+					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
+					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
+				}
 			}
 		}
 			

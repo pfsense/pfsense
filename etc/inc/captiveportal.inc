@@ -980,9 +980,8 @@ function captiveportal_passthrumac_findbyname($username) {
 
 /* 
  * table (3=IN)/(4=OUT) hold allowed ip's without bw limits
- * table (5=IN)/(6=OUT) hold allowed ip's with bw limit.
  */
-function captiveportal_allowedip_configure_entry($ipent) {
+function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 
 	/* This function can deal with hostname or ipaddress */
 	if($ipent['ip']) 	
@@ -991,13 +990,14 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	/*  Instead of copying this entire function for something
 	 *  easy such as hostname vs ip address add this check
 	 */
-	if($ipent['hostname']) {
+	if(!empty($ipent['hostname'])) {
 		$ipaddress = gethostbyname($ipent['hostname']);
 		if(!is_ipaddr($ipaddress)) 
 			return;
 	}
 
 	$rules = "";
+	$cp_filterdns_conf = "";
 	$enBwup = empty($ipent['bw_up']) ? 0 : intval($ipent['bw_up']);
 	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
 
@@ -1005,45 +1005,41 @@ function captiveportal_allowedip_configure_entry($ipent) {
 	$rules .= "pipe {$pipeno} config bw {$ipent['bw_up']}Kbit/s queue 100 buckets 16\n";
 	$pipedown = $pipeno + 1;
 	$rules .= "pipe {$pipedown} config bw {$ipent['bw_down']}Kbit/s queue 100 buckets 16\n";
+	if ($ishostname === true) {
+		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
+		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";
+	}
 	$subnet = "";
 	if (!empty($ipent['sn']))
 		$subnet = "/{$ipent['sn']}";
 	$rules .= "table 3 add {$ipaddress}{$subnet} {$pipeno}\n";
 	$rules .= "table 4 add {$ipaddress}{$subnet} {$pipedown}\n";
 
-	return $rules;
-}
-
-/* 
-	Adds a dnsfilter entry and watches for hostname changes.
-	A change results in reloading the ruleset.
-*/
-function setup_dnsfilter_entries() {
-	global $g, $config, $cpzone;
-
-	$cp_filterdns_filename = "{$g['varetc_path']}/filterdns-{$cpzone}-captiveportal.conf";
-	$cp_filterdns_conf = "";
-	if (is_array($config['captiveportal'][$cpzone]['allowedhostname'])) {
-		foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $hostnameent)  {
-			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 3\n";
-			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 4\n";
-		}
-	}
-	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);
-	unset($cp_filterdns_conf);
-	killbypid("{$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid");
-	mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
+	if ($ishostname === true)
+		return array($rules, $cp_filterdns_conf);
+	else
+		return $rules;
 }
 
 function captiveportal_allowedhostname_configure() {
 	global $config, $g, $cpzone;
 
-	$rules = "\n# captiveportal_allowedhostname_configure()\n";
-	setup_dnsfilter_entries();
+	$rules = "";
 	if (is_array($config['captiveportal'][$cpzone]['allowedhostname'])) {
-		foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $hostnameent) 
-			$rules .= captiveportal_allowedip_configure_entry($hostnameent);
+		$rules = "\n# captiveportal_allowedhostname_configure()\n";
+		$cp_filterdns_conf = "";
+		foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $hostnameent) {
+			$tmprules = captiveportal_allowedip_configure_entry($hostnameent, true);
+			$rules .= $tmprules[0];
+			$cp_filterdns_conf .= $tmprules[1];
+		}
+		$cp_filterdns_filename = "{$g['varetc_path']}/filterdns-{$cpzone}-captiveportal.conf";
+		@file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);
+		unset($cp_filterdns_conf);
+		killbypid("{$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid");
+		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
 	}
+
 	return $rules;
 }
 
@@ -1063,15 +1059,11 @@ function captiveportal_allowedip_configure() {
 function captiveportal_get_last_activity($ip) {
 	global $cpzone;
 
-	$ipfwoutput = "";
-
 	captiveportal_ipfw_set_context($cpzone);
-	exec("/sbin/ipfw table 1 entrystats {$ip} 2>/dev/null", $ipfwoutput);
+	$ipfwoutput = pfSense_ipfw_getTablestats($cpzone, 1, $ip);
 	/* Reading only from one of the tables is enough of approximation. */
-	if ($ipfwoutput[0]) {
-		$ri = explode(" ", $ipfwoutput[0]);
-		if ($ri[4])
-			return $ri[4];
+	if (is_array($ipfwoutput)) {
+		return $ipfwoutput['timestamp'];
 	}
 
 	return 0;
@@ -1487,28 +1479,20 @@ function getVolume($ip) {
 	global $cpzone;
 
 	$volume = array();
-
 	// Initialize vars properly, since we don't want NULL vars
 	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
-	// Ingress
-	$ipfwin = "";
-	$ipfwout = "";
-	$matchesin = "";
-	$matchesout = "";
 	captiveportal_ipfw_set_context($cpzone);
-	exec("/sbin/ipfw table 1 entrystats {$ip}", $ipfwin);
-	if ($ipfwin[0]) {
-		$ipfwin = explode(" ", $ipfwin[0]);
-		$volume['input_pkts'] = $ipfwin[2];
-		$volume['input_bytes'] = $ipfwin[3];
+	$ipfw = pfSense_ipfw_getTablestats($cpzone, 1, $ip);
+	if (is_array($ipfw)) {
+		$volume['input_pkts'] = $ipfw['packets'];
+		$volume['input_bytes'] = $ipfw['bytes'];
 	}
 
-	exec("/sbin/ipfw table 2 entrystats {$ip}", $ipfwout);
-	if ($ipfwout[0]) {
-		$ipfwout = explode(" ", $ipfwout[0]);
-		$volume['output_pkts'] = $ipfwout[2];
-		$volume['output_bytes'] = $ipfwout[3];
+	$ipfw = pfSense_ipfw_getTablestats($cpzone, 2, $ip);
+	if (is_array($ipfw)) {
+		$volume['output_pkts'] = $ipfw['packets'];
+		$volume['output_bytes'] = $ipfw['bytes'];
 	}
 
 	return $volume;

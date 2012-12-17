@@ -1027,8 +1027,6 @@ function setup_dnsfilter_entries() {
 		foreach ($config['captiveportal'][$cpzone]['allowedhostname'] as $hostnameent)  {
 			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 3\n";
 			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 4\n";
-			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 7\n";
-			$cp_filterdns_conf .= "ipfw {$hostnameent['hostname']} 8\n";
 		}
 	}
 	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);

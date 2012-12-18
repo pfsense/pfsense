@@ -157,8 +157,10 @@ include("fbegin.inc");
 
 <?php
 	if($count > 0)
-  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
- 			echo "<p/>&nbsp<b>$count</b> " . gettext("entries in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
+  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") ) {
+			$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
+			echo "<p/>&nbsp<b>$count</b> " . gettext("entries in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.") . "<br>" . "$last_updated";
+		}
 		else
 			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type=" . htmlspecialchars($tablename) . "'>" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
 ?>

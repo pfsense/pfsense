@@ -4287,7 +4287,7 @@ function get_interfaces_with_gateway() {
 				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:
-				if (substr($ifname['if'], 0, 5) ==  "ovpnc" ||
+				if (substr($ifname['if'], 0, 4) ==  "ovpn" ||
 				    !empty($ifname['gateway']))
 					$ints[$ifdescr] = $ifdescr;
 			break;
@@ -4311,7 +4311,7 @@ function interface_has_gateway($friendly) {
 				return true;
 			break;
 			default:
-				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
+				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
 				if (!empty($ifname['gateway']))
 					return true;
@@ -4340,7 +4340,7 @@ function interface_has_gatewayv6($friendly) {
 				return true;
 				break;
 			default:
-				if (substr($ifname['if'], 0, 5) ==  "ovpnc")
+				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
 				if (!empty($ifname['gatewayv6']))
 					return true;

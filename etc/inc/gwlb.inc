@@ -522,7 +522,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:
-				if (substr($ifcfg['if'], 0, 5) ==  "ovpnc")
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv4";
 				break;
 		}
@@ -588,7 +588,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
 				break;
 			default:
-				if (substr($ifcfg['if'], 0, 5) ==  "ovpnc")
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
 				break;
 		}

@@ -78,22 +78,13 @@ function clientcmp($a, $b) {
 }
 
 if (!empty($cpzone)) {
-	$cpdb = array();
-	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db")) {
-		$captiveportallck = lock("captiveportaldb{$cpzone}");
-		$cpcontents = file("/var/db/captiveportal_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		unlock($captiveportallck);	
-	} else
-		$cpcontents = array();
+	$cpdb = captiveportal_read_db();
+	$concurrent = count($cpdb);
 
-	$concurrent = count($cpcontents);
-
-	foreach ($cpcontents as $cpcontent) {
-		$cpent = explode(",", $cpcontent);
+	foreach ($cpdb as $cpent) {
 		$sessionid = $cpent[5];
 		if ($_GET['showact'])
 			$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-		$cpdb[$sessionid] = $cpent;
 	}
 	if ($_GET['order']) {
 		if ($_GET['order'] == "ip")
@@ -168,7 +159,7 @@ if (!empty($cpzone)) {
 	<?php endif; ?>
     <td class="list sort_ignore"></td>
   </tr>
-<?php foreach ($cpdb as $sid => $cpent): ?>
+<?php foreach ($cpdb as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
@@ -178,7 +169,7 @@ if (!empty($cpzone)) {
     <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$sid;?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>
+	<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>
   </tr>
 <?php endforeach; endif; ?>
 </table>

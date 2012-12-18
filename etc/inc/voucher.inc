@@ -215,8 +215,6 @@ function voucher_expire($voucher_received) {
 	// split into an array. Useful for multiple vouchers given
 	$a_vouchers_received = preg_split("/[\t\n\r ]+/s", $voucher_received); 
 	$active_dirty = false;
-
-	$cpdb = captiveportal_read_db(false, 4); /* Indexed by Voucher */
 	$unsetindexes[] = array();
 
 	// go through all received vouchers, check their valid and extract
@@ -250,11 +248,10 @@ function voucher_expire($voucher_received) {
 				captiveportal_syslog("{$voucher} ({$roll}/{$nr}) forced to expire");
 
 				/* Check if this voucher has any active sessions */
-				if (isset($cpdb[$voucher])) {
-					$cpentry = $cpdb[$voucher];
+				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
+				if (!empty($cpentry)) {
 					captiveportal_disconnect($cpentry,null,13);
 					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");
-					unset($cpdb[$voucher]);
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else
@@ -289,7 +286,7 @@ function voucher_expire($voucher_received) {
 
 	/* Write database */
 	if (!empty($unsetindexes))
-		captiveportal_write_db($cpdb, false, $unsetindexes);
+		captiveportal_remove_entries($unsetindexes);
 
 	return true;
 }

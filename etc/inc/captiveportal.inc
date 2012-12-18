@@ -1218,8 +1218,9 @@ function captiveportal_opendb() {
 		$errormsg = "";
 		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, ruleno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER) ", $errormsg)) {
-			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, user)");
-			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (user)");
+			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
+			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
+			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
 			@sqlite_exec($DB, "CREATE INDEX starttime ON captiveportal (allow_time)");
 			@sqlite_exec($DB, "CREATE INDEX serviceid ON captiveportal (serviceid)");
 		} else

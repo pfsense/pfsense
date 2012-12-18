@@ -55,7 +55,7 @@ else
 fi
 
 if [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
-	egrep -v "^#" /tmp/bogonsv6 > /etc/bogonsv6
+	egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 	RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
 	rm /tmp/bogonsv6
 	echo "Bogons V6 file downloaded:  $RESULT" | logger

@@ -670,6 +670,9 @@ function voucher_save_db_to_config_zone() {
     if (!isset($config['voucher'][$cpzone]['enable']))
         return;   // no vouchers or don't want to save DB's
 
+    if (!is_array($config['voucher'][$cpzone]['roll']))
+	return;
+
     $voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
     // walk all active rolls and save runtime DB's to flash

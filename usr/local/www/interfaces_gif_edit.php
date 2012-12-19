@@ -52,6 +52,9 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_gifs[$id]) {
 	$pconfig['if'] = $a_gifs[$id]['if'];
+	if (!empty($a_gifs[$id]['ipaddr'])) {
+		$pconfig['if'] = $pconfig['if'] . '|' . $a_gifs[$id]['ipaddr'];
+	}
 	$pconfig['gifif'] = $a_gifs[$id]['gifif'];
 	$pconfig['remote-addr'] = $a_gifs[$id]['remote-addr'];
 	$pconfig['tunnel-remote-net'] = $a_gifs[$id]['tunnel-remote-net'];
@@ -77,13 +80,18 @@ if ($_POST) {
 			(!is_ipaddr($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
+	
+	$alias = strstr($_POST['if'],'|');
+	if ((is_ipaddrv4($alias) && !is_ipaddrv4($_POST['remote-addr'])) ||
+			(is_ipaddrv6($alias) && !is_ipaddrv6($_POST['remote-addr'])))
+		$input_errors[] = gettext("The alias IP address family has to match the family of the remote peer address.");
 
 	foreach ($a_gifs as $gif) {
 		if (isset($id) && ($a_gifs[$id]) && ($a_gifs[$id] === $gif))
 			continue;
 
 		/* FIXME: needs to perform proper subnet checks in the feature */
-		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+		if (($gif['if'] == strtok($_POST['if'],'|')) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
 			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['tunnel-remote-addr']);
 			break;
 		}
@@ -91,7 +99,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$gif = array();
-		$gif['if'] = $_POST['if'];
+		list($gif['if'], $gif['ipaddr']) = explode ("|",$_POST['if']);
 		$gif['tunnel-local-addr'] = $_POST['tunnel-local-addr'];
 		$gif['tunnel-remote-addr'] = $_POST['tunnel-remote-addr'];
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
@@ -144,9 +152,12 @@ include("head.inc");
                       <?php
 						$portlist = get_configured_interface_with_descr();
 						$carplist = get_configured_carp_interface_list();
-                                                foreach ($carplist as $cif => $carpip)
-                                                        $portlist[$cif] = $carpip." (".get_vip_descr($carpip).")";
-					  	foreach ($portlist as $ifn => $ifinfo) {
+						foreach ($carplist as $cif => $carpip)
+							$portlist[$cif] = $carpip." (".get_vip_descr($carpip).")";
+						$aliaslist = get_configured_ip_aliases_list();
+						foreach ($aliaslist as $aliasip => $aliasif)
+							$portlist[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+						foreach ($portlist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
 								echo "selected";

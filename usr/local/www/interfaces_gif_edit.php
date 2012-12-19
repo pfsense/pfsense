@@ -99,7 +99,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$gif = array();
-		list($gif['if'], $gif['ipaddr']) = explode ("|",$_POST['if']);
+		list($gif['if'], $gif['ipaddr']) = explode("|",$_POST['if']);
 		$gif['tunnel-local-addr'] = $_POST['tunnel-local-addr'];
 		$gif['tunnel-remote-addr'] = $_POST['tunnel-remote-addr'];
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];

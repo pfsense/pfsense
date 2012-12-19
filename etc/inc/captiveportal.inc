@@ -1371,7 +1371,11 @@ function captiveportal_free_dn_ruleno($ruleno) {
 }
 
 function captiveportal_get_dn_passthru_ruleno($value) {
-	global $config, $g;
+	global $config, $g, $cpzone;
+
+	$cpcfg = $config['captiveportal'][$cpzone];
+	if(!isset($cpcfg['enable']))
+		return NULL;
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {

@@ -834,13 +834,19 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		return -1;
 
 	$realif = get_real_interface($gif['if']);
+	$ipaddr = $gif['ipaddr'];
 
-	if(is_ipaddrv4($gif['remote-addr'])) {
-		$realifip = get_interface_ip($gif['if']);
+	if (is_ipaddrv4($gif['remote-addr'])) {
+		if (is_ipaddrv4($ipaddr))
+			$realifip = $ipaddr;
+		else
+			$realifip = get_interface_ip($gif['if']);
 		$realifgw = get_interface_gateway($gif['if']);
-	}
-	if(is_ipaddrv6($gif['remote-addr'])) {
-		$realifip = get_interface_ipv6($gif['if']);
+	} else if (is_ipaddrv6($gif['remote-addr'])) {
+		if (is_ipaddrv6($ipaddr))
+			$realifip = $ipaddr;
+		else
+			$realifip = get_interface_ipv6($gif['if']);
 		$realifgw = get_interface_gatewayv6($gif['if']);
 	}
 	/* make sure the parent interface is up */

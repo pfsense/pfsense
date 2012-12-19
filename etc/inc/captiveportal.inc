@@ -1371,15 +1371,11 @@ function captiveportal_free_dn_ruleno($ruleno) {
 }
 
 function captiveportal_get_dn_passthru_ruleno($value) {
-	global $config, $g, $cpzone;
+	global $config, $g;
 
-	$cpcfg = $config['captiveportal'][$cpzone];
-	if(!isset($cpcfg['enable']))
-		return NULL;
-
-	$cpruleslck = lock("captiveportalrules{$cpzone}", LOCK_EX);
-	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		captiveportal_ipfw_set_context($cpzone);
 		$ruleno = intval(`/sbin/ipfw show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 5 | /usr/bin/head -n 1`);
 		if ($rules[$ruleno]) {

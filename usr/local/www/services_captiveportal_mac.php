@@ -130,7 +130,7 @@ if ($_GET['act'] == "del") {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
 		if ($ruleno) {
 			captiveportal_free_ipfw_ruleno($ruleno);
-			$pipeno = captiveportal_get_dn_passthru_ruleno($_POST['delmac']);
+			$pipeno = captiveportal_get_dn_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
 			if ($pipeno)
 				captiveportal_free_dn_ruleno($pipeno);
 			captiveportal_ipfw_set_context($cpzone);

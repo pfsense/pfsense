@@ -128,15 +128,16 @@ if ($_POST) {
 			$ip['bw_up'] = $_POST['bw_up'];
 		if ($_POST['bw_down'])
 			$ip['bw_down'] = $_POST['bw_down'];
+		$oldmask = "";
 		if (isset($id) && $a_allowedips[$id]) {
 			$oldip = $a_allowedips[$id]['ip'];
 			if (!empty($a_allowedips[$id]['sn']))
-				$oldip .= "/{$a_allowedips[$id]['sn']}";
+				$oldmask .= "/{$a_allowedips[$id]['sn']}";
 			$a_allowedips[$id] = $ip;
 		} else {
 			$oldip = $ip['ip'];
 			if (!empty($ip['sn']))
-				$oldip .= "/{$ip['sn']}";
+				$oldmask .= "/{$ip['sn']}";
 			$a_allowedips[] = $ip;
 		}
 		allowedips_sort();
@@ -144,9 +145,15 @@ if ($_POST) {
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
+			captiveportal_ipfw_set_context($cpzone);
+                        if (is_ipaddr($oldip)) { 
+                                if (!empty($oldmask))
+                                        $ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
+                                else
+                                        $ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
+                        }
 			$rules = "table 3 delete {$oldip}";
 			$rules .= "table 4 delete {$oldip}";
-			$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 				$rules .= "pipe delete {$ipfw['dnpipe']}";

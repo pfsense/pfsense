@@ -1346,7 +1346,7 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 			break;
 		}
 	} else {
-		$rules = array_pad(array(), $rulenos_range_max - $rulenos_start, false);
+		$rules = array_pad(array(), $rulenos_range_max, false);
 		$rules[$rulenos_start] = "used";
 		$rules[++$rulenos_start] = "used";
 		$ruleno = $rulenos_start;
@@ -1423,7 +1423,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_m
 			break;
 		}
 	} else {
-		$rules = array_pad(array(), $rulenos_range_max - $rulenos_start, false);
+		$rules = array_pad(array(), $rulenos_range_max, false);
 		$rules[$rulenos_start] = "used";
 		$rules[++$rulenos_start] = "used";
 		$ruleno = 2;

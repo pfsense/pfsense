@@ -3162,6 +3162,7 @@ function interface_6rd_configure($interface = "wan") {
 
 	/* stf approach only works when embedding the entire 32 bits of the v4 */
 	mwexec("/sbin/ifconfig stf0 create");
+	pfSense_interface_flags("stf0", IFF_LINK2);
 	mwexec("/sbin/ifconfig stf0 inet6 {$rd6prefix}/{$rd6prefixlen}");
 	log_error("Created 6rd interface stf0 {$rd6prefix}/{$rd6prefixlen}");
 
@@ -3257,6 +3258,7 @@ function interface_6to4_configure($interface = "wan"){
 	/* setup the stf interface */
 	mwexec("/sbin/ifconfig stf0 destroy");
 	mwexec("/sbin/ifconfig stf0 create");
+	pfSense_interface_flags("stf0", IFF_LINK2);
 	mwexec("/sbin/ifconfig stf0 inet6 {$stflanpr} prefixlen 16");
 
 	log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for stf0, route {$stfbrgw}");

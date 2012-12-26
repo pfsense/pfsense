@@ -62,7 +62,10 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	$i=0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
-		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {") {
+		if ($leases_contents[$i] == "  iaaddr {$_GET['deleteip']} {") {
+			/* The iaaddr line is two lines down from the start of the lease, so remove those two lines. */
+			array_pop($newleases_contents);
+			array_pop($newleases_contents);
 			/* Skip to the end of the lease declaration */
 			do {
 				$i++;

@@ -1132,6 +1132,7 @@ include("head.inc");
 			</td>
 			</tr>
 		</table>
+		<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td width="7%" class="listhdrr"><?=gettext("Static ARP");?></td>
@@ -1193,6 +1194,7 @@ include("head.inc");
 		</td>
 		</tr>
 		</table>
+		<?php endif; ?>
 	</div>
 </td>
 </tr>

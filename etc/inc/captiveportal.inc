@@ -835,7 +835,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	
 	if (is_ipaddr($dbent[2])) {
 		captiveportal_ipfw_set_context($cpzone);
-		/* Delete client's ip entry from tables 3 and 4. */
+		/* Delete client's ip entry from tables 1 and 2. */
 		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 1, $dbent[2]);
 		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 2, $dbent[2]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */

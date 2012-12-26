@@ -163,6 +163,9 @@ if (is_array($dhcpdconf)) {
 		if (!is_array($dhcpdconf['staticmap']))
 			$dhcpdconf['staticmap'] = array();
 		$a_maps = &$dhcpdconf['staticmap'];
+	} else {
+		// Options that exist only in pools
+		$pconfig['descr'] = $dhcpdconf['descr'];
 	}
 
 	// Options that can be global or per-pool.
@@ -401,6 +404,9 @@ if ($_POST) {
 				mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
 			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
 			$dhcpdconf['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+		} else {
+			// Options that exist only in pools
+			$dhcpdconf['descr'] = $_POST['descr'];
 		}
 
 		// Options that can be global or per-pool.
@@ -547,6 +553,9 @@ include("head.inc");
 			enable_over = true;
 		<?php endif; ?>
 		endis = !(document.iform.enable.checked || enable_over);
+		<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+			document.iform.descr.disabled = endis;
+		<?php endif; ?>
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
 		document.iform.wins1.disabled = endis;
@@ -690,6 +699,14 @@ include("head.inc");
 				<strong><?=gettext("Deny unknown clients");?></strong><br>
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
+			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+				<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Pool Description");?></td>
+				<td width="78%" class="vtable">
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
@@ -761,8 +778,9 @@ include("head.inc");
 				<?php echo gettext("If you need additional pools of addresses inside of this subnet outside the above Range, they may be specified here."); ?>
 				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="45%" class="listhdrr"><?=gettext("Pool Start");?></td>
-					<td width="45%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="35%" class="listhdrr"><?=gettext("Pool Start");?></td>
+					<td width="35%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="20%" class="listhdrr"><?=gettext("Description");?></td>
 					<td width="10%" class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -782,6 +800,9 @@ include("head.inc");
 				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
 					<?=htmlspecialchars($poolent['range']['to']);?>&nbsp;
 				</td>
+				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+					<?=htmlspecialchars($poolent['descr']);?>&nbsp;
+				</td>
 				<td valign="middle" nowrap class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -795,7 +816,7 @@ include("head.inc");
 				<?php $i++; endforeach; ?>
 				<?php endif; ?>
 				<tr>
-				<td class="list" colspan="2"></td>
+				<td class="list" colspan="3"></td>
 				<td class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>

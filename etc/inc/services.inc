@@ -6,7 +6,7 @@
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2010	Ermal Lu�i
+	Copyright (C) 2010	Ermal Luci
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -1493,15 +1493,9 @@ function services_dyndns_configure($int = "") {
 			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
-			$failovergroup = interface_gateway_group_member($int);
-			if (!empty($int) && $int == $dyndns['interface']) {
+			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
-			} elseif (is_array($gwgroups[$dyndns['interface']])){
-				services_dyndns_configure_client($dyndns);
-				sleep(1);				
-			} else {
-				continue;
 			}
 		}
 

@@ -168,6 +168,24 @@ function get_pkg_id($pkg_name) {
 	return -1;
 }
 
+/****f* pkg-utils/get_pkg_internal_name
+ * NAME
+ *   get_pkg_internal_name - Find a package's internal name (e.g. squid3 internal name is squid)
+ * INPUTS
+ *   $package - array of package data from config
+ * RESULT
+ *   string - internal name (if defined) or default to package name
+ ******/
+function get_pkg_internal_name($package) {
+	if (isset($package['internal_name']) && ($package['internal_name'] != "")) {
+		/* e.g. name is Ipguard-dev, internal name is ipguard */
+		$pkg_internal_name = $package['internal_name'];
+	} else {
+		$pkg_internal_name = $package['name'];
+	}
+	return $pkg_internal_name;
+}
+
 /****f* pkg-utils/get_pkg_info
  * NAME
  *   get_pkg_info - Retrieve package information from pfsense.com.
@@ -240,7 +258,7 @@ function resync_all_package_configs($show_message = false) {
 			echo " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
 		if($g['booting'] != true)
-			stop_service($package['name']);
+			stop_service(get_pkg_internal_name($package));
 		sync_package($idx, true, true);
 		if($pkg_interface == "console") 
 			echo "\n" . gettext("Syncing packages:");
@@ -356,10 +374,9 @@ function uninstall_package($pkg_name) {
 		}
 	}
 
-	stop_service($pkg_name);
-
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
+		stop_service(get_pkg_internal_name($config['installedpackages']['package'][$id]));
 		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package_pbi'];
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
@@ -1281,8 +1298,9 @@ function stop_packages() {
 	if (is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
-			stop_service($package['name']);
-			unset($rcfiles[RCFILEPREFIX . $package['name'] . ".sh"]);
+			$internal_name = get_pkg_internal_name($package);
+			stop_service($internal_name);
+			unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 			echo "done.\n";
 		}
 	}

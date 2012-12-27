@@ -315,7 +315,7 @@ switch($action)
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tbody>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Perform Self Tests"); ?></td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Perform Self-tests"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Test type"); ?></td>
@@ -360,7 +360,7 @@ switch($action)
 					<td width="22%" valign="top" class="vncell"><?=gettext("Log type"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="radio" name="type" value="error" checked /><?=gettext("Error"); ?><br />
-						<input type="radio" name="type" value="selftest" /><?=gettext("Self Test"); ?><br />
+						<input type="radio" name="type" value="selftest" /><?=gettext("Self-test"); ?><br />
 					</td>
 				</tr>
 				<tr>

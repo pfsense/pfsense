@@ -1850,16 +1850,17 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
+			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
 			captiveportal_ipfw_set_context($cpzone);
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, $clientmac, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
 			else
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, NULL, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, $clientmac, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
 			else
-				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, NULL, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

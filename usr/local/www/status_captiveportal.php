@@ -79,13 +79,7 @@ function clientcmp($a, $b) {
 
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
-	$concurrent = count($cpdb);
 
-	foreach ($cpdb as $cpent) {
-		$sessionid = $cpent[5];
-		if ($_GET['showact'])
-			$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-	}
 	if ($_GET['order']) {
 		if ($_GET['order'] == "ip")
 			$order = 2;
@@ -165,8 +159,9 @@ if (!empty($cpzone)) {
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
     <td class="listr"><?=$cpent[4];?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-	<?php if ($_GET['showact']): ?>
-    <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
+	<?php if ($_GET['showact']):
+	$last_act = captiveportal_get_last_activity($cpent[2]); ?>
+    <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
 	<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>

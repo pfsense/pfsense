@@ -1549,18 +1549,25 @@ function getNasIP()
 function portal_ip_from_client_ip($cliip) {
 	global $config, $cpzone;
 
+	$isipv6 = is_ipaddrv6($cliip);
 	$interfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
 	foreach ($interfaces as $cpif) {
-		$ip = get_interface_ip($cpif);
-		$sn = get_interface_subnet($cpif);
+		if ($isipv6) {
+			$ip = get_interface_ipv6($cpif);
+			$sn = get_interface_subnetv6($cpif);
+		} else {
+			$ip = get_interface_ip($cpif);
+			$sn = get_interface_subnet($cpif);
+		}
 		if (ip_in_subnet($cliip, "{$ip}/{$sn}"))
 			return $ip;
 	}
 
-	$iface = exec_command("/sbin/route -n get {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
+	$inet = ($isipv6) ? '-inet6' : '-inet';
+	$iface = exec_command("/sbin/route -n get {$inet} {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
 	$iface = trim($iface, "\n");
 	if (!empty($iface)) {
-		$ip = find_interface_ip($iface);
+		$ip = ($isipv6) ? find_interface_ipv6($iface) : find_interface_ip($iface);
 		if (is_ipaddr($ip))
 			return $ip;
 	}

@@ -1906,8 +1906,12 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$config['captiveportal'][$cpzone]['zoneid'];
 			if (!$ifip)
 				$ourhostname = $config['system']['hostname'] . ":{$httpport}";
-			else
-				$ourhostname = "{$ifip}:{$httpport}";
+			else {
+				if (is_ipaddrv6($ifip))
+					$ourhostname = "[{$ifip}]:{$httpport}";
+				else
+					$ourhostname = "{$ifip}:{$httpport}";
+			}
 			$logouturl = "http://{$ourhostname}/";
 		}
 

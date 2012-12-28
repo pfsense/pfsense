@@ -1217,7 +1217,7 @@ function captiveportal_opendb() {
 	else {
 		$errormsg = "";
 		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, ruleno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER) ", $errormsg)) {
+		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER) ", $errormsg)) {
 			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
 			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
 			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
@@ -1256,7 +1256,7 @@ function captiveportal_remove_entries($remove) {
 	if (!is_array($remove) || empty($remove))
 		return;
 
-	$query = "DELETE FROM captiveportal WHERE sessiondid in (";
+	$query = "DELETE FROM captiveportal WHERE sessionid in (";
 	foreach($remove as $idx => $rid) {
 		$query .= "'{$unindex}'";
 		if ($idx < (count($remove) - 1))
@@ -1856,14 +1856,22 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;
+			
+			/* handle empty attributes */
+			$session_timeout = (!empty($attributes['session_timeout'])) ? $attributes['session_timeout'] : 'NULL';
+			$idle_timeout = (!empty($attributes['idle_timeout'])) ? $attributes['idle_timeout'] : 'NULL';
+			$session_terminate_time = (!empty($attributes['session_terminate_time'])) ? $attributes['session_terminate_time'] : 'NULL';
+
+			/* escape username */
+			$safe_username = sqlite_escape_string($username);
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
 			$cpdb[] = array($allow_time, $pipeno, $clientip, $clientmac, $username, $sessionid, $bpassword,
 				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time'], $radiusctx);
-			$insertquery = "INSERT INTO captiveportal (allow_time, ruleno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time) ";
-			$insertquery .= " VALUES ({$allow_time}, {$ruleno}, '{$clientip}', '{$clientmac}', '{$username}', '{$sessionid}', '{$bpassword}',";
-			$insertquery .= "{$attributes['session_timeout']}, {$attributes['idle_timeout']}, {$attributes['session_terminate_time']})";
+			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time) ";
+			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
+			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time})";
 
 			/* store information to database */
 			captiveportal_write_db($insertquery);

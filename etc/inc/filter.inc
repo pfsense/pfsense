@@ -336,12 +336,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	layer7_start_l7daemon();
 
 	if(!empty($filterdns)) {
-		$filterdnsfd = fopen("{$g['varetc_path']}/filterdns.conf", "w");
-		if($filterdnsfd) {
-			fwrite($filterdnsfd, $filterdns);
-			fclose($filterdnsfd);
-		}
 		killbypid("{$g['tmp_path']}/filterdns.pid");
+		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
 		/*
 		 * FilterDNS has three debugging levels. The default choosen is 1.
 		 * Availabe are level 2 and greater then 2.

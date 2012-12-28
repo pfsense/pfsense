@@ -44,7 +44,6 @@
 
 /* include all configuration functions */
 require_once("globals.inc");
-require_once("cmd_chain.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
 
@@ -1753,16 +1752,10 @@ EOD;
 function interfaces_carp_setup() {
 	global $g, $config;
 
-	$balanacing = "";
-	$pfsyncinterface = "";
-	$pfsyncenabled = "";
-	if(isset($config['system']['developerspew'])) {
+	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "interfaces_carp_setup() being called $mt\n";
 	}
-
-	// Prepare CmdCHAIN that will be used to execute commands.
-	$cmdchain = new CmdCHAIN();	
 
 	if ($g['booting']) {
 		echo gettext("Configuring CARP settings...");
@@ -1770,7 +1763,7 @@ function interfaces_carp_setup() {
 	}
 
 	/* suck in configuration items */
-	if($config['hasync']) {
+	if ($config['hasync']) {
 		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
 		$balanacing = $config['hasync']['balancing'];
 		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
@@ -1781,46 +1774,30 @@ function interfaces_carp_setup() {
 		unset($pfsyncenabled);
 	}
 
-	if($balanacing) {
-		$cmdchain->add(gettext("Enable CARP ARP-balancing"), "/sbin/sysctl net.inet.carp.arpbalance=1", true);
-		$cmdchain->add(gettext("Disallow CARP preemption"), "/sbin/sysctl net.inet.carp.preempt=0", true);
+	if ($balanacing) {
+		mwexec("/sbin/sysctl net.inet.carp.arpbalance=1", true);
+		mwexec("/sbin/sysctl net.inet.carp.preempt=0", true);
 	} else
-		$cmdchain->add(gettext("Enable CARP preemption"), "/sbin/sysctl net.inet.carp.preempt=1", true);		
+		mwexec("/sbin/sysctl net.inet.carp.preempt=1", true);		
 
-	$cmdchain->add(gettext("Enable CARP logging"), "/sbin/sysctl net.inet.carp.log=1", true);
+	mwexec("sbin/sysctl net.inet.carp.log=1", true);
 	if (!empty($pfsyncinterface))
 		$carp_sync_int = get_real_interface($pfsyncinterface);
-
-	if($g['booting']) {
-		/*    install rules to alllow pfsync to sync up during boot
-		 *    carp interfaces will remain down until the bootup sequence finishes
-		 */
-		$fd = fopen("{$g['tmp_path']}/rules.boot", "w");
-		if ($fd) {
-			fwrite($fd, "block quick proto carp \n");
-			fwrite($fd, "block quick proto pfsync \n");
-			fwrite($fd, "pass out quick from any to any keep state\n");
-			fclose($fd);
-			mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.boot");
-		} else
-			log_error(gettext("Could not create rules.boot file!"));
-	}
+	else
+		unset($carp_sync_int);
 
 	/* setup pfsync interface */
-	if($carp_sync_int and $pfsyncenabled) {
+	if ($carp_sync_int and $pfsyncenabled) {
 		if (is_ipaddr($pfsyncpeerip))
-			$cmdchain->add(gettext("Bring up pfsync0 syncpeer"), "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);						
+			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);						
 		else
-			$cmdchain->add(gettext("Bring up pfsync0 syncdev"), "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);			
-	} else
-		$cmdchain->add(gettext("Bring up pfsync0"), "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
+			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);			
 
-	sleep(1);
+		sleep(1);
 
-	/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issues
-	 * for existing sessions.
-	 */
-	if ($config['hasync']['pfsyncenabled'] === "on"){
+		/* XXX: Handle an issue with pfsync(4) and carp(4). In a cluster carp will come up before pfsync(4) has updated and so will cause issues
+		 * for existing sessions.
+		 */
 		log_error("waiting for pfsync...");
 		$i = 0;
 		while (intval(trim(`/sbin/ifconfig pfsync0 | /usr/bin/grep 'syncok: 0' | /usr/bin/grep -v grep | /usr/bin/wc -l`)) == 0 && $i < 30) {
@@ -1832,16 +1809,10 @@ function interfaces_carp_setup() {
 	}
 
 	if($config['virtualip']['vip'])
-		$cmdchain->add(gettext("Allow CARP."), "/sbin/sysctl net.inet.carp.allow=1", true);				
+		mwexec("/sbin/sysctl net.inet.carp.allow=1", true);				
 	else
-		$cmdchain->add(gettext("Disallow CARP."), "/sbin/sysctl net.inet.carp.allow=0", true);		
+		mwexec("/sbin/sysctl net.inet.carp.allow=0", true);		
 	
-	if($g['debug'])
-		$cmdchain->setdebug(); // optional for verbose logging
-
-	$cmdchain->execute();
-	$cmdchain->clear();
-
 	if ($g['booting']) {
 		unmute_kernel_msgs();
 		echo gettext("done.") . "\n";

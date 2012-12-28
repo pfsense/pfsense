@@ -1,10 +1,10 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs_routing.php
+	diag_logs_sshd.php
 	part of pfSense
-
-	Copyright (C) 2012 Jim Pingle <jimp@pfsense.org>.
+	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -30,29 +30,29 @@
 */
 
 /*	
-	pfSense_MODULE:	routing
+	pfSense_MODULE:	sshd
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-routing
-##|*NAME=Status: System logs: Routing page
-##|*DESCR=Allow access to the 'Status: System logs: System: Routing' page.
-##|*MATCH=diag_logs_routing.php*
+##|*IDENT=page-status-systemlogs-sshd
+##|*NAME=Status: System logs: SSHD page
+##|*DESCR=Allow access to the 'Status: System logs: SSHD' page.
+##|*MATCH=diag_logs_sshd.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$routing_logfile = "{$g['varlog_path']}/routing.log";
+$sshd_logfile = "{$g['varlog_path']}/sshd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) 
-	clear_log_file($routing_logfile);
+	clear_log_file($sshd_logfile);
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Routing"));
-$shortcut_section = "routing";
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("SSHD"));
+$shortcut_section = "sshd";
 include("head.inc");
 
 ?>
@@ -63,7 +63,7 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("System"), true, "diag_logs.php");
+	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
 	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
 	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
 	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
@@ -72,35 +72,35 @@ include("head.inc");
 	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
 	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
 	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("NTP"), true, "diag_logs_sshd.php");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
   <tr><td class="tabnavtbl">
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("General"), false, "/diag_logs.php");
-	$tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
-	$tab_array[] = array(gettext("Routing"), true, "/diag_logs_routing.php");
-	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
-	$tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
-	$tab_array[] = array(gettext("SSHD"), false, "/diag_logs_sshd.php");
+        $tab_array = array();
+        $tab_array[] = array(gettext("General"), false, "/diag_logs.php");
+        $tab_array[] = array(gettext("Gateways"), false, "/diag_logs_gateways.php");
+        $tab_array[] = array(gettext("Routing"), false, "/diag_logs_routing.php");
+        $tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
+        $tab_array[] = array(gettext("Wireless"), false, "/diag_logs_wireless.php");
+        $tab_array[] = array(gettext("SSHD"), true, "/diag_logs_sshd.php");
         display_top_tabs($tab_array);
 ?>
-                </td>
-        </tr>
+  </td></tr>
   <tr>
     <td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  <?php printf(gettext("Routing daemon log entries"),$nentries);?></td>
+			  <?php printf(gettext("Last %s SSHD log entries"), $nentries);?></td>
 		  </tr>
-		  <?php dump_clog($routing_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_routing.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
+		  <?php dump_clog($sshd_logfile, $nentries); ?>
+		<tr><td><br>
+		<form action="diag_logs_sshd.php" method="post">
+			<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
 		</table>
 	</div>
 </form>

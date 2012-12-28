@@ -555,7 +555,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
+		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','sshd','dnsmasq','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
 		$syslogconf = "";
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
@@ -631,6 +631,12 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging']))
 			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/wireless.log\n";
 		if (isset($syslogcfg['hostapd']))
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+
+        $syslogconf .= "!sshd\n";
+		if (!isset($syslogcfg['disablelocallogging']))
+			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/sshd.log\n";
+		if (isset($syslogcfg['sshd']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
 		$syslogconf .= "!-{$facilitylist}\n";

@@ -48,17 +48,17 @@ if [ "$BOGON_V4_MD5" = "$ON_DISK_V4_MD5" ]; then
 	egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
 	RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
 	rm /tmp/bogons
-	echo "Bogons V4 file downloaded:  $RESULT" | logger
+	echo "$RESULT" |awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
 else
 	echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv4.txt.md5 (md5 mismatch)" | logger
 	md5_error="true"
 fi
 
 if [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
-	egrep -v "^#" /tmp/bogonsv6 > /etc/bogonsv6
+	egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 	RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
 	rm /tmp/bogonsv6
-	echo "Bogons V6 file downloaded:  $RESULT" | logger
+	echo "$RESULT" |awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
 else
 	echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv6.txt.md5 (md5 mismatch)" | logger
 	md5_error="true"

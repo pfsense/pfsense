@@ -1257,7 +1257,7 @@ function captiveportal_remove_entries($remove) {
 		return;
 
 	$query = "DELETE FROM captiveportal WHERE sessiondid in (";
-	foreach($remove as $idx => $rid) {
+	foreach($remove as $idx => $unindex) {
 		$query .= "'{$unindex}'";
 		if ($idx < (count($remove) - 1))
 			$query .= ",";

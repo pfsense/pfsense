@@ -1361,7 +1361,7 @@ function captiveportal_free_dn_ruleno($ruleno) {
         global $config, $g;
 
         $cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
-        if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
+        if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
                 $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
                 $rules[$ruleno] = false;
                 $rules[++$ruleno] = false;

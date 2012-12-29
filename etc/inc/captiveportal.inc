@@ -873,17 +873,19 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* read database */
-	$cpentry = captiveportal_read_db("WHERE sessionid = '{$sessionid}'");
+	$result = captiveportal_read_db("WHERE sessionid = '{$sessionid}'");
 
 	/* find entry */
-	if (!empty($cpentry)) {
+	if (!empty($result)) {
 		captiveportal_write_db("DELETE FROM captiveportal WHERE sessionid = '{$sessionid}'");
 
-		if (empty($cpentry[10]))
-			$cpentry[10] = 'first';
-		captiveportal_disconnect($cpentry, $radiusservers[$cpentry[10]], $term_cause);
-		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
-		unset($cpentry);
+		foreach ($result as $cpentry) {
+			if (empty($cpentry[10]))
+				$cpentry[10] = 'first';
+			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[10]], $term_cause);
+			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
+		}
+		unset($result);
 	}
 }
 

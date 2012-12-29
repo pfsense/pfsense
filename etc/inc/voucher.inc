@@ -94,14 +94,14 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
-	$dbent_ser = serialize($dbent);
+	$dbent_str = serialize($dbent);
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = $cpzone;
 	\$radiusservers = captiveportal_get_radius_servers();
-	\$dbent = unserialize($dbent_ser);
+	\$dbent = unserialize($dbent_str);
 	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $stop_time);
 
 EOF;

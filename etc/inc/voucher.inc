@@ -51,7 +51,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = $cpzone;
-	voucher_expire(\$vouchers);
+	voucher_expire($vouchers);
 
 EOF;
 
@@ -100,7 +100,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = $cpzone;
 	\$radiusservers = captiveportal_get_radius_servers();
-	captiveportal_disconnect(\$dbent, \$radiusservers, \$term_cause, \$stop_time);
+	captiveportal_disconnect($dbent, \$radiusservers, $term_cause, $stop_time);
 
 EOF;
 

@@ -1551,18 +1551,25 @@ function getNasIP()
 function portal_ip_from_client_ip($cliip) {
 	global $config, $cpzone;
 
+	$isipv6 = is_ipaddrv6($cliip);
 	$interfaces = explode(",", $config['captiveportal'][$cpzone]['interface']);
 	foreach ($interfaces as $cpif) {
-		$ip = get_interface_ip($cpif);
-		$sn = get_interface_subnet($cpif);
+		if ($isipv6) {
+			$ip = get_interface_ipv6($cpif);
+			$sn = get_interface_subnetv6($cpif);
+		} else {
+			$ip = get_interface_ip($cpif);
+			$sn = get_interface_subnet($cpif);
+		}
 		if (ip_in_subnet($cliip, "{$ip}/{$sn}"))
 			return $ip;
 	}
 
-	$iface = exec_command("/sbin/route -n get {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
+	$inet = ($isipv6) ? '-inet6' : '-inet';
+	$iface = exec_command("/sbin/route -n get {$inet} {$cliip} | /usr/bin/awk '/interface/ { print \$2; };'");
 	$iface = trim($iface, "\n");
 	if (!empty($iface)) {
-		$ip = find_interface_ip($iface);
+		$ip = ($isipv6) ? find_interface_ipv6($iface) : find_interface_ip($iface);
 		if (is_ipaddr($ip))
 			return $ip;
 	}
@@ -1845,16 +1852,17 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
+			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
 			captiveportal_ipfw_set_context($cpzone);
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, $clientmac, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
 			else
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, 32, NULL, $bw_up_pipeno);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, $clientmac, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
 			else
-				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, 32, NULL, $bw_down_pipeno);
+				pfSense_ipfw_Tableaction("", IP_FW_TABLE_ADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;
@@ -1916,8 +1924,12 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$config['captiveportal'][$cpzone]['zoneid'];
 			if (!$ifip)
 				$ourhostname = $config['system']['hostname'] . ":{$httpport}";
-			else
-				$ourhostname = "{$ifip}:{$httpport}";
+			else {
+				if (is_ipaddrv6($ifip))
+					$ourhostname = "[{$ifip}]:{$httpport}";
+				else
+					$ourhostname = "{$ifip}:{$httpport}";
+			}
 			$logouturl = "http://{$ourhostname}/";
 		}
 

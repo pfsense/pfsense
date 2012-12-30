@@ -87,6 +87,7 @@ include("head.inc");
 	$tab_array[] = array(gettext("Routing"), false, "/diag_logs_routing.php");
 	$tab_array[] = array(gettext("Resolver"), false, "/diag_logs_resolver.php");
 	$tab_array[] = array(gettext("Wireless"), true, "/diag_logs_wireless.php");
+	$tab_array[] = array(gettext("SSHD"), false, "/diag_logs_sshd.php");
         display_top_tabs($tab_array);
 ?>
                 </td>

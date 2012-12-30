@@ -1238,7 +1238,7 @@ function captiveportal_read_db($query = "") {
 	$DB = captiveportal_opendb();
 	if ($DB) {
 		sqlite_exec($DB, "BEGIN");
-		if (empty($query))
+		if (!empty($query))
 			$cpdb = @sqlite_array_query($DB, "SELECT * FROM captiveportal {$query}", SQLITE_NUM);
 		else {
 			$response = @sqlite_unbuffered_query($DB, "SELECT * FROM captiveportal", SQLITE_NUM);

@@ -180,6 +180,12 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
+                    <?php
+                        $ip = getenv('REMOTE_ADDR');
+                        $mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+                        $mac = str_replace("\n","",$mac);
+                    ?>
+                    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
                     <br> 
                     <span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span></td>
                 </tr>

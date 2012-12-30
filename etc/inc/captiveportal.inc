@@ -1259,7 +1259,7 @@ function captiveportal_remove_entries($remove) {
 		return;
 
 	$query = "DELETE FROM captiveportal WHERE sessionid in (";
-	foreach($remove as $idx => $rid) {
+	foreach($remove as $idx => $unindex) {
 		$query .= "'{$unindex}'";
 		if ($idx < (count($remove) - 1))
 			$query .= ",";
@@ -1363,7 +1363,7 @@ function captiveportal_free_dn_ruleno($ruleno) {
         global $config, $g;
 
         $cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
-        if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
+        if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
                 $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
                 $rules[$ruleno] = false;
                 $rules[++$ruleno] = false;

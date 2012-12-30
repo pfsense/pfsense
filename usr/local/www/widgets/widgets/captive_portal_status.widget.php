@@ -44,7 +44,8 @@ require_once("captiveportal.inc");
 
 <?php
 
-if ($_GET['act'] == "del") {
+if (($_GET['act'] == "del") && (!empty($_GET['zone']))) {
+	$cpzone = $_GET['zone'];
 	captiveportal_disconnect_client($_GET['id']);
 }
 
@@ -59,20 +60,15 @@ if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 
-$cpdb = array();
+$cpdb_all = array();
 
 foreach ($a_cp as $cpzone => $cp) {
-	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.db")) {
-		$captiveportallck = lock('captiveportaldb');
-		$cpcontents = file("{$g['vardb_path']}/captiveportal_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		unlock($captiveportallck);
-		foreach ($cpcontents as $cpcontent) {
-			$cpent = explode(",", $cpcontent);
-			$sessionid = $cpent[5];
-			if ($_GET['showact'])
-				$cpent[5] = captiveportal_get_last_activity($cpent[2]);
-			$cpdb[$sessionid] = $cpent;
-		}
+	$cpdb = captiveportal_read_db();
+	foreach ($cpdb as $cpent) {
+		$cpent[10] = $cpzone;
+		if ($_GET['showact'])
+			$cpent[11] = captiveportal_get_last_activity($cpent[2]);
+		$cpdb_all[] = $cpent;
 	}
 }
 
@@ -85,9 +81,11 @@ if ($_GET['order']) {
                	$order = 4;
 	else if ($_GET['order'] == "lastact")
 		$order = 5;
+	else if ($_GET['order'] == "zone")
+		$order = 10;
 	else
 		$order = 0;
-	usort($cpdb, "clientcmp");
+	usort($cpdb_all, "clientcmp");
 }
 ?>
 <table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -100,17 +98,17 @@ if ($_GET['order']) {
     <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>"><?=gettext("Last activity");?></a></td>
 	<?php endif; ?>
   </tr>
-<?php foreach ($cpdb as $sid => $cpent): ?>
+<?php foreach ($cpdb_all as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
     <td class="listr"><?=$cpent[4];?>&nbsp;</td>
 	<?php if ($_GET['showact']): ?>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-    <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
+    <td class="listr"><?php if ($cpent[11] && ($cpent[11] > 0)) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[11]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$sid;?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&zone=<?=$cpent[10];?>&id=<?=$cpent[5];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
   </tr>
 <?php endforeach; ?>
 </table>

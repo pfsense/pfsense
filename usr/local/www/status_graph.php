@@ -79,7 +79,14 @@ if ($_GET['if']) {
 		exit;
 	}
 } else {
-	$curif = "wan";
+	if (empty($ifdescrs["wan"])) {
+		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
+		reset($ifdescrs);
+		$curif = key($ifdescrs);
+	}
+	else {
+		$curif = "wan";
+	}
 }
 if ($_GET['sort']) {
 	$cursort = $_GET['sort'];

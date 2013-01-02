@@ -336,13 +336,17 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	layer7_start_l7daemon();
 
 	if(!empty($filterdns)) {
-		killbypid("{$g['tmp_path']}/filterdns.pid");
 		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
-		/*
-		 * FilterDNS has three debugging levels. The default choosen is 1.
-		 * Availabe are level 2 and greater then 2.
-		 */
-		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
+		if (isvalidpid("{$g['tmp_path']}/filterdns.pid"))
+			sigkillbypid("{$g['tmp_path']}/filterdns.pid", "HUP");
+		else {
+			killbypid("{$g['tmp_path']}/filterdns.pid");
+			/*
+			 * FilterDNS has three debugging levels. The default choosen is 1.
+			 * Availabe are level 2 and greater then 2.
+			 */
+			mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
+		}
 	}
 
 	/* run items scheduled for after filter configure run */

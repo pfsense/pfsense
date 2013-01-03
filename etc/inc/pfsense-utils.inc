@@ -1199,7 +1199,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['inbytes'] = $in4_pass + $in4_block;
 	$ifinfo['outbytes'] = $out4_pass + $out4_block;
 	$ifinfo['inpkts'] = $in4_pass_packets + $in4_block_packets;
-	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
+	$ifinfo['outpkts'] = $out4_pass_packets + $out4_block_packets;
 		
 	$ifconfiginfo = "";
 	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];

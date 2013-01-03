@@ -124,11 +124,14 @@ if ($_GET['act'] == "del") {
 
 		
 		if (!$input_errors) {
+			if (!session_id())
+				session_start();
 			$user = getUserEntry($_SESSION['Username']);
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				header("Location: firewall_virtual_ip.php");
 				exit;
 			}
+			session_commit();
 
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {

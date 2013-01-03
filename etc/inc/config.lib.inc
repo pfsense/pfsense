@@ -497,14 +497,21 @@ function write_config($desc="Unknown", $backup = true) {
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 	*/
 
+	if (!session_id())
+		session_start();
 	if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 		$user = getUserEntry($_SESSION['Username']);
-		if (is_array($user) && userHasPrivilege($user, "user-config-readonly"))
+		if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
+			session_commit();
 			return false;
+		}
 	}
+
 	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
 	if (!empty($_SERVER['REMOTE_ADDR']))
 		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+
+	session_commit();
 
 	if($backup)
 		backup_config();

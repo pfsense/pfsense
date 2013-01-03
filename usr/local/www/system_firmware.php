@@ -213,7 +213,10 @@ include("head.inc");
 <form action="system_firmware.php" method="post" enctype="multipart/form-data">
 <?php
 	/* Construct an upload_id for this session */
-	$upload_id = "up". $_SESSION['Username'];
+	if (!session_id())
+		$upload_id = uniqid();
+	else
+		$upload_id = session_id();
 ?>
 <input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" /> 
 <?php include("fbegin.inc"); ?>

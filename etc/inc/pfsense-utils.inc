@@ -50,8 +50,13 @@
  ******/
 function have_natonetooneruleint_access($if) {
 	$security_url = "firewall_nat_1to1_edit.php?if=". strtolower($if);
-	if(isAllowedPage($security_url, $_SESSION['Username'])) 
+	if (!session_id())
+		session_start();
+	if(isAllowedPage($security_url, $_SESSION['Username']))  {
+		session_commit();
 		return true;
+	}
+	session_commit();
 	return false;
 }
 

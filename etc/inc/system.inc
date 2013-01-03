@@ -828,13 +828,12 @@ function system_generate_lighty_config($filename,
 	}
 
 	if($captive_portal !== false)  {
-		$captiveportal = ",\"mod_rewrite\"";
+		$captiveportal = ",\"mod_rewrite\",\"mod_evasive\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
-		$captive_portal_module = "";
 
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
 		if(empty($maxprocperip))
-			$maxprocperip = 4;
+			$maxprocperip = 10;
 		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['tmp_path']}/captiveportal/\" )\n";
@@ -844,7 +843,6 @@ function system_generate_lighty_config($filename,
 	} else {
 		$captiveportal = "";
 		$captive_portal_rewrite = "";
-		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"{$g['tmp_path']}/\", \"/var/\" )\n";
 		$server_max_request_size = "server.max-request-size    = 2097152";
@@ -887,64 +885,32 @@ function system_generate_lighty_config($filename,
 			$max_procs += 4; // 6 worker processes
 		}
 		$bin_environment =  <<<EOC
-			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "0",
-				"PHP_FCGI_MAX_REQUESTS" => "500"
-			),
 EOC;
+	}
 
-	} else if ($avail > 0 and $avail < 128) {
-		$bin_environment = <<<EOC
-			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "0",
-				"PHP_FCGI_MAX_REQUESTS" => "2",
-			),
-
-EOC;
-	} else
-		$bin_environment =  <<<EOC
-			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "0",
-				"PHP_FCGI_MAX_REQUESTS" => "500"
-			),
-EOC;
-
-	if($fast_cgi_enable == true) {
-		$module = "\"mod_fastcgi\", \"mod_cgi\"";
-		if ($captive_portal !== false)
-			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
-		else
-			$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
-		$cgi_config = "";
-		$fastcgi_config = <<<EOD
+	if ($captive_portal !== false)
+		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
+	else
+		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
+	$fastcgi_config = <<<EOD
 #### fastcgi module
 ## read fastcgi.txt for more info
 fastcgi.server = ( ".php" =>
-	( "localhost" =>
-		(
-			"socket" => "{$fast_cgi_path}",
-			"min-procs" => 0,
-			"max-procs" => {$max_procs},
-{$bin_environment}
-			"bin-path" => "/usr/local/bin/php"
-		)
+( "localhost" =>
+	(
+		"socket" => "{$fast_cgi_path}",
+		"min-procs" => 0,
+		"max-procs" => {$max_procs},
+		"bin-environment" => (
+			"PHP_FCGI_CHILDREN" => "0",
+			"PHP_FCGI_MAX_REQUESTS" => "500"
+		),
+		"bin-path" => "/usr/local/bin/php"
 	)
 )
-
-#### CGI module
-cgi.assign                 = ( ".cgi" => "" )
+)
 
 EOD;
-	} else {
-		$fastcgi_config = "";
-		$module = "\"mod_cgi\"";
-		$cgi_config = <<<EOD
-#### CGI module
-cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
-                               ".cgi" => "" )
-
-EOD;
-	}
 
 	$lighty_config = "";
 	$lighty_config .= <<<EOD
@@ -961,28 +927,9 @@ server.network-backend 	= "writev"
 #server.use-ipv6 = "enable"
 
 ## modules to load
-server.modules              =   (
-	{$captive_portal_module}
-	"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
-	{$module}{$captiveportal}
+server.modules              =   ( "mod_access", "mod_expire", "mod_compress", "mod_redirect",
+	{$captiveportal}, "mod_fastcgi"
 )
-
-## Unused modules
-#                               "mod_setenv",
-#                               "mod_rewrite",
-#                               "mod_ssi",
-#                               "mod_usertrack",
-#                               "mod_expire",
-#                               "mod_secdownload",
-#                               "mod_rrdtool",
-#                               "mod_auth",
-#                               "mod_status",
-#                               "mod_alias",
-#                               "mod_proxy",
-#                               "mod_simple_vhost",
-#                               "mod_evhost",
-#                               "mod_userdir",
-#                               "mod_cgi",
 
 server.max-keep-alive-requests = 15
 server.max-keep-alive-idle = 30
@@ -996,7 +943,7 @@ server.document-root        = "{$document_root}"
 server.max-write-idle = 999
 
 ## where to send error-messages to
-server.errorlog             = "/var/log/lighttpd.error.log"
+server.errorlog-use-syslog="enable"
 
 # files to check for if .../ is requested
 server.indexfiles           = ( "index.php", "index.html",
@@ -1058,9 +1005,6 @@ mimetype.assign             = (
 # Use the "Content-Type" extended attribute to obtain mime type if possible
 #mimetypes.use-xattr        = "enable"
 
-#### accesslog module
-#accesslog.filename          = "/dev/null"
-
 ## deny access the file-extensions
 #
 # ~    is for backupfiles from vi, emacs, joe, ...
@@ -1117,8 +1061,6 @@ compress.filetype  = ("text/plain","text/css", "text/xml", "text/javascript" )
 {$server_max_request_size}
 
 {$fastcgi_config}
-
-{$cgi_config}
 
 {$captive_portal_mod_evasive}
 

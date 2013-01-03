@@ -902,7 +902,7 @@ fastcgi.server = ( ".php" =>
 		"min-procs" => 0,
 		"max-procs" => {$max_procs},
 		"bin-environment" => (
-			"PHP_FCGI_CHILDREN" => "0",
+			"PHP_FCGI_CHILDREN" => "1",
 			"PHP_FCGI_MAX_REQUESTS" => "500"
 		),
 		"bin-path" => "/usr/local/bin/php"

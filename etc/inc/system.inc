@@ -844,8 +844,8 @@ server.event-handler	= "freebsd-kqueue"
 server.network-backend 	= "writev"
 
 ## modules to load
-server.modules              =   ( "mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect", "mod_fastcgi"
-			{$captiveportal}
+server.modules              =   ( "mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect"
+			{$captiveportal},"mod_fastcgi"
 		)
 
 server.max-keep-alive-requests = 15

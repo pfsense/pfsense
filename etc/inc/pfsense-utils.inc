@@ -933,6 +933,29 @@ function auto_login() {
 
 	$gettytab = file_get_contents("/etc/gettytab");
 	$getty_split = split("\n", $gettytab);
+	$getty_update_needed = false;
+	$getty_search_str = ":ht:np:sp#115200";
+	$getty_al_str = ":al=root:";
+	$getty_al_search_str = $getty_search_str . $getty_al_str;
+	/* Check if gettytab is already OK, if so then do not rewrite it. */
+	foreach($getty_split as $gs) {
+		if(stristr($gs, $getty_search_str)) {
+			if($status == true) {
+				if(!stristr($gs, $getty_al_search_str)) {
+					$getty_update_needed = true;
+				}
+			} else {
+				if(stristr($gs, $getty_al_search_str)) {
+					$getty_update_needed = true;
+				}
+			}
+		}
+	}
+
+	if (!$getty_update_needed) {
+		return;
+	}
+
 	conf_mount_rw();
 	$fd = false;
 	$tries = 0;
@@ -943,21 +966,32 @@ function auto_login() {
 	}
 	if (!$fd) {
 		conf_mount_ro();
-		log_error("Enabling auto login was not possible.");
+		if ($status) {
+			log_error(gettext("Enabling auto login was not possible."));
+		} else {
+			log_error(gettext("Disabling auto login was not possible."));
+		}
 		return;
 	}
 	foreach($getty_split as $gs) {
-		if(stristr($gs, ":ht:np:sp#115200") ) {
+		if(stristr($gs, $getty_search_str)) {
 			if($status == true) {
-				fwrite($fd, "	:ht:np:sp#115200:al=root:\n");
+				fwrite($fd, "	".$getty_al_search_str."\n");
 			} else {
-				fwrite($fd, "	:ht:np:sp#115200:\n");
+				fwrite($fd, "	".$getty_search_str."\n");
 			}
 		} else {
 			fwrite($fd, "{$gs}\n");
 		}
 	}
 	fclose($fd);
+
+	if ($status) {
+		log_error(gettext("Enabled console auto login, console menu is NOT password protected."));
+	} else {
+		log_error(gettext("Disabled console auto login, console menu is password protected."));
+	}
+	
 	conf_mount_ro();
 }
 

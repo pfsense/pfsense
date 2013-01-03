@@ -173,9 +173,8 @@ function restart_service($name) {
 function is_pid_running($pidfile) {
 	if (!file_exists($pidfile))
 		return false;
-	$running = shell_exec("/bin/pgrep -F {$pidfile} 2>/dev/null");
 
-	return (!empty($running));
+	return (isvalidpid($pidfile));
 }
 
 function is_dhcp_running($interface) {

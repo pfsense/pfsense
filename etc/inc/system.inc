@@ -792,8 +792,8 @@ function system_generate_lighty_config($filename,
 	if ($avail > 0 and $avail < 128) {
 		$bin_environment = <<<EOC
 			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "0",
-				"PHP_FCGI_MAX_REQUESTS" => "2",
+				"PHP_FCGI_CHILDREN" => "1",
+				"PHP_FCGI_MAX_REQUESTS" => "500",
 			),
 
 EOC;

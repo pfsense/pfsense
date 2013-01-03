@@ -640,7 +640,7 @@ local0.*							{$log_directive}{$g['varlog_path']}/filter.log
 local3.*							{$log_directive}{$g['varlog_path']}/vpn.log
 local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
 local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit;				{$log_directive}{$g['varlog_path']}/system.log
+*.notice;kern.debug;lpr.info;mail.crit;daemon.none;		{$log_directive}{$g['varlog_path']}/system.log
 news.err;local0.none;local3.none;local4.none;			{$log_directive}{$g['varlog_path']}/system.log
 local7.none							{$log_directive}{$g['varlog_path']}/system.log
 security.*							{$log_directive}{$g['varlog_path']}/system.log

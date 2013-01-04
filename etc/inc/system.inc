@@ -774,7 +774,7 @@ function system_generate_lighty_config($filename,
 
 	if ($captive_portal == true)  {	
 		if ($max_procs > 1)
-			$max_php_children = intval($max_php_children/2);
+			$max_php_children = intval($max_procs/2);
 		else
 			$max_php_children = 1;
 

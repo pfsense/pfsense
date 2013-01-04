@@ -43,7 +43,6 @@
 
 /* include all configuration functions */
 require_once("globals.inc");
-require_once("cmd_chain.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {
@@ -1943,15 +1942,6 @@ function interface_carpdev_configure(&$vip) {
 
 	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} advbase {$vip['advbase']} {$password}");
 	interfaces_bring_up($vipif);
-
-	/*
-	 * XXX: BIG HACK but carpdev needs ip services active
-	 *      before even starting something as dhclient.
-	 *      I do not know if this is a feature or a bug
-	 *      but better than track it make it work ;) .
-	 */
-	//$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
-	//$cmdchain->add("CarpDEV hack", "/sbin/ifconfig {$carpint} inet {$fakeiptouse}", false);
 
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$vipif}.conf", "w");

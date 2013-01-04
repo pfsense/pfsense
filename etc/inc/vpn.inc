@@ -915,9 +915,12 @@ EOD;
 				$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload ipsecdns\"'\n";
 			file_put_contents("{$g['varetc_path']}/filterdns-ipsec.hosts", $hostnames);
 
-			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
-			sleep(1);
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
+			if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid"))
+				sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			else {
+				killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/filterdns-ipsec.hosts -d 1");
+			}
 		}
 	
 		vpn_ipsec_failover_configure();

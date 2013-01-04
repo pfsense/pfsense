@@ -1028,8 +1028,12 @@ function setup_dnsfilter_entries() {
 		}
 	}
 	file_put_contents($cp_filterdns_filename, $cp_filterdns_conf);
-	killbypid("{$g['tmp_path']}/filterdns-cpah.pid");
-	mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns-cpah.pid -i 300 -c {$cp_filterdns_filename} -d 1");
+	if (isvalidpid("{$g['tmp_path']}/filterdns-cpah.pid"))
+		sigkillbypid("{$g['tmp_path']}/filterdns-cpah.pid", "HUP");
+	else {
+		killbypid("{$g['tmp_path']}/filterdns-cpah.pid");
+		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns-cpah.pid -i 300 -c {$cp_filterdns_filename} -d 1");
+	}
 }
 
 function captiveportal_allowedhostname_configure() {

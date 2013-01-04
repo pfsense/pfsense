@@ -1,6 +1,7 @@
 /etc/rc.parse-isc-dhcpd
 /etc/rc.linkup.sh
 /etc/phpshellsessions/cvssync
+/etc/inc/cmd_chain.inc
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
 /usr/local/www/exec_raw.php

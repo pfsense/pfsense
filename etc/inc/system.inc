@@ -716,8 +716,6 @@ function system_generate_lighty_config($filename,
 	$cert_location = "cert.pem",
 	$ca_location = "ca.pem",
 	$max_procs = 1,
-	$max_requests = "2",
-	$fast_cgi_enable = true,
 	$captive_portal = false) {
 
 	global $config, $g;
@@ -762,28 +760,27 @@ function system_generate_lighty_config($filename,
 	// Ramp up captive portal max procs
 	//  Work relative to the default of 2, for values that would be >2.
 	if($captive_portal == true)  {
-		if($avail > 65 and $avail < 98) {
+		if ($avail <= 135)
 			$max_procs = 1;
-		}
-		if($avail > 97 and $avail < 128) {
-			$max_procs = 2;
-		}
-		if($avail > 127 and $avail < 256) {
+		else if ($avail > 135 and $avail < 256) {
 			$max_procs += 1;
-		}
-		if($avail > 255 and $avail < 384) {
+		} else if ($avail > 255 and $avail < 384) {
 			$max_procs += 2;
-		}
-		if($avail > 383) {
+		} else if ($avail > 383) {
 			$max_procs += 3;
 		}
-	} else if ($avail > 135)
+	} else if ($avail > 135 && $max_procs < 2)
 		$max_procs = 2;
 
 	if ($captive_portal == true)  {	
+		if ($max_procs > 1)
+			$max_php_children = intval($max_php_children/2);
+		else
+			$max_php_children = 1;
+
 		$bin_environment =  <<<EOC
 			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "{$max_procs}",
+				"PHP_FCGI_CHILDREN" => "{$max_php_children}",
 				"PHP_FCGI_MAX_REQUESTS" => "500"
 			),
 EOC;

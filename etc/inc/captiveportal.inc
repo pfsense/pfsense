@@ -398,13 +398,6 @@ function captiveportal_init_webgui() {
 	 if (!isset($config['captiveportal']['enable']))
 				return;
 
-	if ($config['captiveportal']['maxprocperip'])
-		$maxproc = $config['captiveportal']['maxprocperip'];
-	else
-		$maxproc = 16;
-
-	$use_fastcgi = true;
-
 	if (isset($config['captiveportal']['httpslogin'])) {
 		$cert = base64_decode($config['captiveportal']['certificate']);
 		if (isset($config['captiveportal']['cacertificate']))
@@ -415,13 +408,13 @@ function captiveportal_init_webgui() {
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
 			$cert, $key, $cacert, "lighty-CaptivePortal-SSL.pid", "8001", "/usr/local/captiveportal/",
-			"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
+			"cert-portal.pem", "ca-portal.pem", 1, true);
 	}
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 		"", "", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-		"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
+		"cert-portal.pem", "ca-portal.pem", 1, true);
 
 	/* attempt to start lighttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");

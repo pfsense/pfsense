@@ -759,7 +759,7 @@ function system_generate_lighty_config($filename,
 
 	// Ramp up captive portal max procs
 	//  Work relative to the default of 2, for values that would be >2.
-	if($captive_portal == true)  {
+	if ($captive_portal == true)  {
 		if ($avail <= 135)
 			$max_procs = 1;
 		else if ($avail > 135 and $avail < 256) {
@@ -785,13 +785,19 @@ function system_generate_lighty_config($filename,
 			),
 EOC;
 
-	} else
+	} else {
 		$bin_environment =  <<<EOC
 			"bin-environment" => (
 				"PHP_FCGI_CHILDREN" => "1",
 				"PHP_FCGI_MAX_REQUESTS" => "500"
 			),
 EOC;
+	}
+
+	if ($captive_portal !== false)
+		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-CP.socket";
+	else
+		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
 
 	$fastcgi_config = <<<EOD
 #### fastcgi module
@@ -799,7 +805,7 @@ EOC;
 fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
-			"socket" => "{$g['tmp_path']}/php-fastcgi.socket",
+			"socket" => "{$fast_cgi_path}",
 			"max-procs" => {$max_procs},
 {$bin_environment}
 			"bin-path" => "/usr/local/bin/php"

@@ -813,8 +813,6 @@ function system_generate_lighty_config($filename,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
 	$ca_location = "ca.pem",
-	$max_requests = "2",
-	$fast_cgi_enable = true,
 	$captive_portal = false) {
 
 	global $config, $g;
@@ -827,12 +825,12 @@ function system_generate_lighty_config($filename,
 		echo "system_generate_lighty_config() being called $mt\n";
 	}
 
-	if($captive_portal !== false)  {
+	if ($captive_portal !== false)  {
 		$captiveportal = ",\"mod_rewrite\",\"mod_evasive\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
-		if(empty($maxprocperip))
+		if (empty($maxprocperip))
 			$maxprocperip = 10;
 		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 
@@ -848,43 +846,46 @@ function system_generate_lighty_config($filename,
 		$server_max_request_size = "server.max-request-size    = 2097152";
 	}
 	
-	if($port <> "")
-		$lighty_port = $port;
-	else
+	if (empty($port))
 		$lighty_port = "80";
+	else
+		$lighty_port = $port;
 
 	$memory = get_memory();
 	$avail = $memory[0];
 
 	// Determine web GUI process settings and take into account low memory systems
-	if($avail > 0 and $avail < 65) {
-		$fast_cgi_enable = false;
-	}
-	if($avail > 64 and $avail < 256) {
-		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 1;
-	}
-	if($avail > 255 ) {
+	if ($avail < 255)
+		$max_procs = 1;
+	else
 		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
-	}
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM 
 	if($captive_portal !== false)  {
-		if($avail > 107 and $avail < 256) {
+		if ($avail > 135 and $avail < 256) {
 			$max_procs += 1; // 2 worker processes
-		}
-		if($avail > 255 and $avail < 320) {
-			$max_procs += 1; // 3 worker processes
-		}
-		if($avail > 319 and $avail < 384) {
-			$max_procs += 2; // 4 worker processes
-		}
-		if($avail > 383 and $avail < 448) {
-			$max_procs += 3; // 5 worker processes
-		}
-		if($avail > 447) {
+		} else if ($avail > 255 and $avail < 513) {
+			$max_procs += 2; // 3 worker processes
+		} else if ($avail > 512) {
 			$max_procs += 4; // 6 worker processes
 		}
+		if ($max_procs > 1)
+			$max_php_children = intval($max_procs/2);
+		else
+			$max_php_children = 1;
+
 		$bin_environment =  <<<EOC
+			"bin-environment" => (
+				"PHP_FCGI_CHILDREN" => "{$max_php_children}",
+				"PHP_FCGI_MAX_REQUESTS" => "500"
+			),
+EOC;
+	} else {
+		$bin_environment =  <<<EOC
+			"bin-environment" => (
+				"PHP_FCGI_CHILDREN" => "1",
+				"PHP_FCGI_MAX_REQUESTS" => "500"
+			),
 EOC;
 	}
 
@@ -892,28 +893,24 @@ EOC;
 		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
 	else
 		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
+
 	$fastcgi_config = <<<EOD
 #### fastcgi module
 ## read fastcgi.txt for more info
 fastcgi.server = ( ".php" =>
-( "localhost" =>
-	(
-		"socket" => "{$fast_cgi_path}",
-		"min-procs" => 0,
-		"max-procs" => {$max_procs},
-		"bin-environment" => (
-			"PHP_FCGI_CHILDREN" => "1",
-			"PHP_FCGI_MAX_REQUESTS" => "500"
-		),
-		"bin-path" => "/usr/local/bin/php"
+	( "localhost" =>
+		(
+			"socket" => "{$fast_cgi_path}",
+			"max-procs" => {$max_procs},
+	{$bin_environment}
+			"bin-path" => "/usr/local/bin/php"
+		)
 	)
-)
 )
 
 EOD;
 
-	$lighty_config = "";
-	$lighty_config .= <<<EOD
+	$lighty_config = <<<EOD
 #
 # lighttpd configuration file
 #

@@ -49,7 +49,7 @@ $cpcfg = $config['captiveportal'][$cpzone];
 
 $orig_host = $_ENV['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
-$orig_request = rtrim($_REQUEST['redirurl'], " /");
+$orig_request = trim($_REQUEST['redirurl'], " /");
 $orig_request = empty($orig_request) ? '' : $orig_request;
 $clientip = $_SERVER['REMOTE_ADDR'];
 
@@ -84,9 +84,9 @@ if ($orig_host != $ourhostname) {
        it's connected to us. Issue a redirect... */
 
     if (isset($cpcfg['httpslogin']))
-        header("Location: https://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
+        header("Location: https://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}/{$orig_request}"));
     else
-        header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
+        header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}/{$orig_request}"));
 
     ob_flush();
     return;

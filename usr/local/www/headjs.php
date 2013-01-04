@@ -48,7 +48,10 @@ function getHeadJS() {
     var input_errors = '';
     Event.observe(window, 'load', init, false);
   ";
+  if (!session_id())
+	session_start();
   $_SESSION['NO_AJAX'] == "True" ? $noajax = "var noAjaxOnSubmit = true;" : $noajax = "var noAjaxOnSubmit = false;";
+  session_commit();
 
   $headjs .= "
     {$noajax}

@@ -38,12 +38,16 @@
 
 include("guiconfig.inc");
 
+if (!session_id())
+	session_start();
+
 // sanitize the ID value
 $id = $_SESSION['uploadid'];
 if (!$id) {
 	echo gettext("Sorry, we could not find an uploadid code.");
 	exit;
 }
+session_commit();
 
 // retrieve the upload data from APC
 $info = uploadprogress_get_info($id);

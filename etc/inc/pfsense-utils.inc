@@ -40,21 +40,6 @@
 	pfSense_MODULE:	utils
 */
 
-/****f* pfsense-utils/have_natonetooneruleint_access
- * NAME
- *   have_natonetooneruleint_access
- * INPUTS
- *	 none
- * RESULT
- *   returns true if user has access to edit a specific firewall nat one to one interface
- ******/
-function have_natonetooneruleint_access($if) {
-	$security_url = "firewall_nat_1to1_edit.php?if=". strtolower($if);
-	if(isAllowedPage($security_url, $_SESSION['Username'])) 
-		return true;
-	return false;
-}
-
 /****f* pfsense-utils/have_natpfruleint_access
  * NAME
  *   have_natpfruleint_access

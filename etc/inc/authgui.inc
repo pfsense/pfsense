@@ -87,6 +87,12 @@ if (!$_SESSION['Post_Login']) {
 	exit;
 }
 
+/* 
+ * Close session data to allow other scripts from same host to come in.
+ * A session can be reactivated from calling session_start again
+ */
+session_commit();
+
 /*
  * determine if the user is allowed access to the requested page
  */

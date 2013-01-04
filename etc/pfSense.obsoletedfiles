@@ -3,6 +3,7 @@
 /etc/phpshellsessions/cvssync
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/usr/local/www/exec_raw.php
 /usr/local/www/diag_showbogons.php
 /usr/local/www/interfaces_wan.php
 /usr/local/www/interfaces_lan.php

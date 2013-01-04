@@ -874,8 +874,12 @@ function system_generate_lighty_config($filename,
 		else
 			$max_php_children = 1;
 
-	} else
-		$max_php_children = 1;
+	} else {
+		if ($avail < 78)
+			$max_php_children = 0;
+		else
+			$max_php_children = 1;
+	}
 
 	if ($captive_portal !== false)
 		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";

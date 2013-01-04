@@ -62,7 +62,7 @@ function isvalidproc($proc) {
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (is_file($pidfile))
+	if (file_exists($pidfile))
 		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
 
 	return 0;

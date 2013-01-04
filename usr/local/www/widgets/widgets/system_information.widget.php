@@ -36,6 +36,7 @@ $nocsrf = true;
 require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
+include_once("includes/functions.inc.php");
 
 if($_REQUEST['getupdatestatus']) {
 	if(isset($config['system']['firmware']['disablecheck'])) {

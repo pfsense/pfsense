@@ -1595,24 +1595,4 @@ function get_possible_listen_ips() {
 	return $listenips;
 }
 
-/* Pick up IPv6 router advertisements on the interface */
-function pickup_ipv6_router_advertisement($interface) {
-	global $g;
-	$realif = get_real_interface($interface);
-	exec("/sbin/rtsol -d {$realif} 2>&1", $out, $ret);
-	if(!empty($out)) {
-		foreach($out as $line) {
-			if((stristr($line, "received")) && (!stristr($line, "unexpected"))) {
-				$parts = explode(" ", $line);
-				if(is_ipaddrv6($parts[3])) {
-					log_error("Found IPv6 default gateway '{$parts[3]}' on interface {$realif} by RA.");
-					file_put_contents("{$g['tmp_path']}/{$realif}_routerv6", "{$parts[3]}\n");
-					file_put_contents("{$g['tmp_path']}/{$realif}_defaultgwv6", "{$parts[3]}\n");
-					break;
-				}
-			}
-		}
-	}
-}
-
 ?>

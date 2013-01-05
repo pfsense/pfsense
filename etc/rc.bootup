@@ -241,6 +241,9 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
+/* start syslogd */
+system_syslogd_start();
+
 echo "Starting Secure Shell Services...";
 mwexec_bg("/etc/sshd");
 echo "done.\n";
@@ -272,9 +275,6 @@ echo "done.\n";
 
 /* generate resolv.conf */
 system_resolvconf_generate();
-
-/* start syslogd */
-system_syslogd_start();
 
 /* setup altq + pf */
 filter_configure_sync();

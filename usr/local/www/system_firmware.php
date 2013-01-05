@@ -297,11 +297,6 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 									}
 								}
 							?>
-							<?php
-								/*
-								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
-								*/
-							?>
 							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
 							<br>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">

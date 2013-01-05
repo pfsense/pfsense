@@ -1413,6 +1413,10 @@ function session_auth() {
 		unset($_SESSION['NO_AJAX']);
 
 	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
+	
+	if (!defined('DONT_CLOSE_SESSION'))
+		session_write_close();// close the session, so while 'waiting' for the processing to complete allow processing for possible loading other pages that are waiting for the 'session-lock'
+
 	return true;
 }
 

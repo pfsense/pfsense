@@ -3307,7 +3307,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 	}
 	$dhcp6cscript = "#!/bin/sh\n";
 	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
-	$dhcp6cscript .= "/etc/rc.newwanipv6 $interface \n";
+	$dhcp6cscript .= "/etc/rc.newwanipv6 $wanif \n";
 
 	fwrite($fds, $dhcp6cscript);
 	fclose($fds);
@@ -3319,9 +3319,9 @@ function interface_dhcpv6_configure($interface = "wan") {
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 
-	/* run a filter configure so that the filter rules allow traffic before we launch the client */
-	filter_configure();
-	sleep(3);
+	/* run a filter configure sync so that the filter rules allow traffic before we launch the client */
+	/* there reallyt is no good way around this i'm 'fraid */
+	filter_configure_sync();
 
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf {$wanif}");

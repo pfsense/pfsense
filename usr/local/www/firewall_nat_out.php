@@ -367,20 +367,17 @@ include("head.inc");
                     </table>
 		  </td>
                 </tr>
-              <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
-	        <?php
-			global $FilterIflist;
-			if(empty($FilterIflist)) {
-				filter_generate_optcfg_array();
-			}
-			if (!$natent['interface'] || !isset($FilterIflist[$natent['interface']]))
-				continue;
+              <?php 
+			$ifdescr = get_configured_interface_with_descr(false, true);
+			$nnats = $i = 0; foreach ($a_out as $natent):
+				if (!$natent['interface'] || !isset($ifdescr[$natent['interface']]))
+					continue;
 		?>
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
-                    <?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
+                    <?php echo htmlspecialchars($ifdescr[$natent['interface']]); ?>
                                         &nbsp;
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">

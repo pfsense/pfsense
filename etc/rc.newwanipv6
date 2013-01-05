@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        rc.newwanip
+        rc.newwanipv6
         Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
         part of pfSense (http://www.pfsense.com)
 
@@ -49,44 +49,31 @@ if($g['booting'])
 	exit;
 
 
-// echo print_r($_ENV, true);
-/*Array
-(
-    [REASON] => NBI
-    [new_domain_name_servers] => 2001:470:20::2
-    [new_domain_name] => domain.nl.
-)
-*/
-
 function restart_packages() {
-	global $oldip, $curwanipv6, $g;
+	global $oldipv6, $curwanipv6, $g;
 
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
-	mwexec_bg("/etc/rc.start_packages");
+	log_error("{$g['product_name']} package system has detected an ip change $oldipv6 ->  $curwanipv6 ... Restarting packages.");		
+	send_event("service reload packages");
 }
 
-log_error("rc.newwanipv6: Informational is starting.");
+/* Interface IP address has changed */
+$argument = str_replace("\n", "", $argv[1]);
 
-/* FIXME: how can we find out about the correct interface name? */
-/* switch to ISC dhcp6 client? */
-$curwanipv6 = get_interface_ipv6();
-$interface = "wan";
-$interface_real = get_real_interface();
+log_error("rc.newwanipv6: Informational is starting {$argument}.");
 
-$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
-$valid_ns = array();
-foreach($name_servers as $ns) {
-	if(is_ipaddrv6(trim($ns)))
-		$valid_ns[] = trim($ns);
-}
-if(count($valid_ns > 0))
-	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
-
-if(!empty($_ENV['new_domain_name'])) {
-	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
+if(empty($argument)) {
+	$curwanipv6 = get_interface_ipv6();
+	$interface = "wan";
+	$interface_real = get_real_interface();
+} else {
+	$interface_real = $argument;
+	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	$curwanipv6 = find_interface_ipv6($interface_real, true);
+	if($curwanipv6 == "")
+		$curwanipv6 = get_interface_ipv6($interface);
 }
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
@@ -116,6 +103,10 @@ system_resolvconf_generate(true);
 
 /* write current WAN IPv6 to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+
+/* pickup ipv6 router advertisements */
+pickup_ipv6_router_advertisement($interface_real);
+sleep(3);
 
 /* check native IPv6 interface tracking */
 switch($config['interfaces'][$interface]['ipaddrv6']) {
@@ -157,9 +148,6 @@ services_dnsupdate_process($interface);
 
 /* signal dyndns update */
 services_dyndns_configure($interface);
-
-/* wait for the dhcp6c process to configure the LAN interface */
-sleep(5);
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();

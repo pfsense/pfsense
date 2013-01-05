@@ -1439,18 +1439,14 @@ function filter_nat_rules_generate() {
 					$dst = $obent['destination']['address'];
 				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
 					$dst = "!" . $dst;
-				if(!$obent['interface'])
-					$natif = "wan";
-				else
-					$natif = $obent['interface'];
+
+				if(!$obent['interface'] || !isset($FilterIflist[$obent['interface']]))
+					continue;
 
 				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
-				if (!isset($FilterIflist[$natif]))
-					continue;
-
-				$natrules .= filter_nat_rules_generate_if($natif,
+				$natrules .= filter_nat_rules_generate_if($obent['interface'],
 					$src,
 					$obent['sourceport'],
 					$dst,

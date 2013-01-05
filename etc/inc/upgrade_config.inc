@@ -2965,4 +2965,17 @@ function upgrade_090_to_091() {
 		}
 	}
 }
+
+function upgrade_091_to_092() {
+	global $config;
+
+	if (is_array($config['nat']['advancedoutbound']) && is_array($config['nat']['advancedoutbound']['rule'])) {
+		$nat_rules = &$config['nat']['advancedoutbound']['rule'];
+		for ($i = 0; isset($nat_rules[$i]); $i++) {
+			if (empty($nat_rules[$i]['interface'])) {
+				$nat_rules[$i]['interface'] = 'wan';
+			}
+		}
+	}
+}
 ?>

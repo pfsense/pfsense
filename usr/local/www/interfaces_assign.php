@@ -284,12 +284,6 @@ if ($_GET['act'] == "del") {
 					unset($config['filter']['rule'][$x]);
 			}
         	}
-		if (is_array($config['nat']['advancedoutbound']) && count($config['nat']['advancedoutbound']['rule']) > 0) {
-        	foreach ($config['nat']['advancedoutbound']['rule'] as $x => $rule) {
-				if($rule['interface'] == $id)
-					unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
-        		}
-		}
 		if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
 			foreach ($config['nat']['rule'] as $x => $rule) {
 				if($rule['interface'] == $id)

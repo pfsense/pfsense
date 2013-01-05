@@ -290,11 +290,6 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 									}
 								}
 							?>
-							<?php
-								/*
-								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
-								*/
-							?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>

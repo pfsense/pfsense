@@ -509,7 +509,14 @@ function write_config($desc="Unknown", $backup = true) {
 		}
 	}
 
-	$username = !empty($_SESSION["Username"]) ? $_SESSION['Username'] : empty($_ENV['USER']) ? "(system)" : $_ENV['USER'];
+	if (empty($_SESSION["Username"])) {
+		if (empty($_ENV['USER']) || $_ENV['USER'] == "root")
+			$username = "(system)";
+		else
+			$username = $_ENV['USER'];
+	} else
+		$username = $_SESSION["Username"];
+
 	if (!empty($_SERVER['REMOTE_ADDR']))
 		$username .= '@' . $_SERVER['REMOTE_ADDR'];
 

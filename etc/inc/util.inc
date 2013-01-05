@@ -800,6 +800,7 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
  *
  */
 function get_configured_ip_addresses() {
+	global $config;
 	require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
@@ -813,6 +814,18 @@ function get_configured_ip_addresses() {
 	if(is_array($interfaces)) 
 		foreach($interfaces as $int => $ipaddr) 
 			$ip_array[$int] = $ipaddr;
+
+	/* pppoe server */
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				if(is_ipaddr($pppoe['localip'])) {
+					$int = "pppoes". $pppoe['pppoeid'];
+					$ip_array[$int] = $pppoe['localip'];
+				}
+			}
+		}
+	}
 	return $ip_array;
 }
 

@@ -368,14 +368,6 @@ include("head.inc");
 		  </td>
                 </tr>
               <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
-	        <?php
-			global $FilterIflist;
-			if(empty($FilterIflist)) {
-				filter_generate_optcfg_array();
-			}
-			if (!$natent['interface'] || !isset($FilterIflist[$natent['interface']]))
-				continue;
-		?>
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>

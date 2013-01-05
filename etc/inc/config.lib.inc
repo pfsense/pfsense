@@ -520,7 +520,8 @@ function write_config($desc="Unknown", $backup = true) {
 	if (!empty($_SERVER['REMOTE_ADDR']))
 		$username .= '@' . $_SERVER['REMOTE_ADDR'];
 
-	session_commit();
+	if (!isset($argc))
+		session_commit();
 
 	if($backup)
 		backup_config();

@@ -75,6 +75,7 @@ if (!$_GET['if'])
 		   "<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 
 $iflist = get_configured_interface_with_descr();
+$iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
@@ -232,11 +233,12 @@ if ($_POST) {
 			$subnet_start = gen_subnetv6($ifcfgip, $ifcfgsn);
 			$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
 
-			if ((! is_inrange($_POST['range_from'], $subnet_start, $subnet_end)) ||
-			    (! is_inrange($_POST['range_to'], $subnet_start, $subnet_end))) {
-				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
+			if (is_ipaddrv6($ifcfgip)) {
+				if ((! is_inrange($_POST['range_from'], $subnet_start, $subnet_end)) ||
+			   	 (! is_inrange($_POST['range_to'], $subnet_start, $subnet_end))) {
+					$input_errors[] = gettext("The specified range lies outside of the current subnet.");
+				}
 			}
-
 			/* "from" cannot be higher than "to" */
 			if (inet_pton($_POST['range_from']) > inet_pton($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
@@ -486,6 +488,22 @@ include("head.inc");
 		$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
 		$tabscounter++;
 	}
+	/* tack on PPPoE or PPtP servers here */
+	/* pppoe server */
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				$ifent = "poes". $pppoe['pppoeid'];
+				$ifname = strtoupper($ifent);
+				if ($ifent == $if)
+					$active = true;
+				else
+					$active = false;
+				$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
+				$tabscounter++;
+			}
+		}
+	}
 	if ($tabscounter == 0) {
 		echo "</td></tr></table></form>";
 		include("fend.inc");
@@ -524,6 +542,10 @@ display_top_tabs($tab_array);
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<tr>
+			<?php
+			/* the PPPoE Server could well have no IPv6 address and operate fine with just link-local, just hide these */
+			if(is_ipaddrv6($ifcfgip)) {
+			?>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
 				<?=gen_subnetv6($ifcfgip, $ifcfgsn);?>
@@ -551,6 +573,8 @@ display_top_tabs($tab_array);
 			?>
 			</td>
 			</tr>
+			<?php } ?>
+
 			<?php if($is_olsr_enabled): ?>
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask");?></td>

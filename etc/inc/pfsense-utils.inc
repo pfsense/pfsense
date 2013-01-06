@@ -1085,6 +1085,7 @@ function is_dhcpv6_server_enabled()
 	$dhcpdenable = false;
 	
 	$Iflist = get_configured_interface_list();
+	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
 	foreach($Iflist as $ifname) {
 		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
@@ -2659,4 +2660,34 @@ function zte_simstate_to_string($state) {
 	$string = "{$modes[$state]} State";
 	return $string;
 }
+
+function get_configured_pppoe_server_interfaces() {
+	global $config;
+	$iflist = array();
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				$int = "poes". $pppoe['pppoeid'];
+				$iflist[$int] = strtoupper($int);
+			}
+		}
+	}
+	return $iflist;
+}
+
+function get_pppoes_child_interfaces($ifpattern) {
+	$if_arr = array();
+	if($ifpattern == "")
+		return;
+
+	exec("ifconfig", $out, $ret);
+	foreach($out as $line) {
+		if(preg_match("/^({$ifpattern}[0-9]+):/i", $line, $match)) {
+			$if_arr[] = $match[1];
+		}
+	}
+	return $if_arr;
+
+}
+
 ?>

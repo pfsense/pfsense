@@ -57,6 +57,7 @@ function services_radvd_configure() {
 
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
+	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
@@ -801,6 +802,7 @@ function services_dhcpdv6_configure() {
 		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
 	}
 
+
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcpv6_server_enabled())
 		return 0;
@@ -825,6 +827,8 @@ function services_dhcpdv6_configure() {
 		$config['dhcpdv6'] = array();
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
+	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
+
 
 	if ($g['booting'])
 		echo "Starting DHCPv6 service...";
@@ -911,66 +915,6 @@ EOD;
 
 	$dhcpdv6ifs = array();
 
-	/*    loop through and determine if we need to setup
-	 *    failover peer "bleh" entries
-	 */
-	$dhcpv6num = 0;
-	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-
-		if (!isset($dhcpv6ifconf['enable']))
-			continue;
-
-		if($dhcpv6ifconf['failover_peerip'] <> "") {
-			$intv6 = guess_interface_from_ip($dhcpv6ifconf['failover_peerip']);
-			$intipv6 = find_interface_ipv6($intv6);
-			$real_dhcpv6if = convert_friendly_interface_to_real_interface_name($dhcpv6if);
-			/*
-			 *    yep, failover peer is defined.
-			 *    does it match up to a defined vip?
-			 */
-			$skew = 110;
-			$a_vip = &$config['virtualip']['vip'];
-			if(is_array($a_vip)) {
-				foreach ($a_vip as $vipent) {
-					if($intv6 == $real_dhcpv6if) {
-						/* this is the interface! */
-						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
-							$skew = 0;
-					}
-				}
-			} else {
-				log_error("Warning!  DHCPv6 Failover setup and no CARP virtual IPv6's defined!");
-			}
-			if($skew > 10) {
-				$typev6 = "secondary";
-				$dhcpdv6conf_pri  = "mclt 600;\n";
-				$my_portv6 = "520";
-				$peer_portv6 = "519";
-			} else {
-				$my_portv6 = "519";
-				$peer_portv6 = "520";
-				$typev6 = "primary";
-				$dhcpdv6conf_pri  = "split 128;\n";
-				$dhcpdv6conf_pri .= "  mclt 600;\n";
-			}
-			$dhcpdv6conf .= <<<EOPP
-failover peer "dhcpv6{$dhcpv6num}" {
-  {$typev6};
-  address {$intipv6};
-  port {$my_portv6};
-  peer address {$dhcpv6ifconf['failover_peerip']};
-  peer port {$peer_portv6};
-  max-response-delay 10;
-  max-unacked-updates 10;
-  {$dhcpdv6conf_pri}
-  load balance max seconds 3;
-}
-
-EOPP;
-		$dhcpv6num++;
-		}
-	}
-
 	$dhcpv6num = 0;
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 
@@ -1006,7 +950,7 @@ EOPP;
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
 			$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
-		} else if (isset($config['dnsmasq']['enable'])) {
+		} else if ((isset($config['dnsmasq']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
 			$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 			$dns_arrv6 = array();
@@ -1019,19 +963,19 @@ EOPP;
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 		}
 
-		$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));
-		$dhcpdv6conf .= "subnet6 {$subnet6}/{$ifcfgsnv6} {\n";
+		if(is_ipaddrv6(ifcfgipv6)) {
+			$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));
+			$dhcpdv6conf .= "subnet6 {$subnet6}/{$ifcfgsnv6} {\n";
+		} else {
+			$subnet6 = Net_IPv6::compress(gen_subnetv6($dhcpv6ifconf['range']['from'], "64"));
+			$dhcpdv6conf .= "subnet6 {$subnet6}/64 {\n";
+		}	
 
 		if($dhcpv6ifconf['failover_peerip'] <> "")
 			$dhcpdv6conf .= "		deny dynamic bootp clients;\n";
 
 		if (isset($dhcpv6ifconf['denyunknown']))
 		   $dhcpdv6conf .= "		deny unknown-clients;\n";
-
-		if($dhcpv6ifconf['failover_peerip'] <> "") {
-			$dhcpdv6conf .= "		failover peer \"dhcpv6{$dhcpv6num}\";\n";
-			$dhcpv6num++;
-		}
 
 		$dhcpdv6conf .= <<<EOD
 	range6 {$dhcpv6ifconf['range']['from']} {$dhcpv6ifconf['range']['to']};
@@ -1128,13 +1072,18 @@ EOD;
 		}
 
 		if($config['dhcpdv6'][$dhcpv6if]['ramode'] <> "unmanaged") {
-			$realif = escapeshellcmd(get_real_interface($dhcpv6if));
-			$dhcpdv6ifs[] = $realif;
-			exec("/sbin/ifconfig {$realif} |awk  '/ether/ {print $2}'", $mac);
-			$v6address = generate_ipv6_from_mac($mac[0]);
-			/* Create link local address for bridges */
-			if(stristr("$realif", "bridge")) {
-				mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+			if(preg_match("/poes/si", $dhcpv6if)) {
+				/* magic here */
+				$dhcpdv6ifs = array_merge($dhcpdv6ifs, get_pppoes_child_interfaces($dhcpv6if));
+			} else {
+				$realif = escapeshellcmd(get_real_interface($dhcpv6if));
+				$dhcpdv6ifs[] = $realif;
+				exec("/sbin/ifconfig {$realif} |awk  '/ether/ {print $2}'", $mac);
+				$v6address = generate_ipv6_from_mac($mac[0]);
+				/* Create link local address for bridges */
+				if(stristr("$realif", "bridge")) {
+					mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
+				}
 			}
 		}
 	}
@@ -1152,7 +1101,6 @@ EOD;
 			join(" ", $dhcpdv6ifs));
 		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
-
 	if ($g['booting']) {
 		print gettext("done.") . "\n";
 	}

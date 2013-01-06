@@ -41,11 +41,13 @@ function killbypid($pidfile) {
 	return sigkillbypid($pidfile, "TERM");
 }
 
-function isvalidpid($pid) {
+function isvalidpid($pidfile) {
 	$output = "";
-	exec("/bin/pgrep -nF {$pid}", $output, $retval);
-
-	return (intval($retval) == 0);
+	if (file_exists($pidfile)) {
+		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+		return (intval($retval) == 0);
+	}
+	return false;
 }
 
 function is_process_running($process) {

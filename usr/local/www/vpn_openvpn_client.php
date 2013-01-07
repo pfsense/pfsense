@@ -160,9 +160,9 @@ if ($_POST) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv4 protocol and an IPv6 IP address.");
-	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface)) {
+	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
 		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
-	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface)) {
+	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
 		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
 	}
 

@@ -150,7 +150,7 @@
 					$restart_dhcpd = true;
 		  		} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
 		  	}
-			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
+			$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
 			if (!empty($ifppp))
 				$ifaceassigned = $ifppp;
 		}

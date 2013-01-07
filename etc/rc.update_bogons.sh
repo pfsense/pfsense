@@ -4,6 +4,52 @@
 # Part of the pfSense project
 # www.pfsense.com
 
+# Global variables
+proc_error=""
+
+# Download and extract if necessary
+function process_url() {
+	local file=$1
+	local url=$2
+	local filename=${url##*/}
+	local ext=${filename#*.}
+	
+	/usr/bin/fetch -q -o $file "${url}"
+	
+	if [ ! -f $file ]; then
+		echo "Could not download ${url}" | logger
+		proc_error="true"
+	fi
+	
+	case "$ext" in
+		tar)
+			mv $file $file.tmp
+			/usr/bin/tar -xf $file.tmp -O > $file 2> /dev/null
+			;;
+		tar.gz)
+			;&
+		tgz)
+			mv $file $file.tmp
+			/usr/bin/tar -xzf $file.tmp -O > $file 2> /dev/null
+			;;
+		tar.bz2)
+			mv $file $file.tmp
+			/usr/bin/tar -xjf $file.tmp -O > $file 2> /dev/null
+			;;
+		*)
+			;;
+	esac
+	
+	if [ -f $file.tmp ]; then
+		rm $file.tmp
+	fi
+	
+	if [ ! -f $file ]; then
+		echo "Could not extract ${filename}" | logger
+		proc_error="true"
+	fi
+}
+
 echo "rc.update_bogons.sh is starting up." | logger
 
 # Sleep for some time, unless an argument is specified.
@@ -27,20 +73,12 @@ v6url=${v6url:-"http://files.pfsense.org/lists/fullbogons-ipv6.txt"}
 v4urlcksum=${v4urlcksum:-"${v4url}.md5"}
 v6urlcksum=${v6urlcksum:-"${v6url}.md5"}
 
-/usr/bin/fetch -q -o /tmp/bogons "${v4url}"
-/usr/bin/fetch -q -o /tmp/bogonsv6 "${v6url}"
-if [ ! -f /tmp/bogons ]; then
-	echo "Could not download ${v4url}" | logger
-	dl_error="true"
-fi
-if [ ! -f /tmp/bogonsv6 ]; then
-	echo "Could not download ${v6url}" | logger
-	dl_error="true"
-fi
+process_url /tmp/bogons "${v4url}"
+process_url /tmp/bogonsv6 "${v6url}"
 
-if [ "$dl_error" != "" ];then
+if [ "$proc_error" != "" ]; then
 	# Relaunch and sleep
-	sh /etc/rc.update_bogons.sh & 
+	sh /etc/rc.update_bogons.sh &
 	exit
 fi
 
@@ -50,7 +88,7 @@ BOGON_V6_CKSUM=`/usr/bin/fetch -q -o - "${v6urlcksum}" | awk '{ print $4 }'`
 ON_DISK_V6_CKSUM=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
 
 if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-	# At least one of the downloaded MD5s matches, so mount RW
+	# At least one of the downloaded checksums matches, so mount RW
 	/etc/rc.conf_mount_rw
 fi
 
@@ -60,7 +98,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ]; then
 	rm /tmp/bogons
 	echo "$RESULT" |awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
 else
-	echo "Could not download ${v4urlcksum} (checksum mismatch)" | logger
+	echo "Could not download ${v4url} (checksum mismatch)" | logger
 	checksum_error="true"
 fi
 
@@ -70,7 +108,7 @@ if [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
 	rm /tmp/bogonsv6
 	echo "$RESULT" |awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
 else
-	echo "Could not download ${v6urlcksum} (checksum mismatch)" | logger
+	echo "Could not download ${v6url} (checksum mismatch)" | logger
 	checksum_error="true"
 fi
 
@@ -79,7 +117,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	/etc/rc.conf_mount_ro
 fi
 
-if [ "$checksum_error" != "" ];then
+if [ "$checksum_error" != "" ]; then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh & 
 	exit

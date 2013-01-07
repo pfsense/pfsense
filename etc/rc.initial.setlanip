@@ -299,7 +299,7 @@ function console_configure_ip_address($version) {
 				add_gateway_to_config($interface, $gwip, $inet_type);
 			}
 		}
-		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
+		$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
 		if (!empty($ifppp))
 			$ifaceassigned = $ifppp;
 	}

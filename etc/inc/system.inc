@@ -852,7 +852,7 @@ function system_generate_lighty_config($filename,
 		$lighty_port = $port;
 
 	$memory = get_memory();
-	$avail = $memory[0];
+	$avail = $memory[1];
 
 	// Determine web GUI process settings and take into account low memory systems
 	if ($avail < 255)

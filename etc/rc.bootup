@@ -126,7 +126,7 @@ echo ".";
 
 /* get system memory amount */
 $memory = get_memory();
-$avail = $memory[0];
+$avail = $memory[1];
 echo " done.\n";
 
 conf_mount_rw();

@@ -104,7 +104,7 @@ if (isset($id) && $a_pppoes[$id]) {
 if ($_POST) {
 
 	unset($input_errors);
-	//$pconfig = $_POST;
+	$pconfig = $_POST;
 
 	/* input validation */
 	if ($_POST['mode'] == "server") {

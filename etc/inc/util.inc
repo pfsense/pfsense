@@ -1458,8 +1458,8 @@ function get_memory() {
 		$mem = `cat /var/log/dmesg.boot | grep memory`;
 	else
 		$mem = `dmesg -a | grep memory`;			
-	if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
-		return array($matches[1][0], $matches[1][0]);
+	if (preg_match_all("/memory.* \((.*)MB\)/", $mem, $matches)) 
+		return array($matches[1][0], $matches[1][1]);
 	if(!$real && !$avail) {
 		$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
 		$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);

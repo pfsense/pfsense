@@ -30,7 +30,7 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-pppoeserver-eidt
+##|*IDENT=page-services-pppoeserver-edit
 ##|*NAME=Services: PPPoE Server: Edit page
 ##|*DESCR=Allow access to the 'Services: PPPoE Server: Edit' page.
 ##|*MATCH=vpn_pppoe_edit.php*

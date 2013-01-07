@@ -28,7 +28,7 @@ if [ ! -f /tmp/bogonsv6 ]; then
 	dl_error="true"
 fi
 
-if [ "$dl_error" != "" ];then
+if [ "$dl_error" != "" ]; then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh & 
 	exit
@@ -42,34 +42,37 @@ ON_DISK_V6_MD5=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
 if [ "$BOGON_V4_MD5" = "$ON_DISK_V4_MD5" ] || [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
 	# At least one of the downloaded MD5s matches, so mount RW
 	/etc/rc.conf_mount_rw
-fi
-
-if [ "$BOGON_V4_MD5" = "$ON_DISK_V4_MD5" ]; then
-	egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
-	RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
-	rm /tmp/bogons
-	echo "$RESULT" |awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
-else
-	echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv4.txt.md5 (md5 mismatch)" | logger
-	md5_error="true"
-fi
-
-if [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
-	egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
-	RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
-	rm /tmp/bogonsv6
-	echo "$RESULT" |awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
-else
-	echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv6.txt.md5 (md5 mismatch)" | logger
-	md5_error="true"
-fi
-
-if [ "$BOGON_V4_MD5" = "$ON_DISK_V4_MD5" ] || [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
+	
+	MAXENTRIES=`pfctl -s memory | awk '/table-entries/ { print $4 }'`
+	
+	if [ "$BOGON_V4_MD5" = "$ON_DISK_V4_MD5" ]; then
+		egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
+		RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
+		echo "$RESULT" | awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
+		rm /tmp/bogons
+	else
+		echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv4.txt.md5 (md5 mismatch)" | logger
+		md5_error="true"
+	fi
+	
+	if [ "$BOGON_V6_MD5" = "$ON_DISK_V6_MD5" ]; then
+		LINES=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
+		if [ $MAXENTRIES -gt $((2*LINES)) ]; then
+			egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
+			RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
+			echo "$RESULT" | awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
+		fi
+		rm /tmp/bogonsv6
+	else
+		echo "Could not download http://files.pfsense.org/lists/fullbogons-ipv6.txt.md5 (md5 mismatch)" | logger
+		md5_error="true"
+	fi
+	
 	# We mounted RW, so switch back to RO
 	/etc/rc.conf_mount_ro
 fi
 
-if [ "$md5_error" != "" ];then
+if [ "$md5_error" != "" ]; then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh & 
 	exit

@@ -493,6 +493,7 @@ if ($savemsg)
 											$vipif = $group[0]['int'];
 										$interfaces[$name] = "GW Group {$name}";
 									}
+									$interfaces['lo0'] = "Localhost";
 									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";

@@ -1364,9 +1364,9 @@ $i--): ?>
 					foreach($gateways as $gwname => $gw) {
 						if(($pconfig['ipprotocol'] == "inet46"))
 							continue;
-						if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6($gw['gateway']))
+						if(($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway']))))
 							continue;
-						if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4($gw['gateway']))
+						if(($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway']))))
 							continue;
 						if($gw == "") 
 							continue;

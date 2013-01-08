@@ -86,7 +86,7 @@ foreach($name_servers as $ns) {
 if(count($valid_ns > 0))
 	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 
-if(!empty($_ENV['new_domain_name'])) {
+if(!empty($_ENV['new_domain_name']))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");

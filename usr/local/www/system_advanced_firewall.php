@@ -59,6 +59,7 @@ $pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
+$pconfig['bogonsinterval'] = $config['system']['bogons']['interval'];
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['enablebinatreflection'] = $config['system']['enablebinatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
@@ -170,6 +171,22 @@ if ($_POST) {
 			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
 		else
 			unset($config['system']['tftpinterface']);
+		
+		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
+			switch ($_POST['bogonsinterval']) {
+				case 'daily':
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*");
+					break;
+				case 'weekly':
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "1");
+					break;
+				case 'monthly':
+					// fall through
+				default:
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*");
+			}
+			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
+		}
 	
 		write_config();
 
@@ -387,6 +404,24 @@ function update_description(itemnum) {
 									<br />
 									<?=gettext("With Multi-WAN you generally want to ensure traffic reaches directly connected networks and VPN networks when using policy routing. You can disable this for special purposes but it requires manually creating rules for these networks");?>
 									<br />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Bogon Networks");?></td>
+							</tr>		
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Update Frequency");?></td>
+								<td width="78%" class="vtable">
+									<select name="bogonsinterval" class="formselect">
+									<option value="monthly" <?php if (empty($pconfig['bogonsinterval']) || $pconfig['bogonsinterval'] == 'monthly') echo "selected"; ?>><?=gettext("Monthly"); ?></option>
+									<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected"; ?>><?=gettext("Weekly"); ?></option>
+									<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected"; ?>><?=gettext("Daily"); ?></option>
+									</select>
+									<br/>
+									<?=gettext("The frequency of updating the lists of IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA.");?>
 								</td>
 							</tr>
 							<tr>

@@ -194,6 +194,9 @@
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
 		<powerd_mode>hadp</powerd_mode>
+		<bogons>
+			<interval>monthly</interval>
+		</bogons>
 	</system>
 	<interfaces>
 		<wan>

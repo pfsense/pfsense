@@ -1976,7 +1976,7 @@ function install_cron_job($command, $active=false, $minute="0", $hour="*", $mont
 	} else {
 		if(($is_installed == true) && ($x > 0)) {
 			unset($config['cron']['item'][$x]);
-			write_config(sprintf(gettext("Remvoed cron job for %s"), $command));
+			write_config(sprintf(gettext("Removed cron job for %s"), $command));
 		}
 	}
 	configure_cron();

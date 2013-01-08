@@ -2619,6 +2619,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;
 								<?=gettext("Bogons are prefixes that should never appear in the Internet routing table, " .
 								"and obviously should not appear as the source address in any packets you receive."); ?>
+								<br/><br/>
+								<?=gettext("Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.")?>
 							</td>
 						</tr>
 					</table> <!-- End "allcfg" table -->

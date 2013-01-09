@@ -53,8 +53,8 @@ if($_REQUEST['getactivity']) {
 		$sorttype = escapeshellarg($_REQUEST['sorttype']);
 		$viewtype = escapeshellarg($_REQUEST['viewtype']);
 	} else {
-		$sorttype = gettext("bytes");
-		$viewtype = gettext("default");
+		$sorttype = "bytes";
+		$viewtype = "default";
 	}
 
 	$text = `pftop -b -a -o {$sorttype} -v {$viewtype}`;
@@ -69,8 +69,8 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], array_keys($sorttype
 	$sorttype = htmlentities($_REQUEST['sorttype']);
 	$viewtype = htmlentities($_REQUEST['viewtype']);
 } else {
-	$sorttype = gettext("bytes");
-	$viewtype = gettext("default");
+	$sorttype = "bytes";
+	$viewtype = "default";
 }
 
 ?>

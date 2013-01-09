@@ -534,8 +534,17 @@ function filter_generate_aliases() {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
 			else if ($ifcfg['type6'] == '6to4')
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
-			else 
+			else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
+
+				if ($ifcfg['type'] == 'pptp' && is_array($config['ppps']['ppp'])) {
+					foreach ($config['ppps']['ppp'] as $ppps) {
+						if ($ppps['if'] == $ifcfg['if']) {
+							$aliases .= " {$ppps['ports']}";
+						}
+					}
+				}
+			}
 			$aliases .= " }\"\n";
 		}
 	}

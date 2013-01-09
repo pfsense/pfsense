@@ -44,8 +44,10 @@ $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
 $pgtitle = gettext("Diagnostics: pfTop");
 
+$sorttypes = array('age', 'bytes', 'dest', 'dport', 'exp', 'none', 'peak', 'pkt', 'rate', 'size', 'sport', 'src');
+
 if($_REQUEST['getactivity']) {
-	if($_REQUEST['sorttype'])
+	if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], array_keys($sorttypes)))
 		$sorttype = escapeshellarg($_REQUEST['sorttype']);
 	else
 		$sorttype = gettext("bytes");	
@@ -56,7 +58,7 @@ if($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if($_REQUEST['sorttype'])
+if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], array_keys($sorttypes)))
 	$sorttype = htmlentities($_REQUEST['sorttype']);
 else
 	$sorttype = gettext("bytes");
@@ -98,19 +100,18 @@ else
 	<form method="post">
 	<?=gettext("Sort type:"); ?>
 	<select name='sorttype' id='sorttype' onChange='this.form.submit();'>
-		<option value='<?=$sorttype?>'><?=$sorttype?></option>
-		<option value='age'><?=gettext("age");?></option>
-		<option value='bytes'><?=gettext("bytes");?></option>
-		<option value='dest'><?=gettext("dest");?></option>
-		<option value='dport'><?=gettext("dport");?></option>
-		<option value='exp'><?=gettext("exp");?></option>
-		<option value='none'><?=gettext("none");?></option>
-		<option value='peak'><?=gettext("peak");?></option>
-		<option value='pkt'><?=gettext("pkt");?></option>
-		<option value='rate'><?=gettext("rate");?></option>
-		<option value='size'><?=gettext("size");?></option>
-		<option value='sport'><?=gettext("sport");?></option>
-		<option value='src'><?=gettext("src");?></option>														
+		<option value='age' <?php echo ($sorttype == "age") ? "selected" : ""; ?>><?=gettext("Age");?></option>
+		<option value='bytes' <?php echo ($sorttype == "bytes") ? "selected" : ""; ?>><?=gettext("Bytes");?></option>
+		<option value='dest' <?php echo ($sorttype == "dest") ? "selected" : ""; ?>><?=gettext("Destination Host");?></option>
+		<option value='dport' <?php echo ($sorttype == "dport") ? "selected" : ""; ?>><?=gettext("Destination Port");?></option>
+		<option value='exp' <?php echo ($sorttype == "exp") ? "selected" : ""; ?>><?=gettext("Expiry");?></option>
+		<option value='none' <?php echo ($sorttype == "none") ? "selected" : ""; ?>><?=gettext("None");?></option>
+		<option value='peak' <?php echo ($sorttype == "peak") ? "selected" : ""; ?>><?=gettext("Peak");?></option>
+		<option value='pkt' <?php echo ($sorttype == "pkt") ? "selected" : ""; ?>><?=gettext("Packet");?></option>
+		<option value='rate' <?php echo ($sorttype == "rate") ? "selected" : ""; ?>><?=gettext("Rate");?></option>
+		<option value='size' <?php echo ($sorttype == "size") ? "selected" : ""; ?>><?=gettext("Size");?></option>
+		<option value='sport' <?php echo ($sorttype == "sport") ? "selected" : ""; ?>><?=gettext("Source Port");?></option>
+		<option value='src' <?php echo ($sorttype == "src") ? "selected" : ""; ?>><?=gettext("Source Host");?></option>
 	</select>
 	<p/>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  

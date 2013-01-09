@@ -3597,7 +3597,7 @@ function get_parent_interface($interface) {
 				if (empty($parents))
 					if (is_array($config['ppps']['ppp']))
 						foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-							if ($ppp_if == $ppp['if']) {
+							if ($ifcfg['if'] == $ppp['if']) {
 								$ports = explode(',', $ppp['ports']);
 								foreach ($ports as $pid => $parent_if) 
 									$parents[$pid] = get_real_interface($parent_if);

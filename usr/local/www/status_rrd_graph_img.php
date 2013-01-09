@@ -173,7 +173,10 @@ if ($altq_list_queues[$curif]) {
         break;
         }
 	$upstream = (($altq->GetBandwidth()*$factor)/8);
-	$downstream = $upstream; /* XXX: Ugly hack */
+	if ($upstream != 0)
+		$downstream = $upstream; /* XXX: Ugly hack */
+	else
+		$downstream = $upstream = 12500000;
 	$upif = $curif;
 	$downif = "lan"; /* XXX should this be set to something else?! */
 } else {

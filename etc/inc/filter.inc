@@ -537,10 +537,10 @@ function filter_generate_aliases() {
 			else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 
-				if ($ifcfg['type'] == 'pptp' && is_array($config['ppps']['ppp'])) {
-					foreach ($config['ppps']['ppp'] as $ppps) {
-						if ($ppps['if'] == $ifcfg['if']) {
-							$aliases .= " {$ppps['ports']}";
+				if ($ifcfg['type'] == 'pptp') {
+					foreach (get_parent_interface($ifcfg['if']) as $parent_if) {
+						if ($parent_if != $ifcfg['if']) {
+							$aliases .= " {$parent_if}";
 						}
 					}
 				}

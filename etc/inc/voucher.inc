@@ -217,7 +217,7 @@ function voucher_expire($voucher_received) {
 	// split into an array. Useful for multiple vouchers given
 	$a_vouchers_received = preg_split("/[\t\n\r ]+/s", $voucher_received); 
 	$active_dirty = false;
-	$unsetindexes[] = array();
+	$unsetindexes = array();
 
 	// go through all received vouchers, check their valid and extract
 	// Roll# and Ticket# using the external readvoucher binary

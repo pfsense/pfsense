@@ -688,10 +688,10 @@ EOD;
 		if (!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
 			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
 
-		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf");
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec_bg("/usr/sbin/syslogd -c -c -l {$g['dhcpd_chroot_path']}/var/run/log");
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log");
 	}
 
 	if ($g['booting'])

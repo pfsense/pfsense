@@ -53,16 +53,21 @@ if($_REQUEST['getactivity']) {
 	if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 		&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
 		&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
-		$sorttype = escapeshellarg($_REQUEST['sorttype']);
 		$viewtype = escapeshellarg($_REQUEST['viewtype']);
-		$numstate = (in_array($_REQUEST['viewtype'], $viewall) ? "-a" : escapeshellarg($_REQUEST['states']));
+		if (in_array($_REQUEST['viewtype'], $viewall)) {
+			$sorttype = "";
+			$numstate = "-a";
+		} else {
+			$sorttype = "-o " . escapeshellarg($_REQUEST['sorttype']);
+			$numstate = ($_REQUEST['states'] == "all" ? "-a" : escapeshellarg($_REQUEST['states']));
+		}
 	} else {
 		$sorttype = "bytes";
 		$viewtype = "default";
 		$numstate = "100";
 	}
-
-	$text = `pftop -b -o {$sorttype} -v {$viewtype} $numstate`;
+	log_error("pftop -b {$sorttype} -v {$viewtype} $numstate");
+		$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
 	echo $text;
 	exit;
 }
@@ -72,9 +77,14 @@ include("head.inc");
 if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 	&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
 	&& $_REQUEST['states'] && in_array($_REQUEST['states'], $numstates)) {
-	$sorttype = htmlentities($_REQUEST['sorttype']);
-	$viewtype = htmlentities($_REQUEST['viewtype']);
-	$numstate = (in_array($_REQUEST['viewtype'], $viewall) ? "-a" : htmlentities($_REQUEST['states']));
+	$viewtype = escapeshellarg($_REQUEST['viewtype']);
+	if (in_array($_REQUEST['viewtype'], $viewall)) {
+		$sorttype = "";
+		$numstate = "-a";
+	} else {
+		$sorttype = "-o " . escapeshellarg($_REQUEST['sorttype']);
+		$numstate = ($_REQUEST['states'] == "all" ? "-a" : escapeshellarg($_REQUEST['states']));
+	}
 } else {
 	$sorttype = "bytes";
 	$viewtype = "default";

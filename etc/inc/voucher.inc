@@ -214,7 +214,7 @@ function voucher_expire($voucher_received) {
 	$active_dirty = false;
 
 	$cpdb = captiveportal_read_db(false, 4); /* Indexed by Voucher */
-	$unsetindexes[] = array();
+	$unsetindexes = array();
 
 	// go through all received vouchers, check their valid and extract
 	// Roll# and Ticket# using the external readvoucher binary

@@ -224,6 +224,7 @@ $diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );
 
 $diagnostics_menu[] = array(gettext("Tables"), "/diag_tables.php");
 $diagnostics_menu[] = array(gettext("Ping"), "/diag_ping.php");
+$diagnostics_menu[] = array(gettext("Test Port"), "/diag_testport.php");
 $diagnostics_menu[] = array(gettext("pfInfo"), "/diag_pf_info.php");
 $diagnostics_menu[] = array(gettext("pfTop"), "/diag_system_pftop.php");
 $diagnostics_menu[] = array(gettext("Reboot"), "/reboot.php");

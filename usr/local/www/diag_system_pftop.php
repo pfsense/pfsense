@@ -66,8 +66,8 @@ if($_REQUEST['getactivity']) {
 		$viewtype = "default";
 		$numstate = "100";
 	}
-	log_error("pftop -b {$sorttype} -v {$viewtype} $numstate");
-		$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
+
+	$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
 	echo $text;
 	exit;
 }

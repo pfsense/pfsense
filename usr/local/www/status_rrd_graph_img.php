@@ -793,7 +793,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		$graphcmd .= "DEF:\"$name=$rrddbpath$curdatabase:$name:AVERAGE\" ";
 		$graphcmd .= "CDEF:\"$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out=$name-bytes_out,8,*\" ";
-		$graphcmd .= "$AREA:\"$name-bits_out#${color}:$name\" ";
+		$graphcmd .= "$AREA:\"$name-bits_out#${color}:$name$stack\" ";
 		$t++;
 		if($t > 7) { $t = 0; }
 	}
@@ -823,7 +823,7 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 		$graphcmd .= "CDEF:\"$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out=$name-bytes_out,8,*\" ";
 		$graphcmd .= "CDEF:\"$name-bits_out_neg=$name-bits_out,$multiplier,*\" ";
-		$graphcmd .= "$AREA:\"$name-bits_out_neg#${color}:$name\" ";
+		$graphcmd .= "$AREA:\"$name-bits_out_neg#${color}:$name$stack\" ";
 		$t++;
 		if($t > 7) { $t = 0; }
 	}

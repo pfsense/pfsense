@@ -1091,9 +1091,9 @@ function captiveportal_init_radius_servers() {
 			$radiusport4 = 1812;
 
 		$radiuskey = $config['captiveportal'][$cpzone]['radiuskey'];
-		$radiuskey2 = ($config['captiveportal'][$cpzone]['radiuskey2']) ? $config['captiveportal'][$cpzone]['radiuskey2'] : null;
-		$radiuskey3 = ($config['captiveportal'][$cpzone]['radiuskey3']) ? $config['captiveportal'][$cpzone]['radiuskey3'] : null;
-		$radiuskey4 = ($config['captiveportal'][$cpzone]['radiuskey4']) ? $config['captiveportal'][$cpzone]['radiuskey4'] : null;
+		$radiuskey2 = $config['captiveportal'][$cpzone]['radiuskey2'];
+		$radiuskey3 = $config['captiveportal'][$cpzone]['radiuskey3'];
+		$radiuskey4 = $config['captiveportal'][$cpzone]['radiuskey4'];
 
 		$cprdsrvlck = lock("captiveportalradius{$cpzone}", LOCK_EX);
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db", "w");
@@ -1102,13 +1102,13 @@ function captiveportal_init_radius_servers() {
 			unlock($cprdsrvlck);
 			return 1;
 		}
-		if (isset($radiusip, $radiuskey))
+		if (isset($radiusip))
 			fwrite($fd,$radiusip . "," . $radiusport . "," . $radiusacctport . "," . $radiuskey . ",first");
-		if (isset($radiusip2, $radiuskey2))
+		if (isset($radiusip2))
 			fwrite($fd,"\n" . $radiusip2 . "," . $radiusport2 . "," . $radiusacctport . "," . $radiuskey2 . ",first");
-		if (isset($radiusip3, $radiuskey3))
+		if (isset($radiusip3))
 			fwrite($fd,"\n" . $radiusip3 . "," . $radiusport3 . "," . $radiusacctport . "," . $radiuskey3 . ",second");
-		if (isset($radiusip4, $radiuskey4))
+		if (isset($radiusip4))
 			fwrite($fd,"\n" . $radiusip4 . "," . $radiusport4 . "," . $radiusacctport . "," . $radiuskey4 . ",second");
 		
 

@@ -61,15 +61,15 @@ if ($_POST || $_REQUEST['host']) {
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (!is_ipaddr($_REQUEST['host']) && !is_hostname($_REQUEST['host'])) {
-		$input_errors[] = gettext("Please enter a a valid IP or hostname.");
+		$input_errors[] = gettext("Please enter a valid IP or hostname.");
 	}
 
 	if (!is_port($_REQUEST['port'])) {
-		$input_errors[] = gettext("Please enter a a valid port number.");
+		$input_errors[] = gettext("Please enter a valid port number.");
 	}
 
 	if (is_numeric($_REQUEST['srcport']) && !is_port($_REQUEST['srcport'])) {
-		$input_errors[] = gettext("Please enter a a valid source port number, or leave the field blank.");
+		$input_errors[] = gettext("Please enter a valid source port number, or leave the field blank.");
 	}
 
 	if (is_ipaddrv4($_REQUEST['host']) && ($_REQUEST['ipprotocol'] == "ipv6")) {
@@ -105,7 +105,7 @@ include("head.inc"); ?>
 <tr><td>
 <?php echo gettext("This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port. This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner."); ?>
 <br/><br/>
-<?php echo gettext("No data is transmitted to the remote host during this test, it will only attempt open a connection and optionally display the data sent back from the server."); ?>
+<?php echo gettext("No data is transmitted to the remote host during this test, it will only attempt to open a connection and optionally display the data sent back from the server."); ?>
 <br/><br/><br/>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="diag_testport.php" method="post" name="iform" id="iform">

@@ -151,16 +151,16 @@ $gamesplist['lineage2'] = array();
 	$gamesplist['lineage2'][] = array('Lineage2-2106', 'tcp', '2106', '2106', 'both');
 	$gamesplist['lineage2'][] = array('Lineage2-7777', 'tcp', '7777', '7777', 'both');
 
-$gamesplist['wechwarrioronline'] = array();
+$gamesplist['mechwarrioronline'] = array();
 	/* MechWarrior: Online */
-	$gamesplist['wechwarrioronline'][] = array('wechwarrioronline-tcp1', 'tcp', '45461', '45461', 'both');
-	$gamesplist['wechwarrioronline'][] = array('wechwarrioronline-tcp2', 'tcp', '45464', '45464', 'both');
-	$gamesplist['wechwarrioronline'][] = array('wechwarrioronline-game', 'udp', '21000', '30000', 'both'); // 9000 ports
+	$gamesplist['mechwarrioronline'][] = array('MechWarriorOnline-tcp1', 'tcp', '45461', '45461', 'both');
+	$gamesplist['mechwarrioronline'][] = array('MechWarriorOnline-tcp2', 'tcp', '45464', '45464', 'both');
+	$gamesplist['mechwarrioronline'][] = array('MechWarriorOnline-game', 'udp', '21000', '30000', 'both'); // 9000 ports
 
 $gamesplist['minecraft'] = array();
 	/* Minecraft */
-	$gamesplist['minecraft'][] = array('minecraft-tcp', 'tcp', '25565', '25565', 'both');
-	$gamesplist['minecraft'][] = array('minecraft-udp', 'udp', '25565', '25565', 'both');
+	$gamesplist['minecraft'][] = array('Minecraft-tcp', 'tcp', '25565', '25565', 'both');
+	$gamesplist['minecraft'][] = array('Minecraft-udp', 'udp', '25565', '25565', 'both');
 
 $gamesplist['operationflashpoint-dr'] = array();
 	/* Operation Flashpoint: Dragon Rising */

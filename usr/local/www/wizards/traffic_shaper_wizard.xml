@@ -563,7 +563,7 @@
 				<name>MechwarriorOnline</name>
 				<type>checkbox</type>
 				<typehint>MechWarrior: Online - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;wechwarrioronline</bindstofield>
+				<bindstofield>ezshaper-&gt;step6-&gt;mechwarrioronline</bindstofield>
 			</field>
 			<field>
 				<name>Minecraft</name>

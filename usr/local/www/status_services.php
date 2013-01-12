@@ -43,6 +43,7 @@ require_once("service-utils.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
+require_once("shortcuts.inc");
 
 if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 	switch($_GET['service']) {

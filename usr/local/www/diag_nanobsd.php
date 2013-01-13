@@ -320,8 +320,10 @@ if ($savemsg)
 <?php
 
 // Clear the loading indicator
-echo "<script type=\"text/javascript\">";
-echo "jQuery('#loading').html('');";
-echo "</script>";	
+echo "<script type=\"text/javascript\">\n";
+echo "//<![CDATA[\n";
+echo "jQuery('#loading').html('');\n";
+echo "//]]>\n";
+echo "</script>\n";	
 
 ?>

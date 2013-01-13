@@ -69,10 +69,11 @@ if($_REQUEST['getupdatestatus']) {
 			$needs_system_upgrade = false;
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-				echo "<script type=\"text/javascript\">";
-				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);";
-
-				echo "</script>";
+				echo "\n<script type=\"text/javascript\">\n";
+				echo "//<![CDATA[\n";
+				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);\n";
+				echo "//]]>\n";
+				echo "</script>\n";
 			} else
 				echo "<br />You are on the latest version.";
 		}
@@ -168,7 +169,7 @@ $curcfg = $config['system']['firmware'];
 					<?php
 						$dns_servers = get_dns_servers();
 						foreach($dns_servers as $dns) {
-							echo "{$dns}<br>";
+							echo "{$dns}<br/>";
 						}
 					?>
 			</td>
@@ -255,6 +256,7 @@ $curcfg = $config['system']['firmware'];
 	</tbody>
 </table>
 <script type="text/javascript">
+//<![CDATA[
 	function swapuname() {
 		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
 	}
@@ -278,4 +280,5 @@ $curcfg = $config['system']['firmware'];
 	}
 	setTimeout('getstatus()', 4000);
 	<?php endif; ?>
+//]]>
 </script>

@@ -166,8 +166,15 @@ if ($needs_system_upgrade == false) {
 	exit;
 }
 
-echo "\n<script>jQuery('#invokeupgrade').css('visibility','visible');</script>";
-echo "\n<script>jQuery('#backupdiv').css('visibility','visible');</script>";
+echo "\n<script type=\"text/javascript\">\n"
+echo "jQuery('#invokeupgrade').css('visibility','visible');\n";
+echo "//]]>\n";
+echo "</script>\n";
+echo "<script type=\"text/javascript\">\n";
+echo "//<![CDATA[\n";
+echo "jQuery('#backupdiv').css('visibility','visible');\n";
+echo "//]]>\n";
+echo "</script>\n";
 
 $txt  = gettext("A new version is now available") . "\\n\\n";
 $txt .= gettext("Current version") .": ". $current_installed_version . "\\n";

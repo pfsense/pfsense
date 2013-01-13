@@ -345,9 +345,11 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		</tr>
 	</table>
 	<script type="text/javascript">
+	//<![CDATA[
 		NiftyCheck();
 		Rounded("div#redbox","all","{$nifty_background}","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","{$nifty_background}","{$nifty_blackbox}","smooth");
+	//]]>
 	</script>
 EOFnp;
 
@@ -409,9 +411,11 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 		</tr>
 	</table>
 	<script type="text/javascript">
+	//<![CDATA[
 		NiftyCheck();
 		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
+	//]]>
 	</script>
 EOFnp;
 
@@ -745,11 +749,13 @@ function display_widget_tabs(& $tab_array) {
 		echo "</div>";
 	}
 	
-	echo "<script type=\"text/javascript\">";
+	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
 	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "</script>";
+	echo "//]]>\n";
+	echo "</script>\n";
 	echo "</div>";
 }
 
@@ -759,8 +765,10 @@ function display_widget_tabs(& $tab_array) {
 function outputJavaScriptFileInline($javascript) {
 	if(file_exists($javascript)) {
 		echo "\n<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		include($javascript);
-		echo "\n</script>\n";
+		echo "\n//]]>\n";
+		echo "</script>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$javascript} -->\n\n";
 	}
@@ -771,8 +779,10 @@ function outputJavaScriptFileInline($javascript) {
 function outputCSSPrintFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
+		echo "<!--\n";
 		include($css);
-		echo "\n</style>\n";
+		echo "\n-->\n";
+		echo "</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
 	}
@@ -782,8 +792,10 @@ function outputCSSPrintFileInline($css) {
 function outputCSSFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";
+		echo "<!--\n";
 		include($css);
-		echo "\n</style>\n";
+		echo "\n-->\n";
+		echo "</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
 	}
@@ -963,9 +975,11 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
                         echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
                 }
                 echo "</select>\n<p/>";
-                echo "<script type=\"text/javascript\">";
-                echo " function tabs_will_go(obj){ document.location = obj.value; }";
-                echo "</script>";
+                echo "<script type=\"text/javascript\">\n";
+								echo "//<![CDATA[\n";
+                echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+								echo "//]]>\n";
+                echo "</script>\n";
         }  else {
                 echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
                 echo "<!-- Tabbed bar code-->\n";

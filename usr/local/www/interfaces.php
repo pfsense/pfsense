@@ -1114,9 +1114,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 <script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
 <link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
-<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
+<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
+//<![CDATA[
 	function updateType(t) {
 		switch(t) {
 			case "none": {
@@ -1305,7 +1306,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			}
 		});
 	}
-
+//]]>
 </script>
 </head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -2653,6 +2654,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		-->
 	</form>
 	<script type="text/javascript">
+	//<![CDATA[
 		var gatewayip;
 		var name;
 		var gatewayipv6;
@@ -2808,6 +2810,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		echo "updateType('{$pconfig['type']}');\n";
 		echo "updateTypeSix('{$pconfig['type6']}');\n";
 		?>
+	//]]>
 	</script>
 	<?php include("fend.inc"); ?>
 	</body>

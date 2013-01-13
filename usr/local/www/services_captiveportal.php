@@ -327,8 +327,8 @@ if ($_POST) {
 }
 include("head.inc");
 ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function enable_change(enable_change) {
 	var endis, radius_endis;
 	endis = !(document.iform.enable.checked || enable_change);
@@ -393,7 +393,7 @@ function enable_change(enable_change) {
 	document.iform.reauthenticateacct[1].disabled = radacct_dis;
 	document.iform.reauthenticateacct[2].disabled = radacct_dis;
 }
-//-->
+//]]>
 </script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -959,10 +959,10 @@ function enable_change(enable_change) {
   </tr>
   </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change(false);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

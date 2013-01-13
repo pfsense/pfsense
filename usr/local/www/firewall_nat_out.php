@@ -298,8 +298,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat_out.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
-</script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php print_info_box_np(gettext("The NAT configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>

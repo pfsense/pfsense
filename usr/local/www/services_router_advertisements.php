@@ -200,13 +200,11 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "subnet_address";
 	rowtype[0] = "textbox";
 	rowsize[0] = "30";
@@ -220,6 +218,7 @@ include("head.inc");
 		obj.setAttribute('autocomplete', 'off');
 		objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
 	}
+//]]>
 </script>
 
 <form action="services_router_advertisements.php" method="post" name="iform" id="iform">
@@ -350,8 +349,10 @@ display_top_tabs($tab_array);
 				</tbody>
 				</table>
 				<script type="text/javascript">
+				//<![CDATA[
 					field_counter_js = 2;
 					totalrows = <?= $counter ?>;
+				//]]>
 				</script>
 				<div id="addrowbutton">
 					<a onclick="javascript:addRowTo('maintable'); add_alias_control(); return false;" href="#"><!--

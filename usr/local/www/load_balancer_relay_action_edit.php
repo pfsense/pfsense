@@ -186,8 +186,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script language="javascript">
-
+<script type="text/javascript">
+//<![CDATA
 function updateProtocol(m) {
   // Default to HTTP
   if (m == "") {
@@ -394,7 +394,7 @@ jQuery(document).ready(function() {
   updateType('<?=htmlspecialchars($pconfig['type'])?>');  
   updateAction('<?=htmlspecialchars($pconfig['action'])?>');  
 });
-
+//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>

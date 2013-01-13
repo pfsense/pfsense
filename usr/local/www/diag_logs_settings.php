@@ -146,8 +146,8 @@ include("head.inc");
 ?>
 
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function enable_change(enable_over) {
 	if (document.iform.enable.checked || enable_over) {
 		document.iform.remoteserver.disabled = 0;
@@ -207,7 +207,7 @@ function check_everything() {
 		document.iform.system.disabled = 0;
 	}
 }
-// -->
+//]]>
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -361,10 +361,10 @@ function check_everything() {
 </td></tr>
 </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change(false);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

@@ -342,5 +342,7 @@ $mac_man = load_mac_manufacturer_table();
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 	jQuery('#loading').html('');
+//]]>
 </script>

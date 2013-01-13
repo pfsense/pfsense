@@ -256,6 +256,7 @@ include("head.inc");
 	<?php } ?>
 	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
 	<script type="text/javascript">
+	//<![CDATA[
 		jQuery(function ($) {
 			var options = {
 				dateFormat: 'mm/dd/yy',
@@ -265,6 +266,7 @@ include("head.inc");
 			$("#startDateTime").datetimepicker(options);
 			$("#endDateTime").datetimepicker(options);
 		});
+	//]]>
 	</script>
 	</head>
 <?php } ?>
@@ -602,8 +604,9 @@ function get_dates($curperiod, $graph) {
 					</td>
 				</tr>
 				<tr>
-					<td colspan=2 class="list">
-					<script language="javascript">
+					<td colspan="2" class="list">
+					<script type="text/javascript">
+					//<![CDATA[
 						function update_graph_images() {
 							//alert('updating');
 							var randomid = Math.floor(Math.random()*11);
@@ -675,6 +678,7 @@ function get_dates($curperiod, $graph) {
 							window.setTimeout('update_graph_images()', 355000);
 						}
 						window.setTimeout('update_graph_images()', 355000);
+					//]]>
 					</script>
 					</form>
 					</td>

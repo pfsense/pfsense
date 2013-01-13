@@ -66,6 +66,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <script type="text/javascript">
+//<![CDATA[
 	function getlimiteractivity() {
 		var url = "/diag_limiter_info.php";
 		var pars = 'getactivity=yes';
@@ -78,10 +79,11 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#limiteractivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
+		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><b><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/b><\/font>');
 		setTimeout('getlimiteractivity()', 2000);		
 	}
 	setTimeout('getlimiteractivity()', 5000);	
+//]]>
 </script>
 <div id='maincontent'>
 <?php

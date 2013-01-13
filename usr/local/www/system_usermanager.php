@@ -353,9 +353,9 @@ include("head.inc");
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)
 //For this script, visit http://www.javascriptkit.com
 // -->
-<script language="javascript" type="text/javascript" src="javascript/datetimepicker.js"></script>
-<script language="JavaScript">
-<!--
+<script type="text/javascript" src="javascript/datetimepicker.js"></script>
+<script type="text/javascript">
+//<![CDATA[
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -422,7 +422,7 @@ function sshkeyClicked(obj) {
                 document.getElementById("sshkeychck").style.display="";
         }
 }
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)

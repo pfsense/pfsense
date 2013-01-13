@@ -246,8 +246,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA{
 
 function pool_change() {
 
@@ -318,7 +318,7 @@ function login_banner_change() {
 		document.iform.login_banner.disabled = 1;
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
@@ -663,7 +663,8 @@ function login_banner_change() {
 	</tr>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 pool_change();
 dns_domain_change();
 dns_split_change();
@@ -671,7 +672,7 @@ dns_server_change();
 wins_server_change();
 pfs_group_change();
 login_banner_change();
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

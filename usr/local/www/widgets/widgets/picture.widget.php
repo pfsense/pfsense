@@ -87,8 +87,10 @@ if($_POST) {
 </div>											 
 
 <!-- needed to show the settings widget icon -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "picture-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

@@ -378,7 +378,7 @@ include("head.inc");
 $jscriptstr = <<<EOD
 
 <script type="text/javascript">
-
+//<![CDATA[
 var objAlias = new Array(4999);
 function typesel_change() {
 	switch (document.iform.type.selectedIndex) {
@@ -532,6 +532,7 @@ function update_box_type() {
 		document.getElementById ("addrowbutton").style.display = 'none';
 	}
 }
+//]]>
 </script>
 
 EOD;
@@ -544,19 +545,16 @@ EOD;
 	echo $jscriptstr;
 ?>
 
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
-</script>
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <input type='hidden' name='address_type' value='textbox' />
 <input type='hidden' name='address_subnet_type' value='select' />
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "address";
 	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
@@ -568,6 +566,7 @@ EOD;
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
+//]]>
 </script>
 
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_input_errors"); ?>

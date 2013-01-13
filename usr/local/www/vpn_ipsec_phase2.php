@@ -306,8 +306,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function change_mode() {
 	index = document.iform.mode.selectedIndex;
@@ -457,7 +457,7 @@ function change_protocol() {
 		document.getElementById('opt_enc').style.display = 'none';
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_phase2.php" method="post" name="iform" id="iform">
@@ -779,8 +779,8 @@ function change_protocol() {
 	</tr>
 </table>
 </form>
-<script lannguage="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 change_mode('<?=htmlspecialchars($pconfig['mode'])?>');
 change_protocol('<?=htmlspecialchars($pconfig['proto'])?>');
 typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
@@ -788,7 +788,7 @@ typesel_change_natlocal(<?=htmlspecialchars($pconfig['natlocalid_netbits'])?>);
 <?php if (!isset($pconfig['mobile'])): ?>
 typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 <?php endif; ?>
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

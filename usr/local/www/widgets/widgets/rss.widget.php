@@ -176,8 +176,10 @@ else
 </div>				 
 
 <!-- needed to display the widget settings menu -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "rss-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

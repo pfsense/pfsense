@@ -167,8 +167,11 @@ $shortcut_section = "snmp";
 include("head.inc");
 
 ?>
-<script language="JavaScript">
-<!--
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript">
+//<![CDATA[
 function check_deps() {
 	if (jQuery('#hostres').prop('checked') == true) {
 		jQuery('#mibii').prop('checked',true);
@@ -269,9 +272,9 @@ function enable_change(whichone) {
             //document.iform.bridge.disabled = true;
 	}
 }
-//-->
+//]]>
 </script>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -432,10 +435,10 @@ function enable_change(whichone) {
 		 </tr>
 		</table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change(this);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

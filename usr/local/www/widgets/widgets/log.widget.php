@@ -57,12 +57,14 @@ if($_POST['filterlogentries']) {
 	write_config("Saved Filter Log Entries via Dashboard");
   $filename = $_SERVER['HTTP_REFERER'];
   if(headers_sent($file, $line)){
-    echo '<script type="text/javascript">';
-    echo 'window.location.href="'.$filename.'";';
-    echo '</script>';
-    echo '<noscript>';
-    echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
-    echo '</noscript>';  
+    echo '<script type="text/javascript">\n';
+		echo '//<![CDATA\n';
+    echo 'window.location.href="'.$filename.'";\n';
+		echo '//]]>\n';
+    echo '</script>\n';
+    echo '<noscript>\n';
+    echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />\n';
+    echo '</noscript>\n';  
   } 
 	Header("Location: /");
 }
@@ -86,7 +88,8 @@ handle_ajax($nentries, $nentries + 20);
 
 ?>
 
-<script language="javascript">
+<script type="text/javascript">
+//<![CDATA[
 lastsawtime = '<?php echo time(); ?>';
 var lines = Array();
 var timer;
@@ -105,11 +108,11 @@ else
 /* Called by the AJAX updater */
 function format_log_line(row) {
 	var line = '';
-	line = '  <span class="log-action-mini" nowrap>&nbsp;' + row[0] + '&nbsp;</span>';
-	line += '  <span class="log-interface-mini" nowrap>' + row[2] + '</span>';
-	line += '  <span class="log-source-mini" nowrap>' + row[3] + '</span>';
-	line += '  <span class="log-destination-mini" nowrap>' + row[4] + '</span>';
-	line += '  <span class="log-protocol-mini" nowrap>' + row[5] + '</span>';
+	line = '  <span class="log-action-mini" nowrap>&nbsp;' + row[0] + '&nbsp;<\/span>';
+	line += '  <span class="log-interface-mini" nowrap>' + row[2] + '<\/span>';
+	line += '  <span class="log-source-mini" nowrap>' + row[3] + '<\/span>';
+	line += '  <span class="log-destination-mini" nowrap>' + row[4] + '<\/span>';
+	line += '  <span class="log-protocol-mini" nowrap>' + row[5] + '<\/span>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -122,6 +125,7 @@ function format_log_line(row) {
 
 	return line;
 }
+//]]>
 </script>
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
 <input type="hidden" id="log-config" name="log-config" value="">

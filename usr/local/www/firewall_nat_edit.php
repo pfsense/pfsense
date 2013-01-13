@@ -449,7 +449,7 @@ include("head.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascript/chosen/chosen.jquery.js"></script>
 <?php
 include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -858,8 +858,8 @@ include("fbegin.inc"); ?>
                 </tr>
               </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 	ext_change();
 	dst_change(document.iform.interface.value,'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	var iface_old = document.iform.interface.value;
@@ -869,9 +869,9 @@ include("fbegin.inc"); ?>
 	show_source();
 	<?php endif; ?>
 	nordr_change();
-//-->
+//]]>
 </script>
-<script language="JavaScript">
+<script type="text/javascript">
 //<![CDATA[
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 	var customarray  = <?= json_encode(get_alias_list("port")) ?>;

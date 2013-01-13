@@ -95,6 +95,7 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form method="post" action="diag_system_pftop.php">
 <script type="text/javascript">
+//<![CDATA[
 	function getpftopactivity() {
 		var url = "/diag_system_pftop.php";
 		var pars = 'getactivity=yes&sorttype=' + jQuery('#sorttype').val() + '&viewtype=' + jQuery('#viewtype').val() + '&states=' + jQuery('#states').val();
@@ -107,10 +108,11 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#pftopactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
+		jQuery('#pftopactivitydiv').html('<font face="Courier" size="2"><b><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/b><\/font>');
 		setTimeout('getpftopactivity()', 2500);
 	}
 	setTimeout('getpftopactivity()', 1000);
+//]]>
 </script>
 <div id='maincontent'>
 <?php
@@ -198,7 +200,8 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 	</div>
 </form>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 jQuery("#viewtype").change(function() {
 	var selected = jQuery("#viewtype option:selected");
 	switch(selected.val()) {
@@ -211,6 +214,7 @@ jQuery("#viewtype").change(function() {
 			jQuery("#sorttype, #sorttypediv, #statesdiv, #states").show();
 	}
 });
+//]]>
 </script>
 </body>
 </html>

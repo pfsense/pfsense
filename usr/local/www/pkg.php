@@ -211,6 +211,7 @@ if ($pkg['tabs'] <> "") {
 <script type="textjavascript" src="javascript/domTT/behaviour.js"></script>
 <script type="textjavascript" src="javascript/domTT/fadomatic.js"></script>
 <script>
+//<![CDATA[
 	function setFilter(filtertext) {
 		jQuery('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
@@ -257,6 +258,7 @@ if ($pkg['tabs'] <> "") {
 	<?php 
 		}
 	?>
+//]]>
 </script>
 <tr><td><div id="mainarea"><table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -302,7 +304,7 @@ if ($pkg['tabs'] <> "") {
 							}
 							if($include_filtering_inputbox) 
 								echo "&nbsp;&nbsp;Filter text: <input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "'> <input type='submit' value='Filter'>";
-							echo "</td></tr><tr><td><font siez='-3'>&nbsp;</td></tr>";
+							echo "</td></tr><tr><td><font size='-3'>&nbsp;</td></tr>";
 						}
 					}
 				}

@@ -452,11 +452,13 @@ include("head.inc");
 </form>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 function show_phase2(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
 	aodiv.style.display = "block";
 }
+//]]>
 </script>
 </body>
 </html>

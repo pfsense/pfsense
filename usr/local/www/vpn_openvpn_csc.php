@@ -229,8 +229,8 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function dns_domain_change() {
 
@@ -275,7 +275,7 @@ function netbios_change() {
 	}
 }
 
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -725,14 +725,14 @@ function netbios_change() {
 		</td>
 	</tr>
 </table>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 dns_domain_change();
 dns_server_change();
 wins_server_change();
 ntp_server_change();
 netbios_change();
-//-->
+//]]>
 </script>
 </body>
 <?php include("fend.inc"); ?>

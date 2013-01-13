@@ -239,29 +239,30 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <input type='hidden' name='username' value='textbox' class="formfld unknown" />
 <input type='hidden' name='password' value='textbox' />
 <input type='hidden' name='ip' value='textbox' />
 
 <script type="text/javascript">
-        rowname[0] = "username";
-        rowtype[0] = "textbox";
-        rowsize[0] = "20";
+//<![CDATA[
+	rowname[0] = "username";
+	rowtype[0] = "textbox";
+	rowsize[0] = "20";
 
-        rowname[1] = "password";
-        rowtype[1] = "password";
-        rowsize[1] = "20";
+	rowname[1] = "password";
+	rowtype[1] = "password";
+	rowsize[1] = "20";
 
-        rowname[2] = "ip";
-        rowtype[2] = "textbox";
-        rowsize[2] = "10";
+	rowname[2] = "ip";
+	rowtype[2] = "textbox";
+	rowsize[2] = "10";
+//]]>
 </script>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function get_radio_value(obj)
 {
 	for (i = 0; i < obj.length; i++) {
@@ -342,7 +343,7 @@ function enable_change(enable_over) {
 		document.iform.radius_acct_update.disabled = 1;
 	}
 }
-//-->
+//]]>
 </script>
 <form action="vpn_pppoe_edit.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -604,13 +605,14 @@ function enable_change(enable_over) {
 </table>
 </form>
 <script type="text/javascript">
+//<![CDATA[
 enable_change(false);
 
 field_counter_js = 3;
 rows = 1;
 totalrows = <?php echo $counter; ?>;
 loaded = <?php echo $counter; ?>;
-
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

@@ -62,10 +62,8 @@ $curcfg = $config['system']['altpkgrepo'];
 $pgtitle = array(gettext("System"),gettext("Package Settings"));
 include("head.inc");
 ?>
-<script language="JavaScript">
-<!--
-
-
+<script type="text/javascript">
+//<![CDATA
 function enable_altpkgrepourl(enable_over) {
 	if (document.iform.alturlenable.checked || enable_over) {
 		document.iform.pkgrepourl.disabled = 0;
@@ -73,8 +71,7 @@ function enable_altpkgrepourl(enable_over) {
 		document.iform.pkgrepourl.disabled = 1;
 	}
 }
-
-// -->
+//]]>
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -113,7 +110,11 @@ function enable_altpkgrepourl(enable_over) {
 				</span>
 				</td>
 	</tr>
-	<script>enable_altpkgrepourl();</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	enable_altpkgrepourl();
+	//]]>
+	</script>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

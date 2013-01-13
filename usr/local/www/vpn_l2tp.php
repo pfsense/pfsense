@@ -184,7 +184,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 function get_radio_value(obj)
 {
 	for (i = 0; i < obj.length; i++) {
@@ -268,7 +268,7 @@ function enable_change(enable_over) {
 		document.iform.secret.style.backgroundColor = '#D4D0C8';
 	}
 }
-//-->
+//]]>
 </script>
 <form action="vpn_l2tp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>

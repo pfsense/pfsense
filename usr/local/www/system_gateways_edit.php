@@ -431,15 +431,17 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 function show_advanced_gateway() {
-        document.getElementById("showadvgatewaybox").innerHTML='';
-        aodiv = document.getElementById('showgatewayadv');
-        aodiv.style.display = "block";
+	document.getElementById("showadvgatewaybox").innerHTML='';
+	aodiv = document.getElementById('showgatewayadv');
+	aodiv.style.display = "block";
 }
 function monitor_change() {
-        document.iform.monitor.disabled = document.iform.monitor_disable.checked;
+	document.iform.monitor.disabled = document.iform.monitor_disable.checked;
 }
+//]]>
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
@@ -633,8 +635,10 @@ function monitor_change() {
               </table>
 </form>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 monitor_change();
+//]]>
 </script>
 </body>
 </html>

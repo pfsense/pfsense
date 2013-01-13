@@ -85,10 +85,11 @@ if(file_exists("/tmp/manifest")) {
 }
 
 ?>
-<script language="JavaScript">
-<!--
 
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
+<script type="text/javascript">
+//<![CDATA[
 function enable_altfirmwareurl(enable_over) {  	 
 	if (document.iform.alturlenable.checked || enable_over) { 	 
 		document.iform.firmwareurl.disabled = 0; 	 
@@ -97,11 +98,9 @@ function enable_altfirmwareurl(enable_over) {
 		document.iform.firmwareurl.value = '';
 	} 	 
 }
-
-// -->
+//]]>
 </script>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
@@ -244,7 +243,11 @@ function enable_altfirmwareurl(enable_over) {
 		</td>
 	</tr>
 <?php endif; ?>
-	<script>enable_altfirmwareurl();</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	enable_altfirmwareurl();
+	//]]>
+	</script>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

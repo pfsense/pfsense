@@ -228,7 +228,8 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<script type="text/javascript" >
+<script type="text/javascript">
+//<![CDATA[
 function sticky_checked(obj) {
 	if (obj.checked)
 		jQuery('#srctrack').attr('disabled',false);
@@ -241,6 +242,7 @@ function maxmss_checked(obj) {
 	else
 		jQuery('#maxmss').attr('disabled','true');
 }
+//]]>
 </script>
 	<form action="system_advanced_misc.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">

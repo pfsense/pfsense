@@ -209,7 +209,7 @@ include("head.inc");
 /* using some of the $pfSenseHead function calls */
 $jscriptstr = <<<EOD
 <script type="text/javascript">
-
+//<![CDATA[
 var daysSelected = "";
 var month_array = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var day_array = ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'];
@@ -751,7 +751,7 @@ function removeRow(el) {
 	    }
 	}
 }
-
+//]]>
 </script>
 EOD;
 ?>

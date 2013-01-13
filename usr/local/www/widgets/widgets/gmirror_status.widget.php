@@ -41,9 +41,9 @@ if ($_GET['textonly'] == "true") {
 	</tbody>
 </table>
 
-<script type="text/javascript" language="javascript">
-  // <![CDATA[
+<script type="text/javascript">
+//<![CDATA[
 	var gmirrorupdater = new Ajax.PeriodicalUpdater('gmirror_status_table', '/widgets/widgets/gmirror_status.widget.php?textonly=true',
 	  { method: 'get', frequency: 5 } );
-  // ]]>
+//]]>
 </script>

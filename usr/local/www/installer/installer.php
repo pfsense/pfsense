@@ -349,7 +349,9 @@ function update_installer_status() {
 function update_installer_status_win($status) {
 	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo "	\$('#installeroutput').val('" . str_replace(htmlentities($status), "\n", "") . "');\n";
+	echo "//]]>\n";
 	echo "</script>\n";
 }
 
@@ -414,6 +416,7 @@ function body_html() {
 	<script type="text/javascript" src="/javascript/jquery.js"></script>
 	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
 	<script type="text/javascript">
+	//<![CDATA[
 		function getinstallerprogress() {
 			url = '/installer/installer.php';
 			pars = 'state=update_installer_status';
@@ -432,6 +435,7 @@ function body_html() {
 			setTimeout('getinstallerprogress()', 2000);
 			eval(transport.responseText);
 		}
+	//]]>
 	</script>
 EOF;
 
@@ -703,7 +707,11 @@ function installing_gui() {
 		</td></tr>
 		</table>
 	</center>
-	<script type="text/javascript">setTimeout('getinstallerprogress()', 250);</script>
+	<script type="text/javascript">
+	//<![CDATA[
+		setTimeout('getinstallerprogress()', 250);
+	//]]>
+	</script>
 
 EOF;
 	page_table_end();
@@ -761,6 +769,7 @@ function installer_custom() {
 	page_table_start($g['product_name'] . " installer - Customize disk(s) layout");
 	echo <<<EOF
 		<script type="text/javascript">
+		//<![CDATA[
 			Array.prototype.in_array = function(p_val) {
 				for(var i = 0, l = this.length; i < l; i++) {
 					if(this[i] == p_val) {
@@ -851,8 +860,10 @@ function installer_custom() {
 				}
 			}
 		</script>
+		//]]>
 		<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 		<script type="text/javascript">
+		//<![CDATA[
 			// Setup rowhelper data types
 			rowname[0] = "mountpoint";
 			rowtype[0] = "textbox";
@@ -876,6 +887,7 @@ function installer_custom() {
 			rowhelper_onChange = 	" onChange='javascript:row_helper_dynamic_custom()' ";
 			rowhelper_onDelete = 	"row_helper_dynamic_custom(); ";
 			rowhelper_onAdd = 		"row_helper_dynamic_custom();";
+		//]]>
 		</script>
 		<form action="installer.php" method="post">
 			<input type="hidden" name="state" value="verify_before_install">
@@ -1010,14 +1022,20 @@ EOF;
 		// Remaining allocation box
 		$custom_txt .= "<tr><td></td><td></td><td align='right'>Available space for allocation:</td><td><input style='border:0px; background-color: #FFFFFF;' size='8' id='availalloc' name='availalloc'></td></tr>";
 		$custom_txt .= "</table>";
-		$custom_txt .= "<script type=\"text/javascript\">row_helper_dynamic_custom();</script>";
+		$custom_txt .= "<script type=\"text/javascript\">\n";
+		$custom_txt .= "//<![CDATA[\n";
+		$custom_txt .= "row_helper_dynamic_custom();\n";
+		$custom_txt .= "//]]>\n";
+		$custom_txt .= "</script>\n";
 	}
 	echo <<<EOF
 
 												<tr>
 													<td colspan='4'>
 													<script type="text/javascript">
+													//<![CDATA[
 														\$('#loadingdiv').css('visibility','hidden');
+													//]]>
 													</script>
 													<div id='contentdiv' style="display:none;">
 														<p/>
@@ -1027,9 +1045,11 @@ EOF;
 														<input type="submit" value="Next">
 													</div>
 													<script type="text/javascript">
+													//<![CDATA[
 														var encryption_warning_shown = false;
 														\$('#contentdiv').fadeIn();
 														row_helper_dynamic_custom();
+													//]]>
 													</script>
 												</center>
 												</td></tr>
@@ -1057,10 +1077,10 @@ EOF;
 			</div>
 			</center>
 			<script type="text/javascript">
-			<!--
+			//<![CDATA[
 				newrow[1] = "{$select_txt}";
 				newrow[2] = "{$custom_disks}";
-			-->
+			//]]>
 			</script>
 			
 

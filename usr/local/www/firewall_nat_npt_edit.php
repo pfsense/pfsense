@@ -147,10 +147,8 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>

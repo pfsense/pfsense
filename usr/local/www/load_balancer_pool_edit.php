@@ -164,13 +164,15 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
+<script type="text/javascript">
+//<![CDATA
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
     document.iform.serversSelect.options[i] = null;
   }
   document.iform.serversSelect.selectedIndex = -1;
 }
+//]]>
 </script>
 
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>

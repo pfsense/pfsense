@@ -172,10 +172,10 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "aliashost";
 	rowtype[0] = "textbox";
 	rowsize[0] = "20";
@@ -185,6 +185,7 @@ include("head.inc");
 	rowname[2] = "aliasdescription";
 	rowtype[2] = "textbox";
 	rowsize[2] = "20";
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -272,10 +273,12 @@ include("head.inc");
                       <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
                     </a>
                     <script type="text/javascript">
+										//<![CDATA[
                       field_counter_js = 3;
                       rows = 1;
                       totalrows = <?php echo $counter; ?>;
                       loaded = <?php echo $counter; ?>;
+										//]]>
                     </script>
                   </td>
                 </tr>

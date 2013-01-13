@@ -373,10 +373,12 @@ include("head.inc");
 
 ?>
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "number";
 	rowtype[0] = "textbox";
 	rowsize[0] = "10";
@@ -385,7 +387,8 @@ include("head.inc");
 	rowsize[1] = "55";
 </script>
 
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 	function enable_change(enable_over) {
 		var endis;
 		endis = !(document.iform.enable.checked || enable_over);
@@ -450,9 +453,9 @@ include("head.inc");
 		aodiv = document.getElementById('shownetboot');
 		aodiv.style.display = "block";
 	}
+//]]>
 </script>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dhcpv6.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -818,10 +821,12 @@ display_top_tabs($tab_array);
 					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 				</a>
 				<script type="text/javascript">
+				//<![CDATA[
 					field_counter_js = 2;
 					rows = 1;
 					totalrows = <?php echo $counter; ?>;
 					loaded = <?php echo $counter; ?>;
+				//]]>
 				</script>
 				</div>
 
@@ -908,10 +913,10 @@ display_top_tabs($tab_array);
 </tr>
 </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change(false);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

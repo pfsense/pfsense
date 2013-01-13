@@ -200,7 +200,8 @@ $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => get
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script language="javascript">
+<script type="text/javascript">
+//<![CDATA[
 function updateType(t){
 	switch(t) {
 <?php
@@ -219,6 +220,7 @@ function updateType(t){
 	}
 	jQuery('#' + t).show();
 }
+//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>

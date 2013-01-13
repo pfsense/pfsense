@@ -440,8 +440,8 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function mode_change() {
 	index = document.iform.mode.selectedIndex;
@@ -665,7 +665,7 @@ function tuntap_change() {
 			break;
 	}
 }
-//-->
+//]]>
 </script>
 <?php
 if (!$savemsg)
@@ -1702,8 +1702,8 @@ if ($savemsg)
 		</td>
 	</tr>
 </table>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 mode_change();
 autokey_change();
 tlsauth_change();
@@ -1714,7 +1714,7 @@ wins_server_change();
 ntp_server_change();
 netbios_change();
 tuntap_change();
-//-->
+//]]>
 </script>
 </body>
 <?php include("fend.inc"); ?>

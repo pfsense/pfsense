@@ -355,14 +355,16 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 function show_source_port_range() {
-        document.getElementById("sprtable").style.display = '';
+	document.getElementById("sprtable").style.display = '';
 	document.getElementById("sprtable1").style.display = '';
 	document.getElementById("sprtable2").style.display = '';
 	document.getElementById("sprtable5").style.display = '';
 	document.getElementById("sprtable4").style.display = 'none';
 	document.getElementById("showadvancedboxspr").innerHTML='';
 }
+//]]>
 </script>
 
 <?php
@@ -426,13 +428,15 @@ include("fbegin.inc");
 	</tr>
 </table>
 </form>
-<script type='text/javascript'>
+<script type="text/javascript">
+//<![CDATA[
 <?php
 	$totalrows = 0;
 	if (is_array($config['dnshaper']) && is_array($config['dnshaper']['queue'])) 
 		$totalrows = count($config['dnshaper']['queue']);
 	echo "totalrows = {$totalrows}";
 ?>
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

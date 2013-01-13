@@ -82,7 +82,7 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascript/filter_log.js"></script>
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>

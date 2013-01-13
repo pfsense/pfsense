@@ -104,8 +104,10 @@ include_once("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript">
+//<![CDATA[
 function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
@@ -117,10 +119,9 @@ function enable_change(enable_over) {
 	document.iform.regdhcpstatic.disabled = endis;
 	document.iform.dhcpfirst.disabled = endis;
 }
-//-->
+//]]>
 </script>
 	
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>

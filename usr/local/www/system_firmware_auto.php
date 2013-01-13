@@ -236,7 +236,11 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
-	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
+	echo "document.progressbar.style.visibility='hidden';\n";
+	echo "//]]>\n";
+	echo "</script>\n";
 	mwexec_bg("/usr/bin/nohup {$external_upgrade_helper_text}");
 }
 

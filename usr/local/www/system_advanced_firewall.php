@@ -226,9 +226,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script language="JavaScript">
-<!--
-
+<script type="text/javascript">
+//<![CDATA[
 var descs=new Array(5);
 descs[0]="<?=gettext("as the name says, it's the normal optimization algorithm");?>";
 descs[1]="<?=gettext("used for high latency links, such as satellite links.  Expires idle connections later than default");?>";
@@ -239,8 +238,7 @@ function update_description(itemnum) {
         document.forms[0].info.value=descs[itemnum];
 
 }
-
-//-->
+//]]>
 </script>
 
 <?php
@@ -314,8 +312,10 @@ function update_description(itemnum) {
 									</select>
 									<br/>
 									<textarea readonly="yes" cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
-									<script language="javascript" type="text/javascript">
+									<script type="text/javascript">
+									//<![CDATA[
 										update_description(document.forms[0].optimization.selectedIndex);
+									//]]>
 									</script>
 									<br/>
 									<?=gettext("Select the type of state table optimization to use");?>

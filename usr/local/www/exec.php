@@ -94,8 +94,8 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
 include("head.inc");
 ?>
 
-<script language="javascript">
-<!--
+<script type="text/javascript">
+//<![CATA[
 
    // Create recall buffer array (of encoded strings).
 
@@ -182,7 +182,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
       return true;
    }
-//-->
+//]]>
 </script>
 <style>
 <!--
@@ -324,8 +324,10 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 </div>
 <?php include("fend.inc"); ?>
 </form>
-<script language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
 document.forms[0].txtCommand.focus();
+//]]>
 </script>
 </body>
 </html>

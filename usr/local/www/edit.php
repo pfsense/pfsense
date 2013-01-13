@@ -97,6 +97,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">	
+//<![CDATA[
 	function loadFile() {
 		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
 		jQuery("#fileStatusBox").show(500);
@@ -159,6 +160,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	}
+//]]>
 </script>
 
 <!-- file status box -->
@@ -217,6 +219,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(window).load(
 		function() {
 			jQuery("#fbTarget").focus();
@@ -234,6 +237,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	<?php endif; ?>
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

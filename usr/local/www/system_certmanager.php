@@ -446,7 +446,7 @@ include("head.inc");
 <body link="#000000" vlink="#000000" alink="#000000" onLoad="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function method_change() {
 
@@ -520,19 +520,20 @@ function internalca_change() {
 }
 <?php endif; ?>
 
-//-->
+//]]>
 </script>
-<script type="text/javascript" src="/javascript/row_helper_dynamic.js">
-</script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 <input type='hidden' name='altname_value_type' value='select' />
 <input type='hidden' name='altname_type_type' value='textbox' />
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "altname_type";
 	rowtype[0] = "textbox";
 	rowsize[0] = "10";
 	rowname[1] = "altname_value";
 	rowtype[1] = "textbox";
 	rowsize[1] = "30";
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -793,10 +794,12 @@ function internalca_change() {
 												<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 											</a>
 											<script type="text/javascript">
+											//<![CDATA[
 												field_counter_js = 3;
 												rows = 1;
 												totalrows = <?php echo $counter; ?>;
 												loaded = <?php echo $counter; ?>;
+											//]]>
 											</script>
 											<br/>NOTE: Type must be one of DNS (FQDN or Hostname), IP (IP address), URI, or email.
 										</td>
@@ -1150,12 +1153,10 @@ function internalca_change() {
 </table>
 <?php include("fend.inc");?>
 <script type="text/javascript">
-<!--
-
+//<![CDATA[
 method_change();
 internalca_change();
-
-//-->
+//]]>
 </script>
 
 </body>

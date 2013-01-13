@@ -367,8 +367,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function myidsel_change() {
 	index = document.iform.myid_type.selectedIndex;
@@ -478,7 +478,7 @@ function dpdchkbox_change() {
 		document.iform.dpd_maxfail.value = "5";
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
@@ -872,8 +872,8 @@ function dpdchkbox_change() {
 </table>
 </form>
 
-<script lannguage="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 <?php
 	/* determine if we should init the key length */
 	$keyset = '';
@@ -886,7 +886,7 @@ peeridsel_change();
 methodsel_change();
 ealgosel_change(<?=$keyset;?>);
 dpdchkbox_change();
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

@@ -224,11 +224,10 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 function typesel_change() {
         switch (document.iform.srctype.selectedIndex) {
                 case 1: /* single */
@@ -265,6 +264,7 @@ function typesel_change() {
 			break;
         }
 }
+//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>
@@ -469,13 +469,15 @@ function typesel_change() {
                 </tr>
               </table>
 </form>
-<script language="JavaScript">
-        typesel_change();
+<script type="text/javascript">
+//<![CDATA[
+	typesel_change();
+//]]>
 </script>
-<script language="JavaScript">
+<script type="text/javascript">
 //<![CDATA[
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-        var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
+	var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
 //]]>
 </script>
 <?php include("fend.inc"); ?>

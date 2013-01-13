@@ -86,8 +86,10 @@ if (count($services) > 0) {
 </table>
 
 <!-- needed to display the widget settings menu -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "services_status-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

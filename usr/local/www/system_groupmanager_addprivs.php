@@ -124,7 +124,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 <?php
 
@@ -150,7 +150,7 @@ function update_description() {
 	document.getElementById("pdesc").innerHTML = descs[index];
 }
 
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)

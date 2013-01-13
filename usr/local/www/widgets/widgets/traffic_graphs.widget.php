@@ -110,11 +110,13 @@ if (isset($a_config["refreshinterval"])) {
 </form>
 </div>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	d = document;
 	selectIntLink = "traffic_graphs-configure";
 	textlink = d.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>
 
 <?php

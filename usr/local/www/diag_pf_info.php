@@ -63,6 +63,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <script type="text/javascript">
+//<![CDATA[
 	function getcpuactivity() {
 		var url = "/diag_pf_info.php";
 		var pars = 'getactivity=yes';
@@ -75,10 +76,11 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#cpuactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
+		jQuery('#cpuactivitydiv').html('<font face="Courier" size="2"><b><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/b><\/font>');
 		setTimeout('getcpuactivity()', 2000);		
 	}
 	setTimeout('getcpuactivity()', 5000);	
+//]]>
 </script>
 <div id='maincontent'>
 <?php

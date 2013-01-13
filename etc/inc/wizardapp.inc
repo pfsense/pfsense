@@ -42,7 +42,6 @@ $gamesplist['battlenet'] = array();
 	$gamesplist['battlenet'][] = array('Battle.NET-diablo2', 'tcp', '4000', '4000', 'both'); //diablo2
 	$gamesplist['battlenet'][] = array('Battle.NET-game2', 'tcp', '1119', '1119', 'both');  //diablo3, starcraft 2
 
-
 $gamesplist['battlefield2'] = array();
 	/* Battlefield 2 */
 	$gamesplist['battlefield2'][] = array('BF2-1500-4999', 'udp', '1500', '4999', 'both');
@@ -54,6 +53,30 @@ $gamesplist['battlefield2'] = array();
 	$gamesplist['battlefield2'][] = array('BF2-29900-29901-TCP', 'tcp', '29900', '29901', 'both');
 	$gamesplist['battlefield2'][] = array('BF2-27900', 'udp', '27900', '27900', 'both');
 	$gamesplist['battlefield2'][] = array('BF2-55123-55125', 'udp', '55123', '55125', 'both');
+	
+$gamesplist['battlefield3'] = array();
+	/* Battlefield 3 */
+	$gamesplist['battlefield3'][] = array('BF3-1', 'tcp', '9988', '9988', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-2', 'tcp', '20000', '20100', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-3', 'tcp', '22990', '22990', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-4', 'tcp', '17502', '17502', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-5', 'tcp', '42127', '42127', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-6', 'udp', '3659', '3659', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-7', 'udp', '14000', '14016', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-8', 'udp', '22990', '23006', 'both');
+	$gamesplist['battlefield3'][] = array('BF3-9', 'udp', '25200', '25300', 'both');
+
+$gamesplist['battlefieldbc2'] = array();
+	/* Battlefield Bad Company 2 */
+	$gamesplist['battlefieldbc2'][] = array('BFBC2-1', 'tcp', '18390', '18390', 'both');
+	$gamesplist['battlefieldbc2'][] = array('BFBC2-2', 'tcp', '18395', '18395', 'both');
+	$gamesplist['battlefieldbc2'][] = array('BFBC2-3', 'udp', '18395', '18395', 'both');
+	$gamesplist['battlefieldbc2'][] = array('BFBC2-4', 'tcp', '13505', '13505', 'both');
+
+$gamesplist['borderlands'] = array();
+	/* Borderlands */
+	$gamesplist['borderlands'][] = array('Borderlands-udp', 'udp', '7777', '7777', 'both');
+	$gamesplist['borderlands'][] = array('Borderlands-tcp', 'tcp', '7777', '7777', 'both');
 
 $gamesplist['callofduty'] = array();
 	/* Call Of Duty */
@@ -129,6 +152,11 @@ $gamesplist['farcry2'] = array();
 	$gamesplist['farcry2'][] = array('FarCry2-tcp', 'tcp', '9000', '9004', 'both');
 	$gamesplist['farcry2'][] = array('FarCry2-udp', 'udp', '9000', '9004', 'both');
 
+$gamesplist['farcry3'] = array();
+	/* FarCry 3*/
+	$gamesplist['farcry3'][] = array('FarCry3-game', 'udp', '9000', '9000', 'both');
+	$gamesplist['farcry3'][] = array('FarCry3-punkbuster', 'udp', '10009', '10009', 'both');
+	
 $gamesplist['gunzonline'] = array();
 	/* GunZ Online */
 	$gamesplist['gunzonline'][] = array('GunZOnline', 'udp', '7700', '7700', 'both');
@@ -144,6 +172,12 @@ $gamesplist['halo2'] = array();
 	$gamesplist['halo2'][] = array('Halo2-1', 'udp', '88', '88', 'both');
 	$gamesplist['halo2'][] = array('Halo2-2', 'udp', '3074', '3074', 'both');
 	$gamesplist['halo2'][] = array('Halo2-3', 'tcp', '3074', '3074', 'both');
+
+$gamesplist['leagueoflegends'] = array();
+	/* League of Legends */
+	$gamesplist['leagueoflegends'][] = array('LeagueofLegends-1', 'udp', '5000', '5500', 'both');
+	$gamesplist['leagueoflegends'][] = array('LeagueofLegends-2', 'tcp', '2099', '2099', 'both');
+	$gamesplist['leagueoflegends'][] = array('LeagueofLegends-3', 'tcp', '5222', '5223', 'both');
 
 $gamesplist['lineage2'] = array();
 	/* Lineage II */
@@ -193,11 +227,24 @@ $gamesplist['playstation3'] = array();
 $gamesplist['quakeiii'] = array();
 	/* quake3 */
 	$gamesplist['quakeiii'][] = array('quakeiii', 'udp', '27910', '27919', 'both');
+	
+$gamesplist['quakeiv'] = array();
+	/* quake4 */
+	$gamesplist['quakeiv'][] = array('quakeiv-server-udp', 'udp', '27650', '27650', 'both');
+	$gamesplist['quakeiv'][] = array('quakeiv-server-tcp', 'tcp', '27650', '27650', 'both');
+	$gamesplist['quakeiv'][] = array('quakeiv-client-udp', 'udp', '28004', '28004', 'both');
+	$gamesplist['quakeiv'][] = array('quakeiv-client-tcp', 'tcp', '28004', '28004', 'both');
+
+$gamesplist['starwarstor'] = array();
+	/* quake3 */
+	$gamesplist['starwarstor'][] = array('StarWarsTOR-1', 'tcp', '8995', '8995', 'both');
+	$gamesplist['starwarstor'][] = array('StarWarsTOR-2', 'tcp', '12000', '12999', 'both');
+	$gamesplist['starwarstor'][] = array('StarWarsTOR-2', 'tcp', '20000', '30000', 'both');
 
 $gamesplist['steam'] = array();
 	/* Steam Games */
-	$gamesplist['steam'][] = array('steam-game-udp', 'udp', '27000', '27015', 'both');  //america's army 3, cs:s, cs:go, HL2
-	$gamesplist['steam'][] = array('steam-game-tcp', 'tcp', '27000', '27015', 'both');  //america's army 3, cs:s, cs:go, HL2
+	$gamesplist['steam'][] = array('steam-game-udp', 'udp', '27000', '27030', 'both');  //america's army 3, cs:s, cs:go, HL2, COD: Black Ops, COD: Black Ops 2, Natural Selection 2
+	$gamesplist['steam'][] = array('steam-game-tcp', 'tcp', '27000', '27030', 'both');  //america's army 3, cs:s, cs:go, HL2, COD: Black Ops, COD: Black Ops 2, Natural Selection 2
 	$gamesplist['steam'][] = array('steam-hltv', 'udp', '27015', '27030', 'both');
 	$gamesplist['steam'][] = array('steam-1', 'udp', '4380', '4380', 'both');
 	$gamesplist['steam'][] = array('steam-2', 'udp', '1200', '1200', 'both');

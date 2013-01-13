@@ -438,7 +438,7 @@
 				<type>checkbox</type>
 				<typehint>Prioritize network gaming traffic</typehint>
 				<description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-				<enablefields>ARMA2,BattleNET,Battlefield2,CallOfDuty,Counterstrike,Crysis2,DeltaForce,Dirt3,DOOM3,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,GunZOnline,HalfLife,Halo2,Lineage2,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,PlayStation3,QuakeIII,Steam,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
+				<enablefields>ARMA2,BattleNET,Battlefield2,Battlefield3,BattlefieldBC2,Borderlands,CallOfDuty,Counterstrike,Crysis2,DeltaForce,Dirt3,DOOM3,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,FarCry3,GunZOnline,HalfLife,Halo2,LeagueofLegends,Lineage2,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,PlayStation3,QuakeIII,QuakeIV,Steam,StarWarsTOR,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
 			</field>
@@ -467,6 +467,24 @@
 				<type>checkbox</type>
 				<typehint>Battlefield 2 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;battlefield2</bindstofield>
+			</field>
+			<field>
+				<name>Battlefield3</name>
+				<type>checkbox</type>
+				<typehint>Battlefield 3 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;battlefield3</bindstofield>
+			</field>
+			<field>
+				<name>BattlefieldBC2</name>
+				<type>checkbox</type>
+				<typehint>Battlefield: Bad Company 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;battlefieldbc2</bindstofield>
+			</field>
+			<field>
+				<name>Borderlands</name>
+				<type>checkbox</type>
+				<typehint>Borderlands</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;borderlands</bindstofield>
 			</field>
 			<field>
 				<name>CallOfDuty</name>
@@ -541,6 +559,12 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;farcry2</bindstofield>
 			</field>
 			<field>
+				<name>FarCry3</name>
+				<type>checkbox</type>
+				<typehint>Far Cry 3</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;farcry3</bindstofield>
+			</field>
+			<field>
 				<name>GunZOnline</name>
 				<type>checkbox</type>
 				<typehint>GunZ Online</typehint>
@@ -557,6 +581,12 @@
 				<type>checkbox</type>
 				<typehint>Halo2 via Xbox live</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;halo2xbox</bindstofield>
+			</field>
+			<field>
+				<name>LeagueofLegends</name>
+				<type>checkbox</type>
+				<typehint>League of Legends - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;leagueoflegends</bindstofield>
 			</field>
 			<field>
 				<name>Lineage2</name>
@@ -607,9 +637,21 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;quakeiii</bindstofield>
 			</field>
 			<field>
+				<name>QuakeIV</name>
+				<type>checkbox</type>
+				<typehint>Quake IV</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;quakeiv</bindstofield>
+			</field>
+			<field>
+				<name>StarWarsTOR</name>
+				<type>checkbox</type>
+				<typehint>StarWars: The Old Republic - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;starwarstor</bindstofield>
+			</field>
+			<field>
 				<name>Steam</name>
 				<type>checkbox</type>
-				<typehint>Steam (Includes: America's Army 3, Counter-Strike: Source, Counter-Strike: Global Offensive, Halflife 2)</typehint>
+				<typehint>Steam (Includes: America's Army 3, Counter-Strike: Source, Counter-Strike: Global Offensive, Halflife 2, COD: Black Ops Series, Borderlands 2, Natural Selection 2, Left 4 Dead Series, Portal 2)</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;steam</bindstofield>
 			</field>
 			<field>

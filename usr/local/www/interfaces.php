@@ -2586,7 +2586,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
 							<td class="vtable">
-								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <? if ($pconfig['rsn_preauth']) echo "checked"; ?>>
+								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked"; ?>>
 								<br/>
 							</td>
 						</tr>

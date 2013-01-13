@@ -47,7 +47,7 @@ include("head.inc");
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <?php
 
 define('MAX_TTL', 64);
@@ -115,7 +115,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				<td valign="top" colspan="2">
 				<p><span class="vexpl"><span class="red"><b><?=gettext("Note: ");?></b></span><?=gettext("Traceroute may take a while to complete. You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?></span><p>
-				<? if ($do_traceroute) {
+				<?php if ($do_traceroute) {
 					echo "<font face='terminal' size='2'>";
 					echo("<br><strong>" . gettext("Traceroute output:") . "</strong><br>");
 					echo('<pre>');

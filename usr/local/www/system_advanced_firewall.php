@@ -54,6 +54,8 @@ $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
 $pconfig['scrubrnid'] = $config['system']['scrubrnid'];
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
+$pconfig['adaptivestart'] = $config['system']['adaptivestart'];
+$pconfig['adaptiveend'] = $config['system']['adaptiveend'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
@@ -74,6 +76,14 @@ if ($_POST) {
 	$pconfig = array_merge($pconfig, $_POST);
 
 	/* input validation */
+	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend'])))
+		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
+	if (!empty($_POST['adaptivestart']) && !is_numericint($_POST['adaptivestart'])) {
+		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
+	}
+	if (!empty($_POST['adaptiveend']) && !is_numericint($_POST['adaptiveend'])) {
+		$input_errors[] = gettext("The Firewall Adaptive End value must be an integer.");
+	}
 	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {
 		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
 	}
@@ -118,6 +128,15 @@ if ($_POST) {
                         $config['system']['scrubrnid'] = "enabled";
                 else
                         unset($config['system']['scrubrnid']);
+
+		if (!empty($_POST['adaptiveend']))
+			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
+                else
+                        unset($config['system']['adaptiveend']);
+		if (!empty($_POST['adaptivestart']))
+			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
+                else
+                        unset($config['system']['adaptivestart']);
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
@@ -320,6 +339,21 @@ function update_description(itemnum) {
 									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> />
 									<strong><?=gettext("Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.");?></strong>
 									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Adaptive Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("Timeouts for states can be scaled adaptively as the number of state table entries grows.");?></strong>
+									<br/>
+									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
+									<br/><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
+									
+									<br/>
+									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
+									<br/><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
+									<br/>
+									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default(0).");?></span>
 								</td>
 							</tr>
 							<tr>

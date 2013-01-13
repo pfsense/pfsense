@@ -241,6 +241,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	} else
 		$limitrules .= "set optimization normal\n";
 
+	if (!empty($config['system']['adaptivestart']) && !empty($config['system']['adaptiveend']))
+		$limitrules .= "set timeout { adaptive.start {$config['system']['adaptivestart']}, adaptive.end {$config['system']['adaptiveend']} }\n";
+	else
+		$limitrules .= "set timeout { adaptive.start 0, adaptive.end 0 }\n";
+
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$limitrules .= "set limit states {$config['system']['maximumstates']}\n";

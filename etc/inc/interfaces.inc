@@ -3475,37 +3475,37 @@ function get_current_wan_address($interface = "wan") {
  * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
  */
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
-        global $config;
+	global $config;
 
 	if (stristr($interface, "_vip")) {
-                foreach ($config['virtualip']['vip'] as $counter => $vip) {
-                        if ($vip['mode'] == "carp")  {
-                                if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
-                                        return $vip['interface'];
-                        }
-                }
-        }
+		foreach ($config['virtualip']['vip'] as $counter => $vip) {
+			if ($vip['mode'] == "carp")  {
+				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
+					return $vip['interface'];
+			}
+		}
+	}
 
-        /* XXX: For speed reasons reference directly the interface array */
+	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];
-        //$ifdescrs = get_configured_interface_list(false, true);
+	//$ifdescrs = get_configured_interface_list(false, true);
 
-        foreach ($ifdescrs as $if => $ifname) {
-                if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
-                        return $if;
+	foreach ($ifdescrs as $if => $ifname) {
+		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
+			return $if;
 
-                if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
-                        return $if;
+		if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
+			return $if;
 
 		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
 		//      Not to be replaced with get_real_interface - causes slow interface listings here because of recursion!
 		/*
-                $int = get_parent_interface($if);
-                if ($int[0] == $interface)
-                        return $ifname;
-		*/
-        }
-        return NULL;
+		$int = get_parent_interface($if);
+		if ($int[0] == $interface)
+			return $ifname;
+		 */
+	}
+	return NULL;
 }
 
 /* attempt to resolve interface to friendly descr */

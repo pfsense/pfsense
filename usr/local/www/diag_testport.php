@@ -100,7 +100,7 @@ if (!isset($do_testport)) {
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php echo gettext("This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port. This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner."); ?>
@@ -181,7 +181,7 @@ include("head.inc"); ?>
 		</tr>
 		<tr>
 		<td valign="top" colspan="2">
-		<? if ($do_testport) {
+		<?php if ($do_testport) {
 			echo "<font face='terminal' size='2'>";
 			echo "<strong>" . gettext("Port Test Results") . ":</strong><br>";
 			echo '<pre>';

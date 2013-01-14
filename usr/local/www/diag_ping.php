@@ -76,7 +76,7 @@ if (!isset($do_ping)) {
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
@@ -121,7 +121,7 @@ include("head.inc"); ?>
 				</tr>
 				<tr>
 				<td valign="top" colspan="2">
-				<? if ($do_ping) {
+				<?php if ($do_ping) {
 					echo "<font face='terminal' size='2'>";
 					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 					echo('<pre>');

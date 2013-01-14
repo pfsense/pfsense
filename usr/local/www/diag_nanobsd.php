@@ -245,10 +245,10 @@ if ($savemsg)
 							<form action="diag_nanobsd.php" method="post" name="iform">
 								<?=gettext("Frequency:");?>
 								<select name='rrdbackup'>
-									<option value='0' <? if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
-								<? for ($x=1; $x<=24; $x++) { ?>
-									<option value='<?= $x ?>' <? if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><? if ($x>1) echo "s"; ?></option>
-								<? } ?>
+									<option value='0' <?php if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+								<?php for ($x=1; $x<=24; $x++) { ?>
+									<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+								<?php } ?>
 								</select>
 								<br/>
 								<?=gettext("This will periodically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
@@ -262,10 +262,10 @@ if ($savemsg)
 							<form action="diag_nanobsd.php" method="post" name="iform">
 								<?=gettext("Frequency:");?>
 								<select name='dhcpbackup'>
-									<option value='0' <? if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
-								<? for ($x=1; $x<=24; $x++) { ?>
-									<option value='<?= $x ?>' <? if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><? if ($x>1) echo "s"; ?></option>
-								<? } ?>
+									<option value='0' <?php if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+								<?php for ($x=1; $x<=24; $x++) { ?>
+									<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+								<?php } ?>
 								</select>
 								<br/>
 								<?=gettext("This will periodically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>

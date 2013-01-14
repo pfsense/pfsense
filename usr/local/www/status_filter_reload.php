@@ -74,7 +74,7 @@ include("head.inc");
 <?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter">
-<? endif; ?>
+<?php endif; ?>
 </form>
 <br/><br/><br/>
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">

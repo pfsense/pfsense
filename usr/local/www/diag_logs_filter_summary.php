@@ -177,7 +177,7 @@ include("head.inc"); ?>
 	}
 </script>
 
-<? include("fbegin.inc"); ?>
+<?pgp include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

@@ -349,7 +349,7 @@ include("head.inc");
 ?>
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 function generatenewkey() {
 	jQuery('#publickey').val('One moment please...');
 	jQuery('#privatekey').val('One moment please...');
@@ -409,7 +409,7 @@ function enable_change(enable_change) {
 		jQuery('#addnewroll').show();
 	}
 }
-//]]>
+//-->
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -634,8 +634,8 @@ function enable_change(enable_change) {
 </table>
 </form>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 enable_change(false);
-//]]>
+//-->
 </script>
 <?php include("fend.inc"); ?>

@@ -217,7 +217,6 @@ include("head.inc");
 ?>
 
 <script type="text/javascript">
-//<![CDATA[
 // Global Variables
 var rowname = new Array(9999);
 var rowtype = new Array(9999);
@@ -244,13 +243,13 @@ var addRowTo = (function() {
         tr = d.createElement("tr");
         for (i = 0; i < field_counter_js; i++) {
                 td = d.createElement("td");
-		td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'/><input size='" + rowsize[i] + "' class='formfld unknown' name='" + rowname[i] + totalrows + "'/> ";
+		td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' class='formfld unknown' name='" + rowname[i] + totalrows + "'></input> ";
                 tr.appendChild(td);
         }
         td = d.createElement("td");
         td.rowSpan = "1";
 
-        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="x" /><\/a>';
+        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
         tr.appendChild(td);
         tbody.appendChild(tr);
         totalrows++;
@@ -275,7 +274,6 @@ function removeRow(el) {
 	rowname[2] = <?=gettext("detail");?>;
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
-//]]>
 </script>
 <input type='hidden' name='members_type' value='textbox' class="formfld unknown" />
 
@@ -405,12 +403,10 @@ function removeRow(el) {
 </form>
 
 <script type="text/javascript">
-//<![CDATA[
 	field_counter_js = 1;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
 	loaded = <?php echo $counter; ?>;
-//]]>
 </script>
 
 <?php include("fend.inc"); ?>

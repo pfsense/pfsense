@@ -163,10 +163,8 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-//<![CDATA[
 	NiftyCheck();
 	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
-//]]>
 </script>
 
 

@@ -266,8 +266,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 function get_radio_value(obj)
 {
         for (i = 0; i < obj.length; i++) {
@@ -342,7 +342,7 @@ function typesel_change() {
 		break;
 	}
 }
-//]]>
+//-->
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -498,10 +498,10 @@ function typesel_change() {
 
               </table>
 </form>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 enable_change();
-//]]>
+//-->
 </script>
 <?php include("fend.inc"); ?>
 </body>

@@ -98,7 +98,7 @@ include("head.inc");
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
-<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
+<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");

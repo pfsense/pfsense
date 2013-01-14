@@ -163,7 +163,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <script type="text/javascript">
-//<![CDATA[
 function _onTypeChange(type){ 
 	switch(type) {
 		case "custom":
@@ -197,7 +196,6 @@ function _onTypeChange(type){
 			document.getElementById("r53_ttl").style.display='none';
 	}
 }
-//]]>
 </script>
 <form action="services_dyndns_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -385,9 +383,7 @@ function _onTypeChange(type){
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-//<![CDATA[
 _onTypeChange("<?php echo $pconfig['type']; ?>");
-//]]>
 </script>
 
 </body>

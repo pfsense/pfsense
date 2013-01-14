@@ -54,30 +54,28 @@ if($_GET) {
 ?>
 <html>
 	<head>
-	<style type="text/css">
-	<!--
-		table {
-			border-width: 1px 1px 1px 1px;
-			border-spacing: 0px;
-			border-style: solid solid solid solid;
-			border-color: gray gray gray gray;
-			border-collapse: separate;
-			background-color: collapse;
-		}
-		td {
-			border-width: 0px 0px 0px 0px;
-			border-spacing: 0px;
-			border-style: solid solid solid solid;
-			border-color: gray gray gray gray;
-			border-collapse: collapse;
-			background-color: white;
-		}
-	-->
-	</style>
-</head>
-<script type="text/javascript">
-//<![CDATA[
+            <STYLE type="text/css">
+                        TABLE {
+                                border-width: 1px 1px 1px 1px;
+                                border-spacing: 0px;
+                                border-style: solid solid solid solid;
+                                border-color: gray gray gray gray;
+                                border-collapse: separate;
+                                background-color: collapse;
+                        }
+                        TD {
+                                border-width: 0px 0px 0px 0px;
+                                border-spacing: 0px;
+                                border-style: solid solid solid solid;
+                                border-color: gray gray gray gray;
+                                border-collapse: collapse;
+                                background-color: white;
+                        }
+            </STYLE>
+        </head>
+<script language="JavaScript">
 function post_choices() {
+
 	var ous = <?php echo count($ous); ?>;
 	var i;
 		opener.document.forms[0].ldapauthcontainers.value="";
@@ -89,8 +87,8 @@ function post_choices() {
 		}
 	}
 	window.close();
+-->
 }
-//]]>
 </script>
 
  <body link="#000000" vlink="#000000" alink="#000000" >

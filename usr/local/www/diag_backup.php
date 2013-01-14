@@ -202,7 +202,7 @@ function spit_out_select_items($name, $showall) {
 		);
 
 	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
-	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
+	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
 	
 	if($showall == true)
 		foreach($areas as $area => $areaname)
@@ -217,13 +217,11 @@ function spit_out_select_items($name, $showall) {
 	if ($name === "backuparea") {
 		$select .= <<<END_SCRIPT_BLOCK
 			<script type='text/javascript'>
-			//<![CDATA[
 				jQuery(function (\$) {
 					$("#{$name}").change(function () {
 						backuparea_change(this);
 					}).trigger("change");
 				});
-			//]]>
 			</script>
 END_SCRIPT_BLOCK;
 	}
@@ -582,8 +580,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 
 function encrypt_change() {
 
@@ -610,7 +608,7 @@ function backuparea_change(obj) {
                 document.getElementById("dotnotbackuprrd").disabled = false;
 	}
 }
-//]]>
+//-->
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -764,11 +762,11 @@ function backuparea_change(obj) {
 </table>
 </form>
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 encrypt_change();
 decrypt_change();
-//]]>
+//-->
 </script>
 
 <?php include("fend.inc"); ?>

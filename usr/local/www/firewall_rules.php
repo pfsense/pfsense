@@ -297,11 +297,12 @@ include("head.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/chosen/chosen.jquery.js"></script>
+<script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
+</script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php
@@ -881,7 +882,6 @@ if($_REQUEST['undodrag']) {
 </table>
   <input type="hidden" name="if" value="<?=htmlspecialchars($if);?>">
   <script type="text/javascript">
-	//<![CDATA[
 	var number_of_rules = <?=$nrules?>;
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
 /*
@@ -908,7 +908,6 @@ if($_REQUEST['undodrag']) {
 		return;
 	}
 	jQuery('#loading').hide();
-	//]]>
   </script>
 </form>
 <?php include("fend.inc"); ?>

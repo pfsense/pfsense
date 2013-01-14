@@ -175,8 +175,8 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -224,7 +224,7 @@ function presubmit() {
 	setall_selected('members');
 }
 
-//]]>
+//-->
 </script>
 <?php
 	if ($input_errors)

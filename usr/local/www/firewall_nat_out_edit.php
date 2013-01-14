@@ -318,8 +318,8 @@ include("head.inc");
 
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 var portsenabled = 1;
 function staticportchange() {
 	if(document.iform.staticnatport.checked) {
@@ -403,7 +403,7 @@ function poolopts_change() {
 		jQuery('#targetip_subnet').val('0');
 	}
 }
-//]]>
+//-->
 </script>
 </head>
 
@@ -665,7 +665,7 @@ any)");?></td>
                 </tr>
               </table>
 </form>
-<script type="text/javascript">
+<script language="JavaScript">
 //<![CDATA[
 	sourcesel_change();
 	typesel_change();

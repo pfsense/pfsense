@@ -109,7 +109,6 @@ include("head.inc"); ?>
 <?php include("fbegin.inc"); ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
-//<![CDATA[
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -137,7 +136,6 @@ include("head.inc"); ?>
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
-//]]>
 </script>
 
 <?php foreach ($servers as $server): ?>

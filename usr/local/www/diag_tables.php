@@ -98,8 +98,7 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form method='post'>
 
-<script type="text/javascrtip">
-//<![CDATA[
+<script language="javascript">
 	function method_change(entrytype) {
 		window.location='diag_tables.php?type=' + entrytype;
 	}
@@ -114,7 +113,6 @@ include("fbegin.inc");
 		}
 		});
 	}
-//]]>
 </script>
 	
 <?=gettext("Table:");?> 

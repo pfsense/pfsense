@@ -116,25 +116,23 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
-//<![CDATA[
-	function getqueueactivity() {
-		var url = "/status_queues.php";
-		var pars = 'getactivity=yes';
-		jQuery.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
-	}
-	function activitycallback(transport) {
-		setTimeout('getqueueactivity()', 5100);
-	}
-	jQuery(document).ready(function(){
-		setTimeout('getqueueactivity()', 150);
-	});
-//]]>
+        function getqueueactivity() {
+                var url = "/status_queues.php";
+                var pars = 'getactivity=yes';
+                jQuery.ajax(
+                        url,
+                        {
+                                type: 'post',
+                                data: pars,
+                                complete: activitycallback
+                        });
+        }
+        function activitycallback(transport) {
+                setTimeout('getqueueactivity()', 5100);
+        }
+        jQuery(document).ready(function(){
+          setTimeout('getqueueactivity()', 150);
+        });
 </script>
 <?php endif; ?>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">

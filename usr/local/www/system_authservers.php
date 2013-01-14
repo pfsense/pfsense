@@ -293,7 +293,7 @@ include("head.inc");
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 
 function server_typechange(typ) {
 
@@ -410,7 +410,7 @@ function select_clicked() {
         if (oWin==null || typeof(oWin)=="undefined")
 			alert("<?=gettext('Popup blocker detected.  Action aborted.');?>");
 }
-//]]>
+//-->
 </script>
 <?php
 	if ($input_errors)
@@ -801,7 +801,7 @@ function select_clicked() {
 </table>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 server_typechange('<?=htmlspecialchars($pconfig['type']);?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();
@@ -814,6 +814,6 @@ ldap_tmplchange();
 <?php if (!isset($id) || $pconfig['type'] == "radius"): ?>
 radius_srvcschange();
 <?php endif; ?>
-//]]>
+//-->
 </script>
 </body>

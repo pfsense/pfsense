@@ -198,8 +198,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 function get_radio_value(obj)
 {
 	for (i = 0; i < obj.length; i++) {
@@ -289,7 +289,7 @@ function enable_change(enable_over) {
 		document.iform.redir.disabled = 1;
 	}
 }
-//]]>
+//-->
 </script>
 <form action="vpn_pptp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -486,10 +486,10 @@ function enable_change(enable_over) {
 	</tr>
 </table>
 </form>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 enable_change(false);
-//]]>
+//-->
 </script>
 <?php include("fend.inc"); ?>
 </body>

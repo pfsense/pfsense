@@ -246,8 +246,9 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
+
 function prot_change() {
 
 	if (document.iform.https_proto.checked)
@@ -255,7 +256,8 @@ function prot_change() {
 	else
 		document.getElementById("ssl_opts").style.display="none";
 }
-//]]>
+
+//-->
 </script>
 <?php
 	if ($input_errors)
@@ -541,10 +543,10 @@ function prot_change() {
 			</tr>
 		</table>
 	</form>
-	<script type="text/javascript">
-	//<![CDATA[
+	<script language="JavaScript" type="text/javascript">
+	<!--
 		prot_change();
-	//]]>
+	//-->
 	</script>
 
 <?php include("fend.inc"); ?>

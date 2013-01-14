@@ -122,10 +122,8 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
@@ -138,9 +136,10 @@ function show_advanced_dns() {
 	aodiv = document.getElementById('showadv');
 	aodiv.style.display = "block";
 }
-//]]>
+//-->
 </script>
 
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -376,10 +375,10 @@ function show_advanced_dns() {
 	</tfoot>
 </table>
 </form>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 enable_change(false);
-//]]>
+//-->
 </script>
 <?php include("fend.inc"); ?>
 </body>

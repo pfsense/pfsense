@@ -521,19 +521,17 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
 
 <script type="text/javascript">
-//<![CDATA[
 	function itemtype_field(fieldname, fieldsize, n) {
 		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
 			$customitemtypes = array('text' => gettext('Text'), 'string' => gettext('String'), 'boolean' => gettext('Boolean'),
 				'unsigned integer 8' => gettext('Unsigned 8-bit integer'), 'unsigned integer 16' => gettext('Unsigned 16-bit integer'), 'unsigned integer 32' => gettext('Unsigned 32-bit integer'),
 				'signed integer 8' => gettext('Signed 8-bit integer'), 'signed integer 16' => gettext('Signed 16-bit integer'), 'signed integer 32' => gettext('Signed 32-bit integer'), 'ip-address' => gettext('IP address or host'));
 			foreach ($customitemtypes as $typename => $typedescr) {
-				echo "<option value=\"{$typename}\">{$typedescr}<\/option>";
+				echo "<option value=\"{$typename}\">{$typedescr}</option>";
 			}
 		?></select>';
 	}
@@ -546,11 +544,9 @@ include("head.inc");
 	rowname[2] = "value";
 	rowtype[2] = "textbox";
 	rowsize[2] = "40";
-////]
 </script>
 
-<script type="text/javascript">
-//<![CDATA[
+<script type="text/javascript" language="JavaScript">
 	function enable_change(enable_over) {
 		var endis;
 		<?php if (is_numeric($pool) || ($act == "newpool")): ?>
@@ -630,9 +626,9 @@ include("head.inc");
 		aodiv = document.getElementById('shownetboot');
 		aodiv.style.display = "block";
 	}
-//]]>
 </script>
 
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dhcp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -1099,12 +1095,10 @@ include("head.inc");
 					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 				</a>
 				<script type="text/javascript">
-				//<![CDATA[
 					field_counter_js = 3;
 					rows = 1;
 					totalrows = <?php echo $counter; ?>;
 					loaded = <?php echo $counter; ?>;
-				//]]>
 				</script>
 				</div>
 
@@ -1206,10 +1200,10 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 enable_change(false);
-//]]>
+//-->
 </script>
 <?php include("fend.inc"); ?>
 </body>

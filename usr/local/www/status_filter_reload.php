@@ -90,8 +90,7 @@ include("head.inc");
 
 
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript">
 /* init update "thread */
 function update_status_thread() {
 	getURL('status_filter_reload.php?getstatus=true', update_data);
@@ -103,26 +102,24 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> ' + result_text + '...');
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...');
 	} else {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> Obtaining filter status...');
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...');
 	}
 	if(result_text == "Initializing") {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loading" .> Initializing...');
+		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Initializing...');
 	} else if(result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
 		jQuery('#reloadinfo').css("visibility","hidden");
 		jQuery('#doneurl').css("visibility","visible");
-		jQuery('#doneurl').html("<p/><a href='status_queues.php'>Queue Status<\/a>");
+		jQuery('#doneurl').html("<p/><a href='status_queues.php'>Queue Status</a>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }
-//]]>
 </script>
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript">
 /*
  * getURL is a proprietary Adobe function, but it's simplicity has made it very
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.
@@ -167,7 +164,6 @@ if (typeof getURL == 'undefined') {
   }
 }
 window.setTimeout('update_status_thread()', 2500);
-//]]>
 </script>
 
 <?php include("fend.inc"); ?>

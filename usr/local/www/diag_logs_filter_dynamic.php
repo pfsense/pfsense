@@ -66,7 +66,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <script language="javascript">
-//<![CDATA[
 	lastsawtime = '<?php echo time(); ?>;';
 	var lines = Array();
 	var timer;
@@ -83,17 +82,16 @@ include("head.inc");
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
 		var line = '';
-		line =  '  <span class="log-action" nowrap>' + row[0] + '<\/span>';
-		line += '  <span class="log-time" nowrap>' + row[1] + '<\/span>';
-		line += '  <span class="log-interface" nowrap>' + row[2] + '<\/span>';
-		line += '  <span class="log-source" nowrap>' + row[3] + '<\/span>';
-		line += '  <span class="log-destination" nowrap>' + row[4] + '<\/span>';
-		line += '  <span class="log-protocol" nowrap>' + row[5] + '<\/span>';
+		line =  '  <span class="log-action" nowrap>' + row[0] + '</span>';
+		line += '  <span class="log-time" nowrap>' + row[1] + '</span>';
+		line += '  <span class="log-interface" nowrap>' + row[2] + '</span>';
+		line += '  <span class="log-source" nowrap>' + row[3] + '</span>';
+		line += '  <span class="log-destination" nowrap>' + row[4] + '</span>';
+		line += '  <span class="log-protocol" nowrap>' + row[5] + '</span>';
 		return line;
 	}
-//]]>
 </script>
-<script type="text/javascript" src="/javascript/filter_log.js"></script>
+<script src="/javascript/filter_log.js" type="text/javascript"></script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

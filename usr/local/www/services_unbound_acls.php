@@ -133,12 +133,10 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
 
 <script type="text/javascript">
-//<![CDATA[
 	function mask_field(fieldname, fieldsize, n) {
 		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
 			for ($i = 128; $i >= 0; $i--) {
@@ -155,8 +153,9 @@ include("head.inc");
 	rowtype[2] = "textbox";
 	rowname[2] = "description";
 	rowsize[2] = "40";
-//]]>
 </script>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_acls.php" method="post" name="iform" id="iform">

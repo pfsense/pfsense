@@ -82,7 +82,6 @@ include("head.inc");
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
-//<![CDATA[
 	function removeState(srcip, dstip) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -110,7 +109,6 @@ include("head.inc");
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
-//]]>
 </script>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

@@ -177,14 +177,14 @@ include("head.inc");
 <?php
 
 	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
-		echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
+		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
 	else 
-		echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
+		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 ?>
 
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 
 function  FieldValidate(userinput,  regexp,  message)
 {
@@ -299,7 +299,7 @@ function showchange() {
 	}
 ?>
 }
-//]]>
+//-->
 </script>
 <?php } ?>
 
@@ -776,7 +776,7 @@ function showchange() {
 </div>
 </form>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 	if (typeof ext_change != 'undefined') {
 		ext_change();
 	}
@@ -815,17 +815,15 @@ function showchange() {
 
 	}
 
-//]]>
+//-->
 </script>
 <script type="text/javascript">
-//<![CDATA[
 NiftyCheck();
 var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
 Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
 enablechange();
 disablechange();
 showchange();
-//]]>
 </script>
 
 <?php
@@ -835,7 +833,6 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 	// create a fieldname loop that can be used with javascript
 	// hide and enable features.
 	echo "\n<script type=\"text/javascript\">\n";
-	echo "//<![CDATA[\n";
 	echo "function disableall() {\n";
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 		if($field['type'] <> "submit" and $field['type'] <> "listtopic") {
@@ -876,7 +873,6 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 		echo "\t}\n";
 	}
 	echo "}\n";
-	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 
@@ -888,10 +884,8 @@ if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 
 if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	// handle after form display event.
-	echo "\n<script type=\"text/javascript\">\n";
-	echo "//<![CDATA[\n";
+        echo "\n<script type=\"text/javascript\">\n";
 	echo $pkg['step'][$stepid]['javascriptafterformdisplay'] . "\n";
-	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 

@@ -62,7 +62,6 @@ $clients = openvpn_get_active_clients();
 
 <br/>
 <script type="text/javascript">
-//<![CDATA{
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -90,7 +89,6 @@ $clients = openvpn_get_active_clients();
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
-//]]>
 </script>
 
 <?php foreach ($servers as $server): ?>

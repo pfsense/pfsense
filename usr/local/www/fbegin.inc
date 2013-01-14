@@ -1,19 +1,10 @@
 
-<script type="text/javascript" src="/javascript/sorttable.js"></script>
-<script type="text/javascript" src="/javascript/ticker.js"></script>
-<style id="antiClickjack">
-<!--
-body{display:none}
--->
-</style>
-<script type="text/JavaScript">
-//<![CDATA[
-if (self === top) {
-	var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
-} else {
-	top.location = self.location;
+<script src="/javascript/sorttable.js"></script>
+<script src="/javascript/ticker.js"></script>
+<style id="antiClickjack">body{display:none}</style> <script type="text/JavaScript">
+if (self === top) { var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
+} else { top.location = self.location;
 }
-//]]>
 </script>
 <?php
 /*

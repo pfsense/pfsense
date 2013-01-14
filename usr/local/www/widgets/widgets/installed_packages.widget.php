@@ -109,8 +109,7 @@ $updateavailable = false;
 </table>
 
 <?php if ($updateavailable): ?>
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
 	window.onload = function(in_event)
 	{
 		for (y=1; y<=<?php echo $y;?>; y++){
@@ -118,6 +117,5 @@ $updateavailable = false;
 			jQuery(textID).effect('pulsate');
 		}
 	}
-//]]>
 </script>
 <?php endif; ?>

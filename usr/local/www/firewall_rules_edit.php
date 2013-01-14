@@ -669,7 +669,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/chosen/chosen.jquery.js"></script>
+<script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -748,9 +748,7 @@ include("head.inc");
 						echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' >";
 				?>
 				<script type="text/javascript">
-				//<![CDATA[
 				editenabled = 0;
-				//]]>
 				</script>
 			</td>
 		</tr>
@@ -1556,7 +1554,7 @@ $i--): ?>
 		</tr>
 	</table>
 </form>
-<script type="text/javascript">
+<script language="JavaScript">
 //<![CDATA[
 	ext_change();
 	typesel_change();

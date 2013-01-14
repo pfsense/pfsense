@@ -164,11 +164,7 @@ if (!is_array($config['widgets'])) {
 	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
-	<script type="text/javascript">
-	//<![CDATA[
-	var theme = "nervecenter"
-	//]]>
-	</script>
+	<script type="text/javascript">var theme = "nervecenter"</script>
 	<script type="text/javascript" src="/themes/nervecenter/loader.js"></script>
 		
 EOF;
@@ -191,10 +187,8 @@ EOF;
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";
-		echo "//<![CDATA[\n";
 		echo "NiftyCheck();\n";
 		echo "Rounded(\"div#nifty\",\"all\",\"#AAA\",\"#FFFFFF\",\"smooth\");\n";
-		echo "//]]>\n";
 		echo "</script>\n";
 		exit;
 	}
@@ -277,8 +271,8 @@ foreach($phpincludefiles as $includename) {
 
 ##begin AJAX
 $jscriptstr = <<<EOD
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
+
 
 function widgetAjax(widget) {
 	uri = "widgets/widgets/" + widget + ".widget.php";
@@ -460,7 +454,7 @@ function changeTabDIV(selectedDiv){
 		}
 	}
 }
-//]]>
+
 </script>
 EOD;
 $closehead = false;
@@ -473,10 +467,10 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
+// <![CDATA[
 columns = ['col1','col2'];
-//]]>
+// ]]>
 
 </script>
 
@@ -733,7 +727,6 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-//<![CDATA[
 	jQuery(document).ready(function(in_event)
 	{		
 			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
@@ -744,7 +737,6 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	<?php } ?>
 	});
-//]]>
 </script>
 <?php
 	//build list of javascript include files
@@ -758,7 +750,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	foreach($jsincludefiles as $jsincludename) {
 		if(!stristr($jsincludename, ".js"))
 			continue;
-		echo "<script type='text/javascript' src='{$directory}{$jsincludename}'></script>\n";	
+		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";	
 	}
 ?>
 </script>

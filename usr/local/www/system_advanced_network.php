@@ -153,15 +153,17 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
+
 function enable_change(enable_over) {
 	if (document.iform.ipv6nat_enable.checked || enable_over)
 		document.iform.ipv6nat_ipaddr.disabled = 0;
 	else
 		document.iform.ipv6nat_ipaddr.disabled = 1;
 }
-//]]>
+
+//-->
 </script>
 
 
@@ -307,10 +309,10 @@ function enable_change(enable_over) {
 			</tr>
 		</table>
 	</form>
-	<script type="text/javascript">
-	//<![CDATA[
+	<script language="JavaScript" type="text/javascript">
+	<!--
 		enable_change(false);
-	//]]>
+	//-->
 	</script>
 
 <?php include("fend.inc"); ?>

@@ -102,8 +102,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
+
 function updateBandwidth(){
     var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
 	var sorting = "<?php echo htmlspecialchars($cursort); ?>";
@@ -174,7 +174,8 @@ function updateBandwidthHosts(data){
     
     setTimeout('updateBandwidth()', 1000);
 }
-//]]>
+
+
 </script>
 
 <?php include("fbegin.inc"); ?>
@@ -305,12 +306,11 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-//<![CDATA[
 window.onload = function(in_event)
 	{
-		updateBandwidth();
-	}
-//]]>
+        updateBandwidth();
+    }
+
 </script>
 </body>
 </html>

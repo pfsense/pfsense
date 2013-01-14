@@ -392,10 +392,8 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 	<link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
 	<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript">
-	//<![CDATA[
+	<script type="text/javascript" >
 		jQuery(document).ready(function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
-	//]]>
 	</script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >

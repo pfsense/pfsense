@@ -202,8 +202,10 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/autosuggest.js"></script>
-<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js">
+</script>
+<script type="text/javascript" src="/javascript/suggestions.js">
+</script>
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
@@ -320,7 +322,6 @@ include("head.inc");
               </table>
 </form>
 <script type="text/javascript">
-//<![CDATA[
 					var gatewayip;
 					var name;
 					function show_add_gateway() {
@@ -344,7 +345,7 @@ include("head.inc");
 					}
 					function hide_add_gatewaysave() {
 						document.getElementById("addgateway").style.display = 'none';
-						jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> One moment please...');
+						jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
 						var iface = jQuery('#addinterfacegw').val();
 						name = jQuery('#name').val();
 						var descr = jQuery('#gatewaydescr').val();
@@ -371,7 +372,7 @@ include("head.inc");
 						optn.value = value;
 						selectbox.append(optn);
 						selectbox.prop('selectedIndex',selectbox.children('option').length-1);
-						jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "<\/a>");?> <\/strong>");
+						jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:");?></strong> <?php printf(gettext("You can manage Gateways %shere%s."), "<a target='_new' href='system_gateways.php'>", "</a>");?> </strong>");
 					}				
 					function report_failure() {
 						alert("<?=gettext("Sorry, we could not create your gateway at this time."); ?>");
@@ -390,8 +391,8 @@ include("head.inc");
 					}
 					var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
 					var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
-//]]>
-</script>
+
+				</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

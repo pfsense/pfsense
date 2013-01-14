@@ -159,7 +159,5 @@ ob_implicit_flush(1);
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-//<![CDATA[
 	jQuery('#loading').html('');
-//]]>
 </script>

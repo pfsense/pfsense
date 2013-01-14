@@ -129,14 +129,15 @@ include("head.inc");
 	include("fbegin.inc");
 ?>
 
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
+</script>
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
 
 <input type='hidden' name='address_type' value='textbox' class="formfld unknown" />
 <input type='hidden' name='address_subnet_type' value='select' />
 
 <script type="text/javascript">
-//<![CDATA[
 	rowname[0] = "address";
 	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
@@ -148,7 +149,6 @@ include("head.inc");
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
-//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -290,12 +290,10 @@ include("head.inc");
 </form>
 
 <script type="text/javascript">
-//<![CDATA[
 	field_counter_js = 2;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
 	loaded = <?php echo $counter; ?>;
-//]]>
 </script>
 
 <?php include("fend.inc"); ?>

@@ -250,7 +250,7 @@ include("head.inc");
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
 
 function method_change() {
 
@@ -268,7 +268,7 @@ function method_change() {
 	}
 }
 
-//]]>
+//-->
 </script>
 <?php
 	if ($input_errors)
@@ -631,9 +631,11 @@ function method_change() {
 </table>
 <?php include("fend.inc");?>
 <script type="text/javascript">
-//<![CDATA[
+<!--
+
 method_change();
-//]]>
+
+//-->
 </script>
 
 </body>

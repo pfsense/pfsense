@@ -15,46 +15,43 @@ $pagetitle = gentitle( $pgtitle );
 	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
-	<?php 
+		<?php 
 		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
-			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
-		else:
-			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/css/table.css\" media=\"all\" />";
-		endif;
-	?>
+			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
+        else:
+        	echo "<link rel=\"stylesheet\" href=\"/css/table.css\" media=\"all\" />";
+        endif;
+		?>
 		
-	<?php
-		if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
-			file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-	<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
-	<?php else: ?>
-	<link type="text/css" rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
-	<?php endif; ?>
-	<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
-	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
-	<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
-	<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-	<script type="text/javascript" src="/javascript/jquery.js"></script>
-	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
-	<script type="text/javascript">
-	//<![CDATA
-		var theme = "<?php echo $g['theme']; ?>";
-		jQuery.noConflict();
-	//]]>
-	</script>
-	<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
-	
+		<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
+                  file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
+					<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
+        <?php else: ?>
+        	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
+        <?php endif; ?>
+		<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
+		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
+		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all">
+		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
+		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+		<script type="text/javascript">
+			var theme = "<?php echo $g['theme']; ?>";
+
+			jQuery.noConflict();
+		</script>
+		<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
 <?php
-	if($_GET['enablefirebuglite']) {
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";
-	}
-	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/prototype.js\"></script>\n";
-	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/scriptaculous.js\"></script>\n";
-	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/effects.js\"></script>\n";
-	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/dragdrop.js\"></script>\n";
-	if(file_exists("{$g['www_path']}/javascript/global.js"))
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/global.js\"></script>\n";
+		if($_GET['enablefirebuglite']) {
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";
+		}
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/prototype.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/scriptaculous.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/effects.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/dragdrop.js\"></script>\n";
+		if(file_exists("{$g['www_path']}/javascript/global.js"))
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/global.js\"></script>\n";
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)

@@ -36,9 +36,8 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 ?>
 <link  href="/themes/nervecenter/graphlink.css"  rel="stylesheet"  type="text/css"  />  
-<script type="text/javascript" src="/widgets/javascript/cpu_graphs.js" ></script>
+<script src="/widgets/javascript/cpu_graphs.js" type="text/javascript"></script>
 <script type="text/javascript">
-//<![CDATA[
     /* initialize the graph */
     // --- Global Data --- //
     var graphs;        // An array that stores all created graphs
@@ -57,11 +56,10 @@ require_once("functions.inc");
     graph_dir     = new Array();
     last_val      = new Array();
     last_val_span = new Array();
-//]]>
 </script>
 <div style='display: block; margin-left: auto; margin-right: auto' class="GraphLink" id="GraphOutput"></div>
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
+
     // Graph 1
     graph[0]         = GraphInitialize('GraphOutput', 200, 50, 4);
     graph_dir[0]     = GL_END;
@@ -70,5 +68,5 @@ require_once("functions.inc");
 
     GraphSetVMax(graph[0], 100);
     GraphDynamicScale(graph[0]);
-//]]>
+
 </script>

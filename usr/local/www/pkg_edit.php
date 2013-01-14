@@ -271,8 +271,7 @@ if ($pkg['custom_php_after_head_command'])
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <?php if($pkg['fields']['field'] <> "") { ?>
-<script type="text/javascript">
-//<![CDATA[
+<script type="text/javascript" language="javascript">
 	//Everything inside it will load as soon as the DOM is loaded and before the page contents are loaded
 	jQuery(document).ready(function() {
 		
@@ -354,14 +353,14 @@ if ($pkg['custom_php_after_head_command'])
 	}
 	?>
 }
-//]]>
+//-->
 </script>
 <?php } ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
-<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
+<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
 
 <?php include("fbegin.inc"); ?>
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
@@ -701,11 +700,9 @@ if ($pkg['tabs'] <> "") {
 				$input .= fixup_string($pkga['description']) . "\n";
 
 				$script = "<script type='text/javascript'>\n";
-				$script .= "//<![CDATA[\n";
 				$script .= "var aliasarray = new Array({$aliasesaddr})\n";
 				$script .= "var oTextbox1 = new AutoSuggestControl(document.getElementById('{$fieldname}'), new StateSuggestions(aliasarray))\n";
-				$script .= "//]]>\n";
-				$script .= "</script>\n";
+				$script .= "</script>";
 
 				echo $input;
 				echo $script;
@@ -796,8 +793,8 @@ if ($pkg['tabs'] <> "") {
 				#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
 				$rowhelpername="row";
 				?>
-				<script type="text/javascript">
-				//<![CDATA[
+				<script type="text/javascript" language='javascript'>
+				<!--
 				<?php
 					$rowcounter = 0;
 					$fieldcounter = 0;
@@ -808,7 +805,7 @@ if ($pkg['tabs'] <> "") {
 						$fieldcounter++;
 					}
 				?>
-				//]]>
+				-->
 				</script>
 				<table name="maintable" id="maintable">
 				<tr id='<?="tr_{$pkga['fieldname']}";?>'>
@@ -867,14 +864,14 @@ if ($pkg['tabs'] <> "") {
 				<!-- <br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif"></a>-->
 				<br><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
 				<br><?php if($pkga['description'] != "") echo $pkga['description']; ?>
-				<script type="text/javascript">
-				//<![CDATA[
+				<script language="JavaScript">
+				<!--
 				field_counter_js = <?= $fieldcounter ?>;
 				rows = <?= $rowcounter ?>;
 				totalrows = <?php echo $rowcounter; ?>;
 				loaded = <?php echo $rowcounter; ?>;
 				//typesel_change();
-				//]]>
+				//-->
 				</script>
 		
 				<?php
@@ -940,14 +937,12 @@ if ($pkg['tabs'] <> "") {
 	/* JavaScript to handle the advanced fields. */
 	if ($pkg['advanced_options'] == "enabled") {
 		echo "<script type=\"text/javascript\">\n";
-		echo "//<![CDATA[\n";
 		foreach($js_array as $advfieldname) {
 			echo "function show_" . $advfieldname . "() {\n";
 			echo "\tjQuery('#showadv_{$advfieldname}').empty();\n";
 			echo "\tjQuery('#show_{$advfieldname}').css('display', 'block');\n";
 			echo "}\n\n";
 		}
-		echo "//]]>\n";
 		echo "</script>\n";
 	}
 ?>

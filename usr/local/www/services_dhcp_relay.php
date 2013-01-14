@@ -103,10 +103,8 @@ include("head.inc");
 
 ?>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<script type="text/javascript">
-//<![CDATA[
+<script language="JavaScript">
+<!--
 function enable_change(enable_over) {
 	if (document.iform.enable.checked || enable_over) {
 		document.iform.server.disabled = 0;
@@ -118,9 +116,11 @@ function enable_change(enable_over) {
 		document.iform.agentoption.disabled = 1;
 	}
 }
-//]]>
+//-->
 </script>
 
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>

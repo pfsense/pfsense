@@ -230,8 +230,8 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript">
+
 var initial_count = new Array();
 var rows_limit = 0; // Set to 0 to disable limitation
 
@@ -276,9 +276,9 @@ function fillProtocol() {
 
 	<?php foreach ($avail_protos as $key => $proto) { ?>
 		name = "<?= $proto; ?>";
-		protocol += "<option value=" + name + ">" + name + "<\/option>";
+		protocol += "<option value=" + name + ">" + name + "</option>";
 	<?php } ?>
-	protocol += "<\/select>";
+	protocol += "</select>";
 
 	return protocol;
 }
@@ -289,16 +289,16 @@ function fillStructure() {
 	<?php foreach ($avail_structures as $key => $struct) { ?>
 		name = "<?= $struct; ?>";
 		if(name == "queue") {
-		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
+		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "</option>";}
 		}
 		else {
 		  if(name == "limiter") {
-		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
+		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "</option>";}
 		  }
-		  else structure += "<option value=" + name + ">" + name + "<\/option>"; //action
+		  else structure += "<option value=" + name + ">" + name + "</option>"; //action
 		}
 	<?php } ?>
-	structure += "<\/select>";
+	structure += "</select>";
 
 	return structure;
 }
@@ -309,9 +309,9 @@ function fillBehaviour() {
 	var name;
 	<?php foreach ($avail_behaviours_action as $key => $behav) { ?>
 		name = "<?= $behav; ?>";
-		behaviour += "<option value=" + name + ">" + name + "<\/option>";
+		behaviour += "<option value=" + name + ">" + name + "</option>";
 	<?php } ?>
-	behaviour += "<\/select>";
+	behaviour += "</select>";
 
 	return behaviour;
 }
@@ -339,7 +339,7 @@ function changeBehaviourValues(row) {
 	var new_behav;
 	var name;
 	for(i=0; i<a_behav.length; i++) {
-		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "<\/option>";
+		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "</option>";
 	}
 
 	document.getElementsByName("behaviour[]")[selectedRow].innerHTML = new_behav;
@@ -358,7 +358,7 @@ function addRow(table_id) {
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>';
+  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" /></a>';
 
   try {
     var newRow = tbl.insertRow(rows_count);
@@ -386,7 +386,6 @@ function removeRow(tbl,row) {
     alert(ex);
   }
 }
-//]]>
 </script>
 
 <?php

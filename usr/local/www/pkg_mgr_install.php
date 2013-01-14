@@ -109,10 +109,8 @@ include("head.inc");
 	</form>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
-//<![CDATA
 NiftyCheck();
 Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
-//]]>
 </script>
 </body>
 </html>
@@ -165,11 +163,7 @@ switch($_GET['mode']) {
 			filter_configure();
 		}
 		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
-		echo "<script type=\"text/javascript\">\n";
-		echo "//<![CDATA[\n";
-		echo "document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";\n";
-		echo "//]]>\n";
-		echo "</script>\n";
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
 		break;
 	case "installedinfo":
 		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
@@ -215,11 +209,7 @@ switch($_GET['mode']) {
 			else
 				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
 		file_put_contents("/tmp/{$pkgid}.info", $static_output);
-		echo "<script type=\"text/javascript\">\n";
-		echo "//<![CDATA[\n";
-		echo "document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";\n";
-		echo "//]]>\n";
-		echo "</script>\n";
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
 		}
 		filter_configure();
 		break;

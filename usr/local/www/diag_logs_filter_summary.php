@@ -102,8 +102,7 @@ function pie_block($summary, $stat, $num) {
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
-	print "\n<script type=\"text/javascript\">\n";
-	print "//<![CDATA[\n";
+	print "\n<script language=\"javascript\" type=\"text/javascript\">\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
@@ -138,8 +137,8 @@ function pie_block($summary, $stat, $num) {
 	print "				legend: {show: true, labelFormatter: lblfmt}\n";
 	print "			});\n";
 	print "});\n";
-	print "//]]>\n";
-	print "</script>\n";
+
+	print "</script>";
 	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\">";
 	print "<tr><th><font size=\"+1\">{$fields[$stat]}</font></th></tr>";
 	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>\n";
@@ -165,18 +164,17 @@ foreach ($filterlog as $fe) {
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<script type="text/javascript" src="/javascript/filter_log.js" ></script>
-<script type="text/javascript" src="/protochart/prototype.js"></script>
-<script type="text/javascript" src="/protochart/ProtoChart.js"></script>
+<script src="/javascript/filter_log.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript" src="/protochart/prototype.js"></script>
+<script language="javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
 <!--[if IE]>
-<script type="text/javascript" src="/protochart/excanvas.js"></script>
+<script language="javascript" type="text/javascript" src="/protochart/excanvas.js">
+</script>
 <![endif]-->
-<script type="text/javascript">
-//<![CDATA[
+<script language="javascript" type="text/javascript">
 	function lblfmt(lbl) {
 		return '<font size=\"-2\">' + lbl + '</font>'
 	}
-//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>

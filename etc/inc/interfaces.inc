@@ -1351,8 +1351,11 @@ function interface_ppps_configure($interface) {
 
 	$ports = explode(',',$ppp['ports']);
 	if ($type != "modem") {
-		foreach ($ports as $pid => $port)
+		foreach ($ports as $pid => $port) {
 			$ports[$pid] = get_real_interface($port);
+			if (empty($ports[$pid]))
+				return 0;
+		}
 	}
 	$localips = explode(',',$ppp['localip']);
 	$gateways = explode(',',$ppp['gateway']);
@@ -2629,6 +2632,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$realhwif_array = get_parent_interface($interface);
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
+
+	if (!does_interface_exist($realhwif))
+		return 0;
 
 	/* Disable Accepting router advertisements unless specifically requested */
 	log_error("Deny router advertisements for interface {$interface}");

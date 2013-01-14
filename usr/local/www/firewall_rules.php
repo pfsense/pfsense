@@ -857,7 +857,7 @@ if($_REQUEST['undodrag']) {
 	<span class="red"><?=gettext("Hint:");?></span>
   </strong><br>
 	<ul>
-<?pgp if ("FloatingRules" != $if): ?>
+<?php if ("FloatingRules" != $if): ?>
 	<li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .
 	"the action of the first rule to match a packet will be executed). " .
 	"This means that if you use block rules, you'll have to pay attention " .

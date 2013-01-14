@@ -375,7 +375,7 @@ function enable_change(enable_over) {
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
                   <td width="78%" class="vtable">
-			<input type="password" name="secret" id="secret" class="formfld pwd" value="<? echo htmlspecialchars($pconfig['secret']); ?>">
+			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>">
                     <br />
                     <?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
                     </td>

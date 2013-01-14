@@ -56,12 +56,12 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				} else if($iswireless) {
 					if($ifinfo['status'] == "associated") { ?> 
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />
-					<? } else { ?>
+					<?php } else { ?>
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" />
-					<? } ?>
-				<? } else { ?>
+					<?php } ?>
+				<?php } else { ?>
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
-				<? } ?>&nbsp; 
+				<?php } ?>&nbsp; 
 				<strong><u>
 				<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<?=htmlspecialchars($ifname);?></span></u></strong>
@@ -83,7 +83,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							<td>
 								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
 							</td>
-		                <? } else if ($ifinfo['status'] == "no carrier") { ?>
+		                <?php } else if ($ifinfo['status'] == "no carrier") { ?>
 							<td>
 								<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
 							</td>
@@ -93,7 +93,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							<td>
 								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
 							</td>
-				<? }  else if ($ifinfo['status'] == "down") { ?>
+				<?php }  else if ($ifinfo['status'] == "down") { ?>
 							<td>
 								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
 							</td>
@@ -103,7 +103,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							<td>
 								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
 							</td>
-		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
+		                <?php } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
 							<td>
 								<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
 							</td>

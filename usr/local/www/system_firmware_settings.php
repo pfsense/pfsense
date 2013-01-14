@@ -127,12 +127,21 @@ function enable_altfirmwareurl(enable_over) {
 					<option></option>
 				<?php 
 					foreach($preset_urls_split as $pus) {
-						$pus_text = split("\t", $pus);
-						if($pus_text[0])
-							echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
+						$pus_text = explode("\t", $pus);
+						if (empty($pus_text[0]))
+							continue;
+						if (stristr($pus_text[0], php_uname("m")) !== false) {
+							$style = " style=\"font-weight: bold\"";
+							$yourarch = " (Current architecture)";
+						} else {
+							$style = "";
+							$yourarch = "";
+						}
+						echo "<option value='{$pus_text[1]}'{$style}>{$pus_text[0]}{$yourarch}</option>";
 					}
 				?>
 			</select>
+		<br/><br/><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
 		</td>
 	</tr>
 <?php endif; ?>

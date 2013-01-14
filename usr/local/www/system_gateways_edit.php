@@ -542,10 +542,10 @@ function monitor_change() {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
 			<?php $showbutton = (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && ($pconfig['interval'] > $apinger_default['interval'])) || (isset($pconfig['down']) && !($pconfig['down'] == $apinger_default['down']))); ?>
-			<div id="showadvgatewaybox" <?php if ($showbutton) echo "style='display:none'"; ?>>
+			<div id="showadvgatewaybox" <? if ($showbutton) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 			</div>
-			<div id="showgatewayadv" <?php if (!$showbutton) echo "style='display:none'"; ?>>
+			<div id="showgatewayadv" <? if (!$showbutton) echo "style='display:none'"; ?>>
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>

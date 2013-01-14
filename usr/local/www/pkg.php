@@ -157,7 +157,7 @@ include("fbegin.inc");
 ?>
 <form action="pkg.php" name="pkgform" method="get">
 <input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>'>
-<?php if($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
+<? if($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
 <div id="savemsg"></div>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

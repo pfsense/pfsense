@@ -117,7 +117,7 @@ include("head.inc");
 					<?=htmlspecialchars(strtoupper($bridge['bridgeif']));?>
                   </td>
                   <td class="listr">
-					<?php $members = explode(',', $bridge['members']);
+					<? $members = explode(',', $bridge['members']);
 					$j = 0;
 					foreach ($members as $member) {
 						if (isset($ifdescrs[$member])) {

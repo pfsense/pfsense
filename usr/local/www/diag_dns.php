@@ -146,7 +146,7 @@ if ($_POST) {
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<? include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
@@ -165,7 +165,7 @@ include("head.inc"); ?>
 			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			</td>
 			<td>
-			<?php if ($resolved && $type) { ?>
+			<? if ($resolved && $type) { ?>
 			=  <font size="+1">
 <?php
 				$found = 0;

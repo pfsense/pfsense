@@ -181,7 +181,7 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-	<td><input type="hidden" id="id" name="id" value="<?php echo $id; ?>"></td>
+	<td><input type="hidden" id="id" name="id" value="<? echo $id; ?>"></td>
   </tr>
   <tr>
     <td>
@@ -218,7 +218,7 @@ include("head.inc");
                     <?=htmlspecialchars(strtoupper($config['interfaces'][$vipent['interface']]['descr']));?>&nbsp;
                   </td>
                   <td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <?php if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias'>";?>
+                    <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias'>";?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($vipent['descr']);?>&nbsp;

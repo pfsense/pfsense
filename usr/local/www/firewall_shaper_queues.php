@@ -204,10 +204,10 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 		<td width="30%" valign="top" algin="left">
-                <?php      echo $tree; ?>
+                <?      echo $tree; ?>
 		</td>
 		<td width="70%" valign="top" align="center">
-			<?php 
+			<? 
 				if ($qname)
         				echo "<pr class=\"pgtitle\">" . $qname . "</pr><br />";
 				echo "<table align=\"center\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\">";

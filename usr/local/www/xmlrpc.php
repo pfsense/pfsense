@@ -242,7 +242,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				$anyproxyarp = true;
 				break;
 			case "ipalias":
-				interface_ipalias_configure(&$vip);
+				interface_ipalias_configure($vip);
 				break;
 			case "carp":
 				if ($carp_setuped == false)

@@ -1912,7 +1912,7 @@ function interfaces_vips_configure($interface = "") {
 			case "ipalias":
 				if ($interface <> "" && $vip['interface'] <> $interface)
 					continue;
-				interface_ipalias_configure(&$vip);
+				interface_ipalias_configure($vip);
 				break;
 			case "carp":
 				if ($interface <> "" && $vip['interface'] <> $interface)

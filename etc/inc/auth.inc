@@ -687,14 +687,14 @@ function ldap_setup_caenv($authcfg) {
 		}
 		if (!is_dir("{$g['varrun_path']}/certs"))
 			@mkdir("{$g['varrun_path']}/certs");
-		if (file_exists("{$g['varrun_path']}/certs/{$authcfg['name']}.ca"))
-			@unlink("{$g['varrun_path']}/certs/{$authcfg['name']}.ca");
-		file_put_contents("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", base64_decode($caref['crt']));
-		@chmod("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", 0600);
+		if (file_exists("{$g['varrun_path']}/certs/{$caref['refid']}.ca"))
+			@unlink("{$g['varrun_path']}/certs/{$caref['refid']}.ca");
+		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", base64_decode($caref['crt']));
+		@chmod("{$g['varrun_path']}/certs/{$caref['refid']}.ca", 0600);
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
 		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
-		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$authcfg['name']}.ca");
+		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$caref['refid']}.ca");
 	}
 }
 

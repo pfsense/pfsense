@@ -320,17 +320,17 @@ function removeRow(el) {
 	<td width="78%" class="vtable">
 <?php /* ?>
 		<br/>
-		<input type="checkbox" value="yes" name="autoassign" id="autoassign" <? if ($pconfig['autoassign']) echo checked;?>/>
+		<input type="checkbox" value="yes" name="autoassign" id="autoassign" <?php if ($pconfig['autoassign']) echo checked;?>/>
 		<span class="vexpl"> Auto assign interface so it can be configured with ip etc...</span>
 		<br/>
-		<input type="checkbox" value="yes" name="autoenable" id="autoenable" <? if ($pconfig['autoenable']) echo checked;?>/>
+		<input type="checkbox" value="yes" name="autoenable" id="autoenable" <?php if ($pconfig['autoenable']) echo checked;?>/>
 		<span class="vexpl"> Auto enable interface so it can be used on filter rules.</span>
 		<br/>
-		<input type="checkbox" value="yes" name="autoadjustmtu" id="autoadjustmtu" <? if ($pconfig['autoadjustmtu']) echo "checked";?>>
+		<input type="checkbox" value="yes" name="autoadjustmtu" id="autoadjustmtu" <?php if ($pconfig['autoadjustmtu']) echo "checked";?>>
 		<span class="vexpl"> Allows to keep clients mtu unchanged(1500). <br/>NOTE: if you are using jumbo frames this option is not needed and may produce incorrect results!</span>
 <?php */ ?>
 		<br/>
-		<input name="autogroup" type="checkbox" value="yes" id="autogroup" <? if ($pconfig['autogroup']) echo "checked";?>>
+		<input name="autogroup" type="checkbox" value="yes" id="autogroup" <?php if ($pconfig['autogroup']) echo "checked";?>>
 		<span class="vexpl"><?=gettext("Adds interface to QinQ interface groups so you can write filter rules easily.");?></span>
 	</td>
   </tr>
@@ -367,7 +367,7 @@ function removeRow(el) {
 	?>
         <tr>
 	<td class="vtable">
-	        <input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<? echo $member;?>">
+	        <input name="members<?php echo $counter; ?>" class="formselect" id="members<?php echo $counter; ?>" value="<?php echo $member;?>">
 	</td>
         <td>
 	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>

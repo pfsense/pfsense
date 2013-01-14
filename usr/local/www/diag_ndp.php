@@ -142,7 +142,7 @@ ob_implicit_flush(1);
 							?>
 						</td>
 						<td class="listr">
-							<? 
+							<?php 
 							if(isset($hwif[$entry['interface']]))
 								echo $hwif[$entry['interface']];
 							else

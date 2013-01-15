@@ -1589,6 +1589,30 @@ function portal_ip_from_client_ip($cliip) {
 	return false;
 }
 
+function portal_hostname_from_client_ip($cliip) {
+	global $config, $cpzone;
+
+	$cpcfg = $config['captiveportal'][$cpzone];
+
+	if (isset($cpcfg['httpslogin'])) {
+		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+		$ourhostname = $cpcfg['httpsname'];
+		
+		if ($listenporthttps != 443)
+			$ourhostname .= ":" . $listenporthttps;
+	} else {
+		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+		$ifip = portal_ip_from_client_ip($cliip);
+		if (!$ifip)
+			$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}";
+		else
+			$ourhostname = (is_ipaddrv6($ifip)) ? "[{$ifip}]" : "{$ifip}";
+		
+		if ($listenporthttp != 80)
+			$ourhostname .= ":" . $listenporthttp;
+	}
+}
+
 /* functions move from index.php */
 
 function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null) {
@@ -1606,30 +1630,16 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$cpcfg = $config['captiveportal'][$cpzone];
 
 	/* substitute the PORTAL_REDIRURL variable */
-	if ($config['captiveportal'][$cpzone]['preauthurl']) {
-		$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$config['captiveportal'][$cpzone]['preauthurl']}", $htmltext);
-		$htmltext = str_replace("#PORTAL_REDIRURL#", "{$config['captiveportal'][$cpzone]['preauthurl']}", $htmltext);
+	if ($cpcfg['preauthurl']) {
+		$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $htmltext);
+		$htmltext = str_replace("#PORTAL_REDIRURL#", "{$cpcfg['preauthurl']}", $htmltext);
 	}
 
 	/* substitute other variables */
-	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
-		$httpsport = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
-		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/", $htmltext);
-		$htmltext = str_replace("#PORTAL_ACTION#", "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/", $htmltext);
-	} else {
-		$httpport = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
-		$ifip = portal_ip_from_client_ip($clientip);
-		if (!$ifip) {
-			$ourhostname = $config['system']['hostname'] . ":{$httpport}";
-		} else {
-			if (is_ipaddrv6($ifip))
-				$ourhostname = "[{$ifip}]:{$httpport}";
-			else
-				$ourhostname = "{$ifip}:{$httpport}";
-		}
-		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
-		$htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
-	}
+	$ourhostname = portal_hostname_from_client_ip($clientip);
+	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
+	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/", $htmltext);
+	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/", $htmltext);
 
 	$htmltext = str_replace("\$PORTAL_ZONE\$", htmlspecialchars($cpzone), $htmltext);
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
@@ -1911,29 +1921,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$my_redirurl = $redirurl;
 
 	if(isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !$passthrumac) {
-
-		if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
-			$httpsport =
-				$config['captiveportal'][$cpzone]['listenporthttps'] ?
-				$config['captiveportal'][$cpzone]['listenporthttps'] :
-				($config['captiveportal'][$cpzone]['zoneid'] + 1);
-			$logouturl = "https://{$config['captiveportal'][$cpzone]['httpsname']}:{$httpsport}/";
-		} else {
-			$ifip = portal_ip_from_client_ip($clientip);
-			$httpport =
-				$config['captiveportal'][$cpzone]['listenporthttp'] ?
-				$config['captiveportal'][$cpzone]['listenporthttp'] :
-				$config['captiveportal'][$cpzone]['zoneid'];
-			if (!$ifip)
-				$ourhostname = $config['system']['hostname'] . ":{$httpport}";
-			else {
-				if (is_ipaddrv6($ifip))
-					$ourhostname = "[{$ifip}]:{$httpport}";
-				else
-					$ourhostname = "{$ifip}:{$httpport}";
-			}
-			$logouturl = "http://{$ourhostname}/";
-		}
+		$ourhostname = portal_hostname_from_client_ip($clientip);
+		$protocol = (isset($config['captiveportal'][$cpzone]['httpslogin'])) ? 'https://' : 'http://';
+		$logouturl = "{$protocol}{$ourhostname}/";
 
 		if (isset($attributes['reply_message']))
 			$message = $attributes['reply_message'];

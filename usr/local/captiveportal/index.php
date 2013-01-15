@@ -46,6 +46,7 @@ header("Connection: close");
 
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
+$vcpcfg = $config['voucher'][$cpzone];
 
 $orig_host = $_ENV['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
@@ -152,7 +153,7 @@ EOD;
 	captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
-} else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
+} else if (isset($vcpcfg['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 	$voucher = trim($_POST['auth_voucher']);
 	$timecredit = voucher_auth($voucher);
 	// $timecredit contains either a credit in minutes or an error message
@@ -167,14 +168,14 @@ EOD;
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
 		} else {
-			portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
+			portal_reply_page($redirurl, "error", $vcpcfg['msgexpired'] ? $vcpcfg['msgexpired']: $errormsg);
 		}
 	} else if (-1 == $timecredit) {  // valid but expired
 		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgexpired'] ? $config['voucher'][$cpzone]['msgexpired']: $errormsg);
+		portal_reply_page($redirurl, "error", $vcpcfg['msgexpired'] ? $vcpcfg['msgexpired']: $errormsg);
 	} else {
 		captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
-		portal_reply_page($redirurl, "error", $config['voucher'][$cpzone]['msgnoaccess'] ? $config['voucher'][$cpzone]['msgnoaccess'] : $errormsg);
+		portal_reply_page($redirurl, "error", $vcpcfg['msgnoaccess'] ? $vcpcfg['msgnoaccess'] : $errormsg);
 	}
 
 } else if ($_POST['accept'] && $radius_enable) {

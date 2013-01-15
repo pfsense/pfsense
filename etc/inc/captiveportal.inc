@@ -94,31 +94,28 @@ function get_default_captive_portal_html() {
 								<br/>
 								<div id='loginbox'>
 								<table>
-								   <tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
-								   <tr><td>&nbsp;</td></tr>
-								   <tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
-								   <tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
-								   <tr><td>&nbsp;</td></tr>
+									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
+									<tr><td>&nbsp;</td></tr>
+									<tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+									<tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+									<tr><td>&nbsp;</td></tr>
 
 EOD;
 
 	if(isset($config['voucher'][$cpzone]['enable'])) {
 	$htmltext .= <<<EOD
-								   <tr><td align="right">
-									Enter Voucher Code: 
-									</td><td>
-									<input name="auth_voucher" type="text" style="border:1px dashed;" size="22"> 
-								   </td></tr>
+									<tr>
+										<td align="right">Enter Voucher Code: </td>
+										<td><input name="auth_voucher" type="text" style="border:1px dashed;" size="22"></td>
+									</tr>
 
 EOD;
 	}
 
 	$htmltext .= <<<EOD
-								   <tr>
-									 <td colspan="2">
-									<center><input name="accept" type="submit" value="Continue"></center>
-									 </td>
-								   </tr>
+									<tr>
+										<td colspan="2"><center><input name="accept" type="submit" value="Continue"></center></td>
+									</tr>
 								</table>
 								</div>
 							</center>
@@ -148,17 +145,17 @@ EOD;
 }
 
 function captiveportal_load_modules() {
-        global $config;
+	global $config;
 
 	mute_kernel_msgs();
-        if (!is_module_loaded("ipfw.ko")) {
-                mwexec("/sbin/kldload ipfw");
-                /* make sure ipfw is not on pfil hooks */
-                mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
-                        " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
+	if (!is_module_loaded("ipfw.ko")) {
+		mwexec("/sbin/kldload ipfw");
+		/* make sure ipfw is not on pfil hooks */
+		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
+		       " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
 		/* Activate layer2 filtering */
 		mwexec("/sbin/sysctl net.link.ether.ipfw=1 net.inet.ip.fw.one_pass=1");
-        }
+	}
 
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
 	if (!is_module_loaded("dummynet.ko")) {
@@ -167,12 +164,12 @@ function captiveportal_load_modules() {
 	}
 	unmute_kernel_msgs();
 
-        /* XXX: This are not used in pfSense, if needed can be tuned 
-        if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
-                mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
-        } else {
-                mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
-        }
+	/* XXX: This are not used in pfSense, if needed can be tuned 
+	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+			mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+	} else {
+			mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
+	}
 	*/
 }
 
@@ -416,7 +413,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		$crt = base64_decode($cert['crt']);
 		$key = base64_decode($cert['prv']);
 		$ca = ca_chain($cert);
-    
+
 		/* generate lighttpd configuration */
 		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
@@ -599,7 +596,7 @@ function captiveportal_prune_old() {
 		$idletimeout = $cpcfg['idletimeout'] * 60;
 
 	/* Is there any job to do? */
-	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) && 
+	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) &&
 	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable']))
 		return;
 
@@ -1362,16 +1359,16 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 }
 
 function captiveportal_free_dn_ruleno($ruleno) {
-        global $config, $g;
+	global $config, $g;
 
-        $cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
-        if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-                $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-                $rules[$ruleno] = false;
-                $rules[++$ruleno] = false;
-                file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
-        }
-        unlock($cpruleslck);
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules[$ruleno] = false;
+		$rules[++$ruleno] = false;
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+	}
+	unlock($cpruleslck);
 }
 
 function captiveportal_get_dn_passthru_ruleno($value) {
@@ -1658,40 +1655,41 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$htmltext = str_replace("#USERNAME#", htmlspecialchars($username), $htmltext);
 	$htmltext = str_replace("#PASSWORD#", htmlspecialchars($password), $htmltext);
 
-    echo $htmltext;
+	echo $htmltext;
 }
 
 function portal_mac_radius($clientmac,$clientip) {
-    global $config, $cpzone;
+	global $config, $cpzone;
 
-    $radmac_secret = $config['captiveportal'][$cpzone]['radmac_secret'];
+	$radmac_secret = $config['captiveportal'][$cpzone]['radmac_secret'];
 
-    /* authentication against the radius server */
-    $username = mac_format($clientmac);
-    $auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
-    if ($auth_list['auth_val'] == 2)
-        return TRUE;
-    if (!empty($auth_list['url_redirection']))
-	portal_reply_page($auth_list['url_redirection'], "redir");
+	/* authentication against the radius server */
+	$username = mac_format($clientmac);
+	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
+	if ($auth_list['auth_val'] == 2)
+		return TRUE;
 
-    return FALSE;
+	if (!empty($auth_list['url_redirection']))
+		portal_reply_page($auth_list['url_redirection'], "redir");
+
+	return FALSE;
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {
 	global $config, $cpzone, $g;
-                         
+
 	$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
 	$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
-        $bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-        $bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
-        $bw_up_pipeno = $cpentry[1];
-        $bw_down_pipeno = $cpentry[1]+1;
+	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+	$bw_up_pipeno = $cpentry[1];
+	$bw_down_pipeno = $cpentry[1]+1;
 
 	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
-        unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
+	unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
 }
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $pipeno = null, $radiusctx = null)  {
@@ -1721,17 +1719,17 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 							$macrules = "";
 							$ruleno = captiveportal_get_ipfw_passthru_ruleno($mac['mac']);
 							$pipeno = captiveportal_get_dn_passthru_ruleno($mac['mac']);
-                                			if ($ruleno) {
+							if ($ruleno) {
 								captiveportal_free_ipfw_ruleno($ruleno);
-                                        			$macrules .= "delete {$ruleno}\n";
+								$macrules .= "delete {$ruleno}\n";
 								++$ruleno;
-                                        			$macrules .= "delete {$ruleno}\n";
-                                			}
+								$macrules .= "delete {$ruleno}\n";
+							}
 							if ($pipeno) {
 								captiveportal_free_dn_ruleno($pipeno);
-                                        			$macrules .= "pipe delete {$pipeno}\n";
+								$macrules .= "pipe delete {$pipeno}\n";
 								++$pipeno;
-                                        			$macrules .= "pipe delete {$pipeno}\n";
+								$macrules .= "pipe delete {$pipeno}\n";
 							}
 							unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;
@@ -1745,7 +1743,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 							break;
 						}
 					}
-                                } else {
+				} else {
 					portal_reply_page($redirurl, "error", "Username: {$username} is already authenticated using another MAC address.",
 						$clientmac, $clientip, $username, $password);
 					unlock($cpdblck);
@@ -1774,7 +1772,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$cpentry[10] = 'first';
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
-			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)   
+			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
 			else
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");
@@ -1900,8 +1898,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			unlock($cpdblck);
 
 			if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers[$radiusctx])) {
-				$acct_val = RADIUS_ACCOUNTING_START($pipeno,
-                                		$username, $sessionid, $radiusservers[$radiusctx], $clientip, $clientmac);
+				$acct_val = RADIUS_ACCOUNTING_START($pipeno, $username, $sessionid, $radiusservers[$radiusctx], $clientip, $clientmac);
 				if ($acct_val == 1)
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}

@@ -4,10 +4,16 @@ if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
         /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
 fi
 if [ "$3" != "" ]; then
-	echo "Removing states from $3" | logger -t ppp-linkdown
-	/sbin/pfctl -k 0.0.0.0/0 -k $3/32
-	/sbin/pfctl -k $3/32
-	pfctl -K $3/32
+	if echo "$3" | grep -q '/'; then
+		LOCAL_IP="${3}"
+	else
+		LOCAL_IP="${3}/32"
+	fi
+
+	echo "Removing states from ${LOCAL_IP}" | logger -t ppp-linkdown
+	/sbin/pfctl -k 0.0.0.0/0 -k ${LOCAL_IP}
+	/sbin/pfctl -k ${LOCAL_IP}
+	pfctl -K ${LOCAL_IP}
 fi
 
 OLD_ROUTER=`/bin/cat /tmp/${1}_router`

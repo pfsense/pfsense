@@ -497,7 +497,7 @@
 				<type>checkbox</type>
 				<typehint>Prioritize network gaming traffic</typehint>
 				<description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-				<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
+				<enablefields>ARMA2,BattleNET,Battlefield2,Battlefield3,BattlefieldBC2,Borderlands,CallOfDuty,Counterstrike,Crysis2,DeltaForce,Dirt3,DOOM3,EmpireEarth,EveOnline,Everquest,Everquest2,FarCry,FarCry2,FarCry3,GunZOnline,HalfLife,Halo2,LeagueofLegends,Lineage2,MechwarriorOnline,Minecraft,OperationFlashpointDR,PlanetSide,PlanetSide2,PlayStation3,QuakeIII,QuakeIV,Steam,StarWarsTOR,TigerWoods2004PS2,TribesAscend,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
 			</field>
@@ -508,6 +508,12 @@
 			<field>
 				<name>Enable/Disable specific games</name>
 				<type>listtopic</type>
+			</field>
+			<field>
+				<name>ARMA2</name>
+				<type>checkbox</type>
+				<typehint>ARMA 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;arma2</bindstofield>
 			</field>
 			<field>
 				<name>BattleNET</name>
@@ -522,6 +528,24 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;battlefield2</bindstofield>
 			</field>
 			<field>
+				<name>Battlefield3</name>
+				<type>checkbox</type>
+				<typehint>Battlefield 3 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;battlefield3</bindstofield>
+			</field>
+			<field>
+				<name>BattlefieldBC2</name>
+				<type>checkbox</type>
+				<typehint>Battlefield: Bad Company 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;battlefieldbc2</bindstofield>
+			</field>
+			<field>
+				<name>Borderlands</name>
+				<type>checkbox</type>
+				<typehint>Borderlands</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;borderlands</bindstofield>
+			</field>
+			<field>
 				<name>CallOfDuty</name>
 				<type>checkbox</type>
 				<typehint>Call Of Duty (United Offensive)</typehint>
@@ -534,10 +558,22 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;counterstrike</bindstofield>
 			</field>
 			<field>
+				<name>Crysis2</name>
+				<type>checkbox</type>
+				<typehint>Crysis 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;crysis2</bindstofield>
+			</field>
+			<field>
 				<name>DeltaForce</name>
 				<type>checkbox</type>
 				<typehint>Delta Force</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;deltaforce</bindstofield>
+			</field>
+			<field>
+				<name>Dirt3</name>
+				<type>checkbox</type>
+				<typehint>Dirt 3</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;dirt3</bindstofield>
 			</field>
 			<field>
 				<name>DOOM3</name>
@@ -552,6 +588,12 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;empireearth</bindstofield>
 			</field>
 			<field>
+				<name>EveOnline</name>
+				<type>checkbox</type>
+				<typehint>EVE Online</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;eveonline</bindstofield>
+			</field>
+			<field>
 				<name>Everquest</name>
 				<type>checkbox</type>
 				<typehint>Everquest - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
@@ -564,28 +606,34 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;everquest2</bindstofield>
 			</field>
 			<field>
-				<name>GunZOnline</name>
-				<type>checkbox</type>
-				<typehint>GunZ Online</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;gunzonline</bindstofield>
-			</field>
-			<field>
 				<name>FarCry</name>
 				<type>checkbox</type>
 				<typehint>Far Cry</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;farcry</bindstofield>
 			</field>
 			<field>
-				<name>HalfLife</name>
+				<name>FarCry2</name>
 				<type>checkbox</type>
-				<typehint>HalfLife</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;halflife</bindstofield>
+				<typehint>Far Cry 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;farcry2</bindstofield>
 			</field>
 			<field>
-				<name>HalfLife2</name>
+				<name>FarCry3</name>
 				<type>checkbox</type>
-				<typehint>HalfLife 2</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;halflife2</bindstofield>
+				<typehint>Far Cry 3</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;farcry3</bindstofield>
+			</field>
+			<field>
+				<name>GunZOnline</name>
+				<type>checkbox</type>
+				<typehint>GunZ Online</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;gunzonline</bindstofield>
+			</field>
+			<field>
+				<name>HalfLife</name>
+				<type>checkbox</type>
+				<typehint>Half-Life</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;halflife</bindstofield>
 			</field>
 			<field>
 				<name>Halo2</name>
@@ -594,10 +642,28 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;halo2xbox</bindstofield>
 			</field>
 			<field>
+				<name>LeagueofLegends</name>
+				<type>checkbox</type>
+				<typehint>League of Legends - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;leagueoflegends</bindstofield>
+			</field>
+			<field>
 				<name>Lineage2</name>
 				<type>checkbox</type>
 				<typehint>Lineage II</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;lineage2</bindstofield>
+			</field>
+			<field>
+				<name>MechwarriorOnline</name>
+				<type>checkbox</type>
+				<typehint>MechWarrior: Online - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;mechwarrioronline</bindstofield>
+			</field>
+			<field>
+				<name>Minecraft</name>
+				<type>checkbox</type>
+				<typehint>Minecraft</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;minecraft</bindstofield>
 			</field>
 			<field>
 				<name>PlanetSide</name>
@@ -606,10 +672,46 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;planetside</bindstofield>
 			</field>
 			<field>
+				<name>PlanetSide2</name>
+				<type>checkbox</type>
+				<typehint>PlanetSide 2</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;planetside2</bindstofield>
+			</field>
+			<field>
+				<name>PlayStation3</name>
+				<type>checkbox</type>
+				<typehint>PlayStation 3</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;playstation3</bindstofield>
+			</field>
+			<field>
+				<name>OperationFlashpointDR</name>
+				<type>checkbox</type>
+				<typehint>Operation Flashpoint: Dragon Rising</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;operationflashpoint-dr</bindstofield>
+			</field>
+			<field>
 				<name>QuakeIII</name>
 				<type>checkbox</type>
 				<typehint>Quake III</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;quakeiii</bindstofield>
+			</field>
+			<field>
+				<name>QuakeIV</name>
+				<type>checkbox</type>
+				<typehint>Quake IV</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;quakeiv</bindstofield>
+			</field>
+			<field>
+				<name>StarWarsTOR</name>
+				<type>checkbox</type>
+				<typehint>StarWars: The Old Republic - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;starwarstor</bindstofield>
+			</field>
+			<field>
+				<name>Steam</name>
+				<type>checkbox</type>
+				<typehint>Steam (Includes: America's Army 3, Counter-Strike: Source, Counter-Strike: Global Offensive, Half-Life 2, COD: Black Ops Series, Borderlands 2, Natural Selection 2, Left 4 Dead Series, Portal 2)</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;steam</bindstofield>
 			</field>
 			<field>
 				<name>TigerWoods2004PS2</name>
@@ -618,9 +720,15 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;tigerwoods2004ps2</bindstofield>
 			</field>
 			<field>
+				<name>TribesAscend</name>
+				<type>checkbox</type>
+				<typehint>Tribes Ascend</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;tribesascend</bindstofield>
+			</field>
+			<field>
 				<name>UnrealTournament</name>
 				<type>checkbox</type>
-				<typehint>Unreal Tournament</typehint>
+				<typehint>Unreal Tournament Series</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;unrealtournament</bindstofield>
 			</field>
 			<field>
@@ -638,7 +746,7 @@
 			<field>
 				<name>Xbox360</name>
 				<type>checkbox</type>
-				<typehint>XBox 360</typehint>
+				<typehint>XBox 360 and Games for Windows Live</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;xbox360</bindstofield>
 			</field>
       <field>

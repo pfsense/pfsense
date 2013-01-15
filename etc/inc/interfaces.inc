@@ -2633,9 +2633,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
-	if (!does_interface_exist($realhwif))
-		return 0;
-
 	/* Disable Accepting router advertisements unless specifically requested */
 	log_error("Deny router advertisements for interface {$interface}");
 	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv");

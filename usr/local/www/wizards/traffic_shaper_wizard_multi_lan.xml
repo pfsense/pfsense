@@ -632,7 +632,7 @@
 			<field>
 				<name>HalfLife</name>
 				<type>checkbox</type>
-				<typehint>HalfLife</typehint>
+				<typehint>Half-Life</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;halflife</bindstofield>
 			</field>
 			<field>
@@ -710,7 +710,7 @@
 			<field>
 				<name>Steam</name>
 				<type>checkbox</type>
-				<typehint>Steam (Includes: America's Army 3, Counter-Strike: Source, Counter-Strike: Global Offensive, Halflife 2, COD: Black Ops Series, Borderlands 2, Natural Selection 2, Left 4 Dead Series, Portal 2)</typehint>
+				<typehint>Steam (Includes: America's Army 3, Counter-Strike: Source, Counter-Strike: Global Offensive, Half-Life 2, COD: Black Ops Series, Borderlands 2, Natural Selection 2, Left 4 Dead Series, Portal 2)</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;steam</bindstofield>
 			</field>
 			<field>

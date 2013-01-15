@@ -254,9 +254,9 @@ $gamesplist['steam'] = array();
 
 $gamesplist['tigerwoods2004ps2'] = array();
 	/* tiger woods 2004 ps2 */
-	$gamesplist['tigerwoods2004ps2'][] = array('Outbound2Player', 'udp', '3658', '3658', 'both');
-	$gamesplist['tigerwoods2004ps2'][] = array('Outbound2Player2', 'udp', '6000', '6000', 'both');
-	$gamesplist['tigerwoods2004ps2'][] = array('Outbound2EA', 'tcp', '10300', '10301', 'both');
+	$gamesplist['tigerwoods2004ps2'][] = array('TigerWoods2004-Player', 'udp', '3658', '3658', 'both');
+	$gamesplist['tigerwoods2004ps2'][] = array('TigerWoods2004-Player2', 'udp', '6000', '6000', 'both');
+	$gamesplist['tigerwoods2004ps2'][] = array('TigerWoods2004-EA', 'tcp', '10300', '10301', 'both');
 
 $gamesplist['tribesascend'] = array();
 	/* Tribes Ascend */

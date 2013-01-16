@@ -1608,6 +1608,8 @@ function portal_hostname_from_client_ip($cliip) {
 		if ($listenporthttp != 80)
 			$ourhostname .= ":" . $listenporthttp;
 	}
+	
+	return $ourhostname;
 }
 
 /* functions move from index.php */

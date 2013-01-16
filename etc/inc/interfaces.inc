@@ -1425,6 +1425,8 @@ function interface_ppps_configure($interface) {
 			case "pppoe":
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
+				/* Detach if it was previously attached to use new mac address if it has been changed */
+				pfSense_ngctl_detach("{$port}:", $port);
 				pfSense_ngctl_attach(".", $port);
 				break;
 			case "pptp":

@@ -8,7 +8,7 @@
 proc_error=""
 
 # Download and extract if necessary
-function process_url() {
+process_url() {
 	local file=$1
 	local url=$2
 	local filename=${url##*/}
@@ -27,7 +27,9 @@ function process_url() {
 			/usr/bin/tar -xf $file.tmp -O > $file 2> /dev/null
 			;;
 		tar.gz)
-			;&
+			mv $file $file.tmp
+			/usr/bin/tar -xzf $file.tmp -O > $file 2> /dev/null
+			;;
 		tgz)
 			mv $file $file.tmp
 			/usr/bin/tar -xzf $file.tmp -O > $file 2> /dev/null

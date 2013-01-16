@@ -232,6 +232,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries']))
 		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
+	else {
+		$memory = get_memory();
+		if ($memory[0] < 135)
+			$limitrules .= "set limit table-entries 100000\n";
+		else
+			$limitrules .= "set limit table-entries 200000\n";
+	}
 
 	if ($config['system']['optimization'] <> "") {
 		$limitrules .= "set optimization {$config['system']['optimization']}\n";

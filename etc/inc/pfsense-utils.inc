@@ -1509,7 +1509,7 @@ function is_fqdn($fqdn) {
 function pfsense_default_state_size() {
   /* get system memory amount */
   $memory = get_memory();
-  $avail = $memory[0];
+  $avail = $memory[1];
   /* Be cautious and only allocate 10% of system memory to the state table */
   $max_states = (int) ($avail/10)*1000;
   return $max_states;

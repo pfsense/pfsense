@@ -1369,9 +1369,9 @@ function interface_ppps_configure($interface) {
 			case "pppoe":
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
-				/* Detach if it was previously attached to use new mac address if it has been changed */
-				pfSense_ngctl_detach("{$port}:", $port);
 				pfSense_ngctl_attach(".", $port);
+				/* Enable setautosrc to automatically change mac address if parent interface's changes */
+				mwexec("ngctl msg {$port}: setautosrc 1");
 				break;
 			case "pptp":
 			case "l2tp":

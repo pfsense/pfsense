@@ -99,7 +99,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name interface");
 	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";

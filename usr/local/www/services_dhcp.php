@@ -240,7 +240,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = array(gettext("Range begin"),gettext("Range end"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");

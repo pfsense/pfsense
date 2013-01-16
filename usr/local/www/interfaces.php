@@ -449,7 +449,7 @@ if ($_POST['apply']) {
 		case "staticv4":
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = array(gettext("IPv4 address"),gettext("Subnet bit count"),gettext("Gateway"));
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
@@ -465,7 +465,7 @@ if ($_POST['apply']) {
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
 			$reqdfieldsn = array(gettext("Modem Port"),gettext("Phone Number"));
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "pppoe":
 			if ($_POST['pppoe_dialondemand']) {
@@ -475,7 +475,7 @@ if ($_POST['apply']) {
 				$reqdfields = explode(" ", "pppoe_username pppoe_password");
 				$reqdfieldsn = array(gettext("PPPoE username"),gettext("PPPoE password"));
 			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "pptp":
 			if ($_POST['pptp_dialondemand']) {
@@ -485,7 +485,7 @@ if ($_POST['apply']) {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
 				$reqdfieldsn = array(gettext("PPTP username"),gettext("PPTP password"),gettext("PPTP local IP address"),gettext("PPTP subnet"),gettext("PPTP remote IP address"));
 			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "l2tp":
 			if ($_POST['pptp_dialondemand']) {
@@ -495,14 +495,14 @@ if ($_POST['apply']) {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_remote");
 				$reqdfieldsn = array(gettext("L2TP username"),gettext("L2TP password"),gettext("L2TP remote IP address"));
 			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 	}
 	switch(strtolower($_POST['type6'])) {
 		case "staticv6":
 			$reqdfields = explode(" ", "ipaddrv6 subnetv6 gatewayv6");
 			$reqdfieldsn = array(gettext("IPv6 address"),gettext("Subnet bit count"),gettext("Gateway"));
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "none":
 			if(is_array($config['virtualip']['vip'])) {
@@ -616,7 +616,7 @@ if ($_POST['apply']) {
 			$reqdfields[] = "ssid";
 			$reqdfieldsn[] = gettext("SSID");
 		}
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		check_wireless_mode();
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {

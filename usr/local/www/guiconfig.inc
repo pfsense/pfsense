@@ -228,7 +228,7 @@ $wlan_modes = array("bss" => "Infrastructure (BSS)", "adhoc" => "Ad-hoc (IBSS)",
 /* platforms that support firmware updating */
 $fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
 
-function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) {
+function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
 	/* check for bad control characters */
 	foreach ($postdata as $pn => $pd) {

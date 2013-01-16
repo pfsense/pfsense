@@ -82,7 +82,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name");
 	$reqdfieldsn = explode(",", "Name");
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (! isset($_POST['name'])) {
 		$input_errors[] = gettext("A valid gateway group name must be specified.");

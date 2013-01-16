@@ -74,7 +74,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
 	$reqdfieldsn = array(gettext("Parent interface,Local address, Remote tunnel address, Remote tunnel network, Local tunnel address"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
 			(!is_ipaddr($_POST['remote-addr']))) {

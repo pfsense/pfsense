@@ -319,7 +319,7 @@ if ($_POST) {
 		if (ip2ulong($pconfig['serverbridge_dhcp_start']) > ip2ulong($pconfig['serverbridge_dhcp_end']))
 			$input_errors[] = gettext("The Server Bridge DHCP range is invalid (start higher than end).");
 	}
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (!$input_errors) {
 

@@ -60,7 +60,7 @@ if ($_POST || $_REQUEST['host']) {
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
 	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
 		$input_errors[] = sprintf(gettext("Maximum number of hops must be between 1 and %s"), MAX_TTL);

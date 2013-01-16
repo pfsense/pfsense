@@ -105,7 +105,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "mode");
 	$reqdfieldsn = array(gettext("Type"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['subnet'])
 		$_POST['subnet'] = trim($_POST['subnet']);

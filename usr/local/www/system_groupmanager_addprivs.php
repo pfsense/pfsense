@@ -78,7 +78,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "sysprivs");
 	$reqdfieldsn = array(gettext("Selected priveleges"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
 	if(isAjax() && is_array($input_errors)) {

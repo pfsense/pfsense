@@ -137,7 +137,7 @@ if ($_POST) {
 				$reqfieldsn[] = $field['fielddescr'];
 		}
 	}
-	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqfields, $reqfieldsn, $input_errors);
 
 	if ($pkg['custom_php_validation_command'])
 		eval($pkg['custom_php_validation_command']);

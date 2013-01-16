@@ -94,11 +94,11 @@ if ($_POST) {
 
 		$reqdfields = explode(" ", "rocommunity");
 		$reqdfieldsn = array(gettext("Community"));
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		$reqdfields = explode(" ", "pollport");
 		$reqdfieldsn = array(gettext("Polling Port"));
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		
 	
 	}
@@ -108,15 +108,15 @@ if ($_POST) {
 
 		$reqdfields = explode(" ", "trapserver");
 		$reqdfieldsn = array(gettext("Trap server"));
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		$reqdfields = explode(" ", "trapserverport");
 		$reqdfieldsn = array(gettext("Trap server port"));
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		$reqdfields = explode(" ", "trapstring");
 		$reqdfieldsn = array(gettext("Trap string"));
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 
 
@@ -124,7 +124,7 @@ if ($_POST) {
 	if ($_POST['rwenable']) {
                $reqdfields = explode(" ", "rwcommunity");
                $reqdfieldsn = explode(",", "Write community string");
-               do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+               do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 */
 

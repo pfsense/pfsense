@@ -201,7 +201,7 @@ if ($_POST) {
 				gettext("Distinguished name Common Name"));
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	if ($pconfig['method'] != "existing")
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		for ($i = 0; $i < count($reqdfields); $i++) {

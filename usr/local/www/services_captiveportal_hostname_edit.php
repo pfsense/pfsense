@@ -99,7 +99,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "hostname");
 	$reqdfieldsn = array(gettext("Allowed Hostname"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) 
 		$input_errors[] = sprintf(gettext("A valid Hostname must be specified. [%s]"), $_POST['hostname']);

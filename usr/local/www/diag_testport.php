@@ -58,7 +58,7 @@ if ($_POST || $_REQUEST['host']) {
 	/* input validation */
 	$reqdfields = explode(" ", "host port");
 	$reqdfieldsn = array(gettext("Host"),gettext("Port"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!is_ipaddr($_REQUEST['host']) && !is_hostname($_REQUEST['host'])) {
 		$input_errors[] = gettext("Please enter a valid IP or hostname.");

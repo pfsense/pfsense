@@ -118,7 +118,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Remote network type");
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if(($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) 
 	{

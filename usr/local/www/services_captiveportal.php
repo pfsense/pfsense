@@ -152,7 +152,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "zone cinterface");
 		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		/* make sure no interfaces are bridged or used on other zones */
 		if (is_array($_POST['cinterface'])) {

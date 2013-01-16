@@ -112,7 +112,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "mac");
 	$reqdfieldsn = array(gettext("MAC address"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));

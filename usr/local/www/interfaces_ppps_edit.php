@@ -186,7 +186,7 @@ if ($_POST) {
 		case "ppp":
 			$reqdfields = explode(" ", "interfaces phone");
 			$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Phone Number"));
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
@@ -196,7 +196,7 @@ if ($_POST) {
 				$reqdfields = explode(" ", "interfaces username password");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"));
 			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		case "l2tp":
 		case "pptp":
@@ -207,7 +207,7 @@ if ($_POST) {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
 				$reqdfieldsn = array(gettext("Link Interface(s)"),gettext("Username"),gettext("Password"),gettext("Local IP address"),gettext("Subnet"),gettext("Remote IP address"));
 			}
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 			break;
 		default:
 			$input_errors[] = gettext("Please choose a Link Type.");

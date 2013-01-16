@@ -110,7 +110,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "duid");
 	$reqdfieldsn = array(gettext("DUID Identifier"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);

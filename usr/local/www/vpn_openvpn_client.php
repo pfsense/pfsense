@@ -235,7 +235,7 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (!$input_errors) {
 

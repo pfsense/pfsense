@@ -80,7 +80,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "domain ip");
 	$reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (($_POST['host'] && !is_hostname($_POST['host']))) 
 		$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
@@ -119,7 +119,7 @@ if ($_POST) {
 		$aliasreqdfieldsn = array(gettext("Alias Domain"));
 
 		var_dump(array('fields' => $aliasreqdfields, 'names' => $aliasreqdfieldsn, 'alias' => $alias));
-		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
 		if (($alias['host'] && !is_hostname($alias['host']))) {
 			$input_errors[] = gettext("Hostnames in alias list can only contain the characters A-Z, 0-9 and '-'.");
 		}

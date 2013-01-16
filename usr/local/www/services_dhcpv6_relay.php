@@ -72,7 +72,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "server interface");
 		$reqdfieldsn = array(gettext("Destination Server"), gettext("Interface"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($_POST['server']) {
 			$checksrv = explode(",", $_POST['server']);

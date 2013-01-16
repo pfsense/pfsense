@@ -98,7 +98,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "ip");
 	$reqdfieldsn = array(gettext("Allowed IP address"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);

@@ -102,7 +102,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Update URL");
  	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
 		$input_errors[] = gettext("The MX contains invalid characters.");

@@ -235,7 +235,7 @@ if ($_POST) {
 		}
 
 		$altnames = array();
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		if ($pconfig['method'] != "import") {
 			/* subjectAltNames */
 			foreach ($_POST as $key => $value) {
@@ -394,7 +394,7 @@ if ($_POST) {
 			gettext("Descriptive name"),
 			gettext("Final Certificate data"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 //		old way
 		/* make sure this csr and certificate subjects match */

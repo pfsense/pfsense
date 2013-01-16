@@ -91,7 +91,7 @@ if ($_POST) {
 			gettext("Destination network bit count") . "," .
 			gettext("Gateway"));		
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if (($_POST['network'] && !is_ipaddr($_POST['network']) && !is_alias($_POST['network']))) {
 		$input_errors[] = gettext("A valid IPv4 or IPv6 destination network must be specified.");

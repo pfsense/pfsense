@@ -53,7 +53,7 @@ if ($_POST || $_REQUEST['host']) {
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = array(gettext("Host"),gettext("Count"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);

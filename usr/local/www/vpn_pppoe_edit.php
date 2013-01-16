@@ -117,7 +117,7 @@ if ($_POST) {
 				array(gettext("RADIUS server address"),gettext("RADIUS shared secret")));
 		}
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip'])))
 			$input_errors[] = gettext("A valid server address must be specified.");

@@ -1455,7 +1455,7 @@ function set_sysctl($values) {
 function get_memory() {
 
 	$real = trim(`sysctl -n hw.physmem`, " \n");
-	$avail = trim(`sysctl hw.realmem`, " \n");
+	$avail = trim(`sysctl -n hw.realmem`, " \n");
 	/* convert from bytes to megabytes */
 	return array(($real/1048576),($avail/1048576));
 }

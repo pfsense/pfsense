@@ -51,7 +51,7 @@ function set_networking_interfaces_ports() {
 	$fp = fopen('php://stdin', 'r');
 
 	$memory = get_memory();
-	$avail = $memory[0];
+	$avail = $memory[1];
 
 	if($avail < $g['minimum_ram_warning']) {
 		echo "\n\n\n";

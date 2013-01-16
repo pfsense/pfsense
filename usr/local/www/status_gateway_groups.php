@@ -122,21 +122,21 @@ include("head.inc");
 							$status = $gateways_status[$monitor]['status'];
 							if (stristr($status, "down")) {
                                         			$online = gettext("Offline");
-                                        			$bgcolor = "lightcoral";
+                                        			$bgcolor = "#F08080";  // lightcoral
                                 			} elseif (stristr($status, "loss")) {
                                         			$online = gettext("Warning, Packetloss");
-                                        			$bgcolor = "khaki";
+                                        			$bgcolor = "#F0E68C";  // khaki
                                 			} elseif (stristr($status, "delay")) {
                                         			$online = gettext("Warning, Latency");
-                                        			$bgcolor = "khaki";
+                                        			$bgcolor = "#F0E68C";  // khaki
                                 			} elseif ($status == "none") {
                                         			$online = gettext("Online");
-                                        			$bgcolor = "lightgreen";
+                                        			$bgcolor = "#90EE90";  // lightgreen
                                 			} else {
 								$online = gettext("Gathering data");
-								$bgcolor = "lightblue";
+								$bgcolor = "#ADD8E6";  // lightblue
 							}
-							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) .", $online</td>";
+							echo "<td bgcolor='$bgcolor'>&nbsp;". htmlspecialchars($member) .", $online&nbsp;</td>";
 						} else {
 							echo "<td>&nbsp;</td>";
 						}

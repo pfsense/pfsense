@@ -73,15 +73,15 @@ if (!$nentries)
 		<?php
 		switch (trim($rdr_a[$vsent['name']]['status'])) {
 			case 'active':
-				$bgcolor = "lightgreen";
+				$bgcolor = "#90EE90";  // lightgreen
 				$rdr_a[$vsent['name']]['status'] = "Active";
 				break;
 			case 'down':
-				$bgcolor = "lightcoral";
+				$bgcolor = "#F08080";  // lightcoral
 				$rdr_a[$vsent['name']]['status'] = "Down";
 				break;
 			default:
-				$bgcolor = "lightgray";
+				$bgcolor = "#D3D3D3";  // lightgray
 				 $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
 		}
 		?>
@@ -113,22 +113,22 @@ if (!$nentries)
 					if($server['ip']['addr']!="") {
 						switch ($server['ip']['state']) {
 							case 'up':
-								$bgcolor = "lightgreen";
+								$bgcolor = "#90EE90";  // lightgreen
 								$checked = "checked";
 								break;
 							case 'disabled':
-								$bgcolor = "white";
+								$bgcolor = "#FFFFFF";  // white
 								$checked = "";
 								break;
 							default:
-								$bgcolor = "lightcoral";
+								$bgcolor = "#F08080";  // lightcoral
 								$checked = "checked";
 						}
 						echo "<tr>";
-						echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} </td><td bgcolor={$bgcolor}>";
+						echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
 						if($server['ip']['avail'])
 						  echo " ({$server['ip']['avail']}) ";
-						echo "</td></tr>";
+						echo "&nbsp;</td></tr>";
 					}
 				}
 			}

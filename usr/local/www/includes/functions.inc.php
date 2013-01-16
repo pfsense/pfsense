@@ -42,19 +42,19 @@ function get_gatewaystats() {
 			switch(strtolower($gws['status'])) {
 			case "none":
 				$online = "Online";
-				$bgcolor = "lightgreen";
+				$bgcolor = "#90EE90";  // lightgreen
 				break;
 			case "down":
 				$online = "Offline";
-				$bgcolor = "lightcoral";
+				$bgcolor = "#F08080";  // lightcoral
 				break;
 			case "delay":
 				$online = "Latency";
-				$bgcolor = "khaki";
+				$bgcolor = "#F0E68C";  // khaki
 				break;
 			case "loss":
 				$online = "Packetloss";
-				$bgcolor = "khaki";
+				$bgcolor = "#F0E68C";  // khaki
 				break;
 			default:
 				$online = "Pending";
@@ -65,10 +65,10 @@ function get_gatewaystats() {
 			$gws['delay'] = "~";
 			$gws['loss'] = "~";
 			$online = "Unknown";
-			$bgcolor = "lightblue";
+			$bgcolor = "#ADD8E6";  // lightblue
 		}
 		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
-		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
+		$data .= "<table><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></td></tr></table>";
 	}
 	return $data;
 }

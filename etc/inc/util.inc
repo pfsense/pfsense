@@ -1453,19 +1453,11 @@ function set_sysctl($values) {
  *     [0]real and [1]available
  */
 function get_memory() {
-	$matches = "";
-	if(file_exists("/var/log/dmesg.boot"))
-		$mem = `cat /var/log/dmesg.boot | grep memory`;
-	else
-		$mem = `dmesg -a | grep memory`;			
-	if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
-		return array($matches[1][0], $matches[1][0]);
-	if(!$real && !$avail) {
-		$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
-		$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-		/* convert from bytes to megabytes */
-		return array(($real/1048576),($avail/1048576));
-	}
+
+	$real = trim(`sysctl -n hw.physmem`, " \n");
+	$avail = trim(`sysctl hw.realmem`, " \n");
+	/* convert from bytes to megabytes */
+	return array(($real/1048576),($avail/1048576));
 }
 
 function mute_kernel_msgs() {

@@ -7,26 +7,26 @@
  * (modified for pfSense by Scott Ullrich geekgod@pfsense.com)
  */
 /*
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1.	Redistributions of source code must retain the above copyright notice,
+		this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2.	Redistributions in binary form must reproduce the above copyright
+		notice, this list of conditions and the following disclaimer in the
+		documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/usr/local/sbin/setkey	/usr/local/sbin/pftop	
@@ -50,11 +50,11 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 function doCmdT($title, $command) {
-    echo "<p>\n";
-    echo "<a name=\"" . $title . "\">\n";
-    echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
-    echo "<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
-    echo "<tr><td class=\"listlr\"><pre>";		/* no newline after pre */
+	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
+	echo "\n<a name=\"" . str_replace($rubbish,'',$title) . "\" id=\"" . str_replace($rubbish,'',$title) . "\"></a>\n";
+	echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"" . $title . "\">\n";
+	echo "\t<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
+	echo "\t<tr>\n\t\t<td class=\"listlr\">\n\t\t\t<pre>";		/* no newline after pre */
 
 	if ($command == "dumpconfigxml") {
 		$fd = @fopen("/conf/config.xml", "r");
@@ -81,46 +81,47 @@ function doCmdT($title, $command) {
 			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
 		}
 	}
-    echo "</pre></tr>\n";
+    echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
     echo "</table>\n";
 }
 
 /* Execute a command, giving it a title which is the same as the command. */
 function doCmd($command) {
-    doCmdT($command,$command);
+	doCmdT($command,$command);
 }
 
 /* Define a command, with a title, to be executed later. */
 function defCmdT($title, $command) {
-    global $commands;
-    $title = htmlspecialchars($title,ENT_NOQUOTES);
-    $commands[] = array($title, $command);
+	global $commands;
+	$title = htmlspecialchars($title,ENT_NOQUOTES);
+	$commands[] = array($title, $command);
 }
 
 /* Define a command, with a title which is the same as the command,
  * to be executed later.
  */
 function defCmd($command) {
-    defCmdT($command,$command);
+	defCmdT($command,$command);
 }
 
 /* List all of the commands as an index. */
 function listCmds() {
-    global $commands;
-    echo "<p>" . gettext("This status page includes the following information") . ":\n";
-    echo "<ul width=\"700\">\n";
-    for ($i = 0; isset($commands[$i]); $i++ ) {
-        echo "<li><strong><a href=\"#" . $commands[$i][0] . "\">" . $commands[$i][0] . "</a></strong>\n";
-    }
-    echo "</ul>\n";
+	global $commands;
+	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
+	echo "\n<p>" . gettext("This status page includes the following information") . ":\n";
+	echo "<ul>\n";
+	for ($i = 0; isset($commands[$i]); $i++ ) {
+		echo "\t<li><strong><a href=\"#" . str_replace($rubbish,'',$commands[$i][0]) . "\">" . $commands[$i][0] . "</a></strong></li>\n";
+	}
+	echo "</ul>\n";
 }
 
 /* Execute all of the commands which were defined by a call to defCmd. */
 function execCmds() {
-    global $commands;
-    for ($i = 0; isset($commands[$i]); $i++ ) {
-        doCmdT($commands[$i][0], $commands[$i][1]);
-    }
+	global $commands;
+	for ($i = 0; isset($commands[$i]); $i++ ) {
+		doCmdT($commands[$i][0], $commands[$i][1]);
+	}
 }
 
 global $g;
@@ -209,14 +210,14 @@ include("head.inc");
 
 ?>
 <style type="text/css">
-<!--
+/*<![CDATA[*/
 pre {
-   margin: 0px;
-   font-family: courier new, courier;
-   font-weight: normal;
-   font-size: 9pt;
+	margin: 0px;
+	font-family: courier new, courier;
+	font-weight: normal;
+	font-size: 9pt;
 }
--->
+/*]]>*/
 </style>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -224,7 +225,7 @@ pre {
 <strong><?=$currentDate;?></strong>
 <p><span class="red"><strong><?=gettext("Note: make sure to remove any sensitive information " .
 "(passwords, maybe also IP addresses) before posting " .
-"information from this page in public places (like mailing lists)"); ?>!</strong></span><br>
+"information from this page in public places (like mailing lists)"); ?>!</strong></span><br />
 <?=gettext("Passwords in config.xml have been automatically removed"); ?>.
 
 <div id="cmdspace" style="width:700px">

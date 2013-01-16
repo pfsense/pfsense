@@ -114,13 +114,13 @@ function display_error_form($http_code, $desc) {
 		<title><?=$http_code?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
+		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?> 
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
+		<?php else: ?> 
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
+		<?php endif; ?> 
 		<script type="text/javascript">
-		<!--
+		//<![CDATA[
 			function page_load() {}
 			function clearError() {
 				if($('#inputerrors'))
@@ -130,7 +130,7 @@ function display_error_form($http_code, $desc) {
 				require("headjs.php");
 				echo getHeadJS();
 			?>
-		//-->
+		//]]>
 		</script>
 		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
 	</head>
@@ -213,18 +213,22 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 <html>
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script>$(document).ready(function() { jQuery('#usernamefld').focus(); });</script>
+		<script type="text/javascript">
+		//<![CDATA[
+		$(document).ready(function() { jQuery('#usernamefld').focus(); });
+		//]]>
+		</script>
 		
 		<title><?=gettext("Login"); ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
+		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?> 
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
+		<?php else: ?> 
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
+		<?php endif; ?> 
 		<script type="text/javascript">
-		<!--
+		//<![CDATA[
 			function page_load() {}
 			function clearError() {
 				if($('#inputerrors'))
@@ -234,7 +238,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 				require("headjs.php");
 				echo getHeadJS();
 			?>
-		//-->
+		//]]>
 		</script>
 		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
 	</head>
@@ -246,41 +250,41 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
 				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
-			?>
-			<form id="iform" name="login_iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
-				<h1></h1>
+			?> 
+			<form id="login_iform" name="login_iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
+				<h1>&nbsp;</h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>
 					<span style="text-align:left">
-						<?=gettext("Username:"); ?><br>
+						<?=gettext("Username:"); ?><br />
 						<input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
 					</span>
 				</p>
-				<br>
+				<br />
 				<p>
 					<span style="text-align:left">
-						<?=gettext("Password:"); ?> <br>
+						<?=gettext("Password:"); ?> <br />
 						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
 					</span>
 				</p>
-				<br>
+				<br />
 				<p>
 					<span style="text-align:center; font-weight: normal ; font-style: italic">
 						<?=gettext("Enter username and password to login."); ?>
 					</span>
 
-					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br/><br/>
+					<?php if (!$have_cookies && isset($_POST['login'])): ?> 
+					<br /><br />
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>
-					<?php endif; ?>
+					<?php endif; ?> 
 				</p>        
 				<p>
 					<span style="text-align:center">
 						<input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
 					</span>
-				</P>
+				</p>
 			</form>
 		</div>
 	</body>

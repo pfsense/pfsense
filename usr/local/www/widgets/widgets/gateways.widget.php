@@ -87,25 +87,25 @@ $counter = 1;
 		<?php	if ($gateways_status[$gname]) {
 				if (stristr($gateways_status[$gname]['status'], "down")) {
                                         $online = "Offline";
-                                        $bgcolor = "lightcoral";
+                                        $bgcolor = "#F08080";  // lightcoral
                                 } elseif (stristr($gateways_status[$gname]['status'], "loss")) {
                                         $online = "Packetloss";
-                                        $bgcolor = "khaki";
+                                        $bgcolor = "#F0E68C";  // khaki
                                 } elseif (stristr($gateways_status[$gname]['status'], "delay")) {
                                         $online = "Latency";
-                                        $bgcolor = "khaki";
+                                        $bgcolor = "#F0E68C";  // khaki
                                 } elseif ($gateways_status[$gname]['status'] == "none") {
                                         $online = "Online";
-                                        $bgcolor = "lightgreen";
+                                        $bgcolor = "#90EE90";  // lightgreen
                                 } elseif ($gateways_status[$gname]['status'] == "") {
                                         $online = "Pending";
-                                        $bgcolor = "lightgray";
+                                        $bgcolor = "#D3D3D3";  // lightgray
 				}
 			} else {
 				$online = gettext("Unknown");
-                                $bgcolor = "lightblue";
+                                $bgcolor = "#ADD8E6";  // lightblue
 			}
-			echo "<tr><td bgcolor=\"$bgcolor\">$online</td></tr>\n";
+			echo "<tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr>\n";
 			$counter++;
 		?>
                         </table>

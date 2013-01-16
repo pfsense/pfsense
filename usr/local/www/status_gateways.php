@@ -117,25 +117,25 @@ include("head.inc");
 					$status = $gateways_status[$gname];
 					if (stristr($status['status'], "down")) {
 						$online = gettext("Offline");
-						$bgcolor = "lightcoral";
+						$bgcolor = "#F08080";  // lightcoral
 					} elseif (stristr($status['status'], "loss")) {
 						$online = gettext("Warning, Packetloss").': '.$status['loss'];
-						$bgcolor = "khaki";
+						$bgcolor = "#F0E68C";  // khaki
 					} elseif (stristr($status['status'], "delay")) {
 						$online = gettext("Warning, Latency").': '.$status['delay'];
-						$bgcolor = "khaki";
+						$bgcolor = "#F0E68C";  // khaki
 					} elseif ($status['status'] == "none") {
 						$online = gettext("Online");
-						$bgcolor = "lightgreen";
+						$bgcolor = "#90EE90";  // lightgreen
 					}
 				} else if (isset($gateway['monitor_disable'])) {
 						$online = gettext("Online");
-						$bgcolor = "lightgreen";
+						$bgcolor = "#90EE90";  // lightgreen
 				} else {
 					$online = gettext("Pending");
-					$bgcolor = "lightgray";
+					$bgcolor = "#D3D3D3";  // lightgray
 				}
-				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\" > $online </td></tr><tr><td>";
+				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr><tr><td>";
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 				if(!empty($lastchange)) {
 					echo gettext("Last check:") . '<br/>' . $lastchange;

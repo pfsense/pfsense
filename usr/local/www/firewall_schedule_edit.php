@@ -234,7 +234,7 @@ function repeatExistingDays(){
 		tempstr = 'w' + week + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1"){
-			if (daycell.style.backgroundColor == "lightcoral")
+			if (daycell.style.backgroundColor == "#F08080")  // lightcoral
 				daytogglerepeating(week,daypos,true);
 			else
 				daytogglerepeating(week,daypos,false);
@@ -257,11 +257,11 @@ function daytogglerepeating(week,daypos,bExists){
 		if (daycell != null)
 		{
 			if (bExists){	
-				daycell.style.backgroundColor = "WHITE";
+				daycell.style.backgroundColor = "#FFFFFF";  // white
 			}
 			else
 			{
-				daycell.style.backgroundColor = "lightcoral";		
+				daycell.style.backgroundColor = "#F08080";  // lightcoral		
 			}	
 	
 			if (dayoriginalpos != "-1")
@@ -302,12 +302,12 @@ function daytoggle(id) {
 		var daycell = document.getElementById(idmod);		
 	
 		if (daycell != null){
-			if (daycell.style.backgroundColor == "RED"){
-				daycell.style.backgroundColor = "WHITE";
+			if (daycell.style.backgroundColor == "#FF0000"){  // red
+				daycell.style.backgroundColor = "#FFFFFF";  // white
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
 			}
-			else if (daycell.style.backgroundColor == "lightcoral")
+			else if (daycell.style.backgroundColor == "#F08080")  // lightcoral
 			{
 				daytogglerepeating(week,daypos,true);
 			}
@@ -315,11 +315,11 @@ function daytoggle(id) {
 			{
 				if (!runrepeat)
 				{
-					daycell.style.backgroundColor = "RED";
+					daycell.style.backgroundColor = "#FF0000";  // red
 				}
 				else
 				{
-					daycell.style.backgroundColor = "lightcoral";
+					daycell.style.backgroundColor = "#F08080";  // lightcoral
 					daytogglerepeating(week,daypos,false);								
 				}
 				daysSelected += id + ",";
@@ -654,7 +654,7 @@ function clearCalendar(){
 			tempstr = 'w' + j + 'p' + k;
 			daycell = eval('document.getElementById(tempstr)');
 			if (daycell != null){
-				daycell.style.backgroundColor = "WHITE";	
+				daycell.style.backgroundColor = "#FFFFFF";  // white	
 			}	
 		}
 	}	

@@ -1,4 +1,3 @@
-<!-- 
 var browser     = '';
 var version     = '';
 var entrance    = '';
@@ -25,5 +24,3 @@ if (browser == 'IE' && version < 7) {
 }
 
 document.write('<script type="text/javascript" src="/themes/metallic/javascript/niftyjsCode.js"></scr'+'ipt>'); 
-
-// -->

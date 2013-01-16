@@ -142,19 +142,19 @@ body {
   background-color: #7f7f7f;
 }
 a:link {
-	color: #0000CC;
+	color: #550000;
 }
 
 a:visited {
-	color: #0000CC;
+	color: #550000;
 }
 
 a:active {
-	color: #0000CC;
+	color: #550000;
 }
 
 a:hover {
-	color: #0000CC;
+	color: #550000;
 }
 
 form {

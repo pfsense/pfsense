@@ -1061,6 +1061,60 @@ function interface_vip_bring_down($vip) {
 	}
 }
 
+function interface_cleanup($interface = "wan") {
+	global $config, $g;
+
+	if (!isset($config['interfaces'][$interface]))
+		return;
+
+	$ifcfg = $config['interfaces'][$interface];
+
+	$ppp_types = array("ppp", "pppoe", "pptp", "l2tp");
+
+	$realifs = array(get_real_interface($interface));
+
+	if (in_array($ifcfg['ipaddr'], $ppp_types)) {
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if (get_real_interface($interface) == $ppp['if']) {
+					$realifs = array();
+					$ports = explode(',',$ppp['ports']);
+					foreach($ports as $port) {
+						$realifs[] = get_real_interface($port);
+					}
+				}
+			}
+		}
+	}
+
+	foreach ($ppp_types as $type) {
+		if (($ifcfg['ipaddr'] != $type) && file_exists("{$g['varrun_path']}/{$type}_{$interface}.pid")) {
+			killbypid("{$g['varrun_path']}/{$type}_{$interface}.pid");
+			sleep(2);
+		}
+	}
+
+	if (!in_array($ifcfg['ipaddr'], $ppp_types))
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+
+	if ($ifcfg['ipaddr'] != "dhcp") {
+		foreach($realifs as $realif) {
+			$pid = find_dhclient_process($realif);
+			if($pid)
+				mwexec("/bin/kill {$pid}");
+			sleep(1);
+		}
+		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
+	}
+
+	if (!is_ipaddrv4($ifcfg['ipaddr'])) {
+		foreach($realifs as $realif) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
+		}
+	}
+}
+
 function interface_bring_down($interface = "wan", $destroy = false) {
 	global $config, $g;
 
@@ -1071,6 +1125,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	$ifcfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
+
+	interface_cleanup($interface);
 
 	switch ($ifcfg['ipaddr']) {
 	case "ppp":

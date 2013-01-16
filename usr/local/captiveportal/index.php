@@ -61,35 +61,17 @@ if (!$clientip) {
 	return;
 }
 
-$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
-$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
-
-if (isset($cpcfg['httpslogin']))
-	$ourhostname = $cpcfg['httpsname'] . ":" . $listenporthttps;
-else {
-	$ifip = portal_ip_from_client_ip($clientip);
-	if (!$ifip) {
-		$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}:{$listenporthttp}";
-	} else {
-		if (is_ipaddrv6($ifip))
-			$ourhostname = "[{$ifip}]:{$listenporthttp}";
-		else
-			$ourhostname = "{$ifip}:{$listenporthttp}";
-	}
-}
-
+$ourhostname = portal_hostname_from_client_ip($clientip);
 if ($orig_host != $ourhostname) {
 	/* the client thinks it's connected to the desired web server, but instead
 	   it's connected to us. Issue a redirect... */
-
-	if (isset($cpcfg['httpslogin']))
-		header("Location: https://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}/{$orig_request}"));
-	else
-		header("Location: http://{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}/{$orig_request}"));
+	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
+	header("Location: {$protocol}{$ourhostname}/index.php?zone={$cpzone}&redirurl=" . urlencode("http://{$orig_host}/{$orig_request}"));
 
 	ob_flush();
 	return;
 }
+
 if (!empty($cpcfg['redirurl']))
 	$redirurl = $cpcfg['redirurl'];
 else if (preg_match("/redirurl=(.*)/", $orig_request, $matches))

@@ -378,7 +378,7 @@ class altq_root_queue {
 			$cflink['queue'] = array();
 			foreach ($this->queues as $q) {
 				$cflink['queue'][$q->GetQname()] = array();
-				$q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+				$q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
 			}
 		}
 	}

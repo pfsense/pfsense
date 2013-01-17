@@ -764,7 +764,7 @@ if ($_POST['apply']) {
 				else
 					$a_ppps[$pppid]['provider'] = true;
 				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
-				if (!empty($_POST['idletimeout']))
+				if (!empty($_POST['pppoe_idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
 				else
 					unset($a_ppps[$pppid]['idletimeout']);
@@ -795,7 +795,7 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
 				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
 				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-				if (!empty($_POST['idletimeout']))
+				if (!empty($_POST['pptp_idletimeout']))
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
 				else
 					unset($a_ppps[$pppid]['idletimeout']);

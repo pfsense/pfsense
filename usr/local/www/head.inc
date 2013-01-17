@@ -8,62 +8,66 @@ $g['theme'] = get_current_theme();
 $pagetitle = gentitle( $pgtitle );
 
 ?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
-		<?php 
+	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png" />
+	<?php 
 		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
-			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
-        else:
-        	echo "<link rel=\"stylesheet\" href=\"/css/table.css\" media=\"all\" />";
-        endif;
-		?>
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"/themes/{$g['theme']}/table.css\" />";
+		else:
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/table.css\" media=\"all\" />";
+		endif;
+	?>
 		
-		<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
-                  file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-					<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
-        <?php else: ?>
-        	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
-        <?php endif; ?>
-		<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
-		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
-		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all">
-		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
-		<script type="text/javascript">
-			var theme = "<?php echo $g['theme']; ?>";
+	<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
+		file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
+	<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
+	<?php else: ?>
+	
+	<link rel="stylesheet" type="text/css" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
+	<?php endif; ?>
+	
+	<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
+	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
+	<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
 
-			jQuery.noConflict();
-		</script>
-		<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
-<?php
-		if($_GET['enablefirebuglite']) {
-			echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
-			echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";
-		}
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/prototype.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/scriptaculous.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/effects.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/dragdrop.js\"></script>\n";
-		if(file_exists("{$g['www_path']}/javascript/global.js"))
-			echo "\t<script type=\"text/javascript\" src=\"/javascript/global.js\"></script>\n";
+	<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		var theme = "<?php echo $g['theme']; ?>";
+		jQuery.noConflict();
+	//]]>
+	</script>
+	<?php echo "\n\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
+	<?php
+	if($_GET['enablefirebuglite']) {
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";
+	}
+	echo "\n\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/prototype.js\"></script>\n";
+	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/scriptaculous.js\"></script>\n";
+	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/effects.js\"></script>\n";
+	echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/dragdrop.js\"></script>\n";
+	if(file_exists("{$g['www_path']}/javascript/global.js"))
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/global.js\"></script>\n";
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)
 	 *	Coded by: Erik Kristensen
 	 */
-
 	$dir  = trim(basename($_SERVER["SCRIPT_FILENAME"], '.php'));
 	$path = "{$g['www_path']}/javascript/" . $dir . "/";
 	if (is_dir($path)) {
 		if ($dh = opendir($path)) {
 			while (($file = readdir($dh)) !== false) {
-		   		if (is_dir($file)) 
+				if (is_dir($file)) 
 					continue;
 				echo "\t<script type=\"text/javascript\" src=\"/javascript/{$dir}/{$file}\"></script>\n";
 			}
@@ -71,19 +75,18 @@ $pagetitle = gentitle( $pgtitle );
 		}
 	}
 
-if (!isset($closehead))
-	echo "</head>";
+	if (!isset($closehead))
+		echo "</head>";
 
-/*  If this page is being remotely managed then do not allow the loading of the contents. */
-if($config['remote_managed_pages']['item']) {
-	foreach($config['remote_managed_pages']['item'] as $rmp) {
-		if($rmp == $_SERVER['SCRIPT_NAME']) {
-			include("fbegin.inc");
-			print_info_box_np("This page is currently being managed by a remote machine.");
-			include("fend.inc");
-			exit;
-		}
-	}	
-}
-
+	/*  If this page is being remotely managed then do not allow the loading of the contents. */
+	if($config['remote_managed_pages']['item']) {
+		foreach($config['remote_managed_pages']['item'] as $rmp) {
+			if($rmp == $_SERVER['SCRIPT_NAME']) {
+				include("fbegin.inc");
+				print_info_box_np("This page is currently being managed by a remote machine.");
+				include("fend.inc");
+				exit;
+			}
+		}	
+	}
 ?>

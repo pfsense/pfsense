@@ -1,11 +1,23 @@
 
-<script src="/javascript/sorttable.js"></script>
-<script src="/javascript/ticker.js"></script>
-<style id="antiClickjack">body{display:none}</style> <script type="text/JavaScript">
-if (self === top) { var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
-} else { top.location = self.location;
+<script type="text/JavaScript" src="/javascript/sorttable.js"></script>
+<script type="text/JavaScript" src="/javascript/ticker.js"></script>
+
+<style id="antiClickjack">
+/*<![CDATA[*/
+body{display:none}
+/*]]>*/
+</style>
+
+<script type="text/JavaScript">
+//<![CDATA[
+if (self === top) {
+	var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
+} else { 
+	top.location = self.location;
 }
+//]]>
 </script>
+
 <?php
 /*
 	pfSense_MODULE:	header
@@ -96,9 +108,9 @@ function output_menu($arrayitem, $target = null) {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>\n";
-			printf("<a %s>%s</a>\n", $attr, $item[0]);
-			echo "</li>\n";
+			echo "\n\t\t\t\t\t\t\t<li>";
+			printf("<a %s>%s</a>", $attr, $item[0]);
+			echo "</li>";
 		}
 	}
 }
@@ -156,13 +168,13 @@ $services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
-$services_menu[] = array(gettext("RIP"), "/pkg_edit.php?xml=routed.xml&id=0");
+$services_menu[] = array(gettext("RIP"), "/pkg_edit.php?xml=routed.xml&amp;id=0");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml&id=0");
+	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml&amp;id=0");
 }
 $services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
@@ -264,15 +276,17 @@ if(! $g['disablehelpmenu']) {
 
 <div id="wrapper">
 	<div id="header">
-		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0"></a></div>
+		<div id="header-left">
+			<a href="/index.php" id="status-link">
+				<img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0" alt="transparent" />
+			</a>
+		</div>
 		<div id="header-right">
 			<div class="container">
 				<div class="left">webConfigurator</div>
 				<div class="right" id="menu_messages">
-<?
-				echo get_menu_messages();
-?>
-	</div>
+					<?php echo get_menu_messages(); ?> 
+				</div>
 			</div>
 		</div>
 	</div> <!-- Header DIV -->
@@ -283,69 +297,53 @@ if(! $g['disablehelpmenu']) {
 					<li class="firstdrop">
 						<div><?php echo gettext("System"); ?></div>
 						<ul class="subdrop">
-						<?php
-							output_menu($system_menu);
-						?>
+						<?php output_menu($system_menu); ?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Interfaces"); ?></div>
 						<ul class="subdrop">
-						<?php
-							output_menu($interfaces_menu);
-						?>
+						<?php output_menu($interfaces_menu); ?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Firewall"); ?></div>
 						<ul class="subdrop">
-						<?php
-							output_menu($firewall_menu);
-						?>
+						<?php output_menu($firewall_menu); ?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Services"); ?></div>
 						<ul class="subdrop">
-						<?
-							output_menu($services_menu);
-						?>
+						<?php output_menu($services_menu); ?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("VPN"); ?></div>
 						<ul class="subdrop">
-						<?php
-							output_menu($vpn_menu);
-						?>
+						<?php output_menu($vpn_menu); ?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Status"); ?></div>
 						<ul class="subdrop">
-						<?php
-							output_menu($status_menu);
-						?>
+						<?php output_menu($status_menu);?> 
 						</ul>
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Diagnostics"); ?></div>
 						<ul id="diag" class="subdrop">
-						<?
-							output_menu($diagnostics_menu);
-						?>
+						<?php output_menu($diagnostics_menu); ?> 
 						</ul>
 					</li>
-					<?php if(! $g['disablehelpmenu']): ?>
+					<?php if(! $g['disablehelpmenu']): ?> 
 					<li class="lastdrop">
 						<div><?php echo gettext("Help"); ?></div>
 						<ul id="help" class="subdrop">
-						<?
-							output_menu($help_menu, "_new");
-						?>
+						<?php output_menu($help_menu, "_blank"); ?> 
 						</ul>
 					</li>
-					<?php endif; ?>
+					<?php endif; ?> 
 				</ul>
 			</div>
 
@@ -365,14 +363,14 @@ echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"><
 		$notices = get_notices();
 		if(!$notices) {
 			$need_alert_display = true;
-			$display_text = print_notices($notices) . "<br>";
+			$display_text = print_notices($notices) . "<br />";
 		}
 	}
 	if($need_alert_display == true) {
-                echo "<div style=\"background-color:#000000\" id=\"roundalert\">";
-                echo "<table>";
+		echo "<div style=\"background-color:#000000\" id=\"roundalert\">";
+		echo "<table summary=\"alert\">";
 		echo "<tr><td><font color=\"#ffffff\">";
-		echo "&nbsp;&nbsp;<img align=\"middle\" src=\"/top_notification.gif\">&nbsp;&nbsp;&nbsp;";
+		echo "&nbsp;&nbsp;<img align=\"middle\" src=\"/top_notification.gif\" alt=\"notification\" />&nbsp;&nbsp;&nbsp;";
 		echo $display_text;
 		echo "</td>";
 		echo "</tr>";
@@ -388,38 +386,39 @@ function add_to_menu($url, $name) {
 ?>
 
 <div>
-<span class="pgtitle"><a href="<?= $_SERVER['REQUEST_URI'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
-<span style="float:right; margin: 0 0 20px 20px">
-<?php
-if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
-	$ssvc = array();
-	switch ($shortcut_section) {
-		case "openvpn":
-			$ssvc = find_service_by_openvpn_vpnid($vpnid);
-			break;
-		case "captiveportal":
-			$ssvc = find_service_by_cp_zone($cpzone);
-			break;
-		default:
-			$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
-
+	<span class="pgtitle"><a href="<?= $_SERVER['REQUEST_URI'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
+	<span style="float:right; margin: 0 0 20px 20px">
+	<?php
+	if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+		$ssvc = array();
+		switch ($shortcut_section) {
+			case "openvpn":
+				$ssvc = find_service_by_openvpn_vpnid($vpnid);
+				break;
+			case "captiveportal":
+				$ssvc = find_service_by_cp_zone($cpzone);
+				break;
+			default:
+				$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
+		}
+		if (!empty($ssvc)) {
+			echo get_service_status_icon($ssvc, false);
+			echo get_service_control_links($ssvc, true);
+		}
 	}
-	if (!empty($ssvc)) {
-		echo get_service_status_icon($ssvc, false);
-		echo get_service_control_links($ssvc, true);
-	}
-}
 
-echo get_shortcut_main_link($shortcut_section, true);
-echo get_shortcut_status_link($shortcut_section, true);
-echo get_shortcut_log_link($shortcut_section, true);
+	echo get_shortcut_main_link($shortcut_section, true);
+	echo get_shortcut_status_link($shortcut_section, true);
+	echo get_shortcut_log_link($shortcut_section, true);
+	?>
 
-?>
-<?php if(! $g['disablehelpicon']): ?>
+	<?php if(! $g['disablehelpicon']): ?>
 
-<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0"></a>
-<?php endif; ?>
-</span>
+	<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page"); ?>">
+		<img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0" alt="help" />
+	</a>
+	<?php endif; ?>
+	</span>
 </div>
 <br />
 
@@ -427,7 +426,7 @@ echo get_shortcut_log_link($shortcut_section, true);
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"),gettext("Package Manager"));
-	print_info_box(gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+	print_info_box(gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.") . "<p><img src=\"/themes/{$g['theme']}/images/icons/icon_fw-update.gif\" alt=\"update\" />");
 }
 	$pgtitle_output = true;
 ?>

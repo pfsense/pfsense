@@ -97,6 +97,9 @@ $widgetlist = array();
 
 while (false !== ($filename = readdir($dirhandle))) {
 	$periodpos = strpos($filename, ".");
+	/* Ignore files not ending in .php */
+	if (substr($filename, -4, 4) != ".php")
+		continue;
 	$widgetname = substr($filename, 0, $periodpos);
 	$widgetnames[] = $widgetname;
 	if ($widgetname != "system_information")

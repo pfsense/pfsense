@@ -1043,18 +1043,6 @@ function setup_serial_port($when="save", $path="") {
 	return;
 }
 
-function read_loader_conf($path = "") {
-	$loader_conf_file = "{$path}/boot/loader.conf";
-	$loader_conf = file_get_contents($loader_conf_file);
-	$result = array();
-
-	foreach (explode("\n", $loader_conf) as $line) {
-	}
-}
-
-function write_loader_conf($loader_conf, $path = "") {
-}
-
 function print_value_list($list, $count = 10, $separator = ",") {
 	$list = implode($separator, array_slice($list, 0, $count));
 	if(count($list) < $count) {

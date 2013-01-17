@@ -16,6 +16,11 @@ $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";
 
+$valid_test_types = array("offline", "short", "long", "conveyance");
+$valid_info_types = array("i", "H", "c", "A", "a");
+$valid_log_types = array("error", "selftest");
+
+
 include("head.inc");
 ?>
 
@@ -99,16 +104,24 @@ function smartmonctl($action)
 // What page, aka. action is being wanted
 // If they "get" a page but don't pass all arguments, smartctl will throw an error
 $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
-switch($action)
-{
+$targetdev = basename($_POST['device']);
+if (!file_exists('/dev/' . $targetdev)) {
+	echo "Device does not exist, bailing.";
+	return;
+}
+switch($action) {
 	// Testing devices
 	case 'test':
 	{
 		$test = $_POST['testType'];
-		$output = add_colors(shell_exec($smartctl . " -t " . $test . " /dev/" . $_POST['device']));
+		if (!in_array($test, $valid_test_types)) {
+			echo "Invalid test type, bailing.";
+			return;
+		}
+		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 		echo '<pre>' . $output . '
 		<form action="smartmon.php" method="post" name="abort">
-		<input type="hidden" name="device" value="' . $_POST['device'] . '" />
+		<input type="hidden" name="device" value="' . $targetdev . '" />
 		<input type="hidden" name="action" value="abort" />
 		<input type="submit" name="submit" value="' . gettext("Abort") . '" />
 		</form>
@@ -120,7 +133,11 @@ switch($action)
 	case 'info':
 	{
 		$type = $_POST['type'];
-		$output = add_colors(shell_exec($smartctl . " -" . $type . " /dev/" . $_POST['device']));
+		if (!in_array($type, $valid_info_types)) {
+			echo "Invalid info type, bailing.";
+			return;
+		}
+		$output = add_colors(shell_exec($smartctl . " -" . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
 		echo "<pre>$output</pre>";
 		break;
 	}
@@ -129,7 +146,11 @@ switch($action)
 	case 'logs':
 	{
 		$type = $_POST['type'];
-		$output = add_colors(shell_exec($smartctl . " -l " . $type . " /dev/" . $_POST['device']));
+		if (!in_array($type, $valid_log_types)) {
+			echo "Invalid log type, bailing.";
+			return;
+		}
+		$output = add_colors(shell_exec($smartctl . " -l " . escapeshellarg($type) . " /dev/" . escapeshellarg($targetdev)));
 		echo "<pre>$output</pre>";
 		break;
 	}
@@ -137,7 +158,7 @@ switch($action)
 	// Abort tests
 	case 'abort':
 	{
-		$output = shell_exec($smartctl . " -X /dev/" . $_POST['device']);
+		$output = shell_exec($smartctl . " -X /dev/" . escapeshellarg($targetdev));
 		echo "<pre>$output</pre>";
 		break;
 	}
@@ -294,7 +315,7 @@ switch($action)
 						<?php
 						foreach($devs as $dev)
 						{
-							echo "<option value=" . $dev . ">" . $dev;
+							echo "<option value=" . $dev . ">" . $dev . "</option>";
 						}
 						?>
 						</select>

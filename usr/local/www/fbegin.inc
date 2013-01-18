@@ -1,4 +1,3 @@
-
 <script type="text/JavaScript" src="/javascript/sorttable.js"></script>
 <script type="text/JavaScript" src="/javascript/ticker.js"></script>
 
@@ -108,7 +107,7 @@ function output_menu($arrayitem, $target = null) {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "\n\t\t\t\t\t\t\t<li>";
+			echo "\n<li>";
 			printf("<a %s>%s</a>", $attr, $item[0]);
 			echo "</li>";
 		}

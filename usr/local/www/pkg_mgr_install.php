@@ -1,32 +1,32 @@
 <?php
 /* $Id$ */
 /*
-    pkg_mgr_install.php
-    part of pfSense (http://www.pfSense.com)
-    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
+	pkg_mgr_install.php
+	part of pfSense (http://www.pfSense.com)
+	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
  	Copyright (C) 2005 Colin Smith
-    All rights reserved.
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/rm
@@ -51,8 +51,6 @@ require_once("pkg-utils.inc");
 $static_output = "";
 $static_status = "";
 $sendto = "output";
-
-$todo = array();
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
 include("head.inc");
@@ -175,23 +173,24 @@ switch($_GET['mode']) {
 			update_output_window(sprintf(gettext("Could not find %s."), htmlspecialchars($_GET['pkg'])));
 		break;
 	case "reinstallall":
-		if (is_array($config['installedpackages']['package']))
+		if (is_array($config['installedpackages']['package'])) {
+			$todo = array();
 			foreach($config['installedpackages']['package'] as $package)
 				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-		$pkg_id = 0;
-		foreach($todo as $pkgtodo) {
-			$static_output = "";
-			if($pkgtodo['name']) {
-				update_output_window($static_output);
-				uninstall_package($pkgtodo['name']);
-				install_package($pkgtodo['name']);
-				$pkg_id++;
+			foreach($todo as $pkgtodo) {
+				$static_output = "";
+				if($pkgtodo['name']) {
+					update_output_window($static_output);
+					uninstall_package($pkgtodo['name']);
+					install_package($pkgtodo['name']);
+				}
 			}
-		}
-		update_status(gettext("All packages reinstalled."));
-		$static_output .= "\n" . gettext("All packages reinstalled.");
-		update_output_window($static_output);
-		filter_configure();
+			update_status(gettext("All packages reinstalled."));
+			$static_output .= "\n" . gettext("All packages reinstalled.");
+			update_output_window($static_output);
+			filter_configure();
+		} else
+			update_output_window(gettext("No packages are installed."));
 		break;
 	default:
 		$pkgid = htmlspecialchars($_GET['id']);
@@ -221,7 +220,7 @@ rmdir_recursive("/var/tmp/instmp*");
 
 // close log
 if($fd_log)
-        fclose($fd_log);
+	fclose($fd_log);
 
 if($fs_mounted_rw) {
 	/* Restore to read only fs */

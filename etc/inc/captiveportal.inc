@@ -352,11 +352,12 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal_{$cpzone}.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+
+		captiveportal_radius_stop_all();
+
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
-
-		captiveportal_radius_stop_all();
 
 		mwexec("/usr/local/sbin/ipfw_context -d {$cpzone}", true);
 

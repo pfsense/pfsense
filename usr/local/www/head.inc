@@ -26,7 +26,7 @@ $pagetitle = gentitle( $pgtitle );
 		
 	<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
 		file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-	<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
+	<?php echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"/themes/{$g['theme']}/wizard.css\" medial=\"all\" />"; ?>
 	<?php else: ?>
 	
 	<link rel="stylesheet" type="text/css" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />

@@ -2655,25 +2655,27 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
 	$mac = get_interface_mac($realhwif);
-	/*	Don't try to reapply the spoofed MAC if it's already applied.
-		When ifconfig link is used, it cycles the interface down/up, which triggers
-		the interface config again, which attempts to spoof the MAC again,
-		which cycles the link again... */
+	/*
+	 * Don't try to reapply the spoofed MAC if it's already applied.
+	 * When ifconfig link is used, it cycles the interface down/up, which triggers
+	 * the interface config again, which attempts to spoof the MAC again,
+	 * which cycles the link again...
+	 */
 	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 
-                /*
-                 * All vlans need to spoof their parent mac address, too.  see
-                 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-                 */
-                if (is_array($config['vlans']['vlan'])) {
-                        foreach ($config['vlans']['vlan'] as $vlan) {
-                                if ($vlan['if'] == $realhwif)
-                                        mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
-                                                " link " . escapeshellarg($wancfg['spoofmac']));
-                        }
-                }
+		/*
+		 * All vlans need to spoof their parent mac address, too.  see
+		 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+		 */
+		if (is_array($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $vlan) {
+				if ($vlan['if'] == $realhwif)
+					mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
+					" link " . escapeshellarg($wancfg['spoofmac']));
+			}
+		}
 	}  else {
 
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
@@ -2716,45 +2718,45 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* skip vlans for checksumming and polling */
-        if (!stristr($realhwif, "vlan") && is_array($options)) {
+	if (!stristr($realhwif, "vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))
 				$flags |= IFCAP_TXCSUM;
 			if (isset($options['encaps']['rxcsum']))
 				$flags |= IFCAP_RXCSUM;
-        	} else {
- 			if (!isset($options['caps']['txcsum']))
+		} else {
+			if (!isset($options['caps']['txcsum']))
 				$flags |= IFCAP_TXCSUM;
 			if (!isset($options['caps']['rxcsum']))
 				$flags |= IFCAP_RXCSUM;
-        	}
+		}
 
-        	if(isset($config['system']['disablesegmentationoffloading'])) {
-                	if (isset($options['encaps']['tso4']))
+		if(isset($config['system']['disablesegmentationoffloading'])) {
+			if (isset($options['encaps']['tso4']))
 				$flags |= IFCAP_TSO;
-                	if (isset($options['encaps']['tso6']))
+			if (isset($options['encaps']['tso6']))
 				$flags |= IFCAP_TSO;
-        	} else {
-                	if (!isset($options['caps']['tso4']))
+		} else {
+			if (!isset($options['caps']['tso4']))
 				$flags |= IFCAP_TSO;
-                	if (!isset($options['caps']['tso6']))
+			if (!isset($options['caps']['tso6']))
 				$flags |= IFCAP_TSO;
-        	}
+		}
 
-        	if(isset($config['system']['disablelargereceiveoffloading'])) {
-                	if (isset($options['encaps']['lro']))
+		if(isset($config['system']['disablelargereceiveoffloading'])) {
+			if (isset($options['encaps']['lro']))
 				$flags |= IFCAP_LRO;
-        	} else {
-                	if (!isset($options['caps']['lro']))
+		} else {
+			if (!isset($options['caps']['lro']))
 				$flags |= IFCAP_LRO;
-        	}
+		}
 
-        	/* if the NIC supports polling *AND* it is enabled in the GUI */
-        	if (!isset($config['system']['polling']) || !isset($options['caps']['polling'])) {
+		/* if the NIC supports polling *AND* it is enabled in the GUI */
+		if (!isset($config['system']['polling']) || !isset($options['caps']['polling'])) {
 			$flags |= IFCAP_POLLING;
 		}
-               	pfSense_interface_capabilities($realhwif, -$flags);
+		pfSense_interface_capabilities($realhwif, -$flags);
 	}
 
 	/* invalidate interface/ip/sn cache */
@@ -2784,7 +2786,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 							interface_gre_configure($gre);
 				}
 			} else if (substr($realif, 0, 3) == "gif") {
-				 if (is_array($config['gifs']['gif'])) {
+				if (is_array($config['gifs']['gif'])) {
 					foreach ($config['gifs']['gif'] as $gif)
 						if($gif['gifif'] == $realif)
 							interface_gif_configure($gif);

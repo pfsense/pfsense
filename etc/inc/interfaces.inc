@@ -3418,7 +3418,7 @@ EOD;
 		log_error(printf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
 
 	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
 }

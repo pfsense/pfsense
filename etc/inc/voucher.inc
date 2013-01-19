@@ -95,7 +95,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 
 	/* Construct code that is run on remote machine */
 	$dbent_str = serialize($dbent);
-	$stop_time_str = (isset($stop_time)) ? $stop_time : "null";
+	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
@@ -103,7 +103,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	\$cpzone = "$cpzone";
 	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
-	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $stop_time_str);
+	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;
 
@@ -153,7 +153,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	\$timeleft = voucher_auth("$voucher_received");
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
-	\$toreturn['voucher']['roll'] = \$config['voucher']["$cpzone"]['roll'];
+	\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
 
 EOF;
 

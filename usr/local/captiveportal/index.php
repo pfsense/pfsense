@@ -44,7 +44,10 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
-$cpzone = $_REQUEST['zone'];
+if ($_GET['zone'])
+	$cpzone = $_GET['zone'];
+else if ($_POST['zone'])
+	$cpzone = $_POST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
 
 $orig_host = $_ENV['HTTP_HOST'];

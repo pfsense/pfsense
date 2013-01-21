@@ -142,9 +142,9 @@ if ($_GET['act'] == "del") {
 		voucher_unlink_db($roll);
 		unlock($voucherlck);
 		write_config();
-		header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
-		exit;
     }
+	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
+	exit;
 }
 /* print all vouchers of the selected roll */
 else if ($_GET['act'] == "csv") {
@@ -166,9 +166,10 @@ else if ($_GET['act'] == "csv") {
 				header("Content-Disposition: attachment; filename=vouchers_{$cpzone}_roll{$number}.csv");
 				if (file_exists("{$g['varetc_path']}/voucher_{$cpzone}.cfg"))
 					system("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -p {$g['varetc_path']}/voucher_{$cpzone}.private $number $count");
-				unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
-				exit;
-			}
+				@unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
+			} else
+				header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
+			exit;
 		}
 	} else {
 		$input_errors[] = gettext("Need private RSA key to print vouchers") . "\n";

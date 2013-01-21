@@ -1313,17 +1313,12 @@ function captiveportal_write_elements() {
 	if (is_array($cpcfg['element'])) {
 		conf_mount_rw();
 		foreach ($cpcfg['element'] as $data) {
-			$fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
-			if (!$fd) {
+			if (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
 				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
-			$decoded = base64_decode($data['content']);
-			fwrite($fd,$decoded);
-			fclose($fd);
 			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
-			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
-			mwexec("cd {$g['captiveportal_path']}/ && ln -s {$g['captiveportal_element_path']}/{$data['name']} {$data['name']}");
+			@symlink("{$g['captiveportal_element_path']}/{$data['name']}", "{$g['captiveportal_path']}/{$data['name']}");
 		}
 		conf_mount_ro();
 	}

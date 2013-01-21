@@ -46,6 +46,12 @@ header("Connection: close");
 
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
+if (empty($cpcfg)) {
+	log_error("Submission to captiveportal with unkown parameter zone: " . htmlspecialchars($cpzone));
+	portal_reply_page($redirurl, "error", $errormsg);
+	ob_flush();
+	return;
+}
 
 $orig_host = $_ENV['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */

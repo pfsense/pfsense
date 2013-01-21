@@ -34,6 +34,8 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 
 require_once("functions.inc");
 
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+
 function & lookup_ca($refid) {
 	global $config;
 
@@ -159,11 +161,11 @@ function ca_import(& $ca, $str, $key="", $serial=0) {
 	return true;
 }
 
-function ca_create(& $ca, $keylen, $lifetime, $dn) {
+function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
-		"digest_alg" => "sha1",
+		"digest_alg" => $digest_alg,
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
@@ -193,7 +195,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn) {
 	return true;
 }
 
-function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref) {
+function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "sha256") {
 	// Create Intermediate Certificate Authority
 	$signing_ca =& lookup_ca($caref);
 	if (!$signing_ca)
@@ -206,7 +208,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref) {
 
 	$args = array(
 		"x509_extensions" => "v3_ca",
-		"digest_alg" => "sha1",
+		"digest_alg" => $digest_alg,
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
@@ -253,7 +255,7 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	return true;
 }
 
-function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user") {
+function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $digest_alg = "sha256") {
 
 	$ca =& lookup_ca($caref);
 	if (!$ca)
@@ -280,7 +282,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user") {
 
 	$args = array(
 		"x509_extensions" => $cert_type,
-		"digest_alg" => "sha1",
+		"digest_alg" => $digest_alg,
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
@@ -312,11 +314,11 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user") {
 	return true;
 }
 
-function csr_generate(& $cert, $keylen, $dn) {
+function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 
 	$args = array(
 		"x509_extensions" => "v3_req",
-		"digest_alg" => "sha1",
+		"digest_alg" => $digest_alg,
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);

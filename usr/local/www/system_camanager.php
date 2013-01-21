@@ -46,6 +46,7 @@ $ca_methods = array(
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array( "512", "1024", "2048", "4096");
+global $openssl_digest_algs;
 
 $pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
 
@@ -202,7 +203,7 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	if ($pconfig['method'] != "existing")
+	if ($pconfig['method'] != "existing") {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		for ($i = 0; $i < count($reqdfields); $i++) {
 			if ($reqdfields[$i] == 'dn_email'){
@@ -214,6 +215,11 @@ if ($_POST) {
 			}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 		}
+		if (!in_array($_POST["keylen"], $ca_keylens))
+			array_push($input_errors, gettext("Please select a valid Key Length."));
+		if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+			array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+	}
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -255,7 +261,7 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn)){
+				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])){
 					while($ssl_err = openssl_error_string()){
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -270,7 +276,7 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'])){
+				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])){
 					while($ssl_err = openssl_error_string()){
 						$input_errors = array();
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -464,6 +470,22 @@ function method_change() {
 								<?php endforeach; ?>
 								</select>
 								<?=gettext("bits");?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
+							<td width="78%" class="vtable">
+								<select name='digest_alg' id='digest_alg' class="formselect">
+								<?php
+									foreach( $openssl_digest_algs as $digest_alg):
+									$selected = "";
+									if ($pconfig['digest_alg'] == $digest_alg)
+										$selected = "selected";
+								?>
+									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>

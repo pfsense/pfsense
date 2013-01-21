@@ -475,7 +475,7 @@ function step12_submitphpaction() {
 			'emailAddress' => $pconfig['step6']['email'],
 			'commonName' => $pconfig['step6']['certca']);
 
-		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn);
+		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
 		if (!is_array($config['ca']))
 			$config['ca'] = array();
 
@@ -502,7 +502,7 @@ function step12_submitphpaction() {
 			'emailAddress' => $pconfig['step9']['email'],
 			'commonName' => $pconfig['step9']['certname']);
 
-		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server');
+		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
 		if (!is_array($config['cert']))
 			$config['cert'] = array();
 

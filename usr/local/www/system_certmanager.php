@@ -52,6 +52,7 @@ $cert_types = array(	"ca" => "Certificate Authority",
 			"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
+global $openssl_digest_algs;
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
@@ -292,6 +293,10 @@ if ($_POST) {
 				}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
+			if (!in_array($_POST["keylen"], $cert_keylens))
+				array_push($input_errors, gettext("Please select a valid Key Length."));
+			if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -336,7 +341,7 @@ if ($_POST) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn, $pconfig['type'])){
+						$pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -359,7 +364,7 @@ if ($_POST) {
 						}
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
-					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn)){
+					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['digest_alg'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -675,6 +680,22 @@ function internalca_change() {
 								<?php endforeach; ?>
 								</select>
 								<?=gettext("bits");?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
+							<td width="78%" class="vtable">
+								<select name='digest_alg' id='digest_alg' class="formselect">
+								<?php
+									foreach( $openssl_digest_algs as $digest_alg):
+									$selected = "";
+									if ($pconfig['digest_alg'] == $digest_alg)
+										$selected = "selected";
+								?>
+									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>

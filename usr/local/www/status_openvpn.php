@@ -137,7 +137,7 @@ include("head.inc"); ?>
 		);
 	}
 </script>
-
+<?php $i = 0; ?>
 <?php foreach ($servers as $server): ?>
 
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -192,14 +192,62 @@ include("head.inc"); ?>
 				<td colspan="6" class="list" height="12"></td>
 			</tr>
 			</tfoot>
-
 		</table>
 		</td>
 	</tr>
 </table>
+<?php if (is_array($server['routes']) && count($server['routes'])): ?>
+<div id="shroutebut-<?= $i ?>">
+<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>"></input> - Display OpenVPN's internal routing table for this server.</a>
+<br/><br/>
+</div>
+<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" id="tabroute-<?= $i ?>">
+	<tr>
+		<td colspan="6" class="listtopic">
+			<?=$server['name'];?> <?=gettext("Routing Table"); ?>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td class="listhdrr"><?=gettext("Common Name"); ?></td>
+				<td class="listhdrr"><?=gettext("Real Address"); ?></td>
+				<td class="listhdrr"><?=gettext("Target Network"); ?></td>
+				<td class="listhdrr"><?=gettext("Last Used"); ?></td>
+			</tr>
 
+			<?php foreach ($server['routes'] as $conn): ?>
+			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$conn['common_name'];?>
+				</td>
+				<td class="listr">
+					<?=$conn['remote_host'];?>
+				</td>
+				<td class="listr">
+					<?=$conn['virtual_addr'];?>
+				</td>
+				<td class="listr">
+					<?=$conn['last_time'];?>
+				</td>
+			</tr>
+
+			<?php endforeach; ?>
+			<tfoot>
+			<tr>
+				<td colspan="6" class="list" height="12"><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
+			</tr>
+			</tfoot>
+		</table>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>
+<br/>
+<?php $i++; ?>
 <?php endforeach; ?>
-<br>
+<br/>
 
 <?php if (!empty($sk_servers)) { ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -314,3 +362,10 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 
 
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+function show_routes(id, buttonid) {
+	document.getElementById(buttonid).innerHTML='';
+	aodiv = document.getElementById(id);
+	aodiv.style.display = "block";
+}
+</script>

@@ -947,6 +947,16 @@ function openvpn_get_server_status($server, $socket) {
 				$conn['connect_time'] = $list[6];
 				$server['conns'][] = $conn;
 			}
+			/* parse routing table lines */
+			if (strstr($line, "ROUTING_TABLE")) {
+				$list = explode(",", $line);
+				$conn = array();
+				$conn['virtual_addr'] = $list[1];
+				$conn['common_name'] = $list[2];
+				$conn['remote_host'] = $list[3];
+				$conn['last_time'] = $list[4];
+				$server['routes'][] = $conn;
+			}
 		}
 
 		/* cleanup */

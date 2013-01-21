@@ -79,6 +79,13 @@ $a_cp =& $config['captiveportal'];
 if (!is_array($config['voucher'])) 
 	$config['voucher'] = array();
 
+if (empty($a_cp[$cpzone])) {
+	log_error("Submission on captiveportal page with unknown zone parameter: " . htmlspecialchars($cpzone));
+	header("Location: services_captiveportal_zones.php");
+	exit;
+}
+
+
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
 
@@ -157,7 +164,8 @@ else if ($_GET['act'] == "csv") {
 				$count = $a_voucher[$id]['count'];
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename=vouchers_{$cpzone}_roll{$number}.csv");
-				system("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -p {$g['varetc_path']}/voucher_{$cpzone}.private $number $count");
+				if (file_exists("{$g['varetc_path']}/voucher_{$cpzone}.cfg"))
+					system("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -p {$g['varetc_path']}/voucher_{$cpzone}.private $number $count");
 				unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
 				exit;
 			}

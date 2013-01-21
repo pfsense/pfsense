@@ -56,6 +56,16 @@
 			<value>default</value>
 		</item>
 		<item>
+			<descr><![CDATA[Enable privacy settings for IPv6 (RFC 4941)]]></descr>
+			<tunable>net.inet6.ip6.use_tempaddr</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[Prefer privacy addresses and use them over the normal addresses]]></descr>
+			<tunable>net.inet6.ip6.prefer_tempaddr</tunable>
+			<value>default</value>
+		</item>
+		<item>
 			<descr><![CDATA[Generate SYN cookies for outbound SYN-ACK packets]]></descr>
 			<tunable>net.inet.tcp.syncookies</tunable>
 			<value>default</value>

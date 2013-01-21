@@ -160,10 +160,11 @@ if ($_POST) {
 				$rules .= "pipe delete " . ($ipfw['dnpipe']+1);
 			}
 			$rules .= captiveportal_allowedip_configure_entry($ip);
-			@file_put_contents("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}", $rules);
+			$uniqid = uniq_id("{$cpzone}_allowed");
+			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			captiveportal_ipfw_set_context($cpzone);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");
-			@unlink("{$g['tmp_path']}/{$cpzone}_allowedip_tmp{$id}");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
+			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 		
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");

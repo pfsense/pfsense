@@ -986,7 +986,8 @@ class priq_queue {
 			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
 			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && ($data['name'] != $this->GetQName()))
+		$default = $this->GetDefault();
+		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && empty($default))
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
 	}
 

@@ -1890,8 +1890,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$cpdb[] = array($allow_time, $pipeno, $clientip, $clientmac, $username, $sessionid, $bpassword,
-				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time'], $radiusctx);
 			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
 			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time})";

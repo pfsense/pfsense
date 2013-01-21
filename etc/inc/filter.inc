@@ -223,7 +223,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// Copy rules.debug to rules.debug.old
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
-		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
+		@copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	$limitrules = "";
 	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
@@ -288,30 +288,22 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= discover_pkg_rules("filter");
 
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
-	mwexec("/sbin/pfctl -O -f {$g['tmp_path']}/rules.limits");
+	mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.limits");
 	
-	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
+	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);
 		return;
 	}
 
-	/*
-	 * XXX: This are not being used for now so just comment them out.
-	$rules = "1"; // force to be diff from oldrules
-	$oldrules = "2"; // force to be diff from rules
+	unset($rules, $limitrules);
 
-	if(file_exists("{$g['tmp_path']}/rules.debug"))
-		$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
-	if(file_exists("{$g['tmp_path']}/rules.debug.old"))
-		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
-	 *
-	 */
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-	$rules_loading = mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug");
+	unset($rules_loading, $rules_error);
+	exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug", $rules_error, $rules_loading);
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";
@@ -320,13 +312,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {
-		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = explode(":", $rules_error);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
 			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
-		if($line_error and $line_number) {
+		unset($line_split);
+		if ($line_error and $line_number) {
 			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error), "Filter Reload", "");
 			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error));
@@ -334,10 +326,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			return;
 		}
 		/* Brutal ugly hack but required -- PF is stuck, unwedge */
-		if(strstr("$rules_error", "busy")) {
-			exec("/sbin/pfctl -d");
-			exec("/sbin/pfctl -e");
-			exec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
+		if (strstr("$rules_error", "busy")) {
+			exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 			$error_msg = gettext("PF was wedged/busy and has been reset.");
 			file_notice("pf_busy", $error_msg, "pf_busy", "");
 			log_error($error_msg);
@@ -349,6 +339,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	if(!empty($filterdns)) {
 		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
+		unset($filterdns);
 		if (isvalidpid("{$g['varrun_path']}/filterdns.pid"))
 			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
 		else {

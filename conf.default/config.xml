@@ -386,8 +386,6 @@
 		</page>
 		<httpslogin/>
 		<httpsname></httpsname>
-		<certificate></certificate>
-		<private-key></private-key>
 		<redirurl></redirurl>
 		<radiusip></radiusip>
 		<radiusport></radiusport>

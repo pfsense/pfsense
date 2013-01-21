@@ -156,10 +156,11 @@ if ($_POST) {
 			}
 			
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
-			file_put_contents("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}", $rules);
+			$uniqid = uniqid("{$cpzone}_macedit");
+			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			captiveportal_ipfw_set_context($cpzone);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
-			@unlink("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
+			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");

@@ -765,7 +765,7 @@ function system_webgui_start() {
 			$cert['refid'] = uniqid();
 			$cert['descr'] = gettext("webConfigurator default");
 			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
-			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
+			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha256 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
 			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
 			$key = file_get_contents("{$g['tmp_path']}/ssl.key");
 			unlink("{$g['tmp_path']}/ssl.key");

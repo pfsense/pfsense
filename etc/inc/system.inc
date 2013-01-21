@@ -741,12 +741,14 @@ function system_generate_lighty_config($filename,
 		exec("mkdir -p {$g['tmp_path']}/captiveportal");
 		exec("chmod a-w {$g['tmp_path']}/captiveportal");
 		$server_max_request_size = "server.max-request-size    = 384";
+		$cgi_config = "";
 	} else {
-		$captiveportal = "";
+		$captiveportal = ",\"mod_cgi\"";
 		$captive_portal_rewrite = "";
 		$captive_portal_mod_evasive = "";
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"{$g['tmp_path']}/\", \"/var/\" )\n";
 		$server_max_request_size = "server.max-request-size    = 2097152";
+		$cgi_config = "cgi.assign                 = ( \".cgi\" => \"\" )";
 	}
 	
 	if($port <> "")
@@ -944,6 +946,8 @@ compress.filetype  = ("text/plain","text/css", "text/xml", "text/javascript" )
 {$server_max_request_size}
 
 {$fastcgi_config}
+
+{$cgi_config}
 
 {$captive_portal_mod_evasive}
 

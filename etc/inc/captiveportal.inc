@@ -736,6 +736,7 @@ function captiveportal_prune_old() {
 			}
 		}
 	}
+	unset($cpdb);
 
 	captiveportal_prune_old_automac();
 
@@ -1806,6 +1807,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			}
 		}
 	}
+	unset($cpdb);
 
 	if (!empty($unsetindexes))
 		captiveportal_remove_entries($unsetindexes);

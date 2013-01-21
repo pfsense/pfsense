@@ -54,8 +54,6 @@ if (!$nentries)
 if ($_POST['clear']) 
 	clear_log_file($ppp_logfile);
 
-$ppp_logarr = return_clog($ppp_logfile, $nentries);
-
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("PPP"));
 include("head.inc");
 
@@ -90,23 +88,7 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic"><?php printf (gettext("Last $nentries PPP log entries"),$nentries);?></td>
 		  		</tr>
-				<?php
-				foreach($ppp_logarr as $logent){
-					if(isset($match)) {
-						$logent = preg_replace($search, $replace, $logent);
-					} else {
-						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
-						$logent = preg_replace($searchs, $replaces, $logent);
-					}
-					$logent = preg_split("/\s+/", $logent, 6);
-					echo "<tr valign=\"top\">\n";
-					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
-					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
-					echo "</tr>\n";
-				}
-				?>
+				<?php dump_clog($ppp_logfile, $nentries); ?>
 				<tr>
 					<td>
 						<br>

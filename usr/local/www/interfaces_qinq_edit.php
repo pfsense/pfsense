@@ -150,22 +150,25 @@ if ($_POST) {
 		if (isset($id) && $a_qinqs[$id]) {
 			$omembers = explode(" ", $a_qinqs[$id]['members']);
 			$delmembers = array_diff($omembers, $nmembers);
-			if (count($delmembers) > 0) {
-				foreach ($delmembers as $tag) {
-					mwexec("/usr/sbin/ngctl shutdown {$qinqentry['vlanif']}h{$tag}:");
-					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}qinq: delfilter \\\"{$qinqentry['vlanif']}{$tag}\\\"");
-				}
-			}
 			$addmembers = array_diff($nmembers, $omembers);
-			if (count($addmembers) > 0) {
-				foreach ($addmembers as $member) {
-					$macaddr = get_interface_mac($qinqentry['vlanif']);
-					mwexec("/usr/sbin/ngctl mkpeer {$$qinqentry['vlanif']}qinq: eiface {$$qinqentry['vlanif']}{$member} ether");
-					mwexec("/usr/sbin/ngctl name {$qinqentry['vlanif']}qinq:{$qinqentry['vlanif']}{$tag} {$qinqentry['vlanif']}h{$member}");
-					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}qinq: addfilter '{ vlan={$member} hook=\\\"{$qinqentry['vlanif']}{$member}\\\" }'");
-					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}h{$tag}: setifname \\\"{$qinqentry['vlanif']}_{$member}\\\"");
-					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}h{$member}: set {$macaddr}");
+
+			if ((count($delmembers) > 0) || (count($addmembers) > 0)) {
+				$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+				foreach ($delmembers as $tag) {
+					fwrite($fd, "shutdown {$qinqentry['vlanif']}h{$tag}:\n");
+					fwrite($fd, "msg {$qinqentry['vlanif']}qinq: delfilter \\\"{$qinqentry['vlanif']}{$tag}\\\"\n");
 				}
+
+				foreach ($addmembers as $member) {
+					$qinq = array();
+					$qinq['if'] = $qinqentry['vlanif'];
+					$qinq['tag'] = $member;
+					$macaddr = get_interface_mac($qinqentry['vlanif']);
+					interface_qinq2_configure($qinq, $fd, $macaddr);
+				}
+
+				fclose($fd);
+				mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
 			}
 			$a_qinqs[$id] = $qinqentry;
 		} else {

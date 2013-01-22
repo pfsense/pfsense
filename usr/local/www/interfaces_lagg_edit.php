@@ -50,8 +50,8 @@ $portlist = get_interface_list();
 $realifchecklist = array();
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-        foreach ($config['laggs']['lagg'] as $lagg) {
-                unset($portlist[$lagg['laggif']]);
+	foreach ($config['laggs']['lagg'] as $lagg) {
+		unset($portlist[$lagg['laggif']]);
 		$laggiflist = explode(",", $lagg['members']);
 		foreach ($laggiflist as $tmpif)
 			$realifchecklist[get_real_interface($tmpif)] = $tmpif;
@@ -96,20 +96,20 @@ if ($_POST) {
 		if (isset($id) && $a_laggs[$id])
 			$lagg['laggif'] = $a_laggs[$id]['laggif'];
 
-                $lagg['laggif'] = interface_lagg_configure($lagg);
-                if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
-                        $input_errors[] = gettext("Error occured creating interface, please retry.");
-                else {
-                        if (isset($id) && $a_laggs[$id])
-                                $a_laggs[$id] = $lagg;
-                        else
-                                $a_laggs[] = $lagg;
+		$lagg['laggif'] = interface_lagg_configure($lagg);
+		if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
+			$input_errors[] = gettext("Error occured creating interface, please retry.");
+		else {
+			if (isset($id) && $a_laggs[$id])
+				$a_laggs[$id] = $lagg;
+			else
+				$a_laggs[] = $lagg;
 
-                        write_config();
+			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
-                        if ($confif <> "")
-                                interface_configure($confif);
+			if ($confif <> "")
+				interface_configure($confif);
 
 			header("Location: interfaces_lagg.php");
 			exit;
@@ -136,7 +136,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <select name="members[]" multiple="true" size="4" class="formselect">
                       <?php
-					  	foreach ($portlist as $ifn => $ifinfo) {
+						foreach ($portlist as $ifn => $ifinfo) {
 							if (array_key_exists($ifn, $realifchecklist))
 								continue;
 							echo "<option value=\"{$ifn}\"";
@@ -144,7 +144,7 @@ include("head.inc");
 								echo "selected";
 							echo ">". $ifn ."(".$ifinfo['mac'] .")</option>";
 						}
-		      		?>
+				?>
                     </select>
 			<br/>
 			<span class="vexpl"><?=gettext("Choose the members that will be used for the link aggregation"); ?>.</span></td>
@@ -154,19 +154,19 @@ include("head.inc");
                   <td class="vtable">
                     <select name="proto" class="formselect" id="proto">
 		<?php
-		 foreach (array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin") as $proto) {
+		foreach (array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin") as $proto) {
 			echo "<option value=\"{$proto}\"";
 			if ($proto == $pconfig['proto'])
 				echo "selected";
 			echo ">".strtoupper($proto)."</option>";
 		}
 		?>
-                    </select>					
+                    </select>
                     <br/>
                     <span class="vexpl">
 		   <ul>
 		<li>
-		    <b><?=gettext("failover"); ?></b><br/>      
+		    <b><?=gettext("failover"); ?></b><br/>
 			<?=gettext("Sends and receives traffic only through the master port.  If " .
                   "the master port becomes unavailable, the next active port is " .
                   "used.  The first interface added is the master port; any " .

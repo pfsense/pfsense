@@ -169,9 +169,11 @@ if ($_POST) {
 			}
 			$a_qinqs[$id] = $qinqentry;
 		} else {
-			interface_qinq_configure($qinqentry);
 			$a_qinqs[] = $qinqentry;
 		}
+
+		interface_qinq_configure($qinqentry);
+
 		if ($_POST['autogroup'] == "yes") {
 			if (!is_array($config['ifgroups']['ifgroupentry']))
 				$config['ifgroups']['ifgroupentry'] = array();

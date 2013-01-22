@@ -150,6 +150,7 @@ if($_GET['act']=="edit"){
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
+		$pconfig['topology_subnet'] = $a_server[$id]['topology_subnet'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
 		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
@@ -378,6 +379,7 @@ if ($_POST) {
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
+		$server['topology_subnet'] = $pconfig['topology_subnet'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
 		$server['serverbridge_interface'] = $pconfig['serverbridge_interface'];
@@ -639,6 +641,7 @@ function tuntap_change() {
 			document.getElementById("serverbridge_interface").style.display="none";
 			document.getElementById("serverbridge_dhcp_start").style.display="none";
 			document.getElementById("serverbridge_dhcp_end").style.display="none";
+			document.getElementById("topology_subnet_opt").style.display="";
 			break;
 		case "tap":
 			document.getElementById("ipv4_tunnel_network").className="vncell";
@@ -647,6 +650,7 @@ function tuntap_change() {
 				document.getElementById("serverbridge_interface").style.display="";
 				document.getElementById("serverbridge_dhcp_start").style.display="";
 				document.getElementById("serverbridge_dhcp_end").style.display="";
+				document.getElementById("topology_subnet_opt").style.display="none";
 				if (document.iform.serverbridge_dhcp.checked) {
 					document.iform.serverbridge_interface.disabled = false;
 					document.iform.serverbridge_dhcp_start.disabled = false;
@@ -657,6 +661,7 @@ function tuntap_change() {
 					document.iform.serverbridge_dhcp_end.disabled = true;
 				}
 			} else {
+				document.getElementById("topology_subnet_opt").style.display="none";
 				document.iform.serverbridge_dhcp.disabled = true;
 				document.iform.serverbridge_interface.disabled = true;
 				document.iform.serverbridge_dhcp_start.disabled = true;
@@ -1381,6 +1386,31 @@ if ($savemsg)
 										<span class="vexpl">
 											<?=gettext("Provide a virtual adapter IP address to clients (see Tunnel Network)"); ?><br>
 										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="topology_subnet_opt">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Topology"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['topology_subnet'],$chk); ?>
+										<input name="topology_subnet" type="checkbox" id="topology_subnet" value="yes" <?=$chk;?>/>
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Allocate only one IP per client (topology subnet), rather than an isolated subnet per client (topology net30)."); ?><br/>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>
+										<?=gettext("Relevant when supplying a virtual adapter IP address to clients when using tun mode on IPv4."); ?><br/>
+										<?=gettext("Some clients may require this even for IPv6, such as OpenVPN Connect on iOS. Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones."); ?><br>
 									</td>
 								</tr>
 							</table>

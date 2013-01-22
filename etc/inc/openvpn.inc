@@ -670,6 +670,10 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "float\n";
 	}
 
+	if ($settings['topology_subnet']) {
+		$conf .= "topology subnet\n";
+	}
+
 	openvpn_add_custom($settings, $conf);
 
 	openvpn_create_dirs();

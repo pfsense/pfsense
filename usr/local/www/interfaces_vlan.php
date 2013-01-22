@@ -63,6 +63,8 @@ if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (vlan_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
+	} elseif (!does_interface_exist($a_vlans[$_GET['id']]['vlanif'])) {
+		$input_errors[] = gettext("Invalid VLAN interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_vlans[$_GET['id']]['vlanif'] . " destroy");
 		unset($a_vlans[$_GET['id']]);

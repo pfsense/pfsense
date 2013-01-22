@@ -1739,40 +1739,44 @@ function remove_tunnel_spd_policy($phase1,$phase2) {
 	global $config;
 	global $g;
 
+	if (!$phase1 || !$phase2)
+		return false;
+
+	if (isset($phase1['mobile']))
+		return false;
+
 	$spdconf = "";
-	if($phase1 && $phase2) {
-		$ep = ipsec_get_phase1_src($phase1);
-		$gw = trim($phase1['remote-gateway']);
-		$sad_arr = ipsec_dump_sad();
-		$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
+	$ep = ipsec_get_phase1_src($phase1);
+	$gw = trim($phase1['remote-gateway']);
+	$sad_arr = ipsec_dump_sad();
+	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
 
-		if (!empty($phase2['natlocalid']))
-			$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid']);
-		else
-			$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
+	if (!empty($phase2['natlocalid']))
+		$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid']);
+	else
+		$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
 
-		if ($phase2['mode'] == "tunnel6")
-			$family = "-6";
-		else
-			$family = "-4";
+	if ($phase2['mode'] == "tunnel6")
+		$family = "-6";
+	else
+		$family = "-4";
 
-		$spdconf .= "spddelete {$family} {$local_subnet} " .
-			"{$remote_subnet} any -P out ipsec " .
-			"{$phase2['protocol']}/tunnel/{$ep}-" .
-			"{$gw}/unique;\n";
+	$spdconf .= "spddelete {$family} {$local_subnet} " .
+		"{$remote_subnet} any -P out ipsec " .
+		"{$phase2['protocol']}/tunnel/{$ep}-" .
+		"{$gw}/unique;\n";
 
-		$spdconf .= "spddelete {$family} {$remote_subnet} " .
-			"{$local_subnet} any -P in ipsec " .
-			"{$phase2['protocol']}/tunnel/{$gw}-" .
-			"{$ep}/unique;\n";
+	$spdconf .= "spddelete {$family} {$remote_subnet} " .
+		"{$local_subnet} any -P in ipsec " .
+		"{$phase2['protocol']}/tunnel/{$gw}-" .
+		"{$ep}/unique;\n";
 
-		/* zap any existing SA entries */
-		foreach($sad_arr as $sad) {
-			if(($sad['dst'] == $ep) && ($sad['src'] == $gw))
-				$spdconf .= "delete {$family} {$ep} {$gw} {$phase2['protocol']} 0x{$sad['spi']};\n";
-			if(($sad['src'] == $ep) && ($sad['dst'] == $_gw))
-				$spdconf .= "delete {$family} {$gw} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
-		}
+	/* zap any existing SA entries */
+	foreach($sad_arr as $sad) {
+		if(($sad['dst'] == $ep) && ($sad['src'] == $gw))
+			$spdconf .= "delete {$family} {$ep} {$gw} {$phase2['protocol']} 0x{$sad['spi']};\n";
+		if(($sad['src'] == $ep) && ($sad['dst'] == $_gw))
+			$spdconf .= "delete {$family} {$gw} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
 	}
 
 	log_error(sprintf(gettext("Removing SPDs from tunnel gw '%1\$s'. Local Subnet '%2\$s' and Remote Subnet '%3\$s'. Reloading policy"),$phase1['remote-gateway'],$local_subnet,$remote_subnet));
@@ -1782,6 +1786,7 @@ function remove_tunnel_spd_policy($phase1,$phase2) {
 	/* generate temporary spd.conf */
 	@file_put_contents($spdfile, $spdconf);
 	unset($spdconf);
+
 	return true;
 }
 

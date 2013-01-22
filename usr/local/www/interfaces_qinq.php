@@ -59,11 +59,14 @@ function qinq_inuse($num) {
 }
 
 if ($_GET['act'] == "del") {
+	$id = $_GET['id'];
+
 	/* check if still in use */
-	if (qinq_inuse($_GET['id'])) {
+	if (qinq_inuse($id)) {
 		$input_errors[] = gettext("This QinQ cannot be deleted because it is still being used as an interface.");
+	} elseif (empty($a_qinqs[$id]['vlanif']) || !does_interface_exist($a_qinqs[$id]['vlanif'])) {
+		$input_errors[] = gettext("QinQ interface does not exist");
 	} else {
-		$id = $_GET['id'];
 		$qinq =& $a_qinqs[$id];
 
 		$delmembers = explode(" ", $qinq['members']);

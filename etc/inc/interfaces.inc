@@ -500,7 +500,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	if ($g['booting'] || !empty($bridge['bridgeif'])) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
-		$bridgeif = $bridge['bridgeif'];
+		$bridgeif = escapeshellarg($bridge['bridgeif']);
 	} else
 		$bridgeif = pfSense_interface_create("bridge");
 
@@ -525,7 +525,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	if (isset($bridge['enablestp'])) {
 		/* Choose spanning tree proto */
-		mwexec("/sbin/ifconfig {$bridgeif} proto {$bridge['proto']}");
+		mwexec("/sbin/ifconfig {$bridgeif} proto " . escapeshellarg($bridge['proto']));
 
 		if (!empty($bridge['stp'])) {
 			$stpifs = explode(',', $bridge['stp']);
@@ -535,15 +535,15 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			}
 		}
 		if (!empty($bridge['maxage']))
-			mwexec("/sbin/ifconfig {$bridgeif} maxage {$bridge['maxage']}");
+			mwexec("/sbin/ifconfig {$bridgeif} maxage " . escapeshellarg($bridge['maxage']));
 		if (!empty($bridge['fwdelay']))
-			mwexec("/sbin/ifconfig {$bridgeif} fwddelay {$bridge['fwdelay']}");
+			mwexec("/sbin/ifconfig {$bridgeif} fwddelay " . escapeshellarg($bridge['fwdelay']));
 		if (!empty($bridge['hellotime']))
-			mwexec("/sbin/ifconfig {$bridgeif} hellotime {$bridge['hellotime']}");
+			mwexec("/sbin/ifconfig {$bridgeif} hellotime " . escapeshellarg($bridge['hellotime']));
 		if (!empty($bridge['priority']))
-			mwexec("/sbin/ifconfig {$bridgeif} priority {$bridge['priority']}");
+			mwexec("/sbin/ifconfig {$bridgeif} priority " . escapeshellarg($bridge['priority']));
 		if (!empty($bridge['holdcount']))
-			mwexec("/sbin/ifconfig {$bridgeif} holdcnt {$bridge['holdcnt']}");
+			mwexec("/sbin/ifconfig {$bridgeif} holdcnt " . escapeshellarg($bridge['holdcnt']));
 		if (!empty($bridge['ifpriority'])) {
 			$pconfig = explode(",", $bridge['ifpriority']);
 			$ifpriority = array();
@@ -554,7 +554,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			}
 			foreach ($ifpriority as $key => $value) {
 				$realif = get_real_interface($key);
-				mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} {$value}");
+				mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} " . escapeshellarg($value));
 			}
 		}
 		if (!empty($bridge['ifpathcost'])) {
@@ -567,7 +567,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			}
 			foreach ($ifpathcost as $key => $value) {
 				$realif = get_real_interface($key);
-				mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} {$value}");
+				mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} " . escapeshellarg($value));
 			}
 		}
 	}

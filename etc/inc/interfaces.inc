@@ -290,6 +290,12 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 		log_error(sprintf(gettext("interface_qinq_configure called with if undefined.%s"), "\n"));
 		return;
 	}
+
+	if(!does_interface_exist($qinqif)) {
+		log_error(sprintf(gettext("interface_qinq_configure called with invalid if.%s"), "\n"));
+		return;
+	}
+
 	$vlanif = interface_vlan_configure($vlan);
 
 	if ($fd == NULL) {

@@ -27,7 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl	
+	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl
 	pfSense_MODULE:	interfaces
 */
 
@@ -67,10 +67,10 @@ if ($_GET['act'] == "del") {
 		$qinq =& $a_qinqs[$id];
 
 		$delmembers = explode(" ", $qinq['members']);
-                if (count($delmembers) > 0) {
+		if (count($delmembers) > 0) {
 			foreach ($delmembers as $tag)
 				mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}h{$tag}:");
-                }
+		}
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}qinq:");
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}:");
 		mwexec("/sbin/ifconfig {$qinq['vlanif']} destroy");

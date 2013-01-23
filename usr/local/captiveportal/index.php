@@ -44,6 +44,8 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
+global $cpzone;
+
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
 if (empty($cpcfg)) {

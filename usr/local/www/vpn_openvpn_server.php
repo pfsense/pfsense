@@ -1410,7 +1410,7 @@ if ($savemsg)
 									<td>&nbsp;</td>
 									<td>
 										<?=gettext("Relevant when supplying a virtual adapter IP address to clients when using tun mode on IPv4."); ?><br/>
-										<?=gettext("Some clients may require this even for IPv6, such as OpenVPN Connect on iOS. Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones."); ?><br>
+										<?=gettext("Some clients may require this even for IPv6, such as OpenVPN Connect (iOS/Android). Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones."); ?><br>
 									</td>
 								</tr>
 							</table>

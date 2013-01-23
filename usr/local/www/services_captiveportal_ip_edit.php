@@ -64,7 +64,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
                         
-if (empty($cpzone)) {
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
 }
@@ -145,7 +145,6 @@ if ($_POST) {
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
-			captiveportal_ipfw_set_context($cpzone);
                         if (is_ipaddr($oldip)) { 
                                 if (!empty($oldmask))
                                         $ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
@@ -162,8 +161,7 @@ if ($_POST) {
 			$rules .= captiveportal_allowedip_configure_entry($ip);
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			captiveportal_ipfw_set_context($cpzone);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 		

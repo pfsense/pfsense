@@ -49,7 +49,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
 }
@@ -72,7 +72,6 @@ if ($_GET['act'] == "del") {
 				$ipent['ip'] .= "/{$ipent['sn']}";
 			} else
 				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip']);
-			captiveportal_ipfw_set_context($cpzone);
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");

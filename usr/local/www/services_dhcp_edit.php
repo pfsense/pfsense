@@ -1,22 +1,22 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	services_dhcp_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -41,13 +41,13 @@
 ##|-PRIV
 
 function staticmapcmp($a, $b) {
-        return ipcmp($a['ipaddr'], $b['ipaddr']);
+	return ipcmp($a['ipaddr'], $b['ipaddr']);
 }
 
 function staticmaps_sort($ifgui) {
-        global $g, $config;
+	global $g, $config;
 
-        usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
+	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
 }
 
 require_once('globals.inc');
@@ -62,7 +62,7 @@ require("guiconfig.inc");
 $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
-	
+
 if (!$if) {
 	header("Location: services_dhcp.php");
 	exit;
@@ -87,20 +87,20 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_maps[$id]) {
-        $pconfig['mac'] = $a_maps[$id]['mac'];
-		$pconfig['hostname'] = $a_maps[$id]['hostname'];
-        $pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
-	    $pconfig['filename'] = $a_maps[$id]['filename'];
-		$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-        $pconfig['descr'] = $a_maps[$id]['descr'];
-        $pconfig['arp_table_static_entry'] = isset($a_maps[$id]['arp_table_static_entry']);
+	$pconfig['mac'] = $a_maps[$id]['mac'];
+	$pconfig['hostname'] = $a_maps[$id]['hostname'];
+	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
+	$pconfig['filename'] = $a_maps[$id]['filename'];
+	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
+	$pconfig['descr'] = $a_maps[$id]['descr'];
+	$pconfig['arp_table_static_entry'] = isset($a_maps[$id]['arp_table_static_entry']);
 } else {
-        $pconfig['mac'] = $_GET['mac'];
-		$pconfig['hostname'] = $_GET['hostname'];
-	    $pconfig['filename'] = $_GET['filename'];
-		$pconfig['rootpath'] = $_GET['rootpath'];
-        $pconfig['descr'] = $_GET['descr'];
-        $pconfig['arp_table_static_entry'] = $_GET['arp_table_static_entry'];
+	$pconfig['mac'] = $_GET['mac'];
+	$pconfig['hostname'] = $_GET['hostname'];
+	$pconfig['filename'] = $_GET['filename'];
+	$pconfig['rootpath'] = $_GET['rootpath'];
+	$pconfig['descr'] = $_GET['descr'];
+	$pconfig['arp_table_static_entry'] = $_GET['arp_table_static_entry'];
 }
 
 if ($_POST) {
@@ -111,16 +111,16 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "mac");
 	$reqdfieldsn = array(gettext("MAC address"));
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
-	
+
 	if ($_POST['hostname']) {
 		preg_match("/\-\$/", $_POST['hostname'], $matches);
 		if($matches)
-			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");		
+			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
@@ -138,7 +138,7 @@ if ($_POST) {
 	if($static_arp_enabled && !$_POST['ipaddr']) {
 		$input_errors[] = gettext("Static ARP is enabled.  You must specify an IP address.");
 	}
-	
+
 	/* check for overlaps */
 	foreach ($a_maps as $mapent) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
@@ -149,7 +149,7 @@ if ($_POST) {
 			break;
 		}
 	}
-		
+
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
 		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
@@ -182,12 +182,12 @@ if ($_POST) {
 		else
 			$a_maps[] = $mapent;
 		staticmaps_sort($if);
-		
+
 		write_config();
 
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['regdhcpstatic']))	
+			if (isset($config['dnsmasq']['regdhcpstatic']))
 				mark_subsystem_dirty('hosts');
 		}
 
@@ -210,24 +210,24 @@ include("head.inc");
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCP Mapping");?></td>
-				</tr>	
-                <tr> 
+				</tr>
+                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
 		    <?php
 			$ip = getenv('REMOTE_ADDR');
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
 			$mac = str_replace("\n","",$mac);
 		    ?>
-		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>   		    
+		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
                     <br>
                     <span class="vexpl"><?=gettext("Enter a MAC address in the following format: ".
                     "xx:xx:xx:xx:xx:xx");?></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     <br>
 			<?=gettext("If an IPv4 address is entered, the address must be outside of the pool.");?>
@@ -235,12 +235,12 @@ include("head.inc");
 			<?=gettext("If no IPv4 address is given, one will be dynamically allocated from the pool.");?>
 			</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
                     <br> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
-                </tr>				
+                </tr>
                 <?php if($netboot_enabled) { ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Netboot Filename</td>
@@ -255,28 +255,28 @@ include("head.inc");
 		    <br> <span class="vexpl"><?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>, overrides setting on main page.</span></td>
 		</tr>
 		<?php } ?>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-                  <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("ARP Table Static Entry");?></td>
-                  <td width="78%" class="vtable"> 
-                    <input name="arp_table_static_entry" id="arp_table_static_entry" type="checkbox" value="yes" <?php if ($pconfig['arp_table_static_entry']) echo "checked"; ?>> 
+                  <td width="78%" class="vtable">
+                    <input name="arp_table_static_entry" id="arp_table_static_entry" type="checkbox" value="yes" <?php if ($pconfig['arp_table_static_entry']) echo "checked"; ?>>
                     <br> <span class="vexpl"><?=gettext("Create an ARP Table Static Entry for this MAC & IP Address pair. ".
                     "");?></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_maps[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
-                    <input name="if" type="hidden" value="<?=htmlspecialchars($if);?>"> 
+                    <input name="if" type="hidden" value="<?=htmlspecialchars($if);?>">
                   </td>
                 </tr>
               </table>

@@ -253,7 +253,7 @@ if ($_POST) {
 		$parent_ip = get_interface_ip($_POST['if']);
 		if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
 			$parent_sn = get_interface_subnet($_POST['if']);
-			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) 
+			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 		}
 		if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])))
@@ -849,7 +849,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
+				 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
 			</td>
 			</tr>
 			<tr>
@@ -857,7 +857,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
 				 <?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
-			 </td>
+			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
@@ -934,9 +934,8 @@ include("head.inc");
 					<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCP leases are displayed in UTC time.  By checking this 
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCP leases are displayed in UTC time.  By checking this
 						box DHCP lease time will be displayed in local time and set to time zone selected.  This will be used for all DHCP interfaces lease time."); ?>
-					
 					</td>
 					</tr>
 				</table>

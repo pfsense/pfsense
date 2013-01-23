@@ -609,10 +609,9 @@ EOPP;
 				$pdnscfg .= "		option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $poolconf['domainsearchlist'])) . "\";\n";
 			}
 
-			if (isset($poolconf['ddnsupdate']) && ($poolconf['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
-				if($poolconf['ddnsdomain'] <> "") {
+			if (isset($poolconf['ddnsupdate'])) {
+				if (($poolconf['ddnsdomain'] <> "") && ($poolconf['ddnsdomain'] != $dhcpifconf['ddnsdomain']))
 					$pdnscfg .= "		ddns-domainname \"{$poolconf['ddnsdomain']}\";\n";
-				}
 				$pdnscfg .= "		ddns-update-style interim;\n";
 			}
 
@@ -755,6 +754,52 @@ EOD;
 
 				if ($sm['rootpath'])
 					$dhcpdconf .= "	option root-path \"{$sm['rootpath']}\";\n";
+
+				if ($sm['gateway'] && ($sm['gateway'] != $dhcpifconf['gateway']))
+					$dhcpdconf .= "	option routers {$sm['gateway']};\n";
+
+				$smdnscfg = "";
+
+				if ($sm['domain'] && ($sm['domain'] != $dhcpifconf['domain'])) {
+					$smdnscfg .= "	option domain-name \"{$sm['domain']}\";\n";
+				}
+
+				if(!empty($sm['domainsearchlist']) && ($sm['domainsearchlist'] != $dhcpifconf['domainsearchlist'])) {
+					$smdnscfg .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $sm['domainsearchlist'])) . "\";\n";
+				}
+
+				if (isset($sm['ddnsupdate'])) {
+					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain']))
+						$pdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+					$pdnscfg .= "		ddns-update-style interim;\n";
+				}
+
+				if (is_array($sm['dnsserver']) && ($sm['dnsserver'][0]) && ($sm['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
+					$smdnscfg .= "	option domain-name-servers " . join(",", $sm['dnsserver']) . ";\n";
+				}
+				$dhcpdconf .= "{$smdnscfg}";
+
+				// default-lease-time
+				if ($sm['defaultleasetime'] && ($sm['defaultleasetime'] != $dhcpifconf['defaultleasetime']))
+					$dhcpdconf .= "	default-lease-time {$sm['defaultleasetime']};\n";
+
+				// max-lease-time
+				if ($sm['maxleasetime'] && ($sm['maxleasetime'] != $dhcpifconf['maxleasetime']))
+					$dhcpdconf .= "	max-lease-time {$sm['maxleasetime']};\n";
+
+				// netbios-name*
+				if (is_array($sm['winsserver']) && $sm['winsserver'][0] && ($sm['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
+					$dhcpdconf .= "	option netbios-name-servers " . join(",", $sm['winsserver']) . ";\n";
+					$dhcpdconf .= "	option netbios-node-type 8;\n";
+				}
+
+				// ntp-servers
+				if (is_array($sm['ntpserver']) && $sm['ntpserver'][0] && ($sm['ntpserver'][0] != $dhcpifconf['ntpserver'][0]))
+					$dhcpdconf .= "	option ntp-servers " . join(",", $sm['ntpserver']) . ";\n";
+
+				// tftp-server-name
+				if (!empty($sm['tftp']) && ($sm['tftp'] != $dhcpifconf['tftp']))
+					$dhcpdconf .= "	option tftp-server-name \"{$sm['tftp']}\";\n";
 
 				$dhcpdconf .= "}\n";
 				$i++;

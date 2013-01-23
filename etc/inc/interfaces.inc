@@ -1055,8 +1055,12 @@ function interface_vip_bring_down($vip) {
 		break;
 	case "ipalias":
 		$vipif = get_real_interface($vip['interface']);
-		if(does_interface_exist($vipif))
-			pfSense_interface_deladdress($vipif, $vip['subnet']);
+		if (does_interface_exist($vipif)) {
+			if (is_ipaddrv6($vip['subnet']))
+				mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} -alias");
+			else
+				pfSense_interface_deladdress($vipif, $vip['subnet']);
+		}
 		break;
 	case "carp":
 		$vipif = "{$vip['interface']}_vip{$vip['vhid']}";

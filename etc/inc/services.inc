@@ -616,7 +616,7 @@ EOPP;
 				$pdnscfg .= "		ddns-update-style interim;\n";
 			}
 
-			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $poolconf['dnsserver'][0])) {
+			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
 				$pdnscfg .= "		option domain-name-servers " . join(",", $poolconf['dnsserver']) . ";\n";
 			}
 			$dhcpdconf .= "{$pdnscfg}";
@@ -630,13 +630,13 @@ EOPP;
 				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
 
 			// netbios-name*
-			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $poolconf['winsserver'][0])) {
+			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
 				$dhcpdconf .= "		option netbios-node-type 8;\n";
 			}
 
 			// ntp-servers
-			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $poolconf['ntpserver'][0]))
+			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $dhcpifconf['ntpserver'][0]))
 				$dhcpdconf .= "		option ntp-servers " . join(",", $poolconf['ntpserver']) . ";\n";
 
 			// tftp-server-name

@@ -145,7 +145,7 @@ if(is_array($dhcrelaycfg)) {
 }
 
 function is_inrange($test, $start, $end) {
-	if ( (inet_pton($test) < inet_pton($end)) && (inet_pton($test) > inet_pton($start)) )
+	if ( (inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start)) )
 		return true;
 	else
 		return false;

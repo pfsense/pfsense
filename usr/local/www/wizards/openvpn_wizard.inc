@@ -360,10 +360,10 @@ function step10_submitphpaction() {
 	if ($result = openvpn_validate_port($_POST['localport'], 'Local port'))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($_POST['tunnelnet'], 'Tunnel network'))
+	if ($result = openvpn_validate_cidr($_POST['tunnelnet'], 'Tunnel Network', false, "ipv4"))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($_POST['localnet'], 'Local network'))
+	if ($result = openvpn_validate_cidr($_POST['localnet'], 'Local Network', true, "ipv4"))
 		$input_errors[] = $result;
 
 	$portused = openvpn_port_used($_POST['protocol'], $_POST['localport']);

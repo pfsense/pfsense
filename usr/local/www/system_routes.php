@@ -81,13 +81,16 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
 		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
-		if(is_ipaddrv6($a_routes[$_GET['id']]['network']))
-			$family = "-inet6";
-		mwexec("/sbin/route delete {$family} " . escapeshellarg($a_routes[$_GET['id']]['network']));
-		unset($a_routes[$_GET['id']]);
-		write_config($changedesc);
-		header("Location: system_routes.php");
-		exit;
+		list($ip, $mask) = explode("/", $a_routes[$_GET['id']]['network']);
+		if (is_ipaddr($ip)) {
+			if(is_ipaddrv6($ip))
+				$family = "-inet6";
+			mwexec("/sbin/route delete {$family} " . escapeshellarg($a_routes[$_GET['id']]['network']));
+			unset($a_routes[$_GET['id']]);
+			write_config($changedesc);
+			header("Location: system_routes.php");
+			exit;
+		}
 	}
 }
 

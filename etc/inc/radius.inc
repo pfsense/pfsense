@@ -306,11 +306,8 @@ class Auth_RADIUS extends PEAR {
         $this->putAttribute(RADIUS_NAS_IP_ADDRESS, $ipaddr, "addr");
 
         // Add support for sending NAS-Identifier
-	$nasId = "";
-	exec("/bin/hostname", $nasId);
-	if(!$nasId[0])
-		$nasId[0] = "{$g['product_name']}";
-        $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId[0]);
+	$nasId = php_uname("n");
+        $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId);
     }
 
     /**
@@ -645,7 +642,7 @@ class Auth_RADIUS extends PEAR {
                 break;
 
 		case 85: /* Acct-Interim-Interval: RFC 2869 */
-			$this->attributes['interim-interval'] = radius_cvt_int($datav);
+			$this->attributes['interim_interval'] = radius_cvt_int($datav);
 			break;
             }
         }
@@ -1071,6 +1068,7 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
             $this->putAttribute(RADIUS_ACCT_AUTHENTIC, $this->authentic);
         }
 
+	$this->putStandardAttributes();
     }
 
 }

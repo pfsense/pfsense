@@ -569,7 +569,7 @@ EOD;
 /* 
  * Remove clients that have been around for longer than the specified amount of time
  * db file structure:
- * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time
+ * timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid,password,session_timeout,idle_timeout,session_terminate_time,interim_interval
  * (password is in Base64 and only saved when reauthentication is enabled)
  */
 function captiveportal_prune_old() {
@@ -700,15 +700,24 @@ function captiveportal_prune_old() {
 						$cpentry[2], // clientip
 						$cpentry[3]); // clientmac
 				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
-					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-						$cpentry[4], // username
-						$cpentry[5], // sessionid
-						$cpentry[0], // start time
-						$radiusservers,
-						$cpentry[2], // clientip
-						$cpentry[3], // clientmac
-						10, // NAS Request
-						true); // Interim Updates
+					$session_time = $pruning_time - $cpentry[0];
+					if (!empty($cpentry[10]) && $cpentry[10] > 60)
+						$interval = $cpentry[10];
+					else
+						$interval = 0;
+					$past_interval_min = ($session_time > $interval);
+					$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
+					if (($interval > 0 && $past_interval_min && $within_interval) || $interval === 0) {
+						RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+							$cpentry[4], // username
+							$cpentry[5], // sessionid
+							$cpentry[0], // start time
+							$radiusservers,
+							$cpentry[2], // clientip
+							$cpentry[3], // clientmac
+							10, // NAS Request
+							true); // Interim Updates
+					}
 				}
 			}
 
@@ -1211,7 +1220,7 @@ function captiveportal_opendb() {
 	else {
 		$errormsg = "";
 		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER) ", $errormsg)) {
+		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER) ", $errormsg)) {
 			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
 			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
 			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
@@ -1866,15 +1875,16 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$session_timeout = (!empty($attributes['session_timeout'])) ? $attributes['session_timeout'] : 'NULL';
 			$idle_timeout = (!empty($attributes['idle_timeout'])) ? $attributes['idle_timeout'] : 'NULL';
 			$session_terminate_time = (!empty($attributes['session_terminate_time'])) ? $attributes['session_terminate_time'] : 'NULL';
+			$interim_interval = (!empty($attributes['interim_interval'])) ? $attributes['interim_interval'] : 'NULL';
 
 			/* escape username */
 			$safe_username = sqlite_escape_string($username);
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time) ";
+			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
-			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time})";
+			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval})";
 
 			/* store information to database */
 			captiveportal_write_db($insertquery);

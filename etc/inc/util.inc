@@ -679,6 +679,14 @@ function is_valid_shaperbw($val) {
 	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
 }
 
+/* returns true if $test is in the range between $start and $end */
+function is_inrange_v4($test, $start, $end) {
+	if ( (ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start)) )
+		return true;
+	else
+		return false;
+}
+
 /* return the configured carp interface list */
 function get_configured_carp_interface_list() {
 	global $config;

@@ -199,13 +199,6 @@ if (is_array($dhcpdconf)) {
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
 $ifcfgsn = $config['interfaces'][$if]['subnet'];
 
-function is_inrange($test, $start, $end) {
-	if ( (ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start)) )
-		return true;
-	else
-		return false;
-}
-
 function validate_partial_mac_list($maclist) {
 	$macs = explode(',', $maclist);
 
@@ -299,7 +292,7 @@ if ($_POST) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
-					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
+					if($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
 						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."),$vip['subnet']);
 			}
 		}

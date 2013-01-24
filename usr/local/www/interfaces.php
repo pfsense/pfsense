@@ -354,19 +354,9 @@ if ($_POST['apply']) {
 
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-			foreach ($toapplylist as $ifapply => $values) {
-				if (isset($config['interfaces'][$ifapply]['enable'])) {
-					/* check if any old addresses need purging */
-					if(is_ipaddrv6($values['ipaddrv6'])) {
-						$realif = get_real_interface("$ifapply");
-						log_error("removing old v6 address {$values['ipaddrv6']} on {$realif}");
-						mwexec("/sbin/ifconfig {$realif} inet6 {$values['ipaddrv6']} -alias");
-					}
-					interface_reconfigure($ifapply, true);
-				} else {
-
-					interface_bring_down($ifapply);
-				}
+			foreach ($toapplylist as $ifapply => $ifcfgo) {
+				interface_bring_down($ifapply, false, $ifcfgo);
+				interface_configure($ifapply);
 			}
 		}
 		/* restart snmp so that it binds to correct address */
@@ -375,7 +365,7 @@ if ($_POST['apply']) {
 		/* sync filter configuration */
 		setup_gateways_monitor();
 
-		clear_subsystem_dirty('staticroutes');
+		clear_subsystem_dirty('interfaces');
 
 		filter_configure();
 
@@ -395,11 +385,8 @@ if ($_POST['apply']) {
 	} else {
 		$toapplylist = array();
 	}
-	$toapplylist[$if] = array();
+	$toapplylist[$if] = $wancfg;
 	/* we need to be able remove IP aliases for IPv6 */
-	if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
-		$toapplylist[$if]['ipaddrv6'] = "{$old_wancfg['ipaddrv6']}";
-	}
 	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 	header("Location: interfaces.php?if={$if}");
 	exit;
@@ -897,12 +884,7 @@ if ($_POST['apply']) {
 		} else {
 			$toapplylist = array();
 		}
-		$toapplylist[$if] = array();
-		/* we need to be able remove IP aliases for IPv6 */
-		if(($old_wancfg['ipaddrv6'] != $wancfg['ipaddrv6']) && (is_ipaddrv6($old_wancfg['ipaddrv6']))) {
-			$toapplylist[$if]['ipaddrv6'] = $old_wancfg['ipaddrv6'];
-		}
-		
+		$toapplylist[$if] = $old_wancfg;
 		file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 
 		mark_subsystem_dirty('interfaces');

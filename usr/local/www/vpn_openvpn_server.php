@@ -231,13 +231,22 @@ if ($_POST) {
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4"))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6"))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'Local network'))
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
 		$input_errors[] = $result;
 
 	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);

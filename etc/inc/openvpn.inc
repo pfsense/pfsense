@@ -209,14 +209,51 @@ function openvpn_validate_port($value, $name) {
 	return false;
 }
 
-function openvpn_validate_cidr($value, $name) {
+function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv4") {
+	$value = trim($value);
+	$error = false;
+	if (empty($value))
+		return false;
+	$networks = explode(',', $value);
+
+	if (!$multiple && (count($networks) > 1))
+		return sprintf(gettext("The field '%s' must contain a single valid %s CIDR range."), $name, $ipproto);
+
+	foreach ($networks as $network) {
+		if ($ipproto == "ipv4")
+			$error = !openvpn_validate_cidr_ipv4($network);
+		else
+			$error = !openvpn_validate_cidr_ipv6($network);
+		if ($error)
+			break;
+	}
+
+	if ($error)
+		return sprintf(gettext("The field '%s' must contain only valid %s CIDR range(s) separated by commas."), $name, $ipproto);
+	else
+		return false;
+}
+
+function openvpn_validate_cidr_ipv4($value) {
 	$value = trim($value);
 	if (!empty($value)) {
 		list($ip, $mask) = explode('/', $value);
-		if (!is_ipaddr($ip) or !is_numeric($mask) or ($mask > 32) or ($mask < 0))
-			return sprintf(gettext("The field '%s' must contain a valid CIDR range."), $name);
+		if (!is_ipaddrv4($ip) or !is_numeric($mask) or ($mask > 32) or ($mask < 0))
+			return false;
 	}
-	return false;
+	return true;
+}
+
+function openvpn_validate_cidr_ipv6($value) {
+	$value = trim($value);
+	if (!empty($value)) {
+		list($ipv6, $prefix) = explode('/', $value);
+		if (empty($prefix))
+			$prefix = "128";
+		if (!is_ipaddrv6($ipv6) or !is_numeric($prefix) or ($prefix > 128) or ($prefix < 0))
+			return false;
+	}
+	return true;
 }
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
@@ -523,15 +560,10 @@ function openvpn_reconfigure($mode, $settings) {
 
 		// Can we push routes
 		if ($settings['local_network']) {
-			list($ip, $mask) = explode('/', $settings['local_network']);
-			$mask = gen_subnet_mask($mask);
-			$conf .= "push \"route $ip $mask\"\n";
+			$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
 		}
 		if ($settings['local_networkv6']) {
-			list($ipv6, $prefix) = explode('/', $settings['local_networkv6']);
-			if (empty($prefix))
-				$prefix = "128";
-			$conf .= "push \"route-ipv6 $ipv6/$prefix\"\n";
+			$conf .= openvpn_gen_routes($settings['local_networkv6'], "ipv6", true);
 		}
 
 		switch($settings['mode']) {
@@ -613,16 +645,11 @@ function openvpn_reconfigure($mode, $settings) {
 
 	// Add a remote network route if set, and only for p2p modes.
 	if ((substr($settings['mode'], 0, 3) == "p2p") && is_subnet($settings['remote_network'])) {
-		list($ip, $mask) = explode('/', $settings['remote_network']);
-		$mask = gen_subnet_mask($mask);
-		$conf .= "route $ip $mask\n";
+		$conf .= openvpn_gen_routes($settings['remote_network'], "ipv4", false);
 	}
 	// Add a remote network route if set, and only for p2p modes.
 	if ((substr($settings['mode'], 0, 3) == "p2p") && is_subnet($settings['remote_networkv6'])) {
-		list($ipv6, $prefix) = explode('/', $settings['remote_networkv6']);
-		if (empty($prefix))
-			$prefix = "128";
-		$conf .= "route-ipv6 ${ipv6}/${prefix}\n";
+		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false);
 	}
 
 	// Write the settings for the keys
@@ -1171,6 +1198,39 @@ function openvpn_clear_route($mode, $settings) {
 			}
 			break;
 	}
+}
+
+function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false) {
+	$routes = "";
+	if (empty($value))
+		return "";
+	$networks = explode(',', $value);
+
+	foreach ($networks as $network) {
+		if ($ipproto == "ipv4")
+			$route = openvpn_gen_route_ipv4($network);
+		else
+			$route = openvpn_gen_route_ipv6($network);
+
+		if ($push)
+			$routes .= "push \"{$route}\"\n";
+		else
+			$routes .= "{$route}\n";
+	}
+	return $routes;
+}
+
+function openvpn_gen_route_ipv4($network) {
+	list($ip, $mask) = explode('/', trim($network));
+	$mask = gen_subnet_mask($mask);
+	return "route $ip $mask";
+}
+
+function openvpn_gen_route_ipv6($network) {
+	list($ipv6, $prefix) = explode('/', trim($network));
+	if (empty($prefix))
+		$prefix = "128";
+	return "route-ipv6 ${ipv6}/${prefix}";
 }
 
 ?>

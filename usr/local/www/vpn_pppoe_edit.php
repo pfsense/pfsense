@@ -145,6 +145,9 @@ if ($_POST) {
 		}
 	}
 
+	if ($_POST['pppoeid'] && !is_numeric($_POST['pppoeid']))
+		$input_errors[] = gettext("Wrong data submitted");
+
 	if (!$input_errors) {
 		$pppoecfg = array();
 

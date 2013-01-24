@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich

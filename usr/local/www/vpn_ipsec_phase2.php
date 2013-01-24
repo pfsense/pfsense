@@ -129,6 +129,10 @@ if ($_POST) {
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
+				elseif (is_ipaddrv4($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel"))
+					$input_errors[] = gettext("A valid local network IPv4 address must be specified or you need to change Mode to IPv6");
+				elseif (is_ipaddrv6($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel6"))
+					$input_errors[] = gettext("A valid local network IPv6 address must be specified or you need to change Mode to IPv4");
 				break;
 		}
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
@@ -151,6 +155,10 @@ if ($_POST) {
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
 						$input_errors[] = gettext("A valid nat local network IP address must be specified.");
+					elseif (is_ipaddrv4($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel"))
+						$input_errors[] = gettext("A valid nat local network IPv4 address must be specified or you need to change Mode to IPv6");
+					elseif (is_ipaddrv6($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel6"))
+						$input_errors[] = gettext("A valid nat local network IPv6 address must be specified or you need to change Mode to IPv4");
 					break;
 			}
 
@@ -171,6 +179,10 @@ if ($_POST) {
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
 					$input_errors[] = gettext("A valid remote network IP address must be specified.");
+				elseif (is_ipaddrv4($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel"))
+					$input_errors[] = gettext("A valid remote network IPv4 address must be specified or you need to change Mode to IPv6");
+				elseif (is_ipaddrv6($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel6"))
+					$input_errors[] = gettext("A valid remote network IPv6 address must be specified or you need to change Mode to IPv4");
 				break;
 		}
 	}
@@ -270,6 +282,14 @@ if ($_POST) {
 		if (isset($pconfig['mobile']))
 			$ph2ent['mobile'] = true;
 
+		ipsec_lookup_phase1($ph2ent, $ph1ent);
+		if (($ph1ent['protocol'] == "inet") && ($ph2ent['mode'] == "tunnel6"))
+			$input_errors[] = gettext("Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2.");
+		if (($ph1ent['protocol'] == "inet6") && ($ph2ent['mode'] == "tunnel"))
+			$input_errors[] = gettext("Phase 1 is using IPv6. You cannot use Tunnel IPv4 on Phase 2.");
+	}
+
+	if (!$input_errors) {
 		if (isset($p2index) && $a_phase2[$p2index])
 			$a_phase2[$p2index] = $ph2ent;
 		else

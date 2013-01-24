@@ -176,8 +176,14 @@ if ($_POST) {
 	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 
-	if (($pconfig['remotegw'] && !is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])))
-		$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
+	if ($pconfig['remotegw']) {
+		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))
+			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
+		elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet"))
+			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or you need to change protocol to IPv6");
+		elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6"))
+			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or you need to change protocol to IPv4");
+	}
 
 	if (($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled']) )) {
 		$t = 0;
@@ -189,6 +195,21 @@ if ($_POST) {
 				}
 			}
 			$t++;
+		}
+	}
+
+	if (is_array($a_phase2) && (count($a_phase2))) {
+		foreach ($a_phase2 as $phase2) {
+			if($phase2['ikeid'] == $pconfig['ikeid']) {
+				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
+					$input_errors[] = gettext("There is a Phase 2 using IPv6, you cannot use IPv4.");
+					break;
+				}
+				if (($pconfig['protocol'] == "inet6") && ($phase2['mode'] == "tunnel")) {
+					$input_errors[] = gettext("There is a Phase 2 using IPv4, you cannot use IPv6.");
+					break;
+				}
+			}
 		}
 	}
 

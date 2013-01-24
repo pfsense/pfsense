@@ -1070,7 +1070,7 @@ function interface_vip_bring_down($vip) {
 	}
 }
 
-function interface_bring_down($interface = "wan", $destroy = false) {
+function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = false) {
 	global $config, $g;
 
 	if (!isset($config['interfaces'][$interface]))
@@ -1079,7 +1079,13 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	if ($g['debug'])
 		log_error("Calling interface down for interface {$interface}, destroy is " . (($destroy) ? 'true' : 'false'));
 
-	$ifcfg = $config['interfaces'][$interface];
+	if ($ifacecfg === false)
+		$ifcfg = $config['interfaces'][$interface];
+	else if (!is_array($ifacecfg))
+		log_error(gettext("Wrong parameters used during interface_bring_down"));
+	else
+		$ifcfg = $ifacecfg;
+		
 
 	$realif = get_real_interface($interface);
 

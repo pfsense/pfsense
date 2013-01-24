@@ -687,6 +687,14 @@ function is_inrange_v4($test, $start, $end) {
 		return false;
 }
 
+/* returns true if $test is in the range between $start and $end */
+function is_inrange_v6($test, $start, $end) {
+	if ( (inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start)) )
+		return true;
+	else
+		return false;
+}
+
 /* return the configured carp interface list */
 function get_configured_carp_interface_list() {
 	global $config;

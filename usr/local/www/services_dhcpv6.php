@@ -144,13 +144,6 @@ if(is_array($dhcrelaycfg)) {
 	}
 }
 
-function is_inrange($test, $start, $end) {
-	if ( (inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start)) )
-		return true;
-	else
-		return false;
-}
-
 if ($_POST) {
 
 	unset($input_errors);
@@ -218,7 +211,7 @@ if ($_POST) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
-					if($vip['subnetv6'] && is_inrange($vip['subnetv6'], $_POST['range_from'], $_POST['range_to']))
+					if($vip['subnetv6'] && is_inrange_v6($vip['subnetv6'], $_POST['range_from'], $_POST['range_to']))
 						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IPv6 address %s."),$vip['subnetv6']);
 			}
 		}
@@ -234,8 +227,8 @@ if ($_POST) {
 			$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
 
 			if (is_ipaddrv6($ifcfgip)) {
-				if ((! is_inrange($_POST['range_from'], $subnet_start, $subnet_end)) ||
-			   	 (! is_inrange($_POST['range_to'], $subnet_start, $subnet_end))) {
+				if ((! is_inrange_v6($_POST['range_from'], $subnet_start, $subnet_end)) ||
+			   	 (! is_inrange_v6($_POST['range_to'], $subnet_start, $subnet_end))) {
 					$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 				}
 			}

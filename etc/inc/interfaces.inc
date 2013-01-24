@@ -1167,6 +1167,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			$ip6 = get_interface_ipv6($interface);
 			if (is_ipaddrv6($ip6))
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+			if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ifcfg['ipaddrv6']} delete", true);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");

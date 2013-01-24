@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	services.inc
 	part of the pfSense project (http://www.pfsense.com)

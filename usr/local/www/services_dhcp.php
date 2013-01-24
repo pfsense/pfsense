@@ -343,9 +343,24 @@ if ($_POST) {
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 
-			// TODO: Ensure range and pools do not overlap!
-			// If we're editing the main range, check pools
-			// If we're editing a pool, locate parent range and other pools.
+			if (is_numeric($pool) || ($act == "newpool")) {
+				$rfrom = $config['dhcpd'][$if]['range']['from'];
+				$rto = $config['dhcpd'][$if]['range']['to'];
+
+				if (is_inrange_v4($_POST['range_from'], $rfrom, $rto) || is_inrange_v4($_POST['range_to'], $rfrom, $rto))
+					$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
+			}
+
+			foreach ($a_pools as $id => $p) {
+				if (is_numeric($pool) && ($id == $pool))
+					continue;
+
+				if (is_inrange_v4($_POST['range_from'], $p['range']['from'], $p['range']['to']) ||
+				    is_inrange_v4($_POST['range_to'], $p['range']['from'], $p['range']['to'])) {
+					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
+					break;
+				}
+			}
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false))

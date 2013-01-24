@@ -75,6 +75,10 @@ if (!is_array($config['dhcpd'][$if]))
 if (!is_array($config['dhcpd'][$if]['staticmap']))
 	$config['dhcpd'][$if]['staticmap'] = array();
 
+if (!is_array($config['dhcpd'][$if]['pool']))
+	$config['dhcpd'][$if]['pool'] = array();
+$a_pools = &$config['dhcpd'][$if]['pool'];
+
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
@@ -182,6 +186,13 @@ if ($_POST) {
 		if ((ip2ulong($_POST['ipaddr']) >= $dynsubnet_start) &&
 			(ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
+		}
+
+		foreach ($a_pools as $id => $p) {
+			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
+				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
+				break;
+			}
 		}
 
 		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));

@@ -150,6 +150,8 @@ if ($_POST) {
 
 	if (is_array($_POST['members'])) {
 		foreach($_POST['members'] as $ifmembers) {
+			if (empty($config['interfaces'][$ifmembers]))
+				$input_errors[] = gettext("A member interface passed does not exist in configuration");
 			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
 				$config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap")
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");

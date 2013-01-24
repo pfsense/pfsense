@@ -80,7 +80,7 @@ if ($_POST) {
 			(!is_ipaddr($_POST['remote-addr']))) {
 		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
 	}
-	
+
 	$alias = strstr($_POST['if'],'|');
 	if ((is_ipaddrv4($alias) && !is_ipaddrv4($_POST['remote-addr'])) ||
 			(is_ipaddrv6($alias) && !is_ipaddrv6($_POST['remote-addr'])))
@@ -91,7 +91,7 @@ if ($_POST) {
 			continue;
 
 		/* FIXME: needs to perform proper subnet checks in the feature */
-		if (($gif['if'] == strtok($_POST['if'],'|')) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+		if (($gif['if'] == $interface && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
 			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['tunnel-remote-addr']);
 			break;
 		}

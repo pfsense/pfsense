@@ -65,8 +65,12 @@ function lagg_inuse($num) {
 }
 
 if ($_GET['act'] == "del") {
+        if (!isset($_GET['id']))
+                $input_errors[] = getext("Wrong parameters supplied");
+        else if (empty($a_laggs[$_GET['id']]))
+                $input_errors[] = getext("Wrong index supplied");
 	/* check if still in use */
-	if (lagg_inuse($_GET['id'])) {
+	else if (lagg_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
 		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");

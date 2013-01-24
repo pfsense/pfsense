@@ -60,8 +60,12 @@ function vlan_inuse($num) {
 }
 
 if ($_GET['act'] == "del") {
+        if (!isset($_GET['id']))
+                $input_errors[] = getext("Wrong parameters supplied");
+        else if (empty($a_vlans[$_GET['id']]))
+                $input_errors[] = getext("Wrong index supplied");
 	/* check if still in use */
-	if (vlan_inuse($_GET['id'])) {
+	else if (vlan_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	} elseif (!does_interface_exist($a_vlans[$_GET['id']]['vlanif'])) {
 		$input_errors[] = gettext("Invalid VLAN interface.");

@@ -80,6 +80,9 @@ if ($_POST) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 
+	if (!does_interface_exist($_POST['if']))
+		$input_errors[] = gettext("Interface supplied as parent is invalid");
+
 	foreach ($a_vlans as $vlan) {
 		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan))
 			continue;

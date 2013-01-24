@@ -62,6 +62,8 @@ $checklist = get_configured_interface_list(false, true);
 foreach ($checklist as $tmpif)
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 
+$laggprotos = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -86,6 +88,17 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Member interfaces"), gettext("Lagg protocol"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if (is_array($_POST['members'])) {
+		foreach ($_POST['members'] as $member) {
+			if (!does_interface_exist($_POST['members']))
+				$input_errors[] = gettext("Interface supplied as member is invalid");
+		}
+	} else if (!does_interface_exist($_POST['members']))
+		$input_errors[] = gettext("Interface supplied as member is invalid");
+
+	if (!in_array($_POST['proto'], $laggprotos))
+		$input_errors[] = gettext("Protocol supplied is invalid");
 
 	if (!$input_errors) {
 		$lagg = array();
@@ -154,7 +167,7 @@ include("head.inc");
                   <td class="vtable">
                     <select name="proto" class="formselect" id="proto">
 		<?php
-		foreach (array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin") as $proto) {
+		foreach ($laggprotos as $proto) {
 			echo "<option value=\"{$proto}\"";
 			if ($proto == $pconfig['proto'])
 				echo "selected";

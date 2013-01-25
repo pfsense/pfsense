@@ -66,7 +66,7 @@ function fetch_new_rules_callback(callback_data) {
 
 		new_data_to_add[new_data_to_add.length] = tmp;
 	}
-	update_div_rows(new_data_to_add);
+	update_table_rows(new_data_to_add);
 	isBusy = false;
 }
 
@@ -80,7 +80,7 @@ function in_arrayi(needle, haystack) {
 	return false;
 }
 
-function update_div_rows(data) {
+function update_table_rows(data) {
 	if(isPaused)
 		return;
 
@@ -98,26 +98,47 @@ function update_div_rows(data) {
 	}
 	data = data.slice(startat, data.length);
 
-	var rows = jQuery('.log-entry-mini');
-	if (jQuery(rows).length == 0) {
-		rows = jQuery('.log-entry');
-	}
+	var rows = jQuery('#filter-log-entries>tr');
 
-	for(var x=0; x<data.length; x++) {
-		/*    if reverse logging is enabled we need to show the
-		 *    records in a reverse order with new items appearing
-		 *    on the top
-		 */
-		if(isReverse == false) {
-			for (var i = 1; i < jQuery(rows).length; i++) {
-				jQuery(rows[i-1]).html(jQuery(rows[i]).html());
-			}
-		} else {
-			for (var i = jQuery(rows).length - 1; i > 0; i--) {
-				jQuery(rows[i]).html(jQuery(rows[i-1]).html());
+	// Number of rows to move by
+	var move = rows.length + data.length - nentries;
+	if (move < 0)
+		move = 0;
+
+	if (isReverse == false) {
+		for (var i = move; i < rows.length; i++) {
+			jQuery(rows[i - move]).html(jQuery(rows[i]).html());
+		}
+
+		var tbody = jQuery('#filter-log-entries');
+		for (var i = 0; i < data.length; i++) {
+			var rowIndex = rows.length - move + i;
+			if (rowIndex < rows.length) {
+				jQuery(rows[rowIndex]).html(data[i]);
+			} else {
+				jQuery(tbody).append('<tr>' + data[i] + '</tr>');
 			}
 		}
-		jQuery('#firstrow').html(data[x]);
+	} else {
+		for (var i = rows.length - 1; i >= move; i--) {
+			jQuery(rows[i]).html(jQuery(rows[i - move]).html());
+		}
+
+		var tbody = jQuery('#filter-log-entries');
+		for (var i = 0; i < data.length; i++) {
+			var rowIndex = move - 1 - i;
+			if (rowIndex >= 0) {
+				jQuery(rows[rowIndex]).html(data[i]);
+			} else {
+				jQuery(tbody).prepend('<tr>' + data[i] + '</tr>');
+			}
+		}
+	}
+
+	// Much easier to go through each of the rows once they've all be added.
+	rows = jQuery('#filter-log-entries>tr');
+	for (var i = 0; i < rows.length; i++) {
+		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
 	}
 }
 

@@ -104,12 +104,11 @@ else
 
 /* Called by the AJAX updater */
 function format_log_line(row) {
-	var line = '';
-	line = '  <span class="log-action-mini" nowrap>&nbsp;' + row[0] + '&nbsp;</span>';
-	line += '  <span class="log-interface-mini" nowrap>' + row[2] + '</span>';
-	line += '  <span class="log-source-mini" nowrap>' + row[3] + '</span>';
-	line += '  <span class="log-destination-mini" nowrap>' + row[4] + '</span>';
-	line += '  <span class="log-protocol-mini" nowrap>' + row[5] + '</span>';
+	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[5] + '">' + row[5] + '</td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -151,27 +150,48 @@ function format_log_line(row) {
 	</form>
 </div>
 
-<div class="log-header">
-    <span class="log-action-mini-header">Act</span>
-    <span class="log-interface-mini-header">IF</span>
-    <span class="log-source-mini-header">Source</span>
-    <span class="log-destination-mini-header">Destination</span>
-    <span class="log-protocol-mini-header">Prot</span>
-</div>
-<?php $counter=0; foreach ($filterlog as $filterent): ?>
-<div class="log-entry-mini" <?php echo is_first_row($counter, count($filterlog)); ?> style="clear:both;">
-	<span class="log-action-mini" nowrap>
-	&nbsp;<a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);"><img border="0" src="<?php echo find_action_image($filterent['act']);?>" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" /></a>&nbsp;</span>
-	<span class="log-interface-mini"><?php echo htmlspecialchars($filterent['interface']);?>&nbsp;</span>
-	<span class="log-source-mini"><?php echo htmlspecialchars($filterent['src']);?>&nbsp;</span>
-	<span class="log-destination-mini"><?php echo (strlen($filterent['dst']) < 19 ? htmlspecialchars($filterent['dst']) : htmlspecialchars(substr($filterent['dst'],0,18))."..."); ?>&nbsp;</span>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout: fixed;">
+	<colgroup>
+		<col style='width: 8%;' />
+		<col style='width: 10%;' />
+		<col style='width: 35%;' />
+		<col style='width: 35%;' />
+		<col style='width: 12%;' />
+	</colgroup>
+	<thead>
+		<tr>
+			<td class="listhdrr"><?=gettext("Act");?></td>
+			<td class="listhdrr"><?=gettext("IF");?></td>
+			<td class="listhdrr"><?=gettext("Source");?></td>
+			<td class="listhdrr"><?=gettext("Destination");?></td>
+			<td class="listhdrr"><?=gettext("Prot");?></td>
+		</tr>
+	</thead>
+	<tbody id='filter-log-entries'>
 	<?php
-	if ($filterent['proto'] == "TCP")
-		$filterent['proto'] .= ":{$filterent['tcpflags']}";
+	$rowIndex = 0;
+	foreach ($filterlog as $filterent):
+	$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+	$rowIndex++;
 	?>
-	<span class="log-protocol-mini"><?php echo htmlspecialchars($filterent['proto']);?>&nbsp;</span>
-</div>
-<?php $counter++; endforeach; ?>
+		<tr class="<?=$evenRowClass?>">
+			<td class="listMRlr" nowrap="nowrap" align="center">
+			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
+			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
+			</a>
+			</td>
+			<td class="listMRr ellipsis" nowrap="nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
+			<td class="listMRr ellipsis" nowrap="nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>"><?php echo htmlspecialchars($filterent['src']);?></td>
+			<td class="listMRr ellipsis" nowrap="nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>"><?php echo htmlspecialchars($filterent['dst']);?></td>
+			<?php
+				if ($filterent['proto'] == "TCP")
+					$filterent['proto'] .= ":{$filterent['tcpflags']}";
+			?>
+			<td class="listMRr ellipsis" nowrap="nowrap" title="<?php echo htmlspecialchars($filterent['proto']);?>"><?php echo htmlspecialchars($filterent['proto']);?></td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>
 
 <!-- needed to display the widget settings menu -->
 <script language="javascript" type="text/javascript">

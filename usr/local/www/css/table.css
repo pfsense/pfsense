@@ -40,3 +40,7 @@ if theme changes are needed include a table.css in the /themes/yourtheme/ */
 	border-left: none;
 	border-bottom: 2px solid #999999;
 }
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

@@ -937,6 +937,9 @@ function interfaces_configure() {
 	if (!$g['booting'])
 		$reload = true;
 
+	/* create the unconfigured wireless clones */
+	interfaces_create_wireless_clones();
+
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
 		if (strstr($realif, "bridge"))
@@ -959,9 +962,6 @@ function interfaces_configure() {
 				echo gettext( "done.") . "\n";
 		}
 	}
-
-	/* create the unconfigured wireless clones */
-	interfaces_create_wireless_clones();
 
 	/*
 	 * NOTE: The following function parameter consists of

@@ -920,6 +920,9 @@ function interfaces_configure() {
 	/* Set up our loopback interface */
 	interfaces_loopback_configure();
 
+	/* create the unconfigured wireless clones */
+	interfaces_create_wireless_clones();
+
 	/* set up LAGG virtual interfaces */
 	interfaces_lagg_configure();
 
@@ -936,9 +939,6 @@ function interfaces_configure() {
 	$reload = false;
 	if (!$g['booting'])
 		$reload = true;
-
-	/* create the unconfigured wireless clones */
-	interfaces_create_wireless_clones();
 
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];

@@ -3972,14 +3972,16 @@ function link_interface_to_vips($int, $action = "") {
 	global $config;
 
 	if (is_array($config['virtualip']['vip'])) {
+		$result = array();
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($int == $vip['interface']) {
 				if ($action == "update")
 					interfaces_vips_configure($int);
 				else
-					return $vip;
+					$result[] = $vip;
 			}
 		}
+		return $result;
 	}
 }
 

@@ -1751,7 +1751,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	/* read in client database */
 	$query = "WHERE ip = '{$clientip}'";
 	$tmpusername = strtolower($username);
-	if (isset($config['captiveportal']['noconcurrentlogins']))
+	if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins']))
 		$query .= " OR (username != 'unauthenticated' AND lower(username) = '{$tmpusername}')";
 	$cpdb = captiveportal_read_db($query);
 

@@ -576,7 +576,7 @@ EOD;
 
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
 <input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($pconfig['type']);?>" />
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
 	<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
   </tr>

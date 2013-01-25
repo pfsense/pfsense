@@ -170,7 +170,17 @@ function parse_filter_line($line) {
 		$flags = preg_split('/[, ]/', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	} elseif ($flent['proto'] == "Options") {
-		$flent['proto'] = "none";
+		/* Then there must be some info we missed */
+		if (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
+			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
+		} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
+			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
+		}
+		$proto = explode(" ", trim($proto[1]));
+		$flent['proto'] = rtrim($proto[0], ",");
+		/* If it's still 'Options', then just ignore it. */
+		if ($flent['proto'] == "Options")
+			$flent['proto'] = "none";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */

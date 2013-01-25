@@ -116,9 +116,9 @@ function display_error_form($http_code, $desc) {
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?> 
+		<?php else: ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?> 
+		<?php endif; ?>
 		<script type="text/javascript">
 		//<![CDATA[
 			function page_load() {}
@@ -224,9 +224,9 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?> 
+		<?php else: ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?> 
+		<?php endif; ?>
 		<script type="text/javascript">
 		//<![CDATA[
 			function page_load() {}

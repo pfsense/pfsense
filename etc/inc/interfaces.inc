@@ -395,10 +395,19 @@ function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
 }
 
 function interfaces_create_wireless_clones() {
-	global $config;
+	global $config, $g;
 
 	if($g['booting'])
-		echo gettext("Creating other wireless clone interfaces...");
+		echo gettext("Creating wireless clone interfaces...");
+
+	$iflist = get_configured_interface_list();
+
+	foreach (array_keys($iflist) as $if) {
+		$realif = $config['interfaces'][$if]['if'];
+		if (is_interface_wireless($realif))
+			interface_wireless_clone(interface_get_wireless_clone($realif), $config['interfaces'][$if]);
+	}
+
 	if (isset($config['wireless']['clone']) && is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
 		foreach ($config['wireless']['clone'] as $clone) {
 			if(empty($clone['cloneif']))
@@ -406,13 +415,11 @@ function interfaces_create_wireless_clones() {
 			if(does_interface_exist($clone['cloneif']))
 				continue;
 			/* XXX: Maybe we should report any errors?! */
-			if(interface_wireless_clone($clone['cloneif'], $clone))
-				if($g['booting'])
-					echo " " . $clone['cloneif'];
+			interface_wireless_clone($clone['cloneif'], $clone);
 		}
 	}
 	if($g['booting'])
-		echo " " . gettext("done.") . "\n";
+		echo gettext("done.") . "\n";
 
 }
 

@@ -831,6 +831,7 @@ include("fbegin.inc"); ?>
 						<option value="add-unassociated"><?=gettext("Add unassociated filter rule"); ?></option>
 						<option value="pass"><?=gettext("Pass"); ?></option>
 					</select>
+					<br/><br/><?=gettext("NOTE: The \"pass\" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.")?>
 				  </td>
                 </tr><?php endif; ?>
 <?php

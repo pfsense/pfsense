@@ -507,8 +507,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
-	} else
+	} else {
 		$bridgeif = pfSense_interface_create("bridge");
+		$bridge['bridgeif'] = $bridgeif;
+	}
 
 	$checklist = get_configured_interface_list();
 
@@ -525,7 +527,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		pfSense_interface_mtu($realif, $smallermtu);
 		pfSense_interface_capabilities($realif, -$flags);
 		interfaces_bring_up($realif);
-		pfSense_bridge_add_member($bridgeif, $realif);
+		pfSense_bridge_add_member($bridge['bridgeif'], $realif);
 	}
 
 	if (isset($bridge['enablestp'])) {
@@ -628,12 +630,12 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		}
 	}
 
-	if($bridgeif)
-		interfaces_bring_up($bridgeif);
+	if ($bridgeif)
+		interfaces_bring_up($bridge['bridgeif']);
 	else
 		log_error(gettext("bridgeif not defined -- could not bring interface up"));
 
-	return $bridgeif;
+	return $bridge['bridgeif'];
 }
 
 function interface_bridge_add_member($bridgeif, $interface) {

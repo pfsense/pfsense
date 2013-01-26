@@ -402,7 +402,7 @@ function interfaces_create_wireless_clones() {
 
 	$iflist = get_configured_interface_list();
 
-	foreach (array_keys($iflist) as $if) {
+	foreach ($iflist as $if) {
 		$realif = $config['interfaces'][$if]['if'];
 		if (is_interface_wireless($realif))
 			interface_wireless_clone(interface_get_wireless_clone($realif), $config['interfaces'][$if]);

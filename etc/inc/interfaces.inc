@@ -548,7 +548,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			mwexec("/sbin/ifconfig {$bridgeif_esc} hellotime " . escapeshellarg($bridge['hellotime']));
 		if (!empty($bridge['priority']))
 			mwexec("/sbin/ifconfig {$bridgeif_esc} priority " . escapeshellarg($bridge['priority']));
-		if (!empty($bridge['holdcount']))
+		if (!empty($bridge['holdcnt']))
 			mwexec("/sbin/ifconfig {$bridgeif_esc} holdcnt " . escapeshellarg($bridge['holdcnt']));
 		if (!empty($bridge['ifpriority'])) {
 			$pconfig = explode(",", $bridge['ifpriority']);

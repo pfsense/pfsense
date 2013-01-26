@@ -73,7 +73,7 @@ if (isset($id) && $a_bridges[$id]) {
 	$pconfig['hellotime'] = $a_bridges[$id]['hellotime'];
 	$pconfig['priority'] = $a_bridges[$id]['priority'];
 	$pconfig['proto'] = $a_bridges[$id]['proto'];
-	$pconfig['holdcount'] = $a_bridges[$id]['holdcount'];
+	$pconfig['holdcnt'] = $a_bridges[$id]['holdcnt'];
 	if (!empty($a_bridges[$id]['ifpriority'])) {
 		$pconfig['ifpriority'] = explode(",", $a_bridges[$id]['ifpriority']);
 		$ifpriority = array();
@@ -178,7 +178,7 @@ if ($_POST) {
 		$bridge['hellotime'] = $_POST['hellotime'];
 		$bridge['priority'] = $_POST['priority'];
 		$bridge['proto'] = $_POST['proto'];
-		$bridge['holdcount'] = $_POST['holdcount'];
+		$bridge['holdcnt'] = $_POST['holdcnt'];
 		$i = 0;
 		$ifpriority = "";
 		$ifpathcost = "";

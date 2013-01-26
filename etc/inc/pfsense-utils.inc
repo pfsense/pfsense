@@ -1054,59 +1054,40 @@ function print_value_list($list, $count = 10, $separator = ",") {
 }
 
 /* DHCP enabled on any interfaces? */
-function is_dhcp_server_enabled() 
-{
+function is_dhcp_server_enabled() {
 	global $config;
 
-	$dhcpdenable = false;
-	
 	if (!is_array($config['dhcpd']))
 		return false;
 
-	$Iflist = get_configured_interface_list();
-
-	if(is_array($config['dhcpd'])) {
-		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
-				$dhcpdenable = true;
-				break;
-			}
-		}
+	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+		if (isset($dhcpifconf['enable']) && !empty($config['interfaces'][$dhcpif]))
+			return true;
 	}
 
-	return $dhcpdenable;
+	return false;
 }
 
 /* DHCP enabled on any interfaces? */
-function is_dhcpv6_server_enabled() 
-{
+function is_dhcpv6_server_enabled() {
 	global $config;
 
-	$dhcpdenable = false;
-	
-	$Iflist = get_configured_interface_list();
-	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
-
-	foreach($Iflist as $ifname) {
-		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
-			return true;
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $ifcfg) {
+			if (!empty($ifcfg['track6-interface']))
+				return true;
 		}
 	}
 
 	if (!is_array($config['dhcpdv6']))
 		return false;
 
-
-	if(is_array($config['dhcpdv6'])) {
-		foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-			if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if])) {
-				$dhcpdenable = true;
-				break;
-			}
-		}
+	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if]))
+			return true;
 	}
 
-	return $dhcpdenable;
+	return false;
 }
 
 /* radvd enabled on any interfaces? */

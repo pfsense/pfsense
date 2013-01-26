@@ -57,6 +57,7 @@ function services_radvd_configure() {
 	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
+	$carplist = get_configured_carp_interface_list();
 
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
@@ -69,42 +70,39 @@ function services_radvd_configure() {
 		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
-		if(!isset($dhcpv6ifconf['ramode']))
+		if (!isset($dhcpv6ifconf['ramode']))
 			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
 
 		/* are router advertisements enabled? */
-		if($dhcpv6ifconf['ramode'] == "disabled")
+		if ($dhcpv6ifconf['ramode'] == "disabled")
 			continue;
 
-		if(!isset($dhcpv6ifconf['rapriority']))
+		if (!isset($dhcpv6ifconf['rapriority']))
 			$dhcpv6ifconf['rapriority'] = "medium";
 
 		/* always start with the real parent, we override with the carp if later */
-		$realif = get_real_interface($dhcpv6if);
 		$carpif = false;
 		/* check if we need to listen on a CARP interface */
-		$carplist = get_configured_carp_interface_list();
-		if($dhcpv6ifconf['rainterface'] <> "") {
-			if($carplist[$dhcpv6ifconf['rainterface']] <> "") {
-				$realif = $dhcpv6ifconf['rainterface'];
+		if ($dhcpv6ifconf['rainterface'] <> "") {
+			if (!empty($carplist[$dhcpv6ifconf['rainterface']])) {
+				$dhcpv6if = $dhcpv6ifconf['rainterface'];
 				$carpif = true;
 			}
 		}
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
-		if(!is_ipaddrv6($ifcfgipv6))
+		if (!is_ipaddrv6($ifcfgipv6))
 			continue;
 
-		if(in_array($realif, $radvdifs))
+		if (in_array($realif, $radvdifs))
 			continue;
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
-		$radvdifs[] = $realif;
-		$radvdifs[] = get_real_interface($realif);
-		
+		$radvdifs[] = get_real_interface($dhcpv6if);
+
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
@@ -161,7 +159,7 @@ function services_radvd_configure() {
 		}
 		$radvdconf .= "\t};\n";
 
-		if($carpif == true) {
+		if($carpif === true) {
 			$radvdconf .= "\troute ::/0 {\n";
 			$radvdconf .= "\t\tRemoveRoute off;\n";
 			$radvdconf .= "\t};\n";
@@ -173,27 +171,27 @@ function services_radvd_configure() {
 
 		/* add DNS servers */
 		$dnslist = array();
-		if(!empty($dhcpv6ifconf['dnsserver'][0])) {
+		if (is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
 			foreach($dhcpv6ifconf['dnsserver'] as $server) {
 				if(is_ipaddrv6($server))
 					$dnslist[] = $server;
 			}
 		} elseif (isset($config['dnsmasq']['enable'])) {
 			$dnslist[] = get_interface_ipv6($realif);
-		} elseif (!empty($config['system']['dnsserver'][0])) {
+		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 			foreach($config['system']['dnsserver'] as $server) {
-				if(is_ipaddrv6($server))
+				if (is_ipaddrv6($server))
 					$dnslist[] = $server;
 			}
 		}
-		if(count($dnslist) > 0) {
+		if (count($dnslist) > 0) {
 			$dnsstring = implode(" ", $dnslist);
-			if($dnsstring <> "")
+			if ($dnsstring <> "")
 				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 		}
-		if($dhcpv6ifconf['domain'] <> "") {
+		if (!empty($dhcpv6ifconf['domain'])) {
 			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { };\n";
-		} elseif ($config['system']['domain'] <> "") {
+		} elseif (!empty($config['system']['domain'])) {
 			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 		}
 		$radvdconf .= "};\n";
@@ -244,19 +242,19 @@ function services_radvd_configure() {
 				/* add DNS servers */
 				$dnslist = array();
 				if (isset($config['dnsmasq']['enable'])) {
-						$dnslist[] = $ifcfgipv6;
-				} elseif (!empty($config['system']['dnsserver'][0])) {
+					$dnslist[] = $ifcfgipv6;
+				} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 					foreach($config['system']['dnsserver'] as $server) {
 						if(is_ipaddrv6($server))
 							$dnslist[] = $server;
 					}
 				}
-				if(count($dnslist) > 0) {
+				if (count($dnslist) > 0) {
 					$dnsstring = implode(" ", $dnslist);
-					if($dnsstring <> "")
+					if (!empty($dnsstring))
 						$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 				}
-				if ($config['system']['domain'] <> "") {
+				if (!empty($config['system']['domain'])) {
 					$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 				}
 			$radvdconf .= "};\n";
@@ -265,22 +263,24 @@ function services_radvd_configure() {
 	}
 
 	/* write radvd.conf */
-	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf))
-		printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
+	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf)) {
+		log_error("Error: cannot open radvd.conf in services_radvd_configure().\n");
+		if ($g['booting'])
+			printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
+	}
 	unset($radvdconf);
 
-	if(count($radvdifs) > 0) {
-		if(is_process_running("radvd")) {
-			mwexec("killall -1 radvd");
-		} else {
-			mwexec("/usr/local/sbin/radvd -C {$g['varetc_path']}/radvd.conf -m syslog");
-		}
+	if (count($radvdifs) > 0) {
+		if (isvalidpid("{$g['varrun_path']}/radvd.pid"))
+			sigkillbypid("{$g['varrun_path']}/radvd.pid", "HUP");
+		else
+			mwexec("/usr/local/sbin/radvd -p {$g['varrun_path']}/radvd.pid -C {$g['varetc_path']}/radvd.conf -m syslog");
 	} else {
 		/* we need to shut down the radvd cleanly, it will send out the prefix
 		 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
-		if(is_process_running("radvd")) {
+		if (isvalidpid("{$g['varrun_path']}/radvd.pid")) {
 			log_error("Shutting down Router Advertisment daemon cleanly");
-			mwexec("killall radvd");
+			killbypid("{$g['varrun_path']}/radvd.pid");
 		}
 	}
 	return 0;
@@ -291,7 +291,6 @@ function services_dhcpd_configure() {
 
 	/* configure DHCPD chroot once */
 	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
-	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
@@ -306,6 +305,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
+	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
 	if(!trim($status))
 		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
@@ -329,9 +329,10 @@ function services_dhcpdv4_configure() {
 	}
 
 	/* kill any running dhcpd */
-	if(is_process_running("dhcpd")) {
+	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid"))
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
-	}
+	else
+		mwexec("/usr/bin/killall dhcpd");
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcp_server_enabled())
@@ -368,13 +369,6 @@ function services_dhcpdv4_configure() {
 		echo gettext("Starting DHCP service...");
 	else
 		sleep(1);
-
-	/* write dhcpd.conf */
-	$fd = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpd.conf", "w");
-	if (!$fd) {
-		printf(gettext("Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"), "\n");
-		return 1;
-	}
 
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
@@ -808,23 +802,26 @@ EOD;
 		$dhcpdifs[] = get_real_interface($dhcpif);
 	}
 
-	fwrite($fd, $dhcpdconf);
-	fclose($fd);
+	/* write dhcpd.conf */
+	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpd.conf", $dhcpdconf)) {
+		printf(gettext("Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"), "\n");
+		unset($dhcpdconf);
+		return 1;
+	}
 	unset($dhcpdconf);
 
 	/* create an empty leases database */
-	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-
+	if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))
+		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
 	/* fire up dhcpd in a chroot */
-	if(count($dhcpdifs) > 0) {
+	if (count($dhcpdifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf -pf {$g['varrun_path']}/dhcpd.pid " .
 			join(" ", $dhcpdifs));
 	}
 
-	if ($g['booting']) {
+	if ($g['booting'])
 		print "done.\n";
-	}
 
 	return 0;
 }
@@ -841,11 +838,10 @@ function services_dhcpdv6_configure() {
 	}
 
 	/* kill any running dhcpd */
-	if(is_process_running("dhcpd")) {
+	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid"))
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+	if (isvalidpid("{$g['varrun_path']}/dhcpleases6.pid"))
 		killbypid("{$g['varrun_path']}/dhcpleases6.pid");
-	}
-
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcpv6_server_enabled())
@@ -880,13 +876,13 @@ function services_dhcpdv6_configure() {
 		sleep(1);
 
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
-	foreach($Iflist as $ifname) {
+	foreach ($Iflist as $ifname) {
 		$realif = get_real_interface($ifname);
 		$ifcfgipv6 = find_interface_ipv6($realif);
 		if(!is_ipaddrv6($ifcfgipv6))
 			continue;
 		$ifcfgipv6 = Net_IPv6::getNetmask($ifcfgipv6, 64);
-		if($config['interfaces'][$ifname]['track6-interface'] <> "") {
+		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
 			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
 			$trackcfg = $config['interfaces'][$trackifname];
 			$pdlen = calculate_ipv6_delegation_length($trackifname);
@@ -917,13 +913,6 @@ function services_dhcpdv6_configure() {
 				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
 			}
 		}
-	}
-
-	/* write dhcpdv6.conf */
-	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
-	if (! $fdv6) {
-		printf("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
-		return 1;
 	}
 
 	$custoptionsv6 = "";
@@ -1013,7 +1002,7 @@ EOD;
 		} else {
 			$subnet6 = Net_IPv6::compress(gen_subnetv6($dhcpv6ifconf['range']['from'], "64"));
 			$dhcpdv6conf .= "subnet6 {$subnet6}/64 {\n";
-		}	
+		}
 
 		if($dhcpv6ifconf['failover_peerip'] <> "")
 			$dhcpdv6conf .= "		deny dynamic bootp clients;\n";
@@ -1077,8 +1066,8 @@ EOD;
 			}
 			if ($dhcpv6ifconf['rootpath'] <> "") {
 				$dhcpdv6conf .= "	option root-path \"{$dhcpv6ifconf['rootpath']}\";\n";
-      		}
-	}
+			}
+		}
 
 		$dhcpdv6conf .= <<<EOD
 }
@@ -1132,22 +1121,29 @@ EOD;
 		}
 	}
 
-	fwrite($fdv6, $dhcpdv6conf);
-	fclose($fdv6);
+	/* write dhcpdv6.conf */
+	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
+	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
+		log_error("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
+		if ($g['booting'])
+			printf("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
+		unset($dhcpdv6conf);
+		return 1;
+	}
 	unset($dhcpdv6conf);
 
 	/* create an empty leases v6 database */
-	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
+	if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases"))
+		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 
 	/* fire up dhcpd in a chroot */
-	if(count($dhcpdv6ifs) > 0) {
+	if (count($dhcpdv6ifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -6 -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpdv6.conf -pf {$g['varrun_path']}/dhcpdv6.pid " .
 			join(" ", $dhcpdv6ifs));
 		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
-	if ($g['booting']) {
+	if ($g['booting'])
 		print gettext("done.") . "\n";
-	}
 
 	return 0;
 }

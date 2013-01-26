@@ -495,19 +495,18 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
-		if (!array_key_exists($member, $checklist))
+		if (empty($checklist[$member]))
 			continue;
-		$realif1 = get_real_interface($member);
-		$realif =  escapeshellarg($realif1);
+		$realif = get_real_interface($member);
 		if (!$realif) {
 			log_error("realif not defined in interfaces bridge - up");
 			continue;
 		}
 		/* make sure the parent interface is up */
-		pfSense_interface_mtu($realif1, $smallermtu);
-		pfSense_interface_capabilities($realif1, -$flags);
-		interfaces_bring_up($realif1);
-		pfSense_bridge_add_member($bridgeif, $realif1);
+		pfSense_interface_mtu($realif, $smallermtu);
+		pfSense_interface_capabilities($realif, -$flags);
+		interfaces_bring_up($realif);
+		pfSense_bridge_add_member($bridgeif, $realif);
 	}
 
 	if (isset($bridge['enablestp'])) {

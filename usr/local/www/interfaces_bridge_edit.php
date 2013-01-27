@@ -212,7 +212,7 @@ if ($_POST) {
 			$bridge['autoptp'] = implode(',', $_POST['autoptp']);
 
 		$bridge['bridgeif'] = $_POST['bridgeif'];
-		$bridge['bridgeif'] = interface_bridge_configure($bridge);
+		interface_bridge_configure($bridge);
 		if ($bridge['bridgeif'] == "" || !stristr($bridge['bridgeif'], "bridge"))
 			$input_errors[] = gettext("Error occured creating interface, please retry.");
 		else {

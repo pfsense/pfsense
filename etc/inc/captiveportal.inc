@@ -987,9 +987,9 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
-	$rules .= "pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16\n";
+	pfSense_pipe_action("pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeno + 1;
-	$rules .= "pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16\n";
+	pfSense_pipe_action("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";

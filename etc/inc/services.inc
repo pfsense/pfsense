@@ -90,18 +90,18 @@ function services_radvd_configure() {
 			}
 		}
 
+		$realif = get_real_interface($dhcpv6if);
+		if (in_array($realif, $radvdifs))
+			continue;
+		$radvdifs[] = $realif;
+
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		if (!is_ipaddrv6($ifcfgipv6))
-			continue;
-
-		if (in_array($realif, $radvdifs))
 			continue;
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
-
-		$radvdifs[] = get_real_interface($dhcpv6if);
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";

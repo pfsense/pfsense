@@ -25,7 +25,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/local/bin/openssl
 	pfSense_MODULE:	captiveportal
 */
 
@@ -56,8 +56,8 @@ require("captiveportal.inc");
 require_once("voucher.inc");
 
 if($_REQUEST['generatekey']) {
-	exec("openssl genrsa 64 > /tmp/key64.private");
-	exec("openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
+	exec("/usr/local/bin/openssl genrsa 64 > /tmp/key64.private");
+	exec("/usr/local/bin/openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
 	$privatekey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.private"));
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");

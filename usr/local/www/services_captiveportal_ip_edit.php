@@ -145,18 +145,18 @@ if ($_POST) {
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
-                        if (is_ipaddr($oldip)) { 
-                                if (!empty($oldmask))
-                                        $ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
-                                else
-                                        $ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
-                        }
-			$rules = "table 3 delete {$oldip}";
-			$rules .= "table 4 delete {$oldip}";
+			if (is_ipaddr($oldip)) { 
+				if (!empty($oldmask))
+					$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
+				else
+					$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
+			}
+			$rules = "table 3 delete {$oldip}\n";
+			$rules .= "table 4 delete {$oldip}\n";
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-				$rules .= "pipe delete {$ipfw['dnpipe']}";
-				$rules .= "pipe delete " . ($ipfw['dnpipe']+1);
+				$rules .= "pipe delete {$ipfw['dnpipe']}\n";
+				$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
 			}
 			$rules .= captiveportal_allowedip_configure_entry($ip);
 			$uniqid = uniqid("{$cpzone}_allowed");

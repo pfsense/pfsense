@@ -91,7 +91,7 @@ if ($_POST) {
 			continue;
 
 		/* FIXME: needs to perform proper subnet checks in the feature */
-		if (($gif['if'] == $interface && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
+		if (($gif['if'] == $interface) && ($gif['tunnel-remote-addr'] == $_POST['tunnel-remote-addr'])) {
 			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['tunnel-remote-addr']);
 			break;
 		}

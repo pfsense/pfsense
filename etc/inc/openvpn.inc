@@ -180,12 +180,31 @@ function openvpn_get_cipherlist() {
 
 function openvpn_get_engines() {
 	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
-	exec("/usr/local/bin/openssl engine", $openssl_engine_output);
+	exec("/usr/local/bin/openssl engine -t -c", $openssl_engine_output);
+	$openssl_engine_output = implode("\n", $openssl_engine_output);
+	$openssl_engine_output = preg_replace("/\\n\\s+/", "|", $openssl_engine_output);
+	$openssl_engine_output = explode("\n", $openssl_engine_output);
+
 	foreach ($openssl_engine_output as $oeo) {
+		$keep = true;
+		$details = explode("|", $oeo);
+		$engine = array_shift($details);
 		$linematch = array();
-		preg_match("/\((.*)\)\s(.*)/", $oeo, $linematch);
-		if ($linematch[1] != "dynamic")
-			$openssl_engines[$linematch[1]] = $linematch[2];
+		preg_match("/\((.*)\)\s(.*)/", $engine, $linematch);
+		foreach ($details as $dt) {
+			if (strpos($dt, "unavailable") !== FALSE)
+				$keep = false;
+			if (strpos($dt, "available") !== FALSE)
+				continue;
+			if (strpos($dt, "[") !== FALSE)
+				$ciphers = trim($dt, "[]");
+		}
+		if (!empty($ciphers))
+			$ciphers = " - " . $ciphers;
+		if (strlen($ciphers) > 60)
+			$ciphers = substr($ciphers, 0, 60) . " ... ";
+		if ($keep)
+			$openssl_engines[$linematch[1]] = $linematch[2] . $ciphers;
 	}
 	return $openssl_engines;
 }

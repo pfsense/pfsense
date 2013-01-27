@@ -442,16 +442,16 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	global $config, $g;
 
 	if (!is_array($bridge))
-	        return -1;
+		return;
 
 	if (empty($bridge['members'])) {
 		log_error(sprintf(gettext("No members found on %s"), $bridge['bridgeif']));
-		return -1;
+		return;
 	}
 
 	$members = explode(',', $bridge['members']);
 	if (!count($members))
-		return -1;
+		return;
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
@@ -634,8 +634,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		interfaces_bring_up($bridge['bridgeif']);
 	else
 		log_error(gettext("bridgeif not defined -- could not bring interface up"));
-
-	return $bridge['bridgeif'];
 }
 
 function interface_bridge_add_member($bridgeif, $interface) {

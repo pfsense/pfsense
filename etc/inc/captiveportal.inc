@@ -924,9 +924,9 @@ function captiveportal_passthrumac_configure_entry($macent) {
 
 	$rules = "";
 	$pipeup = $pipeno;
-	$rules .= "pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16\n";
+	pfSense_pipe_action("pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeno + 1;
-	$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16\n";
+	pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
 	$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC {$macent['mac']} any\n";
 	$ruleno++;
 	$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC any {$macent['mac']}\n";

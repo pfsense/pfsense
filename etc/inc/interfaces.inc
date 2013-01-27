@@ -630,7 +630,7 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		}
 	}
 
-	if ($bridgeif)
+	if ($bridge['bridgeif'])
 		interfaces_bring_up($bridge['bridgeif']);
 	else
 		log_error(gettext("bridgeif not defined -- could not bring interface up"));

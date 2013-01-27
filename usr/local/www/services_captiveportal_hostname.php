@@ -73,6 +73,7 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 				$ipent['ip'] .= "/{$ipent['sn']}";
 			$ip = gethostbyname($ipent['ip']);
 			if(is_ipaddr($ip)) {
+				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ip);
 				if (is_array($ipfw)) {
 					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");

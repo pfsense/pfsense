@@ -1109,20 +1109,20 @@ EOD;
 				/* magic here */
 				$dhcpdv6ifs = array_merge($dhcpdv6ifs, get_pppoes_child_interfaces($dhcpv6if));
 			} else {
-				$realif = escapeshellcmd(get_real_interface($dhcpv6if));
-				$dhcpdv6ifs[] = $realif;
-				exec("/sbin/ifconfig {$realif} |awk  '/ether/ {print $2}'", $mac);
-				$v6address = generate_ipv6_from_mac($mac[0]);
-				/* Create link local address for bridges */
-				if(stristr("$realif", "bridge")) {
+				$realif = get_real_interface($dhcpv6if);
+				if (stristr("$realif", "bridge")) {
+					$mac = get_interface_mac($realif);
+					$v6address = generate_ipv6_from_mac($mac);
+					/* Create link local address for bridges */
 					mwexec("/sbin/ifconfig {$realif} inet6 {$v6address}");
 				}
+				$realif = escapeshellcmd($realif);
+				$dhcpdv6ifs[] = $realif;
 			}
 		}
 	}
 
 	/* write dhcpdv6.conf */
-	$fdv6 = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", "w");
 	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
 		log_error("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		if ($g['booting'])

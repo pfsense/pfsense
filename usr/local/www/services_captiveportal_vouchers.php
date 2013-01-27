@@ -36,15 +36,6 @@
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
-        $cpzone = $_POST['zone'];
-
-if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-        header("Location: services_captiveportal_zones.php");
-        exit;
-}
-
 if ($_POST['postafterlogin'])
 	$nocsrf= true;
 
@@ -54,6 +45,15 @@ require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
 
 if($_REQUEST['generatekey']) {
 	exec("/usr/local/bin/openssl genrsa 64 > /tmp/key64.private");

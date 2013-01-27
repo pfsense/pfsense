@@ -1083,7 +1083,7 @@ function is_dhcpv6_server_enabled() {
 		return false;
 
 	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-		if (isset($dhcpv6ifconf['enable']) && isset($Iflist[$dhcpv6if]))
+		if (isset($dhcpv6ifconf['enable']) && !empty($config['interfaces'][$dhcpv6if]))
 			return true;
 	}
 

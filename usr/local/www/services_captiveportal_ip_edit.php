@@ -155,8 +155,8 @@ if ($_POST) {
 			$rules .= "table 4 delete {$oldip}\n";
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-				$rules .= "pipe delete {$ipfw['dnpipe']}\n";
-				$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
+				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
+				pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 			}
 			$rules .= captiveportal_allowedip_configure_entry($ip);
 			$uniqid = uniqid("{$cpzone}_allowed");

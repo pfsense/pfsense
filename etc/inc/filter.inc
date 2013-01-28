@@ -557,8 +557,17 @@ function filter_generate_aliases() {
 
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
+	$aliases .= "table <virusprot>\n";
 
-	$aliases .= "\ntable <virusprot>\n";
+	$vpns_list = filter_get_vpns_list();
+	if($vpns_list)
+		$aliases .= "table <vpn_networks> { $vpns_list }\n";
+
+	/* add a Negate_networks table */
+	$aliases .= "table <negate_networks> ";
+	if($vpns_list)
+		$aliases .= "{ $vpns_list }";
+	$aliases .= "\n";
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
@@ -705,6 +714,22 @@ function filter_get_vpns_list() {
 	$vpns = "";
 	$vpns_arr = array();
 
+	/* ipsec */
+	if (isset($config['ipsec']['enable'])) {
+		if (is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as $ph2ent) {
+				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
+					if (!function_exists('ipsec_idinfo_to_cidr'))
+						require_once("ipsec.inc");
+					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if ($vpns_subnet == "0.0.0.0/0")
+						continue;
+					$vpns_arr[] = $vpns_subnet;
+				}
+			}
+		}
+	}
+
 	/* openvpn */
 	foreach (array('client', 'server') as $type) {
 		if(is_array($config['openvpn']["openvpn-$type"])) {
@@ -730,9 +755,10 @@ function filter_get_vpns_list() {
 			}
 		}
 	}
-	if(!empty($vpns_arr)) {
+
+	if (!empty($vpns_arr))
 		$vpns = implode(" ", $vpns_arr);
-	}
+
 	return $vpns;
 }
 
@@ -1618,17 +1644,6 @@ function filter_nat_rules_generate() {
 				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
 		}
 	}
-
-	$interface_counter = 0;
-	$vpns_list = filter_get_vpns_list();
-	if($vpns_list)
-		$natrules .= "table <vpn_networks> { $vpns_list }\n";
-	
-	/* add a Negate_networks table */
-	$natrules .= "table <negate_networks> {";
-	if($vpns_list)
-		$natrules .= " $vpns_list ";
-	$natrules .= "}\n";
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if(isset($config['diag']['ipv6nat']['enable']) &&

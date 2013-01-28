@@ -2049,8 +2049,7 @@ function upgrade_054_to_055() {
 	setup_gateways_monitor();
 
 	/* build a list of traffic and packets databases */
-	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
 		$databasetmp = "{$database}.tmp";
@@ -2662,8 +2661,7 @@ function upgrade_080_to_081() {
 	$upstream = 125000000;
 
 	/* build a list of traffic and packets databases */
-	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
 		$databasetmp = "{$database}.tmp";

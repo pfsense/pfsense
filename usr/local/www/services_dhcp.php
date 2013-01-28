@@ -1142,6 +1142,10 @@ include("head.inc");
 		<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
+			<td colspan="5" valign="top" class="listtopic"><?=gettext("DHCP Static Mappings for this interface.");?></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
 			<td width="7%" class="listhdrr"><?=gettext("Static ARP");?></td>
 			<td width="18%" class="listhdrr"><?=gettext("MAC address");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>

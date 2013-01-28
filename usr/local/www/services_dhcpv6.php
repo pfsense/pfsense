@@ -843,6 +843,10 @@ display_top_tabs($tab_array);
 		</table>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
+			<td colspan="4" valign="top" class="listtopic"><?=gettext("DHCPv6 Static Mappings for this interface.");?></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
 			<td width="25%" class="listhdrr"><?=gettext("DUID");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IPv6 address");?></td>
 			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>

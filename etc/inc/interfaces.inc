@@ -1147,7 +1147,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			mwexec("/bin/kill {$pidv6}");
 		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
-		if(does_interface_exist("$realif")) {
+		if (does_interface_exist("$realif")) {
 			$ip6 = get_interface_ipv6($interface);
 			if (is_ipaddrv6($ip6))
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
@@ -2656,6 +2656,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	global $interface_snv6_arr_cache, $interface_ipv6_arr_cache;
 
 	$wancfg = $config['interfaces'][$interface];
+
+	if (!isset($wancfg['enable']))
+		return;
 
 	$realif = get_real_interface($interface);
 	$realhwif_array = get_parent_interface($interface);

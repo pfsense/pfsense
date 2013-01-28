@@ -887,6 +887,10 @@ include("head.inc");
 		</table>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
+			<td colspan="4" valign="top" class="listtopic"><?=gettext("DHCP Static Mappings for this interface.");?></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
 			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>
 			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>

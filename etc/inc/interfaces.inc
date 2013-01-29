@@ -3330,10 +3330,10 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* wide-dhcp6c works for now. */
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}.conf", $dhcp6cconf)) {
 		printf("Error: cannot open dhcp6c_{$interface}.conf in interface_dhcpv6_configure() for writing.\n");
-		unet($dhcp6cconf);
+		unset($dhcp6cconf);
 		return 1;
 	}
-	unet($dhcp6cconf);
+	unset($dhcp6cconf);
 
 	$dhcp6cscript = "#!/bin/sh\n";
 	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
@@ -3341,10 +3341,10 @@ function interface_dhcpv6_configure($interface = "wan") {
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", $dhcp6cscript)) {
 		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
-		unet($dhcp6cscript);
+		unset($dhcp6cscript);
 		return 1;
 	}
-	unet($dhcp6cscript);
+	unset($dhcp6cscript);
 	@chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
 
 

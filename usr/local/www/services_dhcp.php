@@ -128,6 +128,7 @@ $act = $_GET['act'];
 if (!empty($_POST['act']))
 	$act = $_POST['act'];
 
+$a_pools = array();
 
 if (is_array($config['dhcpd'][$if])){
 	$pool = $_GET['pool'];

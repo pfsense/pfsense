@@ -553,7 +553,7 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
-                if ($vendor == 1584) {
+                elseif ($vendor == 1584) {
 
                     switch ($attrv) {
                     case 102:
@@ -562,7 +562,7 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
-                if ($vendor == 3309) {    /* RADIUS_VENDOR_NOMADIX */
+                elseif ($vendor == 3309) {    /* RADIUS_VENDOR_NOMADIX */
 
                     switch ($attrv) {
                     case 1: /* RADIUS_NOMADIX_BW_UP */
@@ -589,7 +589,7 @@ class Auth_RADIUS extends PEAR {
                     }
                 } 
 
-        	if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
+        	elseif ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
 
             		switch ($attrv) {
             		case 1: /* WISPr-Location-ID */
@@ -628,7 +628,7 @@ class Auth_RADIUS extends PEAR {
            		}
         	}
 
-		if ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
+		elseif ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
 			switch ($attrv) {
 			case 4: /* ChilliSpot-Bandwidth-Max-Up */
 				$this->attributes['bw_up'] = radius_cvt_int($datav);
@@ -639,6 +639,34 @@ class Auth_RADIUS extends PEAR {
 			}
 		}
 
+        elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
+             //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
+            if ($attrv == 0) { /* Colubris AV-Pair */
+			    $datav = explode('=', $datav);
+			    switch ($datav[0]) {
+                case 'max-input-rate':
+                    // "Controls the data rate [kbps] at which traffic can be transferred from the user to the [router]."
+                    $this->attributes['bw_up'] = radius_cvt_int($datav[1]);
+                    break;
+                case 'max-output-rate':
+                    //"Controls the data rate [kbps] at which traffic can be transferred from the [router] to the user."
+                    $this->attributes['bw_down'] = radius_cvt_int($datav[1]);
+                    break;
+                case 'max-input-octets':
+                    $this->attributes['maxbytesup'] = radius_cvt_int($datav[1]);
+                    break;
+                case 'max-output-octets':
+                    $this->attributes['maxbytesdown'] = radius_cvt_int($datav[1]);
+                    break;
+                case 'welcome-url':
+                    $this->attributes['url_redirection'] = radius_cvt_string($datav[1]);
+                    break;
+                case 'goodbye-url':
+                    $this->attributes['url_logoff'] = radius_cvt_string($datav[1]);
+                    break;
+                }
+            }
+        }
                 break;
 
 		case 85: /* Acct-Interim-Interval: RFC 2869 */

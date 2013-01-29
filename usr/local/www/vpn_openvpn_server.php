@@ -1222,56 +1222,56 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="local_optsv4">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
+							<input name="local_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_network']);?>">
 							<br>
-							<?=gettext("This is the network that will be accessible " .
-							"from the remote endpoint. Expressed as a CIDR " .
-							"range. You may leave this blank if you don't " .
+							<?=gettext("These are the IPv4 networks that will be accessible " .
+							"from the remote endpoint. Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"You may leave this blank if you don't " .
 							"want to add a route to the local network " .
 							"through this tunnel on the remote machine. " .
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
 					<tr id="local_optsv6">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="local_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
+							<input name="local_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
 							<br>
-							<?=gettext("This is the IPv6 network that will be accessible " .
-							"from the remote endpoint. Expressed as a CIDR " .
-							"range. You may leave this blank if you don't " .
+							<?=gettext("These are the IPv6 networks that will be accessible " .
+							"from the remote endpoint. Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"You may leave this blank if you don't " .
 							"want to add a route to the local network " .
 							"through this tunnel on the remote machine. " .
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
 					<tr id="remote_optsv4">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							<?=gettext("This is a network that will be routed through " .
+							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank if " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>
 					<tr id="remote_optsv6">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
 							<br>
-							<?=gettext("This is an IPv6 network that will be routed through " .
+							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as an IP/PREFIX. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank if " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>

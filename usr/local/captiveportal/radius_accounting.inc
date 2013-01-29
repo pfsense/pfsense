@@ -178,6 +178,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
 
     // close OO RADIUS_ACCOUNTING
     $racct->close();
+    unset($racct);
 
     return $retvalue ;
 

@@ -205,6 +205,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
 
     // close OO RADIUS_AUTHENTICATION
     $rauth->close();
+    unset($rauth);
 
     return $retvalue;
 

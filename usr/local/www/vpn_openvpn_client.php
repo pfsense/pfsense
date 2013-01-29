@@ -815,30 +815,30 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							<?=gettext("This is a network that will be routed through " .
+							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank to " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
 							<br>
-							<?=gettext("This is an IPv6 network that will be routed through " .
+							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as an IP/PREFIX. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank to " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
 					</tr>
@@ -906,7 +906,7 @@ if ($savemsg)
 									<td>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
 										<?=gettext("Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon"); ?><br/>
-										<?=gettext("EXAMPLE: route 10.0.0.0 255.255.255.0;"); ?>
+										<?=gettext("EXAMPLE:"); ?> <strong>remote server.mysite.com 1194;</strong> or <strong>remote 1.2.3.4 1194;</strong>
 									</td>
 								</tr>
 							</table>

@@ -1160,7 +1160,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		break;
 	case "6rd":
 	case "6to4":
-		$realif = "stf0";
+		$realif = "{$interface}_stf";
 		if(does_interface_exist("$realif")) {
 			$ip6 = get_interface_ipv6($interface);
 			if (is_ipaddrv6($ip6))
@@ -3148,12 +3148,14 @@ function interface_6rd_configure($interface = "wan") {
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
-	/* stf approach only works when embedding the entire 32 bits of the v4 */
-	mwexec("/sbin/ifconfig stf0 create");
-	pfSense_interface_flags("stf0", IFF_LINK2);
-	mwexec("/sbin/ifconfig stf0 inet6 {$rd6prefix}/{$rd6prefixlen}");
+	/* XXX: need to extend to support variable prefix size for v4 */
+	$tmpstfiface = pfSense_interface_create("stf");
+	$stfiface = "{$interface}_stf";
+	pfSense_interface_rename($tmpstfiface, $stfiface);
+	pfSense_interface_flags($stfiface, IFF_LINK2);
+	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	if ($g['debug'])
-		log_error("Created 6rd interface stf0 {$rd6prefix}/{$rd6prefixlen}");
+		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
@@ -3249,12 +3251,15 @@ function interface_6to4_configure($interface = "wan"){
 	$stflan = Net_IPv6::compress(implode(":", $stflanarr));
 
 	/* setup the stf interface */
-	mwexec("/sbin/ifconfig stf0 destroy");
-	mwexec("/sbin/ifconfig stf0 create");
-	pfSense_interface_flags("stf0", IFF_LINK2);
-	mwexec("/sbin/ifconfig stf0 inet6 {$stflanpr} prefixlen 16");
+	$stfiface = "{$interface}_stf";
+	pfSense_interface_destroy($stfiface);
+	$tmpstfiface = pfSense_interface_create("stf");
+	pfSense_interface_rename($tmpstfiface, $stfiface);
+	pfSense_interface_flags($stfiface, IFF_LINK2);
+	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");
 
-	log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for stf0, route {$stfbrgw}");
+	if ($g['debug'])
+		log_error("Set IPv6 address inet6 {$stflanpr} prefixlen 16 for {$stfiface}, route {$stfbrgw}");
 
 	/* write out a default router file */
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
@@ -4257,7 +4262,7 @@ function get_interface_ipv6($interface = "wan")
 	switch($config['interfaces'][$interface]['ipaddrv6']) {
 		case "6rd":
 		case "6to4":
-			$realif = "stf0";
+			$realif = "{$interface}_stf";
 			break;
 	}
 	if (!$realif) {

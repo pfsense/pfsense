@@ -533,9 +533,9 @@ function filter_generate_aliases() {
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
 			/* XXX possibly add 6to4 in the future as well, stf0 */
 			if ($ifcfg['type6'] == '6rd')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
 			else if ($ifcfg['type6'] == '6to4')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
 			else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 
@@ -2733,7 +2733,7 @@ EOD;
 		switch($ifcfg['type6']) {
 			case "6rd":
 			case "6to4":
-				$stf = stf0;
+				$stf = "{$ifdescr}_stf";
 				$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
 				break;
 			default:

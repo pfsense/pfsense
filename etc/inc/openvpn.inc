@@ -137,28 +137,46 @@ function openvpn_vpnid_next() {
 	return $vpnid;
 }
 
-function openvpn_port_used($prot, $port) {
+function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 	global $config;
 
-	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as & $settings)
-			if ($port == $settings['local_port'] &&
-				$prot == $settings['protocol'] && !isset($settings['disable']))
-				return $settings['vpnid'];
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
+			if (isset($settings['disable']))
+				continue;
 
-	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as & $settings)
-			if ($port == $settings['local_port'] &&
-				$prot == $settings['protocol'] && !isset($settings['disable']))
+			if ($curvpnid != 0 && $curvpnid == $settings['vpnid'])
+				continue;
+
+			if ($port == $settings['local_port'] && $prot == $settings['protocol'] &&
+				($interface == $settings['interface'] || $interface == "any" || $settings['interface'] == "any"))
 				return $settings['vpnid'];
+		}
+	}
+
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
+			if (isset($settings['disable']))
+				continue;
+
+			if ($curvpnid != 0 && $curvpnid == $settings['vpnid'])
+				continue;
+
+			if ($port == $settings['local_port'] && $prot == $settings['protocol'] &&
+				($interface == $settings['interface'] || $interface == "any" || $settings['interface'] == "any"))
+				return $settings['vpnid'];
+		}
+	}
 
 	return 0;
 }
 
-function openvpn_port_next($prot) {
+function openvpn_port_next($prot, $interface = "wan") {
 
 	$port = 1194;
-	while(openvpn_port_used($prot, $port))
+	while(openvpn_port_used($prot, $interface, $port))
+		$port++;
+	while(openvpn_port_used($prot, "any", $port))
 		$port++;
 
 	return $port;

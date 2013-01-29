@@ -366,7 +366,7 @@ function step10_submitphpaction() {
 	if ($result = openvpn_validate_cidr($_POST['localnet'], 'Local Network', true, "ipv4"))
 		$input_errors[] = $result;
 
-	$portused = openvpn_port_used($_POST['protocol'], $_POST['localport']);
+	$portused = openvpn_port_used($_POST['protocol'], $_POST['interface'], $_POST['localport']);
 	if ($portused != 0)
 		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
 

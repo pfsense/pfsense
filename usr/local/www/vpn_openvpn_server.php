@@ -249,7 +249,7 @@ if ($_POST) {
 	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
 		$input_errors[] = $result;
 
-	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
+	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
 	if (($portused != $vpnid) && ($portused != 0))
 		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
 

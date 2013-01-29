@@ -877,9 +877,9 @@ function filter_generate_optcfg_array() {
 						$oic['vips6'] = array();
 					$oic['vips6'][$vipidx]['ip'] = $vip['subnet'];
 					if (empty($vip['subnet_bits']))
-						$oic['vips'][$vipidx]['sn'] = 128;
+						$oic['vips6'][$vipidx]['sn'] = 128;
 					else
-						$oic['vips'][$vipidx]['sn'] = $vip['subnet_bits'];
+						$oic['vips6'][$vipidx]['sn'] = $vip['subnet_bits'];
 				}
 			}
 		}
@@ -2721,7 +2721,7 @@ EOD;
 			continue;
 
 		$gw = get_interface_gateway($ifdescr);
-		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip'])) {
+		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip'])) {
                 	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip)
@@ -2745,7 +2745,7 @@ EOD;
                 	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip)
-					$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+					$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			}
 		}
 	}

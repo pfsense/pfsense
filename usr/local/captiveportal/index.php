@@ -170,7 +170,7 @@ EOD;
 	}
 
 } else if ($_POST['accept'] && $radius_enable) {
-	if (($_POST['auth_user'] && $_POST['auth_pass']) || ($_POST['auth_user2'] && $_POST['auth_pass2'])) {
+	if (($_POST['auth_user'] && isset($_POST['auth_pass'])) || ($_POST['auth_user2'] && isset($_POST['auth_pass2']))) {
 		if (!empty($_POST['auth_user'])) {
 			$user = $_POST['auth_user'];
 			$paswd = $_POST['auth_pass'];

@@ -589,89 +589,89 @@ class Auth_RADIUS extends PEAR {
                     }
                 } 
 
-        	elseif ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
+                elseif ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
 
-            		switch ($attrv) {
-            		case 1: /* WISPr-Location-ID */
-            			$this->attributes['location_id'] = radius_cvt_string($datav);
-            			break;
-            		case 2: /* WISPr-Location-Name */
-            			$this->attributes['location_name'] = radius_cvt_string($datav);
-            			break;
-            		case 3: /* WISPr-Logoff-URL */
-            			$this->attributes['url_logoff'] = radius_cvt_string($datav);
-            			break;
-            		case 4: /* WISPr-Redirection-URL */
-            			$this->attributes['url_redirection'] = radius_cvt_string($datav);
-            			break;
-            		case 5: /* WISPr-Bandwidth-Min-Up */
-            			$this->attributes['bw_up_min'] = radius_cvt_int($datav);
-            			break;
-            		case 6: /* WISPr-Bandwidth-Min-Down */
-            			$this->attributes['bw_down_min'] = radius_cvt_int($datav);
-            			break;
-            		case 7: /* WISPr-Bandwidth-Max-Up */
-            			$this->attributes['bw_up'] = radius_cvt_int($datav);
-            			break;
-            		case 8: /* WISPr-Bandwidth-Max-Down */
-            			$this->attributes['bw_down'] = radius_cvt_int($datav);
-            			break;
-            		case 9: /* WISPr-Session-Terminate-Time */
-            			$this->attributes['session_terminate_time'] = radius_cvt_string($datav);
-            			break;
-            		case 10: /* WISPr-Session-Terminate-End-Of-Day */
-            			$this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
-            			break;
-            		case 11: /* WISPr-Billing-Class-Of-Service */
-            			$this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
-            			break;
-           		}
-        	}
-
-		elseif ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
-			switch ($attrv) {
-			case 4: /* ChilliSpot-Bandwidth-Max-Up */
-				$this->attributes['bw_up'] = radius_cvt_int($datav);
-				break;
-			case 5: /* ChilliSpot-Bandwidth-Max-Down */
-				$this->attributes['bw_down'] = radius_cvt_int($datav);
-				break;
-			}
-		}
-
-        elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
-             //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
-            if ($attrv == 0) { /* Colubris AV-Pair */
-			    $datav = explode('=', $datav);
-			    switch ($datav[0]) {
-                case 'max-input-rate':
-                    // "Controls the data rate [kbps] at which traffic can be transferred from the user to the [router]."
-                    $this->attributes['bw_up'] = radius_cvt_int($datav[1]);
-                    break;
-                case 'max-output-rate':
-                    //"Controls the data rate [kbps] at which traffic can be transferred from the [router] to the user."
-                    $this->attributes['bw_down'] = radius_cvt_int($datav[1]);
-                    break;
-                case 'max-input-octets':
-                    $this->attributes['maxbytesup'] = radius_cvt_int($datav[1]);
-                    break;
-                case 'max-output-octets':
-                    $this->attributes['maxbytesdown'] = radius_cvt_int($datav[1]);
-                    break;
-                case 'welcome-url':
-                    $this->attributes['url_redirection'] = radius_cvt_string($datav[1]);
-                    break;
-                case 'goodbye-url':
-                    $this->attributes['url_logoff'] = radius_cvt_string($datav[1]);
-                    break;
+                    switch ($attrv) {
+                    case 1: /* WISPr-Location-ID */
+                        $this->attributes['location_id'] = radius_cvt_string($datav);
+                        break;
+                    case 2: /* WISPr-Location-Name */
+                        $this->attributes['location_name'] = radius_cvt_string($datav);
+                        break;
+                    case 3: /* WISPr-Logoff-URL */
+                        $this->attributes['url_logoff'] = radius_cvt_string($datav);
+                        break;
+                    case 4: /* WISPr-Redirection-URL */
+                        $this->attributes['url_redirection'] = radius_cvt_string($datav);
+                        break;
+                    case 5: /* WISPr-Bandwidth-Min-Up */
+                        $this->attributes['bw_up_min'] = radius_cvt_int($datav);
+                        break;
+                    case 6: /* WISPr-Bandwidth-Min-Down */
+                        $this->attributes['bw_down_min'] = radius_cvt_int($datav);
+                        break;
+                    case 7: /* WISPr-Bandwidth-Max-Up */
+                        $this->attributes['bw_up'] = radius_cvt_int($datav);
+                        break;
+                    case 8: /* WISPr-Bandwidth-Max-Down */
+                        $this->attributes['bw_down'] = radius_cvt_int($datav);
+                        break;
+                    case 9: /* WISPr-Session-Terminate-Time */
+                        $this->attributes['session_terminate_time'] = radius_cvt_string($datav);
+                        break;
+                    case 10: /* WISPr-Session-Terminate-End-Of-Day */
+                        $this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
+                        break;
+                    case 11: /* WISPr-Billing-Class-Of-Service */
+                        $this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
+                        break;
+                    }
                 }
-            }
-        }
+
+                elseif ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
+                    switch ($attrv) {
+                    case 4: /* ChilliSpot-Bandwidth-Max-Up */
+                        $this->attributes['bw_up'] = radius_cvt_int($datav);
+                        break;
+                    case 5: /* ChilliSpot-Bandwidth-Max-Down */
+                        $this->attributes['bw_down'] = radius_cvt_int($datav);
+                        break;
+                    }
+                }
+
+                elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
+                     //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
+                    if ($attrv == 0) { /* Colubris AV-Pair */
+                        $datav = explode('=', $datav);
+                        switch ($datav[0]) {
+                        case 'max-input-rate':
+                            // "Controls the data rate [kbps] at which traffic can be transferred from the user to the [router]."
+                            $this->attributes['bw_up'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-output-rate':
+                            //"Controls the data rate [kbps] at which traffic can be transferred from the [router] to the user."
+                            $this->attributes['bw_down'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-input-octets':
+                            $this->attributes['maxbytesup'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-output-octets':
+                            $this->attributes['maxbytesdown'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'welcome-url':
+                            $this->attributes['url_redirection'] = radius_cvt_string($datav[1]);
+                            break;
+                        case 'goodbye-url':
+                            $this->attributes['url_logoff'] = radius_cvt_string($datav[1]);
+                            break;
+                        }
+                    }
+                }
                 break;
 
-		case 85: /* Acct-Interim-Interval: RFC 2869 */
-			$this->attributes['interim_interval'] = radius_cvt_int($datav);
-			break;
+            case 85: /* Acct-Interim-Interval: RFC 2869 */
+                $this->attributes['interim_interval'] = radius_cvt_int($datav);
+                break;
             }
         }
 

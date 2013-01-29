@@ -58,7 +58,7 @@ class QueueStats {
 }
 if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid")) {
 	/* Start in the background so we don't hang up the GUI */	
-	mwexec_bg("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid"); */
+	mwexec_bg("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
 	/* Give it a moment to start up */
 	sleep(1);
 }
@@ -223,6 +223,7 @@ function statsQueues($xml){
 			$current->drops += $child->drops;
 		}
 	}
+	unset($child);
 	$statistics[] = $current;
 	return $current;
 }

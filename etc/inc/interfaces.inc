@@ -957,6 +957,8 @@ function interfaces_configure() {
 		else if (strstr($realif, "ovpn")) {
 			//echo "Delaying OpenVPN interface configuration...done.\n";
 			continue;
+		} else if (!empty($config['interfaces'][$if]['ipaddrv6']) && $config['interfaces'][$if]['ipaddrv6'] == "track6") {
+			$delayed_list[$if] = $ifname;
 		} else {
 			if ($g['booting'])
 				printf(gettext("Configuring %s interface..."), $ifname);
@@ -3161,11 +3163,14 @@ function interface_6rd_configure($interface = "wan") {
 		mwexec("/sbin/route change -host " . $wancfg['gateway-6rd'] . " {$ip4gateway}");
 
 	/* configure dependent interfaces */
-	/* XXX: Really necessary? */
-	$iflist = get_configured_interface_with_descr(false, true);
-	foreach($iflist as $if => $ifname) {
-		if ($config['interfaces'][$if]['track6-interface'] == $interface)
-			interface_track6_configure($if);
+	if (!$g['booting']) {
+		/* XXX: Really necessary? */
+		$iflist = get_configured_interface_with_descr(false, true);
+		foreach($iflist as $if => $ifname) {
+			if ($config['interfaces'][$if]['track6-interface'] == $interface)
+				interface_track6_configure($if);
+		}
+		unset($iflist);
 	}
 
 	return 0;
@@ -3173,7 +3178,6 @@ function interface_6rd_configure($interface = "wan") {
 
 function interface_6to4_configure($interface = "wan"){
 	global $config, $g;
-	$iflist = get_configured_interface_with_descr(false, true);
 
 	/* because this is a tunnel interface we can only function
 	 *	with a public IPv4 address on the interface */
@@ -3260,10 +3264,14 @@ function interface_6to4_configure($interface = "wan"){
 		mwexec("route change -host 192.88.99.1 {$ip4gateway}");
 	}
 
-	/* configure dependent interfaces */
-	foreach($iflist as $if => $ifname) {
-		if($config['interfaces'][$if]['track6-interface'] == $interface)
-			interface_track6_configure($if);
+	if (!$g['booting']) {
+		/* configure dependent interfaces */
+		$iflist = get_configured_interface_with_descr(false, true);
+		foreach($iflist as $if => $ifname) {
+			if($config['interfaces'][$if]['track6-interface'] == $interface)
+				interface_track6_configure($if);
+		}
+		unset($iflist);
 	}
 
 	return 0;
@@ -3315,6 +3323,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 					$dhcp6cconf .= "	};\n";
 				}
 			}
+			unset($iflist);
 			$dhcp6cconf .= "};\n";
 		}
 	}
@@ -3367,7 +3376,7 @@ function interface_dhcpv6_configure($interface = "wan") {
 		}
 	}
 	/* worst case is that the rc.newwanipv6 handles setting up the track6 interface */
-	if ($wancfg['ippaddrv6'] != "slaac") {
+	if (!$g['booting'] && $wancfg['ippaddrv6'] != "slaac") {
 		/* configure dependent interfaces */
 		/* XXX: Really necessary? */
 		$iflist = get_configured_interface_with_descr(false, true);

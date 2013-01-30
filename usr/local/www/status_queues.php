@@ -99,6 +99,7 @@ if ($_REQUEST['getactivity']) {
 		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
 		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
 	}
+	unset($statistics, $altqstats);
 	header("Content-type: text/javascript");
 	echo $finscript;
 	exit;

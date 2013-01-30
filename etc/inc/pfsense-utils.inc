@@ -2431,7 +2431,7 @@ function is_ipaddr_configured($ipaddr) {
 	$interface_list_ips = get_configured_ip_addresses();
 	foreach($interface_list_ips as $ilips) {
 		if(strcasecmp($ipaddr, $ilips) == 0)
-				return true;
+			return true;
 	}
 }
 

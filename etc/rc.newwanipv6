@@ -64,6 +64,9 @@ $argument = str_replace("\n", "", $argv[1]);
 
 log_error("rc.newwanipv6: Informational is starting {$argument}.");
 
+/* wait for the dhcp6c process to configure the LAN interface */
+sleep(5);
+
 if(empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface($interface);
@@ -72,8 +75,20 @@ if(empty($argument)) {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 	$curwanipv6 = find_interface_ipv6($interface_real, true);
-	if($curwanipv6 == "")
+	if (empty($curwanipv6))
 		$curwanipv6 = get_interface_ipv6($interface);
+}
+
+if (empty($interface)) {
+	filter_configure();
+	// restart_packages();
+	exit;
+}
+
+if(empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
+        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
+	// send_event("interface reconfigure {$interface}");
+        exit;
 }
 
 $name_servers = explode(" ", $_ENV['new_domain_name_servers']);
@@ -90,18 +105,6 @@ if(!empty($_ENV['new_domain_name']))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
-
-if($curwanipv6 == "" || !is_ipaddrv6($curwanipv6)) {
-        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
-	// send_event("interface reconfigure {$interface}");
-        exit;
-}
-
-if (empty($interface)) {
-	filter_configure();
-	// restart_packages();
-	exit;
-}
 
 $oldipv6 = "";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
@@ -157,9 +160,6 @@ services_dnsupdate_process($interface);
 
 /* signal dyndns update */
 services_dyndns_configure($interface);
-
-/* wait for the dhcp6c process to configure the LAN interface */
-sleep(5);
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();

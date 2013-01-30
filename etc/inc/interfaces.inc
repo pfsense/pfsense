@@ -2671,7 +2671,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$realhwif = $realhwif_array[0];
 
 	/* Disable Accepting router advertisements unless specifically requested */
-	log_error("Deny router advertisements for interface {$interface}");
+	if ($g['debug'])
+		log_error("Deny router advertisements for interface {$interface}");
 	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv");
 
 	if (!$g['booting'] && !(substr($realif, 0, 4) == "ovpn")) {
@@ -3088,7 +3089,8 @@ function interface_track6_dhcp6_configure($interface = "lan") {
 		$dhcp6lanarr[7] = 1;
 		$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
 		$lanif = get_real_interface($interface);
-		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
+		if ($g['debug'])
+			log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
 	}
 

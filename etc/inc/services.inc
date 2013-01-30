@@ -108,7 +108,11 @@ function services_radvd_configure() {
 		$radvdconf .= "\tAdvSendAdvert on;\n";
 		$radvdconf .= "\tMinRtrAdvInterval 5;\n";
 		$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
-		$radvdconf .= "\tAdvLinkMTU 1280;\n";
+		$mtu = get_interface_mtu($realif);
+		if (is_numeric($mtu))
+			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
+		else
+			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch($dhcpv6ifconf['rapriority']) {
 			case "low":

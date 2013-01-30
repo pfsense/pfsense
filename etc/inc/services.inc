@@ -336,7 +336,7 @@ function services_dhcpdv4_configure() {
 	if (isvalidpid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid"))
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
 	else
-		mwexec("/usr/bin/killall dhcpd");
+		mwexec("/usr/bin/killall dhcpd", true);
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcp_server_enabled())

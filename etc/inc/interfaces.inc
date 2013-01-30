@@ -3107,7 +3107,6 @@ function interface_6rd_configure($interface = "wan") {
 
 	$wanif = get_real_interface($interface);
 	$ip4address = find_interface_ip($wanif);
-	$ip4gateway = get_interface_gateway($wanif);
 	if ((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
 		return false;
@@ -3161,6 +3160,7 @@ function interface_6rd_configure($interface = "wan") {
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$rd6brgw}\n");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$rd6brgw}\n");
 
+	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway))
 		mwexec("/sbin/route change -host " . $wancfg['gateway-6rd'] . " {$ip4gateway}");
 
@@ -3185,14 +3185,12 @@ function interface_6to4_configure($interface = "wan"){
 	 *	with a public IPv4 address on the interface */
 
 	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
 	if (empty($wancfg))
 		$wancfg = array();
 
 	$wanif = get_real_interface($interface);
 
 	$ip4address = find_interface_ip($wanif);
-	$ip4gateway = get_interface_gateway($wanif);
 	if((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
 		return false;
@@ -3265,9 +3263,9 @@ function interface_6to4_configure($interface = "wan"){
 	file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$stfbrgw}");
 	file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$stfbrgw}");
 
-	if (is_ipaddrv4($ip4gateway)) {
+	$ip4gateway = get_interface_gateway($interface);
+	if (is_ipaddrv4($ip4gateway))
 		mwexec("route change -host 192.88.99.1 {$ip4gateway}");
-	}
 
 	if (!$g['booting']) {
 		/* configure dependent interfaces */

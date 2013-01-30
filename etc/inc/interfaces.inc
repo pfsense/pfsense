@@ -2631,7 +2631,7 @@ function kill_hostapd($interface) {
 }
 
 function kill_wpasupplicant($interface) {
-	return "/bin/pkill -f \"wpa_supplicant .*{$interface}\"\n";
+	return "/bin/pkill -f \"wpa_supplicant .*{$interface}\\.conf\"\n";
 }
 
 function find_dhclient_process($interface) {

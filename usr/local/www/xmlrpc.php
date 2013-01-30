@@ -44,16 +44,18 @@ require("xmlrpc_server.inc");
 require("xmlrpc.inc");
 require("array_intersect_key.inc");
 
-/* grab sync to ip if enabled */
-if ($config['hasync']) {
-	$synchronizetoip = $hasync['synchronizetoip'];
-}
+function xmlrpc_loop_detect() {
+	global $config;
 
-if($synchronizetoip) {
-	if($synchronizetoip == $_SERVER['REMOTE_ADDR']) {
-		log_error(gettext("Disallowing CARP sync loop."));
-		die;	
+	/* grab sync to ip if enabled */
+	if ($config['hasync'])
+		$synchronizetoip = $config['hasync']['synchronizetoip'];
+	if($synchronizetoip) {
+		if($synchronizetoip == $_SERVER['REMOTE_ADDR'])
+			return true;	
 	}
+
+	return false;
 }
 
 $xmlrpc_g = array(
@@ -138,6 +140,9 @@ $backup_config_section_sig = array(
 function backup_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
+	if (xmlrpc_loop_detect())
+		log_error("Disallowing CARP sync loop");
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
 		xmlrpc_authfail();
@@ -160,6 +165,9 @@ $restore_config_section_sig = array(
 
 function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
+	if (xmlrpc_loop_detect())
+		log_error("Disallowing CARP sync loop");
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -278,6 +286,9 @@ $merge_config_section_sig = array(
 function merge_installedpackages_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
+	if (xmlrpc_loop_detect())
+		log_error("Disallowing CARP sync loop");
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
 		xmlrpc_authfail();
@@ -302,6 +313,10 @@ $merge_config_section_sig = array(
 
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
+
+	if (xmlrpc_loop_detect())
+		log_error("Disallowing CARP sync loop");
+
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
 		xmlrpc_authfail();
@@ -355,6 +370,9 @@ $carp_configure_sig = array(
 
 function interfaces_carp_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
+
+	if (xmlrpc_loop_detect())
+		log_error("Disallowing CARP sync loop");
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {

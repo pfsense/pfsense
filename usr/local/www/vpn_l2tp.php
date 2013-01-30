@@ -84,6 +84,9 @@ if ($_POST) {
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
+		if (is_ipaddr_configured($_POST['localip'])) {
+			$input_errors[] = gettext("'Server address' parameter should NOT be set to any IP address currently in use on this firewall.");
+		}
 		if (($_POST['l2tp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
 		}

@@ -1203,7 +1203,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	/* hostapd and wpa_supplicant do not need to be running when the interface is down.
 	 * They will also use 100% CPU if running after the wireless clone gets deleted. */
 	if (is_array($ifcfg['wireless'])) {
-		mwexec(kill_hostapd($realif));
+		kill_hostapd($realif);
 		mwexec(kill_wpasupplicant($realif));
 	}
 
@@ -2373,7 +2373,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "authmode open wepmode off ";
 	}
 
-	mwexec(kill_hostapd("{$if}"));
+	kill_hostapd($if);
 	mwexec(kill_wpasupplicant("{$if}"));
 
 	/* generate wpa_supplicant/hostap config if wpa is enabled */
@@ -2509,7 +2509,7 @@ EOD;
 						" link " . escapeshellarg($if_oldmac) . "\n");
 			}
 
-			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
+			fwrite($fd_set, "{$hostapd} -B -P {$g['varrun_path']}/hostapd_{$if}.pid {$g['varetc_path']}/hostapd_{$if}.conf\n");
 
 			/* add line to script to restore spoofed mac after running hostapd */
 			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
@@ -2624,7 +2624,10 @@ EOD;
 }
 
 function kill_hostapd($interface) {
-	return "/bin/pkill -f \"hostapd .*{$interface}\"\n";
+	global $g;
+
+	if (isvalidpid("{$g['varrun_path']}/hostapd_{$interface}.pid"))
+		return killbypid("{$g['varrun_path']}/hostapd_{$interface}.pid");
 }
 
 function kill_wpasupplicant($interface) {

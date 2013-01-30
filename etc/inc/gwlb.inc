@@ -433,7 +433,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				switch($wancfg['ipaddrv6']) {
 					case "6rd":
 					case "6to4":
-						$gateway['interface'] = "stf0";
+						$gateway['interface'] = "{$gateway['interface']}_stf";
 						break;
 					default:
 						$gateway['interface'] = get_real_interface($gateway['interface']);
@@ -600,11 +600,11 @@ function return_gateways_array($disabled = false, $localhost = false) {
 		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
 		switch($ifcfg['ipaddrv6']) {
 			case "6to4":
-				$gateway['interface'] = "stf0";
+				$gateway['interface'] = "{$ifname}_stf";
 				$gateway['dynamic'] = "default";
 				break;
 			case "6rd":
-				$gateway['interface'] = "stf0";
+				$gateway['interface'] = "{$ifname}_stf";
 				$gateway['dynamic'] = "default";
 				break;
 			default:

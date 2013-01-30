@@ -85,7 +85,7 @@ if ($_REQUEST['getactivity']) {
 	/* calculate the bigger amount of packets being moved through all queues. */
 	foreach($statistics as $q) {
 		if ($bigger_packets < $q->pps)
-		{$bigger_packets = $q->pps;}
+			$bigger_packets = $q->pps;
 	}
 	$finscript = "";
 	foreach($statistics as $q) {
@@ -204,6 +204,7 @@ function processQueues($altqstats, $level){
 }
 function statsQueues($xml){
 	global $statistics;
+
 	$current = new QueueStats();
 	$child = new QueueStats();
 	$current->queuename = $xml['name'] . $xml['interface'];

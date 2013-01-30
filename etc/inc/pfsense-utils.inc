@@ -50,7 +50,7 @@
  ******/
 function have_natpfruleint_access($if) {
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
-	if(isAllowedPage($security_url, $allowed)) 
+	if(isAllowedPage($security_url, $allowed))
 		return true;
 	return false;
 }
@@ -65,7 +65,7 @@ function have_natpfruleint_access($if) {
  ******/
 function have_ruleint_access($if) {
 	$security_url = "firewall_rules.php?if=". strtolower($if);
-	if(isAllowedPage($security_url)) 
+	if(isAllowedPage($security_url))
 		return true;
 	return false;
 }
@@ -82,9 +82,9 @@ function does_url_exist($url) {
 	$fd = fopen("$url","r");
 	if($fd) {
 		fclose($fd);
-   		return true;    
+		return true;
 	} else {
-        return false;
+		return false;
 	}
 }
 
@@ -97,18 +97,18 @@ function does_url_exist($url) {
  *   returns true if an ip address is in a private range
  ******/
 function is_private_ip($iptocheck) {
-        $isprivate = false;
-        $ip_private_list=array(
-               "10.0.0.0/8",
-               "100.64.0.0/10",
-               "172.16.0.0/12",
-               "192.168.0.0/16",
-        );
-        foreach($ip_private_list as $private) {
-                if(ip_in_subnet($iptocheck,$private)==true)
-                        $isprivate = true;
-        }
-        return $isprivate;
+	$isprivate = false;
+	$ip_private_list=array(
+		"10.0.0.0/8",
+		"100.64.0.0/10",
+		"172.16.0.0/12",
+		"192.168.0.0/16",
+	);
+	foreach($ip_private_list as $private) {
+		if(ip_in_subnet($iptocheck,$private)==true)
+			$isprivate = true;
+	}
+	return $isprivate;
 }
 
 /****f* pfsense-utils/get_tmp_file
@@ -161,12 +161,12 @@ function enable_hardware_offloading($interface) {
 
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = get_real_interface($interface);
-	if(empty($int)) 
+	if(empty($int))
 		return;
 	$int_family = preg_split("/[0-9]+/", $int);
 	$supported_ints = array('fxp');
 	if (in_array($int_family, $supported_ints)) {
-		if(does_interface_exist($int)) 
+		if(does_interface_exist($int))
 			pfSense_interface_flags($int, IFF_LINK0);
 	}
 
@@ -304,9 +304,9 @@ function setup_microcode() {
  *   boolean	- true if CARP is enabled, false if otherwise.
  ******/
 function get_carp_status() {
-    /* grab the current status of carp */
-    $status = `/sbin/sysctl -n net.inet.carp.allow`;
-    return (intval($status) > 0);
+	/* grab the current status of carp */
+	$status = `/sbin/sysctl -n net.inet.carp.allow`;
+	return (intval($status) > 0);
 }
 
 /*
@@ -326,11 +326,11 @@ function get_carp_interface_status($carpinterface) {
 	$carp_query = "";
 	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
 	foreach($carp_query as $int) {
-		if(stristr($int, "MASTER")) 
+		if(stristr($int, "MASTER"))
 			return gettext("MASTER");
-		if(stristr($int, "BACKUP")) 
+		if(stristr($int, "BACKUP"))
 			return gettext("BACKUP");
-		if(stristr($int, "INIT")) 
+		if(stristr($int, "INIT"))
 			return gettext("INIT");
 	}
 	return;
@@ -340,10 +340,10 @@ function get_carp_interface_status($carpinterface) {
  * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
  */
 function get_pfsync_interface_status($pfsyncinterface) {
-    $result = does_interface_exist($pfsyncinterface);
-    if($result <> true) return;
-    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
-    return $status;
+	$result = does_interface_exist($pfsyncinterface);
+	if($result <> true) return;
+	$status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
+	return $status;
 }
 
 /*
@@ -362,7 +362,7 @@ function remove_text_from_file($file, $text) {
 		return;
 	$filecontents = file_get_contents($file);
 	$text = str_replace($text, "", $filecontents);
-	@file_put_contents($file, $text); 
+	@file_put_contents($file, $text);
 }
 
 /*
@@ -379,7 +379,7 @@ function add_text_to_file($file, $text, $replace = false) {
 
 		$file_text = implode("\n", $filecontents);
 
-		@file_put_contents($file, $file_text); 
+		@file_put_contents($file, $file_text);
 		return true;
 	}
 	return false;
@@ -655,7 +655,7 @@ function rmdir_recursive($path,$follow_links=false) {
 			} elseif (is_file($workingdir)) {
 				unlink($workingdir);
 			}
-               	}
+		}
 	}
 	return;
 }
@@ -688,7 +688,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 		$proxypass = $config['system']['proxypass'];
 	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url, $port, $proxyurl, $proxyport, $proxyuser, $proxypass);
 	// If the ALT PKG Repo has a username/password set, use it.
-	if($config['system']['altpkgrepo']['username'] && 
+	if($config['system']['altpkgrepo']['username'] &&
 	   $config['system']['altpkgrepo']['password']) {
 		$username = $config['system']['altpkgrepo']['username'];
 		$password = $config['system']['altpkgrepo']['password'];
@@ -747,15 +747,15 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
  * host_firmware_version(): Return the versions used in this install
  */
 function host_firmware_version($tocheck = "") {
-        global $g, $config;
+	global $g, $config;
 
-        return array(
+	return array(
 		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
-                "kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
-                "base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
-                "platform" => trim(file_get_contents('/etc/platform', " \n")),
-                "config_version" => $config['version']
-                );
+		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
+		"base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+		"platform" => trim(file_get_contents('/etc/platform', " \n")),
+		"config_version" => $config['version']
+	);
 }
 
 function get_disk_info() {
@@ -928,7 +928,7 @@ function auto_login() {
 	while (!$fd && $tries < 100) {
 		$fd = fopen("/etc/gettytab", "w");
 		$tries++;
-		
+
 	}
 	if (!$fd) {
 		conf_mount_ro();
@@ -957,7 +957,7 @@ function auto_login() {
 	} else {
 		log_error(gettext("Disabled console auto login, console menu is password protected."));
 	}
-	
+
 	conf_mount_ro();
 }
 
@@ -1181,12 +1181,12 @@ function convert_seconds_to_hms($sec){
 
 function get_ppp_uptime($port){
 	if (file_exists("/conf/{$port}.log")){
-    	$saved_time = file_get_contents("/conf/{$port}.log");
-    	$uptime_data = explode("\n",$saved_time);
+		$saved_time = file_get_contents("/conf/{$port}.log");
+		$uptime_data = explode("\n",$saved_time);
 		$sec=0;
 		foreach($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
- 		}
+		}
 		return convert_seconds_to_hms($sec);
 	} else {
 		$total_time = gettext("No history data found!");
@@ -1208,7 +1208,7 @@ function get_interface_info($ifdescr) {
 	$ifinfotmp = pfSense_get_interface_addresses($chkif);
 	$ifinfo['status'] = $ifinfotmp['status'];
 	if (empty($ifinfo['status']))
-                $ifinfo['status'] = "down";
+		$ifinfo['status'] = "down";
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
@@ -1218,11 +1218,11 @@ function get_interface_info($ifdescr) {
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
 	$ifinfotmp = pfSense_get_interface_stats($chkif);
-        // $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
-        // $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
-        $ifinfo['inerrs'] = $ifinfotmp['inerrs'];
-        $ifinfo['outerrs'] = $ifinfotmp['outerrs'];
-        $ifinfo['collisions'] = $ifinfotmp['collisions'];
+	// $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
+	// $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
+	$ifinfo['inerrs'] = $ifinfotmp['inerrs'];
+	$ifinfo['outerrs'] = $ifinfotmp['outerrs'];
+	$ifinfo['collisions'] = $ifinfotmp['collisions'];
 
 	/* Use pfctl for non wrapping 64 bit counters */
 	/* Pass */
@@ -1266,11 +1266,11 @@ function get_interface_info($ifdescr) {
 	$ifinfo['outbytes'] = $out4_pass + $out6_pass;
 	$ifinfo['inpkts'] = $in4_pass_packets + $in6_pass_packets;
 	$ifinfo['outpkts'] = $out4_pass_packets + $out6_pass_packets;
-		
+
 	$ifconfiginfo = "";
 	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];
 	switch ($link_type) {
-	 /* DHCP? -> see if dhclient is up */
+	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
 		/* see if dhclient is up */
 		if (find_dhclient_process($ifinfo['if']) <> "")
@@ -1299,7 +1299,7 @@ function get_interface_info($ifdescr) {
 
 		if (empty($ifinfo['status']))
 			$ifinfo['status'] = "down";
-			
+
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 				if ($config['interfaces'][$ifdescr]['if'] == $ppp['if'])
@@ -1311,7 +1311,7 @@ function get_interface_info($ifdescr) {
 			break;
 		if (!file_exists($dev)) {
 			$ifinfo['nodevice'] = 1;
-			$ifinfo['pppinfo'] = $dev . " " . gettext("device not present! Is the modem attached to the system?");	
+			$ifinfo['pppinfo'] = $dev . " " . gettext("device not present! Is the modem attached to the system?");
 		}
 
 		$usbmodemoutput = array();
@@ -1347,12 +1347,12 @@ function get_interface_info($ifdescr) {
 	default:
 		break;
 	}
-	
+
 	if (file_exists("{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid")) {
 		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
 		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 	}
-	
+
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
@@ -1438,7 +1438,7 @@ function get_interface_info($ifdescr) {
 
 //returns cpu speed of processor. Good for determining capabilities of machine
 function get_cpu_speed() {
-	 return exec("sysctl hw.clockrate | awk '{ print $2 }'");
+	return exec("sysctl hw.clockrate | awk '{ print $2 }'");
 }
 
 function add_hostname_to_watch($hostname) {
@@ -1478,7 +1478,7 @@ function is_fqdn($fqdn) {
 	if(preg_match("/\.\./", $fqdn)) {
 		$hostname = false;
 	}
-	if(preg_match("/^\./i", $fqdn)) { 
+	if(preg_match("/^\./i", $fqdn)) {
 		$hostname = false;
 	}
 	if(preg_match("/\//i", $fqdn)) {
@@ -1488,12 +1488,12 @@ function is_fqdn($fqdn) {
 }
 
 function pfsense_default_state_size() {
-  /* get system memory amount */
-  $memory = get_memory();
-  $avail = $memory[1];
-  /* Be cautious and only allocate 10% of system memory to the state table */
-  $max_states = (int) ($avail/10)*1000;
-  return $max_states;
+	/* get system memory amount */
+	$memory = get_memory();
+	$avail = $memory[1];
+	/* Be cautious and only allocate 10% of system memory to the state table */
+	$max_states = (int) ($avail/10)*1000;
+	return $max_states;
 }
 
 function pfsense_default_tables_size() {
@@ -1597,7 +1597,7 @@ function load_thermal_hardware() {
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
 	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/awk -F= '/smbios.bios.vendor/ {print $2}'`);
-	if(in_array($bios_vendor, $virtualenvs)) 
+	if(in_array($bios_vendor, $virtualenvs))
 		return true;
 	else
 		return false;
@@ -1609,28 +1609,28 @@ function get_freebsd_version() {
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-        global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
-        $file_size  = 1;
-        $downloaded = 1;
+	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
+	$file_size  = 1;
+	$downloaded = 1;
 	$first_progress_update = TRUE;
-        /* open destination file */
-        $fout = fopen($destination_file, "wb");
+	/* open destination file */
+	$fout = fopen($destination_file, "wb");
 
-        /*
-         *      Originally by Author: Keyvan Minoukadeh
-         *      Modified by Scott Ullrich to return Content-Length size
-         */
+	/*
+	 *      Originally by Author: Keyvan Minoukadeh
+	 *      Modified by Scott Ullrich to return Content-Length size
+	 */
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url_file);
-        curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        /* Don't verify SSL peers since we don't have the certificates to do so. */
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
-        curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url_file);
+	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	/* Don't verify SSL peers since we don't have the certificates to do so. */
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
+	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1642,38 +1642,38 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 		}
 	}
 
-        @curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if($fout)
-                fclose($fout);
-        curl_close($ch);
-        return ($http_code == 200) ? true : $http_code;
+	@curl_exec($ch);
+	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	if($fout)
+		fclose($fout);
+	curl_close($ch);
+	return ($http_code == 200) ? true : $http_code;
 }
 
 function read_header($ch, $string) {
-        global $file_size, $fout;
-        $length = strlen($string);
-        $regs = "";
-        preg_match("/(Content-Length:) (.*)/", $string, $regs);
-        if($regs[2] <> "") {
-                $file_size = intval($regs[2]);
-        }
-        ob_flush();
-        return $length;
+	global $file_size, $fout;
+	$length = strlen($string);
+	$regs = "";
+	preg_match("/(Content-Length:) (.*)/", $string, $regs);
+	if($regs[2] <> "") {
+		$file_size = intval($regs[2]);
+	}
+	ob_flush();
+	return $length;
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $first_progress_update;
-		global $pkg_interface;
-        $length = strlen($string);
-        $downloaded += intval($length);
-        if($file_size > 0) {
-                $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-                $downloadProgress = 100 - $downloadProgress;
-        } else
-                $downloadProgress = 0;
-        if($lastseen <> $downloadProgress and $downloadProgress < 101) {
-                if($sendto == "status") {
+	global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $first_progress_update;
+	global $pkg_interface;
+	$length = strlen($string);
+	$downloaded += intval($length);
+	if($file_size > 0) {
+		$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+		$downloadProgress = 100 - $downloadProgress;
+	} else
+		$downloadProgress = 0;
+	if($lastseen <> $downloadProgress and $downloadProgress < 101) {
+		if($sendto == "status") {
 			if($pkg_interface == "console") {
 				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tostatus = $static_status . $downloadProgress . "%";
@@ -1684,9 +1684,9 @@ function read_body($ch, $string) {
 				}
 			} else {
 				$tostatus = $static_status . $downloadProgress . "%";
-				update_status($tostatus);						
+				update_status($tostatus);
 			}
-                } else {
+		} else {
 			if($pkg_interface == "console") {
 				if(($downloadProgress % 10) == 0 || $downloadProgress < 10) {
 					$tooutput = $static_output . $downloadProgress . "%";
@@ -1699,63 +1699,63 @@ function read_body($ch, $string) {
 				$tooutput = $static_output . $downloadProgress . "%";
 				update_output_window($tooutput);
 			}
-                }
+		}
 				if(($pkg_interface != "console") || (($downloadProgress % 10) == 0) || ($downloadProgress < 10)) {
 					update_progress_bar($downloadProgress, $first_progress_update);
 					$first_progress_update = FALSE;
 				}
-                $lastseen = $downloadProgress;
-        }
-        if($fout)
-                fwrite($fout, $string);
-        ob_flush();
-        return $length;
+		$lastseen = $downloadProgress;
+	}
+	if($fout)
+		fwrite($fout, $string);
+	ob_flush();
+	return $length;
 }
 
 /*
  *   update_output_window: update bottom textarea dynamically.
  */
 function update_output_window($text) {
-        global $pkg_interface;
-        $log = preg_replace("/\n/", "\\n", $text);
-        if($pkg_interface != "console") {
-                echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
-				echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";	
-				echo "</script>";
-        }
-        /* ensure that contents are written out */
-        ob_flush();
+	global $pkg_interface;
+	$log = preg_replace("/\n/", "\\n", $text);
+	if($pkg_interface != "console") {
+		echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
+		echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";
+		echo "</script>";
+	}
+	/* ensure that contents are written out */
+	ob_flush();
 }
 
 /*
  *   update_status: update top textarea dynamically.
  */
 function update_status($status) {
-        global $pkg_interface;
-        if($pkg_interface == "console") {
-                echo "\r{$status}";
-        } else {
-                echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
-        }
-        /* ensure that contents are written out */
-        ob_flush();
+	global $pkg_interface;
+	if($pkg_interface == "console") {
+		echo "\r{$status}";
+	} else {
+		echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
+	}
+	/* ensure that contents are written out */
+	ob_flush();
 }
 
 /*
  * update_progress_bar($percent, $first_time): updates the javascript driven progress bar.
  */
 function update_progress_bar($percent, $first_time) {
-        global $pkg_interface;
-        if($percent > 100) $percent = 1;
-        if($pkg_interface <> "console") {
-                echo "\n<script type=\"text/javascript\" language=\"javascript\">";
-                echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-                echo "\n</script>";
-        } else {
+	global $pkg_interface;
+	if($percent > 100) $percent = 1;
+	if($pkg_interface <> "console") {
+		echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+		echo "\n</script>";
+	} else {
 		if(!($first_time))
 			echo "\x08\x08\x08\x08\x08";
 		echo sprintf("%4d%%", $percent);
-        }
+	}
 }
 
 /* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
@@ -1768,7 +1768,7 @@ if(!function_exists("split")) {
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
-	if(!$origname) 
+	if(!$origname)
 		return;
 
 	$sectionref = &$config;
@@ -2163,14 +2163,14 @@ function nanobsd_friendly_slice_name($slicename) {
 }
 
 function get_include_contents($filename) {
-    if (is_file($filename)) {
-        ob_start();
-        include $filename;
-        $contents = ob_get_contents();
-        ob_end_clean();
-        return $contents;
-    }
-    return false;
+	if (is_file($filename)) {
+		ob_start();
+		include $filename;
+		$contents = ob_get_contents();
+		ob_end_clean();
+		return $contents;
+	}
+	return false;
 }
 
 /* This xml 2 array function is courtesy of the php.net comment section on xml_parse.
@@ -2386,9 +2386,9 @@ function generate_ipv6_from_mac($mac) {
 		if($i == 2) {
 			$ipv6 .= "ff:fe";
 		}
-		
+
 		$i++;
-	}	
+	}
 	return $ipv6;
 }
 
@@ -2412,7 +2412,7 @@ function load_mac_manufacturer_table() {
 				$mac_man["$matches[1]"]=$matches[2];
 			}
 		}
- 		return $mac_man;
+		return $mac_man;
 	} else
 		return -1;
 
@@ -2430,9 +2430,9 @@ function load_mac_manufacturer_table() {
 function is_ipaddr_configured($ipaddr) {
 	$interface_list_ips = get_configured_ip_addresses();
 	foreach($interface_list_ips as $ilips) {
-		if(strcasecmp($ipaddr, $ilips) == 0) 
+		if(strcasecmp($ipaddr, $ilips) == 0)
 				return true;
-	}	
+	}
 }
 
 /****f* pfsense-utils/pfSense_handle_custom_code
@@ -2444,11 +2444,11 @@ function is_ipaddr_configured($ipaddr) {
  *   globs the directory and includes the files
  */
 function pfSense_handle_custom_code($src_dir) {
-	// Allow extending of the nat edit page and include custom input validation 
+	// Allow extending of the nat edit page and include custom input validation
 	if(is_dir("$src_dir")) {
 		$cf = glob($src_dir . "/*.inc");
 		foreach($cf as $nf) {
-			if($nf == "." || $nf == "..") 
+			if($nf == "." || $nf == "..")
 				continue;
 			// Include the extra handler
 			include("$nf");
@@ -2476,7 +2476,7 @@ function get_locale_list() {
 function return_hex_ipv4($ipv4) {
 	if(!is_ipaddrv4($ipv4))
 		return(false);
-	
+
 	/* we need the hex form of the interface IPv4 address */
 	$ip4arr = explode(".", $ipv4);
 	$hexwanv4 = "";
@@ -2561,12 +2561,12 @@ function huawei_rssi_to_string($rssi) {
 
 function huawei_mode_to_string($mode, $submode) {
 	$modes[0] = "None";
-	$modes[1] = "AMPS"; 
+	$modes[1] = "AMPS";
 	$modes[2] = "CDMA";
 	$modes[3] = "GSM/GPRS";
 	$modes[4] = "HDR";
 	$modes[5] = "WCDMA";
-	$modes[6] = "GPS"; 
+	$modes[6] = "GPS";
 
 	$submodes[0] = "No Service";
 	$submodes[1] = "GSM";
@@ -2584,7 +2584,7 @@ function huawei_mode_to_string($mode, $submode) {
 
 function huawei_service_to_string($state) {
 	$modes[0] = "No";
-	$modes[1] = "Restricted"; 
+	$modes[1] = "Restricted";
 	$modes[2] = "Valid";
 	$modes[3] = "Restricted Regional";
 	$modes[4] = "Powersaving";
@@ -2594,7 +2594,7 @@ function huawei_service_to_string($state) {
 
 function huawei_simstate_to_string($state) {
 	$modes[0] = "Invalid SIM/locked";
-	$modes[1] = "Valid SIM"; 
+	$modes[1] = "Valid SIM";
 	$modes[2] = "Invalid SIM CS";
 	$modes[3] = "Invalid SIM PS";
 	$modes[4] = "Invalid SIM CS/PS";
@@ -2609,12 +2609,12 @@ function zte_rssi_to_string($rssi) {
 
 function zte_mode_to_string($mode, $submode) {
 	$modes[0] = "No Service";
-	$modes[1] = "Limited Service"; 
+	$modes[1] = "Limited Service";
 	$modes[2] = "GPRS";
 	$modes[3] = "GSM";
 	$modes[4] = "UMTS";
 	$modes[5] = "EDGE";
-	$modes[6] = "HSDPA"; 
+	$modes[6] = "HSDPA";
 
 	$submodes[0] = "CS_ONLY";
 	$submodes[1] = "PS_ONLY";
@@ -2626,7 +2626,7 @@ function zte_mode_to_string($mode, $submode) {
 
 function zte_service_to_string($state) {
 	$modes[0] = "Initializing";
-	$modes[1] = "Network Lock error"; 
+	$modes[1] = "Network Lock error";
 	$modes[2] = "Network Locked";
 	$modes[3] = "Unlocked or correct MCC/MNC";
 	$string = "{$modes[$state]} Service";
@@ -2635,7 +2635,7 @@ function zte_service_to_string($state) {
 
 function zte_simstate_to_string($state) {
 	$modes[0] = "No action";
-	$modes[1] = "Network lock"; 
+	$modes[1] = "Network lock";
 	$modes[2] = "(U)SIM card lock";
 	$modes[3] = "Network Lock and (U)SIM card Lock";
 	$string = "{$modes[$state]} State";

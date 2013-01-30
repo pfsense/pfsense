@@ -139,17 +139,12 @@ function filter_delete_states_for_down_gateways() {
 				continue;
 			$gwstatus =& $a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
-                        	$gwip = $gateway['gateway'];
-                        	if (!is_ipaddr($gwip))
-                                	$gwip = get_interface_gateway($gateway['friendlyiface']);
-                        	if (is_ipaddr($gwstatus['srcip'])) {
-					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']}/32 ";
-					if (is_ipaddr($gwip))
-						$cmd .= "-b {$gwip}/32";
-					else
-						$cmd .= "-b 0.0.0.0/32";
-					mwexec($cmd);
-				}
+				if (!empty($gateway['interface']))
+					$gwiface = $gateway['interface'];
+				else
+					$gwiface = get_real_interface($gateway['friendlyiface']);
+				$cmd = "/sbin/pfctl -i {$gwiface} -k 0.0.0.0/0";
+				mwexec($cmd);
 			}
 		}
 	}

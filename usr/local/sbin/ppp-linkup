@@ -5,7 +5,7 @@ if [ "$2" == "inet" ]; then
 	OLD_ROUTER=`/bin/cat /tmp/${1}_router`
 	if [ "${OLD_ROUTER}" != "" ]; then
 		echo "Removing states to old router ${OLD_ROUTER}" | logger -t ppp-linkup
-		/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
+		/sbin/pfctl -i $1 -k 0.0.0.0/0 -k ${OLD_ROUTER}/32
 	fi
 
 	# let the configuration system know that the ipv4 has changed.

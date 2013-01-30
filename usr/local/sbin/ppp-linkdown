@@ -16,14 +16,9 @@ if [ "$3" != "" ]; then
 	pfctl -K ${LOCAL_IP}
 fi
 
-OLD_ROUTER=`/bin/cat /tmp/${1}_router`
-if [ "${OLD_ROUTER}" != "" ]; then
-	echo "Removing states to ${OLD_ROUTER}" | logger -t ppp-linkdown
-	/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
-
-	if [ -f "/tmp/${interface}_defaultgw" ]; then
-		route delete default ${OLD_ROUTER}
-	fi
+/sbin/pfctl -i $1 -k 0.0.0.0/0
+if [ -f "/tmp/${1}_defaultgw" ]; then
+	route delete default ${OLD_ROUTER}
 fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:

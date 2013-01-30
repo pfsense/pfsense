@@ -42,7 +42,7 @@ log_error("Restarting/Starting all packages.");
 
 conf_mount_rw();
 
-$rcfiles = glob("{$rcfileprefix}*.sh");
+$rcfiles = glob(RCFILEPREFIX . "*.sh");
 if (!$rcfiles)
 	$rcfiles = array();
 else {
@@ -56,7 +56,7 @@ if (is_array($config['installedpackages']['package'])) {
 		echo " Starting package {$package['name']}...";
 		sync_package($package['name']);
 		start_service($package['name']);
-		unset($rcfiles["{$rcfileprefix}{$package['name']}.sh"]);
+		unset($rcfiles[RCFILEPREFIX . "{$package['name']}.sh"]);
 		echo "done.\n";
 	}
 }

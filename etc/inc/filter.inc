@@ -2654,25 +2654,34 @@ EOD;
 			break;
 		case "6rd":
 			$ipfrules .= <<<EOD
-
 # allow our proto 41 traffic from the 6RD border relay in
 pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
 pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
+
+EOD;
+		if (is_ipaddrv6($oc['ipv6'])) {
+			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6rd traffic in for 6rd on {$oc['descr']}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6rd traffic out for 6rd on {$oc['descr']}"
 
 EOD;
+		}
 			break;
 		case "6to4":
 			$ipfrules .= <<<EOD
 
 # allow our proto 41 traffic from the 6to4 border relay in
 pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
 pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+
+EOD;
+		if (is_ipaddrv6($oc['ipv6'])) {
+			$ipfrules .= <<<EOD
+pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
 
 EOD;
+		}
 			break;
 		default:
 			if((isset($config['dhcpdv6'][$on]['enable'])) ||

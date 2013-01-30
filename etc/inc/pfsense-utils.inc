@@ -2433,6 +2433,20 @@ function is_ipaddr_configured($ipaddr) {
 		if(strcasecmp($ipaddr, $ilips) == 0)
 			return true;
 	}
+
+	$interface_list_ips = get_configured_ip_aliases_list();
+	foreach($interface_list_ips as $key => $ilips) {
+		if(strcasecmp($ipaddr, $key) == 0)
+			return true;
+	}
+
+	$interface_list_ips = get_configured_carp_interface_list();
+	foreach($interface_list_ips as $ilips) {
+		if(strcasecmp($ipaddr, $ilips) == 0)
+			return true;
+	}
+
+	return false;
 }
 
 /****f* pfsense-utils/pfSense_handle_custom_code

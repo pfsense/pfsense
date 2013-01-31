@@ -50,8 +50,8 @@ header("Pragma: no-cache"); // HTTP/1.0
 require("guiconfig.inc");
 class QueueStats {
 	public $queuename;
-    public $pps;
-    public $bandwidth;
+	public $pps;
+	public $bandwidth;
 	public $borrows;
 	public $suspends;
 	public $drops;
@@ -151,7 +151,9 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 		<td class="listhdr" width="1%"><?=gettext("Suspends"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Drops"); ?></td>
 	</tr>
-	<?php processQueues($altqstats, 0)?>
+	<?php 
+	$if_queue_list = get_configured_interface_list_by_realif(false, true);
+	processQueues($altqstats, 0)?>
 <?php endif; ?>
 </table>
 <p>
@@ -165,19 +167,26 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php 
 function processQueues($altqstats, $level){
 	global $g;
-	foreach ($altqstats['queue'] as $q) {?>
+	global $if_queue_list;
+	foreach ($altqstats['queue'] as $q) {
+		$if_name = "";
+		foreach ($if_queue_list as $oif => $real_name)
+		{
+			if ($oif == $q['interface'])
+			{
+				$if_name = $real_name;
+				break;
+			}
+		}
+		?>
 		<tr>
 			<td bgcolor="#DDDDDD" style="padding-left: <?php echo $level * 20?>px;">
 				<font color="#000000">
 					<?
 					if (strstr($q['name'], "root_"))
-					{
-						echo "<a href=\"firewall_shaper.php?interface={$q['interface']}&queue={$q['interface']}\">" . htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</a>";
-					}
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$if_name}&action=show\">" . htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</a>";
 					else
-					{
-						echo "<a href=\"firewall_shaper.php?interface={$q['interface']}&queue={$q['name']}\">" . htmlspecialchars($q['name']) . "</a>";
-					}
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$q['name']}&action=show\">" . htmlspecialchars($q['name']) . "</a>";
 					?>
 				</font>
 			</td>			
@@ -196,11 +205,9 @@ function processQueues($altqstats, $level){
 			echo "<td width=\"1%\" bgcolor=\"#DDDDDD\"><input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right'></td>";
 			?>
 		</tr>
-	<?php
+		<?php
 		if (is_array($q['queue']))
-		{
-			  processQueues($q, $level + 1); 
-		}
+			processQueues($q, $level + 1);
 	};
 }
 function statsQueues($xml){
@@ -209,7 +216,7 @@ function statsQueues($xml){
 	$current = new QueueStats();
 	$child = new QueueStats();
 	$current->queuename = $xml['name'] . $xml['interface'];
-	$current->pps = intval($xml['pkts']);
+	$current->pps = intval($xml['measured']);
 	$current->bandwidth = intval($xml['measuredspeedint']);
 	$current->borrows = intval($xml['borrows']);
 	$current->suspends = intval($xml['suspends']);

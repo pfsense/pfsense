@@ -993,7 +993,7 @@ function interfaces_configure() {
 			//echo "Delaying OpenVPN interface configuration...done.\n";
 			continue;
 		} else if (!empty($config['interfaces'][$if]['ipaddrv6']) && $config['interfaces'][$if]['ipaddrv6'] == "track6") {
-			$tack6_list[$if] = $ifname;
+			$track6_list[$if] = $ifname;
 		} else {
 			if ($g['booting'])
 				printf(gettext("Configuring %s interface..."), $ifname);

@@ -359,7 +359,7 @@ if ($_POST['apply']) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply);
 				} else
-					interface_bring_down($ifapply, false, $ifcfgo);
+					interface_bring_down($ifapply, true, $ifcfgo);
 			}
 		}
 		/* restart snmp so that it binds to correct address */

@@ -3212,6 +3212,8 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
 	/* XXX: need to extend to support variable prefix size for v4 */
+	if (!is_module_loaded("if_stf"))
+		mwexec("/sbin/kldload if_stf.ko");
 	$stfiface = "{$interface}_stf";
 	if (does_interface_exist($stfiface))
 		pfSense_interface_destroy($stfiface);
@@ -3306,6 +3308,8 @@ function interface_6to4_configure($interface = "wan", $wancfg){
 	$stflan = Net_IPv6::compress(implode(":", $stflanarr));
 
 	/* setup the stf interface */
+	if (!is_module_loaded("if_stf"))
+		mwexec("/sbin/kldload if_stf.ko");
 	$stfiface = "{$interface}_stf";
 	if (does_interface_exist($stfiface))
 		pfSense_interface_destroy($stfiface);

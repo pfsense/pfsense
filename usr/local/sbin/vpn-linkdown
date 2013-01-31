@@ -2,8 +2,5 @@
 
 # record logout
 /usr/bin/logger -p local3.info "logout,$1,$4,$5"
-/sbin/pfctl -i $1 -b 0.0.0.0/32 -b $4/32
-/sbin/pfctl -i $1 -k $4/32
-/sbin/pfctl -i $1 -k 0.0.0.0/32 $4/32
-/sbin/pfctl -i $1 -K $4/32
-/sbin/pfctl -i $1 -K 0.0.0.0/32 -K $4/32
+/sbin/pfctl -i $1 -Fs
+/sbin/pfctl -K $4/32

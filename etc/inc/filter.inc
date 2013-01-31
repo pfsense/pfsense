@@ -143,7 +143,7 @@ function filter_delete_states_for_down_gateways() {
 					$gwiface = $gateway['interface'];
 				else
 					$gwiface = get_real_interface($gateway['friendlyiface']);
-				$cmd = "/sbin/pfctl -i {$gwiface} -k 0.0.0.0/0";
+				$cmd = "/sbin/pfctl -i {$gwiface} -Fs";
 				mwexec($cmd);
 			}
 		}

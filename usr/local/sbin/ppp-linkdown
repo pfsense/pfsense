@@ -16,7 +16,7 @@ if [ "$3" != "" ]; then
 	pfctl -K ${LOCAL_IP}
 fi
 
-/sbin/pfctl -i $1 -k 0.0.0.0/0
+/sbin/pfctl -i $1 -Fs
 if [ -f "/tmp/${1}_defaultgw" ]; then
 	route delete default ${OLD_ROUTER}
 fi

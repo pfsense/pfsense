@@ -83,6 +83,7 @@ delete_old_states() {
 		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
 			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"
 			/sbin/pfctl -i $interface -k 0.0.0.0/0 -k ${OLD_ROUTER}/32
+			/sbin/pfctl -i $interface -k ${OLD_ROUTER}/32 -k 0.0.0.0/0
 		fi
 	fi
 }

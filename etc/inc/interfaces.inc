@@ -3157,9 +3157,11 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
 	/* XXX: need to extend to support variable prefix size for v4 */
-	$tmpstfiface = pfSense_interface_create("stf");
 	$stfiface = "{$interface}_stf";
-	pfSense_interface_rename($tmpstfiface, $stfiface);
+	if (!does_interface_exist($stfiface)) {
+		$tmpstfiface = pfSense_interface_create("stf");
+		pfSense_interface_rename($tmpstfiface, $stfiface);
+	}
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	if ($g['debug'])
@@ -3250,9 +3252,10 @@ function interface_6to4_configure($interface = "wan", $wancfg){
 
 	/* setup the stf interface */
 	$stfiface = "{$interface}_stf";
-	pfSense_interface_destroy($stfiface);
-	$tmpstfiface = pfSense_interface_create("stf");
-	pfSense_interface_rename($tmpstfiface, $stfiface);
+	if (!does_interface_exist($stfiface)) {
+		$tmpstfiface = pfSense_interface_create("stf");
+		pfSense_interface_rename($tmpstfiface, $stfiface);
+	}
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");
 

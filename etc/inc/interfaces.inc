@@ -431,6 +431,24 @@ function interfaces_bridge_configure($checkmember = 0) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if(empty($bridge['bridgeif']))
 				$bridge['bridgeif'] = "bridge{$i}";
+			if ($checkmember == 1) {
+				$members = explode(',', $bridge['members']);
+				foreach ($members as $member) {
+					if (strstr($bridge['if'], "_vip"))
+						continue 2;
+					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6")  
+						continue 2;
+				}
+			}
+			else if ($checkmember == 2) {
+				$members = explode(',', $bridge['members']);
+				foreach ($members as $member) {
+					if (!strstr($bridge['if'], "_vip"))
+						continue 2;
+					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")  
+						continue 2;
+				}
+			}
 			/* XXX: Maybe we should report any errors?! */
 			interface_bridge_configure($bridge, $checkmember);
 			$i++;
@@ -759,10 +777,18 @@ function interfaces_gre_configure($checkparent = 0) {
 		foreach ($config['gres']['gre'] as $i => $gre) {
 			if(empty($gre['greif']))
 				$gre['greif'] = "gre{$i}";
-			if ($checkparent == 1 && strstr($gre['if'], "_vip"))
-				continue;
-			if ($checkparent == 2 && !strstr($gre['if'], "_vip"))
-				continue;
+			if ($checkparent == 1) {
+				if (strstr($gre['if'], "_vip"))
+					continue;
+				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")  
+					continue;
+			}
+			else if ($checkparent == 2) {
+				if (!strstr($gre['if'], "_vip"))
+					continue;
+				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")  
+					continue;
+			}
 			/* XXX: Maybe we should report any errors?! */
 			interface_gre_configure($gre);
 		}
@@ -825,10 +851,18 @@ function interfaces_gif_configure($checkparent = 0) {
 		foreach ($config['gifs']['gif'] as $i => $gif) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
-			if ($checkparent == 1 && strstr($gif['if'], "_vip"))
-				continue;
-			if ($checkparent == 2 && !strstr($gif['if'], "_vip"))
-				continue;
+			if ($checkparent == 1) {
+				if (strstr($gif['if'], "_vip"))
+					continue;
+				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")  
+					continue;
+			}
+			else if ($checkparent == 2) {
+				if (!strstr($gre['if'], "_vip"))
+					continue;
+				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")  
+					continue;
+			}
 			/* XXX: Maybe we should report any errors?! */
 			interface_gif_configure($gif);
 		}
@@ -940,6 +974,7 @@ function interfaces_configure() {
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();
 	$bridge_list = array();
+	$track6_list = array();
 
 	/* This is needed to speedup interfaces on bootup. */
 	$reload = false;
@@ -958,7 +993,7 @@ function interfaces_configure() {
 			//echo "Delaying OpenVPN interface configuration...done.\n";
 			continue;
 		} else if (!empty($config['interfaces'][$if]['ipaddrv6']) && $config['interfaces'][$if]['ipaddrv6'] == "track6") {
-			$delayed_list[$if] = $ifname;
+			$tack6_list[$if] = $ifname;
 		} else {
 			if ($g['booting'])
 				printf(gettext("Configuring %s interface..."), $ifname);
@@ -985,6 +1020,18 @@ function interfaces_configure() {
 
 	/* set up BRIDGe virtual interfaces */
 	interfaces_bridge_configure(1);
+
+	foreach ($track6_list as $if => $ifname) {
+		if ($g['booting'])
+			printf(gettext("Configuring %s interface..."), $ifname);
+		if ($g['debug'])
+			log_error(sprintf(gettext("Configuring %s"), $ifname));
+
+		interface_configure($if, $reload);
+
+		if ($g['booting'])
+			echo gettext("done.") . "\n";
+	}
 
 	/* bring up vip interfaces */
 	interfaces_vips_configure();

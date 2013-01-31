@@ -3008,6 +3008,9 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	$rd6lan = convert_128bit_to_ipv6($rd6lanbin) ."1";
 
 	$lanif = get_real_interface($interface);
+	$oip = find_interface_ipv6($lanif);
+	if (is_ipaddrv6($oip))
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
 	log_error("rd6 {$interface} with ipv6 address {$rd6lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$rd6lan} prefixlen 64");
 
@@ -3062,6 +3065,9 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	$sixto4lan = convert_128bit_to_ipv6($sixto4lanbin) ."1";
 
 	$lanif = get_real_interface($interface);
+	$oip = find_interface_ipv6($lanif);
+	if (is_ipaddrv6($oip))
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
 	log_error("sixto4 {$interface} with ipv6 address {$sixto4lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$sixto4lan} prefixlen 64");
 
@@ -3097,8 +3103,10 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 		$dhcp6lanarr[7] = 1;
 		$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
 		$lanif = get_real_interface($interface);
-		if ($g['debug'])
-			log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
+		$oip = find_interface_ipv6($lanif);
+		if (is_ipaddrv6($oip))
+			mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
 	}
 
@@ -3158,10 +3166,10 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	/* XXX: need to extend to support variable prefix size for v4 */
 	$stfiface = "{$interface}_stf";
-	if (!does_interface_exist($stfiface)) {
-		$tmpstfiface = pfSense_interface_create("stf");
-		pfSense_interface_rename($tmpstfiface, $stfiface);
-	}
+	if (does_interface_exist($stfiface))
+		pfSense_interface_destroy($stfiface);
+	$tmpstfiface = pfSense_interface_create("stf");
+	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	if ($g['debug'])
@@ -3252,10 +3260,10 @@ function interface_6to4_configure($interface = "wan", $wancfg){
 
 	/* setup the stf interface */
 	$stfiface = "{$interface}_stf";
-	if (!does_interface_exist($stfiface)) {
-		$tmpstfiface = pfSense_interface_create("stf");
-		pfSense_interface_rename($tmpstfiface, $stfiface);
-	}
+	if (does_interface_exist($stfiface))
+		pfSense_interface_destroy($stfiface);
+	$tmpstfiface = pfSense_interface_create("stf");
+	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$stflanpr} prefixlen 16");
 
@@ -4197,11 +4205,14 @@ function find_interface_subnetv6($interface, $flush = false)
 	if (does_interface_exist($interface) == false)
 		return;
 
+	$foundv6 = false;
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
 		$ifinfo = pfSense_get_interface_addresses($interface);
 		// FIXME: Add IPv6 support to the pfSense module
+		unset($output);
 		exec("/sbin/ifconfig {$interface} inet6", $output);
 		foreach($output as $line) {
+			$line = trim($line);
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
 				if(! preg_match("/fe80::/", $parts[1])) {
@@ -4212,11 +4223,16 @@ function find_interface_subnetv6($interface, $flush = false)
 					} else {
 						$ifinfo['subnetbitsv6'] = $parts[3];
 					}
+					$foundv6 = true;
+					break;
 				}
 			}
 		}
-		$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
-		$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+		if ($foundv6 === true) {
+			$interface_ipv6_arr_cache[$interface] = $ifinfo['ipaddrv6'];
+			$interface_snv6_arr_cache[$interface] = $ifinfo['subnetbitsv6'];
+		} else
+			unset($interface_ipv6_arr_cache[$interface], $interface_snv6_arr_cache[$interface]);
 	}
 
 	return $interface_snv6_arr_cache[$interface];
@@ -4265,17 +4281,18 @@ function get_interface_ip($interface = "wan")
 function get_interface_ipv6($interface = "wan")
 {
 	global $config;
+
 	$realif = get_failover_interface($interface);
-	switch($config['interfaces'][$interface]['ipaddrv6']) {
-		case "6rd":
-		case "6to4":
-			$realif = "{$interface}_stf";
-			break;
+	if (is_array($config['interfaces'][$interface])) {
+		switch($config['interfaces'][$interface]['ipaddrv6']) {
+			case "6rd":
+			case "6to4":
+				$realif = "{$interface}_stf";
+				break;
+		}
 	}
 	if (!$realif) {
-		if (preg_match("/^carp/i", $interface))
-			$realif = $interface;
-		else if (preg_match("/^[a-z0-9]+_vip/i", $interface))
+		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
 			$realif = $interface;
 		else
 			return null;
@@ -4328,11 +4345,21 @@ function get_interface_subnet($interface = "wan")
 
 function get_interface_subnetv6($interface = "wan")
 {
-	$realif = get_real_interface($interface);
+	global $config;
+
+	if (!is_array($config['interfaces'][$interface]))
+		return null;
+	switch($config['interfaces'][$interface]['ipaddrv6']) {
+		case "6rd":
+		case "6to4":
+			$realif = "{$interface}_stf";
+			break;
+		default:
+			$realif = get_real_interface($interface);
+			break;
+	}
 	if (!$realif) {
-		if (preg_match("/^carp/i", $interface))
-			$realif = $interface;
-		else if (preg_match("/^[a-z0-9]+_vip/i", $interface))
+		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
 			$realif = $interface;
 		else
 			return null;

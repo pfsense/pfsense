@@ -2892,7 +2892,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			interface_6to4_configure($interface, $wancfg);
 			break;
 		case 'track6':
-			interface_track6_configure($interface);
+			interface_track6_configure($interface, $wancfg);
 			break;
 		default:
 			if (is_ipaddr($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {

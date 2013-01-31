@@ -3383,7 +3383,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		unset($out);
 	}
 	/* worst case is that the rc.newwanipv6 handles setting up the track6 interface */
-	if (!$g['booting'] && $wancfg['ippaddrv6'] != "slaac")
+	if (!$g['booting'] && $wancfg['ipaddrv6'] != "slaac")
 		link_interface_to_track6($interface, "update");
 
 	return 0;

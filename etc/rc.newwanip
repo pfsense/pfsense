@@ -126,10 +126,10 @@ if ($interface == "lan")
 /* check tunneled IPv6 interface tracking */
 switch($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6to4":
-		interface_6to4_configure($interface);
+		interface_6to4_configure($interface, $config['interfaces'][$interface]);
 		break;
 	case "6rd":
-		interface_6rd_configure($interface);
+		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
 }
 

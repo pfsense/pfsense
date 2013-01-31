@@ -1074,7 +1074,7 @@ function is_dhcpv6_server_enabled() {
 
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifcfg) {
-			if (!empty($ifcfg['track6-interface']))
+			if (isset($ifcfg['enable']) && !empty($ifcfg['track6-interface']))
 				return true;
 		}
 	}

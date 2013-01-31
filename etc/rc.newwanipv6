@@ -104,6 +104,9 @@ if(count($valid_ns > 0))
 if(!empty($_ENV['new_domain_name']))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 
+/* write current WAN IPv6 to file */
+file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 $oldipv6 = "";
@@ -114,23 +117,10 @@ $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');
 
+link_interface_to_track6($interface, "update");
+
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
-
-/* write current WAN IPv6 to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
-
-/* check native IPv6 interface tracking */
-switch($config['interfaces'][$interface]['ipaddrv6']) {
-	case "dhcp6":
-		foreach($config['interfaces'] as $iftrackname => $iftrack) {
-			if($iftrack['track6-interface'] == $interface) {
-				log_error("interface {$iftrackname} depends on {$interface}, configuring");
-				interface_track6_configure($iftrackname);
-			}
-		}
-		break;
-}
 
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);

@@ -842,6 +842,8 @@ function filter_generate_optcfg_array() {
 			$oic['type'] = $oc['ipaddr'];
 		if(!is_ipaddrv6($oc['ipaddrv6']) && !empty($oc['ipaddrv6']))
 			$oic['type6'] = $oc['ipaddrv6'];
+		if (!empty($oc['track6-interface']))
+			$oc['track6-interface'] = $oc['track6-interface'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
@@ -2684,21 +2686,23 @@ EOD;
 		}
 			break;
 		default:
-			if((isset($config['dhcpdv6'][$on]['enable'])) ||
-					(isset($config['interfaces'][$on]['track6-interface']))) {
+			if ((is_array($config['dhcpdv6'][$on]) && isset($config['dhcpdv6'][$on]['enable'])) || isset($oc['track6-interface'])) {
 				$ipfrules .= <<<EOD
-
 # allow access to DHCPv6 server on {$oc['descr']}
-anchor "dhcpv6server{$oc['descr']}"
 # We need inet6 icmp for stateless autoconfig and dhcpv6
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 label "allow access to DHCPv6 server"
+
+EOD;
+				if (is_ipaddrv6($oc['ipv6'])) {
+					$ipfrules .= <<<EOD
 pass in quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
 pass out quick on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
 
 EOD;
+				}
 			}
 			break;
 		}
@@ -2861,26 +2865,17 @@ EOD;
 	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";
 	/* add automatic LAN rules to allow IPv6 traffic out for dynamic IPv6 networks */
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		$oc = $FilterIflist[$ifdescr];
-		if($config['interfaces'][$ifdescr]['track6-interface'] <> "") {
-			$realif = get_real_interface($ifdescr);
-			$ifcfgipv6 = find_interface_ipv6($realif);
-			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			if($trackcfg['descr'] == "")
-				$trackcfg['descr'] = $trackifname;
-			$trackcfg['descr'] = strtoupper($trackcfg['descr']);
-
-			$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
-			if(is_ipaddrv6($ifcfgipv6)) {
-				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
-				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";
+		if (isset($ifcfg['track6-interface'])) {
+			if (is_ipaddrv6($ifcfg['ipv6'])) {
+				$trackifname = $ifcfg['track6-interface'];
+				$trackcfg = $FilterIflist[$trackifname];
+				$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
+				$prefix = Net_IPv6::getNetmask($ifcfg['ipv6'], $pdlen);
+				$ipfrules .= "pass in on \${$ifcfg['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$ifcfg['descr']} to any\"\n";
 				/* add rules on the WAN for traffic back in, let the downstream router
 				 * figure out what to do with the traffic */
-				$trackcfgipv6 = find_interface_ipv6(get_real_interface($trackifname));
-				if(is_ipaddrv6($trackcfgipv6)) {
-					$ipfrules .= "pass in quick on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
-				}
+				if (is_ipaddrv6($trackcfg['ipv6']))
+					$ipfrules .= "pass in on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
 			}
 		}
 	}
@@ -2896,12 +2891,12 @@ EOD;
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
 				$routeent = explode("/", $route['network']);
-				if($oc['ip']) {
+				unset($sa);
+				if (is_ipaddrv4($oc['ip'])) {
 					$sa = $oc['sa'];
 					$sn = $oc['sn'];
-					$if = $oc['if'];
 				}
-				if($sa && is_ipaddrv4($routeent[0])) {
+				if ($sa && is_ipaddrv4($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
@@ -2910,12 +2905,12 @@ pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep stat
 
 EOD;
 				}
-				if($oc['ipv6']) {
+				unset($sa);
+				if (is_ipaddrv6($oc['ipv6'])) {
 					$sa = $oc['sav6'];
 					$sn = $oc['snv6'];
-					$if = $oc['if'];
 				}
-				if($sa && is_ipaddrv6($routeent[0])) {
+				if ($sa && is_ipaddrv6($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
@@ -2937,29 +2932,26 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if(isset($config['installedpackages']['miniupnpd']) && isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+	if (is_array($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd'][0])) {
+		if (isset($config['installedpackages']['miniupnpd']['config'][0]['enable']))
+			$ipfrules .= "anchor \"miniupnpd\"\n";
 
-	$ipfrules .= <<<EOD
-# uPnPd
-anchor "miniupnpd"
-
-EOD;
-	
-		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
-		foreach($upnp_interfaces as $upnp_if) {
-			if(is_array($FilterIflist[$upnp_if])) {
-				$oc = $FilterIflist[$upnp_if];
-				if($oc['ip']) {
-					$sa = $oc['sa'];
-					$sn = $oc['sn'];
-					$if = $oc['if'];
-				}
-				if($sa) {
-					$ipfrules .= <<<EOD
-
+		if (is_array($config['installedpackages']['miniupnpd'][0]['config'])) {
+			$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
+			foreach($upnp_interfaces as $upnp_if) {
+				if (is_array($FilterIflist[$upnp_if])) {
+					$oc = $FilterIflist[$upnp_if];
+					unset($sa);
+					if($oc['ip']) {
+						$sa = $oc['sa'];
+						$sn = $oc['sn'];
+					}
+					if($sa) {
+						$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
+					}
 				}
 			}
 		}

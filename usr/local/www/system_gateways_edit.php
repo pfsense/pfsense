@@ -117,7 +117,7 @@ if ($_POST) {
 			$parent_ip = get_interface_ip($_POST['interface']);
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(empty($parent_ip) || empty($parent_sn)) {
-				$input_errors[] = gettext("You can not use a IPv6 Gateway Address on a IPv4 only interface.");
+				$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
 			} else {
 				$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
 				if(!ip_in_subnet($_POST['gateway'], $subnet))
@@ -130,7 +130,7 @@ if ($_POST) {
 				$parent_ip = get_interface_ipv6($_POST['interface']);
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
 				if(empty($parent_ip) || empty($parent_sn)) {
-					$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
+					$input_errors[] = gettext("You can not use a IPv6 Gateway Address on a IPv4 only interface.");
 				} else {
 					$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
 					if(!ip_in_subnet($_POST['gateway'], $subnet))

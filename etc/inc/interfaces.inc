@@ -3786,24 +3786,8 @@ function get_real_interface($interface = "wan") {
 			$wanif = interface_get_wireless_clone($cfg['if']);
 			break;
 		}
-		/*
-		if (empty($cfg['if'])) {
-			$wancfg = $cfg['if'];
-			break;
-		}
-		*/
 
-		switch ($cfg['ipaddr']) {
-			case "pppoe":
-			case "pptp":
-			case "l2tp":
-			case "ppp":
-				$wanif = $cfg['if'];
-				break;
-			default:
-				$wanif = $cfg['if'];
-				break;
-		}
+		$wanif = $cfg['if'];
 		break;
 	}
 

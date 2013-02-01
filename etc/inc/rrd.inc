@@ -280,6 +280,9 @@ function enable_rrd_graphing() {
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "export TERM=dumb\n";
+		$rrdupdatesh .= "\n";
+		$rrdupdatesh .= 'echo $$ > ' . $g['varrun_path'] . '/updaterrd.sh.pid';
+		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
 		$rrdupdatesh .= "do\n";
@@ -808,8 +811,9 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-	mwexec("killall rrdtool", true);
-	mwexec("/bin/pkill -a -f updaterrd.sh", true);
+	global $g;
+
+	killbypid("{$g['varrun_path']}/updaterrd.sh.pid");
 }
 
 ?>

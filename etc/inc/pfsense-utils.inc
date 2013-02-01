@@ -1019,6 +1019,9 @@ function setup_serial_port($when="save", $path="") {
 			} elseif ($g['platform'] == "nanobsd") {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			}
+
+			$new_boot_config[] = 'hw.usb.no_pf="1"';
+
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
 	}

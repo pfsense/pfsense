@@ -736,7 +736,7 @@ function backuparea_change(obj) {
 						<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
-				<?php if($config['installedpackages']['package'] != "") { ?>
+				<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) { ?>
 				<tr>
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>
@@ -746,12 +746,16 @@ function backuparea_change(obj) {
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
-		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
-						<br/>
-						<br/>
-						<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
-						<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>">
+						<?php if ($config['installedpackages']['package'] != "") { ?>
+							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
+							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
+							<br/>
+							<br/>
+						<?php } ?>
+						<?php if (is_subsystem_dirty("packagelock")) { ?>
+							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
+							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>">
+						<?php } ?>
 					</td>
 				</tr>
 				<?php } ?>

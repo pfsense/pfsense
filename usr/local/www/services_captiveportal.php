@@ -133,6 +133,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
+	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext'])
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -303,6 +304,7 @@ if ($_POST) {
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
 		if (!is_array($newcp['page']))
 			$newcp['page'] = array();
 
@@ -392,6 +394,7 @@ function enable_change(enable_change) {
 	document.iform.reauthenticateacct[0].disabled = radacct_dis;
 	document.iform.reauthenticateacct[1].disabled = radacct_dis;
 	document.iform.reauthenticateacct[2].disabled = radacct_dis;
+	document.iform.reverseacct.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
 }
 //-->
 </script>
@@ -753,12 +756,12 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS options"); ?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("RADIUS options"); ?></td>
 			</tr>
 
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
-				<td>
+				<td class="vtable">
 				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
 				<?php $iflist = get_configured_interface_with_descr();
 					foreach ($iflist as $ifdesc => $ifdescr) {
@@ -813,6 +816,12 @@ function enable_change(enable_change) {
 				<?php printf(gettext("If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and " .
 				"the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = %s's WAN IP address."),
 					$g['product_name']);?></td>
+			</tr>
+
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Accounting Style"); ?></td>
+				<td class="vtable"><input name="reverseacct" type="checkbox" id="reverseacct" value="yes" <?php if ($pconfig['reverseacct']) echo "checked"; ?>><strong><?=gettext("Invert Acct-Input-Octets and Acct-Output-Octets"); ?></strong><br>
+				<?=gettext("When this is enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload."); ?></td>
 			</tr>
 		</table>
 	</tr>

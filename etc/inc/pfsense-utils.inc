@@ -1007,7 +1007,8 @@ function setup_serial_port($when="save", $path="") {
 				if(!empty($bcs)
 					&& (stripos($bcs, "console") === false)
 					&& (stripos($bcs, "boot_multicons") === false)
-					&& (stripos($bcs, "boot_serial") === false))
+					&& (stripos($bcs, "boot_serial") === false)
+					&& (stripos($bcs, "hw.usb.no_pf") === false))
 					$new_boot_config[] = $bcs;
 
 			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";

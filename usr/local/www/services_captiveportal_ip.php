@@ -67,15 +67,12 @@ if ($_GET['act'] == "del") {
 		$ipent = $a_allowedips[$_GET['id']];
 		
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			if (!empty($ipent['sn'])) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip'], $ipent['sn']);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ipent['ip'], $ipent['sn']);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ipent['ip'], $ipent['sn']);
-			} else {
-				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip']);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ipent['ip']);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ipent['ip']);
-			}
+			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
+			
+			$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ipent['ip'], $mask);
+			
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
 				pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");

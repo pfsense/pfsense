@@ -95,13 +95,16 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ip");
-	$reqdfieldsn = array(gettext("Allowed IP address"));
+	$reqdfields = explode(" ", "ip sn");
+	$reqdfieldsn = array(gettext("Allowed IP address"), gettext("Subnet mask"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
+	if ($_POST['ip'] && !is_ipaddr($_POST['ip']))
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);
+	
+	if ($_POST['sn'] && (!is_numeric($_POST['sn']) || ($_POST['sn'] < 1) || ($_POST['sn'] > 32)))
+		$input_errors[] = gettext("A valid subnet mask must be specified");
 	
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
@@ -128,16 +131,14 @@ if ($_POST) {
 			$ip['bw_up'] = $_POST['bw_up'];
 		if ($_POST['bw_down'])
 			$ip['bw_down'] = $_POST['bw_down'];
-		$oldmask = "";
 		if (isset($id) && $a_allowedips[$id]) {
 			$oldip = $a_allowedips[$id]['ip'];
 			if (!empty($a_allowedips[$id]['sn']))
-				$oldmask .= "/{$a_allowedips[$id]['sn']}";
+				$oldmask = $a_allowedips[$id]['sn'];
+			else
+				$oldmask = 32;
 			$a_allowedips[$id] = $ip;
 		} else {
-			$oldip = $ip['ip'];
-			if (!empty($ip['sn']))
-				$oldmask .= "/{$ip['sn']}";
 			$a_allowedips[] = $ip;
 		}
 		allowedips_sort();
@@ -145,20 +146,20 @@ if ($_POST) {
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
-			if (is_ipaddr($oldip)) { 
-				if (!empty($oldmask))
-					$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
-				else
-					$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip);
-			}
-			$rules = "table 3 delete {$oldip}\n";
-			$rules .= "table 4 delete {$oldip}\n";
-			if (is_array($ipfw)) {
-				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-				$rules .= "pipe delete {$ipfw['dnpipe']}\n";
-				$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
+			$rules = "";
+			if (isset($oldip) && isset($oldmask)) {
+				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
+				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
+				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
+				if (is_array($ipfw)) {
+					$rules .= "pipe delete {$ipfw['dnpipe']}\n";
+					$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
+				}
 			}
 			$rules .= captiveportal_allowedip_configure_entry($ip);
+			if (is_array($ipfw)) {
+				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+			}
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");

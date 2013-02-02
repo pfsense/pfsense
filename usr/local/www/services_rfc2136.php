@@ -88,21 +88,34 @@ include("head.inc");
 			$iflist = get_configured_interface_with_descr();
 			foreach ($iflist as $if => $ifdesc) {
 				if ($rfc2136['interface'] == $if) {
-					echo $ifdesc;
+					if (!isset($rfc2136['enable']))
+						echo "<span class=\"gray\">{$ifdesc}</span>";
+					else
+						echo "{$ifdesc}";
 					break;
 				}
 			}
 		  ?>
 		  </td>
 		  <td class="listr">
-			<?=htmlspecialchars($rfc2136['host']);?>
+		  <?php
+			if (!isset($rfc2136['enable']))
+				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['host'])."</span>";
+			else
+				echo htmlspecialchars($rfc2136['host']);
+		  ?>
 		  </td>
 		  <td class="listbg">
-			<?=htmlspecialchars($rfc2136['descr']);?>&nbsp;
+		  <?php
+			if (!isset($rfc2136['enable']))
+				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['descr'])."</span>";
+			else
+				echo htmlspecialchars($rfc2136['descr']);
+		  ?>
 		  </td>
 		  <td valign="middle" nowrap class="list">
 			<a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-			&nbsp;<a href="services_rfc2136.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
+			&nbsp;<a href="services_rfc2136.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
 		  </td>
 		</tr>
 		<?php $i++; endforeach; ?>

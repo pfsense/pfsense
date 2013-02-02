@@ -120,7 +120,10 @@ include("head.inc");
 		  <?php	$iflist = get_configured_interface_with_descr();
 			foreach ($iflist as $if => $ifdesc) {
 				if ($dyndns['interface'] == $if) {
-					echo "{$ifdesc}";
+					if (!isset($dyndns['enable']))
+						echo "<span class=\"gray\">{$ifdesc}</span>";
+					else
+						echo "{$ifdesc}";
 					$iface = $if;
 					break;
 				}
@@ -128,7 +131,10 @@ include("head.inc");
 			$groupslist = return_gateway_groups_array();
 	  		foreach ($groupslist as $if => $group) {
 				if ($dyndns['interface'] == $if) {
-					echo "{$if}";
+					if (!isset($dyndns['enable']))
+						echo "<span class=\"gray\">{$if}</span>";
+					else
+						echo "{$if}";
 					$iface = $if;
 					break;
 				}
@@ -139,15 +145,23 @@ include("head.inc");
 		  <?php
 			$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53, Custom");
 			$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom");
-			$j = 0; for ($j = 0; $j < count($vals); $j++) 
-				if ($vals[$j] == $dyndns['type']) { 
-					echo htmlspecialchars($types[$j]);
+			for ($j = 0; $j < count($vals); $j++) 
+				if ($vals[$j] == $dyndns['type']) {
+					if (!isset($dyndns['enable']))
+						echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
+					else
+						echo htmlspecialchars($types[$j]);
 					break;
 				}
 		  ?>
 		  </td>
 		  <td class="listr">
-			<?=htmlspecialchars($dyndns['host']);?>
+		  <?php
+			if (!isset($dyndns['enable']))
+				echo "<span class=\"gray\">".htmlspecialchars($dyndns['host'])."</span>";
+			else
+				echo htmlspecialchars($dyndns['host']);
+		  ?>
 		  </td>
 		  <td class="listr">
 		  <?php
@@ -168,12 +182,16 @@ include("head.inc");
 		  ?>
 		  </td>
 		  <td class="listbg">
-			<?=htmlspecialchars($dyndns['descr']);?>&nbsp;
+		  <?php
+			if (!isset($dyndns['enable']))
+				echo "<span class=\"gray\">".htmlspecialchars($dyndns['descr'])."</span>";
+			else
+				echo htmlspecialchars($dyndns['descr']);
+		  ?>
 		  </td>
 		  <td valign="middle" nowrap class="list">
 			<a href="services_dyndns_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-			&nbsp;
-			<a href="services_dyndns.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
+			&nbsp;<a href="services_dyndns.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
 		  </td>
 		</tr>
 		<?php $i++; endforeach; ?>

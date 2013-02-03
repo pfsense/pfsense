@@ -31,6 +31,14 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/etc/rc.dumpon
 fi
 
+if [ -e /root/force_fsck ]; then
+	echo "Forcing filesystem check..."
+	/sbin/fsck -fy -t ufs /
+	if [ "$PLATFORM" = "nanobsd" ]; then
+		/sbin/fsck -fy -t ufs /cf
+	fi
+fi
+
 TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
 if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
 	echo "Enabling TRIM support"
@@ -97,6 +105,7 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 	fi
 fi
 
+/bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
 

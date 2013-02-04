@@ -213,7 +213,7 @@ switch($wancfg['ipaddrv6']) {
 		break;
 	case "dhcp6":
 		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
-		if(empty($wancfg['dhcp6-ia-pd-len']))
+		if(!isset($wancfg['dhcp6-ia-pd-len']))
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";

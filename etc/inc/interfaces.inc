@@ -3366,18 +3366,16 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 			/* Setup the prefix delegation */
 			$dhcp6cconf .= "id-assoc pd 0 {\n";
-			$iflist = get_configured_interface_with_descr(false, true);
 			$iflist = link_interface_to_track6($interface);
 			foreach ($iflist as $friendly => $ifcfg) {
-				if (is_numeric($ifcfg['track6-prefix-id'])) {
-					if ($g['debug'])
-						log_error("setting up $ifdescr - {$ifcfg['track6-prefix-id']}");
-					$realif = get_real_interface($friendly);
-					$dhcp6cconf .= "	prefix-interface {$realif} {\n";
-					$dhcp6cconf .= "		sla-id {$ifcfg['track6-prefix-id']};\n";
-					$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
-					$dhcp6cconf .= "	};\n";
-				}
+				$prefix_id = (is_numeric($ifcfg['track6-prefix-id'])) ? $ifcfg['track6-prefix-id'] : 0;
+				if ($g['debug'])
+					log_error("setting up $ifdescr - {$prefix_id}");
+				$realif = get_real_interface($friendly);
+				$dhcp6cconf .= "	prefix-interface {$realif} {\n";
+				$dhcp6cconf .= "		sla-id {$prefix_id};\n";
+				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
+				$dhcp6cconf .= "	};\n";
 			}
 			unset($iflist, $ifcfg);
 			$dhcp6cconf .= "};\n";

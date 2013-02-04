@@ -2670,6 +2670,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("cancel").style.display = '';
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
+			jQuery('#status').html('');
 		}
 		function hide_add_gateway_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
@@ -2679,6 +2680,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			document.getElementById("cancel").style.display = '';
 			document.getElementById("gwsave").style.display = '';
 			document.getElementById("gwcancel").style.display = '';
+			jQuery('#statusv6').html('');
 		}
 		function hide_add_gatewaysave() {
 			document.getElementById("addgateway").style.display = 'none';
@@ -2697,7 +2699,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					type: 'post',
 					data: pars,
 					error: report_failure,
-					complete: save_callback
+					success: save_callback
 				});
 		}
 		function hide_add_gatewaysave_v6() {
@@ -2716,7 +2718,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					type: 'post',
 					data: pars_v6,
 					error: report_failure_v6,
-					complete: save_callback_v6
+					success: save_callback_v6
 				});
 		}
 		function addOption(selectbox,text,value)
@@ -2758,7 +2760,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			if(response) {
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
-				jQuery('#status').html('');
 				var gwtext = escape(name) + " - " + gatewayip;
 				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
@@ -2778,7 +2779,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			if(response_v6) {
 				document.getElementById("addgatewayv6").style.display = 'none';
 				hide_add_gateway_v6();
-				jQuery('#statusv6').html('');
 				var gwtext_v6 = escape(name) + " - " + gatewayip;
 				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
 				// Auto submit form?

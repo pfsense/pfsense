@@ -4382,16 +4382,16 @@ function get_interface_subnetv6($interface = "wan")
 {
 	global $config;
 
-	if (!is_array($config['interfaces'][$interface]))
-		return null;
-	switch($config['interfaces'][$interface]['ipaddrv6']) {
-		case "6rd":
-		case "6to4":
-			$realif = "{$interface}_stf";
-			break;
-		default:
-			$realif = get_real_interface($interface);
-			break;
+	if (is_array($config['interfaces'][$interface])) {
+		switch($config['interfaces'][$interface]['ipaddrv6']) {
+			case "6rd":
+			case "6to4":
+				$realif = "{$interface}_stf";
+				break;
+			default:
+				$realif = get_real_interface($interface);
+				break;
+		}
 	}
 	if (!$realif) {
 		if (preg_match("/^[a-z0-9]+_vip/i", $interface))

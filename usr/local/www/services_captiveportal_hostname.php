@@ -86,6 +86,7 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 			
 		unset($a_allowedhostnames[$_GET['id']]);
 		write_config();
+		captiveportal_allowedhostname_configure();
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;
 	}

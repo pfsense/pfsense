@@ -337,13 +337,15 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		if (isvalidpid("{$g['varrun_path']}/filterdns.pid"))
 			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
 		else {
-			killbypid("{$g['varrun_path']}/filterdns.pid");
 			/*
 			 * FilterDNS has three debugging levels. The default choosen is 1.
 			 * Availabe are level 2 and greater then 2.
 			 */
 			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
 		}
+	} else {
+		killbypid("{$g['varrun_path']}/filterdns.pid");
+		@unlink("{$g['varrun_path']}/filterdns.pid");
 	}
 
 	/* run items scheduled for after filter configure run */

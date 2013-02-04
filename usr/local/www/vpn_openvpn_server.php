@@ -540,7 +540,7 @@ function mode_change() {
 
 function autokey_change() {
 
-	if (document.iform.autokey_enable.checked)
+	if ((document.iform.autokey_enable != null) && (document.iform.autokey_enable.checked))
 		document.getElementById("autokey_opts").style.display="none";
 	else
 		document.getElementById("autokey_opts").style.display="";
@@ -660,6 +660,7 @@ function tuntap_change() {
 				document.getElementById("serverbridge_dhcp_start").style.display="";
 				document.getElementById("serverbridge_dhcp_end").style.display="";
 				document.getElementById("topology_subnet_opt").style.display="none";
+				document.iform.serverbridge_dhcp.disabled = false;
 				if (document.iform.serverbridge_dhcp.checked) {
 					document.iform.serverbridge_interface.disabled = false;
 					document.iform.serverbridge_dhcp_start.disabled = false;

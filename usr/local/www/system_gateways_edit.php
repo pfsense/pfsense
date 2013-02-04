@@ -124,7 +124,7 @@ if ($_POST) {
 					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
 			}
 		}
-		if(is_ipaddrv6($_POST['gateway'])) {
+		else if(is_ipaddrv6($_POST['gateway'])) {
 			/* do not do a subnet match on a link local address, it's valid */
 			if(! preg_match("/fe80::/", $_POST['gateway'])) {
 				$parent_ip = get_interface_ipv6($_POST['interface']);

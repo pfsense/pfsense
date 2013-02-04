@@ -474,13 +474,15 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid IPv6 address */
 function is_ipaddrv6($ipaddr) {
+	if (!is_string($ipaddr) || empty($ipaddr))
+		return false;
 	$result = Net_IPv6::checkIPv6($ipaddr);
 	return $result;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */
 function is_ipaddrv4($ipaddr) {
-	if (!is_string($ipaddr))
+	if (!is_string($ipaddr) || empty($ipaddr))
 		return false;
 
 	$ip_long = ip2long($ipaddr);

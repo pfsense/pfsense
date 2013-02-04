@@ -1480,22 +1480,35 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
  */
 
 function getVolume($ip) {
-	global $cpzone;
+	global $config, $cpzone;
 
+	$reverse = empty($config['captiveportal'][$cpzone]['reverseacct']) ? false : true;
 	$volume = array();
 	// Initialize vars properly, since we don't want NULL vars
 	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
 	$ipfw = pfSense_ipfw_getTablestats($cpzone, 1, $ip);
 	if (is_array($ipfw)) {
-		$volume['input_pkts'] = $ipfw['packets'];
-		$volume['input_bytes'] = $ipfw['bytes'];
+		if ($reverse) {
+			$volume['output_pkts'] = $ipfw['packets'];
+			$volume['output_bytes'] = $ipfw['bytes'];
+		}
+		else {
+			$volume['input_pkts'] = $ipfw['packets'];
+			$volume['input_bytes'] = $ipfw['bytes'];
+		}
 	}
 
 	$ipfw = pfSense_ipfw_getTablestats($cpzone, 2, $ip);
 	if (is_array($ipfw)) {
-		$volume['output_pkts'] = $ipfw['packets'];
-		$volume['output_bytes'] = $ipfw['bytes'];
+		if ($reverse) {
+			$volume['input_pkts'] = $ipfw['packets'];
+			$volume['input_bytes'] = $ipfw['bytes'];
+		}
+		else {
+			$volume['output_pkts'] = $ipfw['packets'];
+			$volume['output_bytes'] = $ipfw['bytes'];
+		}
 	}
 
 	return $volume;

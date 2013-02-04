@@ -1024,9 +1024,11 @@ function captiveportal_allowedhostname_configure() {
 		if (isvalidpid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid"))
 			sigkillbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid", "HUP");
 		else {
-			killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");
 			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
 		}
+	} else {
+		killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");
+		@unlink("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");
 	}
 
 	return $rules;

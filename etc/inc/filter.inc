@@ -1953,6 +1953,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesav6}/{$pppoesnv6}";
 						}
 					}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
 			} else {
 				switch ($rule[$target]['network']) {
 					case 'wan':
@@ -1989,6 +1991,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 				}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
 			}
 		}
 	} else if($rule[$target]['address']) {

@@ -106,11 +106,11 @@ if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
 
 // grab the installedpackages->package_name section.
-if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']))
+if($config['installedpackages'] && !is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']))
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
 // If the first entry in the array is an empty <config/> tag, kill it.
-if ((count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) 
+if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) 
 	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == ""))
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 

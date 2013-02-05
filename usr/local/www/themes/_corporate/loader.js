@@ -1,4 +1,4 @@
-<!-- 
+//<![CDATA[
 var browser     = '';
 var version     = '';
 var entrance    = '';
@@ -26,4 +26,4 @@ if (version < 7) {
 
 document.write('<script type="text/javascript" src="/themes/corporate/javascript/niftyjsCode.js"></scr' + 'ipt>'); 
 
-// -->
+//]]>

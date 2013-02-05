@@ -48,6 +48,8 @@ $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
 $pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
+$pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
+$pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
 
 if (!is_array($config['dnsmasq']['hosts']))
@@ -69,6 +71,8 @@ if ($_POST) {
 	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
+	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
 	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 
 	if ($config['dnsmasq']['custom_options']) {
@@ -189,6 +193,27 @@ function show_advanced_dns() {
 			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
 					"affects the name given for a reverse lookup (PTR)."));?></p>
+		</td>
+	</tr>
+	<tr>
+		<td rowspan="2" width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="strict_order" type="checkbox" id="strict_order" value="yes" <?php if ($pconfig['strict_order'] == "yes") echo "checked";?>>
+			<strong><?=gettext("Query DNS servers sequentially");?><br>
+			</strong><?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
+					"rather than all at once in parallel. ".
+					""), $g['product_name']); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="78%" class="vtable"><p>
+			<input name="domain_needed" type="checkbox" id="domain_needed" value="yes" <?php if ($pconfig['domain_needed'] == "yes") echo "checked";?>>
+			<strong><?=gettext("Require domain");?><br>
+			</strong><?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.  ".
+					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ".
+					""), $g['product_name']); ?></p>
 		</td>
 	</tr>
 	<tr>

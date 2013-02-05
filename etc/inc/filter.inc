@@ -528,7 +528,6 @@ function filter_generate_aliases() {
 				$aliases .= " }\"\n";
 			}
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
-			/* XXX possibly add 6to4 in the future as well, stf0 */
 			if ($ifcfg['type6'] == '6rd')
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
 			else if ($ifcfg['type6'] == '6to4')
@@ -2621,14 +2620,19 @@ EOD;
 			/* allow access to DHCP server on interfaces */
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
-
 # allow access to DHCP server on {$oc['descr']}
 pass in quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
+
+EOD;
+				if (is_ipaddrv4($oc['ip'])) {
+					$ipfrules .= <<<EOD
 pass in quick on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out quick on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
-				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
+				}
+
+				if(is_ipaddrv4($pc['ip']) && $config['dhcpd'][$on]['failover_peerip'] <> "") {
 					$ipfrules .= <<<EOD
 # allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
 pass in quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
@@ -2644,7 +2648,6 @@ EOD;
 		case "slaac":
 		case "dhcp6":
 			$ipfrules .= <<<EOD
-
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "allow dhcpv6 client in {$oc['descr']}"
 pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client in {$oc['descr']}"
@@ -2668,13 +2671,14 @@ EOD;
 		}
 			break;
 		case "6to4":
+			if (is_ipaddrv4($oc['ip'])) {
 			$ipfrules .= <<<EOD
-
 # allow our proto 41 traffic from the 6to4 border relay in
 pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
 pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
 
 EOD;
+		}
 		if (is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"

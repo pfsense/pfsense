@@ -67,8 +67,8 @@ function activate_sysctls() {
 		return;
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x0001");
 	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x0001");
-	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x0002");
-	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x0002");
+	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x0001");
+	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x0001");
 
 	if(is_array($config['sysctl'])) {
 		foreach($config['sysctl']['item'] as $tunable) {

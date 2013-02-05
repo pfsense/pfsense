@@ -1547,6 +1547,14 @@ function services_dnsmasq_configure() {
 		if(!isset($config['system']['webgui']['nodnsrebindcheck']))
 			$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
 
+		if (isset($config['dnsmasq']['strict_order'])) {
+			$args .= " --strict-order ";
+		}
+
+		if (isset($config['dnsmasq']['domain_needed'])) {
+			$args .= " --domain-needed ";
+		}
+
 		if ($config['dnsmasq']['custom_options']) {
 			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
 				$args .= " --$c";

@@ -2086,6 +2086,18 @@ function filter_generate_user_rule($rule) {
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
 
+	switch($rule['ipprotocol']) {
+	case "inet":
+		$aline['ipprotocol'] = "inet";
+		break;
+	case "inet6":
+		$aline['ipprotocol'] = "inet6";
+		break;
+	default:
+		$aline['ipprotocol'] = "";
+		break;
+	}
+
 	/* check for unresolvable aliases */
 	if($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");

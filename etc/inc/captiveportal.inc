@@ -416,12 +416,15 @@ function captiveportal_init_webgui() {
 		"", "", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
 		"cert-portal.pem", "ca-portal.pem", 1, true);
 
+	@unlink("{$g['varrun_path']}/lighty-CaptivePortal.pid");
 	/* attempt to start lighttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");
 
 	/* fire up https instance */
-	if (isset($config['captiveportal']['httpslogin']))
+	if (isset($config['captiveportal']['httpslogin'])) {
+		@unlink("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
+	}
 }
 
 /* reinit will disconnect all users, be careful! */

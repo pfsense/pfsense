@@ -1039,7 +1039,7 @@ EOD;
 #server.error-handler-404   = "/error-handler.php"
 
 ## to help the rc.scripts
-server.pid-file            = "/var/run/{$pid_file}"
+server.pid-file            = "{$g['varrun_path']}/{$pid_file}"
 
 ## virtual directory listings
 server.dir-listing         = "disable"

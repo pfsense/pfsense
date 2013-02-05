@@ -735,11 +735,6 @@ function system_webgui_start() {
 	if ($g['booting'])
 		echo gettext("Starting webConfigurator...");
 
-	/* kill any running lighttpd */
-	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
-
-	sleep(1);
-
 	chdir($g['www_path']);
 
 	/* defaults */
@@ -792,6 +787,13 @@ function system_webgui_start() {
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
 		"cert.pem", "ca.pem");
+
+	/* kill any running lighttpd */
+	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+
+	sleep(1);
+
+	@unlink("{$g['varrun_path']}/lighty-webConfigurator.pid");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");

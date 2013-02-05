@@ -424,12 +424,15 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
 		"", "", $cpzone);
 
+	@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start lighttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
-	if (isset($cpcfg['httpslogin']))
+	if (isset($cpcfg['httpslogin'])) {
+		@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
+	}
 }
 
 /* reinit will disconnect all users, be careful! */

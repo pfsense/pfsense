@@ -85,7 +85,7 @@ $counter = 1;
 			echo gettext("Pending");
 	?>
 	<?php $counter++; ?>
-	  </td>
+	</td>
 	<td class="listr" id="gateway<?=$counter?>" >
 	<table border="0" cellpadding="0" cellspacing="2">
 	<?php

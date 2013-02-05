@@ -151,21 +151,33 @@ function csrf_ob_handler($buffer, $flags) {
     $tokens = csrf_get_tokens();
     $name = $GLOBALS['csrf']['input-name'];
     $endslash = $GLOBALS['csrf']['xhtml'] ? ' /' : '';
-    $input = "<input type='hidden' name='$name' value=\"$tokens\"$endslash>";
+    $input = "<input type=\"hidden\" name=\"$name\" value=\"$tokens\"$endslash>";
     $buffer = preg_replace('#(<form[^>]*method\s*=\s*["\']post["\'][^>]*>)#i', '$1' . $input, $buffer);
     if ($GLOBALS['csrf']['frame-breaker']) {
-        $buffer = str_ireplace('</head>', '<script type="text/javascript">if (top != self) {top.location.href = self.location.href;}</script></head>', $buffer);
+        $buffer = str_ireplace(
+          "</head>", 
+          "\n\t<script type=\"text/javascript\">\n".
+          "\t//<![CDATA[\n".
+          "\t\tif (top != self) {top.location.href = self.location.href;}\n".
+          "\t//]]>\n".
+          "\t</script>\n".
+          "</head>", 
+          $buffer
+        );
     }
     if ($js = $GLOBALS['csrf']['rewrite-js']) {
         $buffer = str_ireplace(
-            '</head>',
-            '<script type="text/javascript">'.
-                'var csrfMagicToken = "'.$tokens.'";'.
-                'var csrfMagicName = "'.$name.'";</script>'.
-            '<script src="'.$js.'" type="text/javascript"></script></head>',
+            "</head>",
+            "\n\t<script type=\"text/javascript\">\n".
+            "\t//<![CDATA[\n".
+            "\t\tvar csrfMagicToken=\"".$tokens."\";\n".
+            "\t\tvar csrfMagicName=\"".$name."\";\n".
+            "\t//]]>\n".
+            "\t</script>\n".
+            "\t<script src=\"".$js."\" type=\"text/javascript\"></script>\n\n</head>\n",
             $buffer
         );
-        $script = '<script type="text/javascript">CsrfMagic.end();</script>';
+        $script = "<script type=\"text/javascript\">\n//<![CDATA[\n\tCsrfMagic.end();\n//]]>\n</script>\n\n";
         $buffer = str_ireplace('</body>', $script . '</body>', $buffer, $count);
         if (!$count) {
             $buffer .= $script;
@@ -245,7 +257,7 @@ function csrf_get_tokens() {
  */
 function csrf_callback($tokens) {
     header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Either your session has expired, this page has been inactive too long, or you need to enable cookies.<br />Debug: ".$tokens."</body></html>
+    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Either your session has expired, this page has been inactive too long, or you need to enable cookies.<br/>Debug: ".$tokens."</body></html>
 ";
 }
 

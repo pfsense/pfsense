@@ -2728,7 +2728,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
-		if(($wancfg['ipaddr'] <> "none") && ($wancfg['ipaddrv6'] <> "none")) {
+		if(empty($wancfg['ipaddr']) && empty($wancfg['ipaddrv6'])) {
 			interface_bring_down($interface);
 		}
 	}

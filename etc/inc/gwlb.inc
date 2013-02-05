@@ -460,13 +460,13 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			 * the config. */
 			/* this is a fallback if all else fails and we want to get packets out @smos */
 			if (!isset($gateway['defaultgw'])) {
-				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0)) {
+				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0) && (!isset($gateway['ipprotocol']) || ($gateway['ipprotocol'] == "inet"))) {
 					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
 						$gateway['defaultgw'] = true;
 						$found_defaultv4 = 1;
 					}
 				}
-				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0)) {
+				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
 					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
 						$gateway['defaultgw'] = true;
 						$found_defaultv6 = 1;

@@ -91,7 +91,7 @@ if ($_POST) {
 
 	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $member) {
-			if (!does_interface_exist($_POST['members']))
+			if (!does_interface_exist($member))
 				$input_errors[] = gettext("Interface supplied as member is invalid");
 		}
 	} else if (!does_interface_exist($_POST['members']))

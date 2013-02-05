@@ -2086,20 +2086,6 @@ function filter_generate_user_rule($rule) {
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
 
-	if(isset($rule['ipprotocol'])) {
-		switch($rule['ipprotocol']) {
-			case "inet":
-				$aline['ipprotocol'] = "inet";
-				break;
-			case "inet6":
-				$aline['ipprotocol'] = "inet6";
-				break;
-			case "inet46":
-				$aline['ipprotocol'] = "";
-				break;
-		}
-	}
-
 	/* check for unresolvable aliases */
 	if($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");
@@ -2136,24 +2122,18 @@ function filter_generate_user_rule($rule) {
 
 	/* do not process reply-to for gateway'd rules */
 	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
-		if($rule['ipprotocol'] == "inet6") {
+		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
-			if(is_ipaddrv6($rg)) {
+			if (is_ipaddrv6($rg))
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else {
-				if($rule['interface'] <> "pptp") {
-					log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
-				}
-			}
+			else if ($rule['interface'] <> "pptp")
+				log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
-			if(is_ipaddrv4($rg)) {
+			if (is_ipaddrv4($rg))
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else {
-				if($rule['interface'] <> "pptp") {
-					log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
-				}
-			}
+			else if ($rule['interface'] <> "pptp")
+				log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
@@ -2207,26 +2187,26 @@ function filter_generate_user_rule($rule) {
 		$l7_structures = $l7rule->get_unique_structures();
 		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
 	}
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
+	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
+	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
 		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
-	if(!empty($rule['tag']))
+	if (!empty($rule['tag']))
 		$aline['tag'] = " tag " .$rule['tag']. " ";
-	if(!empty($rule['tagged']))
+	if (!empty($rule['tagged']))
 		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
-	if(!empty($rule['dscp']))
+	if (!empty($rule['dscp']))
 		$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
-	if(!empty($rule['vlanprio']))
+	if (!empty($rule['vlanprio']))
 		$aline['vlanprio'] = " ieee8021q-pcp " . $rule['vlanprio'] . " ";
-	if(!empty($rule['vlanprioset']))
+	if (!empty($rule['vlanprioset']))
 		$aline['vlanprioset'] = " ieee8021q-setpcp " . $rule['vlanprioset'] . " ";
-	if($type == "pass") {
-		if(isset($rule['allowopts']))
+	if ($type == "pass") {
+		if (isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
 
 		$aline['flags'] = "";
-		if($rule['protocol'] == "tcp") {
+		if ($rule['protocol'] == "tcp") {
 			if (isset($rule['tcpflags_any']))
 				$aline['flags'] = "flags any ";
 			else if (!empty($rule['tcpflags2'])) {
@@ -2835,7 +2815,7 @@ EOD;
 		}
 	}
 
-	if(isset($config['filter']['rule'])) {
+	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
 		$rule_arr2 = array();
@@ -2844,28 +2824,50 @@ EOD;
 		 */
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
-			if(!isset ($rule['disabled'])) {
-				if(isset($rule['floating'])) {
+			if (isset ($rule['disabled']))
+				continue;
+
+			if (!empty($rule['ipprotocol']) && $rule['ipprotocol'] == "inet46") {
+				if (isset($rule['floating'])) {
+					$rule['ipprotocol'] = "inet";
+					$rule_arr1[] = filter_generate_user_rule_arr($rule);
+					$rule['ipprotocol'] = "inet6";
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
 				} else {
+					$rule['ipprotocol'] = "inet";
+					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+					$rule['ipprotocol'] = "inet6";
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 				}
-				if($rule['sched'])
-					$time_based_rules = true;
+				$rule['ipprotocol'] = "inet46";
+			} else {
+				if (isset($rule['floating']))
+					$rule_arr1[] = filter_generate_user_rule_arr($rule);
+				else
+					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 			}
+			if ($rule['sched'])
+				$time_based_rules = true;
 		}
-		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined rules follow\n";
 		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
-		foreach($rule_arr as $rule) {
-			if(isset($rule['disabled']))
+		foreach($rule_arr1 as $rule) {
+			if (isset($rule['disabled']))
 				continue;
-			if(!$rule['rule'])
+			if (!$rule['rule'])
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
 		}
+		foreach($rule_arr2 as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+			if (!$rule['rule'])
+				continue;
+			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+		unset($rule_arr1, $rule_arr2);
 	}
 
 	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";

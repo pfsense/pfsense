@@ -63,7 +63,7 @@ function getHeadJS() {
         
         jQuery(\"#submit\").click(submit_form);
         jQuery('#submit').click(function() {return false;});
-        var to_insert = \"<div style='visibility:hidden' id='loading' name='loading'><img src='{$loader_gif}' \/><\/div>\";
+        var to_insert = \"<div style='visibility:hidden' id='loading' name='loading'><img src='{$loader_gif}' alt='loader' \/><\/div>\";
         jQuery('#submit').before(to_insert);
       }
     }
@@ -73,7 +73,7 @@ function getHeadJS() {
       //alert(Form.serialize($('iform')));
 
       if(jQuery('#inputerrors'))
-        jQuery('#inputerrors').html('<center><b><i>Loading...</i></b></center>');
+        jQuery('#inputerrors').html('<center><b><i>Loading...<\/i><\/b><\/center>');
         
       /* dsh: Introduced because pkg_edit tries to set some hidden fields
        *      if executing submit's onclick event. The click gets deleted
@@ -134,10 +134,10 @@ function getHeadJS() {
         return;
       }
 
-      message_html = '<table height=\"32\" width=\"100%\"><tr><td>';
+      message_html = '<table height=\"32\" width=\"100%\" summary=\"redbox\"><tr><td>';
       message_html += '<div style=\"background-color:#990000\" id=\"redbox\">';
-      message_html += '<table width=\"100%\"><tr><td width=\"8%\">';
-      message_html += '<img style=\"vertical-align:center\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\" \/>';
+      message_html += '<table width=\"100%\" summary=\"message\"><tr><td width=\"8%\">';
+      message_html += '<img style=\"vertical-align:center\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\" alt=\"exclamation\" \/>';
       message_html += '<\/td><td width=\"70%\"><font color=\"white\">';
       message_html += '<b>' + message + '<\/b><\/font><\/td>';
 

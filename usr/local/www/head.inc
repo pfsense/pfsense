@@ -15,33 +15,53 @@ $pagetitle = gentitle( $pgtitle );
 	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
-		<?php 
-		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
-			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
+	<?php 
+	if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
+		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
         else:
         	echo "<link rel=\"stylesheet\" href=\"/css/table.css\" media=\"all\" />";
         endif;
-		?>
+	?>
 		
-		<?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
-                  file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-					<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
+	<?php
+	if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
+		file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
+		<?php echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" />"; ?>
         <?php else: ?>
         	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
-		<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
-		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
-		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all">
-		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
-		<script type="text/javascript">
-			var theme = "<?php echo $g['theme']; ?>";
+	<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
+	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
+	<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
+	<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+		var theme = "<?php echo $g['theme']; ?>";
+		jQuery.noConflict();
+	//]]>
+	</script>
 
-			jQuery.noConflict();
-		</script>
-		<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
-<?php
+	<script type="text/javascript" src="/javascript/sorttable.js"></script>
+	<script type="text/javascript" src="/javascript/ticker.js"></script>
+	<style type="text/css" id="antiClickjack">
+	/*<![CDATA[*/
+	body { display:none; }
+	/*]]>*/
+	</style>
+	<script type="text/javascript">
+	//<![CDATA[
+	if (self === top) { 
+		var antiClickjack = document.getElementById("antiClickjack"); antiClickjack.parentNode.removeChild(antiClickjack);
+	} else { 
+		top.location = self.location;
+	}
+	//]]>
+	</script>
+
+	<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
+	<?php
 		if($_GET['enablefirebuglite']) {
 			echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
 			echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";

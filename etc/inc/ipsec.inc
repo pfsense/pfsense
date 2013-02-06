@@ -193,14 +193,14 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 /*
  * Return phase2 idinfo in cidr format
  */
-function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
+function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false,$mode="tunnel") {
 	global $config;
 
 	switch ($idinfo['type'])
 	{
 		case "address":
 			if ($addrbits) {
-				if($idinfo['mode'] == "tunnel6") {
+				if($mode == "tunnel6") {
 					return $idinfo['address']."/128";
 				} else {
 					return $idinfo['address']."/32";
@@ -214,7 +214,7 @@ function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
 		case "mobile":
 			return "0.0.0.0/0";
 		default:
-			if($idinfo['mode'] == "tunnel6") {
+			if($mode == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
 				$address = gen_subnetv6($address,$netbits);
@@ -328,10 +328,10 @@ function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
 	$loc_ip = ipsec_get_phase1_src($ph1ent);
 	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
 
-	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
+	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true,$ph2ent['mode']);
 	if (!empty($ph2ent['natlocalid']))
-		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true);
-	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
+		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true,$ph2ent['mode']);
+	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true,$ph2ent['mode']);
 
 	/* check for established SA in both directions */
 	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
@@ -358,6 +358,10 @@ function ipsec_lookup_isakmp_sa($in_srcip,$in_dstip) {
 function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,$in_dstid) {
 
 	/* match the phase1/2 to an SP */
+	$in_srcip = ipsec_fixup_ip($in_srcip);
+	$in_dstip = ipsec_fixup_ip($in_dstip);
+	$in_srcid = ipsec_fixup_ip($in_srcid);
+	$in_dstid = ipsec_fixup_ip($in_dstid);
 
 	foreach($spd as $sp) {
 
@@ -368,9 +372,9 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 
 		/* match IPs */
 
-		if($in_srcip != $sp['src'])
+		if($in_srcip != ipsec_fixup_ip($sp['src']))
 			continue;
-		if($in_dstip != $sp['dst'])
+		if($in_dstip != ipsec_fixup_ip($sp['dst']))
 			continue;
 
 		/* add netbits for address IDs */
@@ -378,16 +382,24 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 		$sp_srcid = $sp['srcid'];
 		$sp_dstid = $sp['dstid'];
 
-		if (!strstr($sp_srcid,"/"))
-			$sp_srcid .= '/32';
-		if (!strstr($sp_dstid,"/"))
-			$sp_dstid .= '/32';
+		if (!strstr($sp_srcid,"/")) {
+			if (ip_ipaddrv4($sp_srcid))
+				$sp_srcid .= '/32';
+			elseif (ip_ipaddrv6($sp_srcid))
+				$sp_srcid .= '/128';
+		}
+		if (!strstr($sp_dstid,"/")) {
+			if (ip_ipaddrv4($sp_srcid))
+				$sp_dstid .= '/32';
+			elseif (ip_ipaddrv6($sp_srcid))
+				$sp_dstid .= '/128';
+		}
 
 		/* match IDs */
 
-		if($in_srcid != $sp_srcid)
+		if($in_srcid != ipsec_fixup_ip($sp_srcid))
 			continue;
-		if($in_dstid != $sp_dstid)
+		if($in_dstid != ipsec_fixup_ip($sp_dstid))
 			continue;
 
 		/* match the SP to a unique SA by reqid */
@@ -411,9 +423,9 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 
 			/* match IPs */
 
-			if($in_srcip != $sa_srcip)
+			if($in_srcip != ipsec_fixup_ip($sa_srcip))
 				continue;
-			if($in_dstip != $sa_dstip)
+			if($in_dstip != ipsec_fixup_ip($sa_dstip))
 				continue;
 
 			return $sa;
@@ -590,6 +602,13 @@ function ipsec_disconnect_mobile($username) {
 	if (empty($username))
 		return false;
 	exec("/usr/local/sbin/racoonctl logout-user " . escapeshellarg($username));
+}
+
+function ipsec_fixup_ip($ipaddr) {
+	if (is_ipaddrv6($ipaddr) || !is_subnetv6($ipaddr))
+		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
+	else
+		return $ipaddr;
 }
 
 ?>

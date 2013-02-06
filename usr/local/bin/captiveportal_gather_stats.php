@@ -56,9 +56,9 @@ echo "N:";
 if ($type == "loggedin") {
 
 	/* Find out the previous user timestamp
- 	* so we can determine the difference between the current
- 	* and previous user count. If the file is empty return a 0.
- 	*/
+	* so we can determine the difference between the current
+	* and previous user count. If the file is empty return a 0.
+	*/
 	$fd = @fopen($tmpfile, "r");
 	if ($fd) {
 		while (!feof($fd)) {
@@ -67,7 +67,7 @@ if ($type == "loggedin") {
 				$previous_user_timestamp = $line;
 			else
 				$previous_user_timestamp = 0;
-		}			
+		}
 	} else {
 		$previous_user_timestamp = 0;
 	}
@@ -75,13 +75,13 @@ if ($type == "loggedin") {
 
 
 	foreach($cpdb as $user) {
-		$user_ip = $user[2];		
+		$user_ip = $user[2];
 		// Record the timestamp
 		$timestamp = $user[0];
 		if ($timestamp > $previous_user_timestamp)
 			$current_user_count = $current_user_count + 1;
 	}
-	
+
 	// Write out the latest timestamp but not if it is empty
 	if (!empty($timestamp)) {
 		$fd = @fopen($tmpfile, "w");
@@ -90,9 +90,9 @@ if ($type == "loggedin") {
 		}
 		@fclose($fd);
 	}
-	
-	/* If $timestamp is less than or equal to previous_user_timestamp return 0, 
- 	 * as we only want the 'X' number of users logged in since last RRD poll.
+
+	/* If $timestamp is less than or equal to previous_user_timestamp return 0,
+	 * as we only want the 'X' number of users logged in since last RRD poll.
 	 */
 	if($timestamp <= $previous_user_timestamp)
 		$result = 0;
@@ -102,7 +102,6 @@ if ($type == "loggedin") {
 } else
 	$result = $no_users;
 
-	
 echo "$result";
-	
+
 ?>

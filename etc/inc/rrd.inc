@@ -104,7 +104,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsnew = count($rrdnewxml['ds']);
 	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
-	
+
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
 	foreach($rrdnewxml['ds'] as $ds) {
@@ -194,7 +194,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
-	if($g['booting']) 
+	if($g['booting'])
 		echo gettext("Generating RRD graphs...");
 
 	$rrddbpath = "/var/db/rrd/";
@@ -382,7 +382,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-	
+
 					create_new_rrd($rrdcreate);
 				}
 
@@ -406,7 +406,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-	
+
 					create_new_rrd($rrdcreate);
 				}
 
@@ -671,7 +671,7 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
 		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
-		
+
 		/* End Memory statistics */
 
 		/* SPAMD, set up the spamd rrd file */
@@ -736,13 +736,13 @@ function enable_rrd_graphing() {
 			if($g['booting']) {
 				mwexec("$rrdtool update $rrddbpath$ifname$captiveportalconcurrent N:U");
 			}
-			
+
 			/* the Captive Portal stats gathering function. */
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
 			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather concurrent`\n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalconcurrent \${CP}\n";
-			
+
 			$ifname= "captiveportal";
 			if (!file_exists("$rrddbpath$ifname$captiveportalloggedin")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportalloggedin --step $rrdcaptiveportalinterval ";
@@ -805,9 +805,9 @@ function enable_rrd_graphing() {
 		chown($database, "nobody");
 	}
 
-	if($g['booting']) 
+	if($g['booting'])
 		echo gettext("done.") . "\n";
-		
+
 }
 
 function kill_traffic_collector() {

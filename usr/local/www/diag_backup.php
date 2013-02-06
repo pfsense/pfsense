@@ -515,9 +515,14 @@ if ($_POST) {
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");
 								}
-								if(isset($config['captiveportal']['enable'])) {
-									/* for some reason ipfw doesn't init correctly except on bootup sequence */
-									mark_subsystem_dirty("restore");
+								if(is_array($config['captiveportal'])) {
+									foreach($config['captiveportal'] as $cp) {
+										if (isset($cp['enable'])) {
+											/* for some reason ipfw doesn't init correctly except on bootup sequence */
+											mark_subsystem_dirty("restore");
+											break;
+										}
+									}
 								}
 								setup_serial_port();
 								if(is_interface_mismatch() == true) {

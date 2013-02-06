@@ -42,10 +42,8 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	require_once("xmlrpc.inc");
 	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else if ($port == "80")
-		$url = "http://{$syncip}";
 	else
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
@@ -91,10 +89,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	require_once("xmlrpc.inc");
 	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else if ($port == "80")
-		$url = "http://{$syncip}";
 	else
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
@@ -145,10 +141,8 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	require_once("xmlrpc.inc");
 	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else if ($port == "80")
-		$url = "http://{$syncip}";
 	else
-		$url = "http://{$syncip}:{$port}";
+		$url = "http://{$syncip}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';

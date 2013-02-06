@@ -73,7 +73,7 @@ class MainTable {
 
 	function display() {
 		echo "<!-- begin content table -->\n";
-		echo "<table class=\"tabcont\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+		echo "<table class=\"tabcont\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"content table\">\n";
 		echo "  <!-- begin content table header -->\n";
 		echo $this->display_header();
 		echo "  <!-- end content table header -->\n";
@@ -95,7 +95,7 @@ class MainTable {
 		}
 		echo "  <td width=\"{$this->width[$this->columns - 1]}%\" class=\"listhdr\">{$this->headers[$this->columns - 1]}</td>\n";
 		echo "  <td width=\"10%\" class=\"list\">\n";
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"buttons\">\n";
 		echo "      <tr>\n";
 		echo "        <td width=\"17\"></td>\n";
 		echo "         <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\"></a></td>\n";
@@ -142,7 +142,7 @@ class MainTable {
 		echo "<tr>\n";
 		echo "  <td class=\"list\" colspan=\"{$this->columns}\"></td>\n";
 		echo "  <td class=\"list\">\n";
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"footer\">\n";
 		echo "      <tr>\n";
 		echo "        <td width=\"17\"></td>\n";
 		echo "        <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\"></a></td>\n";
@@ -152,12 +152,13 @@ class MainTable {
 		echo "</tr>\n";
 	}
 	private function display_buttons($row) {
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"buttons\">\n";
 		echo "      <tr>\n";
 		if ($this->buttons['move'])
 			echo $this->display_button('move', $row);
 		if ($this->buttons['edit'])
 			echo $this->display_button('edit', $row);
+		echo "      </tr>\n";
 		echo "      <tr>\n";
 		if ($this->buttons['del'])
 			echo $this->display_button('del', $row);

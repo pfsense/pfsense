@@ -1090,7 +1090,7 @@
 
 			if (!$g['debug'])
 				return;
-			$string = '\n'.date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
+			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data."\n";
 			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);

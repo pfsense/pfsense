@@ -1154,7 +1154,7 @@ function alias_expand_urltable($name) {
 	return null;
 }
 
-function subnet_size ($subnet) {
+function subnet_size($subnet) {
 	if (is_subnetv4($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (32 - $bits)));
@@ -1168,7 +1168,7 @@ function subnet_size ($subnet) {
 	}
 }
 
-function subnet_expand ($subnet) {
+function subnet_expand($subnet) {
 	if (is_subnetv4($subnet)) {
 		return subnetv4_expand($subnet);
 	} else if (is_subnetv6($subnet)) {
@@ -1178,7 +1178,7 @@ function subnet_expand ($subnet) {
 	}
 }
 
-function subnetv4_expand ($subnet) {
+function subnetv4_expand($subnet) {
 	$result = array();
 	list ($ip, $bits) = explode("/", $subnet);
 	$net  = ip2long($ip);
@@ -1208,6 +1208,16 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
 
 	return ($sn1 == $sn2);
+}
+
+/* find out whether two IPv6 subnets overlap */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$sub1_min = gen_subnetv6($subnet1, $bits1);
+	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
+	$sub2_min = gen_subnetv6($subnet2, $bits2);
+	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+	
+	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
 }
 
 /* compare two IP addresses */

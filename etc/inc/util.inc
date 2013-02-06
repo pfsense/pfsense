@@ -1217,7 +1217,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub2_min = gen_subnetv6($subnet2, $bits2);
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
 	
-	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max));
+	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
 }
 
 /* compare two IP addresses */

@@ -248,12 +248,12 @@ function print_input_errors($input_errors) {
 	global $g;
 
 	print <<<EOF
-	<div id='inputerrorsdiv' name='inputerrorsdiv'>
+	<div id="inputerrorsdiv">
 	<p>
-	<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	<table border="0" cellspacing="0" cellpadding="4" width="100%" summary="input errors">
 	<tr>
 		<td class="inputerrorsleft">
-			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif">
+			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
 		<td class="inputerrorsright">
 			<span class="errmsg"><p>
@@ -266,13 +266,13 @@ EOF;
 
 	print <<<EOF2
 				</ul>
-			</span>
+			</p></span>
 		</td></tr>
 	</table>
 	</div>
-	</p>&nbsp;<br>
+	</p>&nbsp;<br />
 EOF2;
-	
+
 }
 
 function verify_gzip_file($fname) {
@@ -296,42 +296,42 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		$nifty_background = "#FFF";
 
 	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$savebutton = "<td class='infoboxsave'>";
-		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
+		$savebutton = "<td class=\"infoboxsave\">";
+		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		if($_POST['if'])
-			$savebutton .= "<input type='hidden' name='if' value='" . htmlspecialchars($_POST['if']) . "'>";
+			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		$savebutton.="</td>";
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
-	
+
 	$themename = $g['theme'];
-	
+
 	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
 		eval($toeval);
 	}
-	
+
 	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
 		eval($toeval);
 	}	
-		
+
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery(\'#redboxtable\').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
-	<table class='infobox' id='redboxtable'>
+	<table class="infobox" id="redboxtable" summary="red box table">
 		<tr>
 			<td>
-				<div class='infoboxnp' id='redbox'>
-					<table class='infoboxnptable2'>
+				<div class="infoboxnp" id="redbox">
+					<table class="infoboxnptable2" summary="message">
 						<tr>
-							<td class='infoboxnptd'>
-								&nbsp;&nbsp;&nbsp;<img class='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
+							<td class="infoboxnptd">
+								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
 							</td>
-							<td class='infoboxnptd2'>
+							<td class="infoboxnptd2">
 								<b>{$msg}</b>
 							</td>
 							{$savebutton}
@@ -339,15 +339,17 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 					</table>
 				</div>
 				<div>
-					<p/>
+					<p>&nbsp;</p>
 				</div>
 			</td>
 		</tr>
 	</table>
 	<script type="text/javascript">
+	//<![CDATA[
 		NiftyCheck();
 		Rounded("div#redbox","all","{$nifty_background}","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","{$nifty_background}","{$nifty_blackbox}","smooth");
+	//]]>
 	</script>
 EOFnp;
 
@@ -355,46 +357,46 @@ EOFnp;
 
 function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
 	global $g;
-	
+
 	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
-		$savebutton = "<td class='infoboxsave'><nobr>";
-		$savebutton .= " <input type=\"button\" value=\"Undo\" onClick=\"document.location='{$undo}'\">";
-		$savebutton .= " <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
-		$savebutton.="</nobr></td>";
+		$savebutton = "<td class=\"infoboxsave nowrap\">";
+		$savebutton .= "<input type=\"button\" value=\"Undo\" onclick=\"document.location='{$undo}'\" />";
+		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
+		$savebutton .= "</td>";
 		if($_POST['if']) 
-			$savebutton .= "<input type='hidden' name='if' value='" . htmlspecialchars($_POST['if']) . "'>";
+			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
-	
+
 	$themename = $g['theme'];
-	
+
 	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
 		eval($toeval);
 	}
-	
+
 	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
 		eval($toeval);
 	}	
-	
-		
+
+
 	if(!$savebutton) {
-		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="jQuery(\'#redboxtable\').hide();"></td>';
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery(\'#redboxtable\').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
-	<table class='infobox' id='redboxtable'>
+	<table class="infobox" id="redboxtable" summary="red box table">
 		<tr>
 			<td>
-				<div class='infoboxnp' id='redbox'>
-					<table class='infoboxnptable2'>
+				<div class="infoboxnp" id="redbox">
+					<table class="infoboxnptable2" summary="message">
 						<tr>
-							<td class='infoboxnptd'>
-								&nbsp;&nbsp;&nbsp;<img class='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
+							<td class="infoboxnptd">
+								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
 							</td>
-							<td class='infoboxnptd2'>
+							<td class="infoboxnptd2">
 								<b>{$msg}</b>
 							</td>
 							{$savebutton} 
@@ -403,15 +405,17 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 					</table>
 				</div>
 				<div>
-					<p/>
+					<p>&nbsp;</p>
 				</div>
 			</td>
 		</tr>
 	</table>
 	<script type="text/javascript">
+	//<![CDATA[
 		NiftyCheck();
 		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
+	//]]>
 	</script>
 EOFnp;
 
@@ -430,7 +434,7 @@ function get_std_save_message($ok) {
 		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
 			$filter_related = true;	
 	if($filter_related)
-		$to_return .= "<br/>You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
+		$to_return .= "<br/>You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.";
 	return $to_return;
 }
 
@@ -586,7 +590,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 						$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
 						$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 					}
-					echo "<td class=\"listlr\" nowrap>{$entry_date_time}</td>\n";
+					echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
 					echo "<td class=\"listr\">{$entry_text}</td>\n";
 
 			} else {
@@ -719,7 +723,7 @@ function is_specialnet($net) {
 
 //function to create widget tabs when called
 function display_widget_tabs(& $tab_array) {	
-	echo "<div id='tabs'>";
+	echo "<div id=\"tabs\">";
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
 	$dashpos = strpos($ta[2],'-');
@@ -734,21 +738,23 @@ function display_widget_tabs(& $tab_array) {
 			$tabActive = "none";
 			$tabNonActive = "table-cell";
 		}
-		echo "<div id='{$ta[2]}-active' class='{$tabclass}-tabactive' style='display:{$tabActive}; background-color:#EEEEEE; color:black;'>";
-		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-		echo "&nbsp;&nbsp;&nbsp;</B>";
+		echo "<div id=\"{$ta[2]}-active\" class=\"{$tabclass}-tabactive\" style=\"display:{$tabActive}; background-color:#EEEEEE; color:black;\">";
+		echo "<b>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+		echo "&nbsp;&nbsp;&nbsp;</b>";
 		echo "</div>";
-		
-		echo "<div id='{$ta[2]}-deactive' class='{$tabclass}-tabdeactive' style='display:{$tabNonActive}; background-color:#777777; color:white; cursor: pointer;' onClick=\"return changeTabDIV('{$ta[2]}')\">";
-		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-		echo "&nbsp;&nbsp;&nbsp;</B>";
+
+		echo "<div id=\"{$ta[2]}-deactive\" class=\"{$tabclass}-tabdeactive\" style=\"display:{$tabNonActive}; background-color:#777777; color:white; cursor: pointer;\" onclick=\"return changeTabDIV('{$ta[2]}')\">";
+		echo "<b>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+		echo "&nbsp;&nbsp;&nbsp;</b>";
 		echo "</div>";
 	}
-	
+
 	echo "<script type=\"text/javascript\">";
+	echo "//<![CDATA[";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
 	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
+	echo "//]]>";
 	echo "</script>";
 	echo "</div>";
 }
@@ -851,7 +857,7 @@ function print_rfc2616_select($tag, $current){
 	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";	
 	foreach($rfc2616 as $code => $message) {
 		if ($code == $current) {
-			$sel = " selected";
+			$sel = " selected=\"selected\"";
 		} else {
 			$sel = "";
 		}
@@ -867,7 +873,7 @@ function echo_array($array,$return_me=false){
         foreach($array as $name=>$value){
             if(is_array($value)){
                 $return .= "";
-                $return .= "['<b>$name</b>'] {<div style='margin-left:10px;'>\n";
+                $return .= "['<b>$name</b>'] {<div style=\"margin-left:10px;\">\n";
                 $return .= echo_array($value,true);
                 $return .= "</div>}";
                 $return .= "\n\n";
@@ -901,13 +907,13 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		global $tab_array_indent;
 		global $tab_array_space;
 		global $tab_array_char_limit;
-		
+
         /*  does the user have access to this tab?
          *  master user has access to everything.
          *  if the user does not have access, simply
          *  unset the tab item.
          */
-		 
+
 		/* empty string code */ 
 		if ($tab_array_indent == '') {
 			$tab_array_indent = 0;
@@ -952,19 +958,21 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
         // then show a select item dropdown menubox.
          if($tabcharcount > $tab_array_char_limit) {
                 echo "Currently viewing: ";
-                echo "<select name='TabSelect' onchange='tabs_will_go(this)'>\n";
+                echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
                 foreach ($tab_array as $ta) {
                         if($ta[1]=="true")
-                                $selected = " SELECTED";
+                                $selected = " selected=\"selected\"";
                         else
                                 $selected = "";
                         // Onclick in option will not work in some browser
-                        // echo "<option onClick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
+                        // echo "<option onclick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
                         echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
                 }
-                echo "</select>\n<p/>";
+                echo "</select>\n<p>&nbsp;</p>";
                 echo "<script type=\"text/javascript\">";
+				echo "//<![CDATA[";
                 echo " function tabs_will_go(obj){ document.location = obj.value; }";
+				echo "//]]>";
                 echo "</script>";
         }  else {
                 echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
@@ -1010,37 +1018,37 @@ function alias_info_popup($alias_id){
 	$close_title="title='".gettext('move mouse out this alias to hide')."'";
 	if (is_array($config['aliases']['alias'][$alias_id])){
 		$alias_name=$config['aliases']['alias'][$alias_id];
-		$alias_objects_with_details = "<table width='100%' border='0' cellpadding='2' cellspacing='0'>";
+		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
 		if ($alias_name['url']) {
 			exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
 			$counter=preg_replace("/\D/","",$total_entries[0]);
 			exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
-			$alias_objects_with_details .= "<tr><td colspan='3' $close_title class='vncell'>{$alias_name['url']}</td></tr>";
+			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
 			$x=0;
 			foreach ($alias_addresses as $alias_ports_address ) {
 				switch ($x) {
 				case 0:
 					$x++;
-					$alias_objects_with_details .= "<tr><td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+					$alias_objects_with_details .= "<tr><td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
 					break;
 				case 1:
 					$x++;
-					$alias_objects_with_details .= "<td $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td>";
+					$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
 					break;
 				default:
 					$x=0;
-					$alias_objects_with_details .= "<td  $close_title class='vncell' width='33%' style='background: #FFFFFF;color: #000000;'>{$alias_ports_address}</td><tr>";
+					$alias_objects_with_details .= "<td  $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td><tr>";
 					break;
 				}
 			}
 			for ($y = $x; $y <= $x; $y++) {
-				$alias_objects_with_details .= "<td $close_title class='vncell' width='33%'>&nbsp;</td>";
+				$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\">&nbsp;</td>";
 			}
 			if ($x > 0) {
 				$alias_objects_with_details .= "</tr>";
 			}
 			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan='3'> listing only first 10k items</td><tr>";
+				$alias_objects_with_details .= "<tr><td colspan=\"3\"> listing only first 10k items</td><tr>";
 			}
 		}
 		else{
@@ -1048,12 +1056,12 @@ function alias_info_popup($alias_id){
 			$alias_details = explode ("||", $alias_name['detail']);
 			$counter = 0;
 			foreach ($alias_addresses as $alias_ports_address) {
-				$alias_objects_with_details .= "<tr><td $close_title width='5%' class='vncell' style='background: #FFFFFF;color: #000000;'>{$alias_addresses[$counter]}</td>";
+				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
 				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
 				if ($alias_details[$counter] != "" && $alias_detail_default === False)
-					$alias_objects_with_details .="<td $close_title width='95%' class='vncell' style='background: #FFFFFF;color: #000000;'>{$alias_details[$counter]}</td>";
+					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_details[$counter]}</td>";
 				else
-					$alias_objects_with_details .="<td $close_title width='95%' class='vncell' style='background: #FFFFFF;color: #000000;'>&nbsp;</td>";
+					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">&nbsp;</td>";
 				$alias_objects_with_details .= "</tr>";
 				$counter++;
 			}
@@ -1064,7 +1072,7 @@ function alias_info_popup($alias_id){
 	if ($strlength >= $maxlength)
 		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
 	$item_text = ($counter > 1 ? "items" : "item");
-	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href='/firewall_aliases_edit.php?id={$alias_id}' title='".gettext('edit this alias')."'>&nbsp;&nbsp;edit </a>";
+	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
 	$strlength = strlen ($alias_caption);
 	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
 }
@@ -1075,7 +1083,7 @@ function rule_popup($src,$srcport,$dst,$dstport){
 	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		$descriptions = array ();
 		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
-			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\'> " .gettext("loading...")."</a>";
+			$loading_image="<a><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\" alt=\"loader\" /> " .gettext("loading...")."</a>";
 			switch ($alias_name['type']){
 			case "port":
 				$width="250";

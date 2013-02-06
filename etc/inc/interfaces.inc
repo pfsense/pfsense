@@ -3870,11 +3870,19 @@ function find_ip_interface($ip, $bits = null) {
  */
 function find_virtual_ip_alias($ip, $bits = null) {
 	global $config;
+	
 	if (!is_array($config['virtualip']['vip'])) {
 		return false;
 	}
+	if (!is_ipaddr($ip))
+		return false;
+	
+	$isv6ip = is_ipaddrv6($ip);
+	
 	foreach ($config['virtualip']['vip'] as $vip) {
 		if ($vip['mode'] === "ipalias") {
+			if (is_ipaddrv6($vip['subnet']) != $isv6ip)
+				continue;
 			if ($bits === null) {
 				if (ip_in_subnet($ip, $vip['subnet'] . "/" . $vip['subnet_bits'])) {
 					return $vip;

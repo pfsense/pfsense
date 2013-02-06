@@ -3835,20 +3835,27 @@ function guess_interface_from_ip($ipaddress) {
  * find_ip_interface($ip): return the interface where an ip is defined
  *   (or if $bits is specified, where an IP within the subnet is defined)
  */
-function find_ip_interface($ip, $bits = null)
-{
+function find_ip_interface($ip, $bits = null) {
+	if (!is_ipaddr($ip))
+		return false;
+	
+	$isv6ip = is_ipaddrv6($ip);
+	
 	/* if list */
 	$ifdescrs = get_configured_interface_list();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$ifip = ($isv6ip) ? get_interface_ipv6($ifname) : get_interface_ip($ifname);
+		if ($ifip === null)
+			continue;
 		if ($bits === null) {
-			if ($ip == get_interface_ip($ifname)) {
+			if ($ip == $ifip) {
 				$int = get_real_interface($ifname);
 				return $int;
 			}
 		}
 		else {
-			if (ip_in_subnet(get_interface_ip($ifname), $ip . "/" . $bits)) {
+			if (ip_in_subnet($ifip, $ip . "/" . $bits)) {
 				$int = get_real_interface($ifname);
 				return $int;
 			}

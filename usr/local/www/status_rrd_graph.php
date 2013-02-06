@@ -65,6 +65,11 @@ if ($_GET['cat']) {
 	}
 }
 
+if ($_GET['zone'])
+	$curzone = $_GET['zone'];
+else
+	$curzone = '';
+
 if ($_GET['period']) {
 	$curperiod = $_GET['period'];
 } else {
@@ -198,7 +203,6 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-wireless.rrd",
 		"allgraphs-cellular.rrd",
 		"allgraphs-vpnusers.rrd",
-		"captiveportal-allgraphs.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -222,7 +226,7 @@ foreach($databases as $database) {
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
-	if(stristr($database, "captiveportal-") && isset($config['captiveportal']['enable'])) {
+	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
 }
@@ -244,6 +248,27 @@ $graph_length = array(
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
 $closehead = false;
+
+/* Load all CP zones */
+if ($captiveportal) {
+	$cp_zones_tab_array = array();
+	foreach($config['captiveportal'] as $cpkey => $cp) {
+		if (!isset($cp['enable']))
+			continue;
+
+		if ($curzone == '') {
+			$tabactive = true;
+			$curzone = $cpkey;
+		} elseif ($curzone == $cpkey) {
+			$tabactive = true;
+		} else {
+			$tabactive = false;
+		}
+
+		$cp_zones_tab_array[] = array($cp['zone'], $tabactive, "status_rrd_graph.php?cat=captiveportal&zone=$cpkey");
+	}
+}
+
 include("head.inc");
 ?>
 
@@ -411,6 +436,13 @@ function get_dates($curperiod, $graph) {
 			?>
                 </td>
         </tr>
+	<?php if ($curcat == "captiveportal") : ?>
+	<tr>
+		<td class="tabnavtbl">
+			<?php display_top_tabs($cp_zones_tab_array); ?>
+		</td>
+	</tr>
+	<?php endif; ?>
         <tr>
                 <td>
                         <div id="mainarea">
@@ -438,16 +470,19 @@ function get_dates($curperiod, $graph) {
 						}
 					}
 					foreach ($ui_databases as $db => $database) {
-						if(! preg_match("/($curcat)/i", $database)) {
+						if(! preg_match("/($curcat)/i", $database))
 							continue;
-						}
+
+						if (!empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database))
+							continue;
+
 						$optionc = explode("-", $database);
 						$search = array("-", ".rrd", $optionc);
 						$replace = array(" :: ", "", $friendly);
 
 						switch($curcat) {
 							case "captiveportal":
-								$optionc = str_replace($search, $replace, $optionc[1]);
+								$optionc = str_replace($search, $replace, $optionc[2]);
 								echo "<option value=\"$optionc\"";
 								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 								break;
@@ -533,9 +568,12 @@ function get_dates($curperiod, $graph) {
 						foreach($graphs as $graph) {
 							/* check which databases are valid for our category */
 							foreach($ui_databases as $curdatabase) {
-								if(! preg_match("/($curcat)/i", $curdatabase)) {
+								if(! preg_match("/($curcat)/i", $curdatabase))
 									continue;
-								}
+
+								if (!empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase))
+									continue;
+
 								$optionc = explode("-", $curdatabase);
 								$search = array("-", ".rrd", $optionc);
 								$replace = array(" :: ", "", $friendly);

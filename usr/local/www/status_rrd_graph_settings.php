@@ -106,7 +106,7 @@ foreach($databases as $database) {
 	if(stristr($database, "-vpnusers")) {
 		$vpnusers = true;
 	}
-	if(stristr($database, "captiveportal-") && isset($config['captiveportal']['enable'])) {
+	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
 }

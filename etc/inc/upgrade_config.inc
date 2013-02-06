@@ -2979,4 +2979,17 @@ function upgrade_091_to_092() {
 	}
 }
 
+function upgrade_092_to_093() {
+	global $g;
+
+	$suffixes = array("concurrent", "loggedin");
+
+	foreach ($suffixes as $suffix)
+		if (file_exists("{$g['vardb_path']}/rrd/captiveportal-{$suffix}.rrd"))
+			rename("{$g['vardb_path']}/rrd/captiveportal-{$suffix}.rrd",
+				"{$g['vardb_path']}/rrd/captiveportal-cpZone-{$suffix}.rrd");
+
+	enable_rrd_graphing();
+}
+
 ?>

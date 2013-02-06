@@ -32,6 +32,11 @@ require_once("functions.inc");
 require_once("captiveportal.inc");
 require_once("util.inc");
 
+global $cpzone;
+
+$cpzone = $argv[1];
+$type = $argv[2];
+
 /* read in captive portal db */
 $cpdb = captiveportal_read_db();
 
@@ -44,8 +49,6 @@ $current_user_count = 0;
 
 /* tmp file to use to store old data (per interface)*/
 $tmpfile = "{$g['vardb_path']}/captiveportal_online_users";
-
-$type = $argv[1];
 
 if(empty($type))
 	exit;
@@ -72,7 +75,6 @@ if ($type == "loggedin") {
 		$previous_user_timestamp = 0;
 	}
 	@fclose($fd);
-
 
 	foreach($cpdb as $user) {
 		$user_ip = $user[2];

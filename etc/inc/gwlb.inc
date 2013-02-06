@@ -781,7 +781,7 @@ function return_gateway_groups_array() {
 					$msg = gettext("Gateways status could not be determined, considering all as up/active. (Group: {$group['name']})");
 					log_error($msg);
 					notify_via_growl($msg);
-					notify_via_smtp($msg);
+					//notify_via_smtp($msg);
 				}
 				$tiers = $backupplan;
 			}

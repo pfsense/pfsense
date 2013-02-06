@@ -40,10 +40,12 @@ if(!function_exists('captiveportal_syslog'))
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
@@ -88,10 +90,12 @@ EOF;
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
 	$dbent_str = serialize($dbent);
@@ -140,10 +144,12 @@ EOF;
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
@@ -153,6 +159,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	\$timeleft = voucher_auth("$voucher_received");
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
+	\$toreturn['voucher'] = array();
 	\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
 
 EOF;
@@ -182,6 +189,8 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 	$toreturn =  XML_RPC_Decode($resp->value());
+	if (!is_array($config['voucher']))
+		$config['voucher'] = array();
 	if (is_array($toreturn['voucher']) && (count($toreturn['voucher'][$cpzone]['roll']) <> count($config['voucher'][$cpzone]['roll']))) {
 		$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
@@ -194,8 +203,6 @@ EOF;
 function voucher_expire($voucher_received) {
 	global $g, $config, $cpzone;
 
-	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
-
 	// XMLRPC Call over to the master Voucher node
 	if(!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
 		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
@@ -204,6 +211,8 @@ function voucher_expire($voucher_received) {
 		$vouchersyncusername = $config['voucher'][$cpzone]['vouchersyncusername'];
 		xmlrpc_sync_voucher_expire($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
+
+	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();
@@ -307,8 +316,6 @@ function voucher_auth($voucher_received, $test = 0) {
 	if (!isset($config['voucher'][$cpzone]['enable']))
 		return 0;
 
-	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
-
 	// XMLRPC Call over to the master Voucher node
 	if(!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) {
 		$syncip   = $config['voucher'][$cpzone]['vouchersyncdbip'];
@@ -317,6 +324,8 @@ function voucher_auth($voucher_received, $test = 0) {
 		$vouchersyncusername = $config['voucher'][$cpzone]['vouchersyncusername'];
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
+
+	$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();

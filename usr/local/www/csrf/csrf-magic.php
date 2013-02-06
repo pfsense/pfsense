@@ -151,21 +151,33 @@ function csrf_ob_handler($buffer, $flags) {
     $tokens = csrf_get_tokens();
     $name = $GLOBALS['csrf']['input-name'];
     $endslash = $GLOBALS['csrf']['xhtml'] ? ' /' : '';
-    $input = "<input type='hidden' name='$name' value=\"$tokens\"$endslash>";
+    $input = "<input type=\"hidden\" name=\"$name\" value=\"$tokens\"$endslash>";
     $buffer = preg_replace('#(<form[^>]*method\s*=\s*["\']post["\'][^>]*>)#i', '$1' . $input, $buffer);
     if ($GLOBALS['csrf']['frame-breaker']) {
-        $buffer = str_ireplace('</head>', '<script type="text/javascript">if (top != self) {top.location.href = self.location.href;}</script></head>', $buffer);
+        $buffer = str_ireplace(
+          "</head>", 
+          "\n\script type=\"text/javascript\">\n".
+          "//<![CDATA[\n".
+          "if (top != self) {top.location.href = self.location.href;}\n".
+          "//]]>\n".
+          "</script>\n".
+          "</head>", 
+          $buffer
+        );
     }
     if ($js = $GLOBALS['csrf']['rewrite-js']) {
         $buffer = str_ireplace(
-            '</head>',
-            '<script type="text/javascript">'.
-                'var csrfMagicToken = "'.$tokens.'";'.
-                'var csrfMagicName = "'.$name.'";</script>'.
-            '<script src="'.$js.'" type="text/javascript"></script></head>',
+            "</head>",
+            "\n<script type=\"text/javascript\">\n".
+            "//<![CDATA[\n".
+            "var csrfMagicToken=\"".$tokens."\";\n".
+            "var csrfMagicName=\"".$name."\";\n".
+            "//]]>\n".
+            "</script>\n".
+            "<script src=\"".$js."\" type=\"text/javascript\"></script>\n\n</head>\n",
             $buffer
         );
-        $script = '<script type="text/javascript">CsrfMagic.end();</script>';
+        $script = "<script type=\"text/javascript\">\n//<![CDATA[\n\tCsrfMagic.end();\n//]]>\n</script>\n\n";
         $buffer = str_ireplace('</body>', $script . '</body>', $buffer, $count);
         if (!$count) {
             $buffer .= $script;

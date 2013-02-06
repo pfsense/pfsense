@@ -4,6 +4,8 @@ html, body, td, th, input, select {
 	font-size: 0.9em;
 }
 
+.nowrap { white-space:nowrap; }
+
 .infobox {
 	width:100%;
 }

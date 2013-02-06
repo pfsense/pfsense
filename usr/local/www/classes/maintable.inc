@@ -73,7 +73,7 @@ class MainTable {
 
 	function display() {
 		echo "<!-- begin content table -->\n";
-		echo "<table class=\"tabcont\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+		echo "<table class=\"tabcont\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" summary=\"display\">\n";
 		echo "  <!-- begin content table header -->\n";
 		echo $this->display_header();
 		echo "  <!-- end content table header -->\n";
@@ -95,10 +95,10 @@ class MainTable {
 		}
 		echo "  <td width=\"{$this->width[$this->columns - 1]}%\" class=\"listhdr\">{$this->headers[$this->columns - 1]}</td>\n";
 		echo "  <td width=\"10%\" class=\"list\">\n";
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"display header\">\n";
 		echo "      <tr>\n";
 		echo "        <td width=\"17\"></td>\n";
-		echo "         <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\"></a></td>\n";
+		echo "         <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" alt=\"plus\" /></a></td>\n";
 		echo "      </tr>\n";
 		echo "    </table>\n";
 		echo "  </td>\n";
@@ -116,7 +116,7 @@ class MainTable {
 				} else {
 					$cl = 'listr';
 				}
-				echo "  <td class=\"{$cl}\" onClick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
+				echo "  <td class=\"{$cl}\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
 						echo "    {$data}<br/>\n";
@@ -126,10 +126,10 @@ class MainTable {
 				}
 				echo "  </td>\n";
 			}
-			echo "  <td class=\"listbg\" onClick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location=\'{$this->edit_uri}?id={$cur_row}\'\">\n";
+			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location=\'{$this->edit_uri}?id={$cur_row}\'\">\n";
 			echo "    <font color=\"#FFFFFF\">{$row[$this->cname[$this->columns - 1]]}</font>\n";
 			echo "  </td>\n";
-			echo "  <td class=\"list\" nowrap>\n";
+			echo "  <td class=\"list nowrap\">\n";
 			$this->display_buttons($cur_row);
 			echo "  </td>\n";
 			echo "</tr>\n";
@@ -142,22 +142,23 @@ class MainTable {
 		echo "<tr>\n";
 		echo "  <td class=\"list\" colspan=\"{$this->columns}\"></td>\n";
 		echo "  <td class=\"list\">\n";
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"display footer\">\n";
 		echo "      <tr>\n";
 		echo "        <td width=\"17\"></td>\n";
-		echo "        <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\"></a></td>\n";
+		echo "        <td valign=\"middle\"><a href=\"{$this->edit_uri}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" alt=\"plus\" /></a></td>\n";
 		echo "      </tr>\n";
 		echo "    </table>\n";
 		echo "  </td>\n";
 		echo "</tr>\n";
 	}
 	private function display_buttons($row) {
-		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";
+		echo "    <table border=\"0\" cellspacing=\"0\" cellpadding=\"1\" summary=\"display buttons\">\n";
 		echo "      <tr>\n";
 		if ($this->buttons['move'])
 			echo $this->display_button('move', $row);
 		if ($this->buttons['edit'])
 			echo $this->display_button('edit', $row);
+		echo "      </tr>\n";
 		echo "      <tr>\n";
 		if ($this->buttons['del'])
 			echo $this->display_button('del', $row);
@@ -171,19 +172,19 @@ class MainTable {
 		echo "<td valign=\"middle\">";
 		switch ($button) {
 			case "move": {
-				echo "<input name=\"move_{$row}\" type=\"image\" src=\"./themes/{$g['theme']}/images/icons/icon_left.gif\" width=\"17\" height=\"17\" title=\"Move selected entries before this entry\" onMouseOver=\"fr_insline({$row}, true)\" onMouseOut=\"fr_insline({$row}, false)\">";
+				echo "<input name=\"move_{$row}\" type=\"image\" src=\"./themes/{$g['theme']}/images/icons/icon_left.gif\" width=\"17\" height=\"17\" title=\"Move selected entries before this entry\" onmouseover=\"fr_insline({$row}, true)\" onmouseout=\"fr_insline({$row}, false)\" />";
 				break;
 			}
 			case "edit": {
-				echo "<a href=\"{$this->edit_uri}?id={$row}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_e.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Edit entry\"></a>";
+				echo "<a href=\"{$this->edit_uri}?id={$row}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_e.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Edit entry\" alt=\"edit\" /></a>";
 				break;
 			}
 			case "del": {
-				echo "<a href=\"{$this->my_uri}?act=del&id={$row}\" onclick=\"return confirm(\'Do you really want to delete this entry?\')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\"></a>";
+				echo "<a href=\"{$this->my_uri}?act=del&id={$row}\" onclick=\"return confirm(\'Do you really want to delete this entry?\')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\" alt=\"delete\" /></a>";
 				break;
 			}
 			case "dup": {
-				echo "<a href=\"{$this->edit_uri}?act=dup&id={$row}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Duplicate entry\"></a>";			
+				echo "<a href=\"{$this->edit_uri}?act=dup&id={$row}\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Duplicate entry\" alt=\"duplicate\" /></a>";
 				break;
 			}
 		}

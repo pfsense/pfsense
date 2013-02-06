@@ -40,17 +40,19 @@ if(!function_exists('captiveportal_syslog'))
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $g, $config;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
-	voucher_expire('$vouchers');
+	voucher_expire("$vouchers");
 
 EOF;
 
@@ -87,20 +89,26 @@ EOF;
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = "1", $stop_time = null) {
 	global $g, $config;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
+	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
+	$dbent_str = serialize($dbent);
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$radiusservers = captiveportal_get_radius_servers();
-	captiveportal_disconnect(\$dbent, \$radiusservers, \$term_cause, \$stop_time);
+	\$dbent = unserialize("{$dbent_str}");
+	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;
+	unset($dbent_str, $tmp_stop_time);
 
 	/* assemble xmlrpc payload */
 	$params = array(
@@ -135,10 +143,12 @@ EOF;
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config;
 	require_once("xmlrpc.inc");
-	if($port == "443") 
+	if ($port == "443") 
 		$url = "https://{$syncip}";
-	else 
+	else if ($port == "80")
 		$url = "http://{$syncip}";
+	else
+		$url = "http://{$syncip}:{$port}";
 
 	/* Construct code that is run on remote machine */
 	$method = 'pfsense.exec_php';
@@ -191,8 +201,6 @@ EOF;
 function voucher_expire($voucher_received) {
 	global $g, $config;
 
-	$voucherlck = lock('voucher', LOCK_EX);
-
 	// XMLRPC Call over to the master Voucher node
 	if(!empty($config['voucher']['vouchersyncdbip'])) {
 		$syncip   = $config['voucher']['vouchersyncdbip'];
@@ -201,6 +209,8 @@ function voucher_expire($voucher_received) {
 		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
 		xmlrpc_sync_voucher_expire($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
+
+	$voucherlck = lock('voucher', LOCK_EX);
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();

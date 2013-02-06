@@ -3889,7 +3889,8 @@ function find_virtual_ip_alias($ip, $bits = null) {
 				}
 			}
 			else {
-				if (check_subnets_overlap($ip, $bits, $vip['subnet'], $vip['subnet_bits'])) {
+				if (($isv6ip && check_subnetsv6_overlap($ip, $bits, $vip['subnet'], $vip['subnet_bits']))
+					|| (!$isv6ip && check_subnets_overlap($ip, $bits, $vip['subnet'], $vip['subnet_bits']))) {
 					return $vip;
 				}
 			}

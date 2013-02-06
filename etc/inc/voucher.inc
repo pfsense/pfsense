@@ -144,9 +144,10 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	require_once('/etc/inc/voucher.inc');
-	\$timeleft = voucher_auth('$voucher_received');
+	\$timeleft = voucher_auth("$voucher_received");
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
+	\$toreturn['voucher'] = array();
 	\$toreturn['voucher']['roll'] = \$config['voucher']['roll'];
 
 EOF;
@@ -176,6 +177,8 @@ EOF;
 		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
 	}
 	$toreturn =  XML_RPC_Decode($resp->value());
+	if (!is_array($config['voucher']))
+		$config['voucher'] = array();
 	if (is_array($toreturn['voucher']) && (count($toreturn['voucher']['roll']) <> count($config['voucher']['roll']))) {
 		$config['voucher']['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
@@ -304,8 +307,6 @@ function voucher_auth($voucher_received, $test = 0) {
 	if (!isset($config['voucher']['enable']))
 		return 0;
 
-	$voucherlck = lock('voucher', LOCK_EX);
-
 	// XMLRPC Call over to the master Voucher node
 	if(!empty($config['voucher']['vouchersyncdbip'])) {
 		$syncip   = $config['voucher']['vouchersyncdbip'];
@@ -314,6 +315,8 @@ function voucher_auth($voucher_received, $test = 0) {
 		$vouchersyncusername = $config['voucher']['vouchersyncusername'];
 		$remote_time_used = xmlrpc_sync_used_voucher($voucher_received, $syncip, $syncport, $syncpass, $vouchersyncusername);
 	}
+
+	$voucherlck = lock('voucher', LOCK_EX);
 
 	// read rolls into assoc array with rollid as key and minutes as value
 	$tickets_per_roll = array();
@@ -457,6 +460,9 @@ function voucher_auth($voucher_received, $test = 0) {
 function voucher_configure($sync = false) {
 	global $config, $g;
 
+	if (!is_array($config['voucher']))
+		return;
+
 	if (!isset($config['voucher']['enable']))
 		return 0;
 
@@ -502,9 +508,8 @@ function voucher_configure($sync = false) {
                 voucher_write_used_db($roll, $rollent['used']);
                 $minutes = $rollent['minutes'];
                 $active_vouchers = array();
-                $a_active = &$rollent['active'];
-                if (is_array($a_active)) {
-                    foreach ($a_active as $activent) {
+                if (is_array($rollent['active'])) {
+                    foreach ($rollent['active'] as $activent) {
                         $voucher = $activent['voucher'];
                         $timestamp = $activent['timestamp'];
                         $minutes = $activent['minutes'];
@@ -546,7 +551,7 @@ function voucher_read_active_db($roll) {
 
 	$active = array();
 	$dirty = 0;
-	$file = "{$g['vardb_path']}/voucher_active_$roll.db";
+	$file = "{$g['vardb_path']}/voucher_active_{$roll}.db";
 	if (file_exists($file)) {
 		$fd = fopen($file, "r");
 		if ($fd) {

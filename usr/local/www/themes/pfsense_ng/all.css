@@ -5,6 +5,8 @@ html, body, td, th, input, select {
 
 }
 
+.nowrap { white-space: nowrap; }
+
 .infobox {
 	width:100%;
 }

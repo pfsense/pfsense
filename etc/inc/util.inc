@@ -284,6 +284,7 @@ function gen_subnetv6($ipaddr, $bits) {
 		return "";
 
 	$address = Net_IPv6::getNetmask($ipaddr, $bits);
+	$address = Net_IPv6::compress($address);
 	return $address;
 }
 
@@ -307,7 +308,7 @@ function gen_subnetv6_max($ipaddr, $bits) {
 
 	$inet_end = $inet_ip | ~$inet_mask;
 
-	return(Net_IPv6::uncompress(inet_ntop($inet_end)));
+	return (inet_ntop($inet_end));
 }
 
 /* returns a subnet mask (long given a bit count) */

@@ -1001,10 +1001,10 @@ EOD;
 		}
 
 		if(is_ipaddrv6(ifcfgipv6)) {
-			$subnet6 = Net_IPv6::compress(gen_subnetv6($ifcfgipv6, $ifcfgsnv6));
+			$subnet6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 			$dhcpdv6conf .= "subnet6 {$subnet6}/{$ifcfgsnv6} {\n";
 		} else {
-			$subnet6 = Net_IPv6::compress(gen_subnetv6($dhcpv6ifconf['range']['from'], "64"));
+			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
 			$dhcpdv6conf .= "subnet6 {$subnet6}/64 {\n";
 		}
 

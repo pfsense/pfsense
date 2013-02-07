@@ -110,7 +110,7 @@ if ($_POST) {
 	$current_targets = get_staticroutes(true);
 	$new_targets = array();
 	if(is_ipaddrv6($_POST['network'])) {
-		$osn = Net_IPv6::compress(gen_subnetv6($_POST['network'], $_POST['network_subnet'])) . "/" . $_POST['network_subnet'];
+		$osn = gen_subnetv6($_POST['network'], $_POST['network_subnet']) . "/" . $_POST['network_subnet'];
 		$new_targets[] = $osn;
 	}
 	if (is_ipaddrv4($_POST['network'])) {

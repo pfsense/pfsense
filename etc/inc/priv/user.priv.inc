@@ -2,6 +2,10 @@
 
 global $priv_list;
 
+$priv_list['user-services-captiveportal-login'] = array();
+$priv_list['user-services-captiveportal-login']['name']  = gettext("User - Services - Captive portal login");
+$priv_list['user-services-captiveportal-login']['descr'] = gettext("Indicates whether the user is able to login on the captive portal.");
+
 $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = "WebCfg - Help pages";
 $priv_list['page-help-all']['descr'] = "Show all items on help menu";

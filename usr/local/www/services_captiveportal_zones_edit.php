@@ -76,6 +76,7 @@ if ($_POST) {
 		$a_cp[$cpzone] = array();
 		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];
+		$a_cp[$cpzone]['localauth_priv'] = true;
 		write_config();
 
 		header("Location: services_captiveportal.php?zone={$cpzone}");

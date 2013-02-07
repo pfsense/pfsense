@@ -97,6 +97,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
 	$pconfig['pms_enabled'] = $a_cp[$cpzone]['pms_enabled'];
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
+	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
@@ -251,6 +252,7 @@ if ($_POST) {
 		else
 			unset($newcp['pms_enabled']);
 		$newcp['auth_method'] = $_POST['auth_method'];
+		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
@@ -334,6 +336,7 @@ include("head.inc");
 function enable_change(enable_change) {
 	var endis, radius_endis;
 	endis = !(document.iform.enable.checked || enable_change);
+	localauth_endis = !((!endis && document.iform.auth_method[1].checked) || enable_change);
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 	https_endis = !((!endis && document.iform.httpslogin_enable.checked) || enable_change);
 
@@ -347,6 +350,7 @@ function enable_change(enable_change) {
 	document.iform.timeout.disabled = endis;
 	document.iform.preauthurl.disabled = endis;
 	document.iform.redirurl.disabled = endis;
+	document.iform.localauth_priv.disabled = localauth_endis;
 	document.iform.radiusip.disabled = radius_endis;
 	document.iform.radiusip2.disabled = radius_endis;
 	document.iform.radiusip3.disabled = radius_endis;
@@ -571,19 +575,26 @@ function enable_change(enable_change) {
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
   <?=gettext("No Authentication"); ?></td>
-		  </tr>
+		</tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
   <?=gettext("Local"); ?> <a href="system_usermanager.php"><?=gettext("User Manager"); ?></a> / <?=gettext("Vouchers"); ?></td>
-		  </tr>
+		</tr>
+		</tr><tr>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		</tr>
 		<tr>
+		  <td>&nbsp;</td>
+		  <td><input name="localauth_priv" type="checkbox" id="localauth_priv" value="yes" onClick="enable_change(false)" <?php if($pconfig['localauth_priv']=="yes") echo "checked"; ?>>
+  <?=gettext("Allow only users/groups with 'Captive portal login' privilege set"); ?></td>
+		</tr><tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="radius" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?>>
   <?=gettext("RADIUS Authentication"); ?></td>
-		  </tr><tr>
+		</tr><tr>
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
-		  </tr>
-                  <tr>
+                </tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Radius Protocol"); ?></td>
                   <td width="78%" class="vtable">
                     <table cellpadding="0" cellspacing="0">

@@ -207,6 +207,10 @@ EOD;
 	if ($_POST['auth_user'] && $_POST['auth_pass']) {
 		//check against local user manager
 		$loginok = local_backed($_POST['auth_user'], $_POST['auth_pass']);
+
+		if ($loginok && isset($cpcfg['localauth_priv']))
+			$loginok = userHasPrivilege(getUserEntry($_POST['auth_user']), "user-services-captiveportal-login");
+
 		if ($loginok){
 			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
 			portal_allow($clientip, $clientmac,$_POST['auth_user']);

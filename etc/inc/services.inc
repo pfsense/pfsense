@@ -39,6 +39,8 @@
 	pfSense_MODULE:	utils
 */
 
+require_once("util.inc");
+
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure() {
 	global $config, $g;

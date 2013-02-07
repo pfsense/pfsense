@@ -49,8 +49,8 @@ if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
-        header("Location: services_captiveportal_zones.php");
-        exit;
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 if (!is_array($config['captiveportal']))
@@ -112,7 +112,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
 	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
-        $pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
+	$pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
 	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
@@ -170,7 +170,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['httpslogin_enable']) {
-		 	if (!$_POST['certref']) {
+			if (!$_POST['certref']) {
 				$input_errors[] = gettext("Certificate must be specified for HTTPS login.");
 			}
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
@@ -269,7 +269,7 @@ if ($_POST) {
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
-                $newcp['radius_protocol'] = $_POST['radius_protocol'];
+		$newcp['radius_protocol'] = $_POST['radius_protocol'];
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
 			$newcp['radiusip'] = $_POST['radiusip'];
@@ -321,7 +321,7 @@ if ($_POST) {
 		captiveportal_configure_zone($newcp);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");
-                exit;
+		exit;
 	} else {
 		if (is_array($_POST['cinterface']))
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
@@ -410,7 +410,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");	
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
@@ -428,7 +428,7 @@ function enable_change(enable_change) {
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interfaces"); ?></td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
-		  <?php 
+		  <?php
 		  $interfaces = get_configured_interface_with_descr();
 		  $cselected = explode(",", $pconfig['cinterface']);
 		  foreach ($interfaces as $iface => $ifacename): ?>
@@ -497,7 +497,7 @@ function enable_change(enable_change) {
       <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
       <td class="vtable">
         <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
-		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
+		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?>
 	  </td>
 	</tr>
 	<tr>
@@ -529,7 +529,7 @@ function enable_change(enable_change) {
       <td class="vtable">
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
         <strong><?=gettext("Enable Pass-through MAC automatic additions"); ?></strong><br>
-    <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again."); ?> 
+    <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again."); ?>
     <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
     <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown."); ?>
 	<br/><br/>
@@ -774,18 +774,18 @@ function enable_change(enable_change) {
 						}
 					}
 					if (is_array($config['virtualip']['vip'])) {
-                				foreach ($config['virtualip']['vip'] as $sn) {
-                        				if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
-                                				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-                                				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-                                				$len = $end - $start;
+						foreach ($config['virtualip']['vip'] as $sn) {
+							if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+								$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+								$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+								$len = $end - $start;
 
-                                				for ($i = 0; $i <= $len; $i++) {
-                                        				$snip = long2ip32($start+$i);
-                                					echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
+								for ($i = 0; $i <= $len; $i++) {
+									$snip = long2ip32($start+$i);
+									echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
 								}
 							} else
-                                				echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
+								echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
 						}
 					}
 				?>

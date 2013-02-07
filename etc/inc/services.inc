@@ -56,7 +56,6 @@ function services_radvd_configure() {
 	if (!is_array($config['dhcpdv6']))
 		$config['dhcpdv6'] = array();
 
-	$dhcpdv6cfg = $config['dhcpdv6'];
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 	$carplist = get_configured_carp_interface_list();
@@ -64,12 +63,13 @@ function services_radvd_configure() {
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
 	/* Process all links which need the router advertise daemon */
-	$radvdnum = 0;
 	$radvdifs = array();
 
 	/* handle manually configured DHCP6 server settings first */
-	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
-		if(!isset($config['interfaces'][$dhcpv6if]['enable']))
+	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		if (!is_array($config['interfaces'][$dhcpv6if]))
+			continue;
+		if (!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
 		if (!isset($dhcpv6ifconf['ramode']))
@@ -85,7 +85,7 @@ function services_radvd_configure() {
 		/* always start with the real parent, we override with the carp if later */
 		$carpif = false;
 		/* check if we need to listen on a CARP interface */
-		if ($dhcpv6ifconf['rainterface'] <> "") {
+		if (!empty($dhcpv6ifconf['rainterface'])) {
 			if (!empty($carplist[$dhcpv6ifconf['rainterface']])) {
 				$dhcpv6if = $dhcpv6ifconf['rainterface'];
 				$carpif = true;
@@ -103,7 +103,6 @@ function services_radvd_configure() {
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
@@ -201,7 +200,6 @@ function services_radvd_configure() {
 			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 		}
 		$radvdconf .= "};\n";
-		$radvdnum++;
 	}
 
 	/* handle DHCP-PD prefixes and 6RD dynamic interfaces */
@@ -222,13 +220,15 @@ function services_radvd_configure() {
 
 		$ifcfgsnv6 = get_interface_subnetv6($if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 		$trackif = $config['interfaces'][$if]['track6-interface'];
+		if (empty($config['interfaces'][$trackif]))
+			continue;
 		$radvdifs[] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
 	
-		log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
+		if ($g['debug'])
+			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
 		$dnslist = array();
 		if(is_ipaddrv6($subnetv6)) {
@@ -237,7 +237,11 @@ function services_radvd_configure() {
 				$radvdconf .= "\tAdvSendAdvert on;\n";
 				$radvdconf .= "\tMinRtrAdvInterval 3;\n";
 				$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
-				$radvdconf .= "\tAdvLinkMTU 1280;\n";
+				$mtu = get_interface_mtu($realif);
+				if (is_numeric($mtu))
+					$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
+				else
+					$radvdconf .= "\tAdvLinkMTU 1280;\n";
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 					$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 					$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -264,7 +268,6 @@ function services_radvd_configure() {
 					$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
 				}
 			$radvdconf .= "};\n";
-			$radvdnum++;
 		}
 	}
 
@@ -287,6 +290,7 @@ function services_radvd_configure() {
 		if (isvalidpid("{$g['varrun_path']}/radvd.pid")) {
 			log_error("Shutting down Router Advertisment daemon cleanly");
 			killbypid("{$g['varrun_path']}/radvd.pid");
+			@unlink("{$g['varrun_path']}/radvd.pid");
 		}
 	}
 	return 0;

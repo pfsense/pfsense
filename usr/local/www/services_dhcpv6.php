@@ -598,7 +598,7 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<input name="prefixrange_from" type="text" class="formfld unknown" id="prefixrange_from" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
-				&nbsp;<?=gettext("prefix delegation size"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
+				&nbsp;<br/><?=gettext("Prefix Delegation Size"); ?>:&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
 					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
 					<option value="52" <?php if($pconfig['prefixrange_length'] == 52) echo "selected"; ?>>52</option>
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>

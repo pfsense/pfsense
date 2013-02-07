@@ -1234,15 +1234,12 @@ function ipcmp($a, $b) {
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
 	if(is_ipaddrv6($addr)) {
-		$result = Net_IPv6::IsInNetmask($addr, $subnet);
-		if($result)
-			return true;
-		else
-			return false;
+		return (Net_IPv6::isInNetmask($addr, $subnet));
+	} else { /* XXX: Maybe check for IPv4 */
+		list($ip, $mask) = explode('/', $subnet);
+		$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
+		return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 	}
-	list($ip, $mask) = explode('/', $subnet);
-	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
-	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 }
 
 /* verify (and remove) the digital signature on a file - returns 0 if OK */

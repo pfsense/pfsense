@@ -383,15 +383,15 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 		$sp_dstid = $sp['dstid'];
 
 		if (!strstr($sp_srcid,"/")) {
-			if (ip_ipaddrv4($sp_srcid))
+			if (is_ipaddrv4($sp_srcid))
 				$sp_srcid .= '/32';
-			elseif (ip_ipaddrv6($sp_srcid))
+			elseif (is_ipaddrv6($sp_srcid))
 				$sp_srcid .= '/128';
 		}
 		if (!strstr($sp_dstid,"/")) {
-			if (ip_ipaddrv4($sp_srcid))
+			if (is_ipaddrv4($sp_srcid))
 				$sp_dstid .= '/32';
-			elseif (ip_ipaddrv6($sp_srcid))
+			elseif (is_ipaddrv6($sp_srcid))
 				$sp_dstid .= '/128';
 		}
 

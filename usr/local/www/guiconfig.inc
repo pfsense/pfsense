@@ -60,7 +60,7 @@ require_once("functions.inc");
 
 /* Pull in all the gui related display classes) */
 foreach (scandir("/usr/local/www/classes/") as $file) {
-	if (stristr($file, ".inc") !== false) {
+	if (substr($file, -4) == ".inc") {
 		require_once("classes/{$file}");
 	}
 }

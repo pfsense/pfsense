@@ -108,7 +108,7 @@ if ($_POST) {
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="status_lb_pool.php" method="POST">
+<form action="status_lb_pool.php" method="post">
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
 <?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>

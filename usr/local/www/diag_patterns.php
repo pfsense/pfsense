@@ -63,7 +63,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <div id="mainarea">
-<form action="diag_patterns.php" method="POST" enctype="multipart/form-data" name="frmPattern">
+<form action="diag_patterns.php" method="post" enctype="multipart/form-data" name="frmPattern">
   <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
   	<tr>
     	<td colspan="4" valign="top" class="listtopic"><?=gettext("Upload layer7 pattern file");?></td>

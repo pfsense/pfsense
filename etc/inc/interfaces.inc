@@ -2784,14 +2784,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			$cmd .= " mediaopt " . escapeshellarg($wancfg['mediaopt']);
 		mwexec($cmd);
 	}
-	if (!empty($wancfg['mtu']))
-		pfSense_interface_mtu($realhwif, $wancfg['mtu']);
-	else {
-		$mtu = get_interface_default_mtu(remove_numbers($realhwif));
-		if ($mtu != get_interface_mtu($realhwif))
-			pfSense_interface_mtu($realhwif, $mtu);
-	}
-
 	$options = pfSense_get_interface_addresses($realhwif);
 	if (is_array($options) && isset($options['caps']['polling'])) {
 		if (isset($config['system']['polling']))
@@ -2801,7 +2793,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* skip vlans for checksumming and polling */
-	if (!stristr($realhwif, "vlan") && is_array($options)) {
+	if (!stristr($realif, "vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))
@@ -2901,6 +2893,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				mwexec("/sbin/ifconfig {$realif} inet6 {$wancfg['ipaddrv6']} prefixlen {$wancfg['subnetv6']} ");
 			}
 			break;
+	}
+
+	if (!empty($wancfg['mtu'])) {
+		pfSense_interface_mtu($realif, $wancfg['mtu']);
+	} else {
+		$mtu = get_interface_default_mtu(remove_numbers($realhwif));
+		if ($mtu != get_interface_mtu($realhwif))
+			pfSense_interface_mtu($realhwif, $mtu);
 	}
 
 	if(does_interface_exist($wancfg['if']))

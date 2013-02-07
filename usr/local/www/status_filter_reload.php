@@ -69,7 +69,7 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 <br/>
-<form action="status_filter_reload.php" method="POST" name="filter">
+<form action="status_filter_reload.php" method="post" name="filter">
 <input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
 <?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;

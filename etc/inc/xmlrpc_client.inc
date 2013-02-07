@@ -1493,13 +1493,15 @@ class XML_RPC_Message extends XML_RPC_Base
         if (!xml_parse($parser_resource, $data, sizeof($data))) {
             // thanks to Peter Kocks <peter.kocks@baygate.com>
             if (xml_get_current_line_number($parser_resource) == 1) {
-                $errstr = gettext("XML error at line 1, check URL");
+		/* We already error on this in the GUI, no need to log it and cause a PHP error. */
+		//$errstr = gettext("XML error at line 1, check URL");
             } else {
                 $errstr = sprintf('XML error: %s at line %d',
                                   xml_error_string(xml_get_error_code($parser_resource)),
                                   xml_get_current_line_number($parser_resource));
             }
-            error_log($errstr);
+		if (!empty($errstr))
+			error_log($errstr);
             $r = new XML_RPC_Response(0, $XML_RPC_err['invalid_return'],
                                       $XML_RPC_str['invalid_return']);
             xml_parser_free($parser_resource);

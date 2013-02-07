@@ -1083,7 +1083,7 @@ function rule_popup($src,$srcport,$dst,$dstport){
 	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
 		$descriptions = array ();
 		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
-			$loading_image="<a><img src=\"/themes/{$g['theme']}/images/misc/loader.gif\" alt=\"loader\" /> " .gettext("loading...")."</a>";
+			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
 			switch ($alias_name['type']){
 			case "port":
 				$width="250";

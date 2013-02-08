@@ -282,7 +282,7 @@ system_routing_enable();
 echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
 system_ntp_configure(false);
-mwexec_bg("echo /usr/local/sbin/ntpdate_sync_once.sh | tcsh");
+shell_exec("echo /usr/local/sbin/ntpdate_sync_once.sh | tcsh");
 
 /* start load balancer daemon */
 relayd_configure();

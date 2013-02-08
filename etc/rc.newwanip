@@ -51,7 +51,7 @@ function restart_packages() {
 
 	/* restart packages */
 	system_ntp_configure(false);
-	mwexec_bg("echo /usr/local/sbin/ntpdate_sync_once.sh | tcsh");
+	shell_exec("echo /usr/local/sbin/ntpdate_sync_once.sh | tcsh");
 	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
 	send_event("service reload packages");
 }

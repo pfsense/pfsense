@@ -350,7 +350,7 @@ function relayd_configure($kill_first=false) {
 
 						/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
 						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
-							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
+							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['sitedown']]['monitor']]} \n";
 
 						$conf .= "}\n";
 					}

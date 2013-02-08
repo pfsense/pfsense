@@ -948,7 +948,7 @@ function internalca_change() {
 										$caname = "";
 										$inuse = "";
 										$revoked = "";
-										if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
+										if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
 											continue;
 										$ca = lookup_ca($cert['caref']);
 										if ($ca)

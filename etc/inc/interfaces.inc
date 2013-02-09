@@ -1193,7 +1193,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	case "dhcp6":
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
-			mwexec("/bin/kill {$pidv6}");
+			posix_kill($pidv6, SIGTERM);
 		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 		if (does_interface_exist("$realif")) {

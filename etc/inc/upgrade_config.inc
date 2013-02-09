@@ -2992,4 +2992,14 @@ function upgrade_092_to_093() {
 	enable_rrd_graphing();
 }
 
+function upgrade_093_to_094() {
+	global $config;
+
+	if (isset($config['system']['powerd_mode'])) {
+		$config['system']['powerd_ac_mode'] = $config['system']['powerd_mode'];
+		$config['system']['powerd_battery_mode'] = $config['system']['powerd_mode'];
+		unset($config['system']['powerd_mode']);
+	}
+}
+
 ?>

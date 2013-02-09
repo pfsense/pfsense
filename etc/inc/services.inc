@@ -294,7 +294,7 @@ function services_radvd_configure() {
 	return 0;
 }
 
-function services_dhcpd_configure() {
+function services_dhcpd_configure($family = "all") {
 	global $config, $g;
 
 	/* configure DHCPD chroot once */
@@ -319,9 +319,13 @@ function services_dhcpd_configure() {
 	fclose($fd);
 	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 
-	services_dhcpdv4_configure();
-	services_dhcpdv6_configure();
-	services_radvd_configure();
+	if ($family == "all" || $family == "inet")
+		services_dhcpdv4_configure();
+	if ($family == "all" || $family == "inet6") {
+		services_dhcpdv6_configure();
+		services_radvd_configure();
+	}
+
 	return;
 
 }

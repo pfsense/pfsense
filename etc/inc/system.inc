@@ -373,40 +373,31 @@ function system_routing_configure($interface = "") {
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
-				if ($gateway['ipprotocol'] == "inet6")
-					continue;
-				if(strstr($gateway['gateway'], ":"))
-					continue;
-				if ($gateway['gateway'] == "dynamic")
-					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
-				$gatewayip = $gateway['gateway'];
-				$interfacegw = $gateway['interface'];
-				if (!empty($interfacegw)) {
-					$defaultif = get_real_interface($gateway['interface']);
-					if ($defaultif)
-						@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gatewayip);
+			if (isset($gateway['defaultgw'])) {
+				if ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
+					if(strstr($gateway['gateway'], ":"))
+						continue;
+					if ($gateway['gateway'] == "dynamic")
+						$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+					if (!empty($gateway['interface'])) {
+						$defaultif = get_real_interface($gateway['interface']);
+						if ($defaultif)
+							@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gateway['gateway']);
+					}
+					$foundgw = true;
+				} else if ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic6")) {
+					if ($gateway['gateway'] == "dynamic6")
+						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+					if (!empty($gateway['interface'])) {
+						$defaultifv6 = get_real_interface($gateway['interface']);
+						if ($defaultifv6)
+							@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gateway['gateway']);
+					}
+					$foundgwv6 = true;
 				}
-				$foundgw = true;
-				break;
 			}
-		}
-		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && ((is_ipaddrv6($gateway['gateway'])) || ($gateway['gateway'] == "dynamic6"))) {
-				if ($gateway['ipprotocol'] != "inet6")
-					continue;
-				if ($gateway['gateway'] == "dynamic6")
-					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-				$gatewayipv6 = $gateway['gateway'];
-				$interfacegwv6 = $gateway['interface'];
-				if (!empty($interfacegwv6)) {
-					$defaultifv6 = get_real_interface($gateway['interface']);
-					if ($defaultifv6)
-						@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gatewayipv6);
-				}
-				$foundgwv6 = true;
+			if ($foundgw === true && $foundgwv6 === true)
 				break;
-			}
 		}
 	}
 	if ($foundgw == false) {
@@ -423,7 +414,7 @@ function system_routing_configure($interface = "") {
 	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if($config['installedpackages']['olsrd']) {
+	if (is_array($config['installedpackages']['olsrd'])) {
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if(($olsrd['enabledyngw'] == "on") && ($olsrd['enable'] == "on")) {
 				$dont_add_route = true;

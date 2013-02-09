@@ -2995,7 +2995,7 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 		case "dhcp6":
 			if ($g['debug'])
 				log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
-			/* NOTE dhcp6c will do the work for us so no need to do anything here. */
+			interface_track6_dhcp6_configure($interface, $wancfg);
 			break;
 	}
 
@@ -3117,6 +3117,45 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
 	log_error("sixto4 {$interface} with ipv6 address {$sixto4lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$sixto4lan} prefixlen 64");
+
+	return 0;
+}
+
+function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
+	global $config, $g;
+
+	if (!is_array($lancfg))
+		return;
+
+	/* If the interface is not configured via another, exit */
+	if (empty($lancfg['track6-interface']))
+		return;
+
+	if (!is_numeric($lancfg['track6-prefix-id']))
+		$lancfg['track6-prefix-id'] = 0;
+
+	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
+	if (empty($wancfg)) {
+		log_error("Interface {$interface} tracking non-existant interface {$lancfg['track6-interface']}");
+		return;
+	}
+
+	$wanif = get_real_interface($lancfg['track6-interface']);
+	$ifcfgipv6 = find_interface_ipv6($wanif);
+	if (is_ipaddrv6($ifcfgipv6)) {
+		$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
+		$dhcp6lanarr[4] = 0;
+		$dhcp6lanarr[5] = 0;
+		$dhcp6lanarr[6] = 0;
+		$dhcp6lanarr[7] = 1;
+		$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
+		$lanif = get_real_interface($interface);
+		$oip = find_interface_ipv6($lanif);
+		if (is_ipaddrv6($oip))
+			mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+		log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
+	}
 
 	return 0;
 }

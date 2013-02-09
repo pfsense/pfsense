@@ -203,7 +203,8 @@
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
-		<powerd_mode>hadp</powerd_mode>
+		<powerd_ac_mode>hadp</powerd_ac_mode>
+		<powerd_battery_mode>hadp</powerd_battery_mode>
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>

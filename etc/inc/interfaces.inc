@@ -3366,7 +3366,6 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 			/* Setup the prefix delegation */
 			$dhcp6cconf .= "id-assoc pd 0 {\n";
-			$iflist = get_configured_interface_with_descr(false, true);
 			$iflist = link_interface_to_track6($interface);
 			foreach ($iflist as $friendly => $ifcfg) {
 				if (is_numeric($ifcfg['track6-prefix-id'])) {

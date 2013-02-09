@@ -750,11 +750,11 @@ function display_widget_tabs(& $tab_array) {
 	}
 
 	echo "<script type=\"text/javascript\">";
-	echo "//<![CDATA[";
+	echo "\n//<![CDATA[\n";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
 	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "//]]>";
+	echo "//]]>\n";
 	echo "</script>";
 	echo "</div>";
 }

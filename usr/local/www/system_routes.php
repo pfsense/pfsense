@@ -83,6 +83,7 @@ if ($_GET['act'] == "del") {
 		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
 		list($ip, $mask) = explode("/", $a_routes[$_GET['id']]['network']);
 		if (is_ipaddr($ip)) {
+			$family = "";
 			if(is_ipaddrv6($ip))
 				$family = "-inet6";
 			mwexec("/sbin/route delete {$family} " . escapeshellarg($a_routes[$_GET['id']]['network']));

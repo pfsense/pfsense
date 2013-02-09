@@ -3140,6 +3140,9 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 		return;
 	}
 
+	if ($wancfg['ipaddrv6'] != "slaac")
+		return;
+
 	$wanif = get_real_interface($lancfg['track6-interface']);
 	$ifcfgipv6 = find_interface_ipv6($wanif);
 	if (is_ipaddrv6($ifcfgipv6)) {

@@ -373,9 +373,11 @@ function system_routing_configure($interface = "") {
 	if (is_array($config['gateways']['gateway_item'])) {
 		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
-			if (isset($gateway['defaultgw']) && ((is_ipaddrv4($gateway['gateway'])) || ($gateway['gateway'] == "dynamic"))) {
+			if (isset($gateway['defaultgw']) && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
+				if ($gateway['ipprotocol'] == "inet6")
+					continue;
 				if(strstr($gateway['gateway'], ":"))
-					break;
+					continue;
 				if ($gateway['gateway'] == "dynamic")
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				$gatewayip = $gateway['gateway'];
@@ -391,6 +393,8 @@ function system_routing_configure($interface = "") {
 		}
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw']) && ((is_ipaddrv6($gateway['gateway'])) || ($gateway['gateway'] == "dynamic6"))) {
+				if ($gateway['ipprotocol'] != "inet6")
+					continue;
 				if ($gateway['gateway'] == "dynamic6")
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 				$gatewayipv6 = $gateway['gateway'];
@@ -440,6 +444,7 @@ function system_routing_configure($interface = "") {
 		if (!empty($interface) && $interface != $interfacegwv6)
 			;
 		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
+			$ifscope = "";
 			if(preg_match("/fe80::/i", $gatewayipv6))
 				$ifscope = "%{$defaultifv6}";
 			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}{$ifscope}");
@@ -461,6 +466,7 @@ function system_routing_configure($interface = "") {
 			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
 
+			/* XXX: This is a bit dangerous in case of routing daemons!? */
 			if(isset($rtent['disabled'])) {
 				mwexec("/sbin/route delete " . escapeshellarg($rtent['network']), true);
 				continue;
@@ -469,21 +475,24 @@ function system_routing_configure($interface = "") {
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 
-			if(is_ipaddrv6($gatewayip)) {
-				$inetfamily = "-inet6";
-			} else {
-				$inetfamily = "-inet";
-			}
 			$blackhole = "";
-			if(preg_match("/^Null/i", $rtent['gateway']))
+			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3)))
 				$blackhole = "-blackhole";
 
-			if (is_ipaddr($gatewayip) && ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
-				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($gatewayip));
-			} else if (!empty($interfacegw) &&  ((is_ipaddrv6($gatewayip) && is_subnetv6($rtent['network'])) || (is_ipaddrv4($gatewayip) && is_subnetv4($rtent['network'])))) {
-				mwexec("/sbin/route change {$inetfamily} {$blackhole} " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg($interfacegw));
+			if (is_subnetv6($rtent['network'])) {
+				if (is_ipaddrv6($gatewayip))
+					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
+						" " . escapeshellarg($gatewayip));
+				else if (!empty($interfacegw))
+					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
+						" -iface " . escapeshellarg($interfacegw));
+			 } else if (is_subnetv4($rtent['network'])) {
+				if (is_ipaddrv4($gatewayip))
+					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
+						" " . escapeshellarg($gatewayip));
+				else if (!empty($interfacegw))
+					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
+						" -iface " . escapeshellarg($interfacegw));
 			}
 		}
 	}

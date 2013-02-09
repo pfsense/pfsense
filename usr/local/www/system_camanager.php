@@ -645,18 +645,18 @@ function method_change() {
 						<td class="listr"><?=$certcount;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
-							<a href="system_camanager.php?act=edit&id=<?=$i;?>")">
+							<a href="system_camanager.php?act=edit&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit CA");?>" alt="<?=gettext("edit CA");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_camanager.php?act=exp&id=<?=$i;?>")">
+							<a href="system_camanager.php?act=exp&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export CA cert");?>" alt="<?=gettext("export CA cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php if ($ca['prv']): ?>
-							<a href="system_camanager.php?act=expkey&id=<?=$i;?>")">
+							<a href="system_camanager.php?act=expkey&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export CA private key");?>" alt="<?=gettext("export CA private key");?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
-							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and its CRLs, and unreference any associated certificates?");?>')">
+							<a href="system_camanager.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and its CRLs, and unreference any associated certificates?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete ca");?>" alt="<?=gettext("delete ca"); ?>" width="17" height="17" border="0" />
 							</a>
 						</td>

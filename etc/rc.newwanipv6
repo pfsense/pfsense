@@ -91,16 +91,17 @@ if(empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
         exit;
 }
 
-$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
-$valid_ns = array();
-foreach($name_servers as $ns) {
-	if(is_ipaddrv6(trim($ns)))
-		$valid_ns[] = trim($ns);
+if (!empty($_ENV['new_domain_name_servers'])) {
+	$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
+	$valid_ns = array();
+	foreach($name_servers as $ns) {
+		if(is_ipaddrv6(trim($ns)))
+			$valid_ns[] = trim($ns);
+	}
+
+	if(count($valid_ns > 0))
+		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 }
-
-if(count($valid_ns > 0))
-	file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
-
 if(!empty($_ENV['new_domain_name']))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 
@@ -165,7 +166,5 @@ enable_rrd_graphing();
 services_igmpproxy_configure();
 
 restart_packages();
-
-services_radvd_configure();
 
 ?>

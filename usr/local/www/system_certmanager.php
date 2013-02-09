@@ -583,7 +583,7 @@ function internalca_change() {
 									foreach($cert_methods as $method => $desc):
 									$selected = "";
 									if ($pconfig['method'] == $method)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
 								<?php endforeach; ?>
@@ -616,7 +616,7 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>
-									<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
+									<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
 						</tr>
 						<tr>
@@ -624,7 +624,7 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
 								<br>
-								<?=gettext("Paste a private key in X.509 PEM format here.");?></td>
+								<?=gettext("Paste a private key in X.509 PEM format here.");?>
 							</td>
 						</tr>
 					</table>
@@ -659,7 +659,7 @@ function internalca_change() {
 										continue;
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
 								<?php endforeach; ?>
@@ -674,7 +674,7 @@ function internalca_change() {
 									foreach( $cert_keylens as $len):
 									$selected = "";
 									if ($pconfig['keylen'] == $len)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
@@ -690,7 +690,7 @@ function internalca_change() {
 									foreach( $openssl_digest_algs as $digest_alg):
 									$selected = "";
 									if ($pconfig['digest_alg'] == $digest_alg)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
 								<?php endforeach; ?>
@@ -706,7 +706,7 @@ function internalca_change() {
 									foreach( $cert_types as $ct => $ctdesc ):
 									$selected = "";
 									if ($pconfig['type'] == $ct)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$ct;?>"<?=$selected;?>><?=$ctdesc;?></option>
 								<?php endforeach; ?>
@@ -847,7 +847,7 @@ function internalca_change() {
 									foreach( $cert_keylens as $len):
 									$selected = "";
 									if ($pconfig['keylen'] == $len)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
@@ -866,8 +866,9 @@ function internalca_change() {
 											<?php
 											foreach( $dn_cc as $cc){
 												$selected = "";
-												if ($pconfig['csr_dn_country'] == $cc) $selected = "selected";
-												print "<option value=\"$cc\" $selected>$cc</option>";
+												if ($pconfig['csr_dn_country'] == $cc)
+													$selected = " selected";
+												print "<option value=\"$cc\"$selected>$cc</option>";
 												}
 											?>
 											</select>
@@ -954,13 +955,13 @@ function internalca_change() {
 										if ($ca)
 											$caname = " (CA: {$ca['descr']})";
 										if ($pconfig['certref'] == $cert['refid'])
-											$selected = "selected";
+											$selected = " selected";
 										if (cert_in_use($cert['refid']))
 											$inuse = " *In Use";
 											if (is_cert_revoked($cert))
 											$revoked = " *Revoked";
 								?>
-									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
+									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>

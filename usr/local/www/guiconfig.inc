@@ -970,9 +970,9 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
                 }
                 echo "</select>\n<p>&nbsp;</p>";
                 echo "<script type=\"text/javascript\">";
-				echo "//<![CDATA[";
-                echo " function tabs_will_go(obj){ document.location = obj.value; }";
-				echo "//]]>";
+				echo "\n//<![CDATA[\n";
+                echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+				echo "//]]>\n";
                 echo "</script>";
         }  else {
                 echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";

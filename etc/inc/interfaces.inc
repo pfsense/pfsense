@@ -2999,6 +2999,12 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 			break;
 	}
 
+	if (!function_exists('services_dhcpdv6_configure'))
+		require_once("services.inc");
+
+	services_dhcpdv6_configure();
+	services_radvd_configure();
+
 	return 0;
 }
 
@@ -3158,12 +3164,6 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 			mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
 		}
 	}
-
-	if (!function_exists('services_dhcpdv6_configure'))
-		require_once("services.inc");
-
-	services_dhcpdv6_configure();
-	services_radvd_configure();
 
 	return 0;
 }

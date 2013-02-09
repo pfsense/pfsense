@@ -1239,8 +1239,10 @@ function system_ntp_configure($start_ntpd=true) {
 
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through servers and write out to ntpd.conf */
-	foreach (explode(' ', $config['system']['timeservers']) as $ts)
-		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
+	if (is_array($config['system']['timeservers'])) {
+		foreach (explode(' ', $config['system']['timeservers']) as $ts)
+			$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
+	}
 
 	$ntpcfg .= "enable monitor\n";
 	$ntpcfg .= "enable stats\n";
@@ -1270,34 +1272,27 @@ function system_ntp_configure($start_ntpd=true) {
 	}
 
 	/* open configuration for wrting or bail */
-	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
-	if(!$fd) {
+	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
 		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
 		return;
 	}
-	fwrite($fd, $ntpcfg);
-
-	/* slurp! */
-	fclose($fd);
 
 	/* At bootup we just want to write out the config. */
 	if (!$start_ntpd)
 		return;
 
 	/* if ntpd is running, kill it */
-	while(is_process_running("ntpd")) {
-		killbyname("ntpd");
+	while (is_validpid("{$g['varrun_path']}/ntpd.pid")) {
+		killbypid("{$g['varrun_path']}/ntpd.pid");
 	}
+	@unlink("{$g['varrun_path']}/ntpd.pid");
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	$oldset = array();
-	pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
-	exec("/usr/local/bin/ntpd -g -c {$g['varetc_path']}/ntpd.conf");
-	pcntl_sigprocmask(SIG_SETMASK, $oldset);
+	mwexec("/usr/local/bin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");

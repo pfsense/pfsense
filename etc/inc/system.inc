@@ -47,10 +47,16 @@ function activate_powerd() {
 	if(isset($config['system']['powerd_enable'])) {
 		if ($g["platform"] == "nanobsd")
 			exec("/sbin/kldload cpufreq");
-		$mode = "hadp";
-		if (!empty($config['system']['powerd_mode']))
-			$mode = $config['system']['powerd_mode'];
-		mwexec("/usr/sbin/powerd -b $mode -a $mode");
+
+		$ac_mode = "hadp";
+		if (!empty($config['system']['powerd_ac_mode']))
+			$ac_mode = $config['system']['powerd_ac_mode'];
+
+		$battery_mode = "hadp";
+		if (!empty($config['system']['powerd_battery_mode']))
+			$battery_mode = $config['system']['powerd_battery_mode'];
+
+		mwexec("/usr/sbin/powerd -b $battery_mode -a $ac_mode");
 	}
 }
 

@@ -69,10 +69,13 @@ $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 
-if (!empty($config['system']['powerd_mode']))
-	$pconfig['powerd_mode'] = $config['system']['powerd_mode'];
-else
-	$pconfig['powerd_mode'] = "hadp";
+$pconfig['powerd_ac_mode'] = "hadp";
+if (!empty($config['system']['powerd_ac_mode']))
+	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
+
+$pconfig['powerd_battery_mode'] = "hadp";
+if (!empty($config['system']['powerd_battery_mode']))
+	$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
 
 $crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
 			'aesni' => gettext("AES-NI CPU-based Acceleration"));
@@ -172,7 +175,8 @@ if ($_POST) {
                 else
                         unset($config['system']['powerd_enable']);
 
-		$config['system']['powerd_mode'] = $_POST['powerd_mode'];
+		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
+		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
 
 		if($_POST['crypto_hardware'])
 			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
@@ -350,12 +354,20 @@ function maxmss_checked(obj) {
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Use PowerD"); ?></strong><br/>
 									<br/>
-									<?=gettext("Mode"); ?>&nbsp;:&nbsp;
-									<select name="powerd_mode" id="powerd_mode">
-										<option value="hadp"<?php if($pconfig['powerd_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
+									<?=gettext("On AC Power Mode"); ?>&nbsp;:&nbsp;
+									<select name="powerd_ac_mode" id="powerd_ac_mode">
+										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_ac_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
+									</select>
+									&nbsp;&nbsp;
+									<?=gettext("On Battery Power Mode"); ?>&nbsp;:&nbsp;
+									<select name="powerd_battery_mode" id="powerd_battery_mode">
+										<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
 									</select>
 									<br/><br/>
 								     <?=gettext("The powerd utility monitors the system state and sets various power control " .

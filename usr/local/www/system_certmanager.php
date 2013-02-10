@@ -1124,23 +1124,23 @@ function internalca_change() {
 							<?php endif; ?>
 						</td>
 						<td valign="middle" nowrap class="list">
-							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_certmanager.php?act=key&id=<?=$i;?>">
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_certmanager.php?act=p12&id=<?=$i;?>">
+							<a href="system_certmanager.php?act=p12&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert+key in .p12");?>" alt="<?=gettext("export cert+key in .p12");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onClick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
+							<a href="system_certmanager.php?act=del&amp;id=<?=$i;?>" onClick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete cert");?>" alt="<?=gettext("delete cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>
 							<?php	if ($cert['csr']): ?>
 							&nbsp;
-								<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
+								<a href="system_certmanager.php?act=csr&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("update csr");?>" alt="<?=gettext("update csr");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>
@@ -1181,3 +1181,4 @@ internalca_change();
 </script>
 
 </body>
+</html>

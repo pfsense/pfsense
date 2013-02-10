@@ -386,7 +386,7 @@ function method_change() {
 									foreach($ca_methods as $method => $desc):
 									$selected = "";
 									if ($pconfig['method'] == $method)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
 								<?php endforeach; ?>
@@ -409,7 +409,7 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>
-								<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
+								<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
 						</tr>
 						<tr>
@@ -417,7 +417,7 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
 								<br>
-								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?></td>
+								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?>
 							</td>
 						</tr>
 
@@ -449,7 +449,7 @@ function method_change() {
                                                                                 continue;
                                                                         $selected = "";
                                                                         if ($pconfig['caref'] == $ca['refid'])
-                                                                                $selected = "selected";
+                                                                                $selected = " selected";
                                                                 ?>
                                                                         <option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
                                                                 <?php endforeach; ?>
@@ -464,7 +464,7 @@ function method_change() {
 									foreach( $ca_keylens as $len):
 									$selected = "";
 									if ($pconfig['keylen'] == $len)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
@@ -480,7 +480,7 @@ function method_change() {
 									foreach( $openssl_digest_algs as $digest_alg):
 									$selected = "";
 									if ($pconfig['digest_alg'] == $digest_alg)
-										$selected = "selected";
+										$selected = " selected";
 								?>
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
 								<?php endforeach; ?>
@@ -506,8 +506,9 @@ function method_change() {
 											<?php
 											foreach( $dn_cc as $cc){
 												$selected = "";
-												if ($pconfig['dn_country'] == $cc) $selected = "selected";
-												print "<option value=\"$cc\" $selected>$cc</option>";
+												if ($pconfig['dn_country'] == $cc)
+													$selected = " selected";
+												print "<option value=\"$cc\"$selected>$cc</option>";
 												}
 											?>
 											</select>
@@ -698,3 +699,4 @@ method_change();
 </script>
 
 </body>
+</html>

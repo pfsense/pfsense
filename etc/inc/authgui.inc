@@ -216,7 +216,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		<script type="text/javascript">
 		//<![CDATA[
 		$(document).ready(function() { jQuery('#usernamefld').focus(); });
-		/]]>
+		//]]>
 		</script>
 
 		<title><?=gettext("Login"); ?></title>

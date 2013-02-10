@@ -379,6 +379,7 @@ function system_routing_configure($interface = "") {
 						continue;
 					if ($gateway['gateway'] == "dynamic")
 						$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+					$gatewayip = $gateway['gateway'];
 					if (!empty($gateway['interface'])) {
 						$defaultif = get_real_interface($gateway['interface']);
 						if ($defaultif)
@@ -388,6 +389,7 @@ function system_routing_configure($interface = "") {
 				} else if ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic6")) {
 					if ($gateway['gateway'] == "dynamic6")
 						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+					$gatewayipv6 = $gateway['gateway'];
 					if (!empty($gateway['interface'])) {
 						$defaultifv6 = get_real_interface($gateway['interface']);
 						if ($defaultifv6)

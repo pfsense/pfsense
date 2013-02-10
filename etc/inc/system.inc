@@ -1282,7 +1282,7 @@ function system_ntp_configure($start_ntpd=true) {
 		return;
 
 	/* if ntpd is running, kill it */
-	while (is_validpid("{$g['varrun_path']}/ntpd.pid")) {
+	while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
 		killbypid("{$g['varrun_path']}/ntpd.pid");
 	}
 	@unlink("{$g['varrun_path']}/ntpd.pid");

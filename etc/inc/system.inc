@@ -488,7 +488,9 @@ function system_routing_configure($interface = "") {
 						" -iface " . escapeshellarg($interfacegw));
 			}
 		}
+		unset($gateways_arr);
 	}
+	unset($static_routes);
 
 	return 0;
 }

@@ -526,7 +526,7 @@ EOD;
 	$rulenum++;
 	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(2) out\n";
 	$rulenum++;
-	
+
 	$listenporthttp =
 		$config['captiveportal'][$cpzone]['listenporthttp'] ?
 		$config['captiveportal'][$cpzone]['listenporthttp'] :
@@ -971,18 +971,15 @@ function captiveportal_passthrumac_findbyname($username) {
  */
 function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 
-	/* This function can deal with hostname or ipaddress */
-	if($ipent['ip']) 	
-		$ipaddress = $ipent['ip'];
-
 	/*  Instead of copying this entire function for something
 	 *  easy such as hostname vs ip address add this check
 	 */
-	if(!empty($ipent['hostname'])) {
+	if ($ishostname === true) {
 		$ipaddress = gethostbyname($ipent['hostname']);
-		if(!is_ipaddr($ipaddress)) 
+		if (!is_ipaddr($ipaddress)) 
 			return;
-	}
+	} else
+		$ipaddress = $ipent['ip'];
 
 	$rules = "";
 	$cp_filterdns_conf = "";
@@ -1026,9 +1023,8 @@ function captiveportal_allowedhostname_configure() {
 		unset($cp_filterdns_conf);
 		if (isvalidpid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid"))
 			sigkillbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid", "HUP");
-		else {
+		else
 			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid -i 300 -c {$cp_filterdns_filename} -y {$cpzone} -d 1");
-		}
 	} else {
 		killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");
 		@unlink("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");

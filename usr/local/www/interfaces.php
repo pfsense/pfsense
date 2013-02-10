@@ -197,7 +197,7 @@ switch($wancfg['ipaddr']) {
 		$pconfig['type'] = $wancfg['ipaddr'];
 		break;
 	default:
-		if(is_ipaddr($wancfg['ipaddr'])) {
+		if(is_ipaddrv4($wancfg['ipaddr'])) {
 			$pconfig['type'] = "staticv4";
 			$pconfig['ipaddr'] = $wancfg['ipaddr'];
 			$pconfig['subnet'] = $wancfg['subnet'];
@@ -240,7 +240,7 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['gateway-6rd'] = $wancfg['gateway-6rd'];
 		break;
 	default:
-		if(is_ipaddr($wancfg['ipaddrv6'])) {
+		if(is_ipaddrv6($wancfg['ipaddrv6'])) {
 			$pconfig['type6'] = "staticv6";
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
@@ -544,15 +544,15 @@ if ($_POST['apply']) {
 	
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
-	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr'])))
+	if (($_POST['ipaddr'] && !is_ipaddrv4($_POST['ipaddr'])))
 		$input_errors[] = gettext("A valid IPv4 address must be specified.");
-	if (($_POST['ipaddrv6'] && !is_ipaddr($_POST['ipaddrv6'])))
+	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6'])))
 		$input_errors[] = gettext("A valid IPv6 address must be specified.");
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet'])))
 		$input_errors[] = gettext("A valid subnet bit count must be specified.");
 	if (($_POST['subnetv6'] && !is_numeric($_POST['subnetv6'])))
 		$input_errors[] = gettext("A valid subnet bit count must be specified.");
-	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address'])))
+	if (($_POST['alias-address'] && !is_ipaddrv4($_POST['alias-address'])))
 		$input_errors[] = gettext("A valid alias IP address must be specified.");
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet'])))
 		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
@@ -584,11 +584,11 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
 	if ($_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate'])))
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
-	if (($_POST['pptp_local'] && !is_ipaddr($_POST['pptp_local'])))
+	if (($_POST['pptp_local'] && !is_ipaddrv4($_POST['pptp_local'])))
 		$input_errors[] = gettext("A valid PPTP local IP address must be specified.");
 	if (($_POST['pptp_subnet'] && !is_numeric($_POST['pptp_subnet'])))
 		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
-	if (($_POST['pptp_remote'] && !is_ipaddr($_POST['pptp_remote']) && !is_hostname($_POST['gateway'][$iface])))
+	if (($_POST['pptp_remote'] && !is_ipaddrv4($_POST['pptp_remote']) && !is_hostname($_POST['gateway'][$iface])))
 		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout']))
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
@@ -1095,7 +1095,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 ?>
 
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
 <link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
@@ -1550,9 +1549,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="ipaddrv6" type="text" class="formfld unknown ipv4v6" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
+											<input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
 											/
-											<select name="subnetv6" class="formselect ipv4v6" id="subnetv6">
+											<select name="subnetv6" class="formselect" id="subnetv6">
 												<?php
 												for ($i = 128; $i > 0; $i--) {
 													if($i <> 127) {

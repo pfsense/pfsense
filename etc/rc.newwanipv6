@@ -48,7 +48,6 @@ require_once("rrd.inc");
 if($g['booting']) 
 	exit;
 
-
 function restart_packages() {
 	global $oldipv6, $curwanipv6, $g;
 

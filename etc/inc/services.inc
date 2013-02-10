@@ -325,10 +325,8 @@ function services_dhcpd_configure($family = "all") {
 		services_dhcpdv6_configure();
 		services_radvd_configure();
 	}
-
-	return;
-
 }
+
 function services_dhcpdv4_configure() {
 	global $config, $g;
 
@@ -970,7 +968,6 @@ EOD;
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-		$subnetmaskv6 = gen_subnet_mask($ifcfgsnv6);
 
 		if($is_olsr_enabled == true)
 			if($dhcpv6ifconf['netmask'])
@@ -1081,15 +1078,11 @@ EOD;
 			}
 		}
 
-		$dhcpdv6conf .= <<<EOD
-}
-
-EOD;
+		$dhcpdv6conf .= "}\n";
 
 		/* add static mappings */
 		/* Needs to use DUID */
 		if (is_array($dhcpv6ifconf['staticmap'])) {
-
 			$i = 0;
 			foreach ($dhcpv6ifconf['staticmap'] as $sm) {
 				$dhcpdv6conf .= <<<EOD
@@ -1136,9 +1129,9 @@ EOD;
 
 	/* write dhcpdv6.conf */
 	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
-		log_error("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
+		log_error("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		if ($g['booting'])
-			printf("Error: cannot open dhcpdv6.conf in services_dhcpdv6_configure().\n");
+			printf("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		unset($dhcpdv6conf);
 		return 1;
 	}

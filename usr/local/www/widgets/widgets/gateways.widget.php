@@ -42,6 +42,20 @@ $counter = 1;
 ?>
 
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<td class="vncellt" width="30%" id="gatewayname">
+			Name
+	</td>
+	<td width="70%" class="listr">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+			<td width="25%" class="listhdrr">RTT</td>
+			<td width="25%" class="listhdrr">Loss</td>
+			<td width="50%" class="listhdrr">Status</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
 	<?php foreach ($a_gateways as $gname => $gateway) { ?>
 	<tr>
 	<td class="vncellt" width="30%" id="gateway<?php echo $counter; ?>">
@@ -72,12 +86,7 @@ $counter = 1;
 		</table>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-			<td width="20%" class="listhdrr">RTT</td>
-			<td width="20%" class="listhdrr">Loss</td>
-			<td width="60%" class="listhdrr">Status</td>
-			</tr>
-			<tr>
-			<td class="listlr" align="center" id="gateway<?php echo $counter; ?>">
+			<td width="25%" class="listlr" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
 				if ($gateways_status[$gname])
 					echo htmlspecialchars($gateways_status[$gname]['delay']);
@@ -86,7 +95,7 @@ $counter = 1;
 			?>
 			<?php $counter++; ?>
 			</td>
-			<td class="listr" align="center" id="gateway<?php echo $counter; ?>">
+			<td width="25%" class="listr" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
 				if ($gateways_status[$gname])
 					echo htmlspecialchars($gateways_status[$gname]['loss']);
@@ -95,7 +104,7 @@ $counter = 1;
 			?>
 			<?php $counter++; ?>
 			</td>
-			<td class="listr" id="gateway<?php echo $counter ?>" >
+			<td width="50%" class="listr" id="gateway<?php echo $counter ?>" >
 			<table border="0" cellpadding="0" cellspacing="2">
 			<?php
 				if ($gateways_status[$gname]) {

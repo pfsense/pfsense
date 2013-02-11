@@ -2431,22 +2431,42 @@ function load_mac_manufacturer_table() {
  *   returns true if the IP Address is
  *   configured and present on this device.
 */
-function is_ipaddr_configured($ipaddr) {
-	$interface_list_ips = get_configured_ip_addresses();
-	foreach($interface_list_ips as $ilips) {
-		if(strcasecmp($ipaddr, $ilips) == 0)
+function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false) {
+	global $config;
+
+	if ($check_subnets) {
+		$iflist = get_configured_interface_list();
+		foreach ($iflist as $if => $ifname) {
+			if ($ignore_if == $if)
+				continue;
+			$bitmask = get_interface_subnet($if);
+			$subnet = gen_subnet(get_interface_ip($if), $bitmask);
+			if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
+				return true;
+		}
+	} else {
+		$interface_list_ips = get_configured_ip_addresses();
+		foreach($interface_list_ips as $if => $ilips) {
+			if ($ignore_if == $if)
+				continue;
+			if (strcasecmp($ipaddr, $ilips) == 0)
+				return true;
+		}
+	}
+
+	$interface_list_vips = get_configured_vips_list();
+	foreach($interface_list_vips as $id => $vip) {
+		if ($ignore_if == "vip_" . $id)
+			continue;
+		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;
 	}
 
-	$interface_list_ips = get_configured_ip_aliases_list();
-	foreach($interface_list_ips as $key => $ilips) {
-		if(strcasecmp($ipaddr, $key) == 0)
+	if ($check_localip) {
+		if (isset($config['pptpd']['localip']) && (strcasecmp($ipaddr, $config['pptpd']['localip']) == 0))
 			return true;
-	}
 
-	$interface_list_ips = get_configured_carp_interface_list();
-	foreach($interface_list_ips as $ilips) {
-		if(strcasecmp($ipaddr, $ilips) == 0)
+		if (isset($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0))
 			return true;
 	}
 

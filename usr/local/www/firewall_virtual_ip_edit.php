@@ -110,15 +110,17 @@ if ($_POST) {
 	if ($_POST['subnet'])
 		$_POST['subnet'] = trim($_POST['subnet']);
 
-	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet'])))
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if ($_POST['subnet']) {
+		if (!is_ipaddr($_POST['subnet']))
+			$input_errors[] = gettext("A valid IP address must be specified.");
+		else if (is_ipaddr_configured($_POST['subnet'], "vip_" . $id, true))
+			$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
+	}
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr) {
 		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6'])))
 			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
-		if ($_POST['subnet'] == get_interface_ip($natif))
-			$input_errors[] = sprintf(gettext("The %s IP address may not be used in a virtual entry."),$natdescr);
 	}
 
 	if(is_ipaddrv4($_POST['subnet'])) {
@@ -128,16 +130,6 @@ if ($_POST) {
 	if(is_ipaddrv6($_POST['subnet'])) {
 		if(($_POST['subnet_bits'] == "127" or $_POST['subnet_bits'] == "128")  and $_POST['mode'] == "carp")
 		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
-	}
-	/* check for overlaps with other virtual IP */
-	foreach ($a_vip as $vipent) {
-		if (isset($id) && ($a_vip[$id]) && ($a_vip[$id] === $vipent))
-			continue;
-
-		if (isset($_POST['subnet']) && $_POST['subnet'] == $vipent['subnet']) {
-			$input_errors[] = gettext("There is already a virtual IP entry for the specified IP address.");
-			break;
-		}
 	}
 
 	/* make sure new ip is within the subnet of a valid ip

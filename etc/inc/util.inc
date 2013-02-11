@@ -740,6 +740,20 @@ function get_configured_ip_aliases_list($returnfullentry = false) {
 	return $alias_list;
 }
 
+/* return all configured aliases list (IP, carp, proxyarp and other) */
+function get_configured_vips_list() {
+	global $config;
+
+	$alias_list=array();
+
+	if(is_array($config['virtualip']['vip'])) {
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip)
+			$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
+	}
+
+	return $alias_list;
+}
 
 /* comparison function for sorting by the order in which interfaces are normally created */
 function compare_interface_friendly_names($a, $b) {

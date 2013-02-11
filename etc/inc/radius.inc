@@ -307,10 +307,10 @@ class Auth_RADIUS extends PEAR {
         $this->putAttribute(RADIUS_NAS_IP_ADDRESS, $ipaddr, "addr");
 
         // Add support for sending NAS-Identifier
-        if (empty($config[$cpzone]["radiusnasid"])) {
+        if (empty($config["captiveportal"][$cpzone]["radiusnasid"])) {
             $nasId = php_uname("n");
         } else {
-            $nasId = $config[$cpzone]["radiusnasid"];
+            $nasId = $config["captiveportal"][$cpzone]["radiusnasid"];
         }
         $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId);
     }

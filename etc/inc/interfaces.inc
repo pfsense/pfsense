@@ -3852,9 +3852,9 @@ function find_ip_interface($ip, $bits = null) {
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$ifip = ($isv6ip) ? get_interface_ipv6($ifname) : get_interface_ip($ifname);
-		if ($ifip === null)
+		if (is_null($ifip))
 			continue;
-		if ($bits === null) {
+		if (is_null($bits)) {
 			if ($ip == $ifip) {
 				$int = get_real_interface($ifname);
 				return $int;
@@ -3867,6 +3867,7 @@ function find_ip_interface($ip, $bits = null) {
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -3889,7 +3890,7 @@ function find_virtual_ip_alias($ip, $bits = null) {
 		if ($vip['mode'] === "ipalias") {
 			if (is_ipaddrv6($vip['subnet']) != $isv6ip)
 				continue;
-			if ($bits === null) {
+			if (is_null($bits)) {
 				if (ip_in_subnet($ip, $vip['subnet'] . "/" . $vip['subnet_bits'])) {
 					return $vip;
 				}

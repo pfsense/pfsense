@@ -3788,7 +3788,7 @@ function get_real_interface($interface = "wan") {
 		// Wireless cloned NIC support (FreeBSD 8+)
 		// interface name format: $parentnic_wlanparentnic#
 		// example: ath0_wlan0
-		if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
+		if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if'])) {
 			$wanif = interface_get_wireless_clone($cfg['if']);
 		else
 			$wanif = $cfg['if'];

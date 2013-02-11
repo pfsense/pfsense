@@ -135,6 +135,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
+	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext'])
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -307,6 +308,7 @@ if ($_POST) {
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
+		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 		if (!is_array($newcp['page']))
 			$newcp['page'] = array();
 
@@ -399,6 +401,7 @@ function enable_change(enable_change) {
 	document.iform.reauthenticateacct[1].disabled = radacct_dis;
 	document.iform.reauthenticateacct[2].disabled = radacct_dis;
 	document.iform.reverseacct.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
+	document.iform.radiusnasid.disabled = radius_endis;
 }
 //-->
 </script>
@@ -709,10 +712,7 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="listtopic">&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Accounting"); ?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Accounting"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell">&nbsp;</td>
@@ -833,6 +833,12 @@ function enable_change(enable_change) {
 				<td class="vncell" valign="top"><?=gettext("Accounting Style"); ?></td>
 				<td class="vtable"><input name="reverseacct" type="checkbox" id="reverseacct" value="yes" <?php if ($pconfig['reverseacct']) echo "checked"; ?>><strong><?=gettext("Invert Acct-Input-Octets and Acct-Output-Octets"); ?></strong><br>
 				<?=gettext("When this is enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload."); ?></td>
+			</tr>
+
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("NAS Identifier"); ?></td>
+				<td class="vtable"><input name="radiusnasid" type="text" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>"/><br/>
+				<?=gettext("Specify a NAS identifier to override the default value") . " " . php_uname("n"); ?></td>
 			</tr>
 		</table>
 	</tr>

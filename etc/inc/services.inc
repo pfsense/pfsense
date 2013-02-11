@@ -299,23 +299,23 @@ function services_dhcpd_configure($family = "all") {
 
 	/* configure DHCPD chroot once */
 	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
-	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");
-	fwrite($fd, "chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
-	fwrite($fd, "cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
-	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
-	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
+	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/run\n");
+	fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
+	fwrite($fd, "/bin/cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
+	fwrite($fd, "/bin/cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
+	fwrite($fd, "/usr/sbin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
-	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
-	if(!trim($status))
-		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
+	$status = `/sbin/mount | /usr/bin/grep -v grep  | /usr/bin/grep  "{$g['dhcpd_chroot_path']}/dev"`;
+	if (!trim($status))
+		fwrite($fd, "/sbin/mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 

@@ -3746,7 +3746,7 @@ function interface_get_wireless_clone($wlif) {
 }
 
 function get_real_interface($interface = "wan") {
-	global $config;
+	global $config, $g;
 
 	$wanif = NULL;
 

@@ -194,12 +194,12 @@ if ($_POST) {
 		foreach($a_phase2 as $key => $name){
 			if (isset($name['mobile'])){
 				/* check duplicate localids only for mobile clents */
-				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
+				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$entered = array();
 				$entered['type'] = $pconfig['localid_type'];
 				if (isset($pconfig['localid_address'])) $entered['address'] = $pconfig['localid_address'];
 				if (isset($pconfig['localid_netbits'])) $entered['netbits'] = $pconfig['localid_netbits'];
-				$entered_localid_data = ipsec_idinfo_to_cidr($entered);
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data){
 					if (!isset($pconfig['p2index'])){
 						/* adding new p2 entry */
@@ -219,18 +219,18 @@ if ($_POST) {
 		foreach($a_phase2 as $key => $name){
 			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid']){
 				/* check duplicate subnets only for given phase1 */
-				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
-				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid']);
+				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
+				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid'], false, $name['mode']);
 				$entered_local = array();
 				$entered_local['type'] = $pconfig['localid_type'];
 				if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
 				if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
-				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local);
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local, false, $pconfig['mode']);
 				$entered_remote = array();
 				$entered_remote['type'] = $pconfig['remoteid_type'];
 				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
-				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote);
+				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) { 
 					if (!isset($pconfig['p2index'])){
 						/* adding new p2 entry */

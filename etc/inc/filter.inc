@@ -717,6 +717,9 @@ function filter_get_vpns_list() {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
 						require_once("ipsec.inc");
+					if (!is_array($ph2ent['remoteid']))
+						;
+					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 					if ($vpns_subnet == "0.0.0.0/0")
 						continue;
@@ -1455,16 +1458,25 @@ function filter_nat_rules_generate() {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
 						require_once("ipsec.inc");
+					if (!is_array($ph2ent['localid']))
+						$ph2ent['localid'] = array();
+					$ph2ent['localid']['mode'] = $ph2ent['mode'];
 					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
 					if (empty($local_subnet) || $local_subnet == "0.0.0.0/0")
 						continue;
 					if (!is_subnet($local_subnet) && !is_ipaddr($local_subnet))
 						continue;
+					if (!is_array($ph2ent['natlocalid']))
+						$ph2ent['natlocalid'] = array();
+					$ph2ent['natlocalid']['mode'] = $ph2ent['mode'];
 					$natlocal_subnet = ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
 					if (empty($natlocal_subnet) || $natlocal_subnet == "0.0.0.0/0")
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;
+					if (!is_array($ph2ent['remoteid']))
+						$ph2ent['remoteid'] = array();
+					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 					if (empty($remote_subnet))
 						continue;

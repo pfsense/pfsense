@@ -718,7 +718,7 @@ function filter_get_vpns_list() {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
 						require_once("ipsec.inc");
 					if (!is_array($ph2ent['remoteid']))
-						;
+						continue;
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 					if ($vpns_subnet == "0.0.0.0/0")

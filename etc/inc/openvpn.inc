@@ -1047,4 +1047,35 @@ function openvpn_clear_route($mode, $settings) {
 	}
 }
 
+function openvpn_get_settings($mode, $vpnid) {
+	global $config;
+
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $settings) {
+			if (isset($settings['disable']))
+				continue;
+
+			if ($vpnid != 0 && $vpnid == $settings['vpnid'])
+				return $settings;
+		}
+	}
+
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $settings) {
+			if (isset($settings['disable']))
+				continue;
+
+			if ($vpnid != 0 && $vpnid == $settings['vpnid'])
+				return $settings;
+		}
+	}
+
+	return array();
+}
+
+function openvpn_restart_by_vpnid($mode, $vpnid) {
+	$settings = openvpn_get_settings($mode, $vpnid);
+	openvpn_restart($mode, $settings);
+}
+
 ?>

@@ -40,6 +40,7 @@
 require_once("guiconfig.inc");
 require_once("captiveportal.inc");
 require_once("service-utils.inc");
+require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
@@ -94,12 +95,8 @@ if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
 			if ($vpnmode == "server" || $vpnmode == "client") {
 				$id = $_GET['id'];
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
-				$pidfile = $g['varrun_path'] . "/openvpn_{$vpnmode}{$id}.pid";
-				if (file_exists($configfile)) {
-					killbypid($pidfile);
-					sleep(1);
-					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
-				}
+				if (file_exists($configfile))
+					openvpn_restart_by_vpnid($vpnmode, $id);
 			}
 			break;
 		case 'relayd':
@@ -146,7 +143,7 @@ if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
 				$id = $_GET['id'];
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
 				if (file_exists($configfile))
-					mwexec_bg("/usr/local/sbin/openvpn --config {$configfile}");
+					openvpn_restart_by_vpnid($vpnmode, $id);
 			}
 			break;
 		case 'relayd':

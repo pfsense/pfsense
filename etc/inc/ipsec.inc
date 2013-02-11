@@ -177,6 +177,7 @@ function ipsec_get_phase1_src(& $ph1ent) {
  */
 function ipsec_get_phase1_dst(& $ph1ent) {
 	global $g;
+
 	if (empty($ph1ent['remote-gateway']))
 		return false;
 	$rg = $ph1ent['remote-gateway'];
@@ -193,38 +194,42 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 /*
  * Return phase2 idinfo in cidr format
  */
-function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false,$mode="tunnel") {
+function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 	global $config;
 
-	switch ($idinfo['type'])
-	{
+	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
-				if($mode == "tunnel6") {
+				if ($mode == "tunnel6")
 					return $idinfo['address']."/128";
-				} else {
+				else
 					return $idinfo['address']."/32";
-				}
-			} else {
+			} else
 				return $idinfo['address'];
-			}
+			break; /* NOTREACHED */
 		case "network":
-			return $idinfo['address']."/".$idinfo['netbits'];
+			return "{$idinfo['address']}/{$idinfo['netbits']}";
+			break; /* NOTREACHED */
 		case "none":
 		case "mobile":
 			return "0.0.0.0/0";
+			break; /* NOTREACHED */
 		default:
-			if($mode == "tunnel6") {
+			if (empty($mode) && !empty($idinfo['mode']))
+				$mode = $idinfo['mode'];
+
+			if ($mode == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
 				$address = gen_subnetv6($address,$netbits);
-				return $address."/".$netbits;
+				return "{$address}/{$netbits}";
 			} else {
 				$address = get_interface_ip($idinfo['type']);
 				$netbits = get_interface_subnet($idinfo['type']);
 				$address = gen_subnet($address,$netbits);
-				return $address."/".$netbits;
+				return "{$address}/{$netbits}";
 			}
+			break; /* NOTREACHED */
 	}
 }
 
@@ -234,25 +239,25 @@ function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false,$mode="tunnel") {
 function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 	global $config;
 
-	switch ($idinfo['type'])
-	{
+	switch ($idinfo['type']) {
 		case "address":
 			if ($addrbits) {
-				if($idinfo['mode'] == "tunnel6") {
+				if ($idinfo['mode'] == "tunnel6")
 					return $idinfo['address']."/128";
-				} else {
+				else
 					return $idinfo['address']."/255.255.255.255";
-				}
-			} else {
+			} else
 				return $idinfo['address'];
-			}
+			break; /* NOTREACHED */
 		case "none":
 		case "network":
 			return $idinfo['address']."/".gen_subnet_mask($idinfo['netbits']);
+			break; /* NOTREACHED */
 		case "mobile":
 			return "0.0.0.0/0";
+			break; /* NOTREACHED */
 		default:
-			if($idinfo['mode'] == "tunnel6") {
+			if ($idinfo['mode'] == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
 				$netbits = get_interface_subnetv6($idinfo['type']);
 				$address = gen_subnetv6($address,$netbits);
@@ -263,6 +268,7 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 				$address = gen_subnet($address,$netbits);
 				return $address."/".$netbits;
 			}
+			break; /* NOTREACHED */
 	}
 }
 
@@ -270,40 +276,51 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
  *  Return phase2 idinfo in text format
  */
 function ipsec_idinfo_to_text(& $idinfo) {
+	global $config;
 
-    switch ($idinfo['type'])
-    {
+	switch ($idinfo['type']) {
         case "address":
-            return $idinfo['address'];
+		return $idinfo['address'];
+		break; /* NOTREACHED */
         case "network":
-            return $idinfo['address']."/".$idinfo['netbits'];
+		return $idinfo['address']."/".$idinfo['netbits'];
+		break; /* NOTREACHED */
 	case "mobile":
 		return gettext("Mobile Client");
+		break; /* NOTREACHED */
 	case "none":
 		return gettext("None");
+		break; /* NOTREACHED */
         default:
-            return strtoupper($idinfo['type']);
-    }
+		if (!empty($config['interfaces'][$idinfo['type']]))
+			return convert_friendly_interface_to_friendly_descr($idinfo['type']);
+		else
+			return strtoupper($idinfo['type']);
+		break; /* NOTREACHED */
+	}
 }
 
 /*
  * Return phase1 association for phase2
  */
-function ipsec_lookup_phase1(& $ph2ent,& $ph1ent)
-{
-    global $config;
-    $a_phase1 = $config['ipsec']['phase1'];
+function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
+	global $config;
 
-    if (is_array($a_phase1) && count($a_phase1)) {
-        foreach ($a_phase1 as $ph1tmp) {
-            if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
-                $ph1ent = $ph1tmp;
-                return $ph1ent;
-            }
-        }
-    }
+	if (!is_array($config['ipsec']))
+		return;
+	if (!is_array($config['ipsec']['phase1']))
+		return;
+	if (empty($config['ipsec']['phase1']))
+		return;
 
-    return false;
+	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
+	    if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
+		$ph1ent = $ph1tmp;
+		return $ph1ent;
+	    }
+	}
+
+	return false;
 }
 
 /*
@@ -314,7 +331,7 @@ function ipsec_phase1_status(& $ph1ent) {
 	$loc_ip = get_ipsec_tunnel_src($ph1ent);
 	$rmt_ip = $ph1ent['remote-gateway'];
 
-	if(ipsec_lookup_ipsakmp_sa($loc_ip,$rmt_ip))
+	if (ipsec_lookup_ipsakmp_sa($loc_ip,$rmt_ip))
 		return true;
 
 	return false;

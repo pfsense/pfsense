@@ -729,16 +729,6 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Reauthentication"); ?></td>
-			</tr>
-			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
-			  <strong><?=gettext("Reauthenticate connected users every minute"); ?></strong><br>
-			  <?=gettext("If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is " .
-			  "logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately."); ?></td>
-			</tr>
-			<tr>
 			  <td class="vncell" valign="top"><?=gettext("Accounting updates"); ?></td>
 			  <td class="vtable">
 			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> <?=gettext("no accounting updates"); ?><br>
@@ -750,26 +740,26 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS MAC authentication"); ?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("RADIUS options"); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable">
+				<td class="vncell"><?=gettext("Reauthentication"); ?></td>
+				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
+				<strong><?=gettext("Reauthenticate connected users every minute"); ?></strong><br>
+				<?=gettext("If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is " .
+				"logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately."); ?></td>
+			</tr>
+			<tr>
+				<td class=""><?=gettext("RADIUS MAC authentication"); ?></td>
+				<td class="">
 				<input name="radmac_enable" type="checkbox" id="radmac_enable" value="yes" onClick="enable_change(false)" <?php if ($pconfig['radmac_enable']) echo "checked"; ?>><strong><?=gettext("Enable RADIUS MAC authentication"); ?></strong><br>
 				<?=gettext("If this option is enabled, the captive portal will try to authenticate users by sending their MAC address as the username and the password " .
 				"entered below to the RADIUS server."); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell"><?=gettext("Shared secret"); ?></td>
+				<td class="vncell"><?=gettext("MAC authentication secret"); ?></td>
 				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>"></td>
 			</tr>
-			<tr>
-			  <td colspan="2" class="list" height="12"></td>
-			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("RADIUS options"); ?></td>
-			</tr>
-
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
 				<td class="vtable">
@@ -840,43 +830,45 @@ function enable_change(enable_change) {
 				<td class="vtable"><input name="radiusnasid" type="text" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>"/><br/>
 				<?=gettext("Specify a NAS identifier to override the default value") . " " . php_uname("n"); ?></td>
 			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
+				<td class="vtable">
+					<select name="radmac_format" id="radmac_format">
+						<option value="default"><?php echo gettext("default"); ?></option>
+						<?php
+						$macformats = array("singledash","ietf","cisco","unformatted");
+						foreach ($macformats as $macformat) {
+							if ($pconfig['radmac_format'] == $macformat) {
+								echo "<option selected value=\"$macformat\">",gettext($macformat),"</option>\n";
+							} else {
+								echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
+							}
+						}
+						?>
+					</select></br>
+					<?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
+					<?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
+					<?=gettext("default:"); ?> 00:11:22:33:44:55<br>
+					<?=gettext("singledash:"); ?> 001122-334455<br>
+					<?=gettext("ietf:"); ?> 00-11-22-33-44-55<br>
+					<?=gettext("cisco:"); ?> 0011.2233.4455<br>
+					<?=gettext("unformatted:"); ?> 001122334455
+				</td>
+			</tr>
 		</table>
 	</tr>
-    <tr>
-        <td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
-        <td class="vtable">
-        <select name="radmac_format" id="radmac_format">
-        <option value="default"><?php echo gettext("default"); ?></option>
-        <?php
-        $macformats = array("singledash","ietf","cisco","unformatted");
-        foreach ($macformats as $macformat) {
-            if ($pconfig['radmac_format'] == $macformat)
-                echo "<option selected value=\"$macformat\">",gettext($macformat),"</option>\n";
-            else
-                echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
-        }
-        ?>
-        </select></br>
-        <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
-        <?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
-        <?=gettext("default:"); ?> 00:11:22:33:44:55<br>
-        <?=gettext("singledash:"); ?> 001122-334455<br>
-        <?=gettext("ietf:"); ?> 00-11-22-33-44-55<br>
-        <?=gettext("cisco:"); ?> 0011.2233.4455<br>
-        <?=gettext("unformatted:"); ?> 001122334455
-    </tr>
 	<tr>
-      <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
-      <td class="vtable">
-        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
-        <strong><?=gettext("Enable HTTPS login"); ?></strong><br>
-    <?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name and certificate must also be specified below."); ?></td>
+		<td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
+		<td class="vtable">
+			<input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
+			<strong><?=gettext("Enable HTTPS login"); ?></strong><br>
+			<?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name and certificate must also be specified below."); ?></td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
-      <td class="vtable">
-        <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-	<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
+		<td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
+		<td class="vtable">
+			<input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
+			<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	</tr>
 	<tr id="ssl_opts">
 		<td width="22%" valign="top" class="vncell"><?=gettext("SSL Certificate"); ?></td>

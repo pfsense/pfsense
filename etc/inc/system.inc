@@ -1243,10 +1243,8 @@ function system_ntp_configure($start_ntpd=true) {
 
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through servers and write out to ntpd.conf */
-	if (is_array($config['system']['timeservers'])) {
-		foreach (explode(' ', $config['system']['timeservers']) as $ts)
-			$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
-	}
+-	foreach (explode(' ', $config['system']['timeservers']) as $ts)
+-		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
 
 	$ntpcfg .= "enable monitor\n";
 	$ntpcfg .= "enable stats\n";

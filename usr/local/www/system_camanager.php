@@ -46,7 +46,7 @@ $ca_methods = array(
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array( "512", "1024", "2048", "4096");
-global $openssl_digest_algs;
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
 

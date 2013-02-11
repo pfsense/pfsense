@@ -52,7 +52,7 @@ $cert_types = array(	"ca" => "Certificate Authority",
 			"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
-global $openssl_digest_algs;
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 

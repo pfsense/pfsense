@@ -311,7 +311,7 @@ function services_dhcpd_configure($family = "all") {
 	fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
 	fwrite($fd, "/bin/cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
 	fwrite($fd, "/bin/cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
-	fwrite($fd, "/usr/sbin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
+	fwrite($fd, "/bin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
 	$status = `/sbin/mount | /usr/bin/grep -v grep  | /usr/bin/grep  "{$g['dhcpd_chroot_path']}/dev"`;
 	if (!trim($status))

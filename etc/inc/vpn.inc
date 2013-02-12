@@ -145,7 +145,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 			$ipsecpinghosts = "";
 			/* step through each phase1 entry */
-			$ipsecpinghosts = "";
 			foreach ($a_phase1 as $ph1ent) {
 				if (isset($ph1ent['disabled']))
 					continue;

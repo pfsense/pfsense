@@ -822,11 +822,11 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	} else {
 		mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
-	if (isset($gre['link0']) && $gre['link0'])
+	if (isset($gre['link0']))
 		pfSense_interface_flags($greif, IFF_LINK0);
-	if (isset($gre['link1']) && $gre['link1'])
+	if (isset($gre['link1']))
 		pfSense_interface_flags($greif, IFF_LINK1);
-	if (isset($gre['link2']) && $gre['link2'])
+	if (isset($gre['link2']))
 		pfSense_interface_flags($greif, IFF_LINK2);
 
 	if($greif)
@@ -912,9 +912,9 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}
-	if (isset($gif['link0']) && $gif['link0'])
+	if (isset($gif['link0']))
 		pfSense_interface_flags($gifif, IFF_LINK0);
-	if (isset($gif['link1']) && $gif['link1'])
+	if (isset($gif['link1']))
 		pfSense_interface_flags($gifif, IFF_LINK1);
 	if($gifif)
 		interfaces_bring_up($gifif);

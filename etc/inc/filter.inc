@@ -145,6 +145,11 @@ function filter_delete_states_for_down_gateways() {
 					$gwiface = get_real_interface($gateway['friendlyiface']);
 				$cmd = "/sbin/pfctl -i {$gwiface} -Fs";
 				mwexec($cmd);
+				$gwip = $gateway['gateway'];
+				if (is_ipaddr($gwip)) {
+					$cmd = "/sbin/pfctl -i {$gwiface} -Fs -G {$gwip}";
+					mwexec($cmd);
+				}
 			}
 		}
 	}

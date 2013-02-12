@@ -14,6 +14,7 @@ if [ "$3" != "" ]; then
 	/sbin/pfctl -k 0.0.0.0/0 -k ${LOCAL_IP}
 	/sbin/pfctl -k ${LOCAL_IP}
 	pfctl -K ${LOCAL_IP}
+	pfctl -i $1 -Fs
 fi
 
 /sbin/pfctl -i $1 -Fs

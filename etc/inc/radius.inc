@@ -296,17 +296,22 @@ class Auth_RADIUS extends PEAR {
      */
     function putStandardAttributes()
     {
-	global $g;
+        global $config, $cpzone;
 
-	if (!function_exists("getNasIp"))
-		$ipaddr = "0.0.0.0";
-	else
-		$ipaddr = getNasIP();
+        if (!function_exists("getNasIp")) {
+            $ipaddr = "0.0.0.0";
+        } else {
+            $ipaddr = getNasIP();
+        }
         // Add support for sending NAS-IP-Address, set this explicitly as an ip_addr
         $this->putAttribute(RADIUS_NAS_IP_ADDRESS, $ipaddr, "addr");
 
         // Add support for sending NAS-Identifier
-	$nasId = php_uname("n");
+        if (empty($config["captiveportal"][$cpzone]["radiusnasid"])) {
+            $nasId = php_uname("n");
+        } else {
+            $nasId = $config["captiveportal"][$cpzone]["radiusnasid"];
+        }
         $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId);
     }
 

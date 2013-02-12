@@ -1516,20 +1516,6 @@ function getVolume($ip) {
 }
 
 /**
- * Get the NAS-Identifier
- *
- * We will use our local hostname to make up the nas_id
- */
-function getNasID()
-{
-	$nasId = "";
-	exec("/bin/hostname", $nasId);
-	if(!$nasId[0])
-		$nasId[0] = "{$g['product_name']}";
-	return $nasId[0];
-}
-
-/**
  * Get the NAS-IP-Address based on the current wan address
  *
  * Use functions in interfaces.inc to find this out

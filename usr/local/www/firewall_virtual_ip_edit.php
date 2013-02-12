@@ -297,6 +297,15 @@ function enable_change() {
 		case "proxyarp": set_note(proxyarpnote);	break;
 		default: set_note(undefined);
 	}
+	interface_change();
+}
+
+function interface_change() {
+	if (get_radio_value(document.iform.mode) == "carp") {
+		var ifname = document.iform.interface.options[document.iform.interface.selectedIndex].value + "_subnet";
+		document.iform.subnet_bits.value = document.getElementById(ifname).value;
+	}
+
 	typesel_change();
 }
 
@@ -359,7 +368,7 @@ function typesel_change() {
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
 				  <td width="78%" class="vtable">
-					<select name="interface" class="formselect">
+					<select name="interface" class="formselect" onclick="interface_change()">
 					<?php 
 					  $interfaces = get_configured_interface_with_descr(false, true);
 					  $carplist = get_configured_carp_interface_list();
@@ -373,6 +382,10 @@ function typesel_change() {
 					</select>
 				  </td>
                 </tr>
+		<?php
+			foreach ($interfaces as $iface => $ifacename)
+				print '<input id="' . $iface . '_subnet" type="hidden" value="' . get_interface_subnet($iface) . '">' . "\n";
+		?>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("IP Address(es)");?></td>
                   <td class="vtable">

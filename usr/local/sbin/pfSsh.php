@@ -331,6 +331,7 @@ function playback_text($playback_file_contents) {
 			$playback_text .= $pfs . "\n";
 		}
 	}
+	global $config;
 	eval($playback_text);
 }
 

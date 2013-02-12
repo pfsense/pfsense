@@ -29,7 +29,7 @@ fi
 
 if [ -f /var/etc/ntpd.conf ]; then
 	echo "Starting NTP Daemon." | /usr/bin/logger -t ntp;
-	/usr/local/bin/ntpd -g -c /var/etc/ntpd.conf
+	/usr/local/bin/ntpd -g -c /var/etc/ntpd.conf -p /var/run/ntpd.pid
 else
 	echo "NTP configuration file missing, not starting daemon." | /usr/bin/logger -t ntp;
 fi

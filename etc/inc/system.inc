@@ -546,24 +546,24 @@ function system_syslogd_start() {
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
-	if(is_process_running("syslogd"))
+	if (is_process_running("syslogd"))
 		mwexec('/bin/pkill syslogd');
-	if(is_process_running("fifolog_writer"))
+	if (is_process_running("fifolog_writer"))
 		mwexec('/bin/pkill fifolog_writer');
-	
-	// Define carious commands for logging
-	$fifolog_create = "/usr/sbin/fifolog_create -s ";
-	$fifolog_log = "|/usr/sbin/fifolog_writer ";
-	$clog_create = "/usr/sbin/clog -i -s ";
-	$clog_log = "%";
 
 	// Which logging type are we using this week??
-	if(isset($config['system']['usefifolog'])) {
-		$log_directive = $fifolog_log;
-		$log_create_directive = $fifolog_create;
+	if (isset($config['system']['disablesyslogclog'])) {
+		$log_directive = "";
+		$log_create_directive = "/usr/bin/touch ";
+		$log_size = "";
+	} else if (isset($config['system']['usefifolog'])) {
+		$log_directive = "|/usr/sbin/fifolog_writer ";
+		$log_size = "10240";
+		$log_create_directive = "/usr/sbin/fifolog_create -s ";
 	} else { // Defaults to CLOG
-		$log_directive = $clog_log;
-		$log_create_directive = $clog_create;
+		$log_directive = "%";
+		$log_size = "10240";
+		$log_create_directive = "/usr/sbin/clog -i -s ";
 	}
 	
 	if (isset($syslogcfg)) {
@@ -573,7 +573,7 @@ function system_syslogd_start() {
 			foreach($config['installedpackages']['package'] as $package) {
 				if($package['logging']) {
 					array_push($separatelogfacilities, $package['logging']['facilityname']);
-					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
+					mwexec("{$log_create_directive} {$log_size} {$g['varlog_path']}/{$package['logging']['logfilename']}");
 					$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}

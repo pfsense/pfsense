@@ -120,7 +120,7 @@ switch($action) {
 		}
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 		echo '<pre>' . $output . '
-		<form action="smartmon.php" method="post" name="abort">
+		<form action="diag_smart.php" method="post" name="abort">
 		<input type="hidden" name="device" value="' . $targetdev . '" />
 		<input type="hidden" name="action" value="abort" />
 		<input type="submit" name="submit" value="' . gettext("Abort") . '" />

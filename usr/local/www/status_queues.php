@@ -94,7 +94,7 @@ if ($_REQUEST['getactivity']) {
 		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
 		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (200 - $packet_s) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps,1) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . str_replace("bytes", "B", format_bytes($q->bandwidth)) . "ps');";
+		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
 		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
 		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
@@ -251,5 +251,16 @@ function statsQueues($xml){
 	unset($child);
 	$statistics[] = $current;
 	return $current;
+}
+function format_bits($bits) {
+	if ($bits >= 1000000000) {
+		return sprintf("%.2f Gbps", $bits/1000000000);
+	} else if ($bits >= 1000000) {
+		return sprintf("%.2f Mbps", $bits/1000000);
+	} else if ($bits >= 1000) {
+		return sprintf("%.2f Kb", $bits/1000);
+	} else {
+		return sprintf("%d b", $bits);
+	}
 }
 ?>

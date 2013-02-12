@@ -72,6 +72,10 @@ $db = array();
 foreach($a_roll as $rollent) {
 	$roll = $rollent['number'];
 	$minutes = $rollent['minutes'];
+
+	if (!file_exists("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db"))
+		continue;
+
 	$active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	foreach($active_vouchers as $voucher => $line) {
 		list($voucher,$timestamp, $minutes) = explode(",", $line);

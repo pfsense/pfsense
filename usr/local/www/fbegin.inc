@@ -148,7 +148,6 @@ $services_menu[] = array(gettext("IGMP proxy"), "/services_igmpproxy.php");
 $services_menu[] = array(gettext("Load Balancer"), "/load_balancer_pool.php");
 $services_menu[] = array(gettext("NTP"), "/services_ntpd.php");
 $services_menu[] = array(gettext("PPPoE Server"), "/vpn_pppoe.php");
-$services_menu[] = array(gettext("RIP"), "/pkg_edit.php?xml=routed.xml&amp;id=0");
 $services_menu[] = array(gettext("SNMP"), "/services_snmp.php");
 if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments

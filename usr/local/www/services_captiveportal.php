@@ -224,6 +224,9 @@ if ($_POST) {
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
+	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
+		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
+	}
 
 	if (!$input_errors) {
 		$newcp =& $a_cp[$cpzone];
@@ -827,8 +830,8 @@ function enable_change(enable_change) {
 
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("NAS Identifier"); ?></td>
-				<td class="vtable"><input name="radiusnasid" type="text" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>"/><br/>
-				<?=gettext("Specify a NAS identifier to override the default value") . " " . php_uname("n"); ?></td>
+				<td class="vtable"><input name="radiusnasid" type="text" maxlength="253" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>"/><br/>
+					<?=gettext("Specify a NAS identifier to override the default value") . " (" . php_uname("n") . ")"; ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>

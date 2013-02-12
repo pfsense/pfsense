@@ -40,22 +40,22 @@ function setup_routed() {
 		return;
 	if (isset($config['installedpackages']['routed']['config'][0]['enable']) &&
 		$config['installedpackages']['routed']['config'][0]['enable'] == "on") {
-		/* if user selected individual interfaces */
-		$ifarr = array_flip(explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']));
-                $allifs = get_interface_arr();
-                if (!empty($ifarr)) {
-                        foreach($allifs as $ifname) {
-				$friendly_ifname = convert_real_interface_to_friendly_interface_name($ifname);
-				if (array_key_exists($friendly_ifname, $ifarr))
-					$gw .= setup_etc_gateways($ifname, 'enable');
-				else
-					$gw .= setup_etc_gateways($ifname, 'disable');
-			}
-		} else
-			/* setup for all interfaces */
-			$gw = setup_etc_gateways();
-		conf_mount_rw();
-		file_put_contents("/etc/gateways", $gw);
+			/* if user selected individual interfaces */
+			$ifarr = array_flip(explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']));
+			$allifs = get_interface_arr();
+			if (!empty($ifarr)) {
+				foreach($allifs as $ifname) {
+					$friendly_ifname = convert_real_interface_to_friendly_interface_name($ifname);
+					if (array_key_exists($friendly_ifname, $ifarr))
+						$gw .= setup_etc_gateways($ifname, 'enable');
+					else
+						$gw .= setup_etc_gateways($ifname, 'disable');
+				}
+			} else
+				/* setup for all interfaces */
+				$gw = setup_etc_gateways();
+			conf_mount_rw();
+			file_put_contents("/etc/gateways", $gw);
 		conf_mount_ro();
 		restart_routed();
 	} else
@@ -80,14 +80,14 @@ function setup_etc_gateways($iface="", $mode="") {
 			if ($passwd != "") {
 				$ret .= "passwd={$passwd} ";
 			}
-                        $add_no_ag = $config['installedpackages']['routed']['config'][0]['enable_no_ag'];
-                        $add_no_super_ag = $config['installedpackages']['routed']['config'][0]['enable_no_super_ag'];
-                        if($add_no_ag == "on") {
-                                $ret .= "no_ag ";
-                        }
-                        if($add_no_super_ag == "on") {
-                                $ret .= "no_super_ag ";
-                        }
+			$add_no_ag = $config['installedpackages']['routed']['config'][0]['enable_no_ag'];
+			$add_no_super_ag = $config['installedpackages']['routed']['config'][0]['enable_no_super_ag'];
+			if($add_no_ag == "on") {
+				$ret .= "no_ag ";
+			}
+			if($add_no_super_ag == "on") {
+				$ret .= "no_super_ag ";
+			}
 		}
 		break;
 	case "disable":

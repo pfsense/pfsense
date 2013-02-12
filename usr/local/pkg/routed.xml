@@ -50,7 +50,7 @@
 		<tab>
 			<text>ROUTED Settings</text>
 			<url>/pkg_edit.php?xml=routed.xml</url>
-			<active/>			
+			<active/>
 		</tab>
 	</tabs>
 	<!-- configpath gets expanded out automatically and config items will be
@@ -64,7 +64,7 @@
 			<fieldname>enable</fieldname>
 			<description>Enables the Routing Information Protocol daemon</description>
 			<type>checkbox</type>
-      <enablefields>iface_array[],ripversion,passwd,enable_no_ag,enable_no_super_ag</enablefields>
+			<enablefields>iface_array[],ripversion,passwd,enable_no_ag,enable_no_super_ag</enablefields>
 		</field>
 		<field>
 			<fielddescr>Interfaces</fielddescr>
@@ -74,7 +74,7 @@
 			<size>3</size>
 			<type>interfaces_selection</type>
 			<description>Select the interfaces that RIP will bind to.  You can use the CTRL or COMMAND key to select multiple interfaces.</description>
-      <required />
+			<required />
 		</field>
 		<field>
 			<fielddescr>RIP Version</fielddescr>
@@ -86,7 +86,7 @@
 				<option><name>RIP Version 2</name><value>2</value></option>
 			</options>
 			<typehint>Select which RIP version the daemon will listen/advertise using.</typehint>
-      <required />
+			<required />
 		</field>
 		<field>
 			<fielddescr>RIPv2 password</fielddescr>
@@ -96,27 +96,27 @@
 			</description>
 			<type>input</type>
 		</field>
-                <field>
-                        <fielddescr>no_ag</fielddescr>
-                        <fieldname>enable_no_ag</fieldname>
-                        <description>turns off aggregation of subnets in RIPv1 and RIPv2 responses.</description>
-                        <type>checkbox</type>
-                </field>
-                <field>
-                        <fielddescr>no_super_ag</fielddescr>
-                        <fieldname>enable_no_super_ag</fieldname>
-                        <description>turns off aggregation of networks into supernets in RIPv2 responses.</description>
-                        <type>checkbox</type>
-                </field>
+		<field>
+			<fielddescr>no_ag</fielddescr>
+			<fieldname>enable_no_ag</fieldname>
+			<description>turns off aggregation of subnets in RIPv1 and RIPv2 responses.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>no_super_ag</fielddescr>
+			<fieldname>enable_no_super_ag</fieldname>
+			<description>turns off aggregation of networks into supernets in RIPv2 responses.</description>
+			<type>checkbox</type>
+		</field>
 	</fields>
 	<aftersaveredirect>pkg_edit.php?xml=routed.xml&amp;id=0</aftersaveredirect>
-        <custom_php_command_before_form>
-        </custom_php_command_before_form>
+	<custom_php_command_before_form>
+	</custom_php_command_before_form>
 	<custom_delete_php_command>
 	</custom_delete_php_command>
 	<custom_php_resync_config_command>
 		conf_mount_rw();
-		setup_routed();		
+		setup_routed();
 		conf_mount_ro();
 	</custom_php_resync_config_command>
 	<custom_php_install_command>

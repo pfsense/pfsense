@@ -547,7 +547,7 @@ if ($_POST['apply']) {
 	if ($_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr']))
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
-		else if (is_ipaddr_configured($_POST['ipaddr'], $if, true, true))
+		else if (is_ipaddr_configured($_POST['ipaddr'], $if, true))
 			$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
 	}
 	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6'])))

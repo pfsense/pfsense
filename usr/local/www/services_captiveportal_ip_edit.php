@@ -142,11 +142,12 @@ if ($_POST) {
 			$a_allowedips[] = $ip;
 		}
 		allowedips_sort();
-		
+
 		write_config();
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
+			unset($ipfw);
 			if (isset($oldip) && isset($oldmask)) {
 				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
 				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";

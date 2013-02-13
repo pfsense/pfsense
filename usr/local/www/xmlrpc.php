@@ -177,7 +177,7 @@ function restore_config_section_xmlrpc($raw_params) {
 
 	// Some sections should just be copied and not merged or we end
 	//   up unable to sync the deletion of the last item in a section
-	$sync_full = array('ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules');
+	$sync_full = array('ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat');
 	$sync_full_done = array();
 	foreach ($sync_full as $syncfull) {
 		if (isset($params[0][$syncfull])) {

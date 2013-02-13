@@ -1146,12 +1146,15 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$radiusservers[0]['ipaddr'] = $authcfg['host'];
 		$radiusservers[0]['port'] = $authcfg['radius_auth_port'];
 		$radiusservers[0]['sharedsecret'] = $authcfg['radius_secret'];
+		$radiusservers[0]['timeout'] = $authcfg['radius_timeout'];
 	} else
 		return false;
 
 	/* Add a new servers to our instance */
-	foreach ($radiusservers as $radsrv)
-		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret']);
+	foreach ($radiusservers as $radsrv) {
+		$timeout = (is_numeric($radsrv['timeout'])) ? $radsrv['timeout'] : 5;
+		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret'], $timeout);
+	}
 
 	if (PEAR::isError($rauth->start())) {
 		$retvalue['auth_val'] = 1;

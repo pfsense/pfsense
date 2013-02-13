@@ -900,11 +900,13 @@ include("head.inc");
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>><?=gettext("any");?></option>
-								<option value="single"  <?php
-									if (!$sel &&
-										((is_ipaddrv6($pconfig['src']) && ($pconfig['srcmask'] == 128)) ||
-										(is_ipaddrv4($pconfig['src']) && ($pconfig['srcmask'] == 32)))
-									) { echo "selected"; $sel = 1; } ?>> <?=gettext("Single host or alias");?></option>
+								<option value="single"
+						<?php  if (!$sel &&
+							    ((is_ipaddrv6($pconfig['src']) && $pconfig['srcmask'] == 128) ||
+							    (is_ipaddrv4($pconfig['src']) && $pconfig['srcmask'] == 32) || is_alias($pconfig['src'])))
+								{ echo "selected"; $sel = 1; } 
+						?>
+								> <?=gettext("Single host or alias");?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network");?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients");?></option>

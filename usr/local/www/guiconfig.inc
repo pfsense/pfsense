@@ -658,8 +658,12 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 		$padr = $adr['network'];
 	else if ($adr['address']) {
 		list($padr, $pmask) = explode("/", $adr['address']);
-		if (!$pmask)
-			$pmask = 32;
+		if (!$pmask) {
+			if (is_ipaddrv6($padr))
+				$pmask = 128;
+			else
+				$pmask = 32;
+		}
 	}
 
 	if (isset($adr['not']))
@@ -686,8 +690,13 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
 		$adr['network'] = $padr;
 	else {
 		$adr['address'] = $padr;
-		if ($pmask != 32)
-			$adr['address'] .= "/" . $pmask;
+		if (is_ipaddrv6($padr)) {
+			if ($pmask != 128)
+				$adr['address'] .= "/" . $pmask;
+		} else {
+			if ($pmask != 32)
+				$adr['address'] .= "/" . $pmask;
+		}
 	}
 
 	if ($pnot)

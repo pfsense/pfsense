@@ -970,14 +970,17 @@ function captiveportal_passthrumac_findbyname($username) {
  * table (3=IN)/(4=OUT) hold allowed ip's without bw limits
  */
 function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
+	global $g;
 
 	/*  Instead of copying this entire function for something
 	 *  easy such as hostname vs ip address add this check
 	 */
 	if ($ishostname === true) {
-		$ipaddress = gethostbyname($ipent['hostname']);
-		if (!is_ipaddr($ipaddress)) 
-			return;
+		if (!$g['booting']) {
+			$ipaddress = gethostbyname($ipent['hostname']);
+			if (!is_ipaddr($ipaddress)) 
+				return;
+		}
 	} else
 		$ipaddress = $ipent['ip'];
 
@@ -993,6 +996,8 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";
+		if (!is_ipaddr($ipaddress))
+			return array("", $cp_filterdns_conf);
 	}
 	$subnet = "";
 	if (!empty($ipent['sn']))

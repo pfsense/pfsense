@@ -70,12 +70,13 @@ function file_is_for_platform($filename, $ul_name) {
 		else
 			return false;		
 	}
-	exec("/usr/bin/tar xzf $filename -C /tmp/ etc/platform");
+	$_gb = exec("/usr/bin/tar xzf $filename -C /tmp/ etc/platform");
+	unset($_gb);
 	if(!file_exists("/tmp/etc/platform")) 
 		return false;
-	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
-	if($g['platform'] == $upgrade_is_for_platform) {
-		unlink("/tmp/etc/platform");
+	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform", " \n\t\r"));
+	if ($g['platform'] == $upgrade_is_for_platform) {
+		@unlink("/tmp/etc/platform");
 		return true;
 	}
 	return false;
@@ -120,12 +121,8 @@ if(is_subsystem_dirty('firmwarelock')) {
 if($_POST['backupbeforeupgrade']) 
 	touch("/tmp/perform_full_backup.txt");
 
-if($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes))) {
-	if($_POST['kerneltype'] == "single") 
-		touch("/boot/kernel/pfsense_kernel.txt");
-	else 
-		file_put_contents("/boot/kernel/pfsense_kernel.txt", $_POST['kerneltype']);
-}
+if ($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes)))
+	file_put_contents("/boot/kernel/pfsense_kernel.txt", $_POST['kerneltype']);
 
 /* Handle manual upgrade */
 if ($_POST && !is_subsystem_dirty('firmwarelock')) {
@@ -185,22 +182,27 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 
 			run_plugins("/usr/local/pkg/firmware_upgrade");
 
-            /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
-            if (!$input_errors && !is_subsystem_dirty('firmwarelock') && (!$sig_warning || $_POST['sig_override'])) {
-                    if (file_exists("{$g['upload_path']}/firmware.tgz")) {
-                            /* fire up the update script in the background */
-							mark_subsystem_dirty('firmwarelock');
-                            $savemsg = gettext("The firmware is now being updated. The firewall will reboot automatically.");
-							if(stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
-								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
-							else if(stristr($_FILES['ulfile']['name'],"bdiff"))
-                            	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
-							else 
-								mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
-                    } else {
-                            $savemsg = sprintf(gettext("Firmware image missing or other error, please try again %s."),$errortext);
-                    }
-            }
+			/* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
+			if (!$input_errors && !is_subsystem_dirty('firmwarelock') && (!$sig_warning || $_POST['sig_override'])) {
+				if (file_exists("{$g['upload_path']}/firmware.tgz")) {
+					/* fire up the update script in the background */
+					mark_subsystem_dirty('firmwarelock');
+					$savemsg = gettext("The firmware is now being updated. The firewall will reboot automatically.");
+					if (stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
+						mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
+					else if(stristr($_FILES['ulfile']['name'],"bdiff"))
+						mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
+					else  {
+						if($g['platform'] == "nanobsd")
+							$whichone = "pfSenseNanoBSDupgrade";
+						else
+							$whichone = "pfSenseupgrade";
+						mwexec_bg("/etc/rc.firmware {$whichone} {$g['upload_path']}/firmware.tgz");
+						unset($whichone);
+					}
+				} else
+					$savemsg = sprintf(gettext("Firmware image missing or other error, please try again %s."),$errortext);
+			}
 		}
 	}
 }

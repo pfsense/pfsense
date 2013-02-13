@@ -1089,7 +1089,7 @@ function mwexec_bg($command, $clearsigmask = false) {
 		$oldset = array();
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
-	$_gb = exec("nohup $command > /dev/null 2>&1 &");
+	$_gb = exec("/usr/bin/nohup $command > /dev/null 2>&1 &");
 	if ($clearsigmask) {
 		pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	}

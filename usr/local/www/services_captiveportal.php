@@ -237,7 +237,7 @@ if ($_POST) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
 					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
 		}
-		$oldifaces = $newcp['interface'];
+		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface']))
 			$newcp['interface'] = implode(",", $_POST['cinterface']);
 		$newcp['maxproc'] = $_POST['maxproc'];
@@ -325,7 +325,17 @@ if ($_POST) {
 
 		write_config();
 
+		/* Clear up unselected interfaces */
+		$newifaces = explode(",", $newcp['interface']);
+		$toremove = array_diff($oldifaces, $newifaces);
+		if (!empty($toremove)) {
+			foreach ($toremove as $removeif) {
+				$removeif = get_real_interface($removeif);
+				mwexec("/usr/local/sbin/ipfw_context -d {$cpzone} -x {$removeif}");
+			}
+		}
 		captiveportal_configure_zone($newcp);
+		unset($newcp, $newifaces, $toremove);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");
 		exit;

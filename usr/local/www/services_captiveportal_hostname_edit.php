@@ -138,8 +138,10 @@ if ($_POST) {
 		
 		write_config();
 
-		captiveportal_allowedip_configure_entry($ip, true);
-		captiveportal_allowedhostname_configure();
+		$rules = captiveportal_allowedhostname_configure();
+		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
+		mwexec("/sbin/ipfw -x {$cpzone} {$g['tmp_path']}/hostname_rules");
+		unset($rules);
 		
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;

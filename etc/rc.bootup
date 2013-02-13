@@ -373,10 +373,6 @@ auto_login();
 /* load graphing functions */
 enable_rrd_graphing();
 
-/* startup routed if needed */
-include_once("/usr/local/pkg/routed.inc");
-setup_routed();
-
 /* enable watchdog if supported */
 enable_watchdog();
 

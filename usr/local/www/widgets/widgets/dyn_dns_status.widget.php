@@ -103,7 +103,7 @@ function dyndnsCheckIP($int) {
           </td>
           <td class="listlr">
             <?php
-              $filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . ".cache";
+              $filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
               $ipaddr = dyndnsCheckIP($if);
               if(file_exists($filename)) {
                 $cached_ip_s = split(":", file_get_contents($filename));

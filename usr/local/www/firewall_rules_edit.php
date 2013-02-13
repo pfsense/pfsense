@@ -1278,7 +1278,7 @@ $i--): ?>
 				</div>
 				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-					<?=gettext("Hint: This prevents the rule from automatically syncing to other CARP members.");?>
+					<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 				</div>
 			</td>
 		</tr>

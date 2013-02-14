@@ -2434,15 +2434,24 @@ function load_mac_manufacturer_table() {
 function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false) {
 	global $config;
 
+	$isipv6 = is_ipaddrv6($ipaddr);
+
 	if ($check_subnets) {
 		$iflist = get_configured_interface_list();
 		foreach ($iflist as $if => $ifname) {
 			if ($ignore_if == $if)
 				continue;
-			$bitmask = get_interface_subnet($if);
-			$subnet = gen_subnet(get_interface_ip($if), $bitmask);
-			if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
-				return true;
+			if ($isipv6 === true) {
+				$bitmask = get_interface_subnetv6($if);
+				$subnet = gen_subnetv6(get_interface_ipv6($if), $bitmask);
+				if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
+					return true;
+			} else {
+				$bitmask = get_interface_subnet($if);
+				$subnet = gen_subnet(get_interface_ip($if), $bitmask);
+				if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
+					return true;
+			}
 		}
 
 		$interface_list_vips = get_configured_vips_list(true);

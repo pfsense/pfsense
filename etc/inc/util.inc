@@ -477,8 +477,7 @@ function is_ipaddr($ipaddr) {
 function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr))
 		return false;
-	$result = Net_IPv6::checkIPv6($ipaddr);
-	return $result;
+	return Net_IPv6::checkIPv6($ipaddr);
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */

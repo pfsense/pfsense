@@ -473,7 +473,7 @@ function get_dates($curperiod, $graph) {
 						if(! preg_match("/($curcat)/i", $database))
 							continue;
 
-						if (!empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database))
+						if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database))
 							continue;
 
 						$optionc = explode("-", $database);
@@ -571,7 +571,7 @@ function get_dates($curperiod, $graph) {
 								if(! preg_match("/($curcat)/i", $curdatabase))
 									continue;
 
-								if (!empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase))
+								if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase))
 									continue;
 
 								$optionc = explode("-", $curdatabase);

@@ -26,4 +26,3 @@ uucp:*:66:66::0:0:UUCP pseudo-user:/var/spool/uucppublic:/usr/local/libexec/uucp
 pop:*:68:6::0:0:Post Office Owner:/nonexistent:/usr/sbin/nologin
 _ntp:*:123:123::0:0:NTP daemon:/var/empty:/sbin/nologin
 _relayd:*:913:913::0:0:Relay Daemon:/var/empty:/usr/sbin/nologin
-unbound:*:59:1::0:0:unbound dns resolver:/nonexistent:/usr/sbin/nologin

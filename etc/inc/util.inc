@@ -836,9 +836,8 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
  */
 function get_configured_ip_addresses() {
 	global $config;
-	require_once("interfaces.inc");
 
-	if (!function_exists('get_configured_interface_list'))
+	if (!function_exists('get_interface_ip'))
 		require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();

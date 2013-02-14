@@ -1161,4 +1161,38 @@ class Auth_RADIUS_Acct_Update extends Auth_RADIUS_Acct
     var $status_type = RADIUS_UPDATE;
 }
 
+/**
+ * class Auth_RADIUS_Acct_On
+ *
+ * Class for sending Accounting-On updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_On extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_ON by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_ON;
+}
+
+/**
+ * class Auth_RADIUS_Acct_Off
+ *
+ * Class for sending Accounting-Off updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_Off extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_OFF by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_OFF;
+}
+
 ?>

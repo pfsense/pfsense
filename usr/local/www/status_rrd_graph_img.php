@@ -38,6 +38,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
+global $g;
+
 $pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer"));
 
 if ($_GET['database']) {

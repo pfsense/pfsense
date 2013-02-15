@@ -630,7 +630,7 @@ function captiveportal_prune_old() {
 		if ($timeout) {
 			if (($pruning_time - $cpentry['allow_time']) >= $timeout) {
 				$timedout = true;
-				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT;
 			}
 		}
 
@@ -638,7 +638,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && !empty($cpentry['session_terminate_time'])) {
 			if ($pruning_time >= $cpentry['session_terminate_time']) {
 				$timedout = true;
-				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT;
 			}
 		}
 
@@ -653,7 +653,7 @@ function captiveportal_prune_old() {
 			$lastact = $lastact ? $lastact : $cpentry['allow_time'];
 			if ($lastact && (($pruning_time - $lastact) >= $uidletimeout)) {
 				$timedout = true;
-				$term_cause = RADIUS_TERM_IDLE_TIMEOUT; // Idle-Timeout
+				$term_cause = RADIUS_TERM_IDLE_TIMEOUT;
 				$stop_time = $lastact; // Entry added to comply with WISPr
 			}
 		}
@@ -662,7 +662,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && isset($vcpcfg['enable']) && !empty($cpentry['session_timeout'])) {
 			if ($pruning_time >= ($cpentry['allow_time'] + $cpentry['session_timeout'])) {
 				$timedout = true;
-				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT;
 				$voucher_needs_sync = true;
 			}
 		}
@@ -671,7 +671,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && isset($cpcfg['radiussession_timeout']) && !empty($cpentry['session_timeout'])) {
 			if ($pruning_time >= ($cpentry['allow_time'] + $cpentry['session_timeout'])) {
 				$timedout = true;
-				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT;
 			}
 		}
 
@@ -686,22 +686,22 @@ function captiveportal_prune_old() {
 			if (isset($cpcfg['radacct_enable'])) {
 				if ($cpcfg['reauthenticateacct'] == "stopstart") {
 					/* stop and restart accounting */
-					RADIUS_ACCOUNTING_STOP($cpentry['pipeno'], // ruleno
-						$cpentry['username'], // username
-						$cpentry['sessionid'], // sessionid
-						$cpentry['allow_time'], // start time
+					RADIUS_ACCOUNTING_STOP($cpentry['pipeno'],
+						$cpentry['username'],
+						$cpentry['sessionid'],
+						$cpentry['allow_time'],
 						$radiusservers,
-						$cpentry['ip'], // clientip
-						$cpentry['mac'], // clientmac
-						RADIUS_TERM_NAS_REQUEST); // NAS Request
+						$cpentry['ip'],
+						$cpentry['mac'],
+						RADIUS_TERM_NAS_REQUEST);
 					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2]);
 					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2]);
-					RADIUS_ACCOUNTING_START($cpentry['pipeno'], // ruleno
-						$cpentry['username'], // username
-						$cpentry['sessionid'], // sessionid
+					RADIUS_ACCOUNTING_START($cpentry['pipeno'],
+						$cpentry['username'],
+						$cpentry['sessionid'],
 						$radiusservers,
-						$cpentry['ip'], // clientip
-						$cpentry['mac']); // clientmac
+						$cpentry['ip'],
+						$cpentry['mac']);
 				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
 					$session_time = $pruning_time - $cpentry['allow_time'];
 					if (!empty($cpentry['interim_interval']) && $cpentry['interim_interval'] > 60)
@@ -711,27 +711,27 @@ function captiveportal_prune_old() {
 					$past_interval_min = ($session_time > $interval);
 					$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
 					if (($interval > 0 && $past_interval_min && $within_interval) || $interval === 0) {
-						RADIUS_ACCOUNTING_STOP($cpentry['pipeno'], // ruleno
-							$cpentry['username'], // username
-							$cpentry['sessionid'], // sessionid
-							$cpentry['allow_time'], // start time
+						RADIUS_ACCOUNTING_STOP($cpentry['pipeno'],
+							$cpentry['username'],
+							$cpentry['sessionid'],
+							$cpentry['allow_time'],
 							$radiusservers,
-							$cpentry['ip'], // clientip
-							$cpentry['mac'], // clientmac
+							$cpentry['ip'],
+							$cpentry['mac'],
 							0,
-							true); // Interim Updates
+							true); // Interim Update
 					}
 				}
 			}
 
 			/* check this user against RADIUS again */
 			if (isset($cpcfg['reauthenticate'])) {
-				$auth_list = RADIUS_AUTHENTICATION($cpentry['username'], // username
-					base64_decode($cpentry['bpassword']), // password
+				$auth_list = RADIUS_AUTHENTICATION($cpentry['username'],
+					base64_decode($cpentry['bpassword']),
 					$radiusservers,
-					$cpentry['ip'], // clientip
-					$cpentry['mac'], // clientmac
-					$cpentry['pipeno']); // ruleno
+					$cpentry['ip'],
+					$cpentry['mac'],
+					$cpentry['pipeno']);
 				if ($auth_list['auth_val'] == 3) {
 					captiveportal_disconnect($cpentry, $radiusservers, RADIUS_TERM_NAS_REQUEST);
 					captiveportal_logportalauth($cpentry['username'], $cpentry['mac'], $cpentry['ip'], "RADIUS_DISCONNECT", $auth_list['reply_message']);
@@ -824,12 +824,12 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	/* this client needs to be deleted - remove ipfw rules */
 	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers)) {
 		RADIUS_ACCOUNTING_STOP($dbent['pipeno'], // ruleno
-			$dbent['username'], // username
-			$dbent['sessionid'], // sessionid
-			$dbent['allow_time'], // start time
+			$dbent['username'],
+			$dbent['sessionid'],
+			$dbent['allow_time'],
 			$radiusservers,
-			$dbent['ip'], // clientip
-			$dbent['mac'], // clientmac
+			$dbent['ip'],
+			$dbent['mac'],
 			$term_cause, // Acct-Terminate-Cause
 			false,
 			$stop_time);
@@ -904,14 +904,14 @@ function captiveportal_radius_stop_all() {
 			if (empty($cpentry['context']))
 				$cpentry['context'] = 'first';
 			if (!empty($radiusservers[$cpentry['context']])) {
-				RADIUS_ACCOUNTING_STOP($cpentry['pipeno'], // ruleno
-					$cpentry['username'], // username
-					$cpentry['sessionid'], // sessionid
-					$cpentry['allow_time'], // start time
+				RADIUS_ACCOUNTING_STOP($cpentry['pipeno'],
+					$cpentry['username'],
+					$cpentry['sessionid'],
+					$cpentry['allow_time'],
 					$radiusservers[$cpentry['context']],
-					$cpentry['ip'], // clientip
-					$cpentry['mac'], // clientmac
-					RADIUS_TERM_NAS_REBOOT); // Admin Reboot
+					$cpentry['ip'],
+					$cpentry['mac'],
+					RADIUS_TERM_NAS_REBOOT);
 			}
 		}
 	}

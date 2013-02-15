@@ -338,11 +338,11 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		captiveportal_init_radius_servers();
 
-		/* send Accounting-On to server */
-		captiveportal_send_server_accounting();
-
-		if ($g['booting'])
+		if ($g['booting']) {
+			/* send Accounting-On to server */
+			captiveportal_send_server_accounting();
 			echo "done\n";
+		}
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");

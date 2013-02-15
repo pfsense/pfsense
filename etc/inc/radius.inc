@@ -43,12 +43,12 @@
         * Adding of VENDOR Bay Networks (Nortel)
         * Adding of VENDOR Nomadix
         * Adding of VENDOR WISPr (Wi-Fi Alliance)
-	* Adding of VENDOR ChilliSpot (bandwidth-attributes only)
+        * Adding of VENDOR ChilliSpot (bandwidth-attributes only)
 
 */
 
 /*
-	pfSense_MODULE:	auth
+    pfSense_MODULE:    auth
 */
 
 require_once("PEAR.inc");
@@ -645,10 +645,10 @@ class Auth_RADIUS extends PEAR {
                 }
 
                 elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
-					//documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
+                    //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
                     if ($attrv == 0) { /* Colubris AV-Pair */
-					    $datav = explode('=', $datav);
-					    switch ($datav[0]) {
+                        $datav = explode('=', $datav);
+                        switch ($datav[0]) {
                         case 'max-input-rate':
                             // "Controls the data rate [kbps] at which traffic can be transferred from the user to the [router]."
                             $this->attributes['bw_up'] = radius_cvt_int($datav[1]);
@@ -1095,14 +1095,14 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
         }
         $this->putAttribute(RADIUS_ACCT_STATUS_TYPE, $this->status_type);
         //if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
-	if (isset($this->session_time)) {
+        if (isset($this->session_time)) {
             $this->putAttribute(RADIUS_ACCT_SESSION_TIME, $this->session_time);
         }
         if (isset($this->authentic)) {
             $this->putAttribute(RADIUS_ACCT_AUTHENTIC, $this->authentic);
         }
 
-	$this->putStandardAttributes();
+        $this->putStandardAttributes();
     }
 
 }
@@ -1159,6 +1159,40 @@ class Auth_RADIUS_Acct_Update extends Auth_RADIUS_Acct
      * @var  integer
      */
     var $status_type = RADIUS_UPDATE;
+}
+
+/**
+ * class Auth_RADIUS_Acct_On
+ *
+ * Class for sending Accounting-On updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_On extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_ON by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_ON;
+}
+
+/**
+ * class Auth_RADIUS_Acct_Off
+ *
+ * Class for sending Accounting-Off updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_Off extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_OFF by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_OFF;
 }
 
 ?>

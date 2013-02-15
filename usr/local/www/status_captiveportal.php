@@ -50,7 +50,7 @@ if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
 if ($_GET['act'] == "del" && !empty($cpzone)) {
-	captiveportal_disconnect_client($_GET['id']);
+	captiveportal_disconnect_client($_GET['id'], RADIUS_TERM_ADMIN_RESET);
 	Header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }

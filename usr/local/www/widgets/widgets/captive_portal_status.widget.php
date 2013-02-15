@@ -46,7 +46,7 @@ require_once("captiveportal.inc");
 
 if (($_GET['act'] == "del") && (!empty($_GET['zone']))) {
 	$cpzone = $_GET['zone'];
-	captiveportal_disconnect_client($_GET['id']);
+	captiveportal_disconnect_client($_GET['id'], RADIUS_TERM_ADMIN_RESET);
 }
 
 flush();

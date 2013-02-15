@@ -630,7 +630,7 @@ function captiveportal_prune_old() {
 		if ($timeout) {
 			if (($pruning_time - $cpentry['allow_time']) >= $timeout) {
 				$timedout = true;
-				$term_cause = 5; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
 			}
 		}
 
@@ -638,7 +638,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && !empty($cpentry['session_terminate_time'])) {
 			if ($pruning_time >= $cpentry['session_terminate_time']) {
 				$timedout = true;
-				$term_cause = 5; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
 			}
 		}
 
@@ -653,7 +653,7 @@ function captiveportal_prune_old() {
 			$lastact = $lastact ? $lastact : $cpentry['allow_time'];
 			if ($lastact && (($pruning_time - $lastact) >= $uidletimeout)) {
 				$timedout = true;
-				$term_cause = 4; // Idle-Timeout
+				$term_cause = RADIUS_TERM_IDLE_TIMEOUT; // Idle-Timeout
 				$stop_time = $lastact; // Entry added to comply with WISPr
 			}
 		}
@@ -662,7 +662,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && isset($vcpcfg['enable']) && !empty($cpentry['session_timeout'])) {
 			if ($pruning_time >= ($cpentry['allow_time'] + $cpentry['session_timeout'])) {
 				$timedout = true;
-				$term_cause = 5; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
 				$voucher_needs_sync = true;
 			}
 		}
@@ -671,7 +671,7 @@ function captiveportal_prune_old() {
 		if (!$timedout && isset($cpcfg['radiussession_timeout']) && !empty($cpentry['session_timeout'])) {
 			if ($pruning_time >= ($cpentry['allow_time'] + $cpentry['session_timeout'])) {
 				$timedout = true;
-				$term_cause = 5; // Session-Timeout
+				$term_cause = RADIUS_TERM_SESSION_TIMEOUT; // Session-Timeout
 			}
 		}
 
@@ -693,7 +693,7 @@ function captiveportal_prune_old() {
 						$radiusservers,
 						$cpentry['ip'], // clientip
 						$cpentry['mac'], // clientmac
-						10); // NAS Request
+						RADIUS_TERM_NAS_REQUEST); // NAS Request
 					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2]);
 					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2]);
 					RADIUS_ACCOUNTING_START($cpentry['pipeno'], // ruleno
@@ -718,7 +718,7 @@ function captiveportal_prune_old() {
 							$radiusservers,
 							$cpentry['ip'], // clientip
 							$cpentry['mac'], // clientmac
-							10, // NAS Request
+							0,
 							true); // Interim Updates
 					}
 				}
@@ -733,7 +733,7 @@ function captiveportal_prune_old() {
 					$cpentry['mac'], // clientmac
 					$cpentry['pipeno']); // ruleno
 				if ($auth_list['auth_val'] == 3) {
-					captiveportal_disconnect($cpentry, $radiusservers, 17);
+					captiveportal_disconnect($cpentry, $radiusservers, RADIUS_TERM_NAS_REQUEST);
 					captiveportal_logportalauth($cpentry['username'], $cpentry['mac'], $cpentry['ip'], "RADIUS_DISCONNECT", $auth_list['reply_message']);
 					$unsetindexes[] = $cpentry['sessionid'];
 				} else if ($auth_list['auth_val'] == 2)
@@ -911,7 +911,7 @@ function captiveportal_radius_stop_all() {
 					$radiusservers[$cpentry['context']],
 					$cpentry['ip'], // clientip
 					$cpentry['mac'], // clientmac
-					7); // Admin Reboot
+					RADIUS_TERM_NAS_REBOOT); // Admin Reboot
 			}
 		}
 	}
@@ -1787,7 +1787,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$remaining_time = 0;
 
 			/* This user was already logged in so we disconnect the old one */
-			captiveportal_disconnect($cpentry,$radiusservers[$cpentry['context']],13);
+			captiveportal_disconnect($cpentry,$radiusservers[$cpentry['context']],RADIUS_TERM_PORT_PREEMPTED);
 			captiveportal_logportalauth($cpentry['username'],$cpentry['mac'],$cpentry['ip'],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 			$unsetindexes[] = $cpentry['sessionid'];
 			break;
@@ -1796,7 +1796,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* on the same username */
 			if (strcasecmp($cpentry['username'], $username) == 0) {
 				/* This user was already logged in so we disconnect the old one */
-				captiveportal_disconnect($cpentry,$radiusservers[$cpentry['context']],13);
+				captiveportal_disconnect($cpentry,$radiusservers[$cpentry['context']],RADIUS_TERM_PORT_PREEMPTED);
 				captiveportal_logportalauth($cpentry['username'],$cpentry['mac'],$cpentry['ip'],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 				$unsetindexes[] = $cpentry['sessionid'];
 				break;

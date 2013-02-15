@@ -546,7 +546,6 @@ function change_protocol() {
 											?>
 											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
-											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>
 								</tr>

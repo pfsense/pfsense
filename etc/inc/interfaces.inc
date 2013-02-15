@@ -3476,6 +3476,9 @@ initial-interval 1;
 
 EOD;
 
+	// Custom DHCP Config File Advanced
+	if ($wancfg['customdhcpconfigadvanced']) { $dhclientconf = DHCP_Config_File_Advanced($wancfg, $wanif); }
+
 if(is_ipaddr($wancfg['alias-address'])) {
 	$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
 	$dhclientconf .= <<<EOD
@@ -3487,6 +3490,10 @@ alias {
 
 EOD;
 }
+
+	// Custom DHCP Config File Override
+	if ($wancfg['customdhcpconfigfileoverride']) { $dhclientconf = DHCP_Config_File_Override($wancfg, $wanif); }
+
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
@@ -3500,6 +3507,157 @@ EOD;
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
+}
+
+function DHCP_Config_File_Advanced($wancfg, $wanif) {
+
+	if ($wancfg['dhcphostname']) {
+		$dhclientconf_hostname = "send host-name \"{$wancfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
+
+	/* DHCP Protocol Timings */
+	$customdhcppt = array ('customdhcppttimeout' => "timeout", 'customdhcpptretry' => "retry", 'customdhcpptselecttimeout' => "select-timeout", 'customdhcpptreboot' => "reboot", 'customdhcpptbackoffcutoff' => "backoff-cutoff", 'customdhcpptinitialinterval' => "initial-interval");
+
+	foreach ($customdhcppt as $Protocol_Timing => $dhcpPTName) {
+
+		$dhclientconf_ppt_variable = "dhclientconf_{$Protocol_Timing}";
+
+		if ($wancfg[$Protocol_Timing] != "") {
+			${$dhclientconf_ppt_variable} = "{$dhcpPTName} {$wancfg[$Protocol_Timing]};\n";
+		} else {
+			${$dhclientconf_ppt_varialbe} = "";
+		}
+	}
+
+
+	if ($wancfg['customdhcpsendoptions']) {
+		$customdhcpsendoptions = split(",", $wancfg['customdhcpsendoptions']);
+
+		$dhclientconf_customsendoptions = "";
+		foreach ($customdhcpsendoptions as $option) {
+			$dhclientconf_customsendoptions .= "send " . trim($option) . ";\n\t";
+		}
+	} else {
+		$dhclientconf_customsendoptions = "";
+	}
+
+
+	if ($wancfg['customdhcprequestoptions']) {
+		$dhclientconf_customrequestoptions = "request {$wancfg['customdhcprequestoptions']};\n";
+	} else {
+		$dhclientconf_customrequestoptions = "";
+	}
+
+
+	if ($wancfg['customdhcprequiredoptions']) {
+		$dhclientconf_customrequiredoptions = "required {$wancfg['customdhcprequiredoptions']};\n";
+	} else {
+		$dhclientconf_customrequiredoptions = "";
+	}
+
+
+	if ($wancfg['customdhcpoptionmodifiers']) {
+		$customdhcpoptionmodifiers = split(",", $wancfg['customdhcpoptionmodifiers']);
+
+		$dhclientconf_customoptionmodifiers = "";
+		foreach ($customdhcpoptionmodifiers as $option) {
+			$dhclientconf_customoptionmodifiers .= trim($option) . ";\n\t";
+		}
+	} else {
+		$dhclientconf_customoptionmodifiers = "";
+	}
+
+
+ 	$dhclientconf = "";
+	
+	$dhclientconf .= <<<EOD
+interface "{$wanif}" {
+
+# DHCP Protocol Timing Values
+{$dhclientconf_customdhcppttimeout}{$dhclientconf_customdhcpptretry}{$dhclientconf_customdhcpptselecttimeout}{$dhclientconf_customdhcpptreboot}{$dhclientconf_customdhcpptbackoffcutoff}{$dhclientconf_customdhcpptinitialinterval}
+
+# DHCP Protocol Options
+	{$dhclientconf_hostname}
+	{$dhclientconf_customsendoptions}
+	{$dhclientconf_customrequestoptions}
+	{$dhclientconf_customrequiredoptions}
+	{$dhclientconf_customoptionmodifiers}
+
+	script "/sbin/dhclient-script";
+}
+
+EOD;
+
+	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+
+	return $dhclientconf;
+}
+
+
+function DHCP_Config_File_Override($wancfg, $wanif) {
+
+	$dhclientconf = file_get_contents($wancfg['customdhcpconfigfileoverridepath']);
+	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+
+	return $dhclientconf;
+}
+
+
+function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
+
+	/* Apply Interface Substitutions */
+	$dhclientconf = str_replace("{interface}", "{$wanif}", $dhclientconf);
+
+
+	/* Apply Hostname Substitutions */
+	$dhclientconf = str_replace("{hostname}", $wancfg['dhcphostname'], $dhclientconf);
+
+
+	/* Arrays of MAC Address Types, Cases, Delimiters */
+	/* ASCII or HEX, Upper or Lower Case, Various Delimiters (none, space, colon, hyphen, period) */
+	$various_mac_types      = array("mac_addr_ascii", "mac_addr_hex");
+	$various_mac_cases      = array("U", "L");
+	$various_mac_delimiters = array("", " ", ":", "-", ".");
+
+
+	/* Apply MAC Address Substitutions */
+	foreach ($various_mac_types as $various_mac_type) {
+		foreach ($various_mac_cases as $various_mac_case) {
+			foreach ($various_mac_delimiters as $various_mac_delimiter) {
+
+				$res = stripos($dhclientconf, $various_mac_type . $various_mac_case . $various_mac_delimiter);
+				if ($res !== false) {
+
+					/* Get MAC Address as ASCII String With Colon (:) Celimiters */
+					if ("$various_mac_case" == "U") $dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
+					if ("$various_mac_case" == "L") $dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
+
+					if ("$various_mac_type" == "mac_addr_hex") {
+						/* Convert MAC ascii string to HEX with colon (:) delimiters. */
+						$dhcpclientconf_mac = str_replace(":", "", $dhcpclientconf_mac);
+						$dhcpclientconf_mac_hex = "";
+						$delimiter = "";
+						for($i = 0; $i < strlen($dhcpclientconf_mac); $i++) {
+							$dhcpclientconf_mac_hex .= $delimiter. bin2hex($dhcpclientconf_mac[$i]);
+							$delimiter = ":";
+						}
+						$dhcpclientconf_mac = $dhcpclientconf_mac_hex;
+					}
+
+					/* MAC Address Delimiter Substitutions */
+					$dhcpclientconf_mac = str_replace(":", $various_mac_delimiter, $dhcpclientconf_mac);
+
+					/* Apply MAC Address Substitutions */
+					$dhclientconf = str_replace("{" . $various_mac_type . $various_mac_case . $various_mac_delimiter . "}", $dhcpclientconf_mac, $dhclientconf);
+				}
+			}
+		}
+	}
+
+	return $dhclientconf;
 }
 
 function interfaces_group_setup() {

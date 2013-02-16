@@ -213,7 +213,7 @@ if ($_POST) {
 	if (auth_get_authserver($pconfig['name']) && !isset($id))
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 
-	if (isset($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
+	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
 		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
 
 	/* if this is an AJAX caller then handle via JSON */

@@ -289,13 +289,19 @@ if ($_POST) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
 	} else if ($_POST['srctype'] == "single") {
-		$_POST['srcmask'] = 32;
+		if (is_ipaddrv6($_POST['src']))
+			$_POST['srcmask'] = 128;
+		else
+			$_POST['srcmask'] = 32;
 	}
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	}  else if ($_POST['dsttype'] == "single") {
-		$_POST['dstmask'] = 32;
+		if (is_ipaddrv6($_POST['dst']))
+			$_POST['dstmask'] = 128;
+		else
+			$_POST['dstmask'] = 32;
 	}
 
 	$pconfig = $_POST;

@@ -225,9 +225,9 @@ function vpn_ipsec_configure($ipchg = false)
 						}
 					}
 				}
-				@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
-				unset($ipsecpinghosts);
 			}
+			@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
+			unset($ipsecpinghosts);
 		}
 
 		/* generate CA certificates files */

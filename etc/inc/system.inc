@@ -1348,9 +1348,11 @@ function system_reboot_cleanup() {
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
-	foreach ($config['captiveportal'] as $cpzone=>$cp) {
-		captiveportal_radius_stop_all();
-		captiveportal_send_server_accounting(true);
+	if (isset($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone=>$cp) {
+			captiveportal_radius_stop_all();
+			captiveportal_send_server_accounting(true);
+		}
 	}
 	require_once("voucher.inc");
 	voucher_save_db_to_config();

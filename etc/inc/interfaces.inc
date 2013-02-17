@@ -1460,17 +1460,6 @@ function interface_ppps_configure($interface) {
 					log_error("Could not get a Local IP address for PPTP/L2TP link on {$port} in interfaces_ppps_configure. Using 0.0.0.0 ip!");
 					$localips[$pid] = "0.0.0.0";
 				}
-				/* XXX: This needs to go away soon! [It's commented out!] */
-				/* Configure the gateway (remote IP ) */
-				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
-					/* XXX: Fix later
-					$gateways[$pid] = gethostbyname($gateways[$pid]);
-					if(!is_ipaddr($gateways[$pid])) {
-						log_error("Could not get a valid Gateway IP from {$port} via DNS in interfaces_ppps_configure.");
-						return 0;
-					}
-					*/
-				}
 				if(!is_ipaddr($gateways[$pid])){
 					log_error(sprintf(gettext('Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interfaces_ppps_configure.'), $dhcp_gateway, $gway));
 					return 0;

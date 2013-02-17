@@ -117,6 +117,7 @@ if ($act == "edit") {
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
 			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
+			$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
 
 			if ($pconfig['radius_auth_port'] &&
 				$pconfig['radius_acct_port'] ) {
@@ -212,6 +213,9 @@ if ($_POST) {
 	if (auth_get_authserver($pconfig['name']) && !isset($id))
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 
+	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
+		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
+
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
@@ -259,6 +263,9 @@ if ($_POST) {
 
 			if ($pconfig['radius_secret'])
 				$server['radius_secret'] = $pconfig['radius_secret'];
+
+			if ($pconfig['radius_timeout'])
+				$server['radius_timeout'] = $pconfig['radius_timeout'];
 
 			if ($pconfig['radius_srvcs'] == "both") {
 				$server['radius_auth_port'] = $pconfig['radius_auth_port'];
@@ -718,6 +725,15 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Accounting port value");?></td>
 							<td width="78%" class="vtable">
 								<input name="radius_acct_port" type="text" class="formfld unknown" id="radius_acct_port" size="5" value="<?=htmlspecialchars($pconfig['radius_acct_port']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Timeout");?></td>
+							<td width="78%" class="vtable">
+								<input name="radius_timeout" type="text" class="formfld unknown" id="radius_timeout" size="20" value="<?=htmlspecialchars($pconfig['radius_timeout']);?>"/>
+								<br /><?= gettext("This value controls how long, in seconds, that the RADIUS server may take to respond to an authentication request.") ?>
+								<br /><?= gettext("If left blank, the default value is 5 seconds.") ?>
+								<br /><br /><?= gettext("NOTE: If you are using an interactive two-factor authentication system, increase this timeout to account for how long it will take the user to receive and enter a token.") ?>
 							</td>
 						</tr>
 					</table>

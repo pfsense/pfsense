@@ -289,13 +289,19 @@ if ($_POST) {
 		$_POST['src'] = $_POST['srctype'];
 		$_POST['srcmask'] = 0;
 	} else if ($_POST['srctype'] == "single") {
-		$_POST['srcmask'] = 32;
+		if (is_ipaddrv6($_POST['src']))
+			$_POST['srcmask'] = 128;
+		else
+			$_POST['srcmask'] = 32;
 	}
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
 	}  else if ($_POST['dsttype'] == "single") {
-		$_POST['dstmask'] = 32;
+		if (is_ipaddrv6($_POST['dst']))
+			$_POST['dstmask'] = 128;
+		else
+			$_POST['dstmask'] = 32;
 	}
 
 	$pconfig = $_POST;
@@ -900,7 +906,13 @@ include("head.inc");
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>><?=gettext("any");?></option>
-								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias");?></option>
+								<option value="single"
+						<?php  if (!$sel &&
+							    ((is_ipaddrv6($pconfig['src']) && $pconfig['srcmask'] == 128) ||
+							    (is_ipaddrv4($pconfig['src']) && $pconfig['srcmask'] == 32) || is_alias($pconfig['src'])))
+								{ echo "selected"; $sel = 1; } 
+						?>
+								> <?=gettext("Single host or alias");?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network");?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients");?></option>
@@ -993,7 +1005,13 @@ include("head.inc");
 <?php
 								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>><?=gettext("any");?></option>
-								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias");?></option>
+								<option value="single"
+								<?php  if (!$sel &&
+									    ((is_ipaddrv6($pconfig['dst']) && $pconfig['dstmask'] == 128) ||
+									    (is_ipaddrv4($pconfig['dst']) && $pconfig['dstmask'] == 32) || is_alias($pconfig['dst'])))
+										{ echo "selected"; $sel = 1; }
+								?>
+								><?=gettext("Single host or alias");?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network");?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients");?></option>
@@ -1274,7 +1292,7 @@ $i--): ?>
 				</div>
 				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-					<?=gettext("Hint: This prevents the rule from automatically syncing to other CARP members.");?>
+					<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 				</div>
 			</td>
 		</tr>

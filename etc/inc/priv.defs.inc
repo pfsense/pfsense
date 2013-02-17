@@ -702,7 +702,7 @@ $priv_list['page-services-captiveportal-editallowedhostnames'] = array();
 $priv_list['page-services-captiveportal-editallowedhostnames']['name'] = gettext("WebCfg - Services: Captive portal: Edit Allowed IPs page");
 $priv_list['page-services-captiveportal-editallowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.");
 $priv_list['page-services-captiveportal-editallowedhostnames']['match'] = array();
-$priv_list['page-services-captiveportal-editallowedhostnames']['match'][] = "services_captiveportal_hostname_edit.php*";
+$priv_list['page-services-captiveportal-editallowedhostnames']['match'][] = "services_captiveportal_ip_edit.php*";
 
 $priv_list['page-services-captiveportal-allowedips'] = array();
 $priv_list['page-services-captiveportal-allowedips']['name'] = gettext("WebCfg - Services: Captive portal: Allowed IPs page");
@@ -727,6 +727,18 @@ $priv_list['page-services-captiveportal-editmacaddresses']['name'] = gettext("We
 $priv_list['page-services-captiveportal-editmacaddresses']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.");
 $priv_list['page-services-captiveportal-editmacaddresses']['match'] = array();
 $priv_list['page-services-captiveportal-editmacaddresses']['match'][] = "services_captiveportal_mac_edit.php*";
+
+$priv_list['page-services-captiveportal-macaddresses'] = array();
+$priv_list['page-services-captiveportal-macaddresses']['name'] = gettext("WebCfg - Services: Captive portal: Allowed Hostnames page");
+$priv_list['page-services-captiveportal-macaddresses']['descr'] = gettext("Allow access to the 'Services: Captive portal: Allowed Hostnames' page.");
+$priv_list['page-services-captiveportal-macaddresses']['match'] = array();
+$priv_list['page-services-captiveportal-macaddresses']['match'][] = "services_captiveportal_hostname.php*";
+
+$priv_list['page-services-captiveportal-editmacaddresses'] = array();
+$priv_list['page-services-captiveportal-editmacaddresses']['name'] = gettext("WebCfg - Services: Captive portal: Edit Allowed Hostnames page");
+$priv_list['page-services-captiveportal-editmacaddresses']['descr'] = gettext("Allow access to the 'Services: Captive portal: Allowed Hostnames' page.");
+$priv_list['page-services-captiveportal-editmacaddresses']['match'] = array();
+$priv_list['page-services-captiveportal-editmacaddresses']['match'][] = "services_captiveportal_hostname_edit.php*";
 
 $priv_list['page-services-captiveportal-vouchers'] = array();
 $priv_list['page-services-captiveportal-vouchers']['name'] = gettext("WebCfg - Services: Captive portal Vouchers page");

@@ -93,12 +93,19 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	# At least one of the downloaded checksums matches, so mount RW
 	/etc/rc.conf_mount_rw
 	
-	MAXENTRIES=`pfctl -s memory | awk '/table-entries/ { print $4 }'`
+	ENTRIES_MAX=`pfctl -s memory | awk '/table-entries/ { print $4 }'`
 	
 	if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ]; then
-		egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
-		RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
-		echo "$RESULT" |awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
+		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
+		ENTRIES_V4=`pfctl -vvsTables | awk '/-\tbogons$/ {getline; print $2}'`
+		LINES_V4=`wc -l /tmp/bogons | awk '{ print $1 }'`
+		if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V4:-0}+LINES_V4)) ]; then
+			egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
+			RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
+			echo "$RESULT" | awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
+		else
+			echo "Not updating IPv4 bogons (increase table-entries limit)" | logger
+		fi
 		rm /tmp/bogons
 	else
 		echo "Could not download ${v4url} (checksum mismatch)" | logger
@@ -106,11 +113,15 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	fi
 
 	if [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-		LINES=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
-		if [ $MAXENTRIES -gt $((2*LINES)) ]; then
+		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
+		ENTRIES_V6=`pfctl -vvsTables | awk '/-\tbogonsv6$/ {getline; print $2}'`
+		LINES_V6=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
+		if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V6:-0}+LINES_V6)) ]; then
 			egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 			RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
-			echo "$RESULT" |awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
+			echo "$RESULT" | awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
+		else
+			echo "Not updating IPv6 bogons (increase table-entries limit)" | logger
 		fi
 		rm /tmp/bogonsv6
 	else

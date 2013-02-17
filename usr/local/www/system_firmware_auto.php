@@ -237,7 +237,7 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 } else {
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
 	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-	mwexec_bg("/usr/bin/nohup {$external_upgrade_helper_text}");
+	mwexec_bg($external_upgrade_helper_text);
 }
 
 /*

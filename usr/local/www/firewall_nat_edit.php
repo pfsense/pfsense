@@ -782,7 +782,7 @@ include("fbegin.inc"); ?>
 					<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-						<?=gettext("HINT: This prevents the rule from automatically syncing to other CARP members"); ?>.
+						<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 					</td>
 				</tr>
 				<tr>

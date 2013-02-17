@@ -232,13 +232,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	/* User defined maximum table entries in Advanced menu. */
 	if ($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries']))
 		$limitrules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
-	else {
-		$memory = get_memory();
-		if ($memory[0] < 135)
-			$limitrules .= "set limit table-entries 100000\n";
-		else
-			$limitrules .= "set limit table-entries 200000\n";
-	}
 
 	if ($config['system']['optimization'] <> "") {
 		$limitrules .= "set optimization {$config['system']['optimization']}\n";
@@ -2973,7 +2966,7 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if (is_array($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd'][0])) {
+	if (is_array($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']['config'][0])) {
 		if (isset($config['installedpackages']['miniupnpd']['config'][0]['enable']))
 			$ipfrules .= "anchor \"miniupnpd\"\n";
 

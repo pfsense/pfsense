@@ -55,7 +55,6 @@ if ($_GET['act'] == "del") {
 	mwexec("/bin/rm {$g['conf_path']}/dyndns_*.cache");
 
 	write_config();
-
 	services_dyndns_configure();
 
 	header("Location: services_dyndns.php");
@@ -63,7 +62,6 @@ if ($_GET['act'] == "del") {
 }
 
 function dyndnsCheckIP($int) {
-
 	$ip_address = get_interface_ip($int);
 	if (is_private_ip($ip_address)) {
 		$hosttocheck = "checkip.dyndns.org";
@@ -78,7 +76,6 @@ function dyndnsCheckIP($int) {
 		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
 		$ip_address = trim($matches[1]);
 	}
-
 	return $ip_address;
 }
 
@@ -124,18 +121,16 @@ include("head.inc");
 						echo "<span class=\"gray\">{$ifdesc}</span>";
 					else
 						echo "{$ifdesc}";
-					$iface = $if;
 					break;
 				}
 			}
 			$groupslist = return_gateway_groups_array();
-	  		foreach ($groupslist as $if => $group) {
+			foreach ($groupslist as $if => $group) {
 				if ($dyndns['interface'] == $if) {
 					if (!isset($dyndns['enable']))
 						echo "<span class=\"gray\">{$if}</span>";
 					else
 						echo "{$if}";
-					$iface = $if;
 					break;
 				}
 			}
@@ -165,9 +160,9 @@ include("head.inc");
 		  </td>
 		  <td class="listr">
 		  <?php
-			$filename = "{$g['conf_path']}/dyndns_{$iface}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
-			$ipaddr = dyndnsCheckIP($iface);
+			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 			if (file_exists($filename)) {
+				$ipaddr = dyndnsCheckIP($dyndns['interface']);
 				$cached_ip_s = explode(":", file_get_contents($filename));
 				$cached_ip = $cached_ip_s[0];
 				if ($ipaddr <> $cached_ip) 

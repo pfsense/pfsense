@@ -477,8 +477,7 @@ function is_ipaddr($ipaddr) {
 function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr))
 		return false;
-	$result = Net_IPv6::checkIPv6($ipaddr);
-	return $result;
+	return Net_IPv6::checkIPv6($ipaddr);
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */
@@ -836,22 +835,24 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
  */
 function get_configured_ip_addresses() {
 	global $config;
-	require_once("interfaces.inc");
+
+	if (!function_exists('get_interface_ip'))
+		require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
-	if(is_array($interfaces)) {
+	if (is_array($interfaces)) {
 		foreach($interfaces as $int) {
 			$ipaddr = get_interface_ip($int);
 			$ip_array[$int] = $ipaddr;
 		}
 	}
 	$interfaces = get_configured_carp_interface_list();
-	if(is_array($interfaces)) 
+	if (is_array($interfaces)) 
 		foreach($interfaces as $int => $ipaddr) 
 			$ip_array[$int] = $ipaddr;
 
 	/* pppoe server */
-	if (is_array($config['pppoes']['pppoe'])) {
+	if (is_array($config['pppoes']) && is_array($config['pppoes']['pppoe'])) {
 		foreach($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] == "server") {
 				if(is_ipaddr($pppoe['localip'])) {
@@ -861,6 +862,7 @@ function get_configured_ip_addresses() {
 			}
 		}
 	}
+
 	return $ip_array;
 }
 
@@ -1089,10 +1091,11 @@ function mwexec_bg($command, $clearsigmask = false) {
 		$oldset = array();
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
-	exec("nohup $command > /dev/null 2>&1 &");
+	$_gb = exec("/usr/bin/nohup $command > /dev/null 2>&1 &");
 	if ($clearsigmask) {
 		pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	}
+	unset($_gb);
 }
 
 /* unlink a file, if it exists */

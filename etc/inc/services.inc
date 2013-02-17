@@ -34,7 +34,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/pgrep	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
 	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/radvd		/usr/local/sbin/unbound
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/radvd
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcleases6
 	pfSense_MODULE:	utils
 */
@@ -1572,52 +1572,6 @@ function services_dnsmasq_configure() {
 	if (!$g['booting']) {
 		if(services_dhcpd_configure()!=0)
 			$return = 1;
-	}
-
-	return $return;
-}
-
-function services_unbound_configure() {
-	global $config, $g;
-	$return = 0;
-
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "services_unbound_configure() being called $mt\n";
-	}
-
-	/* kill any running unbound */
-	sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
-
-	if (isset($config['unbound']['enable'])) {
-
-		if ($g['booting'])
-			echo "Starting Unbound DNS...";
-		else
-			sleep(1);
-
-		/* Setup Unbound DHCP Chroot environment */
-		$fd = fopen("{$g['tmp_path']}/unbound.sh","w");
-		$status = `/sbin/mount | /usr/bin/grep "{$g['unbound_chroot_path']}/dev"`;
-		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}\n");
-		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}/dev\n");
-		fwrite($fd, "mkdir -p {$g['unbound_chroot_path']}/etc\n");
-		if(!trim($status))
-			fwrite($fd, "mount -t devfs devfs {$g['unbound_chroot_path']}/dev\n");
-		fclose($fd);
-		mwexec("/bin/sh {$g['tmp_path']}/unbound.sh");
-
-		/* generate Unbound config file */
-		if(unbound_generate_config()!=0) {
-			log_error("Problem generating Unbound configuration.");
-			$return = 1;
-		}
-
-		/* run Unbound */
-		mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/etc/unbound.conf");
-
-		if ($g['booting'])
-			echo "done.\n";
 	}
 
 	return $return;

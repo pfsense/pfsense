@@ -338,8 +338,11 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		captiveportal_init_radius_servers();
 
-		if ($g['booting'])
+		if ($g['booting']) {
+			/* send Accounting-On to server */
+			captiveportal_send_server_accounting();
 			echo "done\n";
+		}
 
 	} else {
 		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
@@ -350,6 +353,11 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
 		captiveportal_radius_stop_all();
+
+		/* send Accounting-Off to server */
+		if (!$g['booting']) {
+			captiveportal_send_server_accounting(true);
+		}
 
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
@@ -970,14 +978,17 @@ function captiveportal_passthrumac_findbyname($username) {
  * table (3=IN)/(4=OUT) hold allowed ip's without bw limits
  */
 function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
+	global $g;
 
 	/*  Instead of copying this entire function for something
 	 *  easy such as hostname vs ip address add this check
 	 */
 	if ($ishostname === true) {
-		$ipaddress = gethostbyname($ipent['hostname']);
-		if (!is_ipaddr($ipaddress)) 
-			return;
+		if (!$g['booting']) {
+			$ipaddress = gethostbyname($ipent['hostname']);
+			if (!is_ipaddr($ipaddress)) 
+				return;
+		}
 	} else
 		$ipaddress = $ipent['ip'];
 
@@ -993,6 +1004,8 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";
+		if (!is_ipaddr($ipaddress))
+			return array("", $cp_filterdns_conf);
 	}
 	$subnet = "";
 	if (!empty($ipent['sn']))
@@ -2022,4 +2035,48 @@ function captiveportal_write_usedmacs_db($usedmacs) {
 	unlock($cpumaclck);
 }
 
+function captiveportal_send_server_accounting($off = false) {
+	global $cpzone, $config;
+
+	if (!isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
+		return;
+	}
+	if ($off) {
+		$racct = new Auth_RADIUS_Acct_Off;
+	} else {
+		$racct = new Auth_RADIUS_Acct_On;
+	}
+	$radiusservers = captiveportal_get_radius_servers();
+	if (empty($radiusservers)) {
+		return;
+	}
+	foreach ($radiusservers['first'] as $radsrv) {
+		// Add a new server to our instance
+		$racct->addServer($radsrv['ipaddr'], $radsrv['acctport'], $radsrv['key']);
+	}
+	if (PEAR::isError($racct->start())) {
+		$retvalue['acct_val'] = 1;
+		$retvalue['error'] = $racct->getMessage();
+
+		// If we encounter an error immediately stop this function and go back
+		$racct->close();
+		return $retvalue;
+	}
+	// Send request
+	$result = $racct->send();
+	// Evaluation of the response
+	// 5 -> Accounting-Response
+	// See RFC2866 for this.
+	if (PEAR::isError($result)) {
+		$retvalue['acct_val'] = 1;
+		$retvalue['error'] = $result->getMessage();
+	} else if ($result === true) {
+		$retvalue['acct_val'] = 5 ;
+	} else {
+		$retvalue['acct_val'] = 1 ;
+	}
+
+	$racct->close();
+	return $retvalue;
+}
 ?>

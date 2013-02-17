@@ -77,9 +77,9 @@ if ($type == "loggedin") {
 	@fclose($fd);
 
 	foreach($cpdb as $user) {
-		$user_ip = $user['ip'];
+		$user_ip = $user[2];
 		// Record the timestamp
-		$timestamp = $user['allow_time'];
+		$timestamp = $user[0];
 		if ($timestamp > $previous_user_timestamp)
 			$current_user_count = $current_user_count + 1;
 	}

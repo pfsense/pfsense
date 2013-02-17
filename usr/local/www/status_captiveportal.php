@@ -50,7 +50,7 @@ if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
 if ($_GET['act'] == "del" && !empty($cpzone)) {
-	captiveportal_disconnect_client($_GET['id'], RADIUS_TERM_ADMIN_RESET);
+	captiveportal_disconnect_client($_GET['id']);
 	Header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }
@@ -156,16 +156,16 @@ if (!empty($cpzone)) {
   </tr>
 <?php foreach ($cpdb as $cpent): ?>
   <tr>
-    <td class="listlr"><?=$cpent['ip'];?></td>
-    <td class="listr"><?=$cpent['mac'];?>&nbsp;</td>
-    <td class="listr"><?=$cpent['username'];?>&nbsp;</td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent['allow_time']));?></td>
+    <td class="listlr"><?=$cpent[2];?></td>
+    <td class="listr"><?=$cpent[3];?>&nbsp;</td>
+    <td class="listr"><?=$cpent[4];?>&nbsp;</td>
+    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):
-	$last_act = captiveportal_get_last_activity($cpent['ip']); ?>
+	$last_act = captiveportal_get_last_activity($cpent[2]); ?>
     <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-		<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$cpent['sessionid'];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>
+	<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>
   </tr>
 <?php endforeach; endif; ?>
 </table>

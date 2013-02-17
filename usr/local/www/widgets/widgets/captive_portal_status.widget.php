@@ -46,7 +46,7 @@ require_once("captiveportal.inc");
 
 if (($_GET['act'] == "del") && (!empty($_GET['zone']))) {
 	$cpzone = $_GET['zone'];
-	captiveportal_disconnect_client($_GET['id'], RADIUS_TERM_ADMIN_RESET);
+	captiveportal_disconnect_client($_GET['id']);
 }
 
 flush();
@@ -65,9 +65,9 @@ $cpdb_all = array();
 foreach ($a_cp as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
-		$cpent['zone'] = $cpzone;
+		$cpent[10] = $cpzone;
 		if ($_GET['showact'])
-			$cpent['lastactivity'] = captiveportal_get_last_activity($cpent['ip']);
+			$cpent[11] = captiveportal_get_last_activity($cpent[2]);
 		$cpdb_all[] = $cpent;
 	}
 }
@@ -100,15 +100,15 @@ if ($_GET['order']) {
   </tr>
 <?php foreach ($cpdb_all as $cpent): ?>
   <tr>
-    <td class="listlr"><?=$cpent['ip'];?></td>
-    <td class="listr"><?=$cpent['mac'];?>&nbsp;</td>
-    <td class="listr"><?=$cpent['username'];?>&nbsp;</td>
+    <td class="listlr"><?=$cpent[2];?></td>
+    <td class="listr"><?=$cpent[3];?>&nbsp;</td>
+    <td class="listr"><?=$cpent[4];?>&nbsp;</td>
 	<?php if ($_GET['showact']): ?>
-	<td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent['allow_time']));?></td>
-    <td class="listr"><?php if ($cpent['lastactivity'] && ($cpent['lastactivity'] > 0)) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent['lastactivity']));?></td>
+    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
+    <td class="listr"><?php if ($cpent[11] && ($cpent[11] > 0)) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[11]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&zone=<?=$cpent['zone'];?>&id=<?=$cpent['sessionid'];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&zone=<?=$cpent[10];?>&id=<?=$cpent[5];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
   </tr>
 <?php endforeach; ?>
 </table>

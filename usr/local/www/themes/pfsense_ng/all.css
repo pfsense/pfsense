@@ -5,6 +5,8 @@ html, body, td, th, input, select {
 
 }
 
+.nowrap { white-space: nowrap; }
+
 .infobox {
 	width:100%;
 }
@@ -450,8 +452,8 @@ border: 0px;
 width: 100px;
 height:20px;
 */	
-	
-	
+
+
 }
 /* Make the List inside the List Elements */
 /* initially hidden with absolute position */
@@ -1142,7 +1144,7 @@ div#log span.log-protocol {
 	text-align: left;
 	border-left: 1px solid #999;
 	border-bottom: 1px solid #999;
-	
+
 }
 
 div#log span.log-general {

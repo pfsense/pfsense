@@ -856,6 +856,22 @@ function internalca_change() {
 							</td>
 						</tr>
 						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
+							<td width="78%" class="vtable">
+								<select name='digest_alg' id='digest_alg' class="formselect">
+								<?php
+									foreach( $openssl_digest_algs as $digest_alg):
+									$selected = "";
+									if ($pconfig['digest_alg'] == $digest_alg)
+										$selected = " selected";
+								?>
+									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
+							</td>
+						</tr>
+						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">

@@ -2453,23 +2453,23 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 					return true;
 			}
 		}
-
-		$interface_list_vips = get_configured_vips_list(true);
-		foreach ($interface_list_vips as $id => $vip) {
-			if ($ignore_if == "vip_{$id}")
-				continue;
-			if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
-				return true;
-		}
-
 	} else {
 		$interface_list_ips = get_configured_ip_addresses();
 		foreach($interface_list_ips as $if => $ilips) {
-			if ($ignore_if == $if)
+			/* Also ignore CARP interfaces, it'll be checked below */
+			if (($ignore_if == $if) || preg_match('/_vip[0-9]/', $if))
 				continue;
 			if (strcasecmp($ipaddr, $ilips) == 0)
 				return true;
 		}
+	}
+
+	$interface_list_vips = get_configured_vips_list(true);
+	foreach ($interface_list_vips as $id => $vip) {
+		if ($ignore_if == "vip_{$id}")
+			continue;
+		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
+			return true;
 	}
 
 	if ($check_localip) {

@@ -1494,11 +1494,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													<tr>
 														<td>
 															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></center></td>
 																</tr>
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<?php
 																if($if == "wan" || $if == "WAN")
 																	$checked = " CHECKED";
@@ -1515,14 +1515,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																<tr>
 																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 																</tr>
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<tr>
-																	<td>&nbsp;</td>
-																	<td>
+																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondiv'>
-
-
 																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
 																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
@@ -1602,11 +1599,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													<tr>
 														<td>
 															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new v6 gateway:"); ?></font></b></center></td>
 																</tr>
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<?php
 																if($if == "wan" || $if == "WAN")
 																	$checked = " CHECKED";
@@ -1623,10 +1620,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																<tr>
 																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescrv6" name="gatewaydescrv6"></td>
 																</tr>
-																<tr><td>&nbsp;</td>
+																<tr><td>&nbsp;</td></tr>
 																<tr>
-																	<td>&nbsp;</td>
-																	<td>
+																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondivv6'>
 																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave_v6();'>

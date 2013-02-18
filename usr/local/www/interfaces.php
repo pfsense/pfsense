@@ -1538,6 +1538,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 										</td>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1644,6 +1647,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 										</td>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1693,6 +1699,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"DHCP client."); ?>
 										</td>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1736,6 +1745,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -1776,6 +1788,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<br>
 											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
 										</td>
+									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
 									</tr>
 								</table>
 							</td>
@@ -1834,6 +1849,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 										</td>
+									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
 									</tr>
 								</table>
 							</td>
@@ -1931,6 +1949,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("to create a PPP configuration."); ?>
 											</td>
 										<?php endif; ?>
+									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
 									</tr>
 								</table>
 							</td>
@@ -2038,6 +2059,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</td>
 										<?php endif; ?>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -2106,6 +2130,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</td>
 										<?php endif; ?>
 									</tr>
+									<tr>
+										<td colspan="2" valign="top" height="16"></td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -2113,9 +2140,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							/* Wireless interface? */
 							if (isset($wancfg['wireless'])):
 						?>
-						<tr>
-							<td colspan="2" valign="top" height="16"></td>
-						</tr>
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("Common wireless configuration - Settings apply to all wireless networks on"); ?> <?=$wlanbaseif;?>.</td>
 						</tr>
@@ -2578,10 +2602,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<br/>
 							</td>
 						</tr>
-						<?php endif; ?>
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>
+						<?php endif; ?>
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("Private networks"); ?></td>
 						</tr>

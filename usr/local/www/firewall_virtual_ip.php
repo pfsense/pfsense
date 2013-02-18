@@ -201,6 +201,12 @@ include("head.inc");
                     </table>
 		  </td>
 		</tr>
+		<?php
+			$interfaces = get_configured_interface_with_descr(false, true);
+			$carplist = get_configured_carp_interface_list();
+			foreach ($carplist as $cif => $carpip)
+				$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+		?>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
 			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or
 			        $vipent['subnet_bits'] <> "" or (isset($vipent['range']['from']) && $vipent['range']['from'] <> "")): ?>
@@ -215,7 +221,7 @@ include("head.inc");
 					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars(strtoupper($config['interfaces'][$vipent['interface']]['descr']));?>&nbsp;
+                    <?=htmlspecialchars($interfaces[$vipent['interface']]);?>&nbsp;
                   </td>
                   <td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <?php if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias'>";?>

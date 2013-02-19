@@ -120,12 +120,14 @@ function bandwidthAjax(hostinterface, sorting) {
 	    // Use GET
 	    type: 'get',
 	    error: function(req) {
-	        // Handle 404
+	        /* XXX: Leave this for debugging purposes: Handle 404
 	        if(req.status == 404)
 	            alert('Error 404: location "' + uri + '" was not found.');
-	        // Handle other errors
+		*/
+	        /* Handle other errors
 	        else
 	            alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
+		*/
 	    },
 		success: function(data) {
 			updateBandwidthHosts(data);

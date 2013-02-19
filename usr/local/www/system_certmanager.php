@@ -108,6 +108,7 @@ if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
 	$pconfig['csr_keylen'] = "2048";
+	$pconfig['digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }

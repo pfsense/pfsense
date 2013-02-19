@@ -114,6 +114,7 @@ if ($act == "edit") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
+	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";
 	$pconfig['dn_commonname'] = "internal-ca";
 }

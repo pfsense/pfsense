@@ -71,15 +71,36 @@ unlink_if_exists("/tmp/config.cache");
 conf_mount_rw();
 
 if(!file_exists("/usr/local/bin/git")) {
-	echo "Cannot find git, fetching...";
-	if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
-		$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
-		$pkgstagingdir = "/root/tmp";
-		if (!is_dir($pkgstagingdir))
-			mkdir($pkgstagingdir);
-		$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
+	echo "Cannot find git, fetching...\n";
+	require_once("config.inc");
+	require_once("util.inc");
+	require_once("pkg-utils.inc");
+
+	echo "Trying to fetch package info...";
+	$pkg_info = get_pkg_info();
+	if ($pkg_info) {
+		echo " Done.\n";
+	} else {
+		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+		echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+		return;
 	}
-	system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r {$GIT_PKG}");
+	if (empty($pkg_info["git"])) {
+		echo "Can't locate git package in pfSense repo. Using FreeBSD pkg repo..";
+
+		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
+			$pkgstagingdir = "/root/tmp";
+			if (!is_dir($pkgstagingdir))
+				mkdir($pkgstagingdir);
+			$pkgstaging = "-t {$pkgstagingdir}/instmp.XXXXXX";
+		}
+		system("{$pkgtmpdir}/usr/sbin/pkg_add {$pkgstaging} -r {$GIT_PKG}");
+
+	} else {
+		install_package("git", $pkg_info["git"], true);
+		echo "Done.\n";
+	}
 }
 
 # Remove mainline if exists (older)

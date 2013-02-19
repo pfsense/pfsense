@@ -209,7 +209,7 @@ if ($_POST) {
 	} else if(is_alias($_POST['source'])) {
 		$osn = $_POST['source'];
 	} else {
-		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
+		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . gen_subnetv6($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
 	}
 
 	/* check for existing entries */
@@ -218,7 +218,7 @@ if ($_POST) {
 	} else if(is_alias($_POST['destination'])) {
 		$ext = $_POST['destination'];
 	} else {
-		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
+		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . gen_subnetv6($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
 	}
 
 	foreach ($a_out as $natent) {
@@ -491,7 +491,7 @@ function poolopts_change() {
 			</td></tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
-<?php for ($i = 32; $i >= 0; $i--): ?>
+<?php for ($i = 128; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
                           </select></td>
@@ -529,7 +529,7 @@ blank for any)");?></td>
                         <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
-<?php for ($i = 32; $i >= 0; $i--): ?>
+<?php for ($i = 128; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>"<?php if ($i == $pconfig['destination_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
                           </select> </td>
@@ -587,7 +587,7 @@ any)");?></td>
 				<td><?=gettext("Other Subnet:");?>&nbsp;&nbsp;</td>
 				<td>
 					<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=htmlspecialchars($pconfig['targetip']);?>">/<select name="targetip_subnet" class="formfld" id="targetip_subnet">
-<?php for ($i = 32; $i >= 0; $i--): ?>
+<?php for ($i = 128; $i >= 0; $i--): ?>
 					<option value="<?=$i;?>"<?php if ($i == $pconfig['targetip_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
 					</select>

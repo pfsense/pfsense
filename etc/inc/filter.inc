@@ -1276,6 +1276,13 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
 	global $config, $FilterIflist;
+	if(strpos($src, ":") > 0 || strpos($dst, ":") > 0) {
+		$ipv6 = "inet6";
+		$hostmasklen = "128";
+	} else {
+		$ipv6 = "";
+		$hostmasklen = "32";
+	}
 	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
 		return "# src incorrectly specified\n";
@@ -1285,10 +1292,16 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		elseif (is_alias($natip))
 			$tgt = "\${$natip}";
 		else
-			$tgt = "{$natip}/32";
+			$tgt = "{$natip}/{$hostmasklen}";
+	} else if($ipv6) {
+		$natip = get_interface_ipv6($if);
+		if(is_ipaddrv6($natip))
+			$tgt = "{$natip}/128";
+		else
+			$tgt = "(" . $FilterIflist[$if]['if'] . ")";
 	} else {
 		$natip = get_interface_ip($if);
-		if(is_ipaddr($natip))
+		if(is_ipaddrv4($natip))
 			$tgt = "{$natip}/32";
 		else
 			$tgt = "(" . $FilterIflist[$if]['if'] . ")";
@@ -1343,7 +1356,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	$if_friendly = $FilterIflist[$if]['descr'];
 	/* Put all the pieces together */
 	if($if_friendly)
-		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target} {$poolopts} {$staticnatport_txt}\n";
+		$natrule = "{$nat} on \${$if_friendly} {$ipv6} {$protocol} from {$src} to {$dst} {$target} {$poolopts} {$staticnatport_txt}\n";
 	else
 		$natrule .= "# Could not convert {$if} to friendly name(alias)\n";
 	return $natrule;

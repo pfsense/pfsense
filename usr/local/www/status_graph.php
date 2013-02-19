@@ -72,9 +72,13 @@ foreach (array('server', 'client') as $mode) {
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$found = false;
-	foreach($ifdescrs as $descr => $ifdescr) 
-		if($descr == $curif) $found = true;
-	if(!$found) {
+	foreach($ifdescrs as $descr => $ifdescr) {
+		if ($descr == $curif) {
+			$found = true;
+			break;
+		}
+	}
+	if ($found === false) {
 		Header("Location: status_graph.php");
 		exit;
 	}

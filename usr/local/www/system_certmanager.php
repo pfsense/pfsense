@@ -107,6 +107,7 @@ if ($act == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
+	$pconfig['csr_keylen'] = "2048";
 	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }
@@ -293,7 +294,9 @@ if ($_POST) {
 				}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
-			if (!in_array($_POST["keylen"], $cert_keylens))
+			if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens))
+				array_push($input_errors, gettext("Please select a valid Key Length."));
+			if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens))
 				array_push($input_errors, gettext("Please select a valid Key Length."));
 			if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
@@ -842,11 +845,11 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='csr_keylen' class="formselect">
 								<?php
-									if (!isset($pconfig['keylen']) && isset($pconfig['csr_keylen']))
-										$pconfig['keylen'] = $pconfig['csr_keylen'];
+									if (!isset($pconfig['csr_keylen']) && isset($pconfig['csr_keylen']))
+										$pconfig['csr_keylen'] = $pconfig['csr_keylen'];
 									foreach( $cert_keylens as $len):
 									$selected = "";
-									if ($pconfig['keylen'] == $len)
+									if ($pconfig['csr_keylen'] == $len)
 										$selected = " selected";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>

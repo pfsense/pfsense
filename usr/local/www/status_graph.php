@@ -109,8 +109,8 @@ include("head.inc");
 <script language="javascript" type="text/javascript">
 
 function updateBandwidth(){
-    var hostinterface = $("#if").val();
-	var sorting = $("#sorting").val();
+    var hostinterface = jQuery("#if").val();
+	var sorting = jQuery("#sorting").val();
     bandwidthAjax(hostinterface, sorting);
 }
 

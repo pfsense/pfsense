@@ -308,7 +308,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-jQuery(document).ready('updateBandwidth');
+jQuery(document).ready(updateBandwidth);
 </script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+require_once("config.inc");
+require_once("util.inc");
+require_once("pkg-utils.inc");
+
+global $g, $config, $argv, $command_split;
+
+if(is_array($command_split))
+	$args = array_slice($command_split, 2);
+else
+	$args = array_slice($argv, 3);
+
+$pkg_name = $args[0];
+$remove_type = empty($args[1]) ? "normal" : $args[1];
+$pkg_info = array();
+
+echo "Removing package \"{$pkg_name}\"...\n";
+
+foreach($config['installedpackages']['package'] as $package) {
+	if ($pkg_name == $package['name'])
+		$pkg_info = $package;
+}
+
+$static_output = "";
+$pkg_interface = "console";
+
+if (empty($pkg_info))
+	echo "\nPackage not installed.\n";
+elseif ($remove_type == "normal")
+	uninstall_package($pkg_name);
+elseif ($remove_type == "xmlonly")
+	delete_package_xml($pkg_name);
+else
+	echo "Invalid removal type. Valid values are: normal, xmlonly.\n";
+
+echo "\nDone.\n";

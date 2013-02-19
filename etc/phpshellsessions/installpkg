@@ -1,0 +1,39 @@
+require_once("config.inc");
+require_once("util.inc");
+require_once("pkg-utils.inc");
+
+global $g, $config, $argv, $command_split;
+
+if(is_array($command_split))
+	$args = array_slice($command_split, 2);
+else
+	$args = array_slice($argv, 3);
+
+$pkg_name = $args[0];
+$install_type = empty($args[1]) ? "normal" : $args[1];
+
+echo "Installing package \"{$pkg_name}\"...\n";
+
+echo "Trying to fetch package info...";
+$pkg_info = get_pkg_info();
+if ($pkg_info) {
+	echo " Done.\n";
+} else {
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+	return;
+}
+
+$static_output = "";
+$pkg_interface = "console";
+
+if (empty($pkg_info[$pkg_name]))
+	echo "\nPackage not found.\n";
+elseif ($install_type == "normal")
+	install_package($pkg_name, $pkg_info[$pkg_name], true);
+elseif ($install_type == "xmlonly")
+	install_package_xml($pkg_name);
+else
+	echo "Invalid install type. Valid values are: normal, xmlonly.\n";
+
+echo "\nDone.\n";

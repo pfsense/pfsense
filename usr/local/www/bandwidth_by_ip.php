@@ -35,10 +35,7 @@ if ($sort == "out")
 else
 	{$sort_method = "-R";}
 
-exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
-unset($bandwidthinfo);
-unset($receivebytesarray);
-unset($transmitbytesarray);
+$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 $someinfo = false;
 for ($x=2; $x<12; $x++){
@@ -56,6 +53,8 @@ for ($x=2; $x<12; $x++){
         $someinfo = true;
     }
 }
+unset($bandwidthinfo, $_grb);
+unset($listedIPs);
 
 //no bandwidth usage found
 if ($someinfo == false)

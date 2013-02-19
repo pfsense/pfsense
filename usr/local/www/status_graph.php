@@ -109,8 +109,8 @@ include("head.inc");
 <script language="javascript" type="text/javascript">
 
 function updateBandwidth(){
-    var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
-	var sorting = "<?php echo htmlspecialchars($cursort); ?>";
+    var hostinterface = $("#if").val();
+	var sorting = $("#sorting").val();
     bandwidthAjax(hostinterface, sorting);
 }
 
@@ -125,7 +125,7 @@ function bandwidthAjax(hostinterface, sorting) {
 	            alert('Error 404: location "' + uri + '" was not found.');
 	        // Handle other errors
 	        else
-	            alert('Error ' + req.status + ' -- ' + req.statusText);
+	            alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
 	    },
 		success: function(data) {
 			updateBandwidthHosts(data);
@@ -192,7 +192,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
 <?=gettext("Interface"); ?>:
-<select name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+<select id="if" name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
@@ -202,12 +202,10 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 , Sort by: 
-<select name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+<select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 	<option value="">Bandwidth In</option>
 	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
 </select>
-</form>
-<p><form method="post" action="status_graph.php">
 </form>
 <p>
 <div id="niftyOutter">
@@ -310,11 +308,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-window.onload = function(in_event)
-	{
-        updateBandwidth();
-    }
-
+jQuery(document).ready('updateBandwidth');
 </script>
 </body>
 </html>

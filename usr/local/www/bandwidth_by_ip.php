@@ -19,12 +19,15 @@ $listedIPs = "";
 
 //get interface IP and break up into an array
 $interface = $_GET['if'];
-$real_interface = convert_friendly_interface_to_real_interface_name($interface);
+$real_interface = get_real_interface($interface);
+if (!does_interface_exist($real_interface)) {
+	echo gettext("Wrong Interface");
+	return;
+}
 $intip = find_interface_ip($real_interface);
-$intip = explode (".", $intip);
 //get interface subnet
 $netmask = find_interface_subnet($real_interface);
-$intsubnet = gen_subnet(find_interface_ip($real_interface), $netmask) . "/$netmask";
+$intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
 //get the sort method
 $sort = $_GET['sort'];
 if ($sort == "out") 

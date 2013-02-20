@@ -258,9 +258,9 @@ function format_bits($bits) {
 	} else if ($bits >= 1000000) {
 		return sprintf("%.2f Mbps", $bits/1000000);
 	} else if ($bits >= 1000) {
-		return sprintf("%.2f Kb", $bits/1000);
+		return sprintf("%.2f Kbps", $bits/1000);
 	} else {
-		return sprintf("%d b", $bits);
+		return sprintf("%d bps", $bits);
 	}
 }
 ?>

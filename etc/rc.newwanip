@@ -47,7 +47,7 @@ if($g['booting'])
 	exit;
 
 function restart_packages() {
-	global $oldip, $curwanipi, $g;
+	global $oldip, $curwanip, $g;
 
 	/* restart packages */
 	system_ntp_configure(false);

@@ -110,7 +110,7 @@ include("head.inc");
 
 function updateBandwidth(){
     var hostinterface = jQuery("#if").val();
-	var sorting = jQuery("#sorting").val();
+	var sorting = jQuery("#sort").val();
     bandwidthAjax(hostinterface, sorting);
 }
 

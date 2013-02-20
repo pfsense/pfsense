@@ -323,8 +323,8 @@ $config['interfaces'][$interface]['enable'] = true;
 function console_configure_dhcpd($version = 4) {
 	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run;
 
-	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
-	$dhcpd      = ($version === 6) ? "dhcpd6" : "dhcpd";
+	$label_IPvX = ($version === 6) ? "IPv6"    : "IPv4";
+	$dhcpd      = ($version === 6) ? "dhcpdv6" : "dhcpd";
 
 	if($g['services_dhcp_server_enable'])
 		$yn = prompt_for_enable_dhcp_server($version);
@@ -396,17 +396,17 @@ if($config['interfaces']['lan']) {
 	if($config['dhcpd'])
 		if($config['dhcpd']['wan'])
 			unset($config['dhcpd']['wan']);		
-	if($config['dhcpd6'])
-		if($config['dhcpd6']['wan'])
-			unset($config['dhcpd6']['wan']);		
+	if($config['dhcpdv6'])
+		if($config['dhcpdv6']['wan'])
+			unset($config['dhcpdv6']['wan']);
 }
 
 if(!$config['interfaces']['lan']) {
 	unset($config['interfaces']['lan']);
 	if($config['dhcpd']['lan'])
 		unset($config['dhcpd']['lan']);
-	if($config['dhcpd6']['lan'])
-		unset($config['dhcpd6']['lan']);
+	if($config['dhcpdv6']['lan'])
+		unset($config['dhcpdv6']['lan']);
 	unset($config['shaper']);
 	unset($config['ezshaper']);
 	unset($config['nat']);

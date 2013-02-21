@@ -4736,7 +4736,7 @@ function interfaces_staticarp_configure($if) {
 
 	$ifcfg = $config['interfaces'][$if];
 
-	if (empty($if) || empty($ifcfg['if']))
+	if (empty($if) || empty($ifcfg['if']) || !isset($ifcfg['enable']))
 		return 0;
 
 	/* Enable staticarp, if enabled */

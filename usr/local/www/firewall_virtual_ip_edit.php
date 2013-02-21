@@ -114,7 +114,7 @@ if ($_POST) {
 		if (!is_ipaddr($_POST['subnet']))
 			$input_errors[] = gettext("A valid IP address must be specified.");
 		else if (is_ipaddr_configured($_POST['subnet'], "vip_" . $id))
-			$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
+			$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
 	}
 
 	$natiflist = get_configured_interface_with_descr();

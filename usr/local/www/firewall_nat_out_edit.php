@@ -208,8 +208,10 @@ if ($_POST) {
 		$osn = "any";
 	} else if(is_alias($_POST['source'])) {
 		$osn = $_POST['source'];
+	} else if(is_ipaddrv6($_POST['source']) {
+		$osn = gen_subnetv6($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
 	} else {
-		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . gen_subnetv6($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
+		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
 	}
 
 	/* check for existing entries */

@@ -1276,7 +1276,7 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
 	global $config, $FilterIflist;
-	if(strpos($src, ":") > 0 || strpos($dst, ":") > 0) {
+	if(is_ipaddrv6($src) || is_ipaddrv6($dst)) {
 		$ipv6 = "inet6";
 		$hostmasklen = "128";
 	} else {

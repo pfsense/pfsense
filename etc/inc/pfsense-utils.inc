@@ -2441,20 +2441,24 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 		foreach ($iflist as $if => $ifname) {
 			if ($ignore_if == $if)
 				continue;
+
 			if ($isipv6 === true) {
 				$bitmask = get_interface_subnetv6($if);
 				$subnet = gen_subnetv6(get_interface_ipv6($if), $bitmask);
-				if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
-					return true;
 			} else {
 				$bitmask = get_interface_subnet($if);
 				$subnet = gen_subnet(get_interface_ip($if), $bitmask);
-				if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
-					return true;
 			}
+
+			if (ip_in_subnet($ipaddr, $subnet . '/' . $bitmask))
+				return true;
 		}
 	} else {
-		$interface_list_ips = get_configured_ip_addresses();
+		if ($isipv6 === true)
+			$interface_list_ips = get_configured_ipv6_addresses();
+		else
+			$interface_list_ips = get_configured_ip_addresses();
+
 		foreach($interface_list_ips as $if => $ilips) {
 			/* Also ignore CARP interfaces, it'll be checked below */
 			if (($ignore_if == $if) || preg_match('/_vip[0-9]/', $if))

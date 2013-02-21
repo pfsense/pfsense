@@ -34,12 +34,6 @@
 
 */
 
-function remove_numbers($string) {
-	$nums = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", " ");
-	$string = str_replace($nums, '', $string);
-	return $string;
-}
-
 $g = array(
 	"base_packages" => "siproxd", 
 	"event_address" => "unix:///var/run/check_reload_status",

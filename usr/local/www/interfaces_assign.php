@@ -199,6 +199,19 @@ if ($_POST['apply']) {
 				$errstr .= " " . $ifn;
 
 			$input_errors[] = $errstr;
+		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+			foreach ($config['bridges']['bridged'] as $bridge) {
+				if ($bridge['bridgeif'] != $portname)
+					continue;
+
+				$members = explode(",", strtoupper($bridge['members']));
+				foreach ($members as $member) {
+					if ($member == $ifnames[0]) {
+						$input_errors[] = sprintf(gettext("You cannot set port %s to interface %s because this interface is a member of %s."), $portname, $member, $portname);
+						break;
+					}
+				}
+			}
 		}
 	}
 

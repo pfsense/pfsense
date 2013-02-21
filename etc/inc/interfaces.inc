@@ -2887,7 +2887,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!empty($wancfg['mtu'])) {
 		pfSense_interface_mtu($realif, $wancfg['mtu']);
 	} else {
-		$mtu = get_interface_default_mtu(remove_numbers($realhwif));
+		$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
 		if ($mtu != get_interface_mtu($realhwif))
 			pfSense_interface_mtu($realhwif, $mtu);
 	}
@@ -4521,7 +4521,7 @@ function is_altq_capable($int) {
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 
-	$int_family = preg_split("/[0-9]+/", $int);
+	$int_family = remove_ifindex($int);
 
 	if (in_array($int_family[0], $capable))
 		return true;
@@ -4787,6 +4787,10 @@ function get_failover_interface($interface) {
 	/* fall through to get_real_interface */
 	$wanif = get_real_interface($interface);
 	return $wanif;
+}
+
+function remove_ifindex($ifname) {
+	return preg_replace("/[0-9]+$/", "", $ifname);
 }
 
 ?>

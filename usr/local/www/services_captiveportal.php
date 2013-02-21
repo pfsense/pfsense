@@ -95,7 +95,6 @@ if ($a_cp[$cpzone]) {
 	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
 	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
 	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
-	$pconfig['pms_enabled'] = $a_cp[$cpzone]['pms_enabled'];
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
 	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
@@ -251,10 +250,6 @@ if ($_POST) {
 			$newcp['enable'] = true;
 		else
 			unset($newcp['enable']);
-		if ($_POST['pms_enabled'])
-			$newcp['pms_enabled'] = $_POST['pms_enabled'];
-		else
-			unset($newcp['pms_enabled']);
 		$newcp['auth_method'] = $_POST['auth_method'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
@@ -575,14 +570,6 @@ function enable_change(enable_change) {
         </tr></table>
         <br>
         <?=gettext("If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit."); ?> </td>
-	</tr>
-	<tr>
-      <td valign="top" class="vncell"><?=gettext("PMS authentication"); ?> </td>
-      <td class="vtable">
-        <input name="pms_enabled" type="checkbox" class="formfld" id="pms_enabled" value="yes" <?php if ($pconfig['pms_enabled']) echo "checked"; ?>>
-        <strong><?=gettext("Enable PMS authentication"); ?></strong><br>
-    <?=gettext("If this option is set, users will be authenticated through the PMS backend if they fill the necessary information in the login page.");?>
-	</td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?></td>

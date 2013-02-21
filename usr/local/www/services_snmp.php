@@ -75,7 +75,7 @@ $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
 $pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
 $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
-$pconfig['bindip'] = isset($config['snmpd']['bindip']);
+$pconfig['bindip'] = $config['snmpd']['bindip'];
 
 if ($_POST) {
 

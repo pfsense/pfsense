@@ -63,11 +63,15 @@ if (isset($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
+$after = $_GET['after'];
+
+if (isset($_POST['after']))
+	$after = $_POST['after'];
+
 if (isset($_GET['dup']))  {
 	$id  =  $_GET['dup'];
 	$after  =  $_GET['dup'];
-} else
-	unset($after);
+}
 
 if (isset($id) && $a_out[$id]) {
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
@@ -661,6 +665,7 @@ any)");?></td>
                     <?php if (isset($id) && $a_out[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
+                    <input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
                   </td>
                 </tr>
               </table>

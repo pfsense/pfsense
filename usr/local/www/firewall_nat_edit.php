@@ -60,6 +60,11 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+$after = $_GET['after'];
+
+if (isset($_POST['after']))
+	$after = $_POST['after'];
+
 if (isset($_GET['dup'])) {
         $id = $_GET['dup'];
         $after = $_GET['dup'];
@@ -364,16 +369,6 @@ if ($_POST) {
 			($_POST['filter-rule-association']=='add-associated' ||
 			$_POST['filter-rule-association']=='add-unassociated') )
 			$need_filter_rule = true;
-
-		// Determine NAT entry ID now, we need it for the firewall rule
-		if (isset($id) && $a_nat[$id])
-			$a_nat[$id] = $natent;
-		else {
-			if (is_numeric($after))
-				$id = $after + 1;
-			else
-				$id = count($a_nat);
-		}
 
 		if ($need_filter_rule == true) {
 
@@ -855,6 +850,7 @@ include("fbegin.inc"); ?>
                     <?php if (isset($id) && $a_nat[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
+                    <input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
                   </td>
                 </tr>
               </table>

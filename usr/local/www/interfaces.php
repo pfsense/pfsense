@@ -550,8 +550,12 @@ if ($_POST['apply']) {
 		else if (is_ipaddr_configured($_POST['ipaddr'], $if, true))
 			$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
 	}
-	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6'])))
-		$input_errors[] = gettext("A valid IPv6 address must be specified.");
+	if ($_POST['ipaddrv6']) {
+		if (!is_ipaddrv6($_POST['ipaddrv6']))
+			$input_errors[] = gettext("A valid IPv6 address must be specified.");
+		else if (is_ipaddr_configured($_POST['ipaddrv6'], $if, true))
+			$input_errors[] = gettext("This IPv6 address is being used by another interface or VIP.");
+	}
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet'])))
 		$input_errors[] = gettext("A valid subnet bit count must be specified.");
 	if (($_POST['subnetv6'] && !is_numeric($_POST['subnetv6'])))

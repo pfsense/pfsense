@@ -362,7 +362,7 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>"></a></td>
+                        <td><a href="firewall_nat_out_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>"></a></td>
                       </tr>
                     </table>
 		  </td>

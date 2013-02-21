@@ -216,7 +216,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')">
 			<?php endif; ?>
 			</td>
-                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td><a href="firewall_nat_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
 		  </td>

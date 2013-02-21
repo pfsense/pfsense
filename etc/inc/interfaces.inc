@@ -4181,6 +4181,7 @@ function find_interface_ipv6($interface, $flush = false)
 					} else {
 						$ifinfo['subnetbitsv6'] = $parts[3];
 					}
+					break;
 				}
 			}
 		}

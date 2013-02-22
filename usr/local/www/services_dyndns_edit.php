@@ -117,7 +117,11 @@ if ($_POST) {
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
-		$dyndns['enable'] = $_POST['enable'] ? false : true;
+		/* In this place enable means disabled */
+		if ($_POST['enable'])
+			unset($dyndns['enable']);
+		else
+			$dyndns['enable'] = true;
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];

@@ -39,6 +39,8 @@
 require("config.inc");
 require("functions.inc");
 require("filter.inc");
+require("ipsec.inc");
+require("vpn.inc");
 require("shaper.inc");
 require("xmlrpc_server.inc");
 require("xmlrpc.inc");
@@ -166,6 +168,8 @@ $restore_config_section_sig = array(
 function restore_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
+	$old_config = $config;
+
 	if (xmlrpc_loop_detect())
 		log_error("Disallowing CARP sync loop");
 
@@ -269,6 +273,11 @@ function restore_config_section_xmlrpc($raw_params) {
 		if ($anyproxyarp == true)
 			interface_proxyarp_configure();
 	}
+
+	if (isset($old_config['ipsec']['enable']) !== isset($config['ipsec']['enable']))
+		vpn_ipsec_configure();
+
+	unset($old_config);
 
 	return $xmlrpc_g['return']['true'];
 }

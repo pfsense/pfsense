@@ -1856,9 +1856,11 @@ function interfaces_carp_setup() {
 	/* setup pfsync interface */
 	if ($carp_sync_int and $pfsyncenabled) {
 		if (is_ipaddr($pfsyncpeerip))
-			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);
+			$syncpeer = "syncpeer {$pfsyncpeerip}";
 		else
-			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} -syncpeer up", false);
+			$syncpeer = "-syncpeer";
+
+		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} {$syncpeer} up", false);
 
 		sleep(1);
 

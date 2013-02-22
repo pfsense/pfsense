@@ -77,6 +77,7 @@ if ($_POST) {
 	$a_hasync['username']        = $pconfig['username'];
 	$a_hasync['password']        = $pconfig['password'];
 	write_config("Updated High Availability Sync configuration");
+	interfaces_carp_setup();
 	header("Location: system_hasync.php");
 	exit();
 }

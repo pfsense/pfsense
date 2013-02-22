@@ -1666,7 +1666,7 @@ function interfaces_carp_setup() {
 		if (is_ipaddr($pfsyncpeerip))
 			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);
 		else
-			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);
+			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} -syncpeer up", false);
 
 		sleep(1);
 
@@ -1678,6 +1678,10 @@ function interfaces_carp_setup() {
 			$i++;
 			sleep(1);
 		}
+		log_error("pfsync done in $i seconds.");
+		log_error("Configuring CARP settings finalize...");
+	} else {
+		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer", false);
 	}
 
 	if ($config['virtualip']['vip'])

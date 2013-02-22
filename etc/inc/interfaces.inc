@@ -1874,7 +1874,7 @@ function interfaces_carp_setup() {
 		log_error("pfsync done in $i seconds.");
 		log_error("Configuring CARP settings finalize...");
 	} else {
-		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer", false);
+		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down", false);
 	}
 
 	if($config['virtualip']['vip'])

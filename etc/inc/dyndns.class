@@ -36,6 +36,7 @@
 	 *    - _checkStatus()
 	 *    - _error()
 	 *    - _detectChange()
+	 *    - _maxCacheAge()
 	 *    - _debug()
 	 *    - _checkIP()
 	 * +----------------------------------------------------+
@@ -996,7 +997,7 @@
                                         $status = "Route 53: (Error) Invalid TTL";
                                         break;  
 				case 10:
-					$error = 'phpDynDNS: No change in my IP address and/or 25 days has not passed. Not updating dynamic DNS entry.';
+					$error = 'phpDynDNS: No change in my IP address and/or ' . $this->_maxCacheAge($this->_dnsService) . ' days has not passed. Not updating dynamic DNS entry.';
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";
@@ -1046,11 +1047,8 @@
 			}
 			log_error($log_error);
 
-			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
-			 *   zoneedit, dyns, ods
-			 */
-			$time = '2160000';
-
+			$days = $this->_maxCacheAge($this->_dnsService);
+			$time = $days * 24 * 60 * 60;
 			$needs_updating = FALSE;
 			/* lets determine if the item needs updating */
 			if ($cacheIP != $wan_ip) {
@@ -1060,7 +1058,7 @@
 			}
 			if (($currentTime - $cacheTime) > $time ) {
 				$needs_updating = true;
-				$update_reason = "DynDns: More than 25 days.  Updating. ";
+				$update_reason = "DynDns: More than " . $days . " days.  Updating. ";
 				$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			}
 			if ($initial == true) {
@@ -1080,6 +1078,24 @@
 		}
 
 		/*
+		 * Private Function (added 22 Feb 2013) [beta]
+		 *   - Determine the maximum allowed age of the cached DNS by provider
+		 *      | Written Specifically for pfSense (pfsense.com) may
+		 *      | work with other systems. pfSense base is FreeBSD.
+		 */
+		function _maxCacheAge($dnsService) {
+			switch ($dnsService) {
+				case 'noip':
+					$days = 7;
+					break;
+				default:
+					$days = 25;
+					break;
+			}
+			return $days;
+		}
+
+			/*
 		 * Private Funcation (added 16 July 05) [beta]
 		 *   - Writes debug information to a file.
 		 *   - This function is only called when a unknown response

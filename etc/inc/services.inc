@@ -40,7 +40,7 @@
 */
 
 define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53, Custom');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net Tunnelbroker,SelfHost,Route 53,Custom');
 
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure() {

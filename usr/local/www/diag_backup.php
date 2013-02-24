@@ -216,11 +216,6 @@ if ($_POST) {
 
 				//unlock($lockbckp);
 
-				if ($_POST['encrypt']) {
-					$data = encrypt_data($data, $_POST['encrypt_password']);
-					tagfile_reformat($data, $data, "config.xml");
-				}
-
 				/*
 				 *  Backup RRD Data
 				 */
@@ -240,6 +235,11 @@ if ($_POST) {
 					}
 					$data .= "\t</rrddata>\n";
 					$data .= "</" . $g['xml_rootobj'] . ">\n";
+				}
+
+				if ($_POST['encrypt']) {
+					$data = encrypt_data($data, $_POST['encrypt_password']);
+					tagfile_reformat($data, $data, "config.xml");
 				}
 
 				$size = strlen($data);

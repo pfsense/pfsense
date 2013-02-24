@@ -174,6 +174,60 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
+
+$pconfig['adv_dhcp_pt_timeout'] = $wancfg['adv_dhcp_pt_timeout'];
+$pconfig['adv_dhcp_pt_retry'] = $wancfg['adv_dhcp_pt_retry'];
+$pconfig['adv_dhcp_pt_select_timeout'] = $wancfg['adv_dhcp_pt_select_timeout'];
+$pconfig['adv_dhcp_pt_reboot'] = $wancfg['adv_dhcp_pt_reboot'];
+$pconfig['adv_dhcp_pt_backoff_cutoff'] = $wancfg['adv_dhcp_pt_backoff_cutoff'];
+$pconfig['adv_dhcp_pt_initial_interval'] = $wancfg['adv_dhcp_pt_initial_interval'];
+
+$pconfig['adv_dhcp_pt_values'] = $wancfg['adv_dhcp_pt_values'];
+
+$pconfig['adv_dhcp_send_options'] = $wancfg['adv_dhcp_send_options'];
+$pconfig['adv_dhcp_request_options'] = $wancfg['adv_dhcp_request_options'];
+$pconfig['adv_dhcp_required_options'] = $wancfg['adv_dhcp_required_options'];
+$pconfig['adv_dhcp_option_modifiers'] = $wancfg['adv_dhcp_option_modifiers'];
+
+$pconfig['adv_dhcp_config_advanced'] = $wancfg['adv_dhcp_config_advanced'];
+$pconfig['adv_dhcp_config_file_override'] = $wancfg['adv_dhcp_config_file_override'];
+$pconfig['adv_dhcp_config_file_override_path'] = $wancfg['adv_dhcp_config_file_override_path'];
+
+$pconfig['adv_dhcp6_interface_statement_send_options'] = $wancfg['adv_dhcp6_interface_statement_send_options'];
+$pconfig['adv_dhcp6_interface_statement_request_options'] = $wancfg['adv_dhcp6_interface_statement_request_options'];
+$pconfig['adv_dhcp6_interface_statement_information_only_enable'] = $wancfg['adv_dhcp6_interface_statement_information_only_enable'];
+$pconfig['adv_dhcp6_interface_statement_script'] = $wancfg['adv_dhcp6_interface_statement_script'];
+
+$pconfig['adv_dhcp6_id_assoc_statement_address_enable'] = $wancfg['adv_dhcp6_id_assoc_statement_address_enable'];
+$pconfig['adv_dhcp6_id_assoc_statement_address'] = $wancfg['adv_dhcp6_id_assoc_statement_address'];
+$pconfig['adv_dhcp6_id_assoc_statement_address_id'] = $wancfg['adv_dhcp6_id_assoc_statement_address_id'];
+$pconfig['adv_dhcp6_id_assoc_statement_address_pltime'] = $wancfg['adv_dhcp6_id_assoc_statement_address_pltime'];
+$pconfig['adv_dhcp6_id_assoc_statement_address_vltime'] = $wancfg['adv_dhcp6_id_assoc_statement_address_vltime'];
+
+$pconfig['adv_dhcp6_id_assoc_statement_prefix_enable'] = $wancfg['adv_dhcp6_id_assoc_statement_prefix_enable'];
+$pconfig['adv_dhcp6_id_assoc_statement_prefix'] = $wancfg['adv_dhcp6_id_assoc_statement_prefix'];
+$pconfig['adv_dhcp6_id_assoc_statement_prefix_id'] = $wancfg['adv_dhcp6_id_assoc_statement_prefix_id'];
+$pconfig['adv_dhcp6_id_assoc_statement_prefix_pltime'] = $wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'];
+$pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'];
+
+$pconfig['adv_dhcp6_prefix_interface_statement_sla_id'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_id'];
+$pconfig['adv_dhcp6_prefix_interface_statement_sla_len'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_len'];
+
+$pconfig['adv_dhcp6_authentication_statement_authname'] = $wancfg['adv_dhcp6_authentication_statement_authname'];
+$pconfig['adv_dhcp6_authentication_statement_protocol'] = $wancfg['adv_dhcp6_authentication_statement_protocol'];
+$pconfig['adv_dhcp6_authentication_statement_algorithm'] = $wancfg['adv_dhcp6_authentication_statement_algorithm'];
+$pconfig['adv_dhcp6_authentication_statement_rdm'] = $wancfg['adv_dhcp6_authentication_statement_rdm'];
+
+$pconfig['adv_dhcp6_key_info_statement_keyname'] = $wancfg['adv_dhcp6_key_info_statement_keyname'];
+$pconfig['adv_dhcp6_key_info_statement_realm'] = $wancfg['adv_dhcp6_key_info_statement_realm'];
+$pconfig['adv_dhcp6_key_info_statement_keyid'] = $wancfg['adv_dhcp6_key_info_statement_keyid'];
+$pconfig['adv_dhcp6_key_info_statement_secret'] = $wancfg['adv_dhcp6_key_info_statement_secret'];
+$pconfig['adv_dhcp6_key_info_statement_expire'] = $wancfg['adv_dhcp6_key_info_statement_expire'];
+
+$pconfig['adv_dhcp6_config_advanced'] = $wancfg['adv_dhcp6_config_advanced'];
+$pconfig['adv_dhcp6_config_file_override'] = $wancfg['adv_dhcp6_config_file_override'];
+$pconfig['adv_dhcp6_config_file_override_path'] = $wancfg['adv_dhcp6_config_file_override_path'];
+
 $pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
@@ -710,6 +764,60 @@ if ($_POST['apply']) {
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
+
+		unset($wancfg['adv_dhcp_pt_timeout']);
+		unset($wancfg['adv_dhcp_pt_retry']);
+		unset($wancfg['adv_dhcp_pt_select_timeout']);
+		unset($wancfg['adv_dhcp_pt_reboot']);
+		unset($wancfg['adv_dhcp_pt_backoff_cutoff']);
+		unset($wancfg['adv_dhcp_pt_initial_interval']);
+
+		unset($wancfg['adv_dhcp_pt_values']);
+
+		unset($wancfg['adv_dhcp_send_options']);
+		unset($wancfg['adv_dhcp_request_options']);
+		unset($wancfg['adv_dhcp_required_options']);
+		unset($wancfg['adv_dhcp_option_modifiers']);
+
+		unset($wancfg['adv_dhcp_config_advanced']);
+		unset($wancfg['adv_dhcp_config_file_override']);
+		unset($wancfg['adv_dhcp_config_file_override_path']);
+
+		unset($wancfg['adv_dhcp6_interface_statement_send_options']);
+		unset($wancfg['adv_dhcp6_interface_statement_request_options']);
+		unset($wancfg['adv_dhcp6_interface_statement_information_only_enable']);
+		unset($wancfg['adv_dhcp6_interface_statement_script']);
+
+		unset($wancfg['adv_dhcp6_id_assoc_statement_address_enable']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_address']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_address_id']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_address_pltime']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_address_vltime']);
+
+		unset($wancfg['adv_dhcp6_id_assoc_statement_prefix_enable']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_prefix']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_prefix_id']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime']);
+		unset($wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime']);
+
+		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']);
+		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_len']);
+
+		unset($wancfg['adv_dhcp6_authentication_statement_authname']);
+		unset($wancfg['adv_dhcp6_authentication_statement_protocol']);
+		unset($wancfg['adv_dhcp6_authentication_statement_algorithm']);
+		unset($wancfg['adv_dhcp6_authentication_statement_rdm']);
+
+		unset($wancfg['adv_dhcp6_key_info_statement_keyname']);
+		unset($wancfg['adv_dhcp6_key_info_statement_realm']);
+		unset($wancfg['adv_dhcp6_key_info_statement_keyid']);
+		unset($wancfg['adv_dhcp6_key_info_statement_secret']);
+		unset($wancfg['adv_dhcp6_key_info_statement_expire']);
+
+		unset($wancfg['adv_dhcp6_config_advanced']);
+		unset($wancfg['adv_dhcp6_config_file_override']);
+		unset($wancfg['adv_dhcp6_config_file_override_path']);
+
 		unset($wancfg['pppoe_password']);
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
@@ -746,6 +854,25 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+
+				$wancfg['adv_dhcp_pt_timeout'] = $_POST['adv_dhcp_pt_timeout'];
+				$wancfg['adv_dhcp_pt_retry'] = $_POST['adv_dhcp_pt_retry'];
+				$wancfg['adv_dhcp_pt_select_timeout'] = $_POST['adv_dhcp_pt_select_timeout'];
+				$wancfg['adv_dhcp_pt_reboot'] = $_POST['adv_dhcp_pt_reboot'];
+				$wancfg['adv_dhcp_pt_backoff_cutoff'] = $_POST['adv_dhcp_pt_backoff_cutoff'];
+				$wancfg['adv_dhcp_pt_initial_interval'] = $_POST['adv_dhcp_pt_initial_interval'];
+
+				$wancfg['adv_dhcp_pt_values'] = $_POST['adv_dhcp_pt_values'];
+
+				$wancfg['adv_dhcp_send_options'] = $_POST['adv_dhcp_send_options'];
+				$wancfg['adv_dhcp_request_options'] = $_POST['adv_dhcp_request_options'];
+				$wancfg['adv_dhcp_required_options'] = $_POST['adv_dhcp_required_options'];
+				$wancfg['adv_dhcp_option_modifiers'] = $_POST['adv_dhcp_option_modifiers'];
+
+				$wancfg['adv_dhcp_config_advanced'] = $_POST['adv_dhcp_config_advanced'];
+				$wancfg['adv_dhcp_config_file_override'] = $_POST['adv_dhcp_config_file_override'];
+				$wancfg['adv_dhcp_config_file_override_path'] = $_POST['adv_dhcp_config_file_override_path'];
+
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -840,6 +967,42 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
+
+				$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
+				$wancfg['adv_dhcp6_interface_statement_request_options'] = $_POST['adv_dhcp6_interface_statement_request_options'];
+				$wancfg['adv_dhcp6_interface_statement_information_only_enable'] = $_POST['adv_dhcp6_interface_statement_information_only_enable'];
+				$wancfg['adv_dhcp6_interface_statement_script'] = $_POST['adv_dhcp6_interface_statement_script'];
+
+				$wancfg['adv_dhcp6_id_assoc_statement_address_enable'] = $_POST['adv_dhcp6_id_assoc_statement_address_enable'];
+				$wancfg['adv_dhcp6_id_assoc_statement_address'] = $_POST['adv_dhcp6_id_assoc_statement_address'];
+				$wancfg['adv_dhcp6_id_assoc_statement_address_id'] = $_POST['adv_dhcp6_id_assoc_statement_address_id'];
+				$wancfg['adv_dhcp6_id_assoc_statement_address_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_address_pltime'];
+				$wancfg['adv_dhcp6_id_assoc_statement_address_vltime'] = $_POST['adv_dhcp6_id_assoc_statement_address_vltime'];
+
+				$wancfg['adv_dhcp6_id_assoc_statement_prefix_enable'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_enable'];
+				$wancfg['adv_dhcp6_id_assoc_statement_prefix'] = $_POST['adv_dhcp6_id_assoc_statement_prefix'];
+				$wancfg['adv_dhcp6_id_assoc_statement_prefix_id'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_id'];
+				$wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_pltime'];
+				$wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $_POST['adv_dhcp6_id_assoc_statement_prefix_vltime'];
+
+				$wancfg['adv_dhcp6_prefix_interface_statement_sla_id'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_id'];
+				$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
+
+				$wancfg['adv_dhcp6_authentication_statement_authname'] = $_POST['adv_dhcp6_authentication_statement_authname'];
+				$wancfg['adv_dhcp6_authentication_statement_protocol'] = $_POST['adv_dhcp6_authentication_statement_protocol'];
+				$wancfg['adv_dhcp6_authentication_statement_algorithm'] = $_POST['adv_dhcp6_authentication_statement_algorithm'];
+				$wancfg['adv_dhcp6_authentication_statement_rdm'] = $_POST['adv_dhcp6_authentication_statement_rdm'];
+
+				$wancfg['adv_dhcp6_key_info_statement_keyname'] = $_POST['adv_dhcp6_key_info_statement_keyname'];
+				$wancfg['adv_dhcp6_key_info_statement_realm'] = $_POST['adv_dhcp6_key_info_statement_realm'];
+				$wancfg['adv_dhcp6_key_info_statement_keyid'] = $_POST['adv_dhcp6_key_info_statement_keyid'];
+				$wancfg['adv_dhcp6_key_info_statement_secret'] = $_POST['adv_dhcp6_key_info_statement_secret'];
+				$wancfg['adv_dhcp6_key_info_statement_expire'] = $_POST['adv_dhcp6_key_info_statement_expire'];
+
+				$wancfg['adv_dhcp6_config_advanced'] = $_POST['adv_dhcp6_config_advanced'];
+				$wancfg['adv_dhcp6_config_file_override'] = $_POST['adv_dhcp6_config_file_override'];
+				$wancfg['adv_dhcp6_config_file_override_path'] = $_POST['adv_dhcp6_config_file_override_path'];
+
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -1673,7 +1836,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration &nbsp &nbsp " .
+										' <input name="adv_dhcp_config_advanced" type="checkbox" id="adv_dhcp_config_advanced" value="" onClick="show_adv_dhcp_config(this)";> ' .
+										" Advanced &nbsp &nbsp " .
+										' <input name="adv_dhcp_config_file_override" type="checkbox" id="adv_dhcp_config_file_override" value="" onClick="show_adv_dhcp_config(this)";> ' .
+										" Config File Override &nbsp &nbsp "); ?>
+										</td>
 									</tr>
 									<!-- Uncomment to expose DHCP+ in GUI
 									<tr>
@@ -1686,7 +1854,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
-									<tr>
+									<tr style='display:none' name="show_basic_dhcphostname" id="show_basic_dhcphostname">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
@@ -1696,7 +1864,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"this (for client identification)."); ?>
 										</td>
 									</tr>
-									<tr>
+									<tr style='display:none' name="show_basic_dhcpalias-address" id="show_basic_dhcpalias-address">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IPv4 address"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
@@ -1715,9 +1883,158 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"DHCP client."); ?>
 										</td>
 									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
+
+									<tr style='display:none' name="show_adv_dhcp_pt_timeout" id="show_adv_dhcp_pt_timeout">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING>Protocol Timing</a>"); ?></td>
+										<td width="48%" class="vtable">
+											Timeout: <input name="adv_dhcp_pt_timeout" type="text" class="formfld unknown" id="adv_dhcp_pt_timeout" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>" onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+											Retry:   <input name="adv_dhcp_pt_retry"   type="text" class="formfld unknown" id="adv_dhcp_pt_retry"   size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>"   onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+											Select Timeout: <input name="adv_dhcp_pt_select_timeout" type="text" class="formfld unknown" id="adv_dhcp_pt_select_timeout" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>" onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+
+											&nbsp &nbsp &nbsp &nbsp 
+											Presets: &nbsp
+											<input name="adv_dhcp_pt_values" type="radio" value="DHCP"	unchecked	enabled id="customdhcpptdhcpdefaults"	onClick="customdhcpptsetvalues(this, iform);">FreeBSD Default &nbsp 
+											<input name="adv_dhcp_pt_values" type="radio" value="Clear"	unchecked	enabled id="customdhcpptclear"		onClick="customdhcpptsetvalues(this, iform);">Clear
+
+											<br>
+											Reboot: <input name="adv_dhcp_pt_reboot" type="text" class="formfld unknown" id="adv_dhcp_pt_reboot" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>" onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+											Backoff Cutoff:   <input name="adv_dhcp_pt_backoff_cutoff"   type="text" class="formfld unknown" id="adv_dhcp_pt_backoff_cutoff"   size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>"   onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+											Initial Interval: <input name="adv_dhcp_pt_initial_interval" type="text" class="formfld unknown" id="adv_dhcp_pt_initial_interval" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>" onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
+
+											&nbsp &nbsp &nbsp &nbsp &nbsp 
+											<input name="adv_dhcp_pt_values" type="radio" value="pfSense"	unchecked	enabled id="customdhcpptpfsensedefaults"	onClick="customdhcpptsetvalues(this, iform);">pfSense Default &nbsp 
+											<input name="adv_dhcp_pt_values" type="radio" value="SavedCfg" checked	enabled id="customdhcpptsavedcfg"		onClick="customdhcpptsetvalues(this, iform);">Saved Cfg 
+
+											<br>
+											<?=gettext("The values in these fields are DHCP protocol timings used when requesting a lease. <br> " ); ?>
+
+											<script type="text/javascript">
+												function customdhcpptcheckradiobuton(T, BUTTON) {
+													for (var i = 0; i < T.length; i++) {
+														T[i].checked = false;
+														if (T[i].value == BUTTON) T[i].checked = true;
+													}
+													T.value = BUTTON;
+												}
+
+												function customdhcpptsetvalues(T, FORM) {
+													// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
+													if (T.value == "DHCP")		customdhcpptsetvaluesnow(T, FORM, "60", "300", "0", "10", "120", "10");
+													if (T.value == "pfSense")	customdhcpptsetvaluesnow(T, FORM, "60", "15", "0", "", "", "1");
+													if (T.value == "SavedCfg")	customdhcpptsetvaluesnow(T, FORM, "<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
+													if (T.value == "Clear")		customdhcpptsetvaluesnow(T, FORM, "", "", "", "", "", "");
+												}
+
+												function customdhcpptsetvaluesnow(T, FORM, timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
+													FORM.adv_dhcp_pt_timeout.value = timeout;
+													FORM.adv_dhcp_pt_retry.value = retry;
+													FORM.adv_dhcp_pt_select_timeout.value = selecttimeout;
+													FORM.adv_dhcp_pt_reboot.value = reboot;
+													FORM.adv_dhcp_pt_backoff_cutoff.value = backoffcutoff;
+													FORM.adv_dhcp_pt_initial_interval.value = initialinterval;
+
+													FORM.adv_dhcp_pt_values.value = T.value;
+												}
+
+												<!-- Set the adv_dhcp_pt_values radio button from saved config -->
+												var RADIOBUTTON_VALUE = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
+												if (RADIOBUTTON_VALUE == "") RADIOBUTTON_VALUE = "SavedCfg";
+												customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, RADIOBUTTON_VALUE);
+											</script>
+										</td>
 									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp_send_options" id="show_adv_dhcp_send_options">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Send</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="adv_dhcp_send_options" type="text" class="formfld unknown" id="adv_dhcp_send_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_send_options']);?>">
+											<br>
+											<?=gettext("The values in this field are DHCP options to be sent when requesting a DHCP lease.  [option declaration [, ...]] <br>" .
+											"Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
+											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
+											"Some ISPs may require certain options be or not be sent. "); ?>
+										</td>
+									</tr>
+						
+									<tr style='display:none' name="show_adv_dhcp_request_options" id="show_adv_dhcp_request_options">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Request</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="adv_dhcp_request_options" type="text" class="formfld unknown" id="adv_dhcp_request_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_request_options']);?>">
+											<br>
+											<?=gettext("The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]] <br>" .
+											"Some ISPs may require certain options be or not be requested. "); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp_required_options" id="show_adv_dhcp_required_options">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Require</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="adv_dhcp_required_options" type="text" class="formfld unknown" id="adv_dhcp_required_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_required_options']);?>">
+											<br>
+											<?=gettext("The values in this field are DHCP optiions required by the client when requesting a DHCP lease.  [option [, ...]] "); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp_option_modifiers" id="show_adv_dhcp_option_modifiers">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Option</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#OPTION_MODIFIERS>Modifiers</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="adv_dhcp_option_modifiers" type="text" class="formfld unknown" id="adv_dhcp_option_modifiers" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_option_modifiers']);?>">
+											<br>
+											<?=gettext("The values in this field are DHCP optiion modifires applied to obtained DHCP lease.  [modifier option declaration [, ...]] <br> " . 
+											"modifiers: (default, supersede, prepend, append)"); ?>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp_config_file_override" id="show_adv_dhcp_config_file_override">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5>Configuration File</a> Override"); ?></td>
+										<td width="78%" class="vtable">
+ 											<input name="adv_dhcp_config_file_override_path"   type="text" class="formfld unknown" id="adv_dhcp_config_file_override_path"  size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_config_file_override_path']);?>">
+											<br>
+											<?=gettext("The value in this field is the full absolute path to a DHCP client configuration file.  [/[dirname/[.../]]filename[.ext]] <br> " .
+											"Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
+											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
+											"Some ISPs may require certain options be or not be sent. "); ?>
+										</td>
+									</tr>
+
+ 									<tr>
+ 										<td colspan="2" valign="top" height="16"></td>
+ 									</tr>
+
+									<script type="text/javascript">
+										function show_adv_dhcp_config(T) {
+
+											if (T.checked) T.value = "Selected";
+											else T.value = "";
+
+											     if (document.iform.adv_dhcp_config_file_override.checked)	show_hide_adv_dhcp('none', 'none', '');
+											else if (document.iform.adv_dhcp_config_advanced.checked)	show_hide_adv_dhcp('', '', 'none');
+											else 									show_hide_adv_dhcp('', 'none', 'none');
+										}
+
+										function show_hide_adv_dhcp(basic, advanced, override) {
+
+											document.getElementById("show_basic_dhcphostname").style.display = basic;
+											document.getElementById("show_basic_dhcpalias-address").style.display = basic;
+
+											document.getElementById("show_adv_dhcp_pt_timeout").style.display = advanced;
+											document.getElementById("show_adv_dhcp_send_options").style.display = advanced;
+											document.getElementById("show_adv_dhcp_request_options").style.display = advanced;
+											document.getElementById("show_adv_dhcp_required_options").style.display = advanced;
+											document.getElementById("show_adv_dhcp_option_modifiers").style.display = advanced;
+
+											document.getElementById("show_adv_dhcp_config_file_override").style.display = override;
+										}
+
+										<!-- Set the adv_dhcp_config_advanced checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp_config_advanced']);?>" == "Selected") document.iform.adv_dhcp_config_advanced.checked = true;
+										show_adv_dhcp_config(document.iform.adv_dhcp_config_advanced);
+
+										<!-- Set the adv_dhcp_config_file_override checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp_config_file_override']);?>" == "Selected") document.iform.adv_dhcp_config_file_override.checked = true;
+										show_adv_dhcp_config(document.iform.adv_dhcp_config_file_override);
+									</script>
+
 								</table>
 							</td>
 						</tr>
@@ -1725,10 +2042,15 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP6 client configuration"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP6 client configuration &nbsp &nbsp " .
+										' <input name="adv_dhcp6_config_advanced" type="checkbox" id="adv_dhcp6_config_advanced" value="" onClick="show_adv_dhcp6_config(this)";> ' .
+										" Advanced &nbsp &nbsp " .
+										' <input name="adv_dhcp6_config_file_override" type="checkbox" id="adv_dhcp6_config_file_override" value="" onClick="show_adv_dhcp6_config(this)";> ' .
+										" Config File Override &nbsp &nbsp "); ?>
+										</td>
 									</tr>
 									<!--- Leave commented out for now
-									<tr>
+									<tr style='display:none' name="basicdhcp6_show_dhcp6_duid" id="basicdhcp6_show_dhcp6_duid">
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Unique Identifier (DUID)"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcp6-duid" type="text" class="formfld unknown" id="dhcp6-duid" size="40" value="<?=htmlspecialchars($pconfig['dhcp6-duid']);?>">
@@ -1744,7 +2066,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
-									<tr>
+									<tr style='display:none' name="basicdhcp6_show_dhcp6_prefix_delegation_size" id="basicdhcp6_show_dhcp6_prefix_delegation_size">
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation size"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="dhcp6-ia-pd-len" class="formselect" id="dhcp6-ia-pd-len">
@@ -1761,9 +2083,192 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
+
+									<tr style='display:none' name="show_adv_dhcp6_interface_statement" id="show_adv_dhcp6_interface_statement">
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Interface</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?>
+											<br><br>
+											<input name="adv_dhcp6_interface_statement_information_only_enable" type="checkbox" id="adv_dhcp6_interface_statement_information_only_enable" value="" onClick="show_adv_dhcp6_config(this)";>
+											<?=gettext("Information Only"); ?>
+										</td>
+										<td width="78%" class="vtable">
+											<?=gettext("Send Options"); ?>
+											<input name="adv_dhcp6_interface_statement_send_options" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_send_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_send_options']);?>">
+											<?=gettext("The values in this field are DHCP send options to be sent when requesting a DHCP lease.  [option declaration [, ...]] <br>" .
+											"Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
+											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
+											"Some DHCP services may require certain options be or not be sent. "); ?>
+											<br>
+											<br>
+											<?=gettext("Request Options"); ?>
+											<input name="adv_dhcp6_interface_statement_request_options" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_request_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_request_options']);?>">
+											<br>
+											<?=gettext("The values in this field are DHCP request options to be sent when requesting a DHCP lease.  [option [, ...]] <br>" .
+											"Some DHCP services may require certain options be or not be requested. "); ?>
+											<br>
+											<br>
+											<?=gettext("Script"); ?>
+											<input name="adv_dhcp6_interface_statement_script" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_script" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_script']);?>">
+											<br>
+											<?=gettext("The value in this field is the absolute path to a script invoked on certain conditions including when a reply message is received. <br>" .
+											"[/[dirname/[.../]]filename[.ext]] "); ?>
+										</td>
 									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp6_id_assoc_statement" id="show_adv_dhcp6_id_assoc_statement">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Identity Association</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="78%" class="vtable">
+
+											<input name="adv_dhcp6_id_assoc_statement_address_enable" type="checkbox" id="adv_dhcp6_id_assoc_statement_address_enable" value="" onClick="show_adv_dhcp6_config(this)";>
+											<?=gettext("Non-Temporary Address Allocation"); ?>
+											<div style='display:none'  name="show_adv_dhcp6_id_assoc_statement_address" id="show_adv_dhcp6_id_assoc_statement_address">
+											<?=gettext("id-assoc na"); ?>
+											<?=gettext("<i>ID</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_address_id" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_address_id" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address_id']);?>">
+											<br>
+											<?=gettext("Address"); ?>
+											<?=gettext("<i>ipv6-address</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_address" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_address" size="34" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address']);?>">
+											<?=gettext("<i>pltime</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_address_pltime" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_address_pltime" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address_pltime']);?>">
+											<?=gettext("<i>vltime</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_address_vltime" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_address_vltime" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address_vltime']);?>">
+											</div>
+											<hr>
+
+											<input name="adv_dhcp6_id_assoc_statement_prefix_enable" type="checkbox" id="adv_dhcp6_id_assoc_statement_prefix_enable" value="" onClick="show_adv_dhcp6_config(this)";>
+											<?=gettext("Prefix Delegation"); ?>
+											<div style='display:none'  name="show_adv_dhcp6_id_assoc_statement_prefix" id="show_adv_dhcp6_id_assoc_statement_prefix">
+											<?=gettext("id-assoc pd"); ?>
+											<?=gettext("<i>ID</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_prefix_id" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_prefix_id" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix_id']);?>">
+											<br>
+											<?=gettext("Prefix"); ?>
+											<?=gettext("<i>ipv6-prefix</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_prefix" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_prefix" size="37" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix']);?>">
+											<?=gettext("<i>pltime</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_prefix_pltime" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_prefix_pltime" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix_pltime']);?>">
+											<?=gettext("<i>vltime</i>"); ?>
+											<input name="adv_dhcp6_id_assoc_statement_prefix_vltime" type="text" class="formfld unknown" id="adv_dhcp6_id_assoc_statement_prefix_vltime" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime']);?>">
+											</div>
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp6_prefix_interface_statement" id="show_adv_dhcp6_prefix_interface_statement">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Prefix Interface</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<?=gettext("Prefix Interface "); ?>
+											<?=gettext("<i>sla-id</i>"); ?>
+											<input name="adv_dhcp6_prefix_interface_statement_sla_id" type="text" class="formfld unknown" id="adv_dhcp6_prefix_interface_statement_sla_id" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_prefix_interface_statement_sla_id']);?>">
+											<?=gettext("<i>sla-len</i>"); ?>
+											<input name="adv_dhcp6_prefix_interface_statement_sla_len" type="text" class="formfld unknown" id="adv_dhcp6_prefix_interface_statement_sla_len" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_prefix_interface_statement_sla_len']);?>">
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp6_authentication_statement" id="show_adv_dhcp6_authentication_statement">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Authentication</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<?=gettext("<i>authname</i>"); ?>
+											<input name="adv_dhcp6_authentication_statement_authname" type="text" class="formfld unknown" id="adv_dhcp6_authentication_statement_authname" size="10" value="<?=htmlspecialchars($pconfig['adv_dhcp6_authentication_statement_authname']);?>">
+											<?=gettext("<i>protocol</i>"); ?>
+											<input name="adv_dhcp6_authentication_statement_protocol" type="text" class="formfld unknown" id="adv_dhcp6_authentication_statement_protocol" size="6" value="<?=htmlspecialchars($pconfig['adv_dhcp6_authentication_statement_protocol']);?>">
+											<?=gettext("<i>algorithm</i>"); ?>
+											<input name="adv_dhcp6_authentication_statement_algorithm" type="text" class="formfld unknown" id="adv_dhcp6_authentication_statement_algorithm" size="8" value="<?=htmlspecialchars($pconfig['adv_dhcp6_authentication_statement_algorithm']);?>">
+											<?=gettext("<i>rdm</i>"); ?>
+											<input name="adv_dhcp6_authentication_statement_rdm" type="text" class="formfld unknown" id="adv_dhcp6_authentication_statement_rdm" size="9" value="<?=htmlspecialchars($pconfig['adv_dhcp6_authentication_statement_rdm']);?>">
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp6_key_info_statement" id="show_adv_dhcp6_key_info_statement">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Keyinfo</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="78%" class="vtable">
+											<?=gettext("<i>keyname</i>"); ?>
+											<input name="adv_dhcp6_key_info_statement_keyname" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_keyname" size="27" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_keyname']);?>">
+											<?=gettext("<i>realm</i>"); ?>
+											<input name="adv_dhcp6_key_info_statement_realm" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_realm" size="37" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_realm']);?>">
+											<br>
+											<?=gettext("<i>keyid</i>"); ?>
+											<input name="adv_dhcp6_key_info_statement_keyid" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_keyid" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_keyid']);?>">
+											<?=gettext("<i>secret</i>"); ?>
+											<input name="adv_dhcp6_key_info_statement_secret" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_secret" size="36" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_secret']);?>">
+											<?=gettext("<i>expire</i>"); ?>
+											<input name="adv_dhcp6_key_info_statement_expire" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_expire" size="15" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_expire']);?>">
+										</td>
+									</tr>
+
+									<tr style='display:none' name="show_adv_dhcp6_config_file_override" id="show_adv_dhcp6_config_file_override">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Configuration File</a> Override"); ?></td>
+										<td width="78%" class="vtable">
+ 											<input name="adv_dhcp6_config_file_override_path"   type="text" class="formfld unknown" id="adv_dhcp6_config_file_override_path"  size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override_path']);?>">
+											<br>
+											<?=gettext("The value in this field is the full absolute path to a DHCP client configuration file.  [/[dirname/[.../]]filename[.ext]] <br> " .
+											"Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
+											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
+											"Some ISPs may require certain options be or not be sent. "); ?>
+										</td>
+									</tr>
+
+ 									<tr>
+ 										<td colspan="2" valign="top" height="16"></td>
+ 									</tr>
+
+									<script type="text/javascript">
+										function show_adv_dhcp6_config(T) {
+
+											if (T.checked) T.value = "Selected";
+											else T.value = "";
+
+											     if (document.iform.adv_dhcp6_config_file_override.checked)	show_hide_adv_dhcp6('none', 'none', ''    );
+											else if (document.iform.adv_dhcp6_config_advanced.checked)		show_hide_adv_dhcp6('none', '',     'none');
+											else 															show_hide_adv_dhcp6('',     'none', 'none');
+										}
+
+										function show_hide_adv_dhcp6(basic, advanced, override) {
+
+											document.getElementById("basicdhcp6_show_dhcp6_prefix_delegation_size").style.display = basic;
+
+											document.getElementById("show_adv_dhcp6_interface_statement").style.display = advanced;
+											document.getElementById("show_adv_dhcp6_id_assoc_statement").style.display = advanced;
+
+											document.getElementById("show_adv_dhcp6_id_assoc_statement_address").style.display = 'none';
+											if (document.iform.adv_dhcp6_id_assoc_statement_address_enable.checked)  {
+												document.getElementById("show_adv_dhcp6_id_assoc_statement_address").style.display = advanced;
+											}
+
+											document.getElementById("show_adv_dhcp6_id_assoc_statement_prefix").style.display = 'none';
+											document.getElementById("show_adv_dhcp6_prefix_interface_statement").style.display = 'none';
+											if (document.iform.adv_dhcp6_id_assoc_statement_prefix_enable.checked)  {
+												document.getElementById("show_adv_dhcp6_id_assoc_statement_prefix").style.display = advanced;
+												document.getElementById("show_adv_dhcp6_prefix_interface_statement").style.display = advanced;
+											}
+
+											document.getElementById("show_adv_dhcp6_authentication_statement").style.display = advanced;
+											document.getElementById("show_adv_dhcp6_key_info_statement").style.display = advanced;
+
+											document.getElementById("show_adv_dhcp6_config_file_override").style.display = override;
+										}
+
+										<!-- Set the adv_dhcp6_config_advanced checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp6_config_advanced']);?>" == "Selected") document.iform.adv_dhcp6_config_advanced.checked = true;
+										show_adv_dhcp6_config(document.iform.adv_dhcp6_config_advanced);
+
+										<!-- Set the adv_dhcp6_config_file_override checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override']);?>" == "Selected") document.iform.adv_dhcp6_config_file_override.checked = true;
+										show_adv_dhcp6_config(document.iform.adv_dhcp6_config_file_override);
+
+										<!-- Set the adv_dhcp6_interface_statement_information_only_enable checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_information_only_enable']);?>" == "Selected") document.iform.adv_dhcp6_interface_statement_information_only_enable.checked = true;
+										show_adv_dhcp6_config(document.iform.adv_dhcp6_interface_statement_information_only_enable);
+
+										<!-- Set the adv_dhcp6_id_assoc_statement_address_enable checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_address_enable']);?>" == "Selected") document.iform.adv_dhcp6_id_assoc_statement_address_enable.checked = true;
+										show_adv_dhcp6_config(document.iform.adv_dhcp6_id_assoc_statement_address_enable);
+
+										<!-- Set the adv_dhcp6_id_assoc_statement_prefix_enable checkbox from saved config -->
+										if ("<?=htmlspecialchars($pconfig['adv_dhcp6_id_assoc_statement_prefix_enable']);?>" == "Selected") document.iform.adv_dhcp6_id_assoc_statement_prefix_enable.checked = true;
+										show_adv_dhcp6_config(document.iform.adv_dhcp6_id_assoc_statement_prefix_enable);
+									</script>
+
 								</table>
 							</td>
 						</tr>

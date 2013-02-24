@@ -3382,6 +3382,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 			$dhcp6cconf .= "};\n";
 		}
 	}
+
+	// DHCP6 Config File Advanced
+	if ($wancfg['adv_dhcp6_config_advanced']) { $dhcp6cconf = DHCP6_Config_File_Advanced($interface, $wancfg, $wanif); }
+
+	// DHCP6 Config File Override
+	if ($wancfg['adv_dhcp6_config_file_override']) { $dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif); }
+
 	/* wide-dhcp6c works for now. */
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}.conf", $dhcp6cconf)) {
 		printf("Error: cannot open dhcp6c_{$interface}.conf in interface_dhcpv6_configure() for writing.\n");
@@ -3439,6 +3446,163 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	return 0;
 }
 
+function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
+	global $g;
+
+	$send_options = "";
+	if ($wancfg['adv_dhcp6_interface_statement_send_options'] != '') {
+		$options = split(",", $wancfg['adv_dhcp6_interface_statement_send_options']);
+		foreach ($options as $option) {
+			$send_options .= "\tsend " . trim($option) . ";\n";
+		}
+	}
+
+	$request_options = "";
+	if ($wancfg['adv_dhcp6_interface_statement_request_options'] != '') {
+		$options = split(",", $wancfg['adv_dhcp6_interface_statement_request_options']);
+		foreach ($options as $option) {
+			$request_options .= "\trequest " . trim($option) . ";\n";
+		}
+	}
+
+	$information_only = "";
+	if ($wancfg['adv_dhcp6_interface_statement_information_only_enable'] != '') 
+		$information_only = "\tinformation-only;\n";
+
+	$script = "\tscript \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\";\n";
+	if ($wancfg['adv_dhcp6_interface_statement_script'] != '')
+		$script = "\tscript \"{$wancfg['adv_dhcp6_interface_statement_script']}\";\n";
+
+	$interface_statement  = "interface";
+	$interface_statement .= " {$wanif}";
+	$interface_statement .= " {\n";
+	$interface_statement .= "$send_options";
+	$interface_statement .= "$request_options";
+	$interface_statement .= "$information_only";
+	$interface_statement .= "$script";
+	$interface_statement .= "};\n";
+
+	$id_assoc_statement_address = "";
+	if ($wancfg['adv_dhcp6_id_assoc_statement_address_enable'] != '') {
+		$id_assoc_statement_address .= "id-assoc";
+		$id_assoc_statement_address .= " na";
+		if (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_address_id'])) 
+			$id_assoc_statement_address .= " {$wancfg['adv_dhcp6_id_assoc_statement_address_id']}";
+		$id_assoc_statement_address .= " { ";
+
+		if ( ($wancfg['adv_dhcp6_id_assoc_statement_address'] != '') && 
+			 (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_address_pltime']) || 
+			 ($wancfg['adv_dhcp6_id_assoc_statement_address_pltime'] == 'infinity')) ) {
+			$id_assoc_statement_address .= "\n\taddress";
+			$id_assoc_statement_address .= " {$wancfg['adv_dhcp6_id_assoc_statement_address']}";
+			$id_assoc_statement_address .= " {$wancfg['adv_dhcp6_id_assoc_statement_address_pltime']}";
+			if ( (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_address_vltime'])) || 
+							($wancfg['adv_dhcp6_id_assoc_statement_address_vltime'] == 'infinity') ) 
+				$id_assoc_statement_address .= " {$wancfg['adv_dhcp6_id_assoc_statement_address_vltime']}";
+			$id_assoc_statement_address .= ";\n";
+		}
+
+		$id_assoc_statement_address  .= "};\n";
+	}
+
+	$id_assoc_statement_prefix = "";
+	if ($wancfg['adv_dhcp6_id_assoc_statement_prefix_enable'] != '') {
+		$id_assoc_statement_prefix .= "id-assoc";
+		$id_assoc_statement_prefix .= " pd";
+		if (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_prefix_id'])) 
+			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix_id']}";
+		$id_assoc_statement_prefix .= " { ";
+
+		if ( ($wancfg['adv_dhcp6_id_assoc_statement_prefix'] != '') && 
+			 (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime']) || 
+			 ($wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime'] == 'infinity')) ) {
+			$id_assoc_statement_prefix .= "\n\tprefix";
+			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix']}";
+			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix_pltime']}";
+			if ( (is_numeric($wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'])) || 
+						  ($wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime'] == 'infinity') ) 
+				$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_id_assoc_statement_prefix_vltime']}";
+			$id_assoc_statement_prefix .= ";";
+		}
+
+		if (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) {
+			$id_assoc_statement_prefix .= "\n\tprefix-interface";
+			$id_assoc_statement_prefix .= " {$wanif}";
+			$id_assoc_statement_prefix .= " {\n";
+			$id_assoc_statement_prefix .= "\t\tsla-id {$wancfg['adv_dhcp6_prefix_interface_statement_sla_id']};\n";
+			if ( ($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] >= 0) && 
+				 ($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] <= 128) ) 
+				 $id_assoc_statement_prefix .= "\t\tsla-len {$wancfg['adv_dhcp6_prefix_interface_statement_sla_len']};\n";
+			$id_assoc_statement_prefix .= "\t};";
+		}
+
+		if ( ($wancfg['adv_dhcp6_id_assoc_statement_prefix'] != '') || 
+			 (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) ) { 
+			$id_assoc_statement_prefix .= "\n";
+		}
+
+		$id_assoc_statement_prefix  .= "};\n";
+	}
+
+	$authentication_statement = "";
+	if ( ($wancfg['adv_dhcp6_authentication_statement_authname'] != '') && 
+		 ($wancfg['adv_dhcp6_authentication_statement_protocol'] == 'delayed') ) {
+		$authentication_statement .= "authentication";
+		$authentication_statement .= " {$wancfg['adv_dhcp6_authentication_statement_authname']}";
+		$authentication_statement .= " {\n";
+		$authentication_statement .= "\tprotocol {$wancfg['adv_dhcp6_authentication_statement_protocol']};\n";
+		if (preg_match("/(hmac(-)?md5)||(HMAC(-)?MD5)/", $wancfg['adv_dhcp6_authentication_statement_algorithm'])) 
+			$authentication_statement .= "\talgorithm {$wancfg['adv_dhcp6_authentication_statement_algorithm']};\n";
+		if ($wancfg['adv_dhcp6_authentication_statement_rdm'] == 'monocounter') 
+			$authentication_statement .= "\trdm {$wancfg['adv_dhcp6_authentication_statement_rdm']};\n";
+		$authentication_statement .= "};\n";
+	}
+
+	$key_info_statement = "";
+	if ( ($wancfg['adv_dhcp6_key_info_statement_keyname'] != '') && 
+		 ($wancfg['adv_dhcp6_key_info_statement_realm'] != '') && 
+		 (is_numeric($wancfg['adv_dhcp6_key_info_statement_keyid'])) && 
+		 ($wancfg['adv_dhcp6_key_info_statement_secret'] != '') ) {
+		$key_info_statement .= "keyinfo";
+		$key_info_statement .= " {$wancfg['adv_dhcp6_key_info_statement_keyname']}";
+		$key_info_statement .= " {\n";
+		$key_info_statement .= "\trealm \"{$wancfg['adv_dhcp6_key_info_statement_realm']}\";\n";
+		$key_info_statement .= "\tkeyid {$wancfg['adv_dhcp6_key_info_statement_keyid']};\n";
+		$key_info_statement .= "\tsecret \"{$wancfg['adv_dhcp6_key_info_statement_secret']}\";\n";
+		if (preg_match("/((([0-9]{4}-)?[0-9]{2}[0-9]{2} )?[0-9]{2}:[0-9]{2})||(foreever)/", $wancfg['adv_dhcp6_key_info_statement_expire'])) 
+			$key_info_statement .= "\texpire \"{$wancfg['adv_dhcp6_key_info_statement_expire']}\";\n";
+		$key_info_statement .= "};\n";
+	}
+
+	$dhcp6cconf  = $interface_statement;
+	$dhcp6cconf .= $id_assoc_statement_address;
+	$dhcp6cconf .= $id_assoc_statement_prefix;
+	$dhcp6cconf .= $authentication_statement;
+	$dhcp6cconf .= $key_info_statement;
+
+	$dhcp6cconf = DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+
+	return $dhcp6cconf;
+}
+
+
+function DHCP6_Config_File_Override($wancfg, $wanif) {
+
+	$dhcp6cconf = file_get_contents($wancfg['adv_dhcp6_config_file_override_path']);
+	$dhcp6cconf = DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+
+	return $dhcp6cconf;
+}
+
+
+function DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf) {
+
+	$dhcp6cconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+
+	return $dhcp6cconf;
+}
+
+
 function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
@@ -3480,6 +3644,9 @@ initial-interval 1;
 
 EOD;
 
+	// DHCP Config File Advanced
+	if ($wancfg['adv_dhcp_config_advanced']) { $dhclientconf = DHCP_Config_File_Advanced($interface, $wancfg, $wanif); }
+
 if(is_ipaddr($wancfg['alias-address'])) {
 	$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
 	$dhclientconf .= <<<EOD
@@ -3491,6 +3658,10 @@ alias {
 
 EOD;
 }
+
+	// DHCP Config File Override
+	if ($wancfg['adv_dhcp_config_file_override']) { $dhclientconf = DHCP_Config_File_Override($wancfg, $wanif); }
+
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
@@ -3504,6 +3675,135 @@ EOD;
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
+}
+
+function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
+
+	$hostname = "";
+	if ($wancfg['dhcphostname'] != '') {
+		$hostname = "send host-name \"{$wancfg['dhcphostname']}\";\n";
+	}
+
+	/* DHCP Protocol Timings */
+	$protocol_timings = array ('adv_dhcp_pt_timeout' => "timeout", 'adv_dhcp_pt_retry' => "retry", 'adv_dhcp_pt_select_timeout' => "select-timeout", 'adv_dhcp_pt_reboot' => "reboot", 'adv_dhcp_pt_backoff_cutoff' => "backoff-cutoff", 'adv_dhcp_pt_initial_interval' => "initial-interval");
+	foreach ($protocol_timings as $Protocol_Timing => $PT_Name) {
+		$pt_variable = "{$Protocol_Timing}";
+		${$pt_variable} = "";
+		if ($wancfg[$Protocol_Timing] != "") {
+			${$pt_variable} = "{$PT_Name} {$wancfg[$Protocol_Timing]};\n";
+		}
+	}
+
+	$send_options = "";
+	if ($wancfg['adv_dhcp_send_options'] != '') {
+		$options = split(",", $wancfg['adv_dhcp_send_options']);
+		foreach ($options as $option) {
+			$send_options .= "\tsend " . trim($option) . ";\n";
+		}
+	}
+
+	$request_options = "";
+	if ($wancfg['adv_dhcp_request_options'] != '') {
+		$request_options = "\trequest {$wancfg['adv_dhcp_request_options']};\n";
+	}
+
+	$required_options = "";
+	if ($wancfg['adv_dhcp_required_options'] != '') {
+		$required_options = "\trequired {$wancfg['adv_dhcp_required_options']};\n";
+	}
+
+	$option_modifiers = "";
+	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
+		$modifiers = split(",", $wancfg['adv_dhcp_option_modifiers']);
+		foreach ($modifiers as $modifier) {
+			$option_modifiers .= "\t" . trim($modifier) . ";\n";
+		}
+	}
+
+ 	$dhclientconf  = "interface \"{$wanif}\" {\n";
+ 	$dhclientconf .= "\n";
+ 	$dhclientconf .= "# DHCP Protocol Timing Values\n";
+ 	$dhclientconf .= "{$adv_dhcp_pt_timeout}";
+ 	$dhclientconf .= "{$adv_dhcp_pt_retry}";
+ 	$dhclientconf .= "{$adv_dhcp_pt_select_timeout}";
+ 	$dhclientconf .= "{$adv_dhcp_pt_reboot}";
+ 	$dhclientconf .= "{$adv_dhcp_pt_backoff_cutoff}";
+ 	$dhclientconf .= "{$adv_dhcp_pt_initial_interval}";
+ 	$dhclientconf .= "\n";
+ 	$dhclientconf .= "# DHCP Protocol Options";
+ 	$dhclientconf .= "{$hostname}";
+ 	$dhclientconf .= "{$send_options}";
+ 	$dhclientconf .= "{$request_options}";
+ 	$dhclientconf .= "{$required_options}";
+ 	$dhclientconf .= "{$option_modifiers}";
+ 	$dhclientconf .= "\n";
+ 	$dhclientconf .= "\tscript \"/sbin/dhclient-script\";\n";
+ 	$dhclientconf .= "}\n";
+
+	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+
+	return $dhclientconf;
+}
+
+
+function DHCP_Config_File_Override($wancfg, $wanif) {
+
+	$dhclientconf = file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
+	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
+
+	return $dhclientconf;
+}
+
+
+function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
+
+	/* Apply Interface Substitutions */
+	$dhclientconf = str_replace("{interface}", "{$wanif}", $dhclientconf);
+
+	/* Apply Hostname Substitutions */
+	$dhclientconf = str_replace("{hostname}", $wancfg['dhcphostname'], $dhclientconf);
+
+	/* Arrays of MAC Address Types, Cases, Delimiters */
+	/* ASCII or HEX, Upper or Lower Case, Various Delimiters (none, space, colon, hyphen, period) */
+	$various_mac_types      = array("mac_addr_ascii", "mac_addr_hex");
+	$various_mac_cases      = array("U", "L");
+	$various_mac_delimiters = array("", " ", ":", "-", ".");
+
+	/* Apply MAC Address Substitutions */
+	foreach ($various_mac_types as $various_mac_type) {
+		foreach ($various_mac_cases as $various_mac_case) {
+			foreach ($various_mac_delimiters as $various_mac_delimiter) {
+
+				$res = stripos($dhclientconf, $various_mac_type . $various_mac_case . $various_mac_delimiter);
+				if ($res !== false) {
+
+					/* Get MAC Address as ASCII String With Colon (:) Celimiters */
+					if ("$various_mac_case" == "U") $dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
+					if ("$various_mac_case" == "L") $dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
+
+					if ("$various_mac_type" == "mac_addr_hex") {
+						/* Convert MAC ascii string to HEX with colon (:) delimiters. */
+						$dhcpclientconf_mac = str_replace(":", "", $dhcpclientconf_mac);
+						$dhcpclientconf_mac_hex = "";
+						$delimiter = "";
+						for($i = 0; $i < strlen($dhcpclientconf_mac); $i++) {
+							$dhcpclientconf_mac_hex .= $delimiter. bin2hex($dhcpclientconf_mac[$i]);
+							$delimiter = ":";
+						}
+						$dhcpclientconf_mac = $dhcpclientconf_mac_hex;
+					}
+
+					/* MAC Address Delimiter Substitutions */
+					$dhcpclientconf_mac = str_replace(":", $various_mac_delimiter, $dhcpclientconf_mac);
+
+					/* Apply MAC Address Substitutions */
+					$dhclientconf = str_replace("{" . $various_mac_type . $various_mac_case . $various_mac_delimiter . "}", $dhcpclientconf_mac, $dhclientconf);
+				}
+			}
+		}
+	}
+
+	return $dhclientconf;
 }
 
 function interfaces_group_setup() {

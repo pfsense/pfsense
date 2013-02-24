@@ -61,7 +61,7 @@ $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 function rrd_data_xml() {
 	global $rrddbpath;
 	global $rrdtool;
-	
+
 	$result = "\t<rrddata>\n";
 	$rrd_files = glob("{$rrddbpath}/*.rrd");
 	$xml_files = array();
@@ -176,7 +176,7 @@ function check_and_returnif_section_exists($section) {
 
 function spit_out_select_items($name, $showall) {
 	global $config;
-	
+
 	$areas = array("aliases" => gettext("Aliases"),
 		       "captiveportal" => gettext("Captive Portal"),
 		       "voucher" => gettext("Captive Portal Vouchers"),
@@ -203,7 +203,7 @@ function spit_out_select_items($name, $showall) {
 
 	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
-	
+
 	if($showall == true)
 		foreach($areas as $area => $areaname)
 			$select .= "<option value='{$area}'>{$areaname}</option>\n";
@@ -225,18 +225,18 @@ function spit_out_select_items($name, $showall) {
 			</script>
 END_SCRIPT_BLOCK;
 	}
-	
+
 	echo $select;
-	
+
 }
 
 if ($_POST['apply']) {
-        ob_flush();
-        flush();
+	ob_flush();
+	flush();
 	conf_mount_rw();
 	clear_subsystem_dirty("restore");
 	conf_mount_ro();
-        exit;
+	exit;
 }
 
 if ($_POST) {
@@ -251,32 +251,32 @@ if ($_POST) {
 		$mode = "download";
 	else if (stristr($_POST['Submit'], gettext("Restore version")))
 		$mode = "restore_ver";
-	
+
 	if ($_POST["nopackages"] <> "")
 		$options = "nopackages";
-	
+
 	if ($_POST["ver"] <> "")
 		$ver2restore = $_POST["ver"];
-	
+
 	if ($mode) {
-		
+
 		if ($mode == "download") {
-			
+
 			if ($_POST['encrypt']) {
 				if(!$_POST['encrypt_password'] || !$_POST['encrypt_passconf'])
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
 				if($_POST['encrypt_password'] != $_POST['encrypt_passconf'])
 					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
-			
+
 			if (!$input_errors) {
-				
+
 				//$lockbckp = lock('config');
-				
+
 				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
 				$name = "config-{$host}-".date("YmdHis").".xml";
 				$data = "";
-				
+
 				if($options == "nopackages") {
 					if(!$_POST['backuparea']) {
 						/* backup entire configuration */
@@ -303,14 +303,14 @@ if ($_POST) {
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
 				}
-				
+
 				//unlock($lockbckp);
-				
+
 				if ($_POST['encrypt']) {
 					$data = encrypt_data($data, $_POST['encrypt_password']);
 					tagfile_reformat($data, $data, "config.xml");
 				}
-				
+
 				/*
 				 *  Backup RRD Data
 				 */
@@ -319,7 +319,7 @@ if ($_POST) {
 					$closing_tag = "</" . $g['xml_rootobj'] . ">";
 					$data = str_replace($closing_tag, $rrd_data_xml . $closing_tag, $data);
 				}
-				
+
 				$size = strlen($data);
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
@@ -332,31 +332,31 @@ if ($_POST) {
 					header("Cache-Control: private, must-revalidate");
 				}
 				echo $data;
-				
+
 				exit;
 			}
 		}
-		
+
 		if ($mode == "restore") {
-			
+
 			if ($_POST['decrypt']) {
 				if(!$_POST['decrypt_password'] || !$_POST['decrypt_passconf'])
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
 				if($_POST['decrypt_password'] != $_POST['decrypt_passconf'])
 					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
-			
+
 			if (!$input_errors) {
-				
+
 				if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
-					
+
 					/* read the file contents */
 					$data = file_get_contents($_FILES['conffile']['tmp_name']);
 					if(!$data) {
 						log_error(sprintf(gettext("Warning, could not read file %s"), $_FILES['conffile']['tmp_name']));
 						return 1;
 					}
-					
+
 					if ($_POST['decrypt']) {
 						if (!tagfile_deformat($data, $data, "config.xml")) {
 							$input_errors[] = gettext("The uploaded file does not appear to contain an encrypted pfsense configuration.");
@@ -364,7 +364,7 @@ if ($_POST) {
 						}
 						$data = decrypt_data($data, $_POST['decrypt_password']);
 					}
-					
+
 					if(stristr($data, "<m0n0wall>")) {
 						log_error(gettext("Upgrading m0n0wall configuration to pfsense."));
 						/* m0n0wall was found in config.  convert it. */
@@ -549,15 +549,15 @@ if ($_POST) {
 				}
 			}
 		}
-		
+
 		if ($mode == "reinstallpackages") {
-			
+
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
 			$savemsg = "Package Lock Cleared";
-                } else if ($mode == "restore_ver") {
+		} else if ($mode == "restore_ver") {
 			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
@@ -606,11 +606,11 @@ function decrypt_change() {
 
 function backuparea_change(obj) {
 	if (obj.value == "rrddata") {
-                document.getElementById("nopackages").disabled      = true;
-                document.getElementById("dotnotbackuprrd").disabled = true;
+		document.getElementById("nopackages").disabled      = true;
+		document.getElementById("dotnotbackuprrd").disabled = true;
 	} else {
-                document.getElementById("nopackages").disabled      = false;
-                document.getElementById("dotnotbackuprrd").disabled = false;
+		document.getElementById("nopackages").disabled      = false;
+		document.getElementById("dotnotbackuprrd").disabled = false;
 	}
 }
 //-->
@@ -698,8 +698,8 @@ function backuparea_change(obj) {
 				</tr>
 				<tr>
 					<td colspan="2" class="list" height="12">&nbsp;</td>
-                </tr>
-                <tr>
+				</tr>
+				<tr>
 					<td colspan="2" class="listtopic"><?=gettext("Restore configuration"); ?></td>
 				</tr>
 				<tr>

@@ -97,6 +97,8 @@
 		var $_dnsRequestIf;
 		var $_dnsRequestIfIP;
 		var $_dnsMaxCacheAgeDays;
+		var $_dnsDummyUpdateDone;
+		var $_forceUpdateNeeded;
 		
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -162,7 +164,9 @@
 			log_error("DynDNS ({$this->_dnsHost}): running get_failover_interface for {$dnsRequestIf}. found {$this->_dnsRequestIf}");
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 			$this->_dnsMaxCacheAgeDays = 25;
-
+			$this->_dnsDummyUpdateDone = false;
+			$this->_forceUpdateNeeded = $forceUpdate;
+			
 			// Ensure that we were able to lookup the IP
 			if(!is_ipaddr($this->_dnsIP)) {
 				log_error("DynDNS ({$this->_dnsHost}) There was an error trying to determine the public IP for interface - {$dnsIf}({$this->_if}). Probably interface is not a WAN interface.");
@@ -182,6 +186,7 @@
 				case 'dyndns-custom':
 				case 'dhs':
 				case 'noip':
+				case 'noip-free':
 				case 'easydns':
 				case 'hn':
 				case 'zoneedit':
@@ -198,7 +203,15 @@
 				case 'selfhost':
 				case 'he-net-tunnelbroker':
 				case 'route53':
-					$this->_update();	
+					$this->_update();
+					if($this->_dnsDummyUpdateDone == true) {
+						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
+						// Some providers (e.g. No-IP free accounts) need to have at least 1 address change every month.
+						// If the address has not changed recently, or the user did "Force Update", then the code does
+						// a dummy address change for providers like this.
+						sleep(10);
+						$this->_update();
+					}
 					break;
 				default:
 					$this->_error(6);
@@ -271,6 +284,7 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
 				case 'noip':
+				case 'noip-free':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					$server = "http://dynupdate.no-ip.com/ducupdate.php";
@@ -279,7 +293,17 @@
 						$server = $this->_dnsServer;
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
-					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&hostname=' . $this->_dnsHost.'&ip=' . $this->_dnsIP);
+					if(($this->_dnsService == "noip-free") && 
+					   ($this->_forceUpdateNeeded == true) && 
+					   ($this->_dnsDummyUpdateDone == false)) {
+						// Update the IP to a dummy value to force No-IP free accounts to see a change.
+						$iptoset = "192.168.1.1";
+						$this->_dnsDummyUpdateDone = true;
+						log_error("DynDNS ({$this->_dnsHost}): Processing dummy update on No-IP free account. IP temporarily set to " . $iptoset);
+					} else {
+						$iptoset = $this->_dnsIP;
+					}
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&hostname=' . $this->_dnsHost.'&ip=' . $iptoset);
 					break;
 				case 'easydns':
 					$needsIP = TRUE;
@@ -629,6 +653,7 @@
 				case 'dhs':
 					break;
 				case 'noip':
+				case 'noip-free':
 					list($ip,$code) = explode(":",$data);
 					switch ($code) {
 						case 0:
@@ -1061,6 +1086,7 @@
 			}
 			if (($currentTime - $cacheTime) > $maxCacheAgeSecs) {
 				$needs_updating = true;
+				$this->_forceUpdateNeeded = true;
 				$update_reason = "DynDns: More than " . $this->_dnsMaxCacheAgeDays . " days.  Updating. ";
 				$update_reason .= "{$currentTime} - {$cacheTime} > {$maxCacheAgeSecs} ";
 			}

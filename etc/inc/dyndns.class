@@ -96,6 +96,7 @@
 		var $_dnsResultMatch;
 		var $_dnsRequestIf;
 		var $_dnsRequestIfIP;
+		var $_dnsMaxCacheAgeDays;
 		
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -160,6 +161,7 @@
 			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
 			log_error("DynDNS ({$this->_dnsHost}): running get_failover_interface for {$dnsRequestIf}. found {$this->_dnsRequestIf}");
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
+			$this->_dnsMaxCacheAgeDays = 25;
 
 			// Ensure that we were able to lookup the IP
 			if(!is_ipaddr($this->_dnsIP)) {
@@ -997,7 +999,7 @@
 					$status = "Route 53: (Error) Invalid TTL";
 					break;  
 				case 10:
-					$error = 'phpDynDNS: No change in my IP address and/or 25 days has not passed. Not updating dynamic DNS entry.';
+					$error = 'phpDynDNS: No change in my IP address and/or ' . $this->_dnsMaxCacheAgeDays . ' days has not passed. Not updating dynamic DNS entry.';
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";
@@ -1047,10 +1049,8 @@
 			}
 			log_error($log_error);
 
-			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
-			 *   zoneedit, dyns, ods
-			 */
-			$time = '2160000';
+			// Convert seconds = days * hr/day * min/hr * sec/min
+			$maxCacheAgeSecs = $this->_dnsMaxCacheAgeDays * 24 * 60 * 60;
 
 			$needs_updating = FALSE;
 			/* lets determine if the item needs updating */
@@ -1059,10 +1059,10 @@
 				$update_reason = "DynDns: cacheIP != wan_ip.  Updating. ";
 				$update_reason .= "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			}
-			if (($currentTime - $cacheTime) > $time ) {
+			if (($currentTime - $cacheTime) > $maxCacheAgeSecs) {
 				$needs_updating = true;
-				$update_reason = "DynDns: More than 25 days.  Updating. ";
-				$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
+				$update_reason = "DynDns: More than " . $this->_dnsMaxCacheAgeDays . " days.  Updating. ";
+				$update_reason .= "{$currentTime} - {$cacheTime} > {$maxCacheAgeSecs} ";
 			}
 			if ($initial == true) {
 				$needs_updating = true;

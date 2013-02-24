@@ -39,6 +39,9 @@
 	pfSense_MODULE:	utils
 */
 
+define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net Tunnelbroker,SelfHost,Route 53,Custom');
+
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure() {
 	global $config, $g;
@@ -1497,6 +1500,24 @@ function services_dyndns_configure($int = "") {
 	}
 
 	return 0;
+}
+
+function dyndnsCheckIP($int) {
+	$ip_address = get_interface_ip($int);
+	if (is_private_ip($ip_address)) {
+		$hosttocheck = "checkip.dyndns.org";
+		$checkip = gethostbyname($hosttocheck);
+		$ip_ch = curl_init("http://{$checkip}");
+		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
+		$ip_result_page = curl_exec($ip_ch);
+		curl_close($ip_ch);
+		$ip_result_decoded = urldecode($ip_result_page);
+		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+		$ip_address = trim($matches[1]);
+	}
+	return $ip_address;
 }
 
 function services_dnsmasq_configure() {

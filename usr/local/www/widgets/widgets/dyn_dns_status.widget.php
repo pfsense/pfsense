@@ -44,23 +44,6 @@ if (!is_array($config['dyndnses']['dyndns']))
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-function dyndnsCheckIP($int) {
-	$ip_address = get_interface_ip($int);
-	if (is_private_ip($ip_address)) {
-		$hosttocheck = "checkip.dyndns.org";
-		$checkip = gethostbyname($hosttocheck);
-		$ip_ch = curl_init("http://{$checkip}");
-		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
-		$ip_result_page = curl_exec($ip_ch);
-		curl_close($ip_ch);
-		$ip_result_decoded = urldecode($ip_result_page);
-		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
-		$ip_address = trim($matches[1]);
-	}
-	return $ip_address;
-}
 ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -97,8 +80,8 @@ function dyndnsCheckIP($int) {
 		</td>
 		<td class="listlr">
 		<?php
-		$types = explode(",", "DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net Tunnelbroker,SelfHost,Route 53,Custom");
-		$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom");
+		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
+		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 		for ($j = 0; $j < count($vals); $j++) 
 			if ($vals[$j] == $dyndns['type']) { 
 				if (!isset($dyndns['enable']))

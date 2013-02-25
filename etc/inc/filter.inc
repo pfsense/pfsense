@@ -128,7 +128,7 @@ function filter_delete_states_for_down_gateways() {
 
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
-                foreach ($GatewaysList as $gwname => $gateway) {
+		foreach ($GatewaysList as $gwname => $gateway) {
 			if (empty($gateway['monitor']))
 				continue;
 			if (!is_ipaddr($gateway['monitor']))
@@ -282,7 +282,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
 	mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.limits");
-	
+
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);
@@ -301,7 +301,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";
 	}
-	/* 
+	/*
 	 * check for a error while loading the rules file.	if an error has occured
 	 * then output the contents of the error to the caller
 	 */
@@ -568,7 +568,7 @@ function filter_generate_aliases() {
 	if(isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extralias = "";
-			/* 
+			/*
 			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
 			 * its quite dangerous!
 			 * $ip = find_interface_ip($aliased['address']);
@@ -641,8 +641,8 @@ function filter_generate_gateways() {
 	update_filter_reload_status(gettext("Creating gateway group item..."));
 
 	/* Lookup Gateways to be used in filter rules once */
-        $GatewaysList = return_gateways_array();
-        $GatewayGroupsList = return_gateway_groups_array();
+	$GatewaysList = return_gateways_array();
+	$GatewayGroupsList = return_gateway_groups_array();
 
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -1371,9 +1371,9 @@ function filter_nat_rules_generate() {
 			$sn = "";
 			$sn1 = "";
 			$target = alias_expand($rule['external']);
-                        if (!$target) {
-                                $natrules .= "# Unresolvable alias {$rule['target']}\n";
-                                continue;               /* unresolvable alias */
+			if (!$target) {
+				$natrules .= "# Unresolvable alias {$rule['target']}\n";
+				continue;               /* unresolvable alias */
 			}
 
 			if (!$rule['interface'])
@@ -1381,12 +1381,12 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $rule['interface'];
 			if (!isset($FilterIflist[$natif]))
-                                continue;
+				continue;
 
 			$srcaddr = filter_generate_address($rule, 'source');
-                        $dstaddr = filter_generate_address($rule, 'destination');
+			$dstaddr = filter_generate_address($rule, 'destination');
 			if(!$dstaddr)
-                                $dstaddr = $FilterIflist[$natif]['ip'];
+				$dstaddr = $FilterIflist[$natif]['ip'];
 
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
@@ -1433,10 +1433,10 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $rule['interface'];
 			if (!isset($FilterIflist[$natif]))
-                                continue;
+				continue;
 
 			$srcaddr = filter_generate_address($rule, 'source');
-                        $dstaddr = filter_generate_address($rule, 'destination');
+			$dstaddr = filter_generate_address($rule, 'destination');
 
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
@@ -1484,7 +1484,7 @@ function filter_nat_rules_generate() {
 						$remote_subnet = "any";
 					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
 						$nattype = "nat";
-					else					
+					else
 						$nattype = "binat";
 					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
@@ -2497,7 +2497,7 @@ EOD;
 
 	$ipfrules .= "\n# webConfigurator lockout\n";
 	if(!$config['system']['webgui']['port']) {
-		if($config['system']['webgui']['protocol'] == "http") 
+		if($config['system']['webgui']['protocol'] == "http")
 			$webConfiguratorlockoutport = "80";
 		else
 			$webConfiguratorlockoutport = "443";
@@ -2514,47 +2514,47 @@ EOD;
 	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
 
 	/* if captive portal is enabled, ensure that access to this port
-         * is allowed on a locked down interface
-         */
-        if(is_array($config['captiveportal'])) {
-                foreach ($config['captiveportal'] as $cpcfg) {
-                        $cpinterfaces = explode(",", $cpcfg['interface']);
-                        $cpiflist = array();
-                        $cpiplist = array();
-                        foreach ($cpinterfaces as $cpifgrp) {
-                                if(!isset($FilterIflist[$cpifgrp]))
-                                        continue;
-                                $tmpif = get_real_interface($cpifgrp);
-                                if(!empty($tmpif)) {
-                                        $cpiflist[] = "{$tmpif}";
-                                        $cpipm = get_interface_ip($cpifgrp);
-                                        if(is_ipaddr($cpipm)) {
-                                                $carpif = link_ip_to_carp_interface($cpipm);
-                                                if (!empty($carpif)) {
-                                                        $cpiflist[] = $carpif;
-                                                        $carpsif = explode(" ", $carpif);
-                                                        foreach ($carpsif as $cpcarp) {
-                                                                $carpip = find_interface_ip($cpcarp);
-                                                                if (is_ipaddr($carpip))
-                                                                $cpiplist[] = $carpip;
-                                                        }
-                                                }
-                                                $cpiplist[] = $cpipm;
-                                        }
-                                }
-                        }
-                        if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-                                $cpinterface = implode(" ", $cpiflist);
-                                $cpaddresses = implode(" ", $cpiplist);
+	 * is allowed on a locked down interface
+	 */
+	if(is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpcfg) {
+			$cpinterfaces = explode(",", $cpcfg['interface']);
+			$cpiflist = array();
+			$cpiplist = array();
+			foreach ($cpinterfaces as $cpifgrp) {
+				if(!isset($FilterIflist[$cpifgrp]))
+					continue;
+				$tmpif = get_real_interface($cpifgrp);
+				if(!empty($tmpif)) {
+					$cpiflist[] = "{$tmpif}";
+					$cpipm = get_interface_ip($cpifgrp);
+					if(is_ipaddr($cpipm)) {
+						$carpif = link_ip_to_carp_interface($cpipm);
+						if (!empty($carpif)) {
+							$cpiflist[] = $carpif;
+							$carpsif = explode(" ", $carpif);
+							foreach ($carpsif as $cpcarp) {
+								$carpip = find_interface_ip($cpcarp);
+								if (is_ipaddr($carpip))
+									$cpiplist[] = $carpip;
+							}
+						}
+						$cpiplist[] = $cpipm;
+					}
+				}
+			}
+			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+				$cpinterface = implode(" ", $cpiflist);
+				$cpaddresses = implode(" ", $cpiplist);
 				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
-                                $portalias = $listenporthttps;
-                                $portalias .= " {$listenporthttp}";
-                                $ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
-                                $ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
-                        }
-                }
-        }
+				$portalias = $listenporthttps;
+				$portalias .= " {$listenporthttp}";
+				$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
+				$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+			}
+		}
+	}
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
@@ -2746,7 +2746,7 @@ EOD;
 
 		$gw = get_interface_gateway($ifdescr);
 		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip'])) {
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip)
 					$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$vip['ip']}/{$vip['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
@@ -2766,14 +2766,14 @@ EOD;
 			break;
 		}
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6'])) {
-                	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip)
 					$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			}
 		}
 	}
-	
+
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))

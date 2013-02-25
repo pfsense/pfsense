@@ -1042,12 +1042,12 @@ function openvpn_clear_route($mode, $settings) {
 			break;
 		case 'p2p_tls':
 		case 'p2p_shared_key':
-			if (!empty($ip) && !empty($mask) && ($cidr == 30))
+			if ($cidr == 30)
 				$clear_route = true;
 			break;
 	}
 
-	if ($clear_route) {
+	if ($clear_route && !empty($ip) && !empty($mask)) {
 		list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
 		$ip_to_clear = ($mode == "server") ? $ip1 : $ip2;
 		mwexec("/sbin/route -q delete {$ip_to_clear}");

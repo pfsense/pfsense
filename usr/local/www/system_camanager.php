@@ -600,6 +600,7 @@ function method_change() {
 							$name = htmlspecialchars($ca['descr']);
 							$subj = cert_get_subject($ca['crt']);
 							$issuer = cert_get_issuer($ca['crt']);
+							list($startdate, $enddate) = cert_get_dates($ca['crt']);
 							if($subj == $issuer)
 							  $issuer_name = "<em>" . gettext("self-signed") . "</em>";
 							else
@@ -645,7 +646,20 @@ function method_change() {
 						<td class="listr"><?=$internal;?>&nbsp;</td>
 						<td class="listr"><?=$issuer_name;?>&nbsp;</td>
 						<td class="listr"><?=$certcount;?>&nbsp;</td>
-						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td class="listr"><?=$subj;?><br />
+							<table width="100%" style="font-size: 9px">
+								<tr>
+									<td width="10%">&nbsp;</td>
+									<td width="20%"><?=gettext("Valid From")?>:</td>
+									<td width="70%"><?= $startdate ?></td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td><?=gettext("Valid Until")?>:</td>
+									<td><?= $enddate ?></td>
+								</tr>
+							</table>
+						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_camanager.php?act=edit&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit CA");?>" alt="<?=gettext("edit CA");?>" width="17" height="17" border="0" />

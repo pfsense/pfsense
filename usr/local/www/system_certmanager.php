@@ -1074,6 +1074,7 @@ function internalca_change() {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
 								$purpose = cert_get_purpose($cert['crt']);
+								list($startdate, $enddate) = cert_get_dates($cert['crt']);
 								if($subj==$issuer)
 								  $caname = "<em>" . gettext("self-signed") . "</em>";
 								else
@@ -1119,7 +1120,20 @@ function internalca_change() {
 							</table>
 						</td>
 						<td class="listr"><?=$caname;?>&nbsp;</td>
-						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td class="listr"><?=$subj;?>&nbsp;<br />
+							<table width="100%" style="font-size: 9px">
+								<tr>
+									<td width="10%">&nbsp;</td>
+									<td width="20%"><?=gettext("Valid From")?>:</td>
+									<td width="70%"><?= $startdate ?></td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td><?=gettext("Valid Until")?>:</td>
+									<td><?= $enddate ?></td>
+								</tr>
+							</table>
+						</td>
 						<td class="listr">
 							<?php if (is_cert_revoked($cert)): ?>
 							<b>Revoked</b><br/>

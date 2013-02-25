@@ -1034,16 +1034,23 @@ function openvpn_clear_route($mode, $settings) {
 		return;
 	list($ip, $cidr) = explode('/', $settings['tunnel_network']);
 	$mask = gen_subnet_mask($cidr);
+	$clear_route = false;
+
 	switch($settings['mode']) {
+		case 'shared_key':
+			$clear_route = true;
+			break;
 		case 'p2p_tls':
 		case 'p2p_shared_key':
-		case 'shared_key':
-			if (!empty($ip) && !empty($mask) && ($cidr == 30)) {
-				list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
-				$ip_to_clear = ($mode == "server") ? $ip1 : $ip2;
-				mwexec("/sbin/route -q delete {$ip_to_clear}");
-			}
+			if (!empty($ip) && !empty($mask) && ($cidr == 30))
+				$clear_route = true;
 			break;
+	}
+
+	if ($clear_route) {
+		list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
+		$ip_to_clear = ($mode == "server") ? $ip1 : $ip2;
+		mwexec("/sbin/route -q delete {$ip_to_clear}");
 	}
 }
 

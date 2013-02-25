@@ -50,6 +50,7 @@ header("Pragma: no-cache"); // HTTP/1.0
 require("guiconfig.inc");
 class QueueStats {
 	public $queuename;
+	public $queuelength;	
 	public $pps;
 	public $bandwidth;
 	public $borrows;
@@ -89,15 +90,16 @@ if ($_REQUEST['getactivity']) {
 	}
 	$finscript = "";
 	foreach($statistics as $q) {
-		$packet_s = round(200 * (1 - $q->pps / $bigger_packets), 0);
+		$packet_s = round(150 * (1 - $q->pps / $bigger_packets), 0);
 		if ($packet_s < 0) {$packet_s = 0;}
 		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
-		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (200 - $packet_s) . "');";
+		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (150 - $packet_s) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps,1) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
 		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
 		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
 		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
+		$finscript .= "jQuery('#queue{$q->queuename}length').val('{$q->queuelength}');";
 	}
 	unset($statistics, $altqstats);
 	header("Content-type: text/javascript");
@@ -150,6 +152,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 		<td class="listhdr" width="1%"><?=gettext("Borrows"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Suspends"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Drops"); ?></td>
+		<td class="listhdr" width="1%"><?=gettext("Length"); ?></td>		
 	</tr>
 	<?php 
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
@@ -205,20 +208,21 @@ function processQueues($altqstats, $level, $parent_name){
 			</td>
 			<?php
 			$cpuUsage = 0;
-			echo "<td bgcolor=\"#{$row_background}\"><nobr>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><nobr>";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='absmiddle'>";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (200 - $cpuUsage) . "' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='absmiddle'> ";
 			if (is_array($q['queue'])) {
-				echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a>";
+				echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
 			}
-			echo "</nobr></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left'></td>";
+			echo " </nobr></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left'></td>";
 			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right'></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right'></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right'></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right'></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right'></td>";			
 			?>
 		</tr>
 		<?php
@@ -232,11 +236,12 @@ function statsQueues($xml){
 	$current = new QueueStats();
 	$child = new QueueStats();
 	$current->queuename = $xml['name'] . $xml['interface'];
+	$current->queuelength = $xml['qlength'];		
 	$current->pps = $xml['measured'];
 	$current->bandwidth = $xml['measuredspeedint'];
 	$current->borrows = intval($xml['borrows']);
 	$current->suspends = intval($xml['suspends']);
-	$current->drops = intval($xml['drops']);
+	$current->drops = intval($xml['droppedpkts']);
 	if (is_array($xml['queue']))
 		{
 		foreach($xml['queue'] as $q) {

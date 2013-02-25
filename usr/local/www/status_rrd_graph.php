@@ -250,7 +250,7 @@ $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 $closehead = false;
 
 /* Load all CP zones */
-if ($captiveportal) {
+if ($captiveportal && is_array($config['captiveportal'])) {
 	$cp_zones_tab_array = array();
 	foreach($config['captiveportal'] as $cpkey => $cp) {
 		if (!isset($cp['enable']))

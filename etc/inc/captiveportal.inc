@@ -370,10 +370,12 @@ EOD;
 		else {
 			/* Deactivate ipfw(4) if not needed */
 			$cpactive = false;
-			foreach ($config['captiveportal'] as $cpkey => $cp) {
-				if (isset($cp['enable'])) {
-					$cpactive = true;
-					break;
+			if (is_array($config['captiveportal'])) {
+				foreach ($config['captiveportal'] as $cpkey => $cp) {
+					if (isset($cp['enable'])) {
+						$cpactive = true;
+						break;
+					}
 				}
 			}
 			if ($cpactive === false)

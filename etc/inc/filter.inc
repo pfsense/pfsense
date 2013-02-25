@@ -2846,6 +2846,7 @@ EOD;
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		$rule_arr3 = array();
+		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn");
 		/*
 		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */
@@ -2860,7 +2861,7 @@ EOD;
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
 					$rule['ipprotocol'] = "inet6";
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
-				} else if (is_interface_group($rule['interface'])) {
+				} else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs)) {
 					$rule['ipprotocol'] = "inet";
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 					$rule['ipprotocol'] = "inet6";
@@ -2875,7 +2876,7 @@ EOD;
 			} else {
 				if (isset($rule['floating']))
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
-				else if (is_interface_group($rule['interface']))
+				else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs))
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 				else
 					$rule_arr3[] = filter_generate_user_rule_arr($rule);

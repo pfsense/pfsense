@@ -3533,6 +3533,18 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 	return;
 }
 
+function is_interface_group($if) {
+	global $config;
+
+	if (is_array($config['ifgroups']['ifgroupentry']))
+		foreach ($config['ifgroups']['ifgroupentry'] as $groupentry) {
+			if ($groupentry['ifname'] === $if)
+				return true;
+		}
+
+	return false;
+}
+
 function interface_group_add_member($interface, $groupname) {
 	$interface = get_real_interface($interface);
 	mwexec("/sbin/ifconfig {$interface} group {$groupname}", true);

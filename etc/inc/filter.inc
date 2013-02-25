@@ -2845,8 +2845,9 @@ EOD;
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
 		$rule_arr2 = array();
+		$rule_arr3 = array();
 		/*
-		 * NB: Floating rules need to be written before regular once.
+		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
@@ -2859,18 +2860,25 @@ EOD;
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
 					$rule['ipprotocol'] = "inet6";
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
-				} else {
+				} else if (is_interface_group($rule['interface'])) {
 					$rule['ipprotocol'] = "inet";
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 					$rule['ipprotocol'] = "inet6";
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+				} else {
+					$rule['ipprotocol'] = "inet";
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
+					$rule['ipprotocol'] = "inet6";
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
 				}
 				$rule['ipprotocol'] = "inet46";
 			} else {
 				if (isset($rule['floating']))
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
-				else
+				else if (is_interface_group($rule['interface']))
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+				else
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
 			}
 			if ($rule['sched'])
 				$time_based_rules = true;
@@ -2893,7 +2901,14 @@ EOD;
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
 		}
-		unset($rule_arr1, $rule_arr2);
+		foreach($rule_arr3 as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+			if (!$rule['rule'])
+				continue;
+			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+		unset($rule_arr1, $rule_arr2, $rule_arr3);
 	}
 
 	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";

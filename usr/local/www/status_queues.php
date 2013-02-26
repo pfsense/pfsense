@@ -184,15 +184,18 @@ function processQueues($altqstats, $level, $parent_name){
 	if ($gray_value > 250) $gray_value = 255;
 	$row_background = str_repeat(dechex($gray_value), 3);
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
+	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {
 		$if_name = "";
-		foreach ($if_queue_list as $oif => $real_name)
-		{
-			if ($oif == $q['interface'])
-			{
+		foreach ($if_queue_list as $oif => $real_name) {
+			if ($oif == $q['interface']) {
 				$if_name = $real_name;
 				break;
 			}
+		}
+		if ($prev_if != $q['interface']) {
+			echo "<tr><td colspan=\"8\" style=\"padding: 2px;\"><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
+			$prev_if = $q['interface'];
 		}
 		?>
 		<tr class="<?php echo $parent_name?>">
@@ -200,7 +203,7 @@ function processQueues($altqstats, $level, $parent_name){
 				<font color="#000000">
 					<?
 					if (strstr($q['name'], "root_"))
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$if_name}&action=show\">" . htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</a>";
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$if_name}&action=show\">Root queue</a>";
 					else
 						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$q['name']}&action=show\">" . htmlspecialchars($q['name']) . "</a>";
 					?>
@@ -242,8 +245,7 @@ function statsQueues($xml){
 	$current->borrows = intval($xml['borrows']);
 	$current->suspends = intval($xml['suspends']);
 	$current->drops = intval($xml['droppedpkts']);
-	if (is_array($xml['queue']))
-		{
+	if (is_array($xml['queue'])) {
 		foreach($xml['queue'] as $q) {
 			$child = statsQueues($q);
 			$current->pps += $child->pps;

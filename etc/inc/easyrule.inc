@@ -275,6 +275,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 		list($srchost, $srcmask) = explode("/", $srchost);
 	} elseif (is_specialnet($srchost)) {
 		$srcmask = 0;
+	} elseif (is_ipaddrv6($srchost)) {
+		$srcmask = 128;
 	} else {
 		$srcmask = 32;
 	}
@@ -283,6 +285,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 		list($dsthost, $dstmask) = explode("/", $dsthost);
 	} elseif (is_specialnet($dsthost)) {
 		$dstmask = 0;
+	} elseif (is_ipaddrv6($dsthost)) {
+		$dstmask = 128;
 	} else {
 		$dstmask = 32;
 	}

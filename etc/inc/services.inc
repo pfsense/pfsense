@@ -1503,8 +1503,14 @@ function services_dyndns_configure($int = "") {
 }
 
 function dyndnsCheckIP($int) {
+	global $config;
 	$ip_address = get_interface_ip($int);
 	if (is_private_ip($ip_address)) {
+		$gateways_status = return_gateways_status(true);
+		// If the gateway for this interface is down, then the external check cannot work.
+		// Avoid the long wait for the external check to timeout.
+		if (stristr($gateways_status[$config['interfaces'][$int]['gateway']]['status'],"down"))
+			return "down";
 		$hosttocheck = "checkip.dyndns.org";
 		$checkip = gethostbyname($hosttocheck);
 		$ip_ch = curl_init("http://{$checkip}");

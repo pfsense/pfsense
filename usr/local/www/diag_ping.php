@@ -61,7 +61,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$host = $_REQUEST['host'];
+		$host = trim($_REQUEST['host']);
 		$interface = $_REQUEST['interface'];
 		$count = $_POST['count'];
 		if (preg_match('/[^0-9]/', $count) )

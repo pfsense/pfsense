@@ -512,7 +512,7 @@ function ipsec_dump_sad()
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = chop(fgets($fd));
-			if (!$line)
+			if (!$line || $line[0] == " ")
 				continue;
 			if ($line == "No SAD entries.")
 				break;

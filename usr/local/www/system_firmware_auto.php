@@ -5,8 +5,8 @@
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2005 Scott Ullrich
 
-        Based originally on system_firmware.php
-        (C)2003-2004 Manuel Kasper
+	Based originally on system_firmware.php
+	(C)2003-2004 Manuel Kasper
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -54,9 +54,9 @@ if(isset($curcfg['alturl']['enable']))
 else
 	$updater_url = $g['update_url'];
 
-if($_POST['backupbeforeupgrade']) 
+if($_POST['backupbeforeupgrade'])
 	touch("/tmp/perform_full_backup.txt");
-	
+
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
 include("head.inc");
 
@@ -74,53 +74,55 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-	$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
-	$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-	if($g['hidedownloadbackup'] == false)
-		$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-	display_top_tabs($tab_array);
-?>
+		<?php
+			$tab_array = array();
+			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+			if($g['hidedownloadbackup'] == false)
+				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+			display_top_tabs($tab_array);
+		?>
 		</td>
 	</tr>
 	<tr>
-	  <td class="tabcont">
-	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
-			  <tr>
-			    <td class="tabcont">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td>
-								<center>
-								<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+		<td class="tabcont">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td class="tabcont">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td>
+									<center>
+									<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 
-								<tr>
-									<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
-									</td>
-									<td>
-									<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-										<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
-											<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-										</td>
+										<tr>
+											<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
+											</td>
+											<td>
+											<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+												<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+												<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+												</td>
+											</table>
+											</td>
+											<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+											</td>
+										</tr>
 									</table>
-								</td>
-								<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+									<br>
+									<!-- status box -->
+									<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<!-- command output box -->
+									<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
+									</center>
 								</td>
 							</tr>
 						</table>
-						<br>
-						<!-- status box -->
-						<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
-						<!-- command output box -->
-						<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
-					</center>
 					</td>
 				</tr>
-	      </table>
-		</table>
-	  </td>
+			</table>
+		</td>
 	</tr>
 </table>
 </form>
@@ -166,7 +168,7 @@ if(!$latest_version) {
 			} else {
 				$update_filename = "latest.tgz";
 			}
-			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");
 			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
@@ -210,13 +212,13 @@ if ($sigchk == 1) {
 }
 
 if ($exitstatus) {
-        update_status($sig_warning);
-        update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
-		require("fend.inc");
-        exit;
+	update_status($sig_warning);
+	update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
+	require("fend.inc");
+	exit;
 } else if ($sigchk == 2) {
-        update_status("Upgrade in progress...");
-        update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
+	update_status("Upgrade in progress...");
+	update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
 }
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {

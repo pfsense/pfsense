@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar	
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar
 	pfSense_MODULE:	firmware
 */
 
@@ -68,11 +68,11 @@ function file_is_for_platform($filename, $ul_name) {
 		if(stristr($ul_name, "nanobsd"))
 			return true;
 		else
-			return false;		
+			return false;
 	}
 	$_gb = exec("/usr/bin/tar xzf $filename -C /tmp/ etc/platform");
 	unset($_gb);
-	if(!file_exists("/tmp/etc/platform")) 
+	if(!file_exists("/tmp/etc/platform"))
 		return false;
 	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform", " \n\t\r"));
 	if ($g['platform'] == $upgrade_is_for_platform) {
@@ -83,24 +83,24 @@ function file_is_for_platform($filename, $ul_name) {
 }
 
 function file_upload_error_message($error_code) {
-    switch ($error_code) {
-        case UPLOAD_ERR_INI_SIZE:
-            return gettext('The uploaded file exceeds the upload_max_filesize directive in php.ini');
-        case UPLOAD_ERR_FORM_SIZE:
-            return gettext('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form');
-        case UPLOAD_ERR_PARTIAL:
-            return gettext('The uploaded file was only partially uploaded');
-        case UPLOAD_ERR_NO_FILE:
-            return gettext('No file was uploaded');
-        case UPLOAD_ERR_NO_TMP_DIR:
-            return gettext('Missing a temporary folder');
-        case UPLOAD_ERR_CANT_WRITE:
-            return gettext('Failed to write file to disk');
-        case UPLOAD_ERR_EXTENSION:
-            return gettext('File upload stopped by extension');
-        default:
-            return gettext('Unknown upload error');
-    }
+	switch ($error_code) {
+	case UPLOAD_ERR_INI_SIZE:
+		return gettext('The uploaded file exceeds the upload_max_filesize directive in php.ini');
+	case UPLOAD_ERR_FORM_SIZE:
+		return gettext('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form');
+	case UPLOAD_ERR_PARTIAL:
+		return gettext('The uploaded file was only partially uploaded');
+	case UPLOAD_ERR_NO_FILE:
+		return gettext('No file was uploaded');
+	case UPLOAD_ERR_NO_TMP_DIR:
+		return gettext('Missing a temporary folder');
+	case UPLOAD_ERR_CANT_WRITE:
+		return gettext('Failed to write file to disk');
+	case UPLOAD_ERR_EXTENSION:
+		return gettext('File upload stopped by extension');
+	default:
+		return gettext('Unknown upload error');
+	}
 }
 
 /* if upgrade in progress, alert user */
@@ -118,7 +118,7 @@ if(is_subsystem_dirty('firmwarelock')) {
 	exit;
 }
 
-if($_POST['backupbeforeupgrade']) 
+if($_POST['backupbeforeupgrade'])
 	touch("/tmp/perform_full_backup.txt");
 
 if ($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes)))
@@ -126,7 +126,7 @@ if ($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltyp
 
 /* Handle manual upgrade */
 if ($_POST && !is_subsystem_dirty('firmwarelock')) {
-	
+
 	unset($input_errors);
 	unset($sig_warning);
 
@@ -149,7 +149,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			clear_subsystem_dirty('firmware');
 		} else if ($mode == "upgrade") {
 			if ($_FILES['ulfile']['error'])
-			    $errortext = "(" . file_upload_error_message($_FILES['ulfile']['error']) . ")";
+				$errortext = "(" . file_upload_error_message($_FILES['ulfile']['error']) . ")";
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
 				if (file_is_for_platform($_FILES['ulfile']['tmp_name'], $_FILES['ulfile']['name']) == false && !$_POST['sig_override'])
@@ -211,7 +211,7 @@ $pgtitle = array(gettext("System"),gettext("Firmware"));
 include("head.inc");
 
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">	
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="system_firmware.php" method="post" enctype="multipart/form-data">
 <?php
 	/* Construct an upload_id for this session */
@@ -220,7 +220,7 @@ include("head.inc");
 	else
 		$upload_id = session_id();
 ?>
-<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" /> 
+<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" />
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -258,12 +258,12 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			<td>
 				<div id="mainarea">
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                	<tr>
+					<tr>
 						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
 					</tr>
 					<tr>
-		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-                  		<td width="78%" class="vtable">
+						<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+						<td width="78%" class="vtable">
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
 						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
@@ -271,24 +271,24 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							<?php printf(gettext('Click "Enable firmware upload" to begin.'),$g['firmware_update_text']);?>
 						<br/>
 						<?php else: ?>
-				  			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
 					</td>
 					</tr>
 					<tr>
-		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-                  		<td width="78%" class="vtable">
-							<?php 
-								if ($g['platform'] == "nanobsd") 
-									$type = "*.img.gz"; 
+						<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+						<td width="78%" class="vtable">
+							<?php
+								if ($g['platform'] == "nanobsd")
+									$type = "*.img.gz";
 								else
-									$type = "*.tgz"; 
-							 ?>
+									$type = "*.tgz";
+							?>
 							<strong><?=gettext("Firmware image file ($type):");?> </strong>
 							<input name="ulfile" type="file" class="formfld">
 							<br>
 							<?php
-						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
-						  			if($g['platform'] == "pfSense") { 
+								if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
+									if($g['platform'] == "pfSense") {
 										echo gettext("Please select kernel type") , ": ";
 										echo "<select name='kerneltype'>";
 										foreach($kerneltypes as $kerntype => $kerndescr) {
@@ -321,8 +321,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							</strong>
 						</span>
 						<?=gettext("DO NOT abort the firmware upgrade once it " .
-								   "has started. The firewall will reboot automatically after " .
-								   "storing the new firmware. The configuration will be maintained.");?>
+								"has started. The firewall will reboot automatically after " .
+								"storing the new firmware. The configuration will be maintained.");?>
 					</span>
 						<?php endif; ?>
 				</td>

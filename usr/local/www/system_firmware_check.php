@@ -61,54 +61,54 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-	$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
-	$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-	if($g['hidedownloadbackup'] == false)
-		$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-	display_top_tabs($tab_array);
-?>
+		<?php
+			$tab_array = array();
+			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+			if($g['hidedownloadbackup'] == false)
+				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+			display_top_tabs($tab_array);
+		?>
 		</td>
 	</tr>
 	<tr>
-	  <td class="tabcont">
-	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
-		<tr>
-		  <td>
-		      <!-- progress bar -->
-		      <center>
-							<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+		<td class="tabcont">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td>
+						<!-- progress bar -->
+						<center>
+						<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 
 							<tr>
 								<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
 								</td>
 								<td>
-								<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-									<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+									<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+										<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
 										<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-									</td>
-								</table>
-							</td>
-							<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
-							</td>
-						</tr>
-					</table>
-		      <br>
-		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
-		      </textarea>
-			  <div id='backupdiv' name='backupdiv' style='visibility:hidden'>
-			  	<br/><input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
-			  </div>
-		      </center>
- 			<p>
-			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>">
-		  </td>
-		</tr>
-	      </table>
-	  </td>
+										</td>
+									</table>
+								</td>
+								<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+								</td>
+							</tr>
+						</table>
+						<br>
+						<!-- command output box -->
+						<textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
+						</textarea>
+						<div id='backupdiv' name='backupdiv' style='visibility:hidden'>
+							<br/><input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
+						</div>
+						</center>
+						<p>
+						<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>"></center>
+					</td>
+				</tr>
+			</table>
+		</td>
 	</tr>
 </table>
 

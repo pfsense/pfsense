@@ -52,18 +52,18 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if($_POST['overwriteconfigxml']) 
+if($_POST['overwriteconfigxml'])
 	touch("/tmp/do_not_restore_config.xml");
 
-if($_GET['backupnow']) 
+if($_GET['backupnow'])
 	mwexec_bg("/etc/rc.create_full_backup");
 
 if($_GET['downloadbackup']) {
 	$filename = $_GET['downloadbackup'];
 	$path = "/root/{$filename}";
 	if(file_exists("/root/{$filename}")) {
-	    session_write_close();
-	    ob_end_clean();
+		session_write_close();
+		ob_end_clean();
 		session_cache_limiter('public');
 		//$fd = fopen("/root/{$filename}", "rb");
 		$filesize = filesize("/root/{$filename}");
@@ -74,11 +74,11 @@ if($_GET['downloadbackup']) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		header("Content-Transfer-Encoding: binary\n");
 		if($file = fopen("/root/{$filename}", 'rb')){
-	        while( (!feof($file)) && (connection_status()==0) ){
-	            print(fread($file, 1024*8));
-	            flush();
-	        }
-        	fclose($file);
+			while( (!feof($file)) && (connection_status()==0) ){
+				print(fread($file, 1024*8));
+				flush();
+			}
+			fclose($file);
 		}
 
 		exit;
@@ -175,13 +175,13 @@ include("head.inc");
 					echo "</td>";
 					echo "</tr>";
 				}
- ?>
+?>
 				<tr>
 					<td width="78%" colspan="3">
 						&nbsp;<br/>
 						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" CHECKED> do not restore config.xml.
 						<p/>
-		  				<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>">
+						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>">
 					</td>
 				</tr>
 			</table>

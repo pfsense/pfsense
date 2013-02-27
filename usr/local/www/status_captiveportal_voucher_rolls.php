@@ -99,6 +99,8 @@ include("fbegin.inc");
 					$used = voucher_used_count($rollent['number']);
 					$active = count(voucher_read_active_db($rollent['number']),$rollent['minutes']);
 					$ready = $rollent['count'] - $used;
+					/* used also count active vouchers, remove them */
+					$used = $used - $avtive;
 				?>
 				<tr>
 					<td class="listlr">

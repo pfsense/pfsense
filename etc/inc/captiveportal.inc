@@ -527,7 +527,9 @@ EOD;
 	$rulenum++;
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} pipe tablearg ip from table(3) to any in\n";
+	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(3) in\n";
 	$rulenum++;
+	$cprules .= "add {$rulenum} pipe tablearg ip from table(4) to any out\n";
 	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(4) out\n";
 	$rulenum++;
 

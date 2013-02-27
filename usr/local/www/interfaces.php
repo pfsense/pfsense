@@ -2798,8 +2798,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			}
 			hide_add_gateway_v6();
 		}
-		function save_callback(transport) {
-			var response = transport.responseText;
+		function save_callback(response) {
 			if(response) {
 				document.getElementById("addgateway").style.display = 'none';
 				hide_add_gateway();
@@ -2817,8 +2816,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			aodiv = document.getElementById('showmediaadv');
 			aodiv.style.display = "block";
 		}
-		function save_callback_v6(transport) {
-			var response_v6 = transport.responseText;
+		function save_callback_v6(response_v6) {
 			if(response_v6) {
 				document.getElementById("addgatewayv6").style.display = 'none';
 				hide_add_gateway_v6();

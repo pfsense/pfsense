@@ -100,7 +100,9 @@ include("head.inc");
 						<textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
 						</textarea>
 						<div id='backupdiv' name='backupdiv' style='visibility:hidden'>
+							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
 							<br/><input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
+							<?php endif; ?>
 						</div>
 						</center>
 						<p>

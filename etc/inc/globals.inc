@@ -64,6 +64,7 @@ $g = array(
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
 	"hidedownloadbackup" => false,
+	"hidebackupbeforeupgrade" => false,
 	"disablethemeselection" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
@@ -102,6 +103,8 @@ if(file_exists("/etc/platform")) {
 		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_HEAD/.updaters/";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 		$g['firmware_update_text']="pfSense-*.img.gz";
+		$g['hidedownloadbackup'] = true;
+		$g['hidebackupbeforeupgrade'] = true;
 
 	} else {
 		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_HEAD/.updaters/";

@@ -299,8 +299,10 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 									}
 								}
 							?>
+							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
 							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
 							<br>
+							<?php endif; ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
 							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
 						<?php endif; else: ?>

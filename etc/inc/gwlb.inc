@@ -455,24 +455,6 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					$found_defaultv6 = 1;
 				}
 			}
-			/* FIXME: Should this be enabled.
-			 * Some interface like wan might be default but have no info recorded 
-			 * the config. */
-			/* this is a fallback if all else fails and we want to get packets out @smos */
-			if (!isset($gateway['defaultgw'])) {
-				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0) && (!isset($gateway['ipprotocol']) || ($gateway['ipprotocol'] == "inet"))) {
-					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
-						$gateway['defaultgw'] = true;
-						$found_defaultv4 = 1;
-					}
-				}
-				if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
-					if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
-						$gateway['defaultgw'] = true;
-						$found_defaultv6 = 1;
-					}
-				}
-			}
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
@@ -642,6 +624,27 @@ function return_gateways_array($disabled = false, $localhost = false) {
 		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;
 		unset($gateway);
+	}
+
+	/* FIXME: Should this be enabled.
+	 * Some interface like wan might be default but have no info recorded
+	 * the config. */
+	/* this is a fallback if all else fails and we want to get packets out @smos */
+	if ($found_defaultv4 == 0 || $found_defaultv6 == 0) {
+		foreach ($gateways_arr as &$gateway) {
+			if (($gateway['friendlyiface'] == "wan") && ($found_defaultv4 == 0) && (!isset($gateway['ipprotocol']) || ($gateway['ipprotocol'] == "inet"))) {
+				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgw")) {
+					$gateway['defaultgw'] = true;
+					$found_defaultv4 = 1;
+				}
+			}
+			if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
+				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
+					$gateway['defaultgw'] = true;
+					$found_defaultv6 = 1;
+				}
+			}
+		}
 	}
 
 	if($localhost === true) {

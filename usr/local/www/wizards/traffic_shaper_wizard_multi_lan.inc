@@ -1221,12 +1221,25 @@ function apply_all_choosen_items() {
 				/* create VOIP rules */
 				$rule = array();
 				$rule['type'] = "match";
-			        //$rule['interface'] = "wan";
-				$rule['descr'] = gettext("VOIP Adapter");
+				//$rule['interface'] = "wan";
+				$rule['descr'] = gettext("Connections From Upstream SIP Server");
 				$rule['protocol'] = "udp";
 				$rule['defaultqueue'] = "qVoIP";
 				$rule['source']['address'] = $config['ezshaper']['step3']['address'];
 				$rule['destination']['any'] = TRUE;
+				$rule['floating'] = "yes";
+				$rule['wizard'] = "yes";
+				$rule['enabled'] = "on";
+				$config['filter']['rule'][] = $rule;
+
+				$rule = array();
+				$rule['type'] = "match";
+				//$rule['interface'] = "wan";
+				$rule['descr'] = gettext("Connections To Upstream SIP Server");
+				$rule['protocol'] = "udp";
+				$rule['defaultqueue'] = "qVoIP";
+				$rule['source']['any'] = TRUE;
+				$rule['destination']['address'] = $config['ezshaper']['step3']['address'];
 				$rule['floating'] = "yes";
 				$rule['wizard'] = "yes";
 				$rule['enabled'] = "on";

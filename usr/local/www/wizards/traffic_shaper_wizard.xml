@@ -115,9 +115,9 @@
 				</options>
 			</field>
 			<field>
-				<name>Address</name>
+				<name>Upstream SIP Server</name>
 				<type>inputalias</type>
-				<description>(Optional) If this is chosen, the provider field will be overridden.  This allows you to just provide the IP address of the VOIP adaptor to prioritize.  NOTE: You can also use a Firewall Alias in this location.</description>
+				<description>(Optional) If this is chosen, the provider field will be overridden.  This allows you to provide the IP address of the &lt;strong&gt;remote&lt;/strong&gt; PBX or SIP Trunk to prioritize.  &lt;br /&gt;NOTE: You can also use a Firewall Alias in this location.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>

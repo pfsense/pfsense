@@ -332,10 +332,10 @@ function step3_stepbeforeformdisplay() {
 	$voipfields[] = $field;
 
 	$field = array();
-	$field['name'] = "Address";
-	$enablefields[] = "Address";
+	$field['name'] = "Upstream SIP Server";
+	$enablefields[] = "Upstream SIP Server";
 	$field['type'] = "inputalias";
-	$field['description'] = "(Optional) If this is chosen, the provider field will be overridden. This allows you to just provide the IP address of the VOIP adaptor to prioritize. NOTE: You can also use a Firewall Alias in this location.";
+	$field['description'] = "(Optional) If this is chosen, the provider field will be overridden. This allows you to provide the IP address of the <strong>remote</strong> PBX or SIP Trunk to prioritize. <br />NOTE: You can also use a Firewall Alias in this location.";
 	$field['message'] = "IP Address field is non-blank and doesn't look like an IP address.";
 	$field['bindstofield'] = "ezshaper->step3->address";
 	$voipfields[] = $field;
@@ -1359,9 +1359,9 @@ function apply_all_choosen_items() {
 				if( is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
 					/* create VOIP rules */
 					$rule = array();
-				        $rule['type'] = "match";
+					$rule['type'] = "match";
 					//$rule['interface'] = $interfacelist;
-					$rule['descr'] = gettext("VOIP Adapter");
+					$rule['descr'] = gettext("Connections From Upstream SIP Server");
 					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['address'] = $config['ezshaper']['step3']['address'];
@@ -1370,7 +1370,19 @@ function apply_all_choosen_items() {
 					$rule['wizard'] = "yes";
 					$rule['enabled'] = "on";
 					$config['filter']['rule'][] = $rule;
-	
+
+					$rule = array();
+					$rule['type'] = "match";
+					//$rule['interface'] = $interfacelist;
+					$rule['descr'] = gettext("Connections To Upstream SIP Server");
+					$rule['protocol'] = "udp";
+					$rule['defaultqueue'] = "qVoIP";
+					$rule['source']['any'] = TRUE;
+					$rule['destination']['address'] = $config['ezshaper']['step3']['address'];
+					$rule['floating'] = "yes";
+					$rule['wizard'] = "yes";
+					$rule['enabled'] = "on";
+					$config['filter']['rule'][] = $rule;
 				} elseif( $config['ezshaper']['step3']['provider'] == "Generic" ) {
 					/* create VOIP rules */
 					$rule = array();

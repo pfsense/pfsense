@@ -97,6 +97,11 @@ if ($_GET['sort']) {
 } else {
 	$cursort = "";
 }
+if ($_GET['hostipformat']) {
+	$curhostipformat = $_GET['hostipformat'];
+} else {
+	$curhostipformat = "";
+}
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
@@ -111,11 +116,12 @@ include("head.inc");
 function updateBandwidth(){
     var hostinterface = jQuery("#if").val();
 	var sorting = jQuery("#sort").val();
-    bandwidthAjax(hostinterface, sorting);
+	var hostipformat = jQuery("#hostipformat").val();
+    bandwidthAjax(hostinterface, sorting, hostipformat);
 }
 
-function bandwidthAjax(hostinterface, sorting) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting;
+function bandwidthAjax(hostinterface, sorting, hostipformat) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&hostipformat=" + hostipformat;
 	var opt = {
 	    // Use GET
 	    type: 'get',
@@ -208,6 +214,11 @@ foreach ($ifdescrs as $ifn => $ifd) {
 	<option value="">Bandwidth In</option>
 	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
 </select>
+, Display: 
+<select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">IP Address</option>
+	<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
+</select>
 </form>
 <p>
 <div id="niftyOutter">
@@ -217,7 +228,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
     <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td class="listtopic" valign="top"><?=gettext("Host IP"); ?></td>
+                <td class="listtopic" valign="top"><?=(($curhostipformat=="hostname") ? gettext("Host Name or IP") : gettext("Host IP")); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
            </tr>

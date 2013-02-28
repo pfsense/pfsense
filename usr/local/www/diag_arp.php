@@ -321,14 +321,15 @@ $mac_man = load_mac_manufacturer_table();
 						<td class="listlr"><?=$entry['ip'];?></td>
 						<td class="listr">
 						<?php
-						$mac=$entry['mac']; 
+						$mac=trim($entry['mac']);
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 						print $mac;
 						if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 						?>
+						</td>
 						<td class="listr">
 							<?php
-							echo str_replace("Z_ ", "", $entry['dnsresolve']);
+							echo trim(str_replace("Z_ ", "", $entry['dnsresolve']));
 							?>
 						</td>
 						<td class="listr"><?=$hwif[$entry['interface']];?></td>

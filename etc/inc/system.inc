@@ -371,7 +371,7 @@ function system_routing_configure($interface = "") {
 	$foundgwv6 = false;
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
-		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
+		mwexec("/bin/rm -f {$g['tmp_path']}/*_defaultgw {$g['tmp_path']}/*_defaultgwv6", true);
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {
 				if ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {

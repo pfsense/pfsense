@@ -1884,7 +1884,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 
-									<tr style='display:none' name="show_adv_dhcp_pt_timeout" id="show_adv_dhcp_pt_timeout">
+									<tr style='display:none' name="show_adv_dhcp_protocol_timing" id="show_adv_dhcp_protocol_timing">
 										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING>Protocol Timing</a>"); ?></td>
 										<td width="48%" class="vtable">
 											Timeout: <input name="adv_dhcp_pt_timeout" type="text" class="formfld unknown" id="adv_dhcp_pt_timeout" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>" onChange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');">
@@ -1944,31 +1944,24 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 
-									<tr style='display:none' name="show_adv_dhcp_send_options" id="show_adv_dhcp_send_options">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Send</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
+									<tr style='display:none' name="show_adv_dhcp_lease_requirements_and_requests" id="show_adv_dhcp_lease_requirements_and_requests">
+										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Lease Requirements and Requests</a>"); ?></td>
 										<td width="78%" class="vtable">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Send</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?><br>
 											<input name="adv_dhcp_send_options" type="text" class="formfld unknown" id="adv_dhcp_send_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_send_options']);?>">
 											<br>
 											<?=gettext("The values in this field are DHCP options to be sent when requesting a DHCP lease.  [option declaration [, ...]] <br>" .
 											"Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
 											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
 											"Some ISPs may require certain options be or not be sent. "); ?>
-										</td>
-									</tr>
-						
-									<tr style='display:none' name="show_adv_dhcp_request_options" id="show_adv_dhcp_request_options">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Request</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
-										<td width="78%" class="vtable">
+											<hr>
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Request</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?><br>
 											<input name="adv_dhcp_request_options" type="text" class="formfld unknown" id="adv_dhcp_request_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_request_options']);?>">
 											<br>
 											<?=gettext("The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]] <br>" .
 											"Some ISPs may require certain options be or not be requested. "); ?>
-										</td>
-									</tr>
-
-									<tr style='display:none' name="show_adv_dhcp_required_options" id="show_adv_dhcp_required_options">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Require</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?></td>
-										<td width="78%" class="vtable">
+											<hr>
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Require</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?><br>
 											<input name="adv_dhcp_required_options" type="text" class="formfld unknown" id="adv_dhcp_required_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_required_options']);?>">
 											<br>
 											<?=gettext("The values in this field are DHCP optiions required by the client when requesting a DHCP lease.  [option [, ...]] "); ?>
@@ -2017,10 +2010,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											document.getElementById("show_basic_dhcphostname").style.display = basic;
 											document.getElementById("show_basic_dhcpalias-address").style.display = basic;
 
-											document.getElementById("show_adv_dhcp_pt_timeout").style.display = advanced;
-											document.getElementById("show_adv_dhcp_send_options").style.display = advanced;
-											document.getElementById("show_adv_dhcp_request_options").style.display = advanced;
-											document.getElementById("show_adv_dhcp_required_options").style.display = advanced;
+											document.getElementById("show_adv_dhcp_protocol_timing").style.display = advanced;
+											document.getElementById("show_adv_dhcp_lease_requirements_and_requests").style.display = advanced;
 											document.getElementById("show_adv_dhcp_option_modifiers").style.display = advanced;
 
 											document.getElementById("show_adv_dhcp_config_file_override").style.display = override;
@@ -2086,28 +2077,29 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' name="show_adv_dhcp6_interface_statement" id="show_adv_dhcp6_interface_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Interface</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?>
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports#Interface_statement>Interface Statement</a>"); ?>
 											<br><br>
 											<input name="adv_dhcp6_interface_statement_information_only_enable" type="checkbox" id="adv_dhcp6_interface_statement_information_only_enable" value="" onClick="show_adv_dhcp6_config(this)";>
 											<?=gettext("Information Only"); ?>
 										</td>
 										<td width="78%" class="vtable">
-											<?=gettext("Send Options"); ?>
+											<?=gettext("Send Options"); ?><br>
 											<input name="adv_dhcp6_interface_statement_send_options" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_send_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_send_options']);?>">
+											<br>
 											<?=gettext("The values in this field are DHCP send options to be sent when requesting a DHCP lease.  [option declaration [, ...]] <br>" .
 											"Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} <br>" .
 											"Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none). <br>" .
 											"Some DHCP services may require certain options be or not be sent. "); ?>
 											<br>
 											<br>
-											<?=gettext("Request Options"); ?>
+											<?=gettext("Request Options"); ?><br>
 											<input name="adv_dhcp6_interface_statement_request_options" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_request_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_request_options']);?>">
 											<br>
 											<?=gettext("The values in this field are DHCP request options to be sent when requesting a DHCP lease.  [option [, ...]] <br>" .
 											"Some DHCP services may require certain options be or not be requested. "); ?>
 											<br>
 											<br>
-											<?=gettext("Script"); ?>
+											<?=gettext("Script"); ?><br>
 											<input name="adv_dhcp6_interface_statement_script" type="text" class="formfld unknown" id="adv_dhcp6_interface_statement_script" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_interface_statement_script']);?>">
 											<br>
 											<?=gettext("The value in this field is the absolute path to a script invoked on certain conditions including when a reply message is received. <br>" .
@@ -2116,7 +2108,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_id_assoc_statement" id="show_adv_dhcp6_id_assoc_statement">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Identity Association</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports#Identity_association_statement>Identity Association Statement</a>"); ?>
+										</td>
 										<td width="78%" class="vtable">
 
 											<input name="adv_dhcp6_id_assoc_statement_address_enable" type="checkbox" id="adv_dhcp6_id_assoc_statement_address_enable" value="" onClick="show_adv_dhcp6_config(this)";>
@@ -2155,7 +2149,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_prefix_interface_statement" id="show_adv_dhcp6_prefix_interface_statement">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Prefix Interface</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports#Prefix_interface_statement>Prefix Interface Statement</a>"); ?>
+										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("Prefix Interface "); ?>
 											<?=gettext("<i>sla-id</i>"); ?>
@@ -2166,7 +2162,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_authentication_statement" id="show_adv_dhcp6_authentication_statement">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Authentication</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports#Authentication_statement>Authentication Statement</a>"); ?>
+										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>authname</i>"); ?>
 											<input name="adv_dhcp6_authentication_statement_authname" type="text" class="formfld unknown" id="adv_dhcp6_authentication_statement_authname" size="10" value="<?=htmlspecialchars($pconfig['adv_dhcp6_authentication_statement_authname']);?>">
@@ -2180,7 +2178,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_key_info_statement" id="show_adv_dhcp6_key_info_statement">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Keyinfo</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Statement</a>"); ?></td>
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports#Keyinfo_statement>Keyinfo Statement</a>"); ?>
+										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>keyname</i>"); ?>
 											<input name="adv_dhcp6_key_info_statement_keyname" type="text" class="formfld unknown" id="adv_dhcp6_key_info_statement_keyname" size="27" value="<?=htmlspecialchars($pconfig['adv_dhcp6_key_info_statement_keyname']);?>">
@@ -2197,7 +2197,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_config_file_override" id="show_adv_dhcp6_config_file_override">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Configuration File</a> Override"); ?></td>
+										<td width="22%" valign="top" class="vncell">
+											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+Ports>Configuration File</a> Override"); ?>
+										</td>
 										<td width="78%" class="vtable">
  											<input name="adv_dhcp6_config_file_override_path"   type="text" class="formfld unknown" id="adv_dhcp6_config_file_override_path"  size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override_path']);?>">
 											<br>

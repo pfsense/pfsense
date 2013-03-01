@@ -167,9 +167,16 @@ if ($_POST) {
 		break;
 	case "ipalias":
 		if (strstr($_POST['interface'], "_vip")) {
-			$parent_ip = get_interface_ip($_POST['interface']);
-			$parent_sn = get_interface_subnet($_POST['interface']);
-			if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
+			if (is_ipaddrv4($_POST['subnet'])) {
+				$parent_ip = get_interface_ip($_POST['interface']);
+				$parent_sn = get_interface_subnet($_POST['interface']);
+				$subnet = gen_subnet($parent_ip, $parent_sn);
+			} else if (is_ipaddrv6($_POST['subnet'])) {
+				$parent_ip = get_interface_ipv6($_POST['interface']);
+				$parent_sn = get_interface_subnetv6($_POST['interface']);
+				$subnet = gen_subnetv6($parent_ip, $parent_sn);
+			}
+			if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
 				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 			}

@@ -132,6 +132,22 @@ if ($_POST) {
 		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
 	}
 
+	/* ipalias and carp should not use network or broadcast address */
+	if ($_POST['mode'] == "ipalias" || $_POST['mode'] == "carp") {
+		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32") {
+			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
+			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
+		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128" ) {
+			$network_addr = gen_subnetv6($_POST['subnet'], $_POST['subnet_bits']);
+			$broadcast_addr = gen_subnetv6_max($_POST['subnet'], $_POST['subnet_bits']);
+		}
+
+		if (isset($network_addr) && $_POST['subnet'] == $network_addr)
+			$input_errors[] = gettext("You cannot use the network address for this VIP");
+		else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr)
+			$input_errors[] = gettext("You cannot use the broadcast address for this VIP");
+	}
+
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */

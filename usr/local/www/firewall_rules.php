@@ -745,7 +745,7 @@ if($_REQUEST['undodrag']) {
 					echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>";
 				} else if (isset($filterent['defaultqueue'])) {
 					$desc = $filterent['defaultqueue'];
-					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>"; }
+					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>";
 				} else
 					echo gettext("none");
 			?>

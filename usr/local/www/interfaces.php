@@ -373,6 +373,9 @@ if ($_POST['apply']) {
 		filter_configure();
 
 		enable_rrd_graphing();
+
+		if (is_subsystem_dirty('staticroutes') && (system_routing_configure() == 0))
+			clear_subsystem_dirty('staticroutes');
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 	header("Location: interfaces.php?if={$if}");

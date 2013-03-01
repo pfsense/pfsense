@@ -2735,7 +2735,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 			var defaultgw = jQuery('#defaultgw').val();
 			var url = "system_gateways_edit.php";
-			var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+			var pars = 'isAjax=true&ipprotocol=inet&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 			jQuery.ajax(
 				url,
 				{
@@ -2754,7 +2754,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			gatewayip = jQuery('#gatewayipv6').val();
 			var defaultgw = jQuery('#defaultgwv6').val();
 			var url_v6 = "system_gateways_edit.php";
-			var pars_v6 = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+			var pars_v6 = 'isAjax=true&ipprotocol=inet6&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 			jQuery.ajax(
 				url_v6,
 				{

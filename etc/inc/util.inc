@@ -1932,7 +1932,7 @@ function get_current_theme() {
 	 *  If this device is an apple ipod/iphone
 	 *  switch the theme to one that works with it.
 	 */
-	$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook");
+	$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook", "IEMobile");
 	foreach($lowres_ua as $useragent)
 		if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 			$theme = (empty($g['theme_lowres']) && (is_dir($g["www_path"].'/themes/'.$g['theme_lowres']))) ? "pfsense" : $g['theme_lowres'];

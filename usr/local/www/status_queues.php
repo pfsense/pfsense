@@ -160,8 +160,8 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php endif; ?>
 </table>
 <p>
-	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><strong><br></strong>
-	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br>
+	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br/>
+	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br/>
 	<?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
 </p>
 <script type="text/javascript">
@@ -173,6 +173,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
         jQuery("." + classname).show();}
 	}
 </script>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>
@@ -203,29 +204,29 @@ function processQueues($altqstats, $level, $parent_name){
 				<font color="#000000">
 					<?
 					if (strstr($q['name'], "root_"))
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$if_name}&action=show\">Root queue</a>";
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
 					else
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&queue={$q['name']}&action=show\">" . htmlspecialchars($q['name']) . "</a>";
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
 					?>
 				</font>
 			</td>
 			<?php
 			$cpuUsage = 0;
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><nobr>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='absmiddle'>";
-			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='absmiddle'> ";
+			echo "<td nowrap=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='middle' alt='' /> ";
 			if (is_array($q['queue'])) {
 				echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
 			}
-			echo " </nobr></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right'></td>";
-			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right'></td>";			
+			echo " </td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
+			echo "<td width=\"1%\" bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";			
 			?>
 		</tr>
 		<?php

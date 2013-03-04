@@ -2888,13 +2888,30 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			break;
 	}
 
-	if (!empty($wancfg['mtu'])) {
-		pfSense_interface_mtu($realif, $wancfg['mtu']);
-	} else {
-		$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
-		if ($mtu != get_interface_mtu($realhwif))
-			pfSense_interface_mtu($realhwif, $mtu);
+	$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
+
+	if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {
+		foreach ($config['interfaces'] as $ifdescr => $ifdata) {
+			if ($ifdata['if'] == $realhwif) {
+				if (!empty($ifdata['mtu']))
+					$mtu = $ifdata['mtu'];
+				break;
+			}
+		}
+	} else if (!empty($wancfg['mtu'])) {
+		$mtu = $wancfg['mtu'];
 	}
+
+	if ($mtu != get_interface_mtu($realhwif))
+		pfSense_interface_mtu($realhwif, $mtu);
+
+	/*
+	 * All vlans need to use the same mtu value as their parent.
+	 */
+	if (is_array($config['vlans']['vlan']))
+		foreach ($config['vlans']['vlan'] as $vlan)
+			if (($vlan['if'] == $realhwif) && (get_interface_mtu($vlan['vlanif']) != $mtu))
+				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);

@@ -92,6 +92,14 @@ if ($if == "wan" && !$wancfg['descr'])
 else if ($if == "lan" && !$wancfg['descr'])
 	$wancfg['descr'] = "LAN";
 
+$parent_vlan_if = "";
+if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {
+	$realhwif_array = get_parent_interface($wancfg['if']);
+	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
+	$realhwif = $realhwif_array[0];
+	$parent_vlan_if = convert_real_interface_to_friendly_interface_name($realhwif);
+	$wancfg['mtu'] = '';
+}
 
 foreach ($a_ppps as $pppid => $ppp) {
 	if ($wancfg['if'] == $ppp['if'])
@@ -1414,10 +1422,18 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("MTU"); ?></td>
 							<td class="vtable">
-								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>"
+									<?php if(!empty($parent_vlan_if)) print "disabled"; ?>>
 								<br>
-								<?=gettext("If you leave this field blank, the adapter's default MTU will " .
-								"be used. This is typically 1500 bytes but can vary in some circumstances."); ?>
+								<?php
+									if (empty($parent_vlan_if))
+										print gettext("If you leave this field blank, the adapter's default MTU will " .
+										"be used. This is typically 1500 bytes but can vary in some circumstances.");
+									else
+										print gettext("This interface is a VLAN and it needs to use same MTU set for " .
+										"its parent. You can change parent's MTU") . "<a href=\"interfaces.php?if={$parent_vlan_if}\"> " .
+										gettext("here") . ".</a>";
+								?>
 							</td>
 						</tr>
 						<tr>

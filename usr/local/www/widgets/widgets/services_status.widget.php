@@ -1,6 +1,6 @@
 <?php
 /*
-    services_status.php
+    services_status.widget.php
     Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 
@@ -72,8 +72,9 @@ if (count($services) > 0) {
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
+		$service_desc = explode(".",$service['description']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
-		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
+		echo '<td class="listr">' . $service_desc[0] . '</td>' . "\n";
 		echo get_service_status_icon($service, false, true);
 		echo '<td valign="middle" class="list" nowrap>';
 		echo get_service_control_links($service);

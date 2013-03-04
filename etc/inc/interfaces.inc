@@ -3681,7 +3681,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$hostname = "";
 	if ($wancfg['dhcphostname'] != '') {
-		$hostname = "send host-name \"{$wancfg['dhcphostname']}\";\n";
+		$hostname = "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
 	}
 
 	/* DHCP Protocol Timings */
@@ -3730,7 +3730,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
  	$dhclientconf .= "{$adv_dhcp_pt_backoff_cutoff}";
  	$dhclientconf .= "{$adv_dhcp_pt_initial_interval}";
  	$dhclientconf .= "\n";
- 	$dhclientconf .= "# DHCP Protocol Options";
+ 	$dhclientconf .= "# DHCP Protocol Options\n";
  	$dhclientconf .= "{$hostname}";
  	$dhclientconf .= "{$send_options}";
  	$dhclientconf .= "{$request_options}";

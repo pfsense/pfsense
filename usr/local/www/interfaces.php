@@ -86,6 +86,8 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
+$old_wancfg['realif'] = get_real_interface($if);
+$old_ppps = $a_ppps;
 // Populate page descr if it does not exist.
 if ($if == "wan" && !$wancfg['descr'])
 	$wancfg['descr'] = "WAN";
@@ -399,7 +401,8 @@ if ($_POST['apply']) {
 	} else {
 		$toapplylist = array();
 	}
-	$toapplylist[$if] = $wancfg;
+	$toapplylist[$if]['ifcfg'] = $wancfg;
+	$toapplylist[$if]['ppps'] = $a_ppps;
 	/* we need to be able remove IP aliases for IPv6 */
 	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 	header("Location: interfaces.php?if={$if}");
@@ -929,7 +932,8 @@ if ($_POST['apply']) {
 		} else {
 			$toapplylist = array();
 		}
-		$toapplylist[$if] = $old_wancfg;
+		$toapplylist[$if]['ifcfg'] = $old_wancfg;
+		$toapplylist[$if]['ppps'] = $old_ppps;
 		file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
 
 		mark_subsystem_dirty('interfaces');

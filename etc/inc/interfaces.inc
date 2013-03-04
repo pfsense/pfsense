@@ -1133,23 +1133,28 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	if ($g['debug'])
 		log_error("Calling interface down for interface {$interface}, destroy is " . (($destroy) ? 'true' : 'false'));
 
-	if ($ifacecfg === false)
+	if ($ifacecfg === false) {
 		$ifcfg = $config['interfaces'][$interface];
-	else if (!is_array($ifacecfg))
+		$ppps = $config['ppps']['ppp'];
+		$realif = get_real_interface($interface);
+	} elseif (!is_array($ifacecfg)) {
 		log_error(gettext("Wrong parameters used during interface_bring_down"));
-	else
-		$ifcfg = $ifacecfg;
-		
-
-	$realif = get_real_interface($interface);
+	} else {
+		$ifcfg = $ifacecfg['ifcfg'];
+		$ppps = $ifacecfg['ppps'];
+		if (isset($ifacecfg['ifcfg']['realif']))
+			$realif = $ifacecfg['ifcfg']['realif'];
+		else
+			$realif = get_real_interface($interface);
+	}
 
 	switch ($ifcfg['ipaddr']) {
 	case "ppp":
 	case "pppoe":
 	case "pptp":
 	case "l2tp":
-		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+		if (is_array($ppps) && count($ppps)) {
+			foreach ($ppps as $pppid => $ppp) {
 				if ($realif == $ppp['if']) {
 					if (isset($ppp['ondemand']) && !$destroy){
 						send_event("interface reconfigure {$interface}");

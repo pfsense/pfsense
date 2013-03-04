@@ -462,7 +462,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				} elseif ($portinfo['isqinq']) {
 					echo htmlspecialchars($portinfo['descr']);
 				} elseif (substr($portname, 0, 4) == 'ovpn') {
-					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5, 1)] . ")");
+					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
 				} else
 					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
 			?></option>

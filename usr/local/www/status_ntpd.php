@@ -100,8 +100,14 @@ foreach ($ntpq_clockvar_output as $line) {
 		if (substr($tmp, 0, 6) == '$GPRMC') {
 			$gps_vars = explode(",", $tmp);
 			$gps_ok  = ($gps_vars[2] == "A");
-			$gps_lat = $gps_vars[3] / 100.0 . $gps_vars[4];
-			$gps_lon = $gps_vars[5] / 100.0 . $gps_vars[6];
+			$gps_lat_deg = substr($gps_vars[3], 0, 2);
+			$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
+			$gps_lon_deg = substr($gps_vars[5], 0, 3);
+			$gps_lon_min = substr($gps_vars[5], 3) / 60.0;
+			$gps_lat = $gps_lat_deg + $gps_lat_min;
+			$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
+			$gps_lon = $gps_lon_deg + $gps_lon_min;
+			$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 		}
 	}
 }
@@ -188,8 +194,8 @@ include("head.inc");
 	</thead>
 	<tbody>
 		<tr>
-			<td class="listlr" align="center"><?php echo $gps_lat; ?></td>
-			<td class="listlr" align="center"><?php echo $gps_lon; ?></td>
+			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lat); ?> (<?php echo sprintf("%d", $gps_lat_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lat_min*60); ?><?php echo $gps_vars[4]; ?>)</td>
+			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lon); ?> (<?php echo sprintf("%d", $gps_lon_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lon_min*60); ?><?php echo $gps_vars[6]; ?>)</td>
 		</tr>
 		<tr>
 			<td class="listlr" colspan="2" align="center"><a href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">Google Maps Link</a></td>

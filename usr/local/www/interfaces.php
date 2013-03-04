@@ -556,10 +556,12 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
 
 			foreach ($staticroutes as $route_subnet) {
-				if (ip_in_subnet($_POST['ipaddr'], $route_subnet)) {
+				list($network, $subnet) = explode("/", $route_subnet);
+				if ($_POST['subnet'] == $subnet && $network == gen_subnet($_POST['ipaddr'], $_POST['subnet'])) {
 					$input_errors[] = gettext("This IPv4 address conflicts with a Static Route.");
 					break;
 				}
+				unset($network, $subnet);
 			}
 		}
 	}
@@ -571,10 +573,12 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("This IPv6 address is being used by another interface or VIP.");
 
 			foreach ($staticroutes as $route_subnet) {
-				if (ip_in_subnet($_POST['ipaddrv6'], $route_subnet)) {
+				list($network, $subnet) = explode("/", $route_subnet);
+				if ($_POST['subnetv6'] == $subnet && $network == gen_subnetv6($_POST['ipaddrv6'], $_POST['subnetv6'])) {
 					$input_errors[] = gettext("This IPv6 address conflicts with a Static Route.");
 					break;
 				}
+				unset($network, $subnet);
 			}
 		}
 	}

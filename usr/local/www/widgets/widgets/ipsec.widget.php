@@ -92,11 +92,11 @@ if (isset($config['ipsec']['phase1'])){?>
 
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
-	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="heading">
 	<tr>
-		<td nowrap class="listhdrr">Active Tunnels</td>
-		<td nowrap class="listhdrr">Inactive Tunnels</td>
-		<td nowrap class="listhdrr">Mobile Users</td>
+		<td class="listhdrr nowrap">Active Tunnels</td>
+		<td class="listhdrr nowrap">Inactive Tunnels</td>
+		<td class="listhdrr nowrap">Mobile Users</td>
 	</tr>
 	<tr>
 		<td class="listlr"><?php echo $activecounter; ?></td>
@@ -141,7 +141,7 @@ if (isset($config['ipsec']['phase1'])){?>
 				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
-			<div class="listr"  style="display:table-cell;width:37px"><?php echo $spans;?><center>
+			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
 			<?php
 
 			if($ipsec['status'] == "true") {
@@ -154,7 +154,7 @@ if (isset($config['ipsec']['phase1'])){?>
 
 			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
 
-			?></center><?php echo $spane;?></div>
+			?><?php echo $spane;?></div>
 		</div>
 	<?php endforeach; ?>
 	</div>
@@ -178,8 +178,8 @@ if (isset($config['ipsec']['phase1'])){?>
 				<?php echo htmlspecialchars($muser['local']);?><br/>
 				<?php echo htmlspecialchars($muser['remote']);?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:30px">
-				<center><a href="diag_ipsec.php?act=disconnect&user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'/></a></center>
+			<div class="listr"  style="display:table-cell;width:30px" align="center">
+				<a href="diag_ipsec.php?act=disconnect&amp;user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt='x' /></a>
 			</div>
 		</div>
 <?php	endforeach; ?>
@@ -190,10 +190,9 @@ if (isset($config['ipsec']['phase1'])){?>
 }//end if tunnels are configured, else show code below
 else { ?>
 <div style="display:block">
-	 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="note">
 	  <tr>
 	    <td colspan="4">
-			  <p>
 	        <span class="vexpl">
 	          <span class="red">
 	            <strong>
@@ -203,7 +202,6 @@ else { ?>
 	          You can configure your IPsec
 	          <a href="vpn_ipsec.php">here</a>.
 	        </span>
-	      </p>
 		</td>
 	  </tr>
 	</table>

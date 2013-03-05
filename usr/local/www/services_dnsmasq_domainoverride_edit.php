@@ -86,8 +86,8 @@ if ($_POST) {
        elseif ($_POST['domain'] && !is_domain($_POST['domain'])) {
                $input_errors[] = gettext("A valid domain must be specified.");
        }
-       if ($_POST['ip'] && !is_ipaddr($_POST['ip']) && ($_POST['ip'] != '#')) {
-              $input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion.");
+       if ($_POST['ip'] && !is_ipaddr($_POST['ip']) && ($_POST['ip'] != '#') && ($_POST['ip'] != '!')) {
+              $input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion or ! to not forward at all.");
        }
        if ($_POST['dnssrcip'] && !in_array($_POST['dnssrcip'], get_configured_ip_addresses())) {
               $input_errors[] = gettext("An interface IP address must be specified for the DNS query source.");
@@ -131,14 +131,14 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
                     <br> <span class="vexpl"><?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)"); ?><br>
-                    <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em></span></td>
+                    <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em> <?=gettext("or"); ?> <em><?=gettext("mycompany.local"); ?></em> <?=gettext("or"); ?> <em><?=gettext("1.168.192.in-addr.arpa"); ?></em> </span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br> <span class="vexpl"><?=gettext("IP address of the authoritative DNS server for this domain"); ?><br>
-                    <?=gettext("e.g."); ?> <em>192.168.100.100</em><br/><?=gettext("Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override."); ?></span></td>
+                    <?=gettext("e.g."); ?> <em>192.168.100.100</em><br/><?=gettext("Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override."); ?><br/><?=gettext("Or enter ! for lookups for this host/subdomain to NOT be forwarded anywhere."); ?></span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Source IP");?></td>

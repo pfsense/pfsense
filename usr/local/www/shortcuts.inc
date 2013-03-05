@@ -93,7 +93,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			break;
 	}
 	if(!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}"))
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" border=\"0\"></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" border=\"0\" alt=\"plus\" /></a>";
 }
 
 function get_shortcut_status_link($shortcut_section, $addspace = true, $service = array()) {
@@ -117,14 +117,14 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if(!empty($link))
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_service_status.gif\" border=\"0\"></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_service_status.gif\" border=\"0\" alt=\"status\" /></a>";
 }
 
 function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
-		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_logs.gif\" border=\"0\"></a>";
+		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_logs.gif\" border=\"0\" alt=\"logs\" /></a>";
 	}
 }
 

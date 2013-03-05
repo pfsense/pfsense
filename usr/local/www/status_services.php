@@ -229,10 +229,8 @@ include("fbegin.inc");
 <form action="status_services.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<p>
-
 <div id="boxarea">
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="status services">
 	<thead>
 	<tr>
 		<td class="listhdrr" align="center"><?=gettext("Service");?></td>
@@ -255,7 +253,7 @@ if (count($services) > 0) {
 		echo '<tr><td class="listlr" width="20%">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr" width="55%">' . $service['description'] . '</td>' . "\n";
 		echo get_service_status_icon($service, true, true);
-		echo '<td valign="middle" class="list" nowrap>';
+		echo '<td valign="middle" class="list nowrap">';
 		echo get_service_control_links($service);
 		$scut = get_shortcut_by_service_name($service['name']);
 		if (!empty($scut)) {
@@ -273,7 +271,6 @@ if (count($services) > 0) {
 </tbody>
 </table>
 </div>
-</p>
 </form>
 <?php include("fend.inc"); ?>
 </body>

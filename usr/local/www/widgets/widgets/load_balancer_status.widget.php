@@ -62,7 +62,7 @@ if (!$nentries)
 
 ?>
 
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="load balancer">
 	<tr>
 		<td width="10%" class="listhdrr">Server</td>
 		<td width="10%" class="listhdrr">Pool</td>
@@ -91,7 +91,7 @@ if (!$nentries)
 			<?=$vsent['ipaddr'].":".$vsent['port'];?><br/>
 		</td>
 		<td class="listr" align="center" >
-		<table border="0" cellpadding="0" cellspacing="2">
+		<table border="0" cellpadding="0" cellspacing="2" summary="status">
 		<?php
 		foreach ($a_pool as $pool) {
 			if ($pool['name'] == $vsent['pool']) {

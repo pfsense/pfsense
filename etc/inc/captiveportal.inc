@@ -992,7 +992,8 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 			$ipaddress = gethostbyname($ipent['hostname']);
 			if (!is_ipaddr($ipaddress)) 
 				return;
-		}
+		} else
+			$ipaddress = "";
 	} else
 		$ipaddress = $ipent['ip'];
 

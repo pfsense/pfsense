@@ -76,14 +76,13 @@ else
 
 ?>
 
-<input type="hidden" id="rss-config" name="rss-config" value="">
+<input type="hidden" id="rss-config" name="rss-config" value="" />
 
-<div id="rss-settings" name="rss-settings" class="widgetconfigdiv" style="display:none;">
-	</form>
-	<form action="/widgets/widgets/rss.widget.php" method="post" name="iforma">
-		<textarea name=rssfeed class="formfld unknown" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
+<div id="rss-settings" class="widgetconfigdiv" style="display:none;">
+	<form action="/widgets/widgets/rss.widget.php" method="post" name="iformc">
+		<textarea name="rssfeed" class="formfld unknown" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
 		<br/>
-		<table>
+		<table summary="rss widget">
 			<tr>
 				<td align="right">
 					Display number of items: 
@@ -131,7 +130,7 @@ else
 					&nbsp;
 				</td>
 				<td>
-					<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+					<input id="submitc" name="submitc" type="submit" class="formbtn" value="Save" />
 				</td>
 			</tr>
 		</table>
@@ -162,11 +161,11 @@ else
 	foreach($feed->get_items() as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
-		echo "<a target='_new' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br/>";
+		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br/>";
 		$content = $item->get_content();
 		$content = strip_tags($content);
 		echo textLimit($content, $rsswidgettextlength) . "<br/>";
-		echo "Source: <a target='_new' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16'></a><br/>";
+		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br/>";
 		$counter++;
 		if($counter > $max_items)
 			break;
@@ -176,8 +175,10 @@ else
 </div>				 
 
 <!-- needed to display the widget settings menu -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "rss-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

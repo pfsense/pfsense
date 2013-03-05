@@ -69,26 +69,27 @@ if($_POST) {
 
 ?>
 
-<input type="hidden" id="picture-config" name="picture-config" value="">
+<input type="hidden" id="picture-config" name="picture-config" value="" />
 
-<div id="picture-settings" name="picture-settings" class="widgetconfigdiv" style="display:none;">
-	</form>
+<div id="picture-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/picture.widget.php" method="post" name="iforma" enctype="multipart/form-data">
-		<input name="pictfile" type="file" class="formfld unknown" id="pictfile" size="20"></p>
+		<input name="pictfile" type="file" class="formfld unknown" id="pictfile" size="20" />
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Upload" /><br/>
 		<b>NOTE:</b> Best image size is 350x350 or smaller.
 	</form>
 </div>
 
 <div id="picture-widgets" style="padding: 5px">
-	<a href='/widgets/widgets/picture.widget.php?getpic=true' target='_new'>
-		<img border=0 width="350" height="350" src="/widgets/widgets/picture.widget.php?getpic=true">
+	<a href='/widgets/widgets/picture.widget.php?getpic=true' target='_blank'>
+		<img border="0" width="350" height="350" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
 	</a>
 </div>											 
 
 <!-- needed to show the settings widget icon -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "picture-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

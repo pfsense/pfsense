@@ -3159,6 +3159,11 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 		return;
 	}
 
+	$lanif = get_real_interface($interface);
+	$oip = find_interface_ipv6($lanif);
+	if (is_ipaddrv6($oip))
+		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+
 	if ($wancfg['ipaddrv6'] == "slaac") {
 		$wanif = get_real_interface($lancfg['track6-interface']);
 		$ifcfgipv6 = find_interface_ipv6($wanif);
@@ -3169,10 +3174,6 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 			$dhcp6lanarr[6] = 0;
 			$dhcp6lanarr[7] = 1;
 			$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
-			$lanif = get_real_interface($interface);
-			$oip = find_interface_ipv6($lanif);
-			if (is_ipaddrv6($oip))
-				mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
 			log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
 			mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
 		}

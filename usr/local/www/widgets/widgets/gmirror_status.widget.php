@@ -35,15 +35,15 @@ if ($_GET['textonly'] == "true") {
 	exit;
 }
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="gmirror status">
 	<tbody id="gmirror_status_table">
 		<?php echo gmirror_html_status(); ?>
 	</tbody>
 </table>
 
-<script type="text/javascript" language="javascript">
-  // <![CDATA[
+<script type="text/javascript">
+//<![CDATA[
 	var gmirrorupdater = new Ajax.PeriodicalUpdater('gmirror_status_table', '/widgets/widgets/gmirror_status.widget.php?textonly=true',
 	  { method: 'get', frequency: 5 } );
-  // ]]>
+//]]>
 </script>

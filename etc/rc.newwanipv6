@@ -141,7 +141,8 @@ if (is_ipaddr($oldipv6) && $curwanipv6 == $oldipv6) {
 		openvpn_resync_all($interface);
 	}
 	exit;
-}
+} else
+	mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 
 file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 

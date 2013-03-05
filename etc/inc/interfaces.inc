@@ -3022,7 +3022,6 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 	return 0;
 }
 
-
 function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	global $config, $g;
 

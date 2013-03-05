@@ -1825,26 +1825,29 @@ function explode_assoc($delimiter, $string) {
 
 function get_staticroutes($returnsubnetsonly = false) {
 	global $config;
-	require_once('filter.inc');
-	$allstaticroutes = array();
-	$allsubnets = array();
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
 	if (!is_array($config['staticroutes']['route']))
 		return array();
 
+	$allstaticroutes = array();
+	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
 		if (is_alias($route['network'])) {
+			if (!function_exists('filter_expand_alias_array'))
+				require_once('filter.inc');
 			$subnets = filter_expand_alias_array($route['network']);
 			foreach ($subnets as $net) {
-				if (is_ipaddrv4($net))
-					$net .= "/32";
-				if (is_ipaddrv6($net) && !is_subnetv6($net))
-					$net .= "/128";
-				/* This must be a hostname, we can't use it. */
-				if (!is_subnet($net))
-					continue;
+				if (!is_subnet($net)) {
+					if (is_ipaddrv4($net))
+						$net .= "/32";
+					else if (is_ipaddrv6($net))
+						$net .= "/128";
+					/* This must be a hostname, we can't use it. */
+					else
+						continue;
+				}
 				$temproute = $route;
 				$temproute['network'] = $net;
 				$allstaticroutes[] = $temproute;
@@ -1855,11 +1858,10 @@ function get_staticroutes($returnsubnetsonly = false) {
 			$allsubnets[] = $route['network'];
 		}
 	}
-	if ($returnsubnetsonly) {
+	if ($returnsubnetsonly)
 		return $allsubnets;
-	} else {
+	else
 		return $allstaticroutes;
-	}
 }
 
 /****f* util/get_alias_list

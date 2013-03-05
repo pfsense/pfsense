@@ -1559,7 +1559,9 @@ function services_dnsmasq_configure() {
 		/* Setup forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {
-			        $args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
+				if ($override['ip'] == "!")
+					$override[ip] = "";
+				$args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
 			}
 		}
 

@@ -65,7 +65,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status interfaces">
 <?php 
 	$i = 0; 
 	$ifdescrs = get_configured_interface_with_descr(false, true);
@@ -98,11 +98,11 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['dhcplink'] == "up"): ?>
-				<a href="status_interfaces.php?action=Release&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Release");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Release&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Release");?>" class="formbtns" />
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Renew&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Renew");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Renew&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Renew");?>" class="formbtns" />
 			<?php endif; ?>
 			</a>
 		</td>
@@ -116,11 +116,11 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['dhcp6link'] == "up"): ?>
-				<a href="status_interfaces.php?action=Release&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Release");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Release&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Release");?>" class="formbtns" />
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Renew&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Renew");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Renew&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Renew");?>" class="formbtns" />
 			<?php endif; ?>
 			</a>
 		</td>
@@ -131,11 +131,11 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['pppoelink'] == "up"): ?>
-				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Disconnect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns" />
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Connect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns" />
 				<?php endif; ?>
 			</a>
 		</td>
@@ -146,11 +146,11 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['pptplink'] == "up"): ?>
-				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Disconnect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns" />
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Connect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns" />
 			<?php endif; ?>
 			</a>
 		</td>
@@ -161,11 +161,11 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
 			<?php if ($ifinfo['l2tplink'] == "up"): ?>
-				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Disconnect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns" />
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Connect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns" />
 			<?php endif; ?>
 			</a>
 		</td>
@@ -176,12 +176,12 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['pppinfo']);?>
 			<?php if ($ifinfo['ppplink'] == "up"): ?>
-				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns">
+				<a href="status_interfaces.php?action=Disconnect&amp;if=<?php echo $ifdescr; ?>">
+				<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Disconnect");?>" class="formbtns" />
 			<?php else: ?>
 				<?php if (!$ifinfo['nodevice']): ?>
-					<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
-					<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns">
+					<a href="status_interfaces.php?action=Connect&amp;if=<?php echo $ifdescr; ?>">
+					<input type="button" name="<?php echo $ifdescr; ?>" value="<?=gettext("Connect");?>" class="formbtns" />
 				<?php endif; ?>
 			<?php endif; ?>
 			</a>
@@ -325,7 +325,7 @@ include("head.inc");
 		<?php
 			$dns_servers = get_dns_servers();
 			foreach($dns_servers as $dns) {
-				echo "{$dns}<br>";
+				echo "{$dns}<br/>";
 			}
 		?>
 		</td>
@@ -473,10 +473,12 @@ include("head.inc");
 
 <br/>
 
-</strong><?php printf(gettext("Using dial-on-demand will bring the connection up again if any packet ".
+<?php printf(gettext("Using dial-on-demand will bring the connection up again if any packet ".
 "triggers it. To substantiate this point: disconnecting manually ".
 "will %snot%s prevent dial-on-demand from making connections ".
 "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
 "is kept disconnected."),'<strong>','</strong>')?>
 
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -42,7 +42,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 		$ifdescrs = get_configured_interface_with_descr();
 ?>
 			
-	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="interfaces">
 				<?php 
 				foreach ($ifdescrs as $ifdescr => $ifname) {
 					$ifinfo = get_interface_info($ifdescr);
@@ -52,18 +52,18 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				<td class="vncellt" width="40%">
 				<?php 
 				if($ifinfo['ppplink']) {
-					echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' />";
+					echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' alt='3g' />";
 				} else if($iswireless) {
 					if($ifinfo['status'] == "associated") { ?> 
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" alt="wlan" />
 					<?php } else { ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" />
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" alt="wlan_d" />
 					<?php } ?>
 				<?php } else { ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif" alt="cablenic" />
 				<?php } ?>&nbsp; 
 				<strong><u>
-				<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
+				<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<?=htmlspecialchars($ifname);?></span></u></strong>
 				<?php 
 					if ($ifinfo['dhcplink']) 
@@ -71,37 +71,37 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				?>
 				</td>
 				<td width="60%"  class="listr">
-	                 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	                 		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
 						<tr>
 		                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
 							<td>
-								<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+								<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
 							</td>
 		                <?php } else if ($ifinfo['status'] == "no carrier") { ?>
 							<td>
-								<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+								<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
 							</td>
 				<?php }  else if ($ifinfo['status'] == "down") { ?>
 							<td>
-								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
 							</td>
 							<td>
-								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
 							</td>
 		                <?php } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
 							<td>
@@ -109,7 +109,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							</td>
 						</tr>
 					</table>
-					<table  width="100%" border="0" cellspacing="0" cellpadding="0">
+					<table  width="100%" border="0" cellspacing="0" cellpadding="0" summary="summary">
 						<tr>
 							<td class="vncellt" width="100%">
 								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
@@ -118,6 +118,6 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							</td>
 						</tr>
 					</table>
-				<?php 	}//end for each ?> 
 		          </td></tr>
+				<?php 	}//end for each ?>
 			</table>

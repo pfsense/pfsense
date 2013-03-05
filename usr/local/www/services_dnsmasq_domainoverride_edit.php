@@ -131,7 +131,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
                     <br> <span class="vexpl"><?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)"); ?><br>
-                    <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em> <?=gettext("or"); ?> <em><?=gettext("mycompany.local"); ?></em> <?=gettext("or"); ?> <em><?=gettext("1.168.192.in-addr.arpa"); ?></em> </span></td>
+                    <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em> <?=gettext("or"); ?> <em>mycompany.localdomain</em> <?=gettext("or"); ?> <em>1.168.192.in-addr.arpa</em> </span></td>
                 </tr>
                                <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>

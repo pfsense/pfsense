@@ -32,6 +32,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/gateways.inc");
 
 $a_gateways = return_gateways_array();
 $gateways_status = array();
@@ -41,13 +42,13 @@ $counter = 1;
 
 ?>
 
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="gateway status">
 	<tr>
 	<td class="vncellt" width="30%" id="gatewayname">
 			Name
 	</td>
 	<td width="70%" class="listr">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="heading">
 			<tr>
 			<td width="25%" class="listhdrr">RTT</td>
 			<td width="25%" class="listhdrr">Loss</td>
@@ -65,7 +66,7 @@ $counter = 1;
 		<?php $counter++; ?>
 	</td>
 	<td width="70%" class="listr">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="address">
 			<tr>
 			<td class="vncellt" width="100%">
 				<div id="gateway<?php echo $counter; ?>" style="display:inline">
@@ -84,7 +85,7 @@ $counter = 1;
 			</td>
 			</tr>
 		</table>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="statistics">
 			<tr>
 			<td width="25%" class="listlr" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
@@ -105,7 +106,7 @@ $counter = 1;
 			<?php $counter++; ?>
 			</td>
 			<td width="50%" class="listr" id="gateway<?php echo $counter ?>" >
-			<table border="0" cellpadding="0" cellspacing="2">
+			<table border="0" cellpadding="0" cellspacing="2" summary="status">
 			<?php
 				if ($gateways_status[$gname]) {
 					if (stristr($gateways_status[$gname]['status'], "down")) {

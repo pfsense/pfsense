@@ -521,9 +521,11 @@ if ($_POST['apply']) {
 			break;
 		case "6rd":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && (($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6']) || ($config[interfaces][$ifent]['ipaddrv6'] == "6to4")) ) {
-					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6to4."),$_POST['type6']);
-					break;
+				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+					if ($config[interfaces][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
+						$input_errors[] = gettext("You can only have one interface configured in 6rd with same prefix.");
+						break;
+					}
 				}
 			}
 			if (in_array($wancfg['ipaddrv6'], array()))
@@ -531,8 +533,8 @@ if ($_POST['apply']) {
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
-				if ($if != $ifent && (($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6']) || ($config[interfaces][$ifent]['ipaddrv6'] == "6rd")) ) {
-					$input_errors[] = sprintf(gettext("You can only have one interface configured as %s or 6rd."),$_POST['type6']);
+				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
+					$input_errors[] = sprintf(gettext("You can only have one interface configured as 6to4."),$_POST['type6']);
 					break;
 				}
 			}

@@ -3218,7 +3218,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
 	$rd6brprefixbin .= substr(sprintf("%032b", hexdec($hexbrv4)), $wancfg['prefix-6rd-v4plen'], 32);
 	/* fill out the rest with 0's */
-	$rd6brprefixbin = str_pad($rd6brprefixbin, 128, "0", STR_PAD_RIGHT);;
+	$rd6brprefixbin = str_pad($rd6brprefixbin, 128, "0", STR_PAD_RIGHT);
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$rd6brgw = convert_128bit_to_ipv6($rd6brprefixbin);

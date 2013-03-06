@@ -35,6 +35,34 @@ if ($sort == "out")
 else
 	{$sort_method = "-R";}
 
+// get the desired format for displaying the host name or IP
+$hostipformat = $_GET['hostipformat'];
+$iplookup = array();
+// Only fill the hostname lookup array if the option is set.
+// Otherwise, leave the array empty so there will be nothing to lookup and IP addresses only will be displayed.
+if ($hostipformat == "hostname") {
+	// Get known IP address to names from DNSmasq entries
+	if (is_array($config['dnsmasq']['hosts'])) {
+		foreach ($config['dnsmasq']['hosts'] as $hostent) {
+			if (($hostent['ip'] != "") && ($hostent['host'] != "")) {
+				$iplookup[$hostent['ip']] = $hostent['host'];
+			}
+		}
+	}
+	// Get known IP address to names from DHCP static mappings
+	if (is_array($config['dhcpd'])) {
+		foreach ($config['dhcpd'] as $ifdata) {
+			if (is_array($ifdata['staticmap'])) {
+				foreach ($ifdata['staticmap'] as $hostent) {
+					if (($hostent['ipaddr'] != "") && ($hostent['hostname'] != "")) {
+						$iplookup[$hostent['ipaddr']] = $hostent['hostname'];
+					}
+				}
+			}
+		}
+	}
+}
+
 $_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 $someinfo = false;
@@ -46,8 +74,13 @@ for ($x=2; $x<12; $x++){
     $emptyinfocounter = 1;
     if ($bandwidthinfo != "") {
         $infoarray = explode (":",$bandwidthinfo);
+		if ($iplookup[$infoarray[0]] != "") {
+			$addrdata = $iplookup[$infoarray[0]];
+		} else {
+			$addrdata = $infoarray[0];
+		}
         //print IP of host;
-        echo $infoarray[0] . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
+        echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
 
         //mark that we collected information
         $someinfo = true;

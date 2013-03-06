@@ -1911,7 +1911,7 @@ function version_compare_dates($a, $b) {
 	} else {
 		if ($a_time < $b_time)
 			return -1;
-		elseif ($$a_time == $b_time)
+		elseif ($a_time == $b_time)
 			return 0;
 		else
 			return 1;

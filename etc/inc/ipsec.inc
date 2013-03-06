@@ -406,9 +406,9 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 				$sp_srcid .= '/128';
 		}
 		if (!strstr($sp_dstid,"/")) {
-			if (is_ipaddrv4($sp_srcid))
+			if (is_ipaddrv4($sp_dstid))
 				$sp_dstid .= '/32';
-			elseif (is_ipaddrv6($sp_srcid))
+			elseif (is_ipaddrv6($sp_dstid))
 				$sp_dstid .= '/128';
 		}
 
@@ -622,7 +622,7 @@ function ipsec_disconnect_mobile($username) {
 }
 
 function ipsec_fixup_ip($ipaddr) {
-	if (is_ipaddrv6($ipaddr) || !is_subnetv6($ipaddr))
+	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr))
 		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
 	else
 		return $ipaddr;

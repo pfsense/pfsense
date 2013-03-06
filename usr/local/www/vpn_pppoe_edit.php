@@ -445,7 +445,7 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br/>

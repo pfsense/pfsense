@@ -1120,7 +1120,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s.'), $ldapname, $username));
+		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
 		@ldap_unbind($ldap);
 		return false;
 	}

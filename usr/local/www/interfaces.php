@@ -1434,9 +1434,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										print gettext("If you leave this field blank, the adapter's default MTU will " .
 										"be used. This is typically 1500 bytes but can vary in some circumstances.");
 									else
-										print gettext("This interface is a VLAN and it needs to use same MTU set for " .
-										"its parent. You can change parent's MTU") . "<a href=\"interfaces.php?if={$parent_vlan_if}\"> " .
-										gettext("here") . ".</a>";
+										print gettext("This interface is a VLAN and must use the MTU of " .
+										"its parent. ") . "<a href=\"interfaces.php?if={$parent_vlan_if}\"> " .
+										gettext("You can change parent's MTU here") . ".</a>";
 								?>
 							</td>
 						</tr>

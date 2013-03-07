@@ -2904,10 +2904,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					$parentmtu = get_interface_mtu($realhwif);
 				if ($wancfg['mtu'] > $parentmtu)
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
-			} else if ($mtu != get_interface_mtu($realhwif))
-				pfSense_interface_mtu($realhwif, $mtu);
-		} else if ($mtu != get_interface_mtu($realhwif))
-			pfSense_interface_mtu($realhwif, $mtu);
+			} else if ($wancfg['mtu'] != get_interface_mtu($realhwif))
+				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+		} else if ($wancfg['mtu'] != get_interface_mtu($realhwif))
+			pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 	} else if ($mtu != get_interface_mtu($realhwif))
 		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */
 		pfSense_interface_mtu($realhwif, $mtu);

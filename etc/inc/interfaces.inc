@@ -2906,7 +2906,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 			} else if ($wancfg['mtu'] != get_interface_mtu($realhwif))
 				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
-		} else if ($wancfg['mtu'] != get_interface_mtu($realif))
+		}
+		if ($wancfg['mtu'] != get_interface_mtu($realif))
 			pfSense_interface_mtu($realif, $wancfg['mtu']);
 	} else if ($mtu != get_interface_mtu($realhwif))
 		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */

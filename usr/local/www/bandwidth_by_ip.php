@@ -65,19 +65,22 @@ for ($x=2; $x<12; $x++){
     $emptyinfocounter = 1;
     if ($bandwidthinfo != "") {
         $infoarray = explode (":",$bandwidthinfo);
-		if ($hostipformat == "hostname") {
+		if ($hostipformat == "") {
+			$addrdata = $infoarray[0];
+		} else {
+			// $hostipformat is "hostname" or "fqdn"
 			$addrdata = gethostbyaddr($infoarray[0]);
 			if ($addrdata == $infoarray[0]) {
 				// gethostbyaddr() gave us back the IP address, so try the static mapping array
 				if ($iplookup[$infoarray[0]] != "")
 					$addrdata = $iplookup[$infoarray[0]];
 			} else {
-				// gethostbyaddr() gave an answer. Just pass back the name up to the first "."
-				$name_array = explode(".", $addrdata);
-				$addrdata = $name_array[0];
+				if ($hostipformat == "hostname") {
+					// Only pass back the first part of the name, not the FQDN.
+					$name_array = explode(".", $addrdata);
+					$addrdata = $name_array[0];
+				}
 			}
-		} else {
-			$addrdata = $infoarray[0];
 		}
         //print host information;
         echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";

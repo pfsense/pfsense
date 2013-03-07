@@ -2943,7 +2943,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				}
 			} else {
 				$bigmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
-				file_put_contents("/tmp/testing", $bigmtu);
 				if ($wancfg['mtu'] >= $bigmtu) {
 					/* All vlans need to use the same mtu value as their parent. */
 					if (is_array($config['vlans']['vlan'])) {

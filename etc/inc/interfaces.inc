@@ -2700,6 +2700,25 @@ function find_dhcp6c_process($interface) {
 	return intval($pid);
 }
 
+function interface_vlan_mtu_configured($realhwif, $mtu) {
+	global $config;
+
+	if (is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if ($vlan['if'] != $realhwif)
+				continue;
+			$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (!empty($assginedport)) {
+				$portmtu = $config['interfaces'][$assginedport]['mtu'];
+				if (!empty($portmtu) && $portmtu > $mtu)
+					$mtu = $portmtu;
+			}
+		}
+	}
+
+	return $mtu;
+}
+
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
@@ -2917,18 +2936,50 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 								$portmtu = $config['interfaces'][$assginedport]['mtu'];
 								if (empty($portmtu))
 									pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-							} else if (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu'])
+							} else if (get_interface_mtu($vlan['vlanif']) < $wancfg['mtu'])
 								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 						}
 					}
 				}
-			} else if ($wancfg['mtu'] > get_interface_mtu($realhwif))
-				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+			} else {
+				$bigmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
+				file_put_contents("/tmp/testing", $bigmtu);
+				if ($wancfg['mtu'] >= $bigmtu) {
+					/* All vlans need to use the same mtu value as their parent. */
+					if (is_array($config['vlans']['vlan'])) {
+						foreach ($config['vlans']['vlan'] as $vlan) {
+							if ($vlan['if'] != $realhwif)
+								continue;
+							if ($vlan['vlanif'] == $realif)
+								continue;
+							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+						}
+					}
+					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+				}
+			}
 		}
 		if ($wancfg['mtu'] != get_interface_mtu($realif))
 			pfSense_interface_mtu($realif, $wancfg['mtu']);
-	} else if ($mtu != get_interface_mtu($realhwif))
+	} else if (stristr($realif, "vlan")) {
 		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */
+		$bigmtu = interface_vlan_mtu_configured($realhwif, $mtu);
+		if ($mtu < $bigmtu)
+			$mtu = $bigmtu;
+		pfSense_interface_mtu($realhwif, $mtu);
+
+		/* All vlans need to use the same mtu value as their parent. */
+		if (is_array($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $vlan) {
+				if ($vlan['if'] != $realhwif)
+					continue;
+				if ($vlan['vlanif'] == $realif)
+					continue;
+				pfSense_interface_mtu($vlan['vlanif'], $mtu);
+			}
+		}
+		pfSense_interface_mtu($realif, $mtu);
+	} else if ($mtu != get_interface_mtu($realhwif))
 		pfSense_interface_mtu($realhwif, $mtu);
 
 	if(does_interface_exist($wancfg['if']))

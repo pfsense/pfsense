@@ -2908,12 +2908,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					/* All vlans need to use the same mtu value as their parent. */
 					if (is_array($config['vlans']['vlan'])) {
 						foreach ($config['vlans']['vlan'] as $vlan) {
+							if ($vlan['if'] != $realhwif)
+								continue;
 							$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 							if (!empty($assginedport)) {
 								$portmtu = $config['interfaces'][$assginedport]['mtu'];
 								if (empty($portmtu))
 									pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-							} else if (($vlan['if'] == $realhwif) && (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu']))
+							} else if (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu'])
 								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 						}
 					}

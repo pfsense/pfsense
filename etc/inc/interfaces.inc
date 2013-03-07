@@ -2910,6 +2910,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 						foreach ($config['vlans']['vlan'] as $vlan) {
 							if ($vlan['if'] != $realhwif)
 								continue;
+							if ($vlan['vlanif'] == $realif)
+								continue;
 							$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 							if (!empty($assginedport)) {
 								$portmtu = $config['interfaces'][$assginedport]['mtu'];

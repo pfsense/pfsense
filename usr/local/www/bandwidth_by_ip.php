@@ -35,6 +35,8 @@ if ($sort == "out")
 else
 	{$sort_method = "-R";}
 
+$filter = $_GET['filter'];
+
 // get the desired format for displaying the host name or IP
 $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
@@ -65,28 +67,32 @@ for ($x=2; $x<12; $x++){
     $emptyinfocounter = 1;
     if ($bandwidthinfo != "") {
         $infoarray = explode (":",$bandwidthinfo);
-		if ($hostipformat == "") {
-			$addrdata = $infoarray[0];
-		} else {
-			// $hostipformat is "hostname" or "fqdn"
-			$addrdata = gethostbyaddr($infoarray[0]);
-			if ($addrdata == $infoarray[0]) {
-				// gethostbyaddr() gave us back the IP address, so try the static mapping array
-				if ($iplookup[$infoarray[0]] != "")
-					$addrdata = $iplookup[$infoarray[0]];
+		if (($filter == "") ||
+			(($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
+			(($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
+			if ($hostipformat == "") {
+				$addrdata = $infoarray[0];
 			} else {
-				if ($hostipformat == "hostname") {
-					// Only pass back the first part of the name, not the FQDN.
-					$name_array = explode(".", $addrdata);
-					$addrdata = $name_array[0];
+				// $hostipformat is "hostname" or "fqdn"
+				$addrdata = gethostbyaddr($infoarray[0]);
+				if ($addrdata == $infoarray[0]) {
+					// gethostbyaddr() gave us back the IP address, so try the static mapping array
+					if ($iplookup[$infoarray[0]] != "")
+						$addrdata = $iplookup[$infoarray[0]];
+				} else {
+					if ($hostipformat == "hostname") {
+						// Only pass back the first part of the name, not the FQDN.
+						$name_array = explode(".", $addrdata);
+						$addrdata = $name_array[0];
+					}
 				}
 			}
-		}
-        //print host information;
-        echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
+			//print host information;
+			echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
 
-        //mark that we collected information
-        $someinfo = true;
+			//mark that we collected information
+			$someinfo = true;
+		}
     }
 }
 unset($bandwidthinfo, $_grb);

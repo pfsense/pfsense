@@ -2922,7 +2922,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 						}
 					}
 				}
-			} else if ($wancfg['mtu'] != get_interface_mtu($realhwif))
+			} else if ($wancfg['mtu'] > get_interface_mtu($realhwif))
 				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 		}
 		if ($wancfg['mtu'] != get_interface_mtu($realif))

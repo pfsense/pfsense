@@ -2909,10 +2909,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		} else if ($mtu != get_interface_mtu($realhwif))
 			pfSense_interface_mtu($realhwif, $mtu);
 	} else if ($mtu != get_interface_mtu($realhwif))
+		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */
 		pfSense_interface_mtu($realhwif, $mtu);
 
 	/*
 	 * All vlans need to use the same mtu value as their parent.
+	 * XXX: This is wrong. It should check for assigned vlans and see if there is any mtu set
 	 */
 	if (is_array($config['vlans']['vlan']))
 		foreach ($config['vlans']['vlan'] as $vlan)

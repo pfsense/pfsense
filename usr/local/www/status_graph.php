@@ -97,6 +97,11 @@ if ($_GET['sort']) {
 } else {
 	$cursort = "";
 }
+if ($_GET['filter']) {
+	$curfilter = $_GET['filter'];
+} else {
+	$curfilter = "";
+}
 if ($_GET['hostipformat']) {
 	$curhostipformat = $_GET['hostipformat'];
 } else {
@@ -116,12 +121,13 @@ include("head.inc");
 function updateBandwidth(){
     var hostinterface = jQuery("#if").val();
 	var sorting = jQuery("#sort").val();
+	var filter = jQuery("#filter").val();
 	var hostipformat = jQuery("#hostipformat").val();
-    bandwidthAjax(hostinterface, sorting, hostipformat);
+    bandwidthAjax(hostinterface, sorting, filter, hostipformat);
 }
 
-function bandwidthAjax(hostinterface, sorting, hostipformat) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&hostipformat=" + hostipformat;
+function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&filter=" + filter + "&hostipformat=" + hostipformat;
 	var opt = {
 	    // Use GET
 	    type: 'get',
@@ -211,8 +217,14 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </select>
 , Sort by: 
 <select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-	<option value="">Bandwidth In</option>
-	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
+	<option value="">Bw In</option>
+	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bw Out</option>
+</select>
+, Filter: 
+<select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">All</option>
+	<option value="local"<?php if ($curfilter == "local") echo " selected";?>>Local</option>
+	<option value="remote"<?php if ($curfilter == "remote") echo " selected";?>>Remote</option>
 </select>
 , Display: 
 <select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">

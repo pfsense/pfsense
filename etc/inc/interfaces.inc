@@ -2902,8 +2902,22 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				$parentmtu = $config['interfaces'][$assginedparent]['mtu'];
 				if (empty($parentmtu))
 					$parentmtu = get_interface_mtu($realhwif);
-				if ($wancfg['mtu'] > $parentmtu)
+				if ($wancfg['mtu'] > $parentmtu) {
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+
+					/* All vlans need to use the same mtu value as their parent. */
+					if (is_array($config['vlans']['vlan'])) {
+						foreach ($config['vlans']['vlan'] as $vlan) {
+							$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+							if (!empty($assginedport)) {
+								$portmtu = $config['interfaces'][$assginedport]['mtu'];
+								if (empty($portmtu))
+									pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+							} else if (($vlan['if'] == $realhwif) && (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu']))
+								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+						}
+					}
+				}
 			} else if ($wancfg['mtu'] != get_interface_mtu($realhwif))
 				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 		}
@@ -2912,15 +2926,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	} else if ($mtu != get_interface_mtu($realhwif))
 		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */
 		pfSense_interface_mtu($realhwif, $mtu);
-
-	/*
-	 * All vlans need to use the same mtu value as their parent.
-	 * XXX: This is wrong. It should check for assigned vlans and see if there is any mtu set
-	 */
-	if (is_array($config['vlans']['vlan']))
-		foreach ($config['vlans']['vlan'] as $vlan)
-			if (($vlan['if'] == $realhwif) && (get_interface_mtu($vlan['vlanif']) != $mtu))
-				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);

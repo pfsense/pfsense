@@ -2920,7 +2920,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			if (!empty($assginedparent)) {
 				$parentmtu = $config['interfaces'][$assginedparent]['mtu'];
 				if (empty($parentmtu))
-					$parentmtu = get_interface_mtu($realhwif);
+					$parentmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
 				if ($wancfg['mtu'] > $parentmtu) {
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 
@@ -2936,7 +2936,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 								$portmtu = $config['interfaces'][$assginedport]['mtu'];
 								if (empty($portmtu))
 									pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-							} else if (get_interface_mtu($vlan['vlanif']) < $wancfg['mtu'])
+							} else
 								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 						}
 					}

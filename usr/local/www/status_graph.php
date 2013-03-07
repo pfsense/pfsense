@@ -153,32 +153,30 @@ function updateBandwidthHosts(data){
     d = document;
     //parse top ten bandwidth abuser hosts
     for (var y=0; y<10; y++){
-        if (hosts_split[y] != "" && hosts_split[y] != "no info"){
-            if (hosts_split[y]) {
-                hostinfo = hosts_split[y].split(";");
+        if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
+			hostinfo = hosts_split[y].split(";");
 
-                //update host ip info
-                var HostIpID = "hostip" + y;
-                var hostip = d.getElementById(HostIpID);
-                hostip.innerHTML = hostinfo[0];
+			//update host ip info
+			var HostIpID = "hostip" + y;
+			var hostip = d.getElementById(HostIpID);
+			hostip.innerHTML = hostinfo[0];
 
-                //update bandwidth inbound to host
-                var hostbandwidthInID = "bandwidthin" + y;
-                var hostbandwidthin = d.getElementById(hostbandwidthInID);
-                hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
+			//update bandwidth inbound to host
+			var hostbandwidthInID = "bandwidthin" + y;
+			var hostbandwidthin = d.getElementById(hostbandwidthInID);
+			hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
 
-                //update bandwidth outbound from host
-                var hostbandwidthOutID = "bandwidthout" + y;
-                var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-                hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
+			//update bandwidth outbound from host
+			var hostbandwidthOutID = "bandwidthout" + y;
+			var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
+			hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
 
-                //make the row appear if hidden
-                var rowid = "#host" + y;
-                if (jQuery(rowid).css('display') == "none"){
-                     //hide rows that contain no data
-                     jQuery(rowid).show(1000);
-                }
-            }
+			//make the row appear if hidden
+			var rowid = "#host" + y;
+			if (jQuery(rowid).css('display') == "none"){
+				//hide rows that contain no data
+				jQuery(rowid).show(1000);
+			}
         }
         else
         {

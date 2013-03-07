@@ -45,14 +45,10 @@ if (!is_array($config['dyndnses']['dyndns']))
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
 if ($_GET['act'] == "del") {
+
+	$conf = $a_dyndns[$_GET['id']];
+	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($conf['host']) . "{$conf['id']}.cache");
 	unset($a_dyndns[$_GET['id']]);
-
-	for($i = 0; $i < count($a_dyndns); $i++) {
-		$a_dyndns[$i]['id'] = $i;
-	}
-
-	//FIXME: Instead of rechecking all interfaces and removing the cache files, gracefully move all cache files to the appropriate ID number.
-	mwexec("/bin/rm {$g['conf_path']}/dyndns_*.cache");
 
 	write_config();
 	services_dyndns_configure();

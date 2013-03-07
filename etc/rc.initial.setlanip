@@ -269,7 +269,7 @@
 			echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
 			if(!empty($config['system']['webgui']['port'])) {
 				$webuiport = $config['system']['webgui']['port'];
-				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$webuiport}/\n";
 			} else {
 				echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";	
 			}

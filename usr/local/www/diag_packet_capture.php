@@ -201,7 +201,7 @@ include("fbegin.inc");
 			</td>
 			<td width="51%" class="vtable">
 			<input name="promiscuous" type="checkbox"<?php if($_POST['promiscuous']) echo " CHECKED"; ?>>
-			<br/><?=gettext("This check box will cause the <a target=FreeBSD href=http://www.freebsd.org/cgi/man.cgi?query=tcpdump&apropos=0&sektion=0&manpath=FreeBSD+8.3-stable&arch=default&format=html>packet capture</a> to perform in promiscuous mode.");?>
+			<br/><?=gettext("This check box will cause the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("to perform in promiscuous mode.");?>
 			<br/><b><?=gettext("Note");?>: </b><?=gettext("Some NIC's do not support or work well in promiscuous mode.");?>
 			</td>
 		</tr>

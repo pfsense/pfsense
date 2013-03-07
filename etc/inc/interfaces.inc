@@ -2951,7 +2951,13 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 								continue;
 							if ($vlan['vlanif'] == $realif)
 								continue;
-							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+							$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+							if (!empty($assginedport)) {
+								$portmtu = $config['interfaces'][$assginedport]['mtu'];
+								if (empty($portmtu))
+									pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+							} else
+								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 						}
 					}
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
@@ -2974,7 +2980,13 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					continue;
 				if ($vlan['vlanif'] == $realif)
 					continue;
-				pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+				if (!empty($assginedport)) {
+					$portmtu = $config['interfaces'][$assginedport]['mtu'];
+					if (empty($portmtu))
+						pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				} else
+					pfSense_interface_mtu($vlan['vlanif'], $mtu);
 			}
 		}
 		pfSense_interface_mtu($realif, $mtu);

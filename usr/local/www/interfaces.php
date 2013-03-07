@@ -94,15 +94,6 @@ if ($if == "wan" && !$wancfg['descr'])
 else if ($if == "lan" && !$wancfg['descr'])
 	$wancfg['descr'] = "LAN";
 
-$parent_vlan_if = "";
-if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {
-	$realhwif_array = get_parent_interface($wancfg['if']);
-	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
-	$realhwif = $realhwif_array[0];
-	$parent_vlan_if = convert_real_interface_to_friendly_interface_name($realhwif);
-	$wancfg['mtu'] = '';
-}
-
 foreach ($a_ppps as $pppid => $ppp) {
 	if ($wancfg['if'] == $ppp['if'])
 		break;
@@ -641,8 +632,39 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac'])))
 		$input_errors[] = gettext("A valid MAC address must be specified.");
-	if ($_POST['mtu'] && ($_POST['mtu'] < 576))
-		$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
+	if ($_POST['mtu']) {
+		if ($_POST['mtu'] < 576)
+			$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
+
+		if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {
+			$realhwif_array = get_parent_interface($wancfg['if']);
+			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
+			$parent_realhwif = $realhwif_array[0];
+			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
+
+			if (!empty($parent_if) && isset($config['interfaces'][$parent_if]['mtu'])) {
+				$parent_mtu = $config['interfaces'][$parent_if]['mtu'];
+
+				if ($_POST['mtu'] > $parent_mtu)
+					$input_errors[] = gettext("MTU of a vlan should not be bigger than parent interface.");
+			}
+		} else {
+			foreach ($config['interfaces'] as $idx => $ifdata) {
+				if (($idx == $if) || !preg_match('/_vlan[0-9]/', $ifdata['if']))
+					continue;
+
+				$realhwif_array = get_parent_interface($ifdata['if']);
+				// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
+				$parent_realhwif = $realhwif_array[0];
+
+				if ($parent_realhwif != $wancfg['if'])
+					continue;
+
+				if (isset($ifdata['mtu']) && $ifdata['mtu'] > $_POST['mtu'])
+					$input_errors[] = sprintf(gettext("Interface %s (VLAN) has MTU set to a bigger value"), $ifdata['descr']);
+			}
+		}
+	}
 	if ($_POST['mss'] && ($_POST['mss'] < 576))
 		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
 	/* Wireless interface? */
@@ -1428,17 +1450,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("MTU"); ?></td>
 							<td class="vtable">
-								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>"
-									<?php if(!empty($parent_vlan_if)) print "disabled"; ?>>
+								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
 								<?php
-									if (empty($parent_vlan_if))
-										print gettext("If you leave this field blank, the adapter's default MTU will " .
-										"be used. This is typically 1500 bytes but can vary in some circumstances.");
-									else
-										print gettext("This interface is a VLAN and must use the MTU of " .
-										"its parent. ") . "<a href=\"interfaces.php?if={$parent_vlan_if}\"> " .
-										gettext("You can change parent's MTU here") . ".</a>";
+									print gettext("If you leave this field blank, the adapter's default MTU will " .
+									"be used. This is typically 1500 bytes but can vary in some circumstances.");
 								?>
 							</td>
 						</tr>

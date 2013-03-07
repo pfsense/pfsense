@@ -218,6 +218,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 	<option value="">IP Address</option>
 	<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
+	<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected";?>>FQDN</option>
 </select>
 </form>
 <p>
@@ -228,7 +229,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
     <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td class="listtopic" valign="top"><?=(($curhostipformat=="hostname") ? gettext("Host Name or IP") : gettext("Host IP")); ?></td>
+                <td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
            </tr>

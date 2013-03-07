@@ -77,7 +77,7 @@ delete_old_states() {
 	if [ -z "${OLD_ROUTER}" ] && [ -f /tmp/${interface}_router ]; then
 		OLD_ROUTER = `cat /tmp/${interface}_router`
 	fi
-	if [ -n $OLD_ROUTER ]; then
+	if [ -n "${OLD_ROUTER}" ]; then
 		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
 		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
 			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"

@@ -1240,7 +1240,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 //	log_error("Checking for old router states: {$g['tmp_path']}/{$realif}_router = {$old_router}");
 	if (!empty($old_router)) {
 		log_error("Clearing states to old gateway {$old_router}.");
-		mwexec("/sbin/pfctl -i {$realif} -Fs; /sbin/pfctl -i {$realif} -Fs -G {$old_router}");
+		mwexec("/sbin/pfctl -i {$realif} -Fs -G {$old_router}");
 	}
 
 	/* remove interface up file if it exists */

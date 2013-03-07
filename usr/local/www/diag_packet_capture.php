@@ -117,6 +117,14 @@ if ($_POST) {
 
 		conf_mount_rw();
 
+		if ($_POST['promiscuous']) {
+			//if promiscuous mode is checked
+			$disablepromiscuous = "";
+		} else {
+			//if promiscuous mode is unchecked
+			$disablepromiscuous = "-p";
+		}
+
 		if ($_POST['dnsquery']) {
 			//if dns lookup is checked
 			$disabledns = "";
@@ -175,11 +183,11 @@ include("fbegin.inc");
 	<form action="diag_packet_capture.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Packet capture");?></td>
+			<td colspan="3" valign="top" class="listtopic"><?=gettext("Packet capture");?></td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
-			<td width="83%" class="vtable">
+			<td width="32%" class="vtable">
 			<select name="interface">
 			<?php
 			?>
@@ -191,10 +199,15 @@ include("fbegin.inc");
 			</select>
 			<br/><?=gettext("Select the interface on which to capture traffic.");?>
 			</td>
+			<td width="51%" class="vtable">
+			<input name="promiscuous" type="checkbox"<?php if($_POST['promiscuous']) echo " CHECKED"; ?>>
+			<br/><?=gettext("This check box will cause the <a target=FreeBSD href=http://www.freebsd.org/cgi/man.cgi?query=tcpdump&apropos=0&sektion=0&manpath=FreeBSD+8.3-stable&arch=default&format=html>packet capture</a> to perform in promiscuous mode.");?>
+			<br/><b><?=gettext("Note");?>: </b><?=gettext("Some NIC's do not support or work well in promiscuous mode.");?>
+			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Address Family");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<select name="fam">
 				<option value="">Any</option>
 				<option value="ip" <?php if ($fam == "ip") echo "selected"; ?>>IPv4 Only</option>
@@ -205,7 +218,7 @@ include("fbegin.inc");
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<select name="proto">
 				<option value="">Any</option>
 				<option value="icmp" <?php if ($proto == "icmp") echo "selected"; ?>>ICMP</option>
@@ -221,7 +234,7 @@ include("fbegin.inc");
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Host Address");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			<br/><?=gettext("This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.");?>
 			<br/><?=gettext("This value can be a domain name or IP address, or subnet in CIDR notation.");?>
@@ -230,7 +243,7 @@ include("fbegin.inc");
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Port");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>">
 			<br/><?=gettext("The port can be either the source or destination port. The packet capture will look for this port in either field.");?>
 			<br/><?=gettext("Leave blank if you do not want to filter by port.");?>
@@ -238,20 +251,21 @@ include("fbegin.inc");
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
 			<br/><?=gettext("The Packet length is the number of bytes of each packet that will be captured. Default value is 0, which will capture the entire frame regardless of its size.");?>
 			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Count");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<input name="count" type="text" class="formfld unknown" id="count" size="5" value="<?=$count;?>">
 			<br/><?=gettext("This is the number of packets the packet capture will grab. Default value is 100.") . "<br/>" . gettext("Enter 0 (zero) for no count limit.");?>
+			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Level of Detail");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<select name="detail" type="text" class="formselect" id="detail" size="1">
 				<option value="normal" <?php if ($detail == "normal") echo "selected"; ?>><?=gettext("Normal");?></option>
 				<option value="medium" <?php if ($detail == "medium") echo "selected"; ?>><?=gettext("Medium");?></option>
@@ -261,10 +275,11 @@ include("fbegin.inc");
 			<br/><?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br/><b>" .
 					gettext("Note:") . "</b> " .
 					gettext("This option does not affect the level of detail when downloading the packet capture.");?>
+			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Reverse DNS Lookup");?></td>
-			<td width="83%" class="vtable">
+			<td colspan="2" width="83%" class="vtable">
 			<input name="dnsquery" type="checkbox"<?php if($_POST['dnsquery']) echo " CHECKED"; ?>>
 			<br/><?=gettext("This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.");?>
 			<br/><b><?=gettext("Note");?>: </b><?=gettext("This option can cause delays for large packet captures.");?>
@@ -272,7 +287,7 @@ include("fbegin.inc");
 		</tr>
 		<tr>
 			<td width="17%" valign="top">&nbsp;</td>
-			<td width="83%">
+			<td colspan="2" width="83%">
 <?php
 
 			/* check to see if packet capture tcpdump is already running */
@@ -341,7 +356,7 @@ include("fbegin.inc");
 			if ($action == gettext("Start")) {
 				$matchstr = implode($matches, " and ");
 				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
-				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $snaplen -w $fp$fn $matchstr");
+				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $disablepromiscuous $searchcount -s $snaplen -w $fp$fn $matchstr");
 			} else {
 				//action = stop
 				echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured:") . "</strong><br/>");

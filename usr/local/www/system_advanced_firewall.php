@@ -226,8 +226,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 var descs=new Array(5);
 descs[0]="<?=gettext("as the name says, it's the normal optimization algorithm");?>";
@@ -240,7 +240,7 @@ function update_description(itemnum) {
 
 }
 
-//-->
+//]]>
 </script>
 
 <?php
@@ -250,7 +250,7 @@ function update_description(itemnum) {
 		print_info_box($savemsg);
 ?>
 	<form action="system_advanced_firewall.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced firewall/nat">
 			<tr>
 				<td class="tabnavtbl">
 					<?php
@@ -263,7 +263,6 @@ function update_description(itemnum) {
 						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
-				</ul>
 				</td>
 			</tr>
 			<tr>
@@ -271,20 +270,20 @@ function update_description(itemnum) {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("NOTE:");?>&nbsp</strong>
+								<strong><?=gettext("NOTE:");?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only.");?>
 							<br/>
 						</span>
 						<br/>
-						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Firewall Advanced");?></td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("IP Do-Not-Fragment compatibility");?></td>
 								<td width="78%" class="vtable">
-									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> />
+									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Clear invalid DF bits instead of dropping the packets");?></strong><br/>
 									<?=gettext("This allows for communications with hosts that generate fragmented " .
 									"packets with the don't fragment (DF) bit set. Linux NFS is known to " .
@@ -295,7 +294,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("IP Random id generation");?></td>
 								<td width="78%" class="vtable">
-									<input name="scrubrnid" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked"; ?> />
+									<input name="scrubrnid" type="checkbox" id="scrubrnid" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Insert a stronger id into IP header of packets passing through the filter.");?></strong><br/>
 									<?=gettext("Replaces the IP identification field of packets with random values to " .
 									"compensate for operating systems that use predictable values. " .
@@ -306,16 +305,18 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Optimization Options");?></td>
 								<td width="78%" class="vtable">
-									<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
-										<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected"; ?>><?=gettext("normal");?></option>
-										<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected"; ?>><?=gettext("high-latency");?></option>
-										<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected"; ?>><?=gettext("aggressive");?></option>
-										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>><?=gettext("conservative");?></option>
+									<select onchange="update_description(this.selectedIndex);" name="optimization" id="optimization">
+										<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected=\"selected\""; ?>><?=gettext("normal");?></option>
+										<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected=\"selected\""; ?>><?=gettext("high-latency");?></option>
+										<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected=\"selected\""; ?>><?=gettext("aggressive");?></option>
+										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected=\"selected\""; ?>><?=gettext("conservative");?></option>
 									</select>
 									<br/>
-									<textarea readonly="yes" cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
-									<script language="javascript" type="text/javascript">
+									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<script type="text/javascript">
+									//<![CDATA[
 										update_description(document.forms[0].optimization.selectedIndex);
+									//]]>
 									</script>
 									<br/>
 									<?=gettext("Select the type of state table optimization to use");?>
@@ -324,10 +325,10 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Disable Firewall");?></td>
 								<td width="78%" class="vtable">
-									<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> />
+									<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all packet filtering.");?></strong>
 									<br/>
-									<span class="vexpl"><?php printf(gettext("Note:  This converts %s into a routing only platform!"), $g['product_name']);?><br>
+									<span class="vexpl"><?php printf(gettext("Note:  This converts %s into a routing only platform!"), $g['product_name']);?><br />
 										<?=gettext("Note:  This will also turn off NAT!");?>
 										<br/><?=gettext("If you only want to disable NAT, and not firewall rules, visit the");?> <a href="firewall_nat_out.php"><?=gettext("Outbound NAT");?></a> <?=gettext("page");?>.
 									</span>
@@ -336,7 +337,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Disable Firewall Scrub");?></td>
 								<td width="78%" class="vtable">
-									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> />
+									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.");?></strong>
 									<br/>
 								</td>
@@ -400,7 +401,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Static route filtering");?></td>
 								<td width="78%" class="vtable">
-									<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
+									<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Bypass firewall rules for traffic on the same interface");?></strong>
 									<br/>
 									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and " .
@@ -412,7 +413,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell">Disable Auto-added VPN rules</td>
 								<td width="78%" class="vtable">
-									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> />
+									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
 									<br />
 									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?> 
@@ -422,7 +423,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell">Disable reply-to</td>
 								<td width="78%" class="vtable">
-									<input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked"; ?> />
+									<input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable reply-to on WAN rules");?></strong>
 									<br />
 									<?=gettext("With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default. " .
@@ -433,7 +434,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell">Disable Negate rules</td> 
 								<td width="78%" class="vtable">
-									<input name="disablenegate" type="checkbox" id="disablenegate" value="yes" <?php if ($pconfig['disablenegate']) echo "checked"; ?> />
+									<input name="disablenegate" type="checkbox" id="disablenegate" value="yes" <?php if ($pconfig['disablenegate']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable Negate rule on policy routing rules");?></strong>
 									<br />
 									<?=gettext("With Multi-WAN you generally want to ensure traffic reaches directly connected networks and VPN networks when using policy routing. You can disable this for special purposes but it requires manually creating rules for these networks");?>
@@ -450,9 +451,9 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Update Frequency");?></td>
 								<td width="78%" class="vtable">
 									<select name="bogonsinterval" class="formselect">
-									<option value="monthly" <?php if (empty($pconfig['bogonsinterval']) || $pconfig['bogonsinterval'] == 'monthly') echo "selected"; ?>><?=gettext("Monthly"); ?></option>
-									<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected"; ?>><?=gettext("Weekly"); ?></option>
-									<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected"; ?>><?=gettext("Daily"); ?></option>
+									<option value="monthly" <?php if (empty($pconfig['bogonsinterval']) || $pconfig['bogonsinterval'] == 'monthly') echo "selected=\"selected\""; ?>><?=gettext("Monthly"); ?></option>
+									<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected=\"selected\""; ?>><?=gettext("Weekly"); ?></option>
+									<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected=\"selected\""; ?>><?=gettext("Daily"); ?></option>
 									</select>
 									<br/>
 									<?=gettext("The frequency of updating the lists of IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA.");?>
@@ -469,9 +470,9 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("NAT Reflection mode for port forwards");?></td>
 								<td width="78%" class="vtable">
 									<select name="natreflection" class="formselect">
-									<option value="disable" <?php if (isset($config['system']['disablenatreflection'])) echo "selected"; ?>><?=gettext("Disable"); ?></option>
-									<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected"; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
-									<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected"; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
+									<option value="disable" <?php if (isset($config['system']['disablenatreflection'])) echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
+									<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
+									<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
 									</select>
 									<br/>
 									<strong><?=gettext("When enabled, this automatically creates additional NAT redirect rules for access to port forwards on your external IP addresses from within your internal networks.");?></strong>
@@ -488,14 +489,14 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
 									<strong><?=gettext("Enter value for Reflection timeout in seconds.");?></strong>
-									<br/<br/>
+									<br/><br/>
 									<?=gettext("Note: Only applies to Reflection on port forwards in NAT + proxy mode.");?>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Enable NAT Reflection for 1:1 NAT");?></td>
 								<td width="78%" class="vtable">
-									<input name="enablebinatreflection" type="checkbox" id="enablebinatreflection" value="yes" <?php if (isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
+									<input name="enablebinatreflection" type="checkbox" id="enablebinatreflection" value="yes" <?php if (isset($config['system']['enablebinatreflection'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Enables the automatic creation of additional NAT redirect rules for access to 1:1 mappings of your external IP addresses from within your internal networks.");?></strong>
 									<br/><br/>
 									<?=gettext("Note: Reflection on 1:1 mappings is only for the inbound component of the 1:1 mappings.  This functions the same as the pure NAT mode for port forwards.  For more details, refer to the pure NAT mode description above.");?>
@@ -506,7 +507,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Enable automatic outbound NAT for Reflection");?></td>
 								<td width="78%" class="vtable">
-									<input name="enablenatreflectionhelper" type="checkbox" id="enablenatreflectionhelper" value="yes" <?php if (isset($config['system']['enablenatreflectionhelper'])) echo "checked"; ?> />
+									<input name="enablenatreflectionhelper" type="checkbox" id="enablenatreflectionhelper" value="yes" <?php if (isset($config['system']['enablenatreflectionhelper'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Automatically create outbound NAT rules which assist inbound NAT rules that direct traffic back out to the same subnet it originated from.");?></strong>
 									<br/>
 									<?=gettext("Required for full functionality of the pure NAT mode of NAT Reflection for port forwards or NAT Reflection for 1:1 NAT.");?>
@@ -517,12 +518,12 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("TFTP Proxy");?></td>
 								<td width="78%" class="vtable">
-									<select name="tftpinterface[]" multiple="true" class="formselect" size="3">
+									<select name="tftpinterface[]" multiple="multiple" class="formselect" size="3">
 <?php
 										$ifdescs = get_configured_interface_with_descr();
 										foreach ($ifdescs as $ifent => $ifdesc):
 ?>
-											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected"; ?>><?=gettext($ifdesc);?></option>
+											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected=\"selected\""; ?>><?=gettext($ifdesc);?></option>
 <?php									endforeach; ?>
 									</select>
 									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
@@ -537,13 +538,12 @@ function update_description(itemnum) {
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
 							</tr>
 						</table>
-					</td>
-				</tr>
-			</div>
+					</div>
+				</td>
+			</tr>
 		</table>
 	</form>
 
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

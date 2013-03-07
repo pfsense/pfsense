@@ -40,7 +40,7 @@ $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
 // If hostname display is requested and the DNS forwarder does not already have DHCP static names registered,
 // then load the DHCP static mappings into an array keyed by IP address.
-if (($hostipformat == "hostname") && (!isset($config['dnsmasq']['regdhcpstatic']))) {
+if (($hostipformat != "") && (!isset($config['dnsmasq']['regdhcpstatic']))) {
 	if (is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $ifdata) {
 			if (is_array($ifdata['staticmap'])) {

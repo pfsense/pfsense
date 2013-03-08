@@ -232,7 +232,8 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<script type="text/javascript" >
+<script type="text/javascript">
+//<![CDATA[
 function sticky_checked(obj) {
 	if (obj.checked)
 		jQuery('#srctrack').attr('disabled',false);
@@ -245,9 +246,10 @@ function maxmss_checked(obj) {
 	else
 		jQuery('#maxmss').attr('disabled','true');
 }
+//]]>
 </script>
 	<form action="system_advanced_misc.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced misc">
 			<tr>
 				<td>
 					<?php
@@ -267,20 +269,20 @@ function maxmss_checked(obj) {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
+								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
 						</span>
 						<br/>
-						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Proxy support"); ?></td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy URL"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown">
+									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Proxy url for allowing %s to use this proxy to connect outside."),$g['product']); ?>
 								</td>
@@ -288,7 +290,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Port"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown">
+									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Proxy port to use when %s connects to the proxy URL configured above. Default is 8080 for http protocol or 443 for ssl."),$g['product']); ?>
 								</td>
@@ -296,7 +298,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Username"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown">
+									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Proxy username for allowing %s to use this proxy to connect outside"),$g['product']); ?>
 								</td>
@@ -304,7 +306,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Pass"); ?></td>
 								<td width="78%" class="vtable">
-									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown">
+									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown" />
 									<br />
 									<?php printf(gettext("Proxy password for allowing %s to use this proxy to connect outside"),$g['product']); ?>
 								</td>
@@ -315,7 +317,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> onClick="sticky_checked(this)" />
+									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> onclick="sticky_checked(this)" />
 									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
 									<?=gettext("Successive connections will be redirected to the servers " .
 									"in a round-robin manner with connections from the same " .
@@ -326,7 +328,7 @@ function maxmss_checked(obj) {
 									"will be redirected to the next web server in the round " .
 									"robin. Changing this option will restart the Load Balancing service."); ?>
 									<br />
-									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo $pconfig['srctrack']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled"; ?>>
+									<input name="srctrack" id="srctrack" value="<?php if ($pconfig['srctrack'] <> "") echo $pconfig['srctrack']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['lb_use_sticky'] == false) echo "disabled=\"disabled\""; ?> />
 									<br />
 									<?=gettext("Set the source tracking timeout for sticky connections. " .
 									"By default this is 0, so source tracking is removed as soon as the state expires. " .
@@ -351,23 +353,23 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("PowerD"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
+									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Use PowerD"); ?></strong><br/>
 									<br/>
 									<?=gettext("On AC Power Mode"); ?>&nbsp;:&nbsp;
 									<select name="powerd_ac_mode" id="powerd_ac_mode">
-										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_ac_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
+										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_ac_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
 									&nbsp;&nbsp;
 									<?=gettext("On Battery Power Mode"); ?>&nbsp;:&nbsp;
 									<select name="powerd_battery_mode" id="powerd_battery_mode">
-										<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected"; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected"; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected"; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected"; ?>><?=gettext("Maximum");?></option>
+										<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
 									<br/><br/>
 								     <?=gettext("The powerd utility monitors the system state and sets various power control " .
@@ -397,7 +399,7 @@ function maxmss_checked(obj) {
 									<select name="crypto_hardware" id="crypto_hardware">
 										<option value=""><?php echo gettext("None"); ?></option>
 										<?php foreach ($crypto_modules as $cryptomod_name => $cryptomod_descr): ?>
-											<option value="<?php echo $cryptomod_name; ?>" <?php if ($pconfig['crypto_hardware'] == $cryptomod_name) echo " selected"; ?>><?php echo "{$cryptomod_descr} ({$cryptomod_name})"; ?></option>
+											<option value="<?php echo $cryptomod_name; ?>" <?php if ($pconfig['crypto_hardware'] == $cryptomod_name) echo " selected=\"selected\""; ?>><?php echo "{$cryptomod_descr} ({$cryptomod_name})"; ?></option>
 										<?php endforeach; ?>
 									</select>
 									<br />
@@ -425,7 +427,7 @@ function maxmss_checked(obj) {
 								<select name="thermal_hardware" id="thermal_hardware">
 									<option value=""><?php echo gettext("None/ACPI"); ?></option>
 									<?php foreach ($thermal_hardware_modules as $themalmod_name => $themalmod_descr): ?>
-										<option value="<?php echo $themalmod_name; ?>" <?php if ($pconfig['thermal_hardware'] == $themalmod_name) echo " selected"; ?>><?php echo "{$themalmod_descr} ({$themalmod_name})"; ?></option>
+										<option value="<?php echo $themalmod_name; ?>" <?php if ($pconfig['thermal_hardware'] == $themalmod_name) echo " selected=\"selected\""; ?>><?php echo "{$themalmod_descr} ({$themalmod_name})"; ?></option>
 									<?php endforeach; ?>
 								</select>
 								<br />
@@ -446,7 +448,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
+									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
 									<br />
 									<?=gettext("By default, if several SAs match, the newest one is " .
@@ -457,7 +459,7 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="racoondebug_enable" type="checkbox" id="racoondebug_enable" value="yes" <?php if ($pconfig['racoondebug_enable']) echo "checked"; ?> />
+									<input name="racoondebug_enable" type="checkbox" id="racoondebug_enable" value="yes" <?php if ($pconfig['racoondebug_enable']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Start racoon in debug mode"); ?></strong>
 									<br />
 									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
@@ -468,10 +470,10 @@ function maxmss_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked"; ?> onClick="maxmss_checked(this)" />
+									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
 									<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
 									<br />
-									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled"; ?>>
+									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
 									<br />
 									<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
 									"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
@@ -486,7 +488,7 @@ function maxmss_checked(obj) {
                                                         <tr>
                                                                 <td width="22%" valign="top" class="vncell"><?=gettext("Schedule States"); ?></td>
                                                                 <td width="78%" class="vtable">
-                                                                        <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
+                                                                        <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked=\"checked\""; ?> />
                                                                         <br />
 									<?=gettext("By default schedules clear the states of existing connections when the expiration time has come. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
@@ -501,7 +503,7 @@ function maxmss_checked(obj) {
                                                         <tr>
                                                                 <td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
                                                                 <td width="78%" class="vtable">
-                                                                        <input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked"; ?> />
+                                                                        <input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked=\"checked\""; ?> />
                                                                         <br />
 									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
@@ -522,12 +524,12 @@ function maxmss_checked(obj) {
 										 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
 											$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
 										?>
-										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected');?>><?=gettext("Always on"); ?></option>
+										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected="selected"');?>><?=gettext("Always on"); ?></option>
 										<?php
 											foreach ($sbvals as $sbval):
 												list($min,$val) = explode(",", $sbval);
 										?>
-										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> <?=gettext("minutes"); ?></option>
+										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected="selected"');?>><?=$min;?> <?=gettext("minutes"); ?></option>
 										<?php endforeach; ?>
 									</select>
 									<br/>
@@ -556,4 +558,3 @@ function maxmss_checked(obj) {
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

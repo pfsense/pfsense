@@ -139,7 +139,7 @@ include("head.inc");
 				print_info_box_np(gettext("The firewall tunables have changed.  You must apply the configuration to take affect."));
 		?>
 	</form>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced tunables">
 		<tr>
 			<td>
 				<?php
@@ -160,13 +160,13 @@ include("head.inc");
 				<div class="tabcont">
 					<span class="vexpl">
 						<span class="red">
-							<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
+							<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 						</span>
 						<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 						<br/>
 					</span>
 					<br/>
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
 							<td width="20%" class="listhdrr"><?=gettext("Tunable Name"); ?></td>
 							<td width="60%" class="listhdrr"><?=gettext("Description"); ?></td>
@@ -174,24 +174,24 @@ include("head.inc");
 						</tr>
 						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
 						<tr>
-							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
+							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['tunable']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['descr']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
 								<?php 
 									if($tunable['value'] == "default") 
 										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; 
 								?>
 							</td>
-							<td class="list" nowrap>
-								<table border="0" cellspacing="0" cellpadding="1">
+							<td class="list nowrap">
+								<table border="0" cellspacing="0" cellpadding="1" summary="edit delete">
 									<tr>
 										<td valign="middle">
-											<a href="system_advanced_sysctl.php?act=edit&id=<?=$i;?>">
+											<a href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>">
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
@@ -209,7 +209,7 @@ include("head.inc");
 						<td class="list" colspan="3">
 							</td>
 							<td class="list">
-								<table border="0" cellspacing="0" cellpadding="1">
+								<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 									<tr>
 										<td valign="middle">
 											<a href="system_advanced_sysctl.php?act=edit">
@@ -229,14 +229,14 @@ include("head.inc");
 			<td>
 				<div id="mainarea">
 					<form action="system_advanced_sysctl.php" method="post" name="iform" id="iform">
-						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="edit system tunable">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit system tunable"); ?></td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunable"); ?></td>
 								<td width="78%" class="vtable">
-									<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
+									<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>" />
 								</td>
 							</tr>
 							<tr>
@@ -248,7 +248,7 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Value"); ?></td>
 								<td width="78%" class="vtable">
-									<input size="65" name="value" value="<?php echo $pconfig['value']; ?>">
+									<input size="65" name="value" value="<?php echo $pconfig['value']; ?>" />
 								</td>
 							</tr>
 							<tr>

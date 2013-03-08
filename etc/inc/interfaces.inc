@@ -323,7 +323,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	if (!stristr($qinqif, "vlan"))
+	if (!stristr($qinqif, "_vlan"))
 		mwexec("/sbin/ifconfig {$qinqif} promisc\n");
 
 	$macaddr = get_interface_mac($qinqif);
@@ -2980,7 +2980,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 		if ($wancfg['mtu'] != get_interface_mtu($realif))
 			pfSense_interface_mtu($realif, $wancfg['mtu']);
-	} else if (stristr($realif, "vlan")) {
+	} else if (stristr($realif, "_vlan")) {
 		/* XXX: This is really dangerous for example with vlans changing their parent mtu! */
 		$bigmtu = interface_vlan_mtu_configured($realhwif, $mtu);
 		if ($mtu < $bigmtu)
@@ -3833,7 +3833,7 @@ function get_parent_interface($interface) {
 			case "static":
 			default:
 				// Handle _vlans
-				if (strstr($realif,"_vlan"))
+				if (stristr($realif,"_vlan"))
 					if (is_array($config['vlans']['vlan']))
 						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan)
 							if ($ifcfg['if'] == $vlan['vlanif']){
@@ -4671,7 +4671,7 @@ function is_altq_capable($int) {
 		return true;
 	else if (stristr($int, "l2tp")) /* VLANs are name $parent_$vlan now */
 		return true;
-	else if (stristr($int, "vlan")) /* VLANs are name $parent_$vlan now */
+	else if (stristr($int, "_vlan")) /* VLANs are name $parent_$vlan now */
 		return true;
 	else if (stristr($int, "_wlan")) /* WLANs are name $parent_$wlan now */
 		return true;

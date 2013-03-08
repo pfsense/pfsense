@@ -2963,6 +2963,23 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 				}
 			}
+		} else {
+			$vlanifs = link_interface_to_vlans($realif);
+			if (!empty($vlanifs)) {
+				foreach ($vlanifs as $vlanif) {
+					$assginedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+					if (empty($assginedport))
+						pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+					else {
+						$vlanmtu = $config['interfaces'][$assginedport]['mtu'];
+						if (!empty($vlanmtu) && $vlanmtu < $wancfg['mtu'])
+							continue;
+						else
+							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+					}
+				}
+				unset($vlanifs);
+			}
 		}
 		if ($wancfg['mtu'] != get_interface_mtu($realif))
 			pfSense_interface_mtu($realif, $wancfg['mtu']);
@@ -4150,14 +4167,17 @@ function link_interface_to_vlans($int, $action = "") {
 		return;
 
 	if (is_array($config['vlans']['vlan'])) {
+		$ifaces = array();
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if ($int == $vlan['if']) {
 				if ($action == "update") {
 					interfaces_bring_up($int);
 				} else if ($action == "")
-					return $vlan;
+					$ifaces[$vlan['tag']] = $vlan;
 			}
 		}
+		if (!empty($ifaces))
+			return $ifaces;
 	}
 }
 
